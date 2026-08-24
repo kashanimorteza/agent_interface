@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless --disable-gpu --force-device-scale-factor=2 --window-size=1240,1235 --screenshot=tree.png file://__TRACKED_VAR__/tree.html)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless --disable-gpu --force-device-scale-factor=2 --window-size=1240,815 --screenshot=tree.png file://__TRACKED_VAR__/tree.html)",
+      "Bash(cp tree.png /Volumes/data/projects/agent_interface/schema/structure-tree.png)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless --disable-gpu --force-device-scale-factor=2 --window-size=1240,1000 --screenshot=tree.png file://__TRACKED_VAR__/tree.html)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -)",
+      "Bash(echo \"grep exit: $?\")",
+      "Bash(echo \"exit=$?\")"
+    ]
+  }
+}

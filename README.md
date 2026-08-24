@@ -11,11 +11,12 @@ AI agents interact with the project through a structured and agent-independent i
 <br><br>
 
 ## Diagram
+![](https://github.com/kashanimorteza/agent_interface/blob/main/design/main.png)
 
 <!--------------------------------------------------------------------------------- Modules -->
 <br><br>
 
-## structure
+## Structure
 
 ### Root
 
