@@ -1,5 +1,5 @@
 meta:
-  path: "project.yaml"
+  path: "definition.yaml"
   path_note: "The address of this file — layer 2, the product definition"
   purpose: "Product definition — what is being built and why"
   scope_note: "This file states the what, not the how — the how lives in rules.yaml and develop.yaml"

@@ -16,11 +16,11 @@ structure:
     responsibility: "Entry point — read protocol, working modes, and write protocol"
     note: "The only file an agent finds without guidance"
 
-  project:
+  definition:
     layer: 2
-    path: "project.yaml"
+    path: "definition.yaml"
     responsibility: "Product definition — identity, goals, and architecture"
-    note: "To understand what is being built, read project.yaml"
+    note: "To understand what is being built, read definition.yaml"
 
   rules:
     layer: 3
@@ -42,7 +42,7 @@ read_order:
       read: "root.yaml"
       why: "This file — read protocol, working modes, and write protocol"
     - step: 2
-      read: "project.yaml"
+      read: "definition.yaml"
       why: "Understand what product is being built"
     - step: 3
       read: "rules.yaml"
@@ -64,13 +64,13 @@ modes:
   planning:
     purpose: "Analyze the project and produce a complete task plan"
     allowed:
-      - "Analyze project.yaml and the architecture"
+      - "Analyze definition.yaml and the architecture"
       - "Write or revise definition.yaml of items"
       - "Create groups and tasks in task.yaml"
       - "Define dependencies and acceptance criteria"
       - "Draft contracts in shared/contracts"
     prohibited:
-      - "Changing root.yaml, project.yaml, rules.yaml, develop.yaml — raise it with the human instead"
+      - "Changing root.yaml, definition.yaml, rules.yaml, develop.yaml — raise it with the human instead"
       - "Writing or changing project code"
       - "Marking any task as done"
       - "Changing a frozen contract"
@@ -92,7 +92,7 @@ modes:
       - "Run the verify command and check the acceptance criteria"
       - "Report the result to the human"
     prohibited:
-      - "Changing root.yaml, project.yaml, rules.yaml, develop.yaml — raise it with the human instead"
+      - "Changing root.yaml, definition.yaml, rules.yaml, develop.yaml — raise it with the human instead"
       - "Changing task.yaml without a stated reason and human approval"
       - "Touching the code of another item"
       - "Calling a task done when its verify did not pass"

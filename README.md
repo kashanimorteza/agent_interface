@@ -22,7 +22,7 @@ AI agents interact with the project through a structured and agent-independent i
 
 Defines the entry point, reading protocol, working modes, and write protocol for AI agents.
 
-### Project
+### Definition
 
 Defines what the product is, its purpose, architecture, and project-level context.
 

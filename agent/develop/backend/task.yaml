@@ -2,7 +2,7 @@ meta:
   path: "develop/backend/task.yaml"
   path_note: "The address of this file — the develop layer, backend item"
   purpose: "Definition of the backend tasks — what has to be done and in what order"
-  derived_from: "project.yaml goals, the global rules.yaml, and this item's definition.yaml and rules.yaml"
+  derived_from: "the root definition.yaml goals, the global rules.yaml, and this item's definition.yaml and rules.yaml"
   schema_source: "The shape of each task is defined in task_schema inside develop.yaml"
   states_source: "The status vocabulary is defined in task_states inside develop.yaml"
   no_status_here: "Task status is not written here — this file holds the task definitions only"

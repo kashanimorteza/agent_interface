@@ -3,7 +3,7 @@ meta:
   path_note: "The address of this file — the develop layer, backend item"
   purpose: "Settings and structure of the backend — which technologies it is built with, and how its code is laid out"
   contains: "tech and code_layout — what has to be settled before a single line of backend code is written"
-  role_defined_in: "project.yaml, under architecture.parts.backend — what this item is responsible for and where its boundaries are"
+  role_defined_in: "the root definition.yaml, under architecture.parts.backend — what this item is responsible for and where its boundaries are"
   identity_defined_in: "develop/develop.yaml, under items.backend — its path, code_path, and summary"
   editable_in_mode: "planning"
   on_change_needed: "Do not change in development mode — raise it with the human"
