@@ -10,11 +10,43 @@ meta:
 
 
 structure:
-  path: "structure.yaml"
-  responsibility: "Project map — the list of layers and the path to each layer's index"
-  note: "root.yaml does not know where anything is — to locate any file, read structure.yaml first"
+  root:
+    layer: 1
+    path: "root.yaml"
+    responsibility: "Entry point — read protocol, working modes, and write protocol"
+    note: "The only file an agent finds without guidance"
 
+  project:
+    layer: 2
+    path: "project.yaml"
+    responsibility: "Product definition — identity, goals, non-goals, outcomes, architecture"
+    note: "To understand what is being built, read project.yaml"
 
+  rules:
+    layer: 3
+    path: "rules.yaml"
+    responsibility: "Rules governing agent behavior — security, quality, and their precedence"
+    note: "No rule lives anywhere else — read rules.yaml before doing anything"
+
+  develop:
+    layer: 4
+    path: "develop/develop.yaml"
+    responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
+    note: "For any work in this layer, read develop.yaml first"
+
+  state:
+    layer: "cross"
+    path: "state.yaml"
+    responsibility: "State layer index — state files, their read order, and the rules for writing them"
+    note: "To understand 'where we are right now', read state.yaml first"
+
+  history:
+    layer: "cross"
+    path: "history/history.yaml"
+    responsibility: "History layer index — record types, the format of each, and the rules for writing them"
+    note: "Before recording anything in this layer, read history.yaml first"
+
+    
 read_order:
   enforcement: "Exactly this order — no less, no more"
   steps:

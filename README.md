@@ -15,7 +15,7 @@ AI agents interact with the project through a structured and agent-independent i
 <!--------------------------------------------------------------------------------- Modules -->
 <br><br>
 
-## Modules
+## structure
 
 ### Root
 
@@ -28,10 +28,6 @@ Defines what the product is, its purpose, architecture, and project-level contex
 ### Rules
 
 Defines the rules, constraints, priorities, and development principles that agents must follow.
-
-### Structure
-
-Defines the project map and the location and organization of the different layers and resources.
 
 ### Develop
 
