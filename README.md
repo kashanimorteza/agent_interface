@@ -4,12 +4,12 @@
 An agent-independent interface between software projects and AI agents.
 
 <!--------------------------------------------------------------------------------- Diagram -->
-<br / ><br / >
+<br><br>
 
 ## Diagram*
 
 <!--------------------------------------------------------------------------------- Modules -->
-<br / ><br / >
+<br><br>
 
 ## Modules
 
@@ -42,7 +42,7 @@ Defines the development layer, including work items, their boundaries, plans, ru
 Records sessions, decisions, and other historical information required to preserve project context across agents and sessions.
 
 <!--------------------------------------------------------------------------------- Concept -->
-<br / ><br / >
+<br><br>
 
 ## Concept
 
