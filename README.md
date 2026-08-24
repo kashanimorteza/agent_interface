@@ -1,6 +1,6 @@
 <!--------------------------------------------------------------------------------- Agent Interface -->
 
-**# Agent Interface**
+# Agent Interface**
 
 An agent-independent interface between software projects and AI agents.
 
@@ -8,13 +8,13 @@ An agent-independent interface between software projects and AI agents.
 
 <!--------------------------------------------------------------------------------- Diagram -->
 
-**## Diagram**
+## Diagram**
 
 ![](https://github.com/kashanimorteza/agent_interface/blob/main/design/economy.png)
 
 <!--------------------------------------------------------------------------------- Modules -->
 
-**## Modules**
+## Modules
 
 ### Root
 
@@ -46,9 +46,9 @@ Records sessions, decisions, and other historical information required to preser
 
 <!--------------------------------------------------------------------------------- Concept -->
 
-**## Concept**
+## Concept**
 
-**Developer ↔ Project ↔ AI Agent**
+Developer ↔ Project ↔ AI Agent**
 
 The project is the source of truth.  
 AI agents interact with the project through a structured and agent-independent interface.
