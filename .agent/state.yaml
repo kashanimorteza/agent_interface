@@ -1,0 +1,61 @@
+meta:
+  layer: "cross"
+  layer_name: "STATE — current state"
+  purpose: "Answers 'where are we now and what should I do' — not history, not definition"
+  write_mode: "overwrite"
+  history_rule: "This layer keeps no history — anything worth keeping is recorded in history/"
+  index_agent_may_edit: false
+  index_on_change_needed: "Record a proposal in questions.yaml — this index itself changes only by a human"
+  files_agent_may_edit: true
+  updated: "2026-08-24"
+
+
+files:
+
+  stage:
+    path: "stage.yaml"
+    responsibility: "Active mode and active item"
+    agent_may_edit: false
+    reason: "The mode is the boundary of an agent's permissions — an agent never moves its own boundary"
+    on_change_needed: "Propose in questions.yaml — only a human may change it"
+
+  blockers:
+    path: "blockers.yaml"
+    responsibility: "Open blockers — whatever has stopped work"
+    agent_may_edit: true
+    linked_to: "The affected task moves to blocked in the item's status.yaml — blocker and task are always updated together"
+
+  questions:
+    path: "questions.yaml"
+    responsibility: "Queue of questions, approval requests, and change proposals for the human"
+    agent_may_edit: true
+    write_rule: "Every question is recorded with a proposal, never as a bare question"
+    answer_rule: "Only a human writes the answer — an agent never answers its own question"
+
+  counters:
+    path: "counters.yaml"
+    responsibility: "Id counters — BE, FE, ADR, BLK, Q"
+    agent_may_edit: true
+    write_rule: "Before creating any identified object, increment the counter first, then use the id"
+    uniqueness: "An id is never reused — even if the previous object was deleted or cancelled"
+
+
+read_order:
+  enforcement: "At the start of every session, before any other layer"
+  steps:
+    - path: "stage.yaml"
+      why: "Learn the active mode and item — the rest of the session depends on this"
+    - path: "questions.yaml"
+      why: "If the human has answered a question, apply that answer first"
+    - path: "blockers.yaml"
+      why: "Know what is blocked so you do not restart blocked work"
+    - path: "counters.yaml"
+      why: "Only when a new id is needed — not part of the opening read"
+
+
+rules:
+  single_source: "Current state lives only in this layer — never duplicated into plan.yaml or definition.yaml"
+  task_status_exception: "Task status is not here — it lives in status.yaml of the item"
+  answered_question: "Once applied, an answered question is closed and summarized in history/journal"
+  resolved_blocker: "A resolved blocker is removed from blockers.yaml and its resolution recorded in the journal"
+  no_silent_change: "Every change in this layer must be reflected in that session's journal entry"

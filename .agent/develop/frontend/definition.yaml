@@ -1,0 +1,51 @@
+meta:
+  item: "frontend"
+  layer: 4
+  purpose: "Definition of the frontend item — what it does, with which technologies, and where its boundaries are"
+  agent_may_edit: true
+  editable_in_mode: "planning"
+  on_change_needed: "Do not change this in development mode — record a proposal in questions.yaml instead"
+  updated: "2026-08-24"
+
+
+responsibility: "Web client — user interface for login, registration, and task management"
+
+code_path: "frontend/"
+
+
+tech:
+  language: "TypeScript"
+  framework: "React"
+  build: "Vite"
+  routing: "React Router"
+  state: "Server state via a request cache; local state via React's own hooks"
+  test: "Vitest + Testing Library"
+  run: "npm run dev"
+
+
+code_layout:
+  "src/main.tsx": "Entry point"
+  "src/api/": "API client — the only layer that talks to the network"
+  "src/pages/": "Pages — one file per route"
+  "src/components/": "Reusable components"
+  "src/auth/": "Session handling and route protection"
+  "tests/": "Tests — mirror the structure of src/"
+
+
+contracts:
+  consumes: "api-v1"
+  contract_path: "develop/shared/contracts/api-v1.yaml"
+  rule: "Tasks in this item depend on the contract version, not on backend tasks"
+  before_frozen: "Until the contract is frozen, work proceeds against mock data derived from that same contract"
+
+
+boundaries:
+  owns: "All code inside frontend/"
+  does_not_own: "Backend code and the database schema — not a single line"
+  interface: "The only way to communicate with the backend is the api-v1 contract"
+
+
+out_of_scope:
+  - "Server-side business logic and final validation"
+  - "Direct database access"
+  - "Deployment infrastructure and CI"

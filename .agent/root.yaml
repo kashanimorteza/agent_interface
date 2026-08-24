@@ -1,0 +1,121 @@
+meta:
+  standard: "Agent Project Interface"
+  version: "1.0"
+  purpose: "Entry point for every agent — protocol, not content: what to read in what order, what is allowed, and where results are recorded"
+  independence: "Independent of any agent, model, or vendor — any agent that can read files can work here"
+  entry_rule: "Every session begins by reading this file in full"
+  on_change_needed: "Record a proposal in questions.yaml — only a human may change this file"
+  agent_may_edit: false
+  updated: "2026-08-24"
+
+
+structure:
+  path: "structure.yaml"
+  responsibility: "Project map — the list of layers and the path to each layer's index"
+  note: "root.yaml does not know where anything is — to locate any file, read structure.yaml first"
+
+
+read_order:
+  enforcement: "Exactly this order — no less, no more"
+  steps:
+    - step: 1
+      read: "root.yaml"
+      why: "This file — read protocol, working modes, and write protocol"
+    - step: 2
+      read: "structure.yaml"
+      why: "Learn which layers exist and where each index lives — the paths for every later step come from here"
+    - step: 3
+      read: "state.yaml"
+      why: "Learn which state files exist, in what order to read them, and which are writable"
+    - step: 4
+      read: "State files — per read_order in state.yaml"
+      why: "Learn the active mode and item, any new human answers, and what is currently blocked"
+    - step: 5
+      read: "project.yaml"
+      why: "Understand what product is being built"
+    - step: 6
+      read: "rules.yaml"
+      why: "Read in full — every rule lives here and security overrides everything"
+    - step: 7
+      read: "develop/develop.yaml"
+      why: "Learn which items exist, where the active item lives, and the boundaries of the build layer"
+    - step: 8
+      read: "Active item: definition.yaml → rules.yaml → plan.yaml"
+      why: "Understand the item you are working on — order comes from item_read_order in develop.yaml"
+    - step: 9
+      read: "status.yaml of the same item"
+      why: "Learn what is done, what remains, and what is blocked — then start work"
+
+
+modes:
+
+  active_mode_source: "stage.yaml"
+  switch_rule: "Only a human changes the mode — an agent never switches its own mode"
+
+  planning:
+    purpose: "Analyze the project and produce a complete task plan"
+    allowed:
+      - "Analyze project.yaml and the architecture"
+      - "Write or revise definition.yaml of items"
+      - "Create groups and tasks in plan.yaml"
+      - "Define dependencies and acceptance criteria"
+      - "Draft contracts in shared/contracts"
+      - "Record decisions (ADR) and questions for the human"
+    prohibited:
+      - "Changing root.yaml, structure.yaml, project.yaml, rules.yaml, develop.yaml — propose via questions only"
+      - "Writing or changing project code"
+      - "Marking any task as done"
+      - "Changing a frozen contract"
+    may_write:
+      - "definition.yaml / plan.yaml / rules.yaml of items"
+      - "shared/contracts (draft only)"
+      - "State files except stage.yaml"
+      - "history/*"
+    steps:
+      - "Read per read_order"
+      - "Analyze and identify areas of work"
+      - "Create groups, then tasks with ids drawn from counters"
+      - "Define dependencies"
+      - "Record the plan and request approval in questions"
+      - "Stop until the human approves"
+
+  development:
+    purpose: "Execute approved tasks"
+    allowed:
+      - "Pick a ready task from status.yaml of the active item"
+      - "Implement only inside the code_path of that item"
+      - "Run tests and check acceptance criteria"
+      - "Record the result and update status.yaml"
+      - "Record blockers, questions, decisions, and the journal"
+    prohibited:
+      - "Changing root.yaml, structure.yaml, project.yaml, rules.yaml, develop.yaml — propose via questions only"
+      - "Changing plan.yaml without a recorded reason and approval"
+      - "Touching the code of another item"
+      - "Marking a task done when its verify did not pass"
+      - "Ignoring the rules"
+    may_write:
+      - "status.yaml of the active item"
+      - "Code inside the code_path of the active item"
+      - "State files except stage.yaml"
+      - "history/*"
+    steps:
+      - "Read per read_order"
+      - "Pick a ready task and claim it in status.yaml"
+      - "Implement per the task definition and the rules"
+      - "Run the tests and check the acceptance criteria"
+      - "Record the result in status.yaml under that task"
+      - "At session end: write the journal entry"
+
+
+write_protocol:
+  task_status_change: "status.yaml of the same item — task status lives only there"
+  work_details: "status.yaml of the same item, under that task"
+  session_report: "History layer — per the journal format in history.yaml; mandatory at the end of every session"
+  decision: "History layer — per the decisions format in history.yaml"
+  blocker: "State layer — per the blockers rules in state.yaml; the affected task moves to blocked in status.yaml"
+  question_for_human: "State layer — per the questions rules in state.yaml; always with a proposal, never a bare question"
+  new_id: "State layer — increment the counter in counters.yaml per state.yaml before creating any id"
+  root_change_needed: "Never directly — propose in questions.yaml; only a human may change it"
+  new_item_needed: "Never directly — items are defined in develop.yaml; propose in questions.yaml"
+  rule_change_needed: "Never directly — rules are defined in rules.yaml; propose in questions.yaml"
+  rule_conflict: "Follow precedence in rules.yaml and record the conflict in questions.yaml"

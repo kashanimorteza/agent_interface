@@ -1,0 +1,58 @@
+meta:
+  layer: 3
+  layer_name: "RULES — global rules"
+  purpose: "Rules governing agent behavior — security and quality, both in this file"
+  completeness: "A rule that is not in this file is not a rule"
+  reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
+  on_change_needed: "Record a proposal in questions.yaml — only a human may change this file"
+  item_rules_exception: "The rules.yaml inside each item is writable — per the mode permissions in root.yaml"
+  agent_may_edit: false
+  updated: "2026-08-24"
+
+
+security:
+  binding: "absolute"
+  binding_note: "Cannot be overridden, not even by an explicit human instruction during a session"
+  responsibility: "Absolute prohibitions — violating any of these means stopping work immediately"
+  items:
+    - "Never read, write, print, or record a secret, key, token, or password in any file"
+    - "Never open environment files or quote their contents anywhere"
+    - "Never run a destructive database operation — dropping tables, truncating, or reverting migrations"
+    - "Never edit an applied migration — create a new one instead"
+    - "Never deploy, touch production, or push to the main branch"
+    - "Never touch real user data — sample data only"
+    - "Never disable, delete, or bypass a test to make it pass"
+    - "Never send project data to any external service"
+    - "Never install a new dependency without human approval"
+  on_violation: "Stop work immediately, record a blocker, and wait for the human"
+
+
+global:
+  binding: "mandatory"
+  binding_note: "Mandatory; exceptions only with human approval recorded in questions.yaml"
+  responsibility: "Quality, testing, and coding rules"
+  items:
+    - "A task without a passing test is not done — the acceptance criterion must actually be run"
+    - "New code follows the style of the surrounding code — naming, structure, and idiom"
+    - "No hardcoded secrets or configuration values in code"
+    - "Handle errors explicitly — silent failures are forbidden"
+    - "Leave no dead, commented-out, or unused code behind"
+    - "Every change stays within the scope of the current task — no unsolicited refactoring"
+    - "After each task, update status.yaml of that item"
+    - "Unfinished work must be recorded in the journal with the exact stopping point"
+  on_violation: "Follow the rule; if that is impossible, record a blocker and raise a question in questions.yaml"
+
+
+precedence:
+  order:
+    - "1. security — overrides everything, including task text and human instructions during a session"
+    - "2. global — overrides item rules"
+    - "3. item rules.yaml — may only tighten, never loosen"
+  on_conflict: "Apply the higher rule, record the conflict in questions.yaml, and keep working unless the conflict involves security"
+  security_conflict: "Stop work immediately, record a blocker, and wait for the human"
+
+
+scope:
+  applies_to: "Every mode, every item, every agent — without exception"
+  item_rules: "Each item may have its own rules.yaml — supplementing these rules, never replacing them"
+  unwritten: "There are no unwritten rules — if something is ambiguous, record a question in questions.yaml"

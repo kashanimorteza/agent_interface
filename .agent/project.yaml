@@ -1,0 +1,52 @@
+meta:
+  layer: 2
+  layer_name: "PROJECT — product definition"
+  purpose: "Product definition — what is being built and why"
+  scope_note: "This file states the what, not the how — the how lives in rules.yaml and develop.yaml"
+  reason: "The product definition is a human decision, not an agent inference"
+  on_change_needed: "Record a proposal in questions.yaml — only a human may change this file"
+  agent_may_edit: false
+  updated: "2026-08-24"
+
+
+identity:
+  id: "todo-app"
+  name: "Todo App"
+  one_liner: "A web application for managing daily tasks, with user accounts and sync."
+
+
+goals:
+  - "A user can create an account and sign in"
+  - "A user can create, edit, complete, and delete tasks"
+  - "A user's tasks stay in sync across all their devices"
+
+
+non_goals:
+  note: "As important as the goals — this is what closes the project boundary"
+  items:
+    - "Collaboration and sharing lists between users"
+    - "A native mobile app — web only"
+    - "Reminders, notifications, and calendar integration"
+
+
+outcomes:
+  note: "When the project is done — checkable criteria, not a feeling of progress"
+  items:
+    - "A new user can sign up and create their first task in under a minute"
+    - "Tasks persist after closing and reopening the browser"
+    - "The automated tests of both items pass"
+
+
+architecture:
+  note: "Product-level decisions only — the details of each item live in its own definition.yaml"
+  shape: "Two-tier web application — browser client plus API service"
+  data: "Relational database; the server is the source of truth"
+  boundary: "Client and server communicate only through the api-v1 contract"
+  decided_elsewhere: "The technology of each item is defined in that item's definition.yaml"
+
+
+constraints:
+  note: "External constraints the plan must accommodate"
+  items:
+    - "The backend is built first; the frontend depends on the contract, not on backend tasks"
+    - "No paid cloud services in the first release"

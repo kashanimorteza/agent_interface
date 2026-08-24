@@ -1,0 +1,89 @@
+meta:
+  layer: 4
+  layer_name: "DEVELOP — build items"
+  purpose: "Build layer index — items, the file template of each item, and the contracts between them"
+  completeness: "An item that is not in this file does not exist as far as an agent is concerned"
+  reason: "Adding or removing an item is an architectural decision, not execution work"
+  on_change_needed: "Record a proposal in questions.yaml — only a human may change this file"
+  item_files_exception: "The four files inside each item are writable — per the mode permissions in root.yaml"
+  agent_may_edit: false
+  updated: "2026-08-24"
+
+
+items:
+
+  backend:
+    enabled: true
+    path: "develop/backend/"
+    prefix: "BE"
+    prefix_note: "Task ids look like BE-0001"
+    code_path: "backend/"
+    code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
+    summary: "API, task and user logic, database"
+
+  frontend:
+    enabled: true
+    path: "develop/frontend/"
+    prefix: "FE"
+    prefix_note: "Task ids look like FE-0001"
+    code_path: "frontend/"
+    code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
+    summary: "Web client — consumer of the api-v1 contract"
+
+
+item_files:
+  rule: "Every item has exactly these four files, no more and no fewer"
+  files:
+    definition.yaml: "What this item does, with what technology, and its own specifics"
+    rules.yaml: "Rules specific to this item — supplementing the global rules"
+    plan.yaml: "Task groups and tasks, step by step"
+    status.yaml: "Status and execution report for the tasks in plan.yaml"
+
+item_read_order:
+  - "definition.yaml"
+  - "rules.yaml"
+  - "plan.yaml"
+  - "status.yaml"
+
+
+task_schema:
+  rule: "Every task in plan.yaml carries exactly these fields — the task definition, never its status"
+  fields:
+    id: "Identifier prefixed with the item prefix — for example BE-0001"
+    title: "The task in one sentence"
+    goal: "What becomes possible after this task that was not possible before"
+    depends_on: "Ids of tasks in the same item — depending on another item is forbidden"
+    needs_contract: "The contract version required — used instead of depending on another item's task"
+    acceptance: "Human-readable acceptance criterion — what must actually work"
+    verify: "A runnable command that proves acceptance — without it a task is never done"
+    touches: "Paths inside code_path that this task touches"
+
+task_states:
+  rule: "Task status lives only in status.yaml — it is never written in plan.yaml"
+  states:
+    todo: "Defined, not started"
+    claimed: "An agent has taken it and is working on it"
+    blocked: "Stopped — the corresponding blocker is recorded in blockers.yaml"
+    done: "verify was run and passed"
+    cancelled: "No longer needed — the reason is recorded"
+    superseded: "Replaced by another task — the successor id is recorded"
+  derived_ready: "ready is not a stored status — a task is ready when it is todo and all of its depends_on are done"
+  done_gate: "Without a passing verify run, no task becomes done — even if the code is written"
+  claim_protocol: "Before starting, set the status to claimed and record it immediately — so two agents never take the same task"
+
+
+shared:
+  contracts:
+    path: "develop/shared/contracts/"
+    responsibility: "Versioned contracts between items — the only permitted connection point"
+    lifecycle:
+      draft: "Under design — only the producing item relies on it"
+      frozen: "Final — the consuming item may define tasks against it"
+      deprecated: "Obsolete — replaced by a newer version"
+    change_rule: "A frozen contract never changes — a new version is created instead"
+
+
+boundaries:
+  code_isolation: "Each item writes only inside its own code_path — touching another item's code is forbidden"
+  cross_item_link: "Items connect only through shared/contracts — never through direct task-to-task dependencies"
+  contract_change: "A frozen contract never changes — if a change is needed, propose it in questions.yaml"
