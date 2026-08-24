@@ -19,12 +19,10 @@ item_files:
   rule: "Every item has exactly these four files, no more and no fewer"
   files:
     definition.yaml: "What this item does, with what technology, and its own specifics"
-    rules.yaml: "Rules specific to this item — supplementing the global rules"
     task.yaml: "Task groups and tasks, step by step"
 
 item_read_order:
   - "definition.yaml"
-  - "rules.yaml"
   - "task.yaml"
 
 
