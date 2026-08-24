@@ -1,18 +1,15 @@
 <!--------------------------------------------------------------------------------- Agent Interface -->
-
-# Agent Interface**
+# Agent Interface
 
 An agent-independent interface between software projects and AI agents.
 
-[Agent Interface]
-
 <!--------------------------------------------------------------------------------- Diagram -->
+<br / ><br / >
 
-## Diagram**
-
-![](https://github.com/kashanimorteza/agent_interface/blob/main/design/economy.png)
+## Diagram*
 
 <!--------------------------------------------------------------------------------- Modules -->
+<br / ><br / >
 
 ## Modules
 
@@ -45,8 +42,9 @@ Defines the development layer, including work items, their boundaries, plans, ru
 Records sessions, decisions, and other historical information required to preserve project context across agents and sessions.
 
 <!--------------------------------------------------------------------------------- Concept -->
+<br / ><br / >
 
-## Concept**
+## Concept
 
 Developer ↔ Project ↔ AI Agent**
 
