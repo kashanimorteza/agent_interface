@@ -3,10 +3,14 @@
 
 An agent-independent interface between software projects and AI agents.
 
+Developer ↔ Project ↔ AI Agent
+The project is the source of truth.  
+AI agents interact with the project through a structured and agent-independent interface.
+
 <!--------------------------------------------------------------------------------- Diagram -->
 <br><br>
 
-## Diagram*
+## Diagram
 
 <!--------------------------------------------------------------------------------- Modules -->
 <br><br>
@@ -29,28 +33,14 @@ Defines the rules, constraints, priorities, and development principles that agen
 
 Defines the project map and the location and organization of the different layers and resources.
 
-### State
-
-Defines the current operational state of the project, including active mode, blockers, questions, and other runtime information.
-
 ### Develop
 
 Defines the development layer, including work items, their boundaries, plans, rules, and implementation scope.
 
+### State
+
+Defines the current operational state of the project, including active mode, blockers, questions, and other runtime information.
+
 ### History
 
 Records sessions, decisions, and other historical information required to preserve project context across agents and sessions.
-
-<!--------------------------------------------------------------------------------- Concept -->
-<br><br>
-
-## Concept
-
-Developer ↔ Project ↔ AI Agent**
-
-The project is the source of truth.  
-AI agents interact with the project through a structured and agent-independent interface.
-
-<!--------------------------------------------------------------------------------- Link -->
-
-[Agent Interface]: https://github.com/kashanimorteza/agent_interface/blob/main/readme.md
