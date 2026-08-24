@@ -16,122 +16,218 @@ meta:
   editable_in_mode: "planning"
   updated: "2026-08-24"
 
-
 groups:
 
   - id: "G1"
-    title: "Foundation"
-    goal: "The service starts and answers"
+    title: "Environment"
+    goal: "A place to run — nothing more"
     tasks:
 
       - id: "0001"
-        title: "Project skeleton and virtual environment"
-        goal: "The application starts and answers a liveness request"
+        title: "Virtual environment and dependencies"
+        goal: "The item has an isolated interpreter with every dependency in it"
         depends_on: []
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "GET /health answers 200 with exactly {status, service}, and every dependency is installed inside the item's virtual environment"
-        verify: "pytest tests/test_health.py"
-        touches: ["app/main.py", "requirements.txt", "tests/test_health.py"]
+        acceptance: "A venv exists inside backend/, FastAPI, SQLAlchemy, Alembic, and pytest import from inside it, and the venv is ignored by git"
+        verify: "python -c \"import fastapi, sqlalchemy, alembic, pytest\""
+        touches: ["requirements.txt", ".gitignore"]
 
       - id: "0002"
-        title: "Configuration and database session"
-        goal: "The database path comes from configuration and every connection is opened the same way"
+        title: "Application object and health route"
+        goal: "The service starts and answers"
         depends_on: ["0001"]
-        acceptance: "The database path is read from the environment and is never a path inside the repository; foreign keys are enabled on every connection, proven by a test that inserts a row with a missing parent and is refused"
-        verify: "pytest tests/test_db_session.py"
-        touches: ["app/config.py", "app/db/", "tests/test_db_session.py"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "GET /health answers 200 with exactly {status, service}"
+        verify: "pytest tests/test_health.py"
+        touches: ["app/main.py", "tests/test_health.py"]
 
   - id: "G2"
-    title: "Data layer"
-    goal: "The schema exists and every input has a shape"
+    title: "Configuration and connection"
+    goal: "Settings come from outside and every connection is opened one way"
     tasks:
 
       - id: "0003"
-        title: "Group and Task models with the first migration"
-        goal: "The schema exists and can be moved forward and back"
-        depends_on: ["0002"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "Both tables match the api-v1 models; task.group_id is a foreign key with an index; deleting a group deletes its tasks; upgrade then downgrade then upgrade runs clean"
-        verify: "alembic upgrade head && alembic downgrade base && alembic upgrade head && pytest tests/test_models.py"
-        touches: ["app/models/", "migrations/", "tests/test_models.py"]
+        title: "Configuration from the environment"
+        goal: "No setting is hardcoded"
+        depends_on: ["0001"]
+        acceptance: "The database path is read from an environment variable, has a default outside the repository, and is never a literal anywhere else"
+        verify: "pytest tests/test_config.py"
+        touches: ["app/config.py", "tests/test_config.py"]
 
       - id: "0004"
-        title: "Validation schemas from the contract"
-        goal: "No raw input ever reaches a service"
-        depends_on: ["0002"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "Every body and response in api-v1 is bound to a model with the stated bounds — name 1 to 120, title 1 to 200 — and timestamps serialize as ISO 8601 UTC"
-        verify: "pytest tests/test_schemas.py"
-        touches: ["app/schemas/", "tests/test_schemas.py"]
+        title: "Engine, session, and foreign keys"
+        goal: "Every connection is opened in one place, with foreign keys on"
+        depends_on: ["0003"]
+        acceptance: "One module owns the engine and session; a row inserted with a missing parent is refused, proving the FK pragma runs on every connection"
+        verify: "pytest tests/test_db_session.py"
+        touches: ["app/db/", "tests/test_db_session.py"]
 
   - id: "G3"
+    title: "Schema"
+    goal: "The two tables exist and can move forward and back"
+    tasks:
+
+      - id: "0005"
+        title: "Group model and its migration"
+        goal: "The groups table exists"
+        depends_on: ["0004"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "The model matches the api-v1 Group; upgrade then downgrade then upgrade runs clean"
+        verify: "alembic upgrade head && alembic downgrade base && alembic upgrade head && pytest tests/test_model_group.py"
+        touches: ["app/models/group.py", "migrations/", "tests/test_model_group.py"]
+
+      - id: "0006"
+        title: "Task model and its migration"
+        goal: "The tasks table exists and belongs to a group"
+        depends_on: ["0005"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "The model matches the api-v1 Task; group_id is an indexed foreign key; deleting a group deletes its tasks; the migration downgrades clean"
+        verify: "alembic upgrade head && pytest tests/test_model_task.py"
+        touches: ["app/models/task.py", "migrations/", "tests/test_model_task.py"]
+
+  - id: "G4"
+    title: "Validation"
+    goal: "No raw input ever reaches a service"
+    tasks:
+
+      - id: "0007"
+        title: "Group schemas"
+        goal: "Every group body and response has a shape"
+        depends_on: ["0001"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "The group input enforces name 1 to 120; the output serializes created_at as ISO 8601 UTC"
+        verify: "pytest tests/test_schema_group.py"
+        touches: ["app/schemas/group.py", "tests/test_schema_group.py"]
+
+      - id: "0008"
+        title: "Task schemas"
+        goal: "Every task body and response has a shape"
+        depends_on: ["0001"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "The create input enforces title 1 to 200; the patch input accepts title, done, or both and refuses an empty body; done defaults to false on create"
+        verify: "pytest tests/test_schema_task.py"
+        touches: ["app/schemas/task.py", "tests/test_schema_task.py"]
+
+  - id: "G5"
     title: "Error surface"
     goal: "Every failure answers in one shape"
     tasks:
 
-      - id: "0005"
-        title: "Uniform error shape and handlers"
-        goal: "A client can branch on a stable code for any failure"
-        depends_on: ["0004"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "A missing id gives 404 not_found, a bad body gives 422 invalid_input with details.fields, an unknown route gives http_error, and an unhandled exception gives 500 internal_error with empty details and nothing internal exposed — each answering with exactly code, message and details"
-        verify: "pytest tests/test_errors.py"
-        touches: ["app/errors.py", "app/main.py", "tests/test_errors.py"]
-
-  - id: "G4"
-    title: "Groups"
-    goal: "A group can be created, read, renamed, and deleted"
-    tasks:
-
-      - id: "0006"
-        title: "Group service"
-        goal: "Group logic exists in one place, outside any route"
-        depends_on: ["0003", "0004"]
-        acceptance: "Create, list ordered by id, read, rename, and delete all work against a test database, and deleting a group deletes every task inside it"
-        verify: "pytest tests/test_group_service.py"
-        touches: ["app/services/groups.py", "tests/test_group_service.py"]
-
-      - id: "0007"
-        title: "Group routes"
-        goal: "The group half of api-v1 is reachable over HTTP"
-        depends_on: ["0005", "0006"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "The five group routes answer with the status codes api-v1 states — 201, 200, 200, 200, 204 — a missing id gives not_found, and no route touches the database directly"
-        verify: "pytest tests/test_group_routes.py"
-        touches: ["app/api/groups.py", "app/main.py", "tests/test_group_routes.py"]
-
-  - id: "G5"
-    title: "Tasks"
-    goal: "A task can be created, read, changed, and deleted"
-    tasks:
-
-      - id: "0008"
-        title: "Task service"
-        goal: "Task logic exists in one place, outside any route"
-        depends_on: ["0003", "0004"]
-        acceptance: "Create inside a group, list one group's tasks ordered by id, read, change title or done or both, and delete all work; a task created under a missing group is refused, and done is false when created"
-        verify: "pytest tests/test_task_service.py"
-        touches: ["app/services/tasks.py", "tests/test_task_service.py"]
-
       - id: "0009"
-        title: "Task routes"
-        goal: "The task half of api-v1 is reachable over HTTP"
-        depends_on: ["0007", "0008"]
+        title: "Error shape, not_found, and http_error"
+        goal: "A missing thing and an unknown route both answer in the contract shape"
+        depends_on: ["0002"]
         needs_contract: "api-v1 (frozen)"
-        acceptance: "The five task routes answer with the status codes api-v1 states, a missing group or task gives not_found, and a bad body gives invalid_input"
-        verify: "pytest tests/test_task_routes.py"
-        touches: ["app/api/tasks.py", "app/main.py", "tests/test_task_routes.py"]
+        acceptance: "Every non-2xx body has exactly code, message, details; a missing id gives 404 not_found; an unknown route gives http_error"
+        verify: "pytest tests/test_errors_basic.py"
+        touches: ["app/errors.py", "app/main.py", "tests/test_errors_basic.py"]
+
+      - id: "0010"
+        title: "invalid_input and internal_error"
+        goal: "Bad input and a crash both answer in the contract shape"
+        depends_on: ["0009"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "A failed validation gives 422 invalid_input with details.fields listing field and problem; an unhandled exception gives 500 internal_error with empty details and nothing internal exposed"
+        verify: "pytest tests/test_errors_input.py"
+        touches: ["app/errors.py", "tests/test_errors_input.py"]
 
   - id: "G6"
+    title: "Group logic"
+    goal: "Group behavior lives in one service, outside any route"
+    tasks:
+
+      - id: "0011"
+        title: "Create and list groups"
+        goal: "A group can come into being and be found"
+        depends_on: ["0006", "0007"]
+        acceptance: "Create returns the stored group with a server-assigned id; list is ordered by id and empty when there are none"
+        verify: "pytest tests/test_group_service_create_list.py"
+        touches: ["app/services/groups.py", "tests/test_group_service_create_list.py"]
+
+      - id: "0012"
+        title: "Read, rename, and delete a group"
+        goal: "A single group can be addressed and changed"
+        depends_on: ["0011"]
+        acceptance: "Read and rename work by id; a missing id raises the not-found error; deleting a group deletes every task inside it"
+        verify: "pytest tests/test_group_service_change.py"
+        touches: ["app/services/groups.py", "tests/test_group_service_change.py"]
+
+  - id: "G7"
+    title: "Group routes"
+    goal: "The group half of api-v1 is reachable over HTTP"
+    tasks:
+
+      - id: "0013"
+        title: "Create and list group routes"
+        goal: "POST /groups and GET /groups answer"
+        depends_on: ["0010", "0012"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "POST answers 201 with a Group, GET answers 200 with an array, a bad name gives invalid_input, and neither route touches the database directly"
+        verify: "pytest tests/test_group_routes_create_list.py"
+        touches: ["app/api/groups.py", "app/main.py", "tests/test_group_routes_create_list.py"]
+
+      - id: "0014"
+        title: "Read, rename, and delete group routes"
+        goal: "GET, PATCH, and DELETE on one group answer"
+        depends_on: ["0013"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "GET answers 200, PATCH answers 200, DELETE answers 204 with no body, and a missing id gives not_found on all three"
+        verify: "pytest tests/test_group_routes_one.py"
+        touches: ["app/api/groups.py", "tests/test_group_routes_one.py"]
+
+  - id: "G8"
+    title: "Task logic"
+    goal: "Task behavior lives in one service, outside any route"
+    tasks:
+
+      - id: "0015"
+        title: "Create and list tasks in a group"
+        goal: "A task can come into being inside a group and be found there"
+        depends_on: ["0006", "0008"]
+        acceptance: "Create stores the task under its group with done false; create under a missing group raises the not-found error; list is scoped to one group, ordered by id, and empty when the group has none"
+        verify: "pytest tests/test_task_service_create_list.py"
+        touches: ["app/services/tasks.py", "tests/test_task_service_create_list.py"]
+
+      - id: "0016"
+        title: "Read, change, and delete a task"
+        goal: "A single task can be addressed and changed"
+        depends_on: ["0015"]
+        acceptance: "Read works by id; a patch changes title, done, or both; delete removes the task; a missing id raises the not-found error on all three"
+        verify: "pytest tests/test_task_service_change.py"
+        touches: ["app/services/tasks.py", "tests/test_task_service_change.py"]
+
+  - id: "G9"
+    title: "Task routes"
+    goal: "The task half of api-v1 is reachable over HTTP"
+    tasks:
+
+      - id: "0017"
+        title: "Create and list task routes"
+        goal: "POST and GET under /groups/{group_id}/tasks answer"
+        depends_on: ["0014", "0016"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "POST answers 201 with a Task, GET answers 200 with an array, a missing group gives not_found, and a bad title gives invalid_input"
+        verify: "pytest tests/test_task_routes_create_list.py"
+        touches: ["app/api/tasks.py", "app/main.py", "tests/test_task_routes_create_list.py"]
+
+      - id: "0018"
+        title: "Read, patch, and delete task routes"
+        goal: "GET, PATCH, and DELETE on one task answer"
+        depends_on: ["0017"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "GET answers 200, PATCH answers 200 for title, done, and both, DELETE answers 204 with no body, and a missing id gives not_found on all three"
+        verify: "pytest tests/test_task_routes_one.py"
+        touches: ["app/api/tasks.py", "tests/test_task_routes_one.py"]
+
+  - id: "G10"
     title: "Conformance"
     goal: "The promise and the implementation are proven to agree"
     tasks:
 
-      - id: "0010"
-        title: "api-v1 conformance suite"
+      - id: "0019"
+        title: "api-v1 conformance sweep"
         goal: "Nothing in the contract is claimed without a test behind it"
-        depends_on: ["0009"]
+        depends_on: ["0018"]
         needs_contract: "api-v1 (frozen)"
-        acceptance: "Every route, every success code, and every error code named in api-v1 is exercised at least once, and the suite runs against a test database rather than the development one"
+        acceptance: "Every route, every success code, and every error code named in api-v1 is exercised at least once, against a test database rather than the development one"
         verify: "pytest tests/test_contract_v1.py"
         touches: ["tests/test_contract_v1.py"]
