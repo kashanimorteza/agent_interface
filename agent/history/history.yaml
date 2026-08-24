@@ -1,11 +1,11 @@
 meta:
-  layer: "cross"
-  layer_name: "HISTORY — project history"
+  path: "history/history.yaml"
+  path_note: "The address of this file — the index of the history layer"
   purpose: "Answers 'why did we end up here' — not current state, not definition"
   write_mode: "append-only"
   immutability: "Nothing is deleted or overwritten — a wrong record is corrected by a new record, never by editing the old one"
-  index_agent_may_edit: false
   index_on_change_needed: "Record a proposal in questions.yaml — this index itself changes only by a human"
+  index_agent_may_edit: false
   files_agent_may_edit: true
   updated: "2026-08-24"
 

@@ -92,10 +92,25 @@ root.yaml
 │   ├── agent_may_edit
 │   └── updated
 │
-├── structure
-│   ├── path
-│   ├── responsibility
-│   └── note
+├── structure                   the map — every layer file is described here,
+│                               not in a meta block of its own
+│   every entry:                layer, path, responsibility, note
+│
+│   ├── root                    (nothing further — root.yaml keeps its own meta)
+│   ├── project                 + layer_name, scope_note, reason,
+│   │                             on_change_needed, agent_may_edit, updated
+│   ├── rules                   + layer_name, completeness, reason,
+│   │                             item_rules_exception, on_change_needed,
+│   │                             agent_may_edit, updated
+│   ├── develop                 + layer_name, completeness, reason,
+│   │                             item_files_exception, on_change_needed,
+│   │                             agent_may_edit, updated
+│   ├── state                   + layer_name, purpose, write_mode, history_rule,
+│   │                             index_on_change_needed, index_agent_may_edit,
+│   │                             files_agent_may_edit, updated
+│   └── history                 + layer_name, purpose, write_mode, immutability,
+│                                 index_on_change_needed, index_agent_may_edit,
+│                                 files_agent_may_edit, updated
 │
 ├── read_order
 │   ├── enforcement
@@ -165,18 +180,8 @@ structure.yaml
 ## Inside project.yaml — layer 2
 
 ```text
-project.yaml
-│
-├── meta
-│   ├── layer
-│   ├── layer_name
-│   ├── purpose
-│   ├── scope_note
-│   ├── reason
-│   ├── on_change_needed
-│   ├── agent_may_edit
-│   └── updated
-│
+project.yaml                    no meta — the file describes itself in
+│                               root.yaml, under structure.project
 ├── identity
 │   ├── id
 │   ├── name
@@ -209,19 +214,8 @@ project.yaml
 ## Inside rules.yaml — layer 3
 
 ```text
-rules.yaml
-│
-├── meta
-│   ├── layer
-│   ├── layer_name
-│   ├── purpose
-│   ├── completeness
-│   ├── reason
-│   ├── on_change_needed
-│   ├── item_rules_exception
-│   ├── agent_may_edit
-│   └── updated
-│
+rules.yaml                      no meta — the file describes itself in
+│                               root.yaml, under structure.rules
 ├── security                   binding: absolute
 │   ├── binding
 │   ├── binding_note
@@ -252,19 +246,8 @@ rules.yaml
 ## Inside develop.yaml — layer 4
 
 ```text
-develop/develop.yaml
-│
-├── meta
-│   ├── layer
-│   ├── layer_name
-│   ├── purpose
-│   ├── completeness
-│   ├── reason
-│   ├── on_change_needed
-│   ├── item_files_exception
-│   ├── agent_may_edit
-│   └── updated
-│
+develop/develop.yaml            no meta — the file describes itself in
+│                               root.yaml, under structure.develop
 ├── items
 │   ├── backend                enabled, path, prefix, code_path, summary
 │   └── frontend               enabled, path, prefix, code_path, summary
@@ -312,19 +295,8 @@ develop/develop.yaml
 ## Inside state.yaml — cross-cutting
 
 ```text
-state.yaml
-│
-├── meta
-│   ├── layer
-│   ├── layer_name
-│   ├── purpose
-│   ├── write_mode             overwrite
-│   ├── history_rule
-│   ├── index_agent_may_edit   false
-│   ├── index_on_change_needed
-│   ├── files_agent_may_edit   true
-│   └── updated
-│
+state.yaml                      no meta — the file describes itself in
+│                               root.yaml, under structure.state
 ├── files
 │   ├── stage                  agent_may_edit: false — the mode is the agent's boundary
 │   ├── blockers               agent_may_edit: true
@@ -348,19 +320,8 @@ state.yaml
 ## Inside history.yaml — cross-cutting
 
 ```text
-history/history.yaml
-│
-├── meta
-│   ├── layer
-│   ├── layer_name
-│   ├── purpose
-│   ├── write_mode             append-only
-│   ├── immutability
-│   ├── index_agent_may_edit   false
-│   ├── index_on_change_needed
-│   ├── files_agent_may_edit   true
-│   └── updated
-│
+history/history.yaml            no meta — the file describes itself in
+│                               root.yaml, under structure.history
 ├── records
 │   ├── decisions              ADR-0001-<slug>.yaml
 │   │   ├── path
@@ -402,6 +363,10 @@ develop/<item>/
 │   ├── responsibility
 │   ├── code_path
 │   ├── tech
+│   │   ├── language           name, version, frameworks
+│   │   │   └── frameworks     one entry per framework, keyed by its role
+│   │   ├── database           engine — "none" for an item that has none
+│   │   └── run                the command that starts this item
 │   ├── code_layout
 │   ├── contracts              produces / consumes, contract_path, rule
 │   ├── boundaries             owns, does_not_own, interface

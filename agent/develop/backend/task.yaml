@@ -1,0 +1,10 @@
+meta:
+  path: "develop/backend/task.yaml"
+  path_note: "The address of this file — the develop layer, backend item"
+  purpose: "Definition of the backend tasks — what has to be done and in what order"
+  schema_source: "The shape of each task is defined in task_schema inside develop.yaml"
+  no_status_here: "Task status is not written here — it lives in status.yaml"
+  editable_in_mode: "planning"
+  change_in_development: "Changing the plan in development mode requires a recorded reason and human approval"
+  agent_may_edit: true
+  updated: "2026-08-24"

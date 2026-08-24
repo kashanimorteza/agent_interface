@@ -1,4 +1,6 @@
 meta:
+  path: "develop/frontend/rules.yaml"
+  path_note: "The address of this file — the develop layer, frontend item"
   item: "frontend"
   layer: 4
   purpose: "Rules specific to the frontend item — a supplement to the global rules, not a replacement for them"

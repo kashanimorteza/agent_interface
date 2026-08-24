@@ -46,7 +46,7 @@ structure:
     responsibility: "History layer index — record types, the format of each, and the rules for writing them"
     note: "Before recording anything in this layer, read history.yaml first"
 
-    
+
 read_order:
   enforcement: "Exactly this order — no less, no more"
   steps:

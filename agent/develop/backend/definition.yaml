@@ -1,50 +1,28 @@
 meta:
-  item: "backend"
-  layer: 4
-  purpose: "Definition of the backend item — what it does, with which technology, and where its boundaries are"
-  agent_may_edit: true
+  path: "develop/backend/definition.yaml"
+  path_note: "The address of this file — the develop layer, backend item"
+  purpose: "Settings and structure of the backend — which technologies it is built with, and how its code is laid out"
+  contains: "tech and code_layout — what has to be settled before a single line of backend code is written"
+  role_defined_in: "project.yaml, under architecture.parts.backend — what this item is responsible for and where its boundaries are"
+  identity_defined_in: "develop/develop.yaml, under items.backend — its path, task prefix, and summary"
   editable_in_mode: "planning"
   on_change_needed: "Do not change in development mode — record a proposal in questions.yaml"
+  agent_may_edit: false
   updated: "2026-08-24"
 
-
-responsibility: "API service — user authentication, task logic, and data persistence"
-
-code_path: "backend/"
-
-
 tech:
-  language: "Python 3.12"
-  framework: "FastAPI"
-  database: "PostgreSQL"
-  orm: "SQLAlchemy + Alembic for migrations"
-  test: "pytest"
-  run: "uvicorn app.main:app --reload"
 
+  language:
+    name: "Python"
+    version: "3.12"
+    frameworks:
+      api: "FastAPI — HTTP layer, routing, and request validation"
+      orm: "SQLAlchemy — data models and queries"
+      migrations: "Alembic — schema changes, one migration per change"
+      test: "pytest — test runner"
 
-code_layout:
-  "app/main.py": "Entry point and route registration"
-  "app/models/": "Data models"
-  "app/routes/": "API routes — one file per domain"
-  "app/services/": "Business logic — independent of HTTP"
-  "app/db/": "Database connection and session"
-  "migrations/": "Alembic migrations"
-  "tests/": "Tests — mirroring the structure of app/"
-
-
-contracts:
-  produces: "api-v1"
-  contract_path: "develop/shared/contracts/api-v1.yaml"
-  rule: "Every change at the API surface must land in the contract first, then in the code"
-
-
-boundaries:
-  owns: "All code inside backend/ and the database schema"
-  does_not_own: "Frontend code — not a single line"
-  interface: "The only way to communicate with the frontend is the api-v1 contract"
-
-
-out_of_scope:
-  - "Rendering the user interface or HTML templates"
-  - "Sending emails and notifications"
-  - "Deployment infrastructure and CI"
+  database:
+    engine: "SQLite"
+    storage: "A single file on disk — its path comes from configuration, never hardcoded"
+    owned_by: "This item — the schema belongs to the backend and no other item reaches it"
+    access: "Only through the ORM — a route never opens a connection of its own"

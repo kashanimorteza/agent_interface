@@ -1,10 +1,10 @@
 meta:
-  item: "backend"
-  layer: 4
+  path: "develop/backend/rules.yaml"
+  path_note: "The address of this file — the develop layer, backend item"
   purpose: "Rules specific to the backend item — a complement to the global rules, not a replacement for them"
   relation_to_global: "It may only tighten, never loosen — precedence is defined in the global rules.yaml"
-  agent_may_edit: true
   editable_in_mode: "planning"
+  agent_may_edit: false
   updated: "2026-08-24"
 
 
@@ -20,6 +20,9 @@ database:
   - "A migration that has already run is never edited — create a new migration"
   - "Every migration must be reversible — write the downgrade"
   - "Do not write a query that filters on a column without an index"
+  - "SQLite cannot alter a column or drop a constraint in place — any such migration uses Alembic's batch mode, or it will fail on upgrade"
+  - "The database file path comes from configuration — never a hardcoded path, and never a path inside the repository"
+  - "Foreign keys are off by default in SQLite — enable them on every connection, or ownership constraints are silently unenforced"
 
 
 security:

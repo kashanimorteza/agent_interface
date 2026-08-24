@@ -1,4 +1,6 @@
 meta:
+  path: "develop/frontend/task.yaml"
+  path_note: "The address of this file — the develop layer, frontend item"
   item: "frontend"
   layer: 4
   purpose: "Definition of the frontend tasks — what has to be done and in what order"

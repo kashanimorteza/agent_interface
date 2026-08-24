@@ -1,11 +1,11 @@
 meta:
-  layer: "cross"
-  layer_name: "STATE — current state"
+  path: "state.yaml"
+  path_note: "The address of this file — the index of the state layer"
   purpose: "Answers 'where are we now and what should I do' — not history, not definition"
   write_mode: "overwrite"
   history_rule: "This layer keeps no history — anything worth keeping is recorded in history/"
-  index_agent_may_edit: false
   index_on_change_needed: "Record a proposal in questions.yaml — this index itself changes only by a human"
+  index_agent_may_edit: false
   files_agent_may_edit: true
   updated: "2026-08-24"
 

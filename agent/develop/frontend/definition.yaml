@@ -1,4 +1,6 @@
 meta:
+  path: "develop/frontend/definition.yaml"
+  path_note: "The address of this file — the develop layer, frontend item"
   item: "frontend"
   layer: 4
   purpose: "Definition of the frontend item — what it does, with which technologies, and where its boundaries are"
@@ -14,12 +16,19 @@ code_path: "frontend/"
 
 
 tech:
-  language: "TypeScript"
-  framework: "React"
-  build: "Vite"
-  routing: "React Router"
+
+  language:
+    name: "TypeScript"
+    frameworks:
+      ui: "React — components and rendering"
+      build: "Vite — dev server and bundling"
+      routing: "React Router — one route per page"
+      test: "Vitest + Testing Library — test runner and component testing"
+
+  database:
+    engine: "none — this item never touches a database; all data arrives through api-v1"
+
   state: "Server state via a request cache; local state via React's own hooks"
-  test: "Vitest + Testing Library"
   run: "npm run dev"
 
 
