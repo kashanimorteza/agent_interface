@@ -2,9 +2,6 @@ meta:
   standard: "Agent Project Interface"
   version: "1.0"
   purpose: "Entry point for every agent — protocol, not content: what to read in what order, what is allowed, and where results are recorded"
-  independence: "Independent of any agent, model, or vendor — any agent that can read files can work here"
-  entry_rule: "Every session begins by reading this file in full"
-  on_change_needed: "Raise it with the human — only a human may change this file"
   agent_may_edit: false
   updated: "2026-08-24"
 
@@ -53,67 +50,3 @@ read_order:
     - step: 5
       read: "Active item: definition.yaml → rules.yaml → task.yaml"
       why: "Understand the item you are working on — order comes from item_read_order in develop.yaml"
-
-
-modes:
-
-  active_mode: "planning"
-  active_mode_note: "The mode is set here, in this file — there is no separate state layer"
-  switch_rule: "Only a human changes the mode — an agent never switches its own mode"
-
-  planning:
-    purpose: "Analyze the project and produce a complete task plan"
-    allowed:
-      - "Analyze definition.yaml and the architecture"
-      - "Write or revise definition.yaml of items"
-      - "Create groups and tasks in task.yaml"
-      - "Define dependencies and acceptance criteria"
-      - "Draft contracts in shared/contracts"
-    prohibited:
-      - "Changing root.yaml, definition.yaml, rules.yaml, develop.yaml — raise it with the human instead"
-      - "Writing or changing project code"
-      - "Marking any task as done"
-      - "Changing a frozen contract"
-    may_write:
-      - "definition.yaml / rules.yaml / task.yaml of items"
-      - "shared/contracts (draft only)"
-    steps:
-      - "Read per read_order"
-      - "Analyze and identify areas of work"
-      - "Create groups, then tasks — ids continue from the highest already used in that item's task.yaml"
-      - "Define dependencies"
-      - "Present the plan to the human and stop until it is approved"
-
-  development:
-    purpose: "Execute approved tasks"
-    allowed:
-      - "Pick a ready task from the active item's task.yaml"
-      - "Implement only inside the code_path of that item"
-      - "Run the verify command and check the acceptance criteria"
-      - "Report the result to the human"
-    prohibited:
-      - "Changing root.yaml, definition.yaml, rules.yaml, develop.yaml — raise it with the human instead"
-      - "Changing task.yaml without a stated reason and human approval"
-      - "Touching the code of another item"
-      - "Calling a task done when its verify did not pass"
-      - "Ignoring the rules"
-    may_write:
-      - "Code inside the code_path of the active item"
-    steps:
-      - "Read per read_order"
-      - "Pick a ready task — todo, with every task in its depends_on already done"
-      - "Implement per the task definition and the rules"
-      - "Run the verify command and check the acceptance criteria"
-      - "Report to the human what passed and what did not"
-
-
-write_protocol:
-  code: "Only inside the code_path of the active item — never another item's code"
-  task_change: "The active item's task.yaml, and only in planning mode"
-  contract: "develop/shared/contracts — a draft may be written; a frozen version never changes, a new version is created instead"
-  root_change_needed: "Never directly — raise it with the human; only a human may change it"
-  new_item_needed: "Never directly — items are defined in develop.yaml; raise it with the human"
-  rule_change_needed: "Never directly — rules are defined in rules.yaml; raise it with the human"
-  rule_conflict: "Follow the precedence in rules.yaml and raise the conflict with the human"
-  blocked: "Stop, say exactly where the work stopped, and wait for the human"
-  ambiguity: "Ask the human — no rule may be invented and no gap may be guessed at"

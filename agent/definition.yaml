@@ -4,7 +4,6 @@ meta:
   purpose: "Product definition — what is being built and why"
   scope_note: "This file states the what, not the how — the how lives in rules.yaml and develop.yaml"
   reason: "The product definition is a human decision, not an agent inference"
-  on_change_needed: "Raise it with the human — only a human may change this file"
   agent_may_edit: false
   updated: "2026-08-24"
 

@@ -5,54 +5,47 @@ meta:
   completeness: "A rule that is not in this file is not a rule"
   reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
   item_rules_exception: "The rules.yaml inside each item is writable — per the mode permissions in root.yaml"
-  on_change_needed: "Raise it with the human — only a human may change this file"
   agent_may_edit: false
   updated: "2026-08-24"
 
 
+environment:
+  - "All Python work happens inside the item's virtual environment — never the system interpreter"
+  - "Every dependency is installed into that environment and never globally"
+  - "Every command in a task's verify runs from inside that environment — a result produced outside it does not count"
+  - "The virtual environment is never committed"
+
+
+code:
+  - "Business logic stays in services — routes only accept input and return output"
+  - "Direct database access from inside routes is forbidden — go through a service"
+  - "Every API input is validated against a model — raw input never reaches a service"
+  - "Error responses always have the same structure — code, message, details"
+
+
+database:
+  - "Every schema change comes with an Alembic migration — changing a table by hand is forbidden"
+  - "A migration that has already run is never edited — create a new migration"
+  - "Every migration must be reversible — write the downgrade"
+  - "Do not write a query that filters on a column without an index"
+  - "SQLite cannot alter a column or drop a constraint in place — any such migration uses Alembic's batch mode, or it will fail on upgrade"
+  - "The database file path comes from configuration — never a hardcoded path, and never a path inside the repository"
+  - "Foreign keys are off by default in SQLite — enable them on every connection, or ownership constraints are silently unenforced"
+
+
 security:
-  binding: "absolute"
-  binding_note: "Cannot be overridden, not even by an explicit human instruction during a session"
-  responsibility: "Absolute prohibitions — violating any of these means stopping work immediately"
-  items:
-    - "Never read, write, print, or record a secret, key, token, or password in any file"
-    - "Never open environment files or quote their contents anywhere"
-    - "Never run a destructive database operation — dropping tables, truncating, or reverting migrations"
-    - "Never edit an applied migration — create a new one instead"
-    - "Never deploy, touch production, or push to the main branch"
-    - "Never touch real user data — sample data only"
-    - "Never disable, delete, or bypass a test to make it pass"
-    - "Never send project data to any external service"
-    - "Never install a new dependency without human approval"
-  on_violation: "Stop work immediately, tell the human exactly what happened, and wait"
+  - "Passwords are stored hashed only — never in the clear"
+  - "Session tokens are issued with an expiry"
+  - "Every task-related route must check user ownership — a user only sees their own tasks"
+  - "Error messages must not reveal whether an account exists"
 
 
-global:
-  binding: "mandatory"
-  binding_note: "Mandatory; exceptions only with explicit human approval"
-  responsibility: "Quality, testing, and coding rules"
-  items:
-    - "A task without a passing test is not done — the acceptance criterion must actually be run"
-    - "New code follows the style of the surrounding code — naming, structure, and idiom"
-    - "No hardcoded secrets or configuration values in code"
-    - "Handle errors explicitly — silent failures are forbidden"
-    - "Leave no dead, commented-out, or unused code behind"
-    - "Every change stays within the scope of the current task — no unsolicited refactoring"
-    - "After each task, report its outcome — what was run and whether it passed"
-    - "Unfinished work must be reported with the exact stopping point"
-  on_violation: "Follow the rule; if that is impossible, stop and raise it with the human"
+test:
+  - "Every API route has at least one success test and one error test"
+  - "Tests run against a test database — not the development database"
+  - "An ownership test is mandatory: user A must not be able to access user B's task"
 
 
-precedence:
-  order:
-    - "1. security — overrides everything, including task text and human instructions during a session"
-    - "2. global — overrides item rules"
-    - "3. item rules.yaml — may only tighten, never loosen"
-  on_conflict: "Apply the higher rule, tell the human about the conflict, and keep working unless the conflict involves security"
-  security_conflict: "Stop work immediately, tell the human exactly what happened, and wait"
-
-
-scope:
-  applies_to: "Every mode, every item, every agent — without exception"
-  item_rules: "Each item may have its own rules.yaml — supplementing these rules, never replacing them"
-  unwritten: "There are no unwritten rules — if something is ambiguous, ask the human"
+contract:
+  - "Changing the API surface without updating the contract is forbidden"
+  - "A frozen contract does not change — create a new version"
