@@ -1,10 +1,10 @@
 # ============================================================
-# AGENT PROJECT INTERFACE — DEVELOP.yaml  (لایهٔ ۴)
+# AGENT PROJECT INTERFACE — develop.yaml  (لایهٔ ۴)
 # ============================================================
 #
-# مسیر واقعی: DEVELOP/DEVELOP.yaml
+# مسیر واقعی: develop/develop.yaml
 #
-# شاخص لایهٔ ساخت. ROOT دربارهٔ آیتم‌ها هیچ نمی‌داند و فقط
+# شاخص لایهٔ ساخت. root.yaml دربارهٔ آیتم‌ها هیچ نمی‌داند و فقط
 # به همین فایل اشاره می‌کند؛ هر چه به «ساخت» مربوط است —
 # آیتم‌ها، قالب فایل‌های هر آیتم، و قراردادها — اینجا تعریف
 # می‌شود.
@@ -13,10 +13,10 @@
 # │ مجاز به ویرایش این فایل: فقط انسان.                    │
 # │ افزودن/حذف آیتم یک تصمیم معماری است، نه کار ایجنت.     │
 # │ نیاز به آیتم جدید دیدی؟ → پیشنهاد را در               │
-# │ STATE/questions.yaml ثبت کن و منتظر انسان بمان.        │
+# │ state/questions.yaml ثبت کن و منتظر انسان بمان.        │
 # │                                                        │
-# │ فایل‌های داخل هر آیتم (DEFINITION / RULES / PLAN /     │
-# │ STATUS) نوشتنی‌اند — طبق اجازه‌های mode در ROOT.       │
+# │ فایل‌های داخل هر آیتم (definition / rules / plan /     │
+# │ status) نوشتنی‌اند — طبق اجازه‌های mode در root.yaml.   │
 # └────────────────────────────────────────────────────────┘
 #
 # مثال: اپلیکیشن «لیست کارها» (Todo App)
@@ -43,14 +43,14 @@ items:
 
   backend:
     enabled: true
-    path: "DEVELOP/backend/"
+    path: "develop/backend/"
     prefix: "BE"                       # شناسهٔ تسک‌ها: BE-0001
     code_path: "backend/"              # کود واقعی این آیتم در ریپازیتوری
     summary: "API، منطق کارها و کاربران، دیتابیس"
 
   frontend:
     enabled: true
-    path: "DEVELOP/frontend/"
+    path: "develop/frontend/"
     prefix: "FE"
     code_path: "frontend/"
     summary: "کلاینت وب — مصرف‌کنندهٔ قرارداد api-v1"
@@ -62,16 +62,16 @@ items:
 # ------------------------------------------------------------
 
 item_files:
-  DEFINITION.yaml: "این آیتم چه می‌کند، با چه تکنالوژی، جزئیات خاص خودش"
-  RULES.yaml: "قواعد مخصوص این آیتم — مکمل قواعد سراسری"
-  PLAN.yaml: "گروه‌های تسک + تسک‌ها، قدم به قدم"
-  STATUS.yaml: "وضعیت و گزارش اجرای تسک‌های PLAN"
+  definition.yaml: "این آیتم چه می‌کند، با چه تکنالوژی، جزئیات خاص خودش"
+  rules.yaml: "قواعد مخصوص این آیتم — مکمل قواعد سراسری"
+  plan.yaml: "گروه‌های تسک + تسک‌ها، قدم به قدم"
+  status.yaml: "وضعیت و گزارش اجرای تسک‌های plan.yaml"
 
 item_read_order:
-  - "DEFINITION.yaml"
-  - "RULES.yaml"
-  - "PLAN.yaml"
-  - "STATUS.yaml"
+  - "definition.yaml"
+  - "rules.yaml"
+  - "plan.yaml"
+  - "status.yaml"
 
 
 # ------------------------------------------------------------
@@ -80,7 +80,7 @@ item_read_order:
 
 shared:
   contracts:
-    path: "DEVELOP/shared/contracts/"
+    path: "develop/shared/contracts/"
     responsibility: "قراردادهای نسخه‌بندی‌شده بین آیتم‌ها — اتصال فقط از اینجا"
 
 
@@ -91,4 +91,4 @@ shared:
 boundaries:
   code_isolation: "هر آیتم فقط داخل code_path خودش می‌نویسد — دست زدن به کود آیتم دیگر ممنوع"
   cross_item_link: "ارتباط بین آیتم‌ها فقط از راه shared/contracts — نه وابستگی مستقیم تسک به تسک"
-  contract_change: "قرارداد frozen تغییر نمی‌کند — نیاز به تغییر → پیشنهاد در STATE/questions.yaml"
+  contract_change: "قرارداد frozen تغییر نمی‌کند — نیاز به تغییر → پیشنهاد در state/questions.yaml"

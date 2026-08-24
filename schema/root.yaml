@@ -4,16 +4,16 @@ meta:
   purpose: "نقطهٔ ورود هر ایجنت — پروتوکول، نه محتوا: به چه ترتیبی خوانده شود، چه کاری مجاز است، و نتایج کجا ثبت شوند"
   independence: "مستقل از هر ایجنت، مدل، و شرکت — هر ایجنتی که فایل بخواند می‌تواند کار کند"
   entry_rule: "هر جلسه با خواندن کامل همین فایل شروع می‌شود"
-  on_change_needed: "پیشنهاد در STATE/questions.yaml ثبت شود — تغییر فقط توسط انسان"
+  on_change_needed: "پیشنهاد در state/questions.yaml ثبت شود — تغییر فقط توسط انسان"
   agent_may_edit: false
   updated: "2026-08-24"
   
 
 
 structure:
-  path: "STRUCTURE.yaml"
+  path: "structure.yaml"
   responsibility: "نقشهٔ پروژه — فهرست لایه‌ها و مسیر شاخص هرکدام"
-  note: "ROOT نمی‌داند چه چیزی کجاست — برای یافتن هر فایلی، اول STRUCTURE.yaml را بخوان"
+  note: "root.yaml نمی‌داند چه چیزی کجاست — برای یافتن هر فایلی، اول structure.yaml را بخوان"
 
 
 read_order:
@@ -22,61 +22,61 @@ read_order:
 
   steps:
     - step: 1
-      read: "ROOT.yaml"
+      read: "root.yaml"
       why: "همین فایل — پروتوکول خواندن، حالت‌های کاری، و پروتوکول نوشتن"
     - step: 2
-      read: "STRUCTURE.yaml"
+      read: "structure.yaml"
       why: "بدان چه لایه‌هایی وجود دارد و شاخص هرکدام کجاست — مسیرهای قدم‌های بعدی از اینجاست"
     - step: 3
-      read: "STATE/STATE.yaml"
+      read: "state/state.yaml"
       why: "بدان چه فایل‌های وضعیتی هست، به چه ترتیبی خوانده شوند، و کدام‌شان نوشتنی است"
     - step: 4
-      read: "فایل‌های وضعیت — طبق read_order در STATE.yaml"
+      read: "فایل‌های وضعیت — طبق read_order در state.yaml"
       why: "بدان الان کدام mode و آیتم فعال است، جواب‌های جدید انسان چیست، و چه چیزی بلاک است"
     - step: 5
-      read: "PROJECT.yaml"
+      read: "project.yaml"
       why: "بفهم چه محصولی ساخته می‌شود"
     - step: 6
-      read: "RULES/RULES.yaml"
+      read: "rules/rules.yaml"
       why: "بدان چه قواعدی هست، به چه ترتیبی خوانده شوند، و در تعارض کدام مقدم است"
     - step: 7
-      read: "فایل‌های قاعده — طبق read_order در RULES.yaml"
+      read: "فایل‌های قاعده — طبق read_order در rules.yaml"
       why: "کامل بخوان — security بر همه چیز مقدم است"
     - step: 8
-      read: "DEVELOP/DEVELOP.yaml"
+      read: "develop/develop.yaml"
       why: "بدان چه آیتم‌هایی وجود دارد، مسیر آیتم فعال کجاست، و مرزهای لایهٔ ساخت چیست"
     - step: 9
-      read: "آیتم فعال: DEFINITION.yaml ← RULES.yaml ← PLAN.yaml"
-      why: "فهم آیتمی که رویش کار می‌کنی — ترتیب از item_read_order در DEVELOP.yaml"
+      read: "آیتم فعال: definition.yaml ← rules.yaml ← plan.yaml"
+      why: "فهم آیتمی که رویش کار می‌کنی — ترتیب از item_read_order در develop.yaml"
     - step: 10
-      read: "STATUS.yaml همان آیتم"
+      read: "status.yaml همان آیتم"
       why: "بدان چه انجام شده، چه مانده، چه بلاک است — بعد کار را شروع کن"
 
 
 modes:
 
-  active_mode_source: "STATE/stage.yaml"
+  active_mode_source: "state/stage.yaml"
   switch_rule: "تغییر mode فقط توسط انسان — ایجنت mode خودش را عوض نمی‌کند"
 
   planning:
     purpose: "تحلیل پروژه و ساخت پلان کامل تسک‌ها"
     allowed:
-      - "تحلیل PROJECT و معماری"
-      - "نوشتن/ویرایش DEFINITION آیتم‌ها"
-      - "ساخت گروه‌ها و تسک‌ها در PLAN"
+      - "تحلیل project.yaml و معماری"
+      - "نوشتن/ویرایش definition.yaml آیتم‌ها"
+      - "ساخت گروه‌ها و تسک‌ها در plan.yaml"
       - "تعریف وابستگی‌ها و معیار پذیرش"
       - "پیش‌نویس قراردادها در shared/contracts"
       - "ثبت تصمیم‌ها (ADR) و سوالات انسان"
     prohibited:
-      - "تغییر ROOT.yaml، PROJECT.yaml، RULES.yaml و فایل‌های قاعده، DEVELOP.yaml — پیشنهاد فقط از طریق questions"
+      - "تغییر root.yaml، project.yaml، rules.yaml و فایل‌های قاعده، develop.yaml — پیشنهاد فقط از طریق questions"
       - "نوشتن یا تغییر کود پروژه"
       - "علامت‌گذاری تسکی به عنوان انجام‌شده"
       - "تغییر قرارداد frozen"
     may_write:
-      - "DEFINITION.yaml / PLAN.yaml / RULES.yaml آیتم‌ها"
+      - "definition.yaml / plan.yaml / rules.yaml آیتم‌ها"
       - "shared/contracts (فقط draft)"
-      - "STATE/* به جز stage"
-      - "HISTORY/*"
+      - "state/* به جز stage"
+      - "history/*"
     steps:
       - "خواندن طبق read_order"
       - "تحلیل و شناسایی حوزه‌ها"
@@ -88,40 +88,40 @@ modes:
   development:
     purpose: "اجرای تسک‌های تأییدشده"
     allowed:
-      - "انتخاب تسک آماده از STATUS آیتم فعال"
+      - "انتخاب تسک آماده از status.yaml آیتم فعال"
       - "پیاده‌سازی فقط داخل code_path همان آیتم"
       - "اجرای تست و معیار پذیرش"
-      - "ثبت نتیجه و به‌روزرسانی STATUS"
+      - "ثبت نتیجه و به‌روزرسانی status.yaml"
       - "ثبت بلاکر، سوال، تصمیم، ژورنال"
     prohibited:
-      - "تغییر ROOT.yaml، PROJECT.yaml، RULES.yaml و فایل‌های قاعده، DEVELOP.yaml — پیشنهاد فقط از طریق questions"
-      - "تغییر PLAN بدون ثبت دلیل و مجوز"
+      - "تغییر root.yaml، project.yaml، rules.yaml و فایل‌های قاعده، develop.yaml — پیشنهاد فقط از طریق questions"
+      - "تغییر plan.yaml بدون ثبت دلیل و مجوز"
       - "دست زدن به کود آیتم‌های دیگر"
       - "done کردن تسکی که تستش موفق نبوده"
-      - "نادیده گرفتن RULES"
+      - "نادیده گرفتن قواعد"
     may_write:
-      - "STATUS.yaml آیتم فعال"
+      - "status.yaml آیتم فعال"
       - "کود داخل code_path آیتم فعال"
-      - "STATE/* به جز stage"
-      - "HISTORY/*"
+      - "state/* به جز stage"
+      - "history/*"
     steps:
       - "خواندن طبق read_order"
-      - "انتخاب تسک آماده و claim آن در STATUS"
-      - "پیاده‌سازی طبق تعریف تسک و RULES"
+      - "انتخاب تسک آماده و claim آن در status.yaml"
+      - "پیاده‌سازی طبق تعریف تسک و قواعد"
       - "اجرای تست‌ها و بررسی معیار پذیرش"
-      - "ثبت نتیجه در STATUS ذیل همان تسک"
+      - "ثبت نتیجه در status.yaml ذیل همان تسک"
       - "در پایان جلسه: ثبت ژورنال"
 
 
 write_protocol:
-  task_status_change: "STATUS.yaml همان آیتم — وضعیت تسک فقط اینجا زندگی می‌کند"
-  work_details: "STATUS.yaml همان آیتم، ذیل همان تسک"
-  session_report: "لایهٔ HISTORY — طبق قالب journal در HISTORY.yaml؛ پایان هر جلسه، الزامی"
-  decision: "لایهٔ HISTORY — طبق قالب decisions در HISTORY.yaml"
-  blocker: "لایهٔ STATE — طبق قواعد blockers در STATE.yaml؛ تسک متأثر در STATUS به حالت blocked می‌رود"
-  question_for_human: "لایهٔ STATE — طبق قواعد questions در STATE.yaml؛ همراه با پیشنهاد، نه فقط سوال"
-  new_id: "لایهٔ STATE — شمارنده در counters طبق STATE.yaml، پیش از ساخت هر شناسه"
-  root_change_needed: "هرگز مستقیم — پیشنهاد در STATE/questions.yaml، تغییر فقط توسط انسان"
-  new_item_needed: "هرگز مستقیم — آیتم‌ها در DEVELOP.yaml تعریف می‌شوند؛ پیشنهاد در STATE/questions.yaml"
-  rule_change_needed: "هرگز مستقیم — قواعد در RULES/ تعریف می‌شوند؛ پیشنهاد در STATE/questions.yaml"
-  rule_conflict: "طبق precedence در RULES.yaml عمل کن و تعارض را در STATE/questions.yaml ثبت کن"
+  task_status_change: "status.yaml همان آیتم — وضعیت تسک فقط اینجا زندگی می‌کند"
+  work_details: "status.yaml همان آیتم، ذیل همان تسک"
+  session_report: "لایهٔ تاریخچه — طبق قالب journal در history.yaml؛ پایان هر جلسه، الزامی"
+  decision: "لایهٔ تاریخچه — طبق قالب decisions در history.yaml"
+  blocker: "لایهٔ وضعیت — طبق قواعد blockers در state.yaml؛ تسک متأثر در status.yaml به حالت blocked می‌رود"
+  question_for_human: "لایهٔ وضعیت — طبق قواعد questions در state.yaml؛ همراه با پیشنهاد، نه فقط سوال"
+  new_id: "لایهٔ وضعیت — شمارنده در counters طبق state.yaml، پیش از ساخت هر شناسه"
+  root_change_needed: "هرگز مستقیم — پیشنهاد در state/questions.yaml، تغییر فقط توسط انسان"
+  new_item_needed: "هرگز مستقیم — آیتم‌ها در develop.yaml تعریف می‌شوند؛ پیشنهاد در state/questions.yaml"
+  rule_change_needed: "هرگز مستقیم — قواعد در rules/ تعریف می‌شوند؛ پیشنهاد در state/questions.yaml"
+  rule_conflict: "طبق precedence در rules.yaml عمل کن و تعارض را در state/questions.yaml ثبت کن"

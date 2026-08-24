@@ -1,43 +1,43 @@
 # ساختار فایل‌ها — Agent Project Interface (نسخهٔ ۱.۰)
 
-همهٔ مسیرها نسبی‌اند — نسبت به همین پوشه، جایی که `ROOT.yaml` در آن است.
+همهٔ مسیرها نسبی‌اند — نسبت به همین پوشه، جایی که `root.yaml` در آن است.
 
 ```text
-ROOT.yaml                          ✓ ساخته شده
-STRUCTURE.yaml                     ✓ ساخته شده
-PROJECT.yaml                       ✓ ساخته شده
-RULES/
-├── RULES.yaml                     ✓ ساخته شده
+root.yaml                          ✓ ساخته شده
+structure.yaml                     ✓ ساخته شده
+project.yaml                       ✓ ساخته شده
+rules/
+├── rules.yaml                     ✓ ساخته شده
 ├── security.yaml                  ✗ هنوز نه
 └── global.yaml                    ✗ هنوز نه
-DEVELOP/
-├── DEVELOP.yaml                   ✓ ساخته شده
+develop/
+├── develop.yaml                   ✓ ساخته شده
 ├── backend/
-│   ├── DEFINITION.yaml            ✗ هنوز نه
-│   ├── RULES.yaml                 ✗ هنوز نه
-│   ├── PLAN.yaml                  ✗ هنوز نه
-│   └── STATUS.yaml                ✗ هنوز نه
+│   ├── definition.yaml            ✗ هنوز نه
+│   ├── rules.yaml                 ✗ هنوز نه
+│   ├── plan.yaml                  ✗ هنوز نه
+│   └── status.yaml                ✗ هنوز نه
 ├── frontend/                      ✗ همان چهار فایل
 └── shared/
     └── contracts/                 ✗ هنوز نه
-STATE/
-├── STATE.yaml                     ✓ ساخته شده
+state/
+├── state.yaml                     ✓ ساخته شده
 ├── stage.yaml                     ✗ هنوز نه
 ├── blockers.yaml                  ✗ هنوز نه
 ├── questions.yaml                 ✗ هنوز نه
 └── counters.yaml                  ✗ هنوز نه
-HISTORY/
-├── HISTORY.yaml                   ✓ ساخته شده
+history/
+├── history.yaml                   ✓ ساخته شده
 ├── decisions/                     ✗ خالی — با اولین ADR پر می‌شود
 └── journal/                       ✗ خالی — با اولین جلسه پر می‌شود
 ```
 
 ---
 
-## ساختار درونی ROOT.yaml — Agent Project Interface (نسخهٔ ۱.۰)
+## ساختار درونی root.yaml — Agent Project Interface (نسخهٔ ۱.۰)
 
 ```text
-ROOT.yaml
+root.yaml
 │
 ├── meta
 │   ├── standard
@@ -57,16 +57,16 @@ ROOT.yaml
 ├── read_order
 │   ├── enforcement
 │   └── steps
-│       ├── 1. ROOT.yaml
-│       ├── 2. STRUCTURE.yaml
-│       ├── 3. STATE/STATE.yaml
+│       ├── 1. root.yaml
+│       ├── 2. structure.yaml
+│       ├── 3. state/state.yaml
 │       ├── 4. فایل‌های وضعیت
-│       ├── 5. PROJECT.yaml
-│       ├── 6. RULES/RULES.yaml
+│       ├── 5. project.yaml
+│       ├── 6. rules/rules.yaml
 │       ├── 7. فایل‌های قاعده
-│       ├── 8. DEVELOP/DEVELOP.yaml
-│       ├── 9. DEFINITION → RULES → PLAN
-│       └── 10. STATUS
+│       ├── 8. develop/develop.yaml
+│       ├── 9. definition → rules → plan
+│       └── 10. status
 │
 ├── modes
 │   ├── active_mode_source
@@ -100,10 +100,10 @@ ROOT.yaml
 
 ---
 
-## ساختار درونی STRUCTURE.yaml — نقشه
+## ساختار درونی structure.yaml — نقشه
 
 ```text
-STRUCTURE.yaml
+structure.yaml
 │
 ├── meta
 │   ├── name
@@ -157,10 +157,10 @@ STRUCTURE.yaml
 
 ---
 
-## ساختار درونی PROJECT.yaml — لایهٔ ۲
+## ساختار درونی project.yaml — لایهٔ ۲
 
 ```text
-PROJECT.yaml
+project.yaml
 │
 ├── meta
 │   ├── layer
@@ -190,10 +190,10 @@ PROJECT.yaml
 
 ---
 
-## ساختار درونی RULES.yaml — لایهٔ ۳
+## ساختار درونی rules.yaml — لایهٔ ۳
 
 ```text
-RULES.yaml
+rules.yaml
 │
 ├── meta
 │   ├── layer
@@ -226,10 +226,10 @@ RULES.yaml
 
 ---
 
-## ساختار درونی DEVELOP.yaml — لایهٔ ۴
+## ساختار درونی develop.yaml — لایهٔ ۴
 
 ```text
-DEVELOP.yaml
+develop.yaml
 │
 ├── meta
 │   ├── layer
@@ -252,10 +252,10 @@ DEVELOP.yaml
 │       └── summary
 │
 ├── item_files
-│   ├── DEFINITION.yaml
-│   ├── RULES.yaml
-│   ├── PLAN.yaml
-│   └── STATUS.yaml
+│   ├── definition.yaml
+│   ├── rules.yaml
+│   ├── plan.yaml
+│   └── status.yaml
 │
 ├── item_read_order
 │
@@ -272,10 +272,10 @@ DEVELOP.yaml
 
 ---
 
-## ساختار درونی STATE.yaml — لایهٔ عرضی
+## ساختار درونی state.yaml — لایهٔ عرضی
 
 ```text
-STATE.yaml
+state.yaml
 │
 ├── meta
 │   ├── layer
@@ -331,10 +331,10 @@ STATE.yaml
 
 ---
 
-## ساختار درونی HISTORY.yaml — لایهٔ عرضی
+## ساختار درونی history.yaml — لایهٔ عرضی
 
 ```text
-HISTORY.yaml
+history.yaml
 │
 ├── meta
 │   ├── layer
