@@ -1,0 +1,116 @@
+meta:
+  path: "develop/shared/contracts/api-v1.yaml"
+  path_note: "The address of this file — the shared contracts directory of the develop layer"
+  purpose: "The api-v1 contract — the only surface the frontend may use and the only thing the backend promises"
+  produced_by: "backend"
+  consumed_by: "frontend"
+  lifecycle: "frozen"
+  lifecycle_note: "Final — the implementation matches it and the frontend may define tasks against it. This version never changes; a change means api-v2."
+  change_rule: "A frozen version never changes — a new version is created instead"
+  updated: "2026-08-24"
+
+
+conventions:
+  transport: "HTTP with JSON bodies"
+  ids: "Integers, assigned by the server; a client never chooses one"
+  timestamps: "ISO 8601, UTC"
+  unknown_id: "Any route addressing a missing group or task answers 404 with the error shape below"
+
+
+error_shape:
+  rule: "Every non-2xx response has exactly these three fields, with no others"
+  fields:
+    code: "A stable machine-readable string — a client may branch on it"
+    message: "One human-readable sentence, safe to show a user"
+    details: "An object with anything specific to this error; may be empty"
+  codes:
+    not_found: "404 — no group or task with that id"
+    invalid_input: "422 — the body failed validation; details.fields lists field and problem"
+    http_error: "4xx raised by the transport layer, such as an unknown route"
+    internal_error: "500 — the service failed; details is always empty and no internals are exposed"
+
+
+models:
+
+  Group:
+    id: "integer"
+    name: "string, 1 to 120 characters"
+    created_at: "timestamp"
+
+  Task:
+    id: "integer"
+    group_id: "integer — the group this task belongs to"
+    title: "string, 1 to 200 characters"
+    done: "boolean, false when created"
+    created_at: "timestamp"
+
+
+routes:
+
+  - method: "GET"
+    path: "/health"
+    summary: "Liveness"
+    response: "200 — {status, service}"
+
+  - method: "POST"
+    path: "/groups"
+    summary: "Create a group"
+    body: "{name}"
+    response: "201 — Group"
+    errors: ["invalid_input"]
+
+  - method: "GET"
+    path: "/groups"
+    summary: "List every group, ordered by id"
+    response: "200 — array of Group, empty array when there are none"
+
+  - method: "GET"
+    path: "/groups/{group_id}"
+    summary: "Read one group"
+    response: "200 — Group"
+    errors: ["not_found"]
+
+  - method: "PATCH"
+    path: "/groups/{group_id}"
+    summary: "Rename a group"
+    body: "{name}"
+    response: "200 — Group"
+    errors: ["not_found", "invalid_input"]
+
+  - method: "DELETE"
+    path: "/groups/{group_id}"
+    summary: "Delete a group and every task inside it"
+    response: "204 — no body"
+    errors: ["not_found"]
+
+  - method: "POST"
+    path: "/groups/{group_id}/tasks"
+    summary: "Create a task inside a group"
+    body: "{title}"
+    response: "201 — Task"
+    errors: ["not_found", "invalid_input"]
+
+  - method: "GET"
+    path: "/groups/{group_id}/tasks"
+    summary: "List the tasks of one group, ordered by id"
+    response: "200 — array of Task, empty array when the group has none"
+    errors: ["not_found"]
+
+  - method: "GET"
+    path: "/tasks/{task_id}"
+    summary: "Read one task"
+    response: "200 — Task"
+    errors: ["not_found"]
+
+  - method: "PATCH"
+    path: "/tasks/{task_id}"
+    summary: "Change a task's title, its done state, or both"
+    body: "{title?, done?}"
+    response: "200 — Task"
+    errors: ["not_found", "invalid_input"]
+
+  - method: "DELETE"
+    path: "/tasks/{task_id}"
+    summary: "Delete a task"
+    response: "204 — no body"
+    errors: ["not_found"]

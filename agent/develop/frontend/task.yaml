@@ -20,7 +20,7 @@ groups:
     goal: "The application starts up and has routing"
     tasks:
 
-      - id: "FE-0001"
+      - id: "0001"
         title: "Project skeleton and build"
         goal: "The application runs and builds"
         depends_on: []
@@ -28,10 +28,10 @@ groups:
         verify: "npm run build && npm run test -- tests/smoke.test.tsx"
         touches: ["frontend/src/main.tsx", "frontend/tests/smoke.test.tsx"]
 
-      - id: "FE-0002"
+      - id: "0002"
         title: "Routing and base layout"
         goal: "Three routes exist: login, registration, and tasks"
-        depends_on: ["FE-0001"]
+        depends_on: ["0001"]
         acceptance: "Each route renders its own page and an unknown route yields a 404 page"
         verify: "npm run test -- tests/routing.test.tsx"
         touches: ["frontend/src/pages/", "frontend/src/main.tsx"]
@@ -41,19 +41,19 @@ groups:
     goal: "The client is ready and matches the contract"
     tasks:
 
-      - id: "FE-0003"
+      - id: "0003"
         title: "Generate types and client from the contract"
         goal: "Every API call goes through a single typed layer"
-        depends_on: ["FE-0001"]
+        depends_on: ["0001"]
         needs_contract: "api-v1 (draft is sufficient)"
         acceptance: "Types are generated from the contract and every contract route has a client function"
         verify: "npm run test -- tests/api-client.test.ts"
         touches: ["frontend/src/api/"]
 
-      - id: "FE-0004"
+      - id: "0004"
         title: "Error handling and network states"
         goal: "Every request covers the three states: loading, error, and empty"
-        depends_on: ["FE-0003"]
+        depends_on: ["0003"]
         acceptance: "A network error yields a comprehensible message and a 401 response clears the session"
         verify: "npm run test -- tests/api-errors.test.ts"
         touches: ["frontend/src/api/", "frontend/src/auth/"]
@@ -63,19 +63,19 @@ groups:
     goal: "A user can register, log in, and log out"
     tasks:
 
-      - id: "FE-0005"
+      - id: "0005"
         title: "Registration and login pages"
         goal: "The user logs in through a form and the token is stored"
-        depends_on: ["FE-0002", "FE-0004"]
+        depends_on: ["0002", "0004"]
         needs_contract: "api-v1 (frozen)"
         acceptance: "A correct login goes to the tasks page; an incorrect login shows an error message"
         verify: "npm run test -- tests/auth-pages.test.tsx"
         touches: ["frontend/src/pages/", "frontend/src/auth/"]
 
-      - id: "FE-0006"
+      - id: "0006"
         title: "Route protection and logout"
         goal: "Private routes are not reachable without a session"
-        depends_on: ["FE-0005"]
+        depends_on: ["0005"]
         acceptance: "Visiting without a session redirects to the login page, and logging out clears the session"
         verify: "npm run test -- tests/auth-guard.test.tsx"
         touches: ["frontend/src/auth/"]
@@ -85,27 +85,27 @@ groups:
     goal: "The user manages their own tasks"
     tasks:
 
-      - id: "FE-0007"
+      - id: "0007"
         title: "Task list"
         goal: "The user's tasks are displayed"
-        depends_on: ["FE-0006"]
+        depends_on: ["0006"]
         needs_contract: "api-v1 (frozen)"
         acceptance: "The list loads and the empty state shows a helpful message"
         verify: "npm run test -- tests/tasks-list.test.tsx"
         touches: ["frontend/src/pages/tasks.tsx", "frontend/src/components/"]
 
-      - id: "FE-0008"
+      - id: "0008"
         title: "Create and edit a task"
         goal: "The user creates a task and changes its title"
-        depends_on: ["FE-0007"]
+        depends_on: ["0007"]
         acceptance: "A new task appears in the list immediately and an edit is saved"
         verify: "npm run test -- tests/tasks-create-edit.test.tsx"
         touches: ["frontend/src/pages/tasks.tsx", "frontend/src/components/"]
 
-      - id: "FE-0009"
+      - id: "0009"
         title: "Complete and delete a task"
         goal: "The user marks a task as done or deletes it"
-        depends_on: ["FE-0008"]
+        depends_on: ["0008"]
         acceptance: "Status changes and deletions give immediate feedback and persist after a refresh"
         verify: "npm run test -- tests/tasks-complete-delete.test.tsx"
         touches: ["frontend/src/pages/tasks.tsx", "frontend/src/components/"]
@@ -115,10 +115,10 @@ groups:
     goal: "The product is usable for a first-time user"
     tasks:
 
-      - id: "FE-0010"
+      - id: "0010"
         title: "Session restoration and persistence"
         goal: "The user is still logged in after closing and reopening the browser"
-        depends_on: ["FE-0009"]
+        depends_on: ["0009"]
         acceptance: "With a valid session, refreshing the page does not log the user out and the tasks remain"
         verify: "npm run test -- tests/session-persistence.test.tsx"
         touches: ["frontend/src/auth/"]

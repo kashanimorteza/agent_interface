@@ -20,7 +20,7 @@ groups:
     goal: "The service runs, reads its configuration, and reaches a database it can migrate"
     tasks:
 
-      - id: "BE-0001"
+      - id: "0001"
         title: "Service skeleton and health route"
         goal: "The service starts and answers on a route, so everything after this has something to attach to"
         depends_on: []
@@ -28,34 +28,34 @@ groups:
         verify: "pytest tests/test_health.py"
         touches: ["backend/app/main.py", "backend/tests/test_health.py"]
 
-      - id: "BE-0002"
+      - id: "0002"
         title: "Configuration layer"
         goal: "Settings come from configuration, so no path or value is ever baked into the code"
-        depends_on: ["BE-0001"]
+        depends_on: ["0001"]
         acceptance: "The database file path is read from configuration; a missing required setting fails loudly at startup with a clear message instead of falling back to a default"
         verify: "pytest tests/test_config.py"
         touches: ["backend/app/config.py", "backend/tests/test_config.py"]
 
-      - id: "BE-0003"
+      - id: "0003"
         title: "Database connection with foreign keys enabled"
         goal: "A session opens and closes, and foreign keys are actually enforced"
-        depends_on: ["BE-0002"]
+        depends_on: ["0002"]
         acceptance: "A session opens from the configured path and closes cleanly; PRAGMA foreign_keys reports on for every new connection; the test suite binds to its own database file, never the development one"
         verify: "pytest tests/test_db_connection.py"
         touches: ["backend/app/db/", "backend/tests/conftest.py", "backend/tests/test_db_connection.py"]
 
-      - id: "BE-0004"
+      - id: "0004"
         title: "Alembic set up with batch mode"
         goal: "Schema changes become migrations that can also be rolled back on SQLite"
-        depends_on: ["BE-0003"]
+        depends_on: ["0003"]
         acceptance: "Alembic runs against the configured database with batch mode enabled; an empty migration applies, rolls back, and re-applies without error"
         verify: "alembic upgrade head && alembic downgrade base && alembic upgrade head"
         touches: ["backend/alembic.ini", "backend/migrations/"]
 
-      - id: "BE-0005"
+      - id: "0005"
         title: "Uniform error responses"
         goal: "Every failure leaves the service in the same shape, so the client has one thing to parse"
-        depends_on: ["BE-0001"]
+        depends_on: ["0001"]
         acceptance: "Every error response carries code, message, and details; an unhandled exception returns that same shape as a 500 and never leaks a stack trace or a file path"
         verify: "pytest tests/test_errors.py"
         touches: ["backend/app/errors.py", "backend/app/main.py", "backend/tests/test_errors.py"]
@@ -66,18 +66,18 @@ groups:
     goal: "Groups and tasks exist as real tables, with the relation between them enforced"
     tasks:
 
-      - id: "BE-0006"
+      - id: "0006"
         title: "Group model and migration"
         goal: "A group of tasks exists as a row — the first half of the first product goal"
-        depends_on: ["BE-0004"]
+        depends_on: ["0004"]
         acceptance: "The groups table is created with a non-empty name and a created timestamp; the migration applies and rolls back cleanly"
         verify: "pytest tests/test_group_model.py"
         touches: ["backend/app/models/group.py", "backend/migrations/"]
 
-      - id: "BE-0007"
+      - id: "0007"
         title: "Task model and migration"
         goal: "A task belongs to a group and can be marked done"
-        depends_on: ["BE-0006"]
+        depends_on: ["0006"]
         acceptance: "Every task references an existing group and cannot be created without one; group_id is indexed because every listing filters on it; done defaults to false; the migration applies and rolls back cleanly"
         verify: "pytest tests/test_task_model.py"
         touches: ["backend/app/models/task.py", "backend/migrations/"]
@@ -88,18 +88,18 @@ groups:
     goal: "The first product goal, end to end over HTTP"
     tasks:
 
-      - id: "BE-0008"
+      - id: "0008"
         title: "Create and list groups"
         goal: "A group can be created and read back through the API"
-        depends_on: ["BE-0005", "BE-0007"]
+        depends_on: ["0005", "0007"]
         acceptance: "A validated name creates a group and it appears in the list in a stable order; an empty or over-long name is rejected with the standard error shape and no row is written"
         verify: "pytest tests/test_groups_create_list.py"
         touches: ["backend/app/routes/groups.py", "backend/app/services/groups.py", "backend/tests/test_groups_create_list.py"]
 
-      - id: "BE-0009"
+      - id: "0009"
         title: "Rename and delete a group"
         goal: "A group can be corrected or removed without leaving its tasks behind"
-        depends_on: ["BE-0008"]
+        depends_on: ["0008"]
         acceptance: "A rename persists and is visible on re-read; deleting a group removes its tasks with it rather than orphaning them; renaming or deleting an unknown group returns 404 in the standard error shape"
         verify: "pytest tests/test_groups_update_delete.py"
         touches: ["backend/app/routes/groups.py", "backend/app/services/groups.py", "backend/tests/test_groups_update_delete.py"]
@@ -110,26 +110,26 @@ groups:
     goal: "The second product goal, end to end over HTTP"
     tasks:
 
-      - id: "BE-0010"
+      - id: "0010"
         title: "Create and list tasks in a group"
         goal: "A task can be added to a group and read back"
-        depends_on: ["BE-0008"]
+        depends_on: ["0008"]
         acceptance: "A task is created inside an existing group and appears in that group's listing; creating one in an unknown group returns 404; one group's listing never returns another group's tasks; an empty group returns an empty list, not an error"
         verify: "pytest tests/test_tasks_create_list.py"
         touches: ["backend/app/routes/tasks.py", "backend/app/services/tasks.py", "backend/tests/test_tasks_create_list.py"]
 
-      - id: "BE-0011"
+      - id: "0011"
         title: "Edit a task and toggle its done state"
         goal: "A task can be corrected and marked done or undone"
-        depends_on: ["BE-0010"]
+        depends_on: ["0010"]
         acceptance: "The title can be changed and done set both ways, and both survive a re-read; an invalid title is rejected with the standard error shape and the stored task is unchanged; editing an unknown task returns 404"
         verify: "pytest tests/test_tasks_edit_complete.py"
         touches: ["backend/app/routes/tasks.py", "backend/app/services/tasks.py", "backend/tests/test_tasks_edit_complete.py"]
 
-      - id: "BE-0012"
+      - id: "0012"
         title: "Delete a task"
         goal: "A task can be removed, completing the second product goal"
-        depends_on: ["BE-0011"]
+        depends_on: ["0011"]
         acceptance: "A deleted task disappears from its group's listing and deleting it a second time returns 404; the deletion leaves its group and the group's other tasks untouched"
         verify: "pytest tests/test_tasks_delete.py"
         touches: ["backend/app/routes/tasks.py", "backend/app/services/tasks.py", "backend/tests/test_tasks_delete.py"]
@@ -140,7 +140,7 @@ groups:
     goal: "The api-v1 contract is published and the implementation matches it"
     tasks:
 
-      - id: "BE-0013"
+      - id: "0013"
         title: "Draft the api-v1 contract"
         goal: "The shape of the API is settled in writing, so the frontend can start without waiting for the backend"
         depends_on: []
@@ -148,10 +148,10 @@ groups:
         verify: "test -f ../agent/develop/shared/contracts/api-v1.yaml"
         touches: ["agent/develop/shared/contracts/api-v1.yaml"]
 
-      - id: "BE-0014"
+      - id: "0014"
         title: "Freeze the api-v1 contract"
         goal: "The contract becomes binding, so the frontend can define tasks on top of it"
-        depends_on: ["BE-0009", "BE-0012", "BE-0013"]
+        depends_on: ["0009", "0012", "0013"]
         acceptance: "Every implemented route matches the contract in path, payload, and status code, with no route present in one and missing from the other; the lifecycle is then marked frozen"
         verify: "pytest tests/test_contract_conformance.py"
         touches: ["agent/develop/shared/contracts/api-v1.yaml", "backend/tests/test_contract_conformance.py"]

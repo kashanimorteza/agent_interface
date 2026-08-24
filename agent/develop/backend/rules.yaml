@@ -8,6 +8,13 @@ meta:
   updated: "2026-08-24"
 
 
+environment:
+  - "All Python work happens inside the item's virtual environment — never the system interpreter"
+  - "Every dependency is installed into that environment and never globally"
+  - "Every command in a task's verify runs from inside that environment — a result produced outside it does not count"
+  - "The virtual environment is never committed"
+
+
 code:
   - "Business logic stays in services — routes only accept input and return output"
   - "Direct database access from inside routes is forbidden — go through a service"
