@@ -3,8 +3,8 @@
 
 An agent-independent interface between software projects and AI agents.
 
-Developer ↔ Project ↔ AI Agent
-The project is the source of truth.  
+Developer ↔ Project ↔ AI Agent  
+The project is the source of truth  
 AI agents interact with the project through a structured and agent-independent interface.
 
 <!--------------------------------------------------------------------------------- Diagram -->
