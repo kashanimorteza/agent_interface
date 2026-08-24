@@ -6,7 +6,7 @@ meta:
   role_defined_in: "project.yaml, under architecture.parts.backend — what this item is responsible for and where its boundaries are"
   identity_defined_in: "develop/develop.yaml, under items.backend — its path, task prefix, and summary"
   editable_in_mode: "planning"
-  on_change_needed: "Do not change in development mode — record a proposal in questions.yaml"
+  on_change_needed: "Do not change in development mode — raise it with the human"
   agent_may_edit: false
   updated: "2026-08-24"
 

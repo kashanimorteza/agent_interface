@@ -6,7 +6,7 @@ meta:
   purpose: "Definition of the frontend item — what it does, with which technologies, and where its boundaries are"
   agent_may_edit: true
   editable_in_mode: "planning"
-  on_change_needed: "Do not change this in development mode — record a proposal in questions.yaml instead"
+  on_change_needed: "Do not change this in development mode — raise it with the human instead"
   updated: "2026-08-24"
 
 

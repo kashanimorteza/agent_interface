@@ -5,7 +5,7 @@ meta:
   layer: 4
   purpose: "Definition of the frontend tasks — what has to be done and in what order"
   schema_source: "The shape of each task is defined in task_schema inside develop.yaml"
-  no_status_here: "Task status is not written here — it lives in status.yaml"
+  no_status_here: "Task status is not written here — this file holds the task definitions only"
   cross_item_rule: "No task depends on a backend task — the only dependency is on the contract version, via needs_contract"
   agent_may_edit: true
   editable_in_mode: "planning"

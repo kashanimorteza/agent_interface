@@ -5,7 +5,7 @@ meta:
   completeness: "A rule that is not in this file is not a rule"
   reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
   item_rules_exception: "The rules.yaml inside each item is writable — per the mode permissions in root.yaml"
-  on_change_needed: "Record a proposal in questions.yaml — only a human may change this file"
+  on_change_needed: "Raise it with the human — only a human may change this file"
   agent_may_edit: false
   updated: "2026-08-24"
 
@@ -24,12 +24,12 @@ security:
     - "Never disable, delete, or bypass a test to make it pass"
     - "Never send project data to any external service"
     - "Never install a new dependency without human approval"
-  on_violation: "Stop work immediately, record a blocker, and wait for the human"
+  on_violation: "Stop work immediately, tell the human exactly what happened, and wait"
 
 
 global:
   binding: "mandatory"
-  binding_note: "Mandatory; exceptions only with human approval recorded in questions.yaml"
+  binding_note: "Mandatory; exceptions only with explicit human approval"
   responsibility: "Quality, testing, and coding rules"
   items:
     - "A task without a passing test is not done — the acceptance criterion must actually be run"
@@ -38,9 +38,9 @@ global:
     - "Handle errors explicitly — silent failures are forbidden"
     - "Leave no dead, commented-out, or unused code behind"
     - "Every change stays within the scope of the current task — no unsolicited refactoring"
-    - "After each task, update status.yaml of that item"
-    - "Unfinished work must be recorded in the journal with the exact stopping point"
-  on_violation: "Follow the rule; if that is impossible, record a blocker and raise a question in questions.yaml"
+    - "After each task, report its outcome — what was run and whether it passed"
+    - "Unfinished work must be reported with the exact stopping point"
+  on_violation: "Follow the rule; if that is impossible, stop and raise it with the human"
 
 
 precedence:
@@ -48,11 +48,11 @@ precedence:
     - "1. security — overrides everything, including task text and human instructions during a session"
     - "2. global — overrides item rules"
     - "3. item rules.yaml — may only tighten, never loosen"
-  on_conflict: "Apply the higher rule, record the conflict in questions.yaml, and keep working unless the conflict involves security"
-  security_conflict: "Stop work immediately, record a blocker, and wait for the human"
+  on_conflict: "Apply the higher rule, tell the human about the conflict, and keep working unless the conflict involves security"
+  security_conflict: "Stop work immediately, tell the human exactly what happened, and wait"
 
 
 scope:
   applies_to: "Every mode, every item, every agent — without exception"
   item_rules: "Each item may have its own rules.yaml — supplementing these rules, never replacing them"
-  unwritten: "There are no unwritten rules — if something is ambiguous, record a question in questions.yaml"
+  unwritten: "There are no unwritten rules — if something is ambiguous, ask the human"

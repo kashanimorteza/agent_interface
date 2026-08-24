@@ -4,7 +4,7 @@ meta:
   purpose: "Entry point for every agent — protocol, not content: what to read in what order, what is allowed, and where results are recorded"
   independence: "Independent of any agent, model, or vendor — any agent that can read files can work here"
   entry_rule: "Every session begins by reading this file in full"
-  on_change_needed: "Record a proposal in questions.yaml — only a human may change this file"
+  on_change_needed: "Raise it with the human — only a human may change this file"
   agent_may_edit: false
   updated: "2026-08-24"
 
@@ -19,7 +19,7 @@ structure:
   project:
     layer: 2
     path: "project.yaml"
-    responsibility: "Product definition — identity, goals, non-goals, outcomes, architecture"
+    responsibility: "Product definition — identity, goals, and architecture"
     note: "To understand what is being built, read project.yaml"
 
   rules:
@@ -34,18 +34,6 @@ structure:
     responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
     note: "For any work in this layer, read develop.yaml first"
 
-  state:
-    layer: "cross"
-    path: "state.yaml"
-    responsibility: "State layer index — state files, their read order, and the rules for writing them"
-    note: "To understand 'where we are right now', read state.yaml first"
-
-  history:
-    layer: "cross"
-    path: "history/history.yaml"
-    responsibility: "History layer index — record types, the format of each, and the rules for writing them"
-    note: "Before recording anything in this layer, read history.yaml first"
-
 
 read_order:
   enforcement: "Exactly this order — no less, no more"
@@ -54,34 +42,23 @@ read_order:
       read: "root.yaml"
       why: "This file — read protocol, working modes, and write protocol"
     - step: 2
-      read: "structure.yaml"
-      why: "Learn which layers exist and where each index lives — the paths for every later step come from here"
-    - step: 3
-      read: "state.yaml"
-      why: "Learn which state files exist, in what order to read them, and which are writable"
-    - step: 4
-      read: "State files — per read_order in state.yaml"
-      why: "Learn the active mode and item, any new human answers, and what is currently blocked"
-    - step: 5
       read: "project.yaml"
       why: "Understand what product is being built"
-    - step: 6
+    - step: 3
       read: "rules.yaml"
       why: "Read in full — every rule lives here and security overrides everything"
-    - step: 7
+    - step: 4
       read: "develop/develop.yaml"
-      why: "Learn which items exist, where the active item lives, and the boundaries of the build layer"
-    - step: 8
-      read: "Active item: definition.yaml → rules.yaml → plan.yaml"
+      why: "Learn which items exist, the shape of a task, and the boundaries of the build layer"
+    - step: 5
+      read: "Active item: definition.yaml → rules.yaml → task.yaml"
       why: "Understand the item you are working on — order comes from item_read_order in develop.yaml"
-    - step: 9
-      read: "status.yaml of the same item"
-      why: "Learn what is done, what remains, and what is blocked — then start work"
 
 
 modes:
 
-  active_mode_source: "stage.yaml"
+  active_mode: "planning"
+  active_mode_note: "The mode is set here, in this file — there is no separate state layer"
   switch_rule: "Only a human changes the mode — an agent never switches its own mode"
 
   planning:
@@ -89,65 +66,54 @@ modes:
     allowed:
       - "Analyze project.yaml and the architecture"
       - "Write or revise definition.yaml of items"
-      - "Create groups and tasks in plan.yaml"
+      - "Create groups and tasks in task.yaml"
       - "Define dependencies and acceptance criteria"
       - "Draft contracts in shared/contracts"
-      - "Record decisions (ADR) and questions for the human"
     prohibited:
-      - "Changing root.yaml, structure.yaml, project.yaml, rules.yaml, develop.yaml — propose via questions only"
+      - "Changing root.yaml, project.yaml, rules.yaml, develop.yaml — raise it with the human instead"
       - "Writing or changing project code"
       - "Marking any task as done"
       - "Changing a frozen contract"
     may_write:
-      - "definition.yaml / plan.yaml / rules.yaml of items"
+      - "definition.yaml / rules.yaml / task.yaml of items"
       - "shared/contracts (draft only)"
-      - "State files except stage.yaml"
-      - "history/*"
     steps:
       - "Read per read_order"
       - "Analyze and identify areas of work"
-      - "Create groups, then tasks with ids drawn from counters"
+      - "Create groups, then tasks — ids continue from the highest already used in that item's task.yaml"
       - "Define dependencies"
-      - "Record the plan and request approval in questions"
-      - "Stop until the human approves"
+      - "Present the plan to the human and stop until it is approved"
 
   development:
     purpose: "Execute approved tasks"
     allowed:
-      - "Pick a ready task from status.yaml of the active item"
+      - "Pick a ready task from the active item's task.yaml"
       - "Implement only inside the code_path of that item"
-      - "Run tests and check acceptance criteria"
-      - "Record the result and update status.yaml"
-      - "Record blockers, questions, decisions, and the journal"
+      - "Run the verify command and check the acceptance criteria"
+      - "Report the result to the human"
     prohibited:
-      - "Changing root.yaml, structure.yaml, project.yaml, rules.yaml, develop.yaml — propose via questions only"
-      - "Changing plan.yaml without a recorded reason and approval"
+      - "Changing root.yaml, project.yaml, rules.yaml, develop.yaml — raise it with the human instead"
+      - "Changing task.yaml without a stated reason and human approval"
       - "Touching the code of another item"
-      - "Marking a task done when its verify did not pass"
+      - "Calling a task done when its verify did not pass"
       - "Ignoring the rules"
     may_write:
-      - "status.yaml of the active item"
       - "Code inside the code_path of the active item"
-      - "State files except stage.yaml"
-      - "history/*"
     steps:
       - "Read per read_order"
-      - "Pick a ready task and claim it in status.yaml"
+      - "Pick a ready task — todo, with every task in its depends_on already done"
       - "Implement per the task definition and the rules"
-      - "Run the tests and check the acceptance criteria"
-      - "Record the result in status.yaml under that task"
-      - "At session end: write the journal entry"
+      - "Run the verify command and check the acceptance criteria"
+      - "Report to the human what passed and what did not"
 
 
 write_protocol:
-  task_status_change: "status.yaml of the same item — task status lives only there"
-  work_details: "status.yaml of the same item, under that task"
-  session_report: "History layer — per the journal format in history.yaml; mandatory at the end of every session"
-  decision: "History layer — per the decisions format in history.yaml"
-  blocker: "State layer — per the blockers rules in state.yaml; the affected task moves to blocked in status.yaml"
-  question_for_human: "State layer — per the questions rules in state.yaml; always with a proposal, never a bare question"
-  new_id: "State layer — increment the counter in counters.yaml per state.yaml before creating any id"
-  root_change_needed: "Never directly — propose in questions.yaml; only a human may change it"
-  new_item_needed: "Never directly — items are defined in develop.yaml; propose in questions.yaml"
-  rule_change_needed: "Never directly — rules are defined in rules.yaml; propose in questions.yaml"
-  rule_conflict: "Follow precedence in rules.yaml and record the conflict in questions.yaml"
+  code: "Only inside the code_path of the active item — never another item's code"
+  task_change: "The active item's task.yaml, and only in planning mode"
+  contract: "develop/shared/contracts — a draft may be written; a frozen version never changes, a new version is created instead"
+  root_change_needed: "Never directly — raise it with the human; only a human may change it"
+  new_item_needed: "Never directly — items are defined in develop.yaml; raise it with the human"
+  rule_change_needed: "Never directly — rules are defined in rules.yaml; raise it with the human"
+  rule_conflict: "Follow the precedence in rules.yaml and raise the conflict with the human"
+  blocked: "Stop, say exactly where the work stopped, and wait for the human"
+  ambiguity: "Ask the human — no rule may be invented and no gap may be guessed at"
