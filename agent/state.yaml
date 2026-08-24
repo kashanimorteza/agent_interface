@@ -1,0 +1,82 @@
+meta:
+  path: "state.yaml"
+  path_note: "The address of this file — layer 5, the operational state"
+  purpose: "Where the project actually stands right now — active mode, active item, task status, blockers, and open questions"
+  scope_note: "This file holds no definition and no rule — only the present state of things defined elsewhere"
+  reason: "task.yaml defines a task and never moves; state.yaml is the only thing that moves"
+  agent_may_edit: true
+  editable_in_mode: "planning, development, and review — review may write blockers and open questions only"
+  updated: "2026-08-24"
+
+
+active:
+  mode: "planning"
+  mode_reason: "No code exists yet — neither code_path has been created, so nothing is implementable until the open questions below are answered"
+  item: "none"
+  set_by: "human"
+
+
+tasks:
+  note: "Every task defined in an item's task.yaml appears here exactly once — a task absent from this list has no status and cannot be worked"
+
+  backend:
+    "0001": { status: "todo" }
+    "0002": { status: "todo" }
+    "0003": { status: "todo" }
+    "0004": { status: "todo" }
+    "0005": { status: "todo" }
+    "0006": { status: "todo" }
+    "0007": { status: "todo" }
+    "0008": { status: "todo" }
+    "0009": { status: "todo" }
+    "0010": { status: "todo" }
+
+  frontend:
+    "0001": { status: "todo" }
+    "0002": { status: "todo" }
+    "0003": { status: "todo" }
+    "0004": { status: "todo" }
+    "0005": { status: "blocked", blocker: "B1" }
+    "0006": { status: "blocked", blocker: "B1" }
+    "0011": { status: "todo" }
+    "0007": { status: "todo" }
+    "0008": { status: "todo" }
+    "0009": { status: "todo" }
+    "0010": { status: "blocked", blocker: "B1" }
+
+
+ready:
+  note: "ready is derived, not stored — a task is ready when it is todo and all of its depends_on are done. Listed here for the reader only"
+  backend: ["0001"]
+  frontend: ["0001"]
+  frontend_note: "Frontend 0011 through 0009 are todo but not reachable — they sit behind 0006, which is blocked by B1"
+
+
+blockers:
+
+  - id: "B1"
+    tasks: ["frontend/0005", "frontend/0006", "frontend/0010"]
+    what_is_missing: "A contract defining registration, login, logout, and session. api-v1 is frozen and contains no such route, and develop.yaml forbids writing a task against a contract that does not exist"
+    consequence: "Authentication cannot be built, and everything behind it — the whole of frontend G4 and G5 — cannot be reached"
+    decision_belongs_to: "human"
+    raised: "2026-08-24"
+
+
+open_questions:
+  note: "Addressed to the human — an agent does not answer these on its own"
+  questions:
+
+    - id: "Q1"
+      question: "How does authentication enter the contract? api-v1 is frozen, so either an api-v2 supersedes it or a separate auth contract is added beside it"
+      why_it_matters: "The one_liner promises user accounts and the goals promise a user sees only their own data, but no contract offers a way to become a user"
+      blocks: "B1"
+
+    - id: "Q2"
+      question: "Where does ownership live in the data? The api-v1 Group and Task models carry no owner field"
+      why_it_matters: "rules.yaml requires that every task route check ownership and that an ownership test prove user A cannot reach user B's task — neither is expressible against api-v1 as frozen. This is the same decision as Q1 and cannot be settled separately"
+      blocks: "B1"
+
+    - id: "Q3"
+      question: "What does sync mean in the one_liner — sync between devices, offline and later reconciliation, or simply that the server is the single source?"
+      why_it_matters: "It appears in the product identity but in no goal, no contract, and no task, so nothing currently builds it"
+      blocks: "nothing yet"

@@ -1,3 +1,12 @@
+meta:
+  path: "develop/develop.yaml"
+  path_note: "The address of this file — layer 4, the index of the build layer"
+  purpose: "Build layer index — which items exist, the file template of each item, the shape of a task, and the contracts between them"
+  scope_note: "This file holds no task — a task lives in its item's task.yaml, and its status lives in state.yaml"
+  agent_may_edit: false
+  updated: "2026-08-24"
+
+
 items:
 
   backend:
@@ -16,10 +25,11 @@ items:
 
 
 item_files:
-  rule: "Every item has exactly these four files, no more and no fewer"
+  rule: "Every item has exactly these two files, no more and no fewer"
   files:
     definition.yaml: "What this item does, with what technology, and its own specifics"
     task.yaml: "Task groups and tasks, step by step"
+  no_item_rules: "An item has no rules file — every rule lives in the global rules.yaml"
 
 item_read_order:
   - "definition.yaml"
@@ -27,17 +37,20 @@ item_read_order:
 
 
 task_schema:
-  rule: "Every task in task.yaml carries exactly these fields, including its status"
+  rule: "Every task in task.yaml carries exactly these fields"
   fields:
     id: "Identifier unique within this item's task.yaml — for example 0001; each item numbers its own tasks"
     title: "The task in one sentence"
     goal: "What becomes possible after this task that was not possible before"
     depends_on: "Ids of tasks in the same item — depending on another item is forbidden"
-    needs_contract: "The contract version required — used instead of depending on another item's task"
+    needs_contract: "The contract version required — used instead of depending on another item's task; omitted when the task needs none"
     acceptance: "Human-readable acceptance criterion — what must actually work"
     verify: "A runnable command that proves acceptance — without it a task is never done"
-    touches: "Paths inside code_path that this task touches"
-    status: "Current task state"
+    touches: "Paths this task touches, written relative to the item's code_path"
+  status_is_not_a_field: "Status is never written in task.yaml — task.yaml defines the task, state.yaml records where it stands"
+
+task_states:
+  path: "state.yaml — under tasks, keyed by item and task id"
   states:
     todo: "Defined, not started"
     claimed: "An agent has taken it and is working on it"
@@ -47,7 +60,7 @@ task_schema:
     superseded: "Replaced by another task — the successor id is recorded"
   derived_ready: "ready is not a stored status — a task is ready when it is todo and all of its depends_on are done"
   done_gate: "Without a passing verify run, no task becomes done — even if the code is written"
-  claim_protocol: "Before starting, set the status to claimed and record it immediately — so two agents never take the same task"
+  claim_protocol: "Before starting, set the status to claimed in state.yaml and record it immediately — so two agents never take the same task"
 
 
 shared:
@@ -59,6 +72,7 @@ shared:
       frozen: "Final — the consuming item may define tasks against it"
       deprecated: "Obsolete — replaced by a newer version"
     change_rule: "A frozen contract never changes — a new version is created instead"
+    coverage_rule: "A task may only name a contract that exists — a task needing a surface no contract provides is blocked, not written against a guess"
 
 
 boundaries:

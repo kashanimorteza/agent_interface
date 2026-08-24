@@ -4,7 +4,7 @@ meta:
   purpose: "Rules governing agent behavior — security and quality, both in this file"
   completeness: "A rule that is not in this file is not a rule"
   reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
-  item_rules_exception: "The rules.yaml inside each item is writable — per the mode permissions in root.yaml"
+  no_item_rules: "An item has no rules file of its own — every rule is here, and an item's specifics live in its definition.yaml"
   agent_may_edit: false
   updated: "2026-08-24"
 

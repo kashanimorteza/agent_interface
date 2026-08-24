@@ -1,12 +1,22 @@
 meta:
   path: "develop/backend/definition.yaml"
   path_note: "The address of this file — the develop layer, backend item"
+  item: "backend"
+  layer: 4
   purpose: "Settings and structure of the backend — which technologies it is built with, and how its code is laid out"
   contains: "tech and code_layout — what has to be settled before a single line of backend code is written"
   role_defined_in: "the root definition.yaml, under architecture.parts.backend — what this item is responsible for and where its boundaries are"
   identity_defined_in: "develop/develop.yaml, under items.backend — its path, code_path, and summary"
-  agent_may_edit: false
+  agent_may_edit: true
+  editable_in_mode: "planning"
+  on_change_needed: "Do not change this in development mode — raise it with the human instead"
   updated: "2026-08-24"
+
+
+responsibility: "HTTP API — task and group logic, validation, and the database"
+
+code_path: "backend/"
+
 
 tech:
 
@@ -24,3 +34,37 @@ tech:
     storage: "A single file on disk — its path comes from configuration, never hardcoded"
     owned_by: "This item — the schema belongs to the backend and no other item reaches it"
     access: "Only through the ORM — a route never opens a connection of its own"
+
+  environment: "A virtual environment inside code_path — every command and every install happens inside it, and it is never committed"
+  run: "uvicorn app.main:app --reload"
+
+
+code_layout:
+  "app/main.py": "Entry point — the application object and the router registrations"
+  "app/config.py": "Configuration — the database path and every other setting, read from the environment"
+  "app/db/": "Engine and session — the only place a connection is opened"
+  "app/models/": "ORM models — the database schema in Python"
+  "app/schemas/": "Validation models — every API input and output is bound to one"
+  "app/services/": "Business logic — the only layer permitted to query the database"
+  "app/api/": "Routes — accept input, call a service, return output, nothing else"
+  "app/errors.py": "The uniform error shape and its handlers"
+  "migrations/": "Alembic — one migration per schema change, each with its downgrade"
+  "tests/": "Tests — mirror the structure of app/"
+
+
+contracts:
+  produces: "api-v1"
+  contract_path: "develop/shared/contracts/api-v1.yaml"
+  rule: "This item's implementation must match the frozen contract exactly — the contract is the promise, not a sketch"
+  change_rule: "api-v1 is frozen — a needed change means api-v2, and that is a human decision"
+
+
+boundaries:
+  owns: "All code inside backend/, and the whole database schema"
+  does_not_own: "Client code — not a single line"
+  interface: "The only thing this item promises the outside is the api-v1 contract"
+
+
+out_of_scope:
+  - "Rendering and user interface"
+  - "Deployment infrastructure and CI"

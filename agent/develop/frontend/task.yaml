@@ -4,12 +4,17 @@ meta:
   item: "frontend"
   layer: 4
   purpose: "Definition of the frontend tasks — what has to be done and in what order"
+  derived_from: "the root definition.yaml goals, the global rules.yaml, the api-v1 contract, and this item's definition.yaml"
   schema_source: "The shape of each task is defined in task_schema inside develop.yaml"
-  no_status_here: "Task status is not written here — this file holds the task definitions only"
+  states_source: "The status vocabulary is defined in task_states inside develop.yaml"
+  no_status_here: "Task status is not written here — it lives in state.yaml"
+  verify_cwd: "Every verify command runs from this item's code_path — frontend/"
+  touches_are_relative: "Every touches path is relative to code_path"
   cross_item_rule: "No task depends on a backend task — the only dependency is on the contract version, via needs_contract"
+  contract_gap: "No contract defines registration, login, or session — the tasks that need that surface name it plainly and are blocked in state.yaml rather than written against a guess"
+  change_in_development: "Changing the plan in development mode requires a recorded reason and human approval"
   agent_may_edit: true
   editable_in_mode: "planning"
-  change_in_development: "Changing the plan in development mode requires a recorded reason and human approval"
   updated: "2026-08-24"
 
 
@@ -26,7 +31,7 @@ groups:
         depends_on: []
         acceptance: "The build finishes without errors and a blank page comes up"
         verify: "npm run build && npm run test -- tests/smoke.test.tsx"
-        touches: ["frontend/src/main.tsx", "frontend/tests/smoke.test.tsx"]
+        touches: ["src/main.tsx", "tests/smoke.test.tsx"]
 
       - id: "0002"
         title: "Routing and base layout"
@@ -34,7 +39,7 @@ groups:
         depends_on: ["0001"]
         acceptance: "Each route renders its own page and an unknown route yields a 404 page"
         verify: "npm run test -- tests/routing.test.tsx"
-        touches: ["frontend/src/pages/", "frontend/src/main.tsx"]
+        touches: ["src/pages/", "src/main.tsx"]
 
   - id: "G2"
     title: "API communication layer"
@@ -45,70 +50,85 @@ groups:
         title: "Generate types and client from the contract"
         goal: "Every API call goes through a single typed layer"
         depends_on: ["0001"]
-        needs_contract: "api-v1 (draft is sufficient)"
+        needs_contract: "api-v1 (frozen)"
         acceptance: "Types are generated from the contract and every contract route has a client function"
         verify: "npm run test -- tests/api-client.test.ts"
-        touches: ["frontend/src/api/"]
+        touches: ["src/api/"]
 
       - id: "0004"
         title: "Error handling and network states"
         goal: "Every request covers the three states: loading, error, and empty"
         depends_on: ["0003"]
-        acceptance: "A network error yields a comprehensible message and a 401 response clears the session"
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "The three fields of the contract error shape are read rather than guessed at, a network error yields a comprehensible message, and an unexpected status is reported without exposing internals"
         verify: "npm run test -- tests/api-errors.test.ts"
-        touches: ["frontend/src/api/", "frontend/src/auth/"]
+        touches: ["src/api/"]
 
   - id: "G3"
     title: "Authentication"
     goal: "A user can register, log in, and log out"
+    blocked_note: "Every task in this group needs a registration, login, and session surface that no contract defines — see open question Q1 in state.yaml"
     tasks:
 
       - id: "0005"
         title: "Registration and login pages"
-        goal: "The user logs in through a form and the token is stored"
+        goal: "The user logs in through a form and the session is stored"
         depends_on: ["0002", "0004"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "A correct login goes to the tasks page; an incorrect login shows an error message"
+        needs_contract: "an authentication contract — none exists yet; api-v1 defines no registration, login, or session route"
+        acceptance: "A correct login goes to the tasks page; an incorrect login shows an error message that does not reveal whether the account exists"
         verify: "npm run test -- tests/auth-pages.test.tsx"
-        touches: ["frontend/src/pages/", "frontend/src/auth/"]
+        touches: ["src/pages/", "src/auth/"]
 
       - id: "0006"
         title: "Route protection and logout"
         goal: "Private routes are not reachable without a session"
         depends_on: ["0005"]
-        acceptance: "Visiting without a session redirects to the login page, and logging out clears the session"
+        needs_contract: "an authentication contract — none exists yet"
+        acceptance: "Visiting without a session redirects to the login page, logging out clears the session, and a 401 answer clears it too"
         verify: "npm run test -- tests/auth-guard.test.tsx"
-        touches: ["frontend/src/auth/"]
+        touches: ["src/auth/", "src/api/"]
 
   - id: "G4"
-    title: "Tasks page"
-    goal: "The user manages their own tasks"
+    title: "Groups and tasks"
+    goal: "The user manages their own groups and the tasks inside them"
+    contract_note: "api-v1 reaches a task only through its group — there is no route listing every task at once, so the group comes first"
     tasks:
 
-      - id: "0007"
-        title: "Task list"
-        goal: "The user's tasks are displayed"
+      - id: "0011"
+        title: "Group list and group management"
+        goal: "The user creates a group, renames it, deletes it, and selects one"
         depends_on: ["0006"]
         needs_contract: "api-v1 (frozen)"
-        acceptance: "The list loads and the empty state shows a helpful message"
+        acceptance: "A groups route exists and is protected; groups load and the empty state explains what to do; a new group appears immediately; a rename is saved; deleting warns that the tasks inside go with it"
+        verify: "npm run test -- tests/groups.test.tsx"
+        touches: ["src/pages/groups.tsx", "src/main.tsx", "src/components/"]
+
+      - id: "0007"
+        title: "Task list of the selected group"
+        goal: "The tasks of the selected group are displayed"
+        depends_on: ["0011"]
+        needs_contract: "api-v1 (frozen)"
+        acceptance: "The list loads for the selected group and the empty state shows a helpful message"
         verify: "npm run test -- tests/tasks-list.test.tsx"
-        touches: ["frontend/src/pages/tasks.tsx", "frontend/src/components/"]
+        touches: ["src/pages/tasks.tsx", "src/components/"]
 
       - id: "0008"
         title: "Create and edit a task"
         goal: "The user creates a task and changes its title"
         depends_on: ["0007"]
+        needs_contract: "api-v1 (frozen)"
         acceptance: "A new task appears in the list immediately and an edit is saved"
         verify: "npm run test -- tests/tasks-create-edit.test.tsx"
-        touches: ["frontend/src/pages/tasks.tsx", "frontend/src/components/"]
+        touches: ["src/pages/tasks.tsx", "src/components/"]
 
       - id: "0009"
         title: "Complete and delete a task"
         goal: "The user marks a task as done or deletes it"
         depends_on: ["0008"]
+        needs_contract: "api-v1 (frozen)"
         acceptance: "Status changes and deletions give immediate feedback and persist after a refresh"
         verify: "npm run test -- tests/tasks-complete-delete.test.tsx"
-        touches: ["frontend/src/pages/tasks.tsx", "frontend/src/components/"]
+        touches: ["src/pages/tasks.tsx", "src/components/"]
 
   - id: "G5"
     title: "User experience"
@@ -119,6 +139,7 @@ groups:
         title: "Session restoration and persistence"
         goal: "The user is still logged in after closing and reopening the browser"
         depends_on: ["0009"]
-        acceptance: "With a valid session, refreshing the page does not log the user out and the tasks remain"
+        needs_contract: "an authentication contract — none exists yet"
+        acceptance: "With a valid session, refreshing the page does not log the user out and the groups and tasks remain"
         verify: "npm run test -- tests/session-persistence.test.tsx"
-        touches: ["frontend/src/auth/"]
+        touches: ["src/auth/"]

@@ -31,6 +31,18 @@ structure:
     responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
     note: "For any work in this layer, read develop.yaml first"
 
+  state:
+    layer: 5
+    path: "state.yaml"
+    responsibility: "Current operational state — active mode, active item, task status, blockers, and open questions"
+    note: "Task status lives here and nowhere else — task.yaml defines tasks, state.yaml says where they stand"
+
+  history:
+    layer: 6
+    path: "history.yaml"
+    responsibility: "Sessions and decisions — the context that must survive an agent and a session"
+    note: "Append only — a past entry is never rewritten"
+
 
 read_order:
   enforcement: "Exactly this order — no less, no more"
@@ -48,5 +60,61 @@ read_order:
       read: "develop/develop.yaml"
       why: "Learn which items exist, the shape of a task, and the boundaries of the build layer"
     - step: 5
-      read: "Active item: definition.yaml → rules.yaml → task.yaml"
+      read: "state.yaml"
+      why: "Learn the active mode, the active item, and which tasks are already taken, blocked, or done"
+    - step: 6
+      read: "Active item: definition.yaml → task.yaml"
       why: "Understand the item you are working on — order comes from item_read_order in develop.yaml"
+  history_note: "history.yaml is not part of the read order — read it when the reason behind an existing decision is needed"
+
+
+modes:
+  rule: "Exactly one mode is active at a time — it is named in state.yaml under active.mode"
+  set_by: "The human — an agent never changes the active mode"
+
+  planning:
+    purpose: "Decide what will be built and in what order — no product code is written"
+    may_write:
+      - "develop/<item>/definition.yaml"
+      - "develop/<item>/task.yaml"
+      - "develop/shared/contracts/ — draft versions only"
+      - "state.yaml"
+      - "history.yaml"
+    may_not_write:
+      - "Any file under an item's code_path"
+      - "A frozen contract"
+      - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
+
+  development:
+    purpose: "Implement the tasks that planning defined"
+    may_write:
+      - "Files under the active item's code_path, limited to the touches of the claimed task"
+      - "state.yaml"
+      - "history.yaml"
+    may_not_write:
+      - "Another item's code_path"
+      - "A frozen contract"
+      - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
+    plan_change: "Changing a task in this mode requires a recorded reason in history.yaml and human approval — an agent never silently rewrites the plan it is executing"
+
+  review:
+    purpose: "Read the result and report — nothing is repaired in this mode"
+    may_write:
+      - "history.yaml"
+      - "state.yaml — blockers and open questions only"
+    may_not_write:
+      - "Anything else"
+
+
+write_protocol:
+  rule: "Every result is recorded in the file that owns it — an agent that writes nowhere has done nothing"
+  where:
+    task_status: "state.yaml — under tasks, keyed by item and task id"
+    blocker: "state.yaml — under blockers, with the task id and what is actually missing"
+    open_question: "state.yaml — under open_questions, addressed to the human"
+    decision: "history.yaml — under decisions, with the reason, not only the outcome"
+    session: "history.yaml — under sessions, one entry per session"
+  claim_protocol: "Before starting, set the task to claimed in state.yaml and write it immediately — so two agents never take the same task"
+  done_gate: "A task becomes done only after its verify has been run and passed — the code being written is not the gate"
+  blocked_protocol: "On a blocker, set the task to blocked, state what is missing to the human, and stop — an agent never invents its way past a missing contract or a missing decision"
+  agent_may_edit_field: "Every file carries agent_may_edit in its meta — false means the human owns it, and an agent that wants it changed raises it instead"

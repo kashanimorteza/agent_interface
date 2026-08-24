@@ -1,0 +1,54 @@
+meta:
+  path: "history.yaml"
+  path_note: "The address of this file — layer 6, the record"
+  purpose: "Sessions and decisions — the context that must survive an agent and a session"
+  scope_note: "Nothing here is current state — state.yaml holds what is true now, this file holds how it got that way"
+  append_only: "A past entry is never rewritten — a decision that turns out wrong is superseded by a new entry, not edited"
+  agent_may_edit: true
+  editable_in_mode: "planning, development, and review"
+  updated: "2026-08-24"
+
+
+decisions:
+
+  - id: "D1"
+    date: "2026-08-24"
+    decision: "Task status moved out of task.yaml and into state.yaml"
+    reason: "task_schema listed status as a task field while both task.yaml files declared no_status_here, so the claim protocol had nowhere to write. The layer that moves is now separate from the layer that defines"
+    decided_by: "human"
+
+  - id: "D2"
+    date: "2026-08-24"
+    decision: "An item has no rules.yaml of its own"
+    reason: "rules.yaml claimed a per-item rules file as a writable exception, develop.yaml allowed an item only two files, and root.yaml's read order named a third that never existed. Every rule now lives in the global rules.yaml, and item specifics live in the item's definition.yaml"
+    decided_by: "human"
+
+  - id: "D3"
+    date: "2026-08-24"
+    decision: "The frontend reaches a task only through its group, so group management precedes the task list"
+    reason: "api-v1 offers no route listing every task at once — only /groups/{group_id}/tasks. The plan had a task list with no way to choose a group, and no task covered the first product goal at all"
+    decided_by: "agent, from the frozen contract"
+
+  - id: "D4"
+    date: "2026-08-24"
+    decision: "Authentication was not planned around, invented, or written into api-v1 — it was raised as a blocker"
+    reason: "api-v1 is frozen and defines no auth surface, while the goals and the security rules require one. develop.yaml forbids a task against a contract that does not exist, and boundaries.contract_change requires a frozen contract's gap to go to the human. Recorded as B1, Q1, and Q2 in state.yaml"
+    decided_by: "agent, per rules"
+
+
+sessions:
+
+  - id: "S1"
+    date: "2026-08-24"
+    mode: "planning"
+    agent: "claude-opus-5"
+    did:
+      - "Read the interface in the order root.yaml defines and checked every file against every other"
+      - "Filled the two sections root.yaml promised but never carried — modes and write_protocol — and registered state.yaml and history.yaml as layers 5 and 6"
+      - "Added the architecture section that root.yaml and backend/definition.yaml both pointed at and that did not exist"
+      - "Wrote the backend task plan — ten tasks over six groups, each with a verify command; the file previously held a header and no task"
+      - "Corrected the frontend plan — touches paths made relative to code_path, group management added, task list re-pointed behind it"
+      - "Recorded D1 through D4 above and opened B1, Q1, Q2, and Q3 in state.yaml"
+    left_for_human:
+      - "Q1 and Q2 — the authentication and ownership decision, which blocks three frontend tasks and everything behind them"
+      - "Q3 — what sync means"
