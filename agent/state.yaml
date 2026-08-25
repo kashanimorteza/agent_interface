@@ -1,12 +1,12 @@
 meta:
   path: "state.yaml"
   path_note: "The address of this file — layer 5, the operational state"
-  purpose: "Where the project actually stands right now — active mode, active item, task status, blockers, and open questions"
-  scope_note: "This file holds no definition and no rule — only the present state of things defined elsewhere"
-  reason: "task.yaml defines a task and never moves; state.yaml is the only thing that moves"
+  purpose: "The project-wide state — active mode, active item, blockers, and open questions"
+  scope_note: "This file holds no definition, no rule, and no task status — the status of a task lives on the task itself, in its item's task.yaml"
+  reason: "Only what belongs to no single task lives here — per-task state travels with the task, so definition and status can never drift apart"
   agent_may_edit: true
   editable_in_mode: "planning, development, and review — review may write blockers and open questions only"
-  updated: "2026-08-24"
+  updated: "2026-08-25"
 
 
 active:
@@ -16,46 +16,14 @@ active:
   set_by: "human"
 
 
-tasks:
-  note: "Every task defined in an item's task.yaml appears here exactly once — a task absent from this list has no status and cannot be worked"
-
-  backend:
-    "0001": { status: "todo" }
-    "0002": { status: "todo" }
-    "0003": { status: "todo" }
-    "0004": { status: "todo" }
-    "0005": { status: "todo" }
-    "0006": { status: "todo" }
-    "0007": { status: "todo" }
-    "0008": { status: "todo" }
-    "0009": { status: "todo" }
-    "0010": { status: "todo" }
-
-  frontend:
-    "0001": { status: "todo" }
-    "0002": { status: "todo" }
-    "0003": { status: "todo" }
-    "0004": { status: "todo" }
-    "0005": { status: "blocked", blocker: "B1" }
-    "0006": { status: "blocked", blocker: "B1" }
-    "0011": { status: "todo" }
-    "0007": { status: "todo" }
-    "0008": { status: "todo" }
-    "0009": { status: "todo" }
-    "0010": { status: "blocked", blocker: "B1" }
-
-
-ready:
-  note: "ready is derived, not stored — a task is ready when it is todo and all of its depends_on are done. Listed here for the reader only"
-  backend: ["0001"]
-  frontend: ["0001"]
-  frontend_note: "Frontend 0011 through 0009 are todo but not reachable — they sit behind 0006, which is blocked by B1"
+task_status:
+  note: "Not stored here — every task carries its own status field in its item's task.yaml, and a blocked task names its blocker id there. This file only defines the blockers those ids point to"
 
 
 blockers:
 
   - id: "B1"
-    tasks: ["frontend/0005", "frontend/0006", "frontend/0010"]
+    blocks: "The frontend authentication surface — the tasks for it cannot even be written, because develop.yaml forbids writing a task against a contract that does not exist"
     what_is_missing: "A contract defining registration, login, logout, and session. api-v1 is frozen and contains no such route, and develop.yaml forbids writing a task against a contract that does not exist"
     consequence: "Authentication cannot be built, and everything behind it — the whole of frontend G4 and G5 — cannot be reached"
     decision_belongs_to: "human"

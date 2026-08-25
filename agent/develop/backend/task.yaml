@@ -7,14 +7,14 @@ meta:
   derived_from: "the root definition.yaml goals, the global rules.yaml, the api-v1 contract, and this item's definition.yaml"
   schema_source: "The shape of each task is defined in task_schema inside develop.yaml"
   states_source: "The status vocabulary is defined in task_states inside develop.yaml"
-  no_status_here: "Task status is not written here — it lives in state.yaml"
+  status_lives_here: "Every task carries its own status field — this file both defines the task and says where it stands; there is no separate status list"
   verify_cwd: "Every verify command runs from this item's code_path — backend/ — inside its virtual environment"
   touches_are_relative: "Every touches path is relative to code_path"
   contract_gap: "api-v1 defines no registration, login, session, or owner field, while the root goals and the security rules require per-user ownership — no task here is written against that missing surface; it is recorded as an open question in state.yaml"
-  change_in_development: "Changing a task in development mode requires a recorded reason and human approval"
+  change_in_development: "Changing a task in development mode requires the reason written into that task's log and human approval"
   agent_may_edit: true
-  editable_in_mode: "planning"
-  updated: "2026-08-24"
+  editable_in_mode: "planning — in development, only the status, blocker, and log fields of a task may change"
+  updated: "2026-08-25"
 
 groups:
 
@@ -30,6 +30,7 @@ groups:
         acceptance: "A venv exists inside backend/, FastAPI, SQLAlchemy, Alembic, and pytest import from inside it, and the venv is ignored by git"
         verify: "python -c \"import fastapi, sqlalchemy, alembic, pytest\""
         touches: ["requirements.txt", ".gitignore"]
+        status: "todo"
 
       - id: "0002"
         title: "Application object and health route"
@@ -39,6 +40,7 @@ groups:
         acceptance: "GET /health answers 200 with exactly {status, service}"
         verify: "pytest tests/test_health.py"
         touches: ["app/main.py", "tests/test_health.py"]
+        status: "todo"
 
   - id: "G2"
     title: "Configuration and connection"
@@ -52,6 +54,7 @@ groups:
         acceptance: "The database path is read from an environment variable, has a default outside the repository, and is never a literal anywhere else"
         verify: "pytest tests/test_config.py"
         touches: ["app/config.py", "tests/test_config.py"]
+        status: "todo"
 
       - id: "0004"
         title: "Engine, session, and foreign keys"
@@ -60,6 +63,7 @@ groups:
         acceptance: "One module owns the engine and session; a row inserted with a missing parent is refused, proving the FK pragma runs on every connection"
         verify: "pytest tests/test_db_session.py"
         touches: ["app/db/", "tests/test_db_session.py"]
+        status: "todo"
 
   - id: "G3"
     title: "Schema"
@@ -74,6 +78,7 @@ groups:
         acceptance: "The model matches the api-v1 Group; upgrade then downgrade then upgrade runs clean"
         verify: "alembic upgrade head && alembic downgrade base && alembic upgrade head && pytest tests/test_model_group.py"
         touches: ["app/models/group.py", "migrations/", "tests/test_model_group.py"]
+        status: "todo"
 
       - id: "0006"
         title: "Task model and its migration"
@@ -83,6 +88,7 @@ groups:
         acceptance: "The model matches the api-v1 Task; group_id is an indexed foreign key; deleting a group deletes its tasks; the migration downgrades clean"
         verify: "alembic upgrade head && pytest tests/test_model_task.py"
         touches: ["app/models/task.py", "migrations/", "tests/test_model_task.py"]
+        status: "todo"
 
   - id: "G4"
     title: "Validation"
@@ -97,6 +103,7 @@ groups:
         acceptance: "The group input enforces name 1 to 120; the output serializes created_at as ISO 8601 UTC"
         verify: "pytest tests/test_schema_group.py"
         touches: ["app/schemas/group.py", "tests/test_schema_group.py"]
+        status: "todo"
 
       - id: "0008"
         title: "Task schemas"
@@ -106,6 +113,7 @@ groups:
         acceptance: "The create input enforces title 1 to 200; the patch input accepts title, done, or both and refuses an empty body; done defaults to false on create"
         verify: "pytest tests/test_schema_task.py"
         touches: ["app/schemas/task.py", "tests/test_schema_task.py"]
+        status: "todo"
 
   - id: "G5"
     title: "Error surface"
@@ -120,6 +128,7 @@ groups:
         acceptance: "Every non-2xx body has exactly code, message, details; a missing id gives 404 not_found; an unknown route gives http_error"
         verify: "pytest tests/test_errors_basic.py"
         touches: ["app/errors.py", "app/main.py", "tests/test_errors_basic.py"]
+        status: "todo"
 
       - id: "0010"
         title: "invalid_input and internal_error"
@@ -129,6 +138,7 @@ groups:
         acceptance: "A failed validation gives 422 invalid_input with details.fields listing field and problem; an unhandled exception gives 500 internal_error with empty details and nothing internal exposed"
         verify: "pytest tests/test_errors_input.py"
         touches: ["app/errors.py", "tests/test_errors_input.py"]
+        status: "todo"
 
   - id: "G6"
     title: "Group logic"
@@ -142,6 +152,7 @@ groups:
         acceptance: "Create returns the stored group with a server-assigned id; list is ordered by id and empty when there are none"
         verify: "pytest tests/test_group_service_create_list.py"
         touches: ["app/services/groups.py", "tests/test_group_service_create_list.py"]
+        status: "todo"
 
       - id: "0012"
         title: "Read, rename, and delete a group"
@@ -150,6 +161,7 @@ groups:
         acceptance: "Read and rename work by id; a missing id raises the not-found error; deleting a group deletes every task inside it"
         verify: "pytest tests/test_group_service_change.py"
         touches: ["app/services/groups.py", "tests/test_group_service_change.py"]
+        status: "todo"
 
   - id: "G7"
     title: "Group routes"
@@ -164,6 +176,7 @@ groups:
         acceptance: "POST answers 201 with a Group, GET answers 200 with an array, a bad name gives invalid_input, and neither route touches the database directly"
         verify: "pytest tests/test_group_routes_create_list.py"
         touches: ["app/api/groups.py", "app/main.py", "tests/test_group_routes_create_list.py"]
+        status: "todo"
 
       - id: "0014"
         title: "Read, rename, and delete group routes"
@@ -173,6 +186,7 @@ groups:
         acceptance: "GET answers 200, PATCH answers 200, DELETE answers 204 with no body, and a missing id gives not_found on all three"
         verify: "pytest tests/test_group_routes_one.py"
         touches: ["app/api/groups.py", "tests/test_group_routes_one.py"]
+        status: "todo"
 
   - id: "G8"
     title: "Task logic"
@@ -186,6 +200,7 @@ groups:
         acceptance: "Create stores the task under its group with done false; create under a missing group raises the not-found error; list is scoped to one group, ordered by id, and empty when the group has none"
         verify: "pytest tests/test_task_service_create_list.py"
         touches: ["app/services/tasks.py", "tests/test_task_service_create_list.py"]
+        status: "todo"
 
       - id: "0016"
         title: "Read, change, and delete a task"
@@ -194,6 +209,7 @@ groups:
         acceptance: "Read works by id; a patch changes title, done, or both; delete removes the task; a missing id raises the not-found error on all three"
         verify: "pytest tests/test_task_service_change.py"
         touches: ["app/services/tasks.py", "tests/test_task_service_change.py"]
+        status: "todo"
 
   - id: "G9"
     title: "Task routes"
@@ -208,6 +224,7 @@ groups:
         acceptance: "POST answers 201 with a Task, GET answers 200 with an array, a missing group gives not_found, and a bad title gives invalid_input"
         verify: "pytest tests/test_task_routes_create_list.py"
         touches: ["app/api/tasks.py", "app/main.py", "tests/test_task_routes_create_list.py"]
+        status: "todo"
 
       - id: "0018"
         title: "Read, patch, and delete task routes"
@@ -217,6 +234,7 @@ groups:
         acceptance: "GET answers 200, PATCH answers 200 for title, done, and both, DELETE answers 204 with no body, and a missing id gives not_found on all three"
         verify: "pytest tests/test_task_routes_one.py"
         touches: ["app/api/tasks.py", "tests/test_task_routes_one.py"]
+        status: "todo"
 
   - id: "G10"
     title: "Conformance"
@@ -231,3 +249,4 @@ groups:
         acceptance: "Every route, every success code, and every error code named in api-v1 is exercised at least once, against a test database rather than the development one"
         verify: "pytest tests/test_contract_v1.py"
         touches: ["tests/test_contract_v1.py"]
+        status: "todo"
