@@ -4,21 +4,45 @@ meta:
   path_note: "Layer 1, the entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
   version: "1.0"
-  agent_may_edit: true
   updated: "2026-08-25"
 
 
-# <!--------------------------------------------------------------------------------- Rules -->
-rules:
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
   rule: "This file holds no write protocol for results — every other file carries its own write rules, scoped to what that file owns"
   by_mode: "What may be written where is decided per mode — see content.modes — never here"
   on_change_needed: "A wanted change to the read order, the layers, or the modes is raised with the human, never applied by an agent"
 
 
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  enforcement: "Exactly this order — no less, no more"
+  steps:
+    - step: 1
+      read: "root.yaml"
+      why: "This file — read protocol and working modes; the write rules of each file are read with that file, under its own policy section"
+    - step: 2
+      read: "definition.yaml"
+      why: "Understand what product is being built"
+    - step: 3
+      read: "rules.yaml"
+      why: "Read in full — every rule lives here and security overrides everything"
+    - step: 4
+      read: "develop/develop.yaml"
+      why: "Learn which items exist, the shape of a task, and the boundaries of the build layer"
+    - step: 5
+      read: "state.yaml"
+      why: "Learn the active mode, the active item, the blockers, and the open questions"
+    - step: 6
+      read: "Active item: definition.yaml → task.yaml"
+      why: "Understand the item you are working on and where each of its tasks stands — order comes from read_order in develop.yaml"
+  no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its own log field"
+
+
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   structure: "The files of the interface — the layer, path, and responsibility of each"
-  read_order: "The order those files are read in — exactly, no less, no more"
   modes: "The working modes — planning, development, review — and what each may write"
 
 
@@ -56,30 +80,6 @@ content:
       path: "state.yaml"
       responsibility: "Project-wide state — active mode, active item, blockers, and open questions"
       note: "Task status does not live here — every task carries its own status field in its item's task.yaml"
-
-
-  read_order:
-    enforcement: "Exactly this order — no less, no more"
-    steps:
-      - step: 1
-        read: "root.yaml"
-        why: "This file — read protocol and working modes; the write rules of each file are read with that file, under its own rules section"
-      - step: 2
-        read: "definition.yaml"
-        why: "Understand what product is being built"
-      - step: 3
-        read: "rules.yaml"
-        why: "Read in full — every rule lives here and security overrides everything"
-      - step: 4
-        read: "develop/develop.yaml"
-        why: "Learn which items exist, the shape of a task, and the boundaries of the build layer"
-      - step: 5
-        read: "state.yaml"
-        why: "Learn the active mode, the active item, the blockers, and the open questions"
-      - step: 6
-        read: "Active item: definition.yaml → task.yaml"
-        why: "Understand the item you are working on and where each of its tasks stands — order comes from read_order in develop.yaml"
-    no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its own log field"
 
 
   modes:

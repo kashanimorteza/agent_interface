@@ -4,7 +4,8 @@ schema:
 
 structure:
   - meta
-  - rules
+  - policy
+  - read_order
   - content_map
   - content
 
@@ -21,10 +22,16 @@ sections:
         path_note:
           required: true
           purpose: "Explains the location, layer, and role of the file."
-  # <!--------------------------------------------------------------------------------- Rules -->
-  rules:
+          
+  # <!--------------------------------------------------------------------------------- Policy -->
+  policy:
     required: true
-    purpose: "Rules for reading, interpreting, and modifying the file."
+    purpose: "Rules and policy for reading, interpreting, and modifying the file."
+
+  # <!--------------------------------------------------------------------------------- Read_Order -->
+  read_order:
+    required: true
+    purpose: "The order the content sections are read in, and why."
 
   # <!--------------------------------------------------------------------------------- Content_Map -->
   content_map:

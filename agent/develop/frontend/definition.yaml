@@ -1,18 +1,37 @@
+# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "develop/frontend/definition.yaml"
   path_note: "The address of this file — the develop layer, frontend item"
   item: "frontend"
   layer: 4
   purpose: "Definition of the frontend item — what it does, with which technologies, and where its boundaries are"
-  role_defined_in: "the root definition.yaml, under architecture.parts.frontend — what this item is responsible for and where its boundaries are"
-  identity_defined_in: "develop/develop.yaml, under structure.items.frontend — its path, code_path, and summary"
-  agent_may_edit: true
-  editable_in_mode: "planning"
-  on_change_needed: "Do not change this in development mode — raise it with the human instead"
+  role_defined_in: "the root definition.yaml, under content.architecture.parts.frontend — what this item is responsible for and where its boundaries are"
+  identity_defined_in: "develop/develop.yaml, under content.items.frontend — its path, code_path, and summary"
   updated: "2026-08-25"
 
 
-structure:
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning"
+  rule: "Written in planning mode only — tech and boundaries are settled before a line of frontend code exists"
+  in_development: "Never written — a needed change to the technology or the layout is recorded in the affected task's log and raised with the human"
+  contract: "The frontend consumes api-v1 and never writes a contract — a missing surface is a blocker in state.yaml, not a change here"
+  boundaries_note: "responsibility, code_path, and boundaries mirror the root definition.yaml and develop.yaml — they are not rewritten here to say something different"
+  on_change_needed: "Do not change this in development mode — raise it with the human instead"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "responsibility and code_path — know what the item is and where it lives"
+  - "tech — know what it is built with before reading a single task"
+  - "code_layout — know where a task's touches land"
+  - "contracts and boundaries — know what it may use and where it stops"
+  - "out_of_scope — know what not to build"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
   responsibility: "What this item is for, in one line — mirrors the root definition.yaml"
   code_path: "Where its code lives — mirrors develop.yaml"
   tech: "The language, framework, and tooling it is built with"
@@ -22,67 +41,54 @@ structure:
   out_of_scope: "What no task here will ever do"
 
 
-read_order:
-  - "responsibility and code_path — know what the item is and where it lives"
-  - "tech — know what it is built with before reading a single task"
-  - "code_layout — know where a task's touches land"
-  - "contracts and boundaries — know what it may use and where it stops"
-  - "out_of_scope — know what not to build"
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  responsibility: "Web client — user interface for login, registration, and task management"
+
+  code_path: "frontend/"
 
 
-rules:
-  write_protocol:
-    rule: "Written in planning mode only — tech and boundaries are settled before a line of frontend code exists"
-    in_development: "Never written — a needed change to the technology or the layout is recorded in the affected task's log and raised with the human"
-    contract: "The frontend consumes api-v1 and never writes a contract — a missing surface is a blocker in state.yaml, not a change here"
-    boundaries: "responsibility, code_path, and boundaries mirror the root definition.yaml and develop.yaml — they are not rewritten here to say something different"
+  tech:
+
+    language:
+      name: "TypeScript"
+      frameworks:
+        ui: "React — components and rendering"
+        build: "Vite — dev server and bundling"
+        routing: "React Router — one route per page"
+        test: "Vitest + Testing Library — test runner and component testing"
+
+    database:
+      engine: "none — this item never touches a database; all data arrives through api-v1"
+
+    state: "Server state via a request cache; local state via React's own hooks"
+    run: "npm run dev"
 
 
-responsibility: "Web client — user interface for login, registration, and task management"
-
-code_path: "frontend/"
-
-
-tech:
-
-  language:
-    name: "TypeScript"
-    frameworks:
-      ui: "React — components and rendering"
-      build: "Vite — dev server and bundling"
-      routing: "React Router — one route per page"
-      test: "Vitest + Testing Library — test runner and component testing"
-
-  database:
-    engine: "none — this item never touches a database; all data arrives through api-v1"
-
-  state: "Server state via a request cache; local state via React's own hooks"
-  run: "npm run dev"
+  code_layout:
+    "src/main.tsx": "Entry point"
+    "src/api/": "API client — the only layer that talks to the network"
+    "src/pages/": "Pages — one file per route"
+    "src/components/": "Reusable components"
+    "src/auth/": "Session handling and route protection"
+    "tests/": "Tests — mirror the structure of src/"
 
 
-code_layout:
-  "src/main.tsx": "Entry point"
-  "src/api/": "API client — the only layer that talks to the network"
-  "src/pages/": "Pages — one file per route"
-  "src/components/": "Reusable components"
-  "src/auth/": "Session handling and route protection"
-  "tests/": "Tests — mirror the structure of src/"
+  contracts:
+    consumes: "api-v1"
+    contract_path: "develop/shared/contracts/api-v1.yaml"
+    rule: "Tasks in this item depend on the contract version, not on backend tasks"
+    before_frozen: "Until the contract is frozen, work proceeds against mock data derived from that same contract"
 
 
-contracts:
-  consumes: "api-v1"
-  contract_path: "develop/shared/contracts/api-v1.yaml"
-  rule: "Tasks in this item depend on the contract version, not on backend tasks"
-  before_frozen: "Until the contract is frozen, work proceeds against mock data derived from that same contract"
+  boundaries:
+    owns: "All code inside frontend/"
+    does_not_own: "Backend code and the database schema — not a single line"
+    interface: "The only way to communicate with the backend is the api-v1 contract"
 
 
-boundaries:
-  owns: "All code inside frontend/"
-  does_not_own: "Backend code and the database schema — not a single line"
-  interface: "The only way to communicate with the backend is the api-v1 contract"
-
-
-out_of_scope:
-  - "Server-side business logic and final validation"
-  - "Direct database access"
-  - "Deployment infrastructure and CI"
+  out_of_scope:
+    - "Server-side business logic and final validation"
+    - "Direct database access"
+    - "Deployment infrastructure and CI"

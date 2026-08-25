@@ -1,3 +1,4 @@
+# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "develop/frontend/task.yaml"
   path_note: "The address of this file — the develop layer, frontend item"
@@ -5,41 +6,44 @@ meta:
   layer: 4
   purpose: "Definition of the frontend tasks — what has to be done and in what order"
   derived_from: "the root definition.yaml goals, the global rules.yaml, the api-v1 contract, and this item's definition.yaml"
-  schema_source: "The shape of each task is defined in develop.yaml, under rules.task_schema"
-  states_source: "The status vocabulary is defined in develop.yaml, under rules.task_states"
+  schema_source: "The shape of each task is defined in develop.yaml, under content.task_schema"
+  states_source: "The status vocabulary is defined in develop.yaml, under content.task_states"
   status_lives_here: "Every task carries its own status field — this file both defines the task and says where it stands; there is no separate status list"
   verify_cwd: "Every verify command runs from this item's code_path — frontend/"
   touches_are_relative: "Every touches path is relative to code_path"
   cross_item_rule: "No task depends on a backend task — the only dependency is on the contract version, via needs_contract"
   contract_gap: "No contract defines registration, login, or session — the tasks that need that surface name it plainly and are blocked in state.yaml rather than written against a guess"
-  change_in_development: "Changing the plan in development mode requires the reason written into that task's log and human approval"
-  agent_may_edit: true
-  editable_in_mode: "planning — in development, only the status, blocker, and log fields of a task may change"
+  points_to: "develop/shared/contracts/api-v1.yaml — the only contract a task here may name in needs_contract"
   updated: "2026-08-25"
 
 
-structure:
-  groups: "Empty — no frontend group is written yet; the tasks that would need registration, login, and session are blocked by B1 in state.yaml, and the rest wait on the same decision"
-  task: "Every task carries the fields of task_schema in develop.yaml — status and log included, so this file is both plan and state"
-  points_to: "develop/shared/contracts/api-v1.yaml — the only contract a task here may name in needs_contract"
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning — in development, only the status, blocker, and log fields of a task may change"
+  rule: "Every result about a frontend task is recorded here, on the task itself — an agent that writes nowhere has done nothing"
+  task_status: "The status field on the task — the one field that moves; a blocked task also names its blocker id from state.yaml"
+  claim_protocol: "Before starting, set the task's status to claimed and write this file immediately — so two agents never take the same task"
+  done_gate: "A task becomes done only after its verify has been run and passed from inside frontend/ — the code being written is not the gate"
+  blocked_protocol: "On a blocker, set the task to blocked, name the blocker id, state what is missing in state.yaml, and stop — a task needing a surface no contract provides is blocked, never written against a guess"
+  decision: "A decision about a task goes into that task's log with its date and reason — a decision the human must still make is an open question in state.yaml, not a log entry"
+  log: "Append-only — a past entry is never rewritten"
+  plan_change: "In development mode the plan fields of a task change only with the reason written into its log and human approval; in planning mode the plan may be written freely, but a task never depends on a backend task — only on a contract version"
 
 
+# <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "groups in order, first group first — a later group assumes the earlier ones are done"
   - "inside a group, tasks by id — depends_on names what must be done before, and is the actual order when it disagrees"
   - "for each task, status before anything else — a task that is not todo is not yours to start"
 
 
-rules:
-  write_protocol:
-    rule: "Every result about a frontend task is recorded here, on the task itself — an agent that writes nowhere has done nothing"
-    task_status: "The status field on the task — the one field that moves; a blocked task also names its blocker id from state.yaml"
-    claim_protocol: "Before starting, set the task's status to claimed and write this file immediately — so two agents never take the same task"
-    done_gate: "A task becomes done only after its verify has been run and passed from inside frontend/ — the code being written is not the gate"
-    blocked_protocol: "On a blocker, set the task to blocked, name the blocker id, state what is missing in state.yaml, and stop — a task needing a surface no contract provides is blocked, never written against a guess"
-    decision: "A decision about a task goes into that task's log with its date and reason — a decision the human must still make is an open question in state.yaml, not a log entry"
-    log: "Append-only — a past entry is never rewritten"
-    plan_change: "In development mode the plan fields of a task change only with the reason written into its log and human approval; in planning mode the plan may be written freely, but a task never depends on a backend task — only on a contract version"
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  groups: "Empty — no frontend group is written yet; the tasks that would need registration, login, and session are blocked by B1 in state.yaml, and the rest wait on the same decision"
 
 
-groups: []
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  groups: []

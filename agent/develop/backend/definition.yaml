@@ -1,3 +1,4 @@
+# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "develop/backend/definition.yaml"
   path_note: "The address of this file — the develop layer, backend item"
@@ -5,15 +6,33 @@ meta:
   layer: 4
   purpose: "Settings and structure of the backend — which technologies it is built with, and how its code is laid out"
   contains: "tech and code_layout — what has to be settled before a single line of backend code is written"
-  role_defined_in: "the root definition.yaml, under architecture.parts.backend — what this item is responsible for and where its boundaries are"
-  identity_defined_in: "develop/develop.yaml, under structure.items.backend — its path, code_path, and summary"
-  agent_may_edit: true
-  editable_in_mode: "planning"
-  on_change_needed: "Do not change this in development mode — raise it with the human instead"
+  role_defined_in: "the root definition.yaml, under content.architecture.parts.backend — what this item is responsible for and where its boundaries are"
+  identity_defined_in: "develop/develop.yaml, under content.items.backend — its path, code_path, and summary"
   updated: "2026-08-25"
 
 
-structure:
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning"
+  rule: "Written in planning mode only — tech and code_layout are settled before a line of backend code exists"
+  in_development: "Never written — a needed change to the technology or the layout is recorded in the affected task's log and raised with the human"
+  contract: "api-v1 is not changed from here — a needed surface means a new contract version, and that is a human decision"
+  boundaries_note: "responsibility, code_path, and boundaries mirror the root definition.yaml and develop.yaml — they are not rewritten here to say something different"
+  on_change_needed: "Do not change this in development mode — raise it with the human instead"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "responsibility and code_path — know what the item is and where it lives"
+  - "tech — know what it is built with before reading a single task"
+  - "code_layout — know where a task's touches land"
+  - "contracts and boundaries — know what it promises and where it stops"
+  - "out_of_scope — know what not to build"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
   responsibility: "What this item is for, in one line — mirrors the root definition.yaml"
   code_path: "Where its code lives — mirrors develop.yaml"
   tech: "The language, framework, database, and tooling it is built with"
@@ -23,74 +42,61 @@ structure:
   out_of_scope: "What no task here will ever do"
 
 
-read_order:
-  - "responsibility and code_path — know what the item is and where it lives"
-  - "tech — know what it is built with before reading a single task"
-  - "code_layout — know where a task's touches land"
-  - "contracts and boundaries — know what it promises and where it stops"
-  - "out_of_scope — know what not to build"
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  responsibility: "HTTP API — task and group logic, validation, and the database"
+
+  code_path: "backend/"
 
 
-rules:
-  write_protocol:
-    rule: "Written in planning mode only — tech and code_layout are settled before a line of backend code exists"
-    in_development: "Never written — a needed change to the technology or the layout is recorded in the affected task's log and raised with the human"
-    contract: "api-v1 is not changed from here — a needed surface means a new contract version, and that is a human decision"
-    boundaries: "responsibility, code_path, and boundaries mirror the root definition.yaml and develop.yaml — they are not rewritten here to say something different"
+  tech:
+
+    language:
+      name: "Python"
+      version: "3.12"
+      frameworks:
+        api: "FastAPI — HTTP layer, routing, and request validation"
+        orm: "SQLAlchemy — data models and queries"
+        migrations: "Alembic — schema changes, one migration per change"
+        test: "pytest — test runner"
+
+    database:
+      engine: "SQLite"
+      storage: "A single file on disk — its path comes from configuration, never hardcoded"
+      owned_by: "This item — the schema belongs to the backend and no other item reaches it"
+      access: "Only through the ORM — a route never opens a connection of its own"
+
+    environment: "A virtual environment inside code_path — every command and every install happens inside it, and it is never committed"
+    run: "uvicorn app.main:app --reload"
 
 
-responsibility: "HTTP API — task and group logic, validation, and the database"
-
-code_path: "backend/"
-
-
-tech:
-
-  language:
-    name: "Python"
-    version: "3.12"
-    frameworks:
-      api: "FastAPI — HTTP layer, routing, and request validation"
-      orm: "SQLAlchemy — data models and queries"
-      migrations: "Alembic — schema changes, one migration per change"
-      test: "pytest — test runner"
-
-  database:
-    engine: "SQLite"
-    storage: "A single file on disk — its path comes from configuration, never hardcoded"
-    owned_by: "This item — the schema belongs to the backend and no other item reaches it"
-    access: "Only through the ORM — a route never opens a connection of its own"
-
-  environment: "A virtual environment inside code_path — every command and every install happens inside it, and it is never committed"
-  run: "uvicorn app.main:app --reload"
+  code_layout:
+    "app/main.py": "Entry point — the application object and the router registrations"
+    "app/config.py": "Configuration — the database path and every other setting, read from the environment"
+    "app/db/": "Engine and session — the only place a connection is opened"
+    "app/models/": "ORM models — the database schema in Python"
+    "app/schemas/": "Validation models — every API input and output is bound to one"
+    "app/services/": "Business logic — the only layer permitted to query the database"
+    "app/api/": "Routes — accept input, call a service, return output, nothing else"
+    "app/errors.py": "The uniform error shape and its handlers"
+    "migrations/": "Alembic — one migration per schema change, each with its downgrade"
+    "tests/": "Tests — mirror the structure of app/"
 
 
-code_layout:
-  "app/main.py": "Entry point — the application object and the router registrations"
-  "app/config.py": "Configuration — the database path and every other setting, read from the environment"
-  "app/db/": "Engine and session — the only place a connection is opened"
-  "app/models/": "ORM models — the database schema in Python"
-  "app/schemas/": "Validation models — every API input and output is bound to one"
-  "app/services/": "Business logic — the only layer permitted to query the database"
-  "app/api/": "Routes — accept input, call a service, return output, nothing else"
-  "app/errors.py": "The uniform error shape and its handlers"
-  "migrations/": "Alembic — one migration per schema change, each with its downgrade"
-  "tests/": "Tests — mirror the structure of app/"
+  contracts:
+    produces: "api-v1"
+    contract_path: "develop/shared/contracts/api-v1.yaml"
+    rule: "This item's implementation must match the frozen contract exactly — the contract is the promise, not a sketch"
+    change_rule: "api-v1 is frozen — a needed change means api-v2, and that is a human decision"
 
 
-contracts:
-  produces: "api-v1"
-  contract_path: "develop/shared/contracts/api-v1.yaml"
-  rule: "This item's implementation must match the frozen contract exactly — the contract is the promise, not a sketch"
-  change_rule: "api-v1 is frozen — a needed change means api-v2, and that is a human decision"
+  boundaries:
+    owns: "All code inside backend/, and the whole database schema"
+    does_not_own: "Client code — not a single line"
+    interface: "The only thing this item promises the outside is the api-v1 contract"
 
 
-boundaries:
-  owns: "All code inside backend/, and the whole database schema"
-  does_not_own: "Client code — not a single line"
-  interface: "The only thing this item promises the outside is the api-v1 contract"
-
-
-out_of_scope:
-  - "Rendering and user interface"
-  - "Deployment infrastructure and CI"
+  out_of_scope:
+    - "Rendering and user interface"
+    - "Deployment infrastructure and CI"

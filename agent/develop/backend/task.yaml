@@ -1,3 +1,4 @@
+# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "develop/backend/task.yaml"
   path_note: "The address of this file — the develop layer, backend item"
@@ -5,283 +6,42 @@ meta:
   layer: 4
   purpose: "Definition of the backend tasks — what has to be done and in what order"
   derived_from: "the root definition.yaml goals, the global rules.yaml, the api-v1 contract, and this item's definition.yaml"
-  schema_source: "The shape of each task is defined in develop.yaml, under rules.task_schema"
-  states_source: "The status vocabulary is defined in develop.yaml, under rules.task_states"
+  schema_source: "The shape of each task is defined in develop.yaml, under content.task_schema"
+  states_source: "The status vocabulary is defined in develop.yaml, under content.task_states"
   status_lives_here: "Every task carries its own status field — this file both defines the task and says where it stands; there is no separate status list"
   verify_cwd: "Every verify command runs from this item's code_path — backend/ — inside its virtual environment"
   touches_are_relative: "Every touches path is relative to code_path"
   contract_gap: "api-v1 defines no registration, login, session, or owner field, while the root goals and the security rules require per-user ownership — no task here is written against that missing surface; it is recorded as an open question in state.yaml"
-  change_in_development: "Changing a task in development mode requires the reason written into that task's log and human approval"
-  agent_may_edit: true
-  editable_in_mode: "planning — in development, only the status, blocker, and log fields of a task may change"
+  points_to: "develop/shared/contracts/api-v1.yaml — the contract most tasks name in needs_contract"
   updated: "2026-08-25"
 
 
-structure:
-  groups: "Ten groups, G1 to G10, each a step the next one stands on — every task lives inside exactly one group"
-  map:
-    G1: "Environment"
-    G2: "Configuration and connection"
-    G3: "Schema"
-    G4: "Validation"
-    G5: "Error surface"
-    G6: "Group logic"
-    G7: "Group routes"
-    G8: "Task logic"
-    G9: "Task routes"
-    G10: "Conformance"
-  task: "Every task carries the fields of task_schema in develop.yaml — status and log included, so this file is both plan and state"
-  points_to: "develop/shared/contracts/api-v1.yaml — the contract most tasks name in needs_contract"
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning — in development, only the status, blocker, and log fields of a task may change"
+  rule: "Every result about a backend task is recorded here, on the task itself — an agent that writes nowhere has done nothing"
+  task_status: "The status field on the task — the one field that moves; a blocked task also names its blocker id from state.yaml"
+  claim_protocol: "Before starting, set the task's status to claimed and write this file immediately — so two agents never take the same task"
+  done_gate: "A task becomes done only after its verify has been run and passed from inside backend/ and its virtual environment — the code being written is not the gate"
+  blocked_protocol: "On a blocker, set the task to blocked, name the blocker id, state what is missing in state.yaml, and stop — an agent never invents its way past a missing contract or a missing decision"
+  decision: "A decision about a task goes into that task's log with its date and reason — a decision the human must still make is an open question in state.yaml, not a log entry"
+  log: "Append-only — a past entry is never rewritten"
+  plan_change: "In development mode the plan fields of a task change only with the reason written into its log and human approval; in planning mode the plan may be written freely, but never against a contract that does not exist"
 
 
+# <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "groups in order, G1 first — a later group assumes the earlier ones are done"
   - "inside a group, tasks by id — depends_on names what must be done before, and is the actual order when it disagrees"
   - "for each task, status before anything else — a task that is not todo is not yours to start"
 
 
-rules:
-  write_protocol:
-    rule: "Every result about a backend task is recorded here, on the task itself — an agent that writes nowhere has done nothing"
-    task_status: "The status field on the task — the one field that moves; a blocked task also names its blocker id from state.yaml"
-    claim_protocol: "Before starting, set the task's status to claimed and write this file immediately — so two agents never take the same task"
-    done_gate: "A task becomes done only after its verify has been run and passed from inside backend/ and its virtual environment — the code being written is not the gate"
-    blocked_protocol: "On a blocker, set the task to blocked, name the blocker id, state what is missing in state.yaml, and stop — an agent never invents its way past a missing contract or a missing decision"
-    decision: "A decision about a task goes into that task's log with its date and reason — a decision the human must still make is an open question in state.yaml, not a log entry"
-    log: "Append-only — a past entry is never rewritten"
-    plan_change: "In development mode the plan fields of a task change only with the reason written into its log and human approval; in planning mode the plan may be written freely, but never against a contract that does not exist"
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  group_titles: "Quick lookup from group id to its title"
+  groups: "Ten groups, G1 to G10, each a step the next one stands on — every task lives inside exactly one group"
 
-groups:
 
-  - id: "G1"
-    title: "Environment"
-    goal: "A place to run — nothing more"
-    tasks:
-
-      - id: "0001"
-        title: "Virtual environment and dependencies"
-        goal: "The item has an isolated interpreter with every dependency in it"
-        depends_on: []
-        acceptance: "A venv exists inside backend/, FastAPI, SQLAlchemy, Alembic, and pytest import from inside it, and the venv is ignored by git"
-        verify: "python -c \"import fastapi, sqlalchemy, alembic, pytest\""
-        touches: ["requirements.txt", ".gitignore"]
-        status: "todo"
-
-      - id: "0002"
-        title: "Application object and health route"
-        goal: "The service starts and answers"
-        depends_on: ["0001"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "GET /health answers 200 with exactly {status, service}"
-        verify: "pytest tests/test_health.py"
-        touches: ["app/main.py", "tests/test_health.py"]
-        status: "todo"
-
-  - id: "G2"
-    title: "Configuration and connection"
-    goal: "Settings come from outside and every connection is opened one way"
-    tasks:
-
-      - id: "0003"
-        title: "Configuration from the environment"
-        goal: "No setting is hardcoded"
-        depends_on: ["0001"]
-        acceptance: "The database path is read from an environment variable, has a default outside the repository, and is never a literal anywhere else"
-        verify: "pytest tests/test_config.py"
-        touches: ["app/config.py", "tests/test_config.py"]
-        status: "todo"
-
-      - id: "0004"
-        title: "Engine, session, and foreign keys"
-        goal: "Every connection is opened in one place, with foreign keys on"
-        depends_on: ["0003"]
-        acceptance: "One module owns the engine and session; a row inserted with a missing parent is refused, proving the FK pragma runs on every connection"
-        verify: "pytest tests/test_db_session.py"
-        touches: ["app/db/", "tests/test_db_session.py"]
-        status: "todo"
-
-  - id: "G3"
-    title: "Schema"
-    goal: "The two tables exist and can move forward and back"
-    tasks:
-
-      - id: "0005"
-        title: "Group model and its migration"
-        goal: "The groups table exists"
-        depends_on: ["0004"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "The model matches the api-v1 Group; upgrade then downgrade then upgrade runs clean"
-        verify: "alembic upgrade head && alembic downgrade base && alembic upgrade head && pytest tests/test_model_group.py"
-        touches: ["app/models/group.py", "migrations/", "tests/test_model_group.py"]
-        status: "todo"
-
-      - id: "0006"
-        title: "Task model and its migration"
-        goal: "The tasks table exists and belongs to a group"
-        depends_on: ["0005"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "The model matches the api-v1 Task; group_id is an indexed foreign key; deleting a group deletes its tasks; the migration downgrades clean"
-        verify: "alembic upgrade head && pytest tests/test_model_task.py"
-        touches: ["app/models/task.py", "migrations/", "tests/test_model_task.py"]
-        status: "todo"
-
-  - id: "G4"
-    title: "Validation"
-    goal: "No raw input ever reaches a service"
-    tasks:
-
-      - id: "0007"
-        title: "Group schemas"
-        goal: "Every group body and response has a shape"
-        depends_on: ["0001"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "The group input enforces name 1 to 120; the output serializes created_at as ISO 8601 UTC"
-        verify: "pytest tests/test_schema_group.py"
-        touches: ["app/schemas/group.py", "tests/test_schema_group.py"]
-        status: "todo"
-
-      - id: "0008"
-        title: "Task schemas"
-        goal: "Every task body and response has a shape"
-        depends_on: ["0001"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "The create input enforces title 1 to 200; the patch input accepts title, done, or both and refuses an empty body; done defaults to false on create"
-        verify: "pytest tests/test_schema_task.py"
-        touches: ["app/schemas/task.py", "tests/test_schema_task.py"]
-        status: "todo"
-
-  - id: "G5"
-    title: "Error surface"
-    goal: "Every failure answers in one shape"
-    tasks:
-
-      - id: "0009"
-        title: "Error shape, not_found, and http_error"
-        goal: "A missing thing and an unknown route both answer in the contract shape"
-        depends_on: ["0002"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "Every non-2xx body has exactly code, message, details; a missing id gives 404 not_found; an unknown route gives http_error"
-        verify: "pytest tests/test_errors_basic.py"
-        touches: ["app/errors.py", "app/main.py", "tests/test_errors_basic.py"]
-        status: "todo"
-
-      - id: "0010"
-        title: "invalid_input and internal_error"
-        goal: "Bad input and a crash both answer in the contract shape"
-        depends_on: ["0009"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "A failed validation gives 422 invalid_input with details.fields listing field and problem; an unhandled exception gives 500 internal_error with empty details and nothing internal exposed"
-        verify: "pytest tests/test_errors_input.py"
-        touches: ["app/errors.py", "tests/test_errors_input.py"]
-        status: "todo"
-
-  - id: "G6"
-    title: "Group logic"
-    goal: "Group behavior lives in one service, outside any route"
-    tasks:
-
-      - id: "0011"
-        title: "Create and list groups"
-        goal: "A group can come into being and be found"
-        depends_on: ["0006", "0007"]
-        acceptance: "Create returns the stored group with a server-assigned id; list is ordered by id and empty when there are none"
-        verify: "pytest tests/test_group_service_create_list.py"
-        touches: ["app/services/groups.py", "tests/test_group_service_create_list.py"]
-        status: "todo"
-
-      - id: "0012"
-        title: "Read, rename, and delete a group"
-        goal: "A single group can be addressed and changed"
-        depends_on: ["0011"]
-        acceptance: "Read and rename work by id; a missing id raises the not-found error; deleting a group deletes every task inside it"
-        verify: "pytest tests/test_group_service_change.py"
-        touches: ["app/services/groups.py", "tests/test_group_service_change.py"]
-        status: "todo"
-
-  - id: "G7"
-    title: "Group routes"
-    goal: "The group half of api-v1 is reachable over HTTP"
-    tasks:
-
-      - id: "0013"
-        title: "Create and list group routes"
-        goal: "POST /groups and GET /groups answer"
-        depends_on: ["0010", "0012"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "POST answers 201 with a Group, GET answers 200 with an array, a bad name gives invalid_input, and neither route touches the database directly"
-        verify: "pytest tests/test_group_routes_create_list.py"
-        touches: ["app/api/groups.py", "app/main.py", "tests/test_group_routes_create_list.py"]
-        status: "todo"
-
-      - id: "0014"
-        title: "Read, rename, and delete group routes"
-        goal: "GET, PATCH, and DELETE on one group answer"
-        depends_on: ["0013"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "GET answers 200, PATCH answers 200, DELETE answers 204 with no body, and a missing id gives not_found on all three"
-        verify: "pytest tests/test_group_routes_one.py"
-        touches: ["app/api/groups.py", "tests/test_group_routes_one.py"]
-        status: "todo"
-
-  - id: "G8"
-    title: "Task logic"
-    goal: "Task behavior lives in one service, outside any route"
-    tasks:
-
-      - id: "0015"
-        title: "Create and list tasks in a group"
-        goal: "A task can come into being inside a group and be found there"
-        depends_on: ["0006", "0008"]
-        acceptance: "Create stores the task under its group with done false; create under a missing group raises the not-found error; list is scoped to one group, ordered by id, and empty when the group has none"
-        verify: "pytest tests/test_task_service_create_list.py"
-        touches: ["app/services/tasks.py", "tests/test_task_service_create_list.py"]
-        status: "todo"
-
-      - id: "0016"
-        title: "Read, change, and delete a task"
-        goal: "A single task can be addressed and changed"
-        depends_on: ["0015"]
-        acceptance: "Read works by id; a patch changes title, done, or both; delete removes the task; a missing id raises the not-found error on all three"
-        verify: "pytest tests/test_task_service_change.py"
-        touches: ["app/services/tasks.py", "tests/test_task_service_change.py"]
-        status: "todo"
-
-  - id: "G9"
-    title: "Task routes"
-    goal: "The task half of api-v1 is reachable over HTTP"
-    tasks:
-
-      - id: "0017"
-        title: "Create and list task routes"
-        goal: "POST and GET under /groups/{group_id}/tasks answer"
-        depends_on: ["0014", "0016"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "POST answers 201 with a Task, GET answers 200 with an array, a missing group gives not_found, and a bad title gives invalid_input"
-        verify: "pytest tests/test_task_routes_create_list.py"
-        touches: ["app/api/tasks.py", "app/main.py", "tests/test_task_routes_create_list.py"]
-        status: "todo"
-
-      - id: "0018"
-        title: "Read, patch, and delete task routes"
-        goal: "GET, PATCH, and DELETE on one task answer"
-        depends_on: ["0017"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "GET answers 200, PATCH answers 200 for title, done, and both, DELETE answers 204 with no body, and a missing id gives not_found on all three"
-        verify: "pytest tests/test_task_routes_one.py"
-        touches: ["app/api/tasks.py", "tests/test_task_routes_one.py"]
-        status: "todo"
-
-  - id: "G10"
-    title: "Conformance"
-    goal: "The promise and the implementation are proven to agree"
-    tasks:
-
-      - id: "0019"
-        title: "api-v1 conformance sweep"
-        goal: "Nothing in the contract is claimed without a test behind it"
-        depends_on: ["0018"]
-        needs_contract: "api-v1 (frozen)"
-        acceptance: "Every route, every success code, and every error code named in api-v1 is exercised at least once, against a test database rather than the development one"
-        verify: "pytest tests/test_contract_v1.py"
-        touches: ["tests/test_contract_v1.py"]
-        status: "todo"
+# <!--------------------------------------------------------------------------------- Content -->
+content:

@@ -1,64 +1,69 @@
+# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "definition.yaml"
   path_note: "The address of this file — layer 2, the product definition"
   purpose: "Product definition — what is being built and why"
   scope_note: "This file states the what, not the how — the how lives in rules.yaml and develop.yaml"
   reason: "The product definition is a human decision, not an agent inference"
-  agent_may_edit: false
   updated: "2026-08-25"
 
 
-structure:
-  identity: "Who the product is — id, name, and the one-liner that names its promise"
-  goals: "What a user can do when the product is finished — the list every task traces back to"
-  architecture: "The parts of the product, what each owns, and the single connection point between them"
-  points_to: "develop/shared/contracts/ — where the connection between the parts is written"
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "An agent never writes this file — identity, goals, and architecture are human decisions"
+  on_gap: "A goal that no contract can satisfy is not fixed here — it is raised as an open question in state.yaml"
+  on_change_needed: "A wanted change to the product definition is raised with the human, never applied"
 
 
+# <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "identity — know what is being built"
   - "goals — know what must become possible"
   - "architecture — know which part owns what, and that the contract is the only bridge"
 
 
-rules:
-  write_protocol:
-    rule: "An agent never writes this file — identity, goals, and architecture are human decisions"
-    on_gap: "A goal that no contract can satisfy is not fixed here — it is raised as an open question in state.yaml"
-    on_change_needed: "A wanted change to the product definition is raised with the human, never applied"
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  identity: "Who the product is — id, name, and the one-liner that names its promise"
+  goals: "What a user can do when the product is finished — the list every task traces back to"
+  architecture: "The parts of the product, what each owns, and the single connection point between them"
 
 
-identity:
-  id: "todo-app"
-  name: "Todo App"
-  one_liner: "A web application for managing daily tasks, with user accounts and sync."
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  identity:
+    id: "todo-app"
+    name: "Todo App"
+    one_liner: "A web application for managing daily tasks, with user accounts and sync."
 
 
-goals:
-  - "A user can create a group of tasks"
-  - "A user can create, edit, complete, and delete tasks"
-  - "A user registers, logs in, and sees only their own groups and tasks"
+  goals:
+    - "A user can create a group of tasks"
+    - "A user can create, edit, complete, and delete tasks"
+    - "A user registers, logs in, and sees only their own groups and tasks"
 
 
-architecture:
-  shape: "Two independent parts — a web client and an HTTP API — joined only by a versioned contract"
-  reason: "Each part is built and verified on its own, so an agent working in one never has to read the other"
+  architecture:
+    shape: "Two independent parts — a web client and an HTTP API — joined only by a versioned contract"
+    reason: "Each part is built and verified on its own, so an agent working in one never has to read the other"
 
-  parts:
+    parts:
 
-    backend:
-      responsibility: "The HTTP API, the task and user logic, and the database"
-      owns: "The API implementation and the whole database schema"
-      does_not_own: "Anything the user sees — not one line of the client"
-      produces: "The contracts under develop/shared/contracts/"
+      backend:
+        responsibility: "The HTTP API, the task and user logic, and the database"
+        owns: "The API implementation and the whole database schema"
+        does_not_own: "Anything the user sees — not one line of the client"
+        produces: "The contracts under develop/shared/contracts/"
 
-    frontend:
-      responsibility: "The web client — the user interface for registration, login, and task management"
-      owns: "All client code"
-      does_not_own: "Business logic, final validation, and the database"
-      consumes: "The contracts under develop/shared/contracts/"
+      frontend:
+        responsibility: "The web client — the user interface for registration, login, and task management"
+        owns: "All client code"
+        does_not_own: "Business logic, final validation, and the database"
+        consumes: "The contracts under develop/shared/contracts/"
 
-  connection:
-    path: "develop/shared/contracts/"
-    rule: "The contract is the only connection point — no part reaches into the other by any other route"
-    versioning: "A frozen contract never changes — a change means a new version"
+    connection:
+      path: "develop/shared/contracts/"
+      rule: "The contract is the only connection point — no part reaches into the other by any other route"
+      versioning: "A frozen contract never changes — a change means a new version"

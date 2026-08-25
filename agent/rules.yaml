@@ -1,3 +1,4 @@
+# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "rules.yaml"
   path_note: "The address of this file — layer 3, the global rules"
@@ -5,35 +6,40 @@ meta:
   completeness: "A rule that is not in this file is not a rule"
   reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
   no_item_rules: "An item has no rules file of its own — every rule is here, and an item's specifics live in its definition.yaml"
-  agent_may_edit: false
   updated: "2026-08-25"
 
 
-structure:
-  rules: "Every global rule, grouped by area — the groups below are the whole of it"
-  groups:
-    write_protocol: "How this file itself is written — by nobody but the human"
-    environment: "Where code runs — the virtual environment"
-    code: "How code is shaped — services, routes, validation, errors"
-    database: "How the schema moves — migrations, indexes, SQLite specifics"
-    security: "What must never leak — passwords, sessions, ownership"
-    test: "What must be proven — routes, databases, ownership"
-    contract: "How the API surface and its contract stay in step"
-    design: "How the interface is drawn — the drawio pages and their exports"
-  precedence: "security overrides everything — when two rules collide, the security rule wins"
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "An agent never writes this file — a rule is a boundary, and an agent never moves its own boundary"
+  on_conflict: "A rule that cannot be satisfied is not relaxed here — the affected task is set to blocked and the conflict is raised in state.yaml"
+  on_change_needed: "A missing or wrong rule is raised with the human as an open question, never added or edited by an agent"
 
 
+# <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "All of it, in full — no group is skipped, because a rule that is not read is still a rule"
   - "security first, then the group of the work at hand, then the rest"
 
 
-rules:
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  precedence: "Which rule wins when two collide"
+  environment: "Where code runs — the virtual environment"
+  code: "How code is shaped — services, routes, validation, errors"
+  database: "How the schema moves — migrations, indexes, SQLite specifics"
+  security: "What must never leak — passwords, sessions, ownership"
+  test: "What must be proven — routes, databases, ownership"
+  contract: "How the API surface and its contract stay in step"
+  design: "How the interface is drawn — the drawio pages and their exports"
 
-  write_protocol:
-    rule: "An agent never writes this file — a rule is a boundary, and an agent never moves its own boundary"
-    on_conflict: "A rule that cannot be satisfied is not relaxed here — the affected task is set to blocked and the conflict is raised in state.yaml"
-    on_change_needed: "A missing or wrong rule is raised with the human as an open question, never added or edited by an agent"
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  precedence: "security overrides everything — when two rules collide, the security rule wins"
+
 
   environment:
     - "All Python work happens inside the item's virtual environment — never the system interpreter"
