@@ -1,12 +1,12 @@
 meta:
   path: "rules.yaml"
   path_note: "The address of this file — layer 3, the global rules"
-  purpose: "Rules governing agent behavior — security and quality, both in this file"
+  purpose: "Rules governing agent behavior — security, quality, and design, all in this file"
   completeness: "A rule that is not in this file is not a rule"
   reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
   no_item_rules: "An item has no rules file of its own — every rule is here, and an item's specifics live in its definition.yaml"
   agent_may_edit: false
-  updated: "2026-08-24"
+  updated: "2026-08-25"
 
 
 environment:
@@ -49,3 +49,14 @@ test:
 contract:
   - "Changing the API surface without updating the contract is forbidden"
   - "A frozen contract does not change — create a new version"
+
+
+design:
+  - "Every design lives as a page in design/file.drawio — one page per interface file, named after the file without its extension"
+  - "A page shows only the main items of its file — the top-level keys — as plain boxes, with no explanation text"
+  - "Every page follows the design of the main page: one colored header bar carrying the name, and boxes of the same size, font, and spacing beneath it"
+  - "Names in headers and boxes never carry a file extension"
+  - "No item in a design may overlap or sit underneath another item"
+  - "Every PNG export has the dark theme, a transparent background, and shadows on — all three, every time"
+  - "Shadows are set on each cell's style, never on the page — a page-level shadow breaks the export"
+  - "An exported PNG sits next to the design file and is named after its page — design/<page>.png"

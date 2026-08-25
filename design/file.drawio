@@ -4,26 +4,49 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="1FFHodW2KaH3quC9297W-1" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;" value="Project" vertex="1">
+        <mxCell id="1FFHodW2KaH3quC9297W-1" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="Project" vertex="1">
           <mxGeometry height="60" width="120" x="-670" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="1FFHodW2KaH3quC9297W-2" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;" value="Rule" vertex="1">
+        <mxCell id="1FFHodW2KaH3quC9297W-2" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="Rule" vertex="1">
           <mxGeometry height="60" width="120" x="-540" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="1FFHodW2KaH3quC9297W-3" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;" value="Develop" vertex="1">
+        <mxCell id="1FFHodW2KaH3quC9297W-3" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="Develop" vertex="1">
           <mxGeometry height="60" width="120" x="-410" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="1FFHodW2KaH3quC9297W-4" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;" value="Root" vertex="1">
+        <mxCell id="1FFHodW2KaH3quC9297W-4" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="Root" vertex="1">
           <mxGeometry height="60" width="120" x="-800" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="1FFHodW2KaH3quC9297W-5" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;" value="History" vertex="1">
+        <mxCell id="1FFHodW2KaH3quC9297W-5" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="History" vertex="1">
           <mxGeometry height="60" width="120" x="-150" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="1FFHodW2KaH3quC9297W-8" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;" value="State" vertex="1">
+        <mxCell id="1FFHodW2KaH3quC9297W-8" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="State" vertex="1">
           <mxGeometry height="60" width="120" x="-280" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="1FFHodW2KaH3quC9297W-13" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;fontColor=#ffffff;fillColor=#008a00;strokeColor=#005700;" value="AI Agent" vertex="1">
+        <mxCell id="1FFHodW2KaH3quC9297W-13" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;fontColor=#ffffff;fillColor=#008a00;strokeColor=#005700;shadow=1;" value="AI Agent" vertex="1">
           <mxGeometry height="60" width="770" x="-800" y="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="rootStructPage0001" name="root">
+    <mxGraphModel dx="2084" dy="884" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rootpg-bar" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;fontColor=#ffffff;fillColor=#008a00;strokeColor=#005700;shadow=1;" value="Root" vertex="1">
+          <mxGeometry height="60" width="510" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rootpg-s1" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="Structure" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rootpg-s2" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="Read Order" vertex="1">
+          <mxGeometry height="60" width="120" x="170" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rootpg-s3" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="Modes" vertex="1">
+          <mxGeometry height="60" width="120" x="300" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rootpg-s4" parent="1" style="whiteSpace=wrap;html=1;fontSize=20;shadow=1;" value="Write Protocol" vertex="1">
+          <mxGeometry height="60" width="120" x="430" y="110" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
