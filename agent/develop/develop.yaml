@@ -19,7 +19,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  this_file: "items and shared — know the items and the contracts; task_schema, task_states, contracts, and boundaries — know the shape of a task, its states, and its limits"
+  this_file: "items and shared — know the items and the contracts; plan_structure, task_schema, task_states, contracts, and boundaries — know the shape of a plan, the shape of a task, its states, and its limits"
   item: "Inside an item, in exactly this order"
   item_files:
     - "definition.yaml"
@@ -32,6 +32,7 @@ content_map:
   items: "The build items that exist — backend and frontend — their paths and summaries"
   item_files: "The exactly two files every item has, and what each holds"
   shared: "The shared contracts directory — the only permitted connection point between items"
+  plan_structure: "The three-level shape of every plan — phases, groups inside a phase, tasks inside a group — with the schema of a phase and a group, the sizing, and the granularity rule"
   task_schema: "The fields every task in every item's task.yaml carries"
   task_states: "The status vocabulary a task's status field may hold"
   contracts: "How a contract may change, and what a task may name in needs_contract"
@@ -62,7 +63,7 @@ content:
     rule: "Every item has exactly these two files, no more and no fewer"
     files:
       definition.yaml: "What this item does, with what technology, and its own specifics"
-      task.yaml: "Task groups and tasks, step by step"
+      task.yaml: "The item's plan — phases, groups inside each phase, tasks inside each group, per plan_structure"
     no_item_rules: "An item has no rules file — every rule lives in the global rules.yaml"
 
 
@@ -75,6 +76,39 @@ content:
         frozen: "Final — the consuming item may define tasks against it"
         deprecated: "Obsolete — replaced by a newer version"
 
+
+  plan_structure:
+    rule: "Every plan in a task.yaml has exactly three levels — phases at the top, groups inside a phase, tasks inside a group; a task never sits directly in a phase, and nothing sits outside a phase"
+
+    phase_schema:
+      purpose: "A phase is one stage of the build — the plan moves phase by phase, and a later phase assumes the earlier ones are done"
+      fields:
+        id: "P1, P2, ... — numbered in build order, unique within the item"
+        title: "The stage in a few words"
+        does: "What this phase accomplishes — what exists at its end that did not exist at its start"
+        groups: "The groups of this phase — every task of the phase lives inside exactly one of them"
+
+    group_schema:
+      purpose: "A group is one area of work inside a phase — related tasks side by side"
+      fields:
+        id: "P1-G1, P1-G2, ... — the phase id plus a group number, unique within the item"
+        title: "The area in a few words"
+        does: "What this group of tasks is doing, and what is true when all of them are done"
+        task_count: "How many tasks the group holds — stated on the group so the size is visible without counting"
+        tasks: "The tasks of this group, each per task_schema"
+
+    sizing:
+      phases: "About ten phases per item — one per build stage, in the order the stages are built"
+      groups_per_phase: "About five to ten groups per phase — one per area of work"
+      tasks_per_group: "Five, ten, up to twenty tasks per group — as many as the area truly needs, never padded and never squeezed"
+
+    granularity:
+      rule: "A task is one concrete act, never something general — it names the file it creates or the piece it changes, and one sitting finishes it"
+      examples:
+        - "Creating a main file and writing its first content — one task"
+        - "An API with several modules — each module is its own task, never one task called 'build the API'"
+        - "A model, its migration, its schema, its service, its route, its test — each its own task, never one task called 'the tasks feature'"
+      test: "If a task's title needs the word 'and' more than once, or its touches spans unrelated files, it is too big — split it"
 
   task_schema:
     rule: "Every task in task.yaml carries exactly these fields"

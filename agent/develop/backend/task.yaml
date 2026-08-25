@@ -6,6 +6,7 @@ meta:
   layer: 4
   purpose: "Definition of the backend tasks — what has to be done and in what order"
   derived_from: "the root definition.yaml goals, the global rules.yaml, the api-v1 contract, and this item's definition.yaml"
+  plan_source: "The three-level shape of the plan — phases, groups, tasks — is defined in develop.yaml, under content.plan_structure"
   schema_source: "The shape of each task is defined in develop.yaml, under content.task_schema"
   states_source: "The status vocabulary is defined in develop.yaml, under content.task_states"
   creation_rule_source: "Whether and when a task may be written here is governed by develop.yaml, under policy.task_creation — no task is added speculatively"
@@ -33,17 +34,18 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "groups in order, G1 first — a later group assumes the earlier ones are done"
+  - "phases in order, P1 first — a later phase assumes the earlier ones are done"
+  - "inside a phase, its does line first, then its groups in order — each group's does says what its tasks accomplish together"
   - "inside a group, tasks by id — depends_on names what must be done before, and is the actual order when it disagrees"
   - "for each task, status before anything else — a task that is not todo is not yours to start"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  groups: "Empty — no backend group is written yet; per policy.task_creation in develop.yaml, tasks are created only when the human explicitly asks for them"
+  phases: "Empty — no backend phase is written yet; per policy.task_creation in develop.yaml, tasks are created only when the human explicitly asks for them, and then per plan_structure: phases, groups inside each phase, tasks inside each group"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  groups: []
+  phases: []

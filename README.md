@@ -37,7 +37,3 @@ Defines the development layer, including work items, their boundaries, plans, ru
 ### State
 
 Defines the current operational state of the project, including active mode, blockers, questions, and other runtime information.
-
-### History
-
-Records sessions, decisions, and other historical information required to preserve project context across agents and sessions.
