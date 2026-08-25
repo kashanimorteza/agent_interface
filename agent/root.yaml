@@ -9,47 +9,49 @@ meta:
   updated: "2026-08-25"
 
 
+rules:
+  write_protocol:
+    rule: "This file holds no write protocol for results — every file carries its own write rules, scoped to what that file owns"
+    by_mode: "Never written in planning, development, or review — see modes"
+
+
+content_map:
+  structure: "The files of the interface — the layer, path, and responsibility of each"
+  read_order: "The order in which those files are read — exactly, no less, no more"
+  modes: "The working modes — planning, development, review — and what each may write"
+
+
 structure:
+  
   root:
-    configuration:
-      layer: 1
-      path: "root.yaml"
-    settings:
-      responsibility: "Entry point — read protocol and working modes"
-      note: "The only file an agent finds without guidance"
-      no_write_protocol_here: "This file holds no write protocol — every file carries its own write rules, scoped to what that file owns"
+    layer: 1
+    path: "root.yaml"
+    responsibility: "Entry point — read protocol and working modes"
+    note: "The only file an agent finds without guidance"
 
   definition:
-    configuration:
-      layer: 2
-      path: "definition.yaml"
-    settings:
-      responsibility: "Product definition — identity, goals, and architecture"
-      note: "To understand what is being built, read definition.yaml"
+    layer: 2
+    path: "definition.yaml"
+    responsibility: "Product definition — identity, goals, and architecture"
+    note: "To understand what is being built, read definition.yaml"
 
   rules:
-    configuration:
-      layer: 3
-      path: "rules.yaml"
-    settings:
-      responsibility: "Rules governing agent behavior — security, quality, and their precedence"
-      note: "No rule lives anywhere else — read rules.yaml before doing anything"
+    layer: 3
+    path: "rules.yaml"
+    responsibility: "Rules governing agent behavior — security, quality, and their precedence"
+    note: "No rule lives anywhere else — read rules.yaml before doing anything"
 
   develop:
-    configuration:
-      layer: 4
-      path: "develop/develop.yaml"
-    settings:
-      responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
-      note: "For any work in this layer, read develop.yaml first"
+    layer: 4
+    path: "develop/develop.yaml"
+    responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
+    note: "For any work in this layer, read develop.yaml first"
 
   state:
-    configuration:
-      layer: 5
-      path: "state.yaml"
-    settings:
-      responsibility: "Project-wide state — active mode, active item, blockers, and open questions"
-      note: "Task status does not live here — every task carries its own status field in its item's task.yaml"
+    layer: 5
+    path: "state.yaml"
+    responsibility: "Project-wide state — active mode, active item, blockers, and open questions"
+    note: "Task status does not live here — every task carries its own status field in its item's task.yaml"
 
 
 read_order:
@@ -76,50 +78,38 @@ read_order:
   no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its log field"
 
 
-rules:
+modes:
+  rule: "Exactly one mode is active at a time — it is named in state.yaml under active.mode"
+  set_by: "The human — an agent never changes the active mode"
 
-  file_structure:
-    rule: "Every interface file has exactly these four top-level sections, in this order — a section with nothing to say is present and empty"
-    sections:
-      meta: "The file's own address, purpose, ownership (agent_may_edit), and date — never its content"
-      structure: "What the file holds or points to — the map of its content sections, with the layer and path of each file it references"
-      read_order: "The order in which the content of this file, and what it points to, is read"
-      rules: "The rules that govern this file — how it is written, by whom, in which mode, and what happens on a gap"
-    content: "Content sections — groups, blockers, routes, tech — come after the four, and are the ones structure describes"
-    reason: "An agent that knows the shape of one file knows the shape of all — nothing is searched for, everything is found in the same place"
+  planning:
+    purpose: "Decide what will be built and in what order — no product code is written"
+    may_write:
+      - "develop/<item>/definition.yaml"
+      - "develop/<item>/task.yaml"
+      - "develop/shared/contracts/ — draft versions only"
+      - "state.yaml"
+    may_not_write:
+      - "Any file under an item's code_path"
+      - "A frozen contract"
+      - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
 
-  modes:
-    rule: "Exactly one mode is active at a time — it is named in state.yaml under active.mode"
-    set_by: "The human — an agent never changes the active mode"
+  development:
+    purpose: "Implement the tasks that planning defined"
+    may_write:
+      - "Files under the active item's code_path, limited to the touches of the claimed task"
+      - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, never the plan"
+      - "state.yaml"
+    may_not_write:
+      - "Another item's code_path"
+      - "A frozen contract"
+      - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
+    plan_change: "Changing a task in this mode requires the reason written into that task's log and human approval — an agent never silently rewrites the plan it is executing"
 
-    planning:
-      purpose: "Decide what will be built and in what order — no product code is written"
-      may_write:
-        - "develop/<item>/definition.yaml"
-        - "develop/<item>/task.yaml"
-        - "develop/shared/contracts/ — draft versions only"
-        - "state.yaml"
-      may_not_write:
-        - "Any file under an item's code_path"
-        - "A frozen contract"
-        - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
-
-    development:
-      purpose: "Implement the tasks that planning defined"
-      may_write:
-        - "Files under the active item's code_path, limited to the touches of the claimed task"
-        - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, never the plan"
-        - "state.yaml"
-      may_not_write:
-        - "Another item's code_path"
-        - "A frozen contract"
-        - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
-      plan_change: "Changing a task in this mode requires the reason written into that task's log and human approval — an agent never silently rewrites the plan it is executing"
-
-    review:
-      purpose: "Read the result and report — nothing is repaired in this mode"
-      may_write:
-        - "state.yaml — blockers and open questions only"
-        - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, to mark it blocked and record what was found"
-      may_not_write:
-        - "Anything else"
+  review:
+    purpose: "Read the result and report — nothing is repaired in this mode"
+    may_write:
+      - "state.yaml — blockers and open questions only"
+      - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, to mark it blocked and record what was found"
+    may_not_write:
+      - "Anything else"
