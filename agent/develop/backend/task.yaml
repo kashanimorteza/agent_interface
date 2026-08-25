@@ -8,6 +8,7 @@ meta:
   derived_from: "the root definition.yaml goals, the global rules.yaml, the api-v1 contract, and this item's definition.yaml"
   schema_source: "The shape of each task is defined in develop.yaml, under content.task_schema"
   states_source: "The status vocabulary is defined in develop.yaml, under content.task_states"
+  creation_rule_source: "Whether and when a task may be written here is governed by develop.yaml, under policy.task_creation — no task is added speculatively"
   status_lives_here: "Every task carries its own status field — this file both defines the task and says where it stands; there is no separate status list"
   verify_cwd: "Every verify command runs from this item's code_path — backend/ — inside its virtual environment"
   touches_are_relative: "Every touches path is relative to code_path"
@@ -39,9 +40,10 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  group_titles: "Quick lookup from group id to its title"
-  groups: "Ten groups, G1 to G10, each a step the next one stands on — every task lives inside exactly one group"
+  groups: "Empty — no backend group is written yet; per policy.task_creation in develop.yaml, tasks are created only when the human explicitly asks for them"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
+
+  groups: []

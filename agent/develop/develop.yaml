@@ -13,6 +13,7 @@ policy:
   rule: "An agent never writes this file — items, the item template, the task schema, and the state vocabulary are fixed by the human"
   new_item: "A new item is not added here by an agent — it is raised with the human"
   new_contract_version: "A new contract version is a file under shared/contracts/, written in planning mode as a draft — this index is not changed for it"
+  task_creation: "An agent never writes a task into an item's task.yaml speculatively — a task.yaml stays as it is, empty or not, until the human explicitly asks for tasks to be created. When asked, tasks are created for exactly what was requested, no more"
   on_change_needed: "A wanted change to the schema or the vocabulary is raised as an open question in state.yaml"
 
 
