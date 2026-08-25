@@ -5,8 +5,8 @@ meta:
   layer: 4
   purpose: "Definition of the backend tasks — what has to be done and in what order"
   derived_from: "the root definition.yaml goals, the global rules.yaml, the api-v1 contract, and this item's definition.yaml"
-  schema_source: "The shape of each task is defined in task_schema inside develop.yaml"
-  states_source: "The status vocabulary is defined in task_states inside develop.yaml"
+  schema_source: "The shape of each task is defined in develop.yaml, under rules.task_schema"
+  states_source: "The status vocabulary is defined in develop.yaml, under rules.task_states"
   status_lives_here: "Every task carries its own status field — this file both defines the task and says where it stands; there is no separate status list"
   verify_cwd: "Every verify command runs from this item's code_path — backend/ — inside its virtual environment"
   touches_are_relative: "Every touches path is relative to code_path"
@@ -15,6 +15,41 @@ meta:
   agent_may_edit: true
   editable_in_mode: "planning — in development, only the status, blocker, and log fields of a task may change"
   updated: "2026-08-25"
+
+
+structure:
+  groups: "Ten groups, G1 to G10, each a step the next one stands on — every task lives inside exactly one group"
+  map:
+    G1: "Environment"
+    G2: "Configuration and connection"
+    G3: "Schema"
+    G4: "Validation"
+    G5: "Error surface"
+    G6: "Group logic"
+    G7: "Group routes"
+    G8: "Task logic"
+    G9: "Task routes"
+    G10: "Conformance"
+  task: "Every task carries the fields of task_schema in develop.yaml — status and log included, so this file is both plan and state"
+  points_to: "develop/shared/contracts/api-v1.yaml — the contract most tasks name in needs_contract"
+
+
+read_order:
+  - "groups in order, G1 first — a later group assumes the earlier ones are done"
+  - "inside a group, tasks by id — depends_on names what must be done before, and is the actual order when it disagrees"
+  - "for each task, status before anything else — a task that is not todo is not yours to start"
+
+
+rules:
+  write_protocol:
+    rule: "Every result about a backend task is recorded here, on the task itself — an agent that writes nowhere has done nothing"
+    task_status: "The status field on the task — the one field that moves; a blocked task also names its blocker id from state.yaml"
+    claim_protocol: "Before starting, set the task's status to claimed and write this file immediately — so two agents never take the same task"
+    done_gate: "A task becomes done only after its verify has been run and passed from inside backend/ and its virtual environment — the code being written is not the gate"
+    blocked_protocol: "On a blocker, set the task to blocked, name the blocker id, state what is missing in state.yaml, and stop — an agent never invents its way past a missing contract or a missing decision"
+    decision: "A decision about a task goes into that task's log with its date and reason — a decision the human must still make is an open question in state.yaml, not a log entry"
+    log: "Append-only — a past entry is never rewritten"
+    plan_change: "In development mode the plan fields of a task change only with the reason written into its log and human approval; in planning mode the plan may be written freely, but never against a contract that does not exist"
 
 groups:
 

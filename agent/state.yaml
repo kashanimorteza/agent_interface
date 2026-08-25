@@ -9,15 +9,35 @@ meta:
   updated: "2026-08-25"
 
 
+structure:
+  active: "The one mode and the one item currently in play — set by the human"
+  blockers: "What is actually missing, by id — the tasks that cannot move point here"
+  open_questions: "What the human still has to decide, by id — each names the blocker it would release"
+  task_status: "Not stored here — every task carries its own status field in its item's task.yaml, and a blocked task names its blocker id there; this file only defines the blockers those ids point to"
+
+
+read_order:
+  - "active — know the mode you are in and the item you are on before anything else"
+  - "blockers — know what cannot move and why"
+  - "open_questions — know what is waiting on the human, so you do not answer it yourself"
+
+
+rules:
+  write_protocol:
+    rule: "Every result is recorded in the file that owns it — this file owns blockers and open questions, nothing else"
+    blocker: "Written under blockers — with an id, what is actually missing, and its consequence; the affected tasks point at it by id from their own task.yaml"
+    open_question: "Written under open_questions — addressed to the human, with why it matters and which blocker it blocks; an agent never answers one on its own"
+    decision_pending: "A decision the human must still make is an open question here — it is not a decision, and nothing is built on its assumed answer"
+    active: "Never written by an agent — active.mode and active.item are set by the human"
+    by_mode: "planning and development may write blockers and open questions; review may write blockers and open questions only"
+    agent_may_edit_field: "Every file carries agent_may_edit in its meta — false means the human owns it, and an agent that wants it changed raises an open question here instead"
+
+
 active:
   mode: "planning"
   mode_reason: "No code exists yet — neither code_path has been created, so nothing is implementable until the open questions below are answered"
   item: "none"
   set_by: "human"
-
-
-task_status:
-  note: "Not stored here — every task carries its own status field in its item's task.yaml, and a blocked task names its blocker id there. This file only defines the blockers those ids point to"
 
 
 blockers:

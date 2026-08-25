@@ -4,10 +4,38 @@ meta:
   item: "frontend"
   layer: 4
   purpose: "Definition of the frontend item — what it does, with which technologies, and where its boundaries are"
+  role_defined_in: "the root definition.yaml, under architecture.parts.frontend — what this item is responsible for and where its boundaries are"
+  identity_defined_in: "develop/develop.yaml, under structure.items.frontend — its path, code_path, and summary"
   agent_may_edit: true
   editable_in_mode: "planning"
   on_change_needed: "Do not change this in development mode — raise it with the human instead"
-  updated: "2026-08-24"
+  updated: "2026-08-25"
+
+
+structure:
+  responsibility: "What this item is for, in one line — mirrors the root definition.yaml"
+  code_path: "Where its code lives — mirrors develop.yaml"
+  tech: "The language, framework, and tooling it is built with"
+  code_layout: "How the code is laid out under code_path — the folders a task's touches refer to"
+  contracts: "The contract this item consumes and the rule for a missing surface"
+  boundaries: "What it owns, what it does not, and its only interface to the backend"
+  out_of_scope: "What no task here will ever do"
+
+
+read_order:
+  - "responsibility and code_path — know what the item is and where it lives"
+  - "tech — know what it is built with before reading a single task"
+  - "code_layout — know where a task's touches land"
+  - "contracts and boundaries — know what it may use and where it stops"
+  - "out_of_scope — know what not to build"
+
+
+rules:
+  write_protocol:
+    rule: "Written in planning mode only — tech and boundaries are settled before a line of frontend code exists"
+    in_development: "Never written — a needed change to the technology or the layout is recorded in the affected task's log and raised with the human"
+    contract: "The frontend consumes api-v1 and never writes a contract — a missing surface is a blocker in state.yaml, not a change here"
+    boundaries: "responsibility, code_path, and boundaries mirror the root definition.yaml and develop.yaml — they are not rewritten here to say something different"
 
 
 responsibility: "Web client — user interface for login, registration, and task management"

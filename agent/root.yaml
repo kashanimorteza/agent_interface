@@ -1,41 +1,55 @@
 meta:
+  path: "root.yaml"
+  path_note: "The address of this file — layer 1, the entry point; the only file an agent finds without guidance"
   standard: "Agent Project Interface"
   version: "1.0"
-  purpose: "Entry point for every agent — protocol, not content: what to read in what order, what is allowed, and where results are recorded"
+  purpose: "Entry point for every agent — protocol, not content: what to read in what order and what is allowed in each mode"
+  write_rules_location: "Where and how a result is written is not decided here — each file carries its own write rules under its rules section"
   agent_may_edit: true
-  updated: "2026-08-24"
+  updated: "2026-08-25"
 
 
 structure:
   root:
-    layer: 1
-    path: "root.yaml"
-    responsibility: "Entry point — read protocol, working modes, and write protocol"
-    note: "The only file an agent finds without guidance"
+    configuration:
+      layer: 1
+      path: "root.yaml"
+    settings:
+      responsibility: "Entry point — read protocol and working modes"
+      note: "The only file an agent finds without guidance"
+      no_write_protocol_here: "This file holds no write protocol — every file carries its own write rules, scoped to what that file owns"
 
   definition:
-    layer: 2
-    path: "definition.yaml"
-    responsibility: "Product definition — identity, goals, and architecture"
-    note: "To understand what is being built, read definition.yaml"
+    configuration:
+      layer: 2
+      path: "definition.yaml"
+    settings:
+      responsibility: "Product definition — identity, goals, and architecture"
+      note: "To understand what is being built, read definition.yaml"
 
   rules:
-    layer: 3
-    path: "rules.yaml"
-    responsibility: "Rules governing agent behavior — security, quality, and their precedence"
-    note: "No rule lives anywhere else — read rules.yaml before doing anything"
+    configuration:
+      layer: 3
+      path: "rules.yaml"
+    settings:
+      responsibility: "Rules governing agent behavior — security, quality, and their precedence"
+      note: "No rule lives anywhere else — read rules.yaml before doing anything"
 
   develop:
-    layer: 4
-    path: "develop/develop.yaml"
-    responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
-    note: "For any work in this layer, read develop.yaml first"
+    configuration:
+      layer: 4
+      path: "develop/develop.yaml"
+    settings:
+      responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
+      note: "For any work in this layer, read develop.yaml first"
 
   state:
-    layer: 5
-    path: "state.yaml"
-    responsibility: "Project-wide state — active mode, active item, blockers, and open questions"
-    note: "Task status does not live here — every task carries its own status field in its item's task.yaml"
+    configuration:
+      layer: 5
+      path: "state.yaml"
+    settings:
+      responsibility: "Project-wide state — active mode, active item, blockers, and open questions"
+      note: "Task status does not live here — every task carries its own status field in its item's task.yaml"
 
 
 read_order:
@@ -43,7 +57,7 @@ read_order:
   steps:
     - step: 1
       read: "root.yaml"
-      why: "This file — read protocol, working modes, and write protocol"
+      why: "This file — read protocol and working modes; the write rules of each file are read with that file, under its rules section"
     - step: 2
       read: "definition.yaml"
       why: "Understand what product is being built"
@@ -58,55 +72,54 @@ read_order:
       why: "Learn the active mode, the active item, the blockers, and the open questions"
     - step: 6
       read: "Active item: definition.yaml → task.yaml"
-      why: "Understand the item you are working on and where each of its tasks stands — order comes from item_read_order in develop.yaml"
+      why: "Understand the item you are working on and where each of its tasks stands — order comes from read_order in develop.yaml"
   no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its log field"
 
 
-modes:
-  rule: "Exactly one mode is active at a time — it is named in state.yaml under active.mode"
-  set_by: "The human — an agent never changes the active mode"
+rules:
 
-  planning:
-    purpose: "Decide what will be built and in what order — no product code is written"
-    may_write:
-      - "develop/<item>/definition.yaml"
-      - "develop/<item>/task.yaml"
-      - "develop/shared/contracts/ — draft versions only"
-      - "state.yaml"
-    may_not_write:
-      - "Any file under an item's code_path"
-      - "A frozen contract"
-      - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
+  file_structure:
+    rule: "Every interface file has exactly these four top-level sections, in this order — a section with nothing to say is present and empty"
+    sections:
+      meta: "The file's own address, purpose, ownership (agent_may_edit), and date — never its content"
+      structure: "What the file holds or points to — the map of its content sections, with the layer and path of each file it references"
+      read_order: "The order in which the content of this file, and what it points to, is read"
+      rules: "The rules that govern this file — how it is written, by whom, in which mode, and what happens on a gap"
+    content: "Content sections — groups, blockers, routes, tech — come after the four, and are the ones structure describes"
+    reason: "An agent that knows the shape of one file knows the shape of all — nothing is searched for, everything is found in the same place"
 
-  development:
-    purpose: "Implement the tasks that planning defined"
-    may_write:
-      - "Files under the active item's code_path, limited to the touches of the claimed task"
-      - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, never the plan"
-      - "state.yaml"
-    may_not_write:
-      - "Another item's code_path"
-      - "A frozen contract"
-      - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
-    plan_change: "Changing a task in this mode requires the reason written into that task's log and human approval — an agent never silently rewrites the plan it is executing"
+  modes:
+    rule: "Exactly one mode is active at a time — it is named in state.yaml under active.mode"
+    set_by: "The human — an agent never changes the active mode"
 
-  review:
-    purpose: "Read the result and report — nothing is repaired in this mode"
-    may_write:
-      - "state.yaml — blockers and open questions only"
-      - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, to mark it blocked and record what was found"
-    may_not_write:
-      - "Anything else"
+    planning:
+      purpose: "Decide what will be built and in what order — no product code is written"
+      may_write:
+        - "develop/<item>/definition.yaml"
+        - "develop/<item>/task.yaml"
+        - "develop/shared/contracts/ — draft versions only"
+        - "state.yaml"
+      may_not_write:
+        - "Any file under an item's code_path"
+        - "A frozen contract"
+        - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
 
+    development:
+      purpose: "Implement the tasks that planning defined"
+      may_write:
+        - "Files under the active item's code_path, limited to the touches of the claimed task"
+        - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, never the plan"
+        - "state.yaml"
+      may_not_write:
+        - "Another item's code_path"
+        - "A frozen contract"
+        - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
+      plan_change: "Changing a task in this mode requires the reason written into that task's log and human approval — an agent never silently rewrites the plan it is executing"
 
-write_protocol:
-  rule: "Every result is recorded in the file that owns it — an agent that writes nowhere has done nothing"
-  where:
-    task_status: "develop/<item>/task.yaml — the status field on the task itself; a blocked task also names its blocker id there"
-    blocker: "state.yaml — under blockers, defining what is actually missing; the affected tasks point at it by id"
-    open_question: "state.yaml — under open_questions, addressed to the human"
-    decision: "On the thing it changed — a decision about a task goes into that task's log with its reason; a decision the human must still make is an open question in state.yaml, not a decision"
-  claim_protocol: "Before starting, set the task's status to claimed in its task.yaml and write it immediately — so two agents never take the same task"
-  done_gate: "A task becomes done only after its verify has been run and passed — the code being written is not the gate"
-  blocked_protocol: "On a blocker, set the task to blocked, state what is missing to the human, and stop — an agent never invents its way past a missing contract or a missing decision"
-  agent_may_edit_field: "Every file carries agent_may_edit in its meta — false means the human owns it, and an agent that wants it changed raises it instead"
+    review:
+      purpose: "Read the result and report — nothing is repaired in this mode"
+      may_write:
+        - "state.yaml — blockers and open questions only"
+        - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, to mark it blocked and record what was found"
+      may_not_write:
+        - "Anything else"

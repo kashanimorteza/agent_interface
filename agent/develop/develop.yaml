@@ -7,80 +7,94 @@ meta:
   updated: "2026-08-25"
 
 
-items:
+structure:
 
-  backend:
-    enabled: true
-    path: "develop/backend/"
-    code_path: "backend/"
-    code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
-    summary: "API, task and user logic, database"
+  items:
 
-  frontend:
-    enabled: true
-    path: "develop/frontend/"
-    code_path: "frontend/"
-    code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
-    summary: "Web client — consumer of the api-v1 contract"
+    backend:
+      enabled: true
+      path: "develop/backend/"
+      code_path: "backend/"
+      code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
+      summary: "API, task and user logic, database"
 
+    frontend:
+      enabled: true
+      path: "develop/frontend/"
+      code_path: "frontend/"
+      code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
+      summary: "Web client — consumer of the api-v1 contract"
 
-item_files:
-  rule: "Every item has exactly these two files, no more and no fewer"
-  files:
-    definition.yaml: "What this item does, with what technology, and its own specifics"
-    task.yaml: "Task groups and tasks, step by step"
-  no_item_rules: "An item has no rules file — every rule lives in the global rules.yaml"
+  item_files:
+    rule: "Every item has exactly these two files, no more and no fewer"
+    files:
+      definition.yaml: "What this item does, with what technology, and its own specifics"
+      task.yaml: "Task groups and tasks, step by step"
+    no_item_rules: "An item has no rules file — every rule lives in the global rules.yaml"
 
-item_read_order:
-  - "definition.yaml"
-  - "task.yaml"
-
-
-task_schema:
-  rule: "Every task in task.yaml carries exactly these fields"
-  fields:
-    id: "Identifier unique within this item's task.yaml — for example 0001; each item numbers its own tasks"
-    title: "The task in one sentence"
-    goal: "What becomes possible after this task that was not possible before"
-    depends_on: "Ids of tasks in the same item — depending on another item is forbidden"
-    needs_contract: "The contract version required — used instead of depending on another item's task; omitted when the task needs none"
-    acceptance: "Human-readable acceptance criterion — what must actually work"
-    verify: "A runnable command that proves acceptance — without it a task is never done"
-    touches: "Paths this task touches, written relative to the item's code_path"
-    status: "Where the task stands right now — the one field of a task that moves; vocabulary in task_states"
-    blocker: "Id of the blocker in state.yaml — present only when status is blocked, absent otherwise"
-    log: "Append-only list of dated entries carried with the task — who claimed it, why it moved, the reason for a cancellation, the successor of a superseded task, an approved plan change with its reason; absent until the task first moves"
-  status_lives_here: "Status is written on the task itself — the file that defines a task also says where it stands, so definition and state can never drift apart"
-  history_lives_here_too: "There is no history file — how a task got to its current state is recorded in its own log field, and a past log entry is never rewritten"
-
-task_states:
-  path: "task.yaml — the status field on each task"
-  states:
-    todo: "Defined, not started"
-    claimed: "An agent has taken it and is working on it"
-    blocked: "Stopped — the reason is stated to the human, who decides how to proceed"
-    done: "verify was run and passed"
-    cancelled: "No longer needed — the reason is recorded in the task's log"
-    superseded: "Replaced by another task — the successor id is recorded in the task's log"
-  derived_ready: "ready is not a stored status — a task is ready when it is todo and all of its depends_on are done"
-  done_gate: "Without a passing verify run, no task becomes done — even if the code is written"
-  claim_protocol: "Before starting, set the task's status to claimed in its task.yaml and write it immediately — so two agents never take the same task"
-  status_only_in_development: "In development mode the status, blocker, and log fields are the only part of task.yaml an agent may change — every other field is the plan, and the plan changes only in planning mode with the reason written into the task's log"
+  shared:
+    contracts:
+      path: "develop/shared/contracts/"
+      responsibility: "Versioned contracts between items — the only permitted connection point"
+      lifecycle:
+        draft: "Under design — only the producing item relies on it"
+        frozen: "Final — the consuming item may define tasks against it"
+        deprecated: "Obsolete — replaced by a newer version"
 
 
-shared:
+read_order:
+  this_file: "structure — know the items and the contracts; rules — know the shape of a task and its states"
+  item: "Inside an item, in exactly this order"
+  item_files:
+    - "definition.yaml"
+    - "task.yaml"
+  contract: "A contract is read when a task names it in needs_contract — never before it is frozen, for a consuming item"
+
+
+rules:
+
+  write_protocol:
+    rule: "An agent never writes this file — items, the item template, the task schema, and the state vocabulary are fixed by the human"
+    new_item: "A new item is not added here by an agent — it is raised with the human"
+    new_contract_version: "A new contract version is a file under shared/contracts/, written in planning mode as a draft — this index is not changed for it"
+    on_change_needed: "A wanted change to the schema or the vocabulary is raised as an open question in state.yaml"
+
+  task_schema:
+    rule: "Every task in task.yaml carries exactly these fields"
+    fields:
+      id: "Identifier unique within this item's task.yaml — for example 0001; each item numbers its own tasks"
+      title: "The task in one sentence"
+      goal: "What becomes possible after this task that was not possible before"
+      depends_on: "Ids of tasks in the same item — depending on another item is forbidden"
+      needs_contract: "The contract version required — used instead of depending on another item's task; omitted when the task needs none"
+      acceptance: "Human-readable acceptance criterion — what must actually work"
+      verify: "A runnable command that proves acceptance — without it a task is never done"
+      touches: "Paths this task touches, written relative to the item's code_path"
+      status: "Where the task stands right now — the one field of a task that moves; vocabulary in task_states"
+      blocker: "Id of the blocker in state.yaml — present only when status is blocked, absent otherwise"
+      log: "Append-only list of dated entries carried with the task — who claimed it, why it moved, the reason for a cancellation, the successor of a superseded task, an approved plan change with its reason; absent until the task first moves"
+    status_lives_here: "Status is written on the task itself — the file that defines a task also says where it stands, so definition and state can never drift apart"
+    history_lives_here_too: "There is no history file — how a task got to its current state is recorded in its own log field, and a past log entry is never rewritten"
+
+  task_states:
+    path: "task.yaml — the status field on each task"
+    states:
+      todo: "Defined, not started"
+      claimed: "An agent has taken it and is working on it"
+      blocked: "Stopped — the reason is stated to the human, who decides how to proceed"
+      done: "verify was run and passed"
+      cancelled: "No longer needed — the reason is recorded in the task's log"
+      superseded: "Replaced by another task — the successor id is recorded in the task's log"
+    derived_ready: "ready is not a stored status — a task is ready when it is todo and all of its depends_on are done"
+    done_gate: "Without a passing verify run, no task becomes done — even if the code is written"
+    claim_protocol: "Before starting, set the task's status to claimed in its task.yaml and write it immediately — so two agents never take the same task"
+    status_only_in_development: "In development mode the status, blocker, and log fields are the only part of task.yaml an agent may change — every other field is the plan, and the plan changes only in planning mode with the reason written into the task's log"
+
   contracts:
-    path: "develop/shared/contracts/"
-    responsibility: "Versioned contracts between items — the only permitted connection point"
-    lifecycle:
-      draft: "Under design — only the producing item relies on it"
-      frozen: "Final — the consuming item may define tasks against it"
-      deprecated: "Obsolete — replaced by a newer version"
     change_rule: "A frozen contract never changes — a new version is created instead"
     coverage_rule: "A task may only name a contract that exists — a task needing a surface no contract provides is blocked, not written against a guess"
 
-
-boundaries:
-  code_isolation: "Each item writes only inside its own code_path — touching another item's code is forbidden"
-  cross_item_link: "Items connect only through shared/contracts — never through direct task-to-task dependencies"
-  contract_change: "A frozen contract never changes — if a change is needed, raise it with the human"
+  boundaries:
+    code_isolation: "Each item writes only inside its own code_path — touching another item's code is forbidden"
+    cross_item_link: "Items connect only through shared/contracts — never through direct task-to-task dependencies"
+    contract_change: "A frozen contract never changes — if a change is needed, raise it with the human"

@@ -5,7 +5,27 @@ meta:
   scope_note: "This file states the what, not the how — the how lives in rules.yaml and develop.yaml"
   reason: "The product definition is a human decision, not an agent inference"
   agent_may_edit: false
-  updated: "2026-08-24"
+  updated: "2026-08-25"
+
+
+structure:
+  identity: "Who the product is — id, name, and the one-liner that names its promise"
+  goals: "What a user can do when the product is finished — the list every task traces back to"
+  architecture: "The parts of the product, what each owns, and the single connection point between them"
+  points_to: "develop/shared/contracts/ — where the connection between the parts is written"
+
+
+read_order:
+  - "identity — know what is being built"
+  - "goals — know what must become possible"
+  - "architecture — know which part owns what, and that the contract is the only bridge"
+
+
+rules:
+  write_protocol:
+    rule: "An agent never writes this file — identity, goals, and architecture are human decisions"
+    on_gap: "A goal that no contract can satisfy is not fixed here — it is raised as an open question in state.yaml"
+    on_change_needed: "A wanted change to the product definition is raised with the human, never applied"
 
 
 identity:
