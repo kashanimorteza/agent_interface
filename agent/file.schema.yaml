@@ -10,6 +10,7 @@ structure:
 
 sections:
 
+  # <!--------------------------------------------------------------------------------- Meta -->
   meta:
       required: true
       fields:
@@ -20,15 +21,17 @@ sections:
         path_note:
           required: true
           purpose: "Explains the location, layer, and role of the file."
-
+  # <!--------------------------------------------------------------------------------- Rules -->
   rules:
     required: true
     purpose: "Rules for reading, interpreting, and modifying the file."
 
+  # <!--------------------------------------------------------------------------------- Content_Map -->
   content_map:
     required: true
     purpose: "Semantic map of the content and the responsibility of each content item."
 
+  # <!--------------------------------------------------------------------------------- Content -->
   content:
     required: true
     purpose: "Actual file content."

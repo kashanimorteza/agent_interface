@@ -1,27 +1,28 @@
+# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "root.yaml"
-  path_note: "The address of this file — layer 1, the entry point; the only file an agent finds without guidance"
+  path_note: "Layer 1, the entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
   version: "1.0"
-  purpose: "Entry point for every agent — protocol, not content: what to read in what order and what is allowed in each mode"
-  write_rules_location: "Where and how a result is written is not decided here — each file carries its own write rules under its rules section"
   agent_may_edit: true
   updated: "2026-08-25"
 
 
+# <!--------------------------------------------------------------------------------- Rules -->
 rules:
+  rule: "This file holds no write protocol for results — every other file carries its own write rules, scoped to what that file owns"
+  by_mode: "What may be written where is decided per mode — see content.modes — never here"
+  on_change_needed: "A wanted change to the read order, the layers, or the modes is raised with the human, never applied by an agent"
 
-  write_protocol:
-    rule: "This file holds no write protocol for results — every file carries its own write rules, scoped to what that file owns"
-    by_mode: "Never written in planning, development, or review — see content.modes"
 
-
+# <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   structure: "The files of the interface — the layer, path, and responsibility of each"
-  read_order: "The order in which those files are read — exactly, no less, no more"
+  read_order: "The order those files are read in — exactly, no less, no more"
   modes: "The working modes — planning, development, review — and what each may write"
 
 
+# <!--------------------------------------------------------------------------------- Content -->
 content:
 
   structure:
@@ -62,7 +63,7 @@ content:
     steps:
       - step: 1
         read: "root.yaml"
-        why: "This file — read protocol and working modes; the write rules of each file are read with that file, under its rules section"
+        why: "This file — read protocol and working modes; the write rules of each file are read with that file, under its own rules section"
       - step: 2
         read: "definition.yaml"
         why: "Understand what product is being built"
@@ -78,7 +79,7 @@ content:
       - step: 6
         read: "Active item: definition.yaml → task.yaml"
         why: "Understand the item you are working on and where each of its tasks stands — order comes from read_order in develop.yaml"
-    no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its log field"
+    no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its own log field"
 
 
   modes:
