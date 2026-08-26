@@ -7,7 +7,7 @@ meta:
   scope_note: "This file holds no definition, no rule, and no task status — the status of a task lives on the task itself, in task.yaml"
   phase_scope: "Phase 1 only — every blocker and every question below is about the data-entry build"
   reason: "Only what belongs to no single task lives here — per-task state travels with the task, so definition and status can never drift apart"
-  updated: "2026-08-26"
+  updated: "2026-08-27"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -50,9 +50,9 @@ content:
   blockers:
 
     - id: "B1"
-      blocks: "The whole backend plan — not one task can be written, because a task may only be defined against a frozen contract"
+      blocks: "Every backend task that names api-v1 — 80 of the 93 in task.yaml, from the six models through the migrations, the validation schemas, the error surface, all four operations of all six records, and the conformance run. The 13 tasks that need no contract — the environment, the package tree, the application object, configuration, the database layer, the declarative base, and the Alembic setup — are todo and can proceed"
       what_is_missing: "A frozen api-v1. Phase 1 names the operations Add, Edit, Update, Delete, and Status without separating Edit from Update, names no read or list operation, and fixes no type, length, or permitted value for Status, State, Risk Parameter, or Profit — so the surface cannot be settled"
-      consequence: "The six models can be described but none of them can be built — every backend task stays unwritten"
+      consequence: "The plan can be written and its foundation built, but not one record can be modelled, migrated, validated, or exposed until the contract is frozen"
       decision_belongs_to: "human"
       raised: "2026-08-26"
 

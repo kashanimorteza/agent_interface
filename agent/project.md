@@ -21,15 +21,9 @@ Delivered in three phases.
 
 <br> <br>
 
-## Phase 1 — Data entry
+## Development
 
-> Models, storage, and management APIs.
-
-### Development
-
-#### Backend
-
-The backend must:
+### Backend
 
 - Use Python as the programming language.
 - Use the latest stable version of Python available when development starts.
@@ -42,9 +36,19 @@ The backend must:
 - Authentication is **not** required.
 - Automated tests are **not** required.
 
-#### Frontend
+### Frontend
 
-`To be defined`
+
+
+
+
+
+
+<br> <br>
+
+## Phase 1 — Data entry
+
+> Models, storage, and management APIs.
 
 ### Models
 
@@ -84,15 +88,6 @@ The backend must:
 
 > Connecting the platform to MT5 and executing defined tasks.
 
-### Development
-
-**Backend** — `To be defined`
-
-**Frontend** — `To be defined`
-
-### Models
-
-`To be defined`
 
 
 
@@ -103,13 +98,3 @@ The backend must:
 ## Phase 3 — Reporting
 
 > Surfacing results, performance, and execution history.
-
-### Development
-
-**Backend** — `To be defined`
-
-**Frontend** — `To be defined`
-
-### Models
-
-`To be defined`
