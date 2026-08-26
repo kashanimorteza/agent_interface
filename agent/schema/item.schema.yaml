@@ -1,0 +1,271 @@
+schema:
+  id: agent-interface-item
+  version: "1.0"
+  purpose: "The shape of one build item — the content section of an item file"
+  applies_to: "The item files — backend.yaml and frontend.yaml, under content"
+  reference: "backend.yaml — the item this schema is drawn from"
+  scope_note: "This file states the shape of an item, not the content of any item — an item file also carries the five sections of schema/file.schema.yaml, and the index of items is in develop.yaml"
+
+structure:
+  - enabled
+  - code_path
+  - code_path_note
+  - summary
+  - needs_test
+  - verify_cwd
+  - cross_item_rule
+  - responsibility
+  - tech
+  - code_layout
+  - contracts
+  - boundaries
+  - out_of_scope
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Enabled -->
+  enabled:
+    required: true
+    type: boolean
+    purpose: "Whether this item is in play — false leaves the entry standing and takes the item out of the build"
+
+  # <!--------------------------------------------------------------------------------- Code_Path -->
+  code_path:
+    required: true
+    type: string
+    purpose: "The folder holding this item's actual code — the one place this item may write"
+
+  # <!--------------------------------------------------------------------------------- Code_Path_Note -->
+  code_path_note:
+    required: true
+    type: string
+    purpose: "States what code_path is relative to, so it is never read as a path inside the interface"
+
+  # <!--------------------------------------------------------------------------------- Summary -->
+  summary:
+    required: true
+    type: string
+    purpose: "The item in one line — read before any of its settings"
+
+  # <!--------------------------------------------------------------------------------- Needs_Test -->
+  needs_test:
+    required: true
+    type: boolean
+    purpose: "Whether every task that produces code is proven by a written test in tests/"
+    note: "true means a task's verify is that test run; false requires no written test, and a runnable verify is still mandatory"
+    set_by: "human"
+
+  # <!--------------------------------------------------------------------------------- Verify_Cwd -->
+  verify_cwd:
+    required: true
+    type: string
+    purpose: "The directory every verify command of this item runs from — and the environment it runs inside"
+
+  # <!--------------------------------------------------------------------------------- Cross_Item_Rule -->
+  cross_item_rule:
+    required: false
+    type: string
+    purpose: "How this item may lean on another — present on a consuming item; the dependency is a contract version, never another item's task"
+
+  # <!--------------------------------------------------------------------------------- Responsibility -->
+  responsibility:
+    required: true
+    type: string
+    purpose: "What this item is answerable for — one sentence, wider than summary and narrower than the product"
+
+  # <!--------------------------------------------------------------------------------- Tech -->
+  tech:
+    required: true
+    purpose: "What the item is built with — the choices an agent follows and never re-decides"
+    fields:
+
+      language:
+        required: true
+        purpose: "The language of the item and the frameworks carried on top of it"
+        fields:
+          name:
+            required: true
+            purpose: "The language."
+          version:
+            required: false
+            purpose: "The version, when the item is pinned to one."
+          frameworks:
+            required: true
+            type: map
+            purpose: "Role to framework — the key is the role it fills, the value is the framework and what it covers"
+
+      database:
+        required: true
+        purpose: "The item's data engine, or none when the item never touches one"
+        fields:
+          engine:
+            required: true
+            purpose: "The engine — or none, with the reason the item needs none."
+          storage:
+            required: false
+            purpose: "Where the data physically lives."
+          owned_by:
+            required: false
+            purpose: "The item owning the schema — no other item reaches it."
+          access:
+            required: false
+            purpose: "The only permitted route to the data."
+
+      environment:
+        required: false
+        purpose: "The isolated environment every command and every install of this item happens inside"
+
+      state:
+        required: false
+        purpose: "How the item holds state — for an item that keeps no database of its own"
+
+      run:
+        required: true
+        purpose: "The command that starts the item."
+
+  # <!--------------------------------------------------------------------------------- Code_Layout -->
+  code_layout:
+    required: true
+    type: map
+    purpose: "Every path inside code_path and what it holds — the key is the path, the value is its responsibility"
+    key_rule: "A folder ends with a slash, a file carries its extension — both written relative to code_path"
+    value_rule: "One line — what lives there, and what does not"
+
+  # <!--------------------------------------------------------------------------------- Contracts -->
+  contracts:
+    required: true
+    purpose: "The item's only connection to the other items — what it publishes, or what it reads"
+    fields:
+
+      produces:
+        required: false
+        purpose: "The contract version this item publishes — on a producing item"
+
+      consumes:
+        required: false
+        purpose: "The contract version this item reads — on a consuming item"
+
+      contract_location:
+        required: false
+        purpose: "Where the consumed contract lives — on a consuming item, which points at it and never copies it"
+
+      rule:
+        required: true
+        purpose: "What the contract binds this item to — the promise on a producing item, the dependency on a consuming one"
+
+      change_rule:
+        required: false
+        purpose: "What happens when the contract must change — on a producing item; a frozen contract is versioned, never edited"
+
+      before_frozen:
+        required: false
+        purpose: "How the item proceeds while the contract is still a draft — on a consuming item"
+
+      "<version>":
+        required: false
+        purpose: "One entry per contract version, on the producing item — per contract_schema below"
+
+  # <!--------------------------------------------------------------------------------- Boundaries -->
+  boundaries:
+    required: true
+    purpose: "The limits of the item — what is its, what is not, and the one thing it promises outward"
+    fields:
+      owns:
+        required: true
+        purpose: "What belongs to this item."
+      does_not_own:
+        required: true
+        purpose: "What is explicitly not this item's, however close it sits."
+      interface:
+        required: true
+        purpose: "The only thing this item offers the outside."
+
+  # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    required: true
+    type: list
+    purpose: "What this item does not do — named so it is never inferred into a task"
+
+# <!--------------------------------------------------------------------------------- Contract_Schema -->
+contract_schema:
+  purpose: "The shape of one contract version — an entry under an item's contracts section"
+  applies_to: "The producing item's file — content.contracts.<version>"
+
+  structure:
+    - lifecycle
+    - lifecycle_note
+    - consumed_by
+    - contract_read_order
+    - conventions
+    - error_shape
+    - models
+    - routes
+
+  sections:
+
+    lifecycle:
+      required: true
+      values: ["draft", "frozen", "deprecated"]
+      purpose: "Where the version stands — only a frozen contract may be defined against"
+
+    lifecycle_note:
+      required: true
+      purpose: "What the lifecycle means for this version, and what a change to it would cost"
+
+    consumed_by:
+      required: true
+      purpose: "The item reading this contract."
+
+    contract_read_order:
+      required: true
+      type: list
+      purpose: "The order the contract is read in, and why"
+
+    conventions:
+      required: true
+      purpose: "What holds across the whole surface — transport, identifiers, timestamps, and the answer to an unknown id"
+
+    error_shape:
+      required: true
+      purpose: "The single shape every failure takes, and the codes it may carry"
+      fields:
+        rule:
+          required: true
+          purpose: "The invariant every non-success response obeys."
+        fields:
+          required: true
+          type: map
+          purpose: "The fields of the shape — exactly these, no others."
+        codes:
+          required: true
+          type: map
+          purpose: "Code to status and meaning — a consumer may branch on the code."
+
+    models:
+      required: true
+      type: map
+      purpose: "The data shapes the surface returns — the key is the model, the value is its fields and their limits"
+
+    routes:
+      required: true
+      type: list
+      purpose: "The surface itself — read last, because each route is read against the conventions, the error shape, and the models"
+      item_fields:
+        method:
+          required: true
+          purpose: "The verb."
+        path:
+          required: true
+          purpose: "The path, with its parameters."
+        summary:
+          required: true
+          purpose: "What the route does, in a few words."
+        body:
+          required: false
+          purpose: "The accepted body — absent when the route takes none."
+        response:
+          required: true
+          purpose: "The success status and what comes back."
+        errors:
+          required: false
+          purpose: "The codes from error_shape this route may answer with."

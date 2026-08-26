@@ -7,8 +7,8 @@ meta:
   creation_rule_source: "Whether and when a task may be written here is governed by develop.yaml, under policy.task_creation — no task is added speculatively"
   status_lives_here: "Every task carries its own status field — this file both defines the task and says where it stands; there is no separate status list"
   contract_gap: "api-v1 defines no registration, login, session, or owner field, while the root goals and the security rules require per-user ownership — no task here is written against that missing surface; it is recorded as Q1 and Q2 in state.yaml"
-  points_to: "develop.yaml — content.items.backend.contracts.api-v1, the contract a task names in needs_contract"
-  updated: "2026-08-25"
+  points_to: "backend.yaml — content.contracts.api-v1, the contract a task names in needs_contract"
+  updated: "2026-08-26"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->

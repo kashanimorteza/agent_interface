@@ -1,0 +1,220 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "backend.yaml"
+  path_note: "The address of this file — layer 4, the backend item: its settings and the contracts it publishes"
+  purpose: "The backend item — what it is built with, how its code is laid out, and the contract it promises the outside"
+  shape: "schema/item.schema.yaml — the shape every item file follows"
+  frame: "develop.yaml — the frame this item sits in: the item index, the plan structure, the contract lifecycle, and the boundaries"
+  plan_location: "This item's plan lives in task.yaml — never here"
+  contract_gap: "api-v1 defines no registration, login, session, or owner field, while the root goals and the security rules require per-user ownership — recorded as Q1 and Q2 in state.yaml"
+  updated: "2026-08-26"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning may write the settings and a draft contract; development and review never write this file — a task's status moves in task.yaml"
+  scope: "The settings and a draft contract are the working surface — a frozen contract is frame, never rewritten, only versioned"
+  settings: "The settings — responsibility through out_of_scope — are written in planning mode only; a change wanted during development is recorded in the affected task's log and raised with the human"
+  new_contract_version: "A new contract version is a new entry under contracts, written in planning mode as a draft — it becomes frozen only by the human"
+  task_protocols: "How a task is claimed, done, blocked, and logged is the policy of task.yaml — it is not repeated here"
+  on_change_needed: "A wanted change to the shape of an item is raised as an open question in state.yaml, never applied here"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "develop.yaml first — the frame: the item index, plan_structure, contracts, boundaries"
+  - "then the settings here, in order — responsibility, tech, code_layout, contracts, boundaries, out_of_scope"
+  - "inside contracts, the contract itself by its own contract_read_order — conventions, error_shape, models, routes"
+  - "then this item's plan in task.yaml, by that file's own read_order"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether this item is in play"
+  code_path: "The one folder this item may write inside"
+  summary: "The item in one line"
+  needs_test: "Whether every task producing code is proven by a written test"
+  verify_cwd: "Where every verify command of this item runs from"
+  responsibility: "What this item is answerable for"
+  tech: "What the item is built with — language, frameworks, database, environment, and the run command"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract this item publishes, and its versions"
+  boundaries: "What is this item's, what is not, and the one thing it promises outward"
+  out_of_scope: "What this item does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  enabled: true
+  code_path: "backend/"
+  code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
+  summary: "API, task and user logic, database"
+  needs_test: true
+  verify_cwd: "Every verify command runs from backend/ — inside its virtual environment"
+
+  responsibility: "HTTP API — task and group logic, validation, and the database"
+
+
+  # =============================================================== Tech
+  tech:
+    language:
+      name: "Python"
+      version: "3.12"
+      frameworks:
+        api: "FastAPI — HTTP layer, routing, and request validation"
+        orm: "SQLAlchemy — data models and queries"
+        migrations: "Alembic — schema changes, one migration per change"
+        test: "pytest — test runner"
+    database:
+      engine: "SQLite"
+      storage: "A single file on disk — its path comes from configuration, never hardcoded"
+      owned_by: "This item — the schema belongs to the backend and no other item reaches it"
+      access: "Only through the ORM — a route never opens a connection of its own"
+    environment: "A virtual environment inside code_path — every command and every install happens inside it, and it is never committed"
+    run: "uvicorn app.main:app --reload"
+
+
+  # =============================================================== Code layout
+  code_layout:
+    "app/main.py": "Entry point — the application object and the router registrations"
+    "app/config.py": "Configuration — the database path and every other setting, read from the environment"
+    "app/db/": "Engine and session — the only place a connection is opened"
+    "app/models/": "ORM models — the database schema in Python"
+    "app/schemas/": "Validation models — every API input and output is bound to one"
+    "app/services/": "Business logic — the only layer permitted to query the database"
+    "app/api/": "Routes — accept input, call a service, return output, nothing else"
+    "app/errors.py": "The uniform error shape and its handlers"
+    "migrations/": "Alembic — one migration per schema change, each with its downgrade"
+    "tests/": "Tests — mirror the structure of app/"
+
+
+  # =============================================================== Contracts
+  contracts:
+    produces: "api-v1"
+    rule: "This item's implementation must match the frozen contract exactly — the contract is the promise, not a sketch"
+    change_rule: "api-v1 is frozen — a needed change means api-v2, a new entry beside it, and that is a human decision"
+
+    api-v1:
+      lifecycle: "frozen"
+      lifecycle_note: "Final — the implementation matches it and the frontend may define tasks against it. This version never changes; a change means api-v2."
+      consumed_by: "frontend"
+      contract_read_order:
+        - "conventions — they apply to everything that follows"
+        - "error_shape — every route's errors point at its codes"
+        - "models — every route's response is one of them"
+        - "routes — last, because each one is read against the three above"
+
+      conventions:
+        transport: "HTTP with JSON bodies"
+        ids: "Integers, assigned by the server; a client never chooses one"
+        timestamps: "ISO 8601, UTC"
+        unknown_id: "Any route addressing a missing group or task answers 404 with the error shape below"
+
+      error_shape:
+        rule: "Every non-2xx response has exactly these three fields, with no others"
+        fields:
+          code: "A stable machine-readable string — a client may branch on it"
+          message: "One human-readable sentence, safe to show a user"
+          details: "An object with anything specific to this error; may be empty"
+        codes:
+          not_found: "404 — no group or task with that id"
+          invalid_input: "422 — the body failed validation; details.fields lists field and problem"
+          http_error: "4xx raised by the transport layer, such as an unknown route"
+          internal_error: "500 — the service failed; details is always empty and no internals are exposed"
+
+      models:
+        Group:
+          id: "integer"
+          name: "string, 1 to 120 characters"
+          created_at: "timestamp"
+        Task:
+          id: "integer"
+          group_id: "integer — the group this task belongs to"
+          title: "string, 1 to 200 characters"
+          done: "boolean, false when created"
+          created_at: "timestamp"
+
+      routes:
+
+        - method: "GET"
+          path: "/health"
+          summary: "Liveness"
+          response: "200 — {status, service}"
+
+        - method: "POST"
+          path: "/groups"
+          summary: "Create a group"
+          body: "{name}"
+          response: "201 — Group"
+          errors: ["invalid_input"]
+
+        - method: "GET"
+          path: "/groups"
+          summary: "List every group, ordered by id"
+          response: "200 — array of Group, empty array when there are none"
+
+        - method: "GET"
+          path: "/groups/{group_id}"
+          summary: "Read one group"
+          response: "200 — Group"
+          errors: ["not_found"]
+
+        - method: "PATCH"
+          path: "/groups/{group_id}"
+          summary: "Rename a group"
+          body: "{name}"
+          response: "200 — Group"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/groups/{group_id}"
+          summary: "Delete a group and every task inside it"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/groups/{group_id}/tasks"
+          summary: "Create a task inside a group"
+          body: "{title}"
+          response: "201 — Task"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "GET"
+          path: "/groups/{group_id}/tasks"
+          summary: "List the tasks of one group, ordered by id"
+          response: "200 — array of Task, empty array when the group has none"
+          errors: ["not_found"]
+
+        - method: "GET"
+          path: "/tasks/{task_id}"
+          summary: "Read one task"
+          response: "200 — Task"
+          errors: ["not_found"]
+
+        - method: "PATCH"
+          path: "/tasks/{task_id}"
+          summary: "Change a task's title, its done state, or both"
+          body: "{title?, done?}"
+          response: "200 — Task"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/tasks/{task_id}"
+          summary: "Delete a task"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+
+  # =============================================================== Boundaries
+  boundaries:
+    owns: "All code inside backend/, and the whole database schema"
+    does_not_own: "Client code — not a single line"
+    interface: "The only thing this item promises the outside is the api-v1 contract"
+
+
+  # =============================================================== Out of scope
+  out_of_scope:
+    - "Rendering and user interface"
+    - "Deployment infrastructure and CI"

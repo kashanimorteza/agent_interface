@@ -4,7 +4,7 @@ meta:
   path_note: "Layer 1, the entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
   version: "1.0"
-  updated: "2026-08-25"
+  updated: "2026-08-26"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -30,7 +30,7 @@ read_order:
       why: "Read in full — every rule lives here and security overrides everything"
     - step: 4
       read: "develop.yaml"
-      why: "Learn which items exist, the shape of a task, and the boundaries of the build layer"
+      why: "Learn the frame of the build layer — which items exist and which file holds each, the shape of a plan, and how items connect"
     - step: 5
       read: "task.yaml"
       why: "Know the shape of a task, its states, and where every plan stands"
@@ -38,7 +38,7 @@ read_order:
       read: "state.yaml"
       why: "Learn the active mode, the active item, the blockers, and the open questions"
     - step: 7
-      read: "Active item: its settings under content.items in develop.yaml, and its plan in task.yaml"
+      read: "Active item: its own file — named on its entry in develop.yaml — and its plan in task.yaml"
       why: "Understand the item you are working on and where each of its tasks stands"
   no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its own log field"
 
@@ -75,8 +75,14 @@ content:
     develop:
       layer: 4
       path: "develop.yaml"
-      responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
-      note: "For any work in this layer, read develop.yaml first"
+      responsibility: "Build layer frame — the item index, the plan structure, the contract lifecycle, and the boundaries"
+      note: "For any work in this layer, read develop.yaml first — it names the file of every item"
+
+    items:
+      layer: 4
+      path: "backend.yaml, frontend.yaml"
+      responsibility: "The items themselves — one file per item: its settings and the contracts it produces or consumes"
+      note: "An item's settings live in its own file and nowhere else; the shape they follow is schema/item.schema.yaml"
 
     task:
       layer: 5
@@ -98,13 +104,13 @@ content:
     planning:
       purpose: "Decide what will be built and in what order — no product code is written"
       may_write:
-        - "develop.yaml — the items' settings and draft contracts under content.items only, never the frame and never a frozen contract"
+        - "The item files — backend.yaml and frontend.yaml — their settings and draft contracts, never a frozen contract"
         - "task.yaml — the plans only, never task_schema and task_states"
         - "state.yaml"
       may_not_write:
         - "Any file under an item's code_path"
         - "A frozen contract"
-        - "root.yaml, definition.yaml, rules.yaml, and the frame of develop.yaml — everything outside content.items"
+        - "root.yaml, definition.yaml, rules.yaml, and develop.yaml — the frame of the build layer"
 
     development:
       purpose: "Implement the tasks that planning defined"
@@ -115,7 +121,7 @@ content:
       may_not_write:
         - "Another item's code_path"
         - "A frozen contract"
-        - "root.yaml, definition.yaml, rules.yaml, and the frame of develop.yaml — everything outside content.items"
+        - "root.yaml, definition.yaml, rules.yaml, develop.yaml, and the item files"
       plan_change: "Changing a task in this mode requires the reason written into that task's log and human approval — an agent never silently rewrites the plan it is executing"
 
     review:

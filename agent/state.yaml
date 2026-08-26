@@ -5,7 +5,7 @@ meta:
   purpose: "The project-wide state — active mode, active item, blockers, and open questions"
   scope_note: "This file holds no definition, no rule, and no task status — the status of a task lives on the task itself, in task.yaml"
   reason: "Only what belongs to no single task lives here — per-task state travels with the task, so definition and status can never drift apart"
-  updated: "2026-08-25"
+  updated: "2026-08-26"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -72,4 +72,9 @@ content:
       - id: "Q3"
         question: "What does sync mean in the one_liner — sync between devices, offline and later reconciliation, or simply that the server is the single source?"
         why_it_matters: "It appears in the product identity but in no goal, no contract, and no task, so nothing currently builds it"
+        blocks: "nothing yet"
+
+      - id: "Q4"
+        question: "definition.yaml names the connection point as 'develop.yaml — content.items.<producing item>.contracts', and rules.yaml requires one design page per interface file. Both are human-owned, and both are now out of step with the build layer being split into develop.yaml plus one file per item"
+        why_it_matters: "An agent following definition.yaml looks for a contract where there is no longer one, and the design rule now asks for pages that do not exist — neither file may be corrected by an agent"
         blocks: "nothing yet"
