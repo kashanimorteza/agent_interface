@@ -1,0 +1,97 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "frontend.yaml"
+  path_note: "The address of this file — layer 4, the frontend item: its settings and the contract it consumes"
+  purpose: "The frontend item — what it is built with, how its code is laid out, and the contract it reads"
+  shape: "schema/frontend.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
+  phase_scope: "Phase 1 only — and Phase 1 says of the frontend exactly one thing: to be defined"
+  plan_location: "This item's plan lives in task.yaml — never here"
+  entry_stands: "The entry stands with enabled false — the item is out of the build, not removed from the interface"
+  contract_gap: "Nothing about this item can be settled until the human defines it — recorded as B2 and Q8 in state.yaml"
+  shape_gap: "schema/frontend.schema.yaml gives a consuming item no field for the contract it reads, so consumes and contract_location are written here beside the shape — raised as Q10 in state.yaml, never fixed by an agent"
+  updated: "2026-08-26"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning may write the settings; development and review never write this file — a task's status moves in task.yaml"
+  scope: "The settings are the working surface — this item produces no contract, and it never edits the one it consumes"
+  settings: "The settings — responsibility through out_of_scope — are written in planning mode only; a change wanted during development is recorded in the affected task's log and raised with the human"
+  undefined_settings: "A setting Phase 1 does not define is written as to be defined and left there — an agent never fills it with a guess"
+  consumed_contract: "The consumed contract lives on the producing item and is never copied here — a change to it is raised with the human, never applied"
+  task_protocols: "How a task is claimed, done, blocked, and logged is the policy of task.yaml — it is not repeated here"
+  on_change_needed: "A wanted change to the shape of this file — schema/frontend.schema.yaml — is raised as an open question in state.yaml, never applied here"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "schema/frontend.schema.yaml first — know the shape of this file and what each parameter means"
+  - "enabled here, before anything else — it is false, so this item is out of the build and nothing below it is acted on"
+  - "then the settings in the order of the shape — every one of them is to be defined"
+  - "then B2 and Q8 in state.yaml — what is missing, and who decides it"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether this item is in play"
+  code_path: "The one folder this item may write inside"
+  code_path_note: "What code_path is relative to"
+  summary: "The item in one line"
+  needs_test: "Whether every task producing code is proven by a written test"
+  verify_cwd: "Where every verify command of this item runs from"
+  responsibility: "What this item is answerable for"
+  tech: "What the item is built with"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract this item reads, and where it lives"
+  boundaries: "What is this item's, what is not, and the one route to the other item"
+  out_of_scope: "What this item does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  enabled: false
+  code_path: "to be defined"
+  code_path_note: "Actual code of this item — relative to the repository root, not the interface root; the folder itself is named when the item is defined"
+  summary: "To be defined — Phase 1 names a frontend and defines nothing about it"
+  needs_test: "to be defined — Phase 1 requires no automated tests, but this item has no settings of its own yet"
+  verify_cwd: "to be defined — it follows from code_path, which is not yet named"
+
+  responsibility: "To be defined"
+
+
+  # =============================================================== Tech
+  tech:
+    language: "to be defined"
+    database: "to be defined — no part of the frontend is defined yet, including whether it touches data at all"
+    environment: "to be defined"
+    run: "to be defined"
+
+
+  # =============================================================== Code layout
+  code_layout:
+    "to be defined": "No path of this item is named yet — the layout is written when the item is defined"
+
+
+  # =============================================================== Contracts
+  contracts:
+    produces: "none — this item publishes no contract"
+    consumes: "api-v1 — the backend's contract, once it is frozen"
+    contract_location: "backend.yaml — content.contracts.api-v1, on the producing item"
+    rule: "A task in this item depends on the contract version, never on a backend task"
+    change_rule: "The consumed contract is never edited here — a needed change is raised with the human on the producing item"
+
+
+  # =============================================================== Boundaries
+  boundaries:
+    owns: "To be defined — nothing until the item is defined"
+    does_not_own: "Backend code and the database schema — not a single line"
+    interface: "The only route to the backend is the api-v1 contract"
+
+
+  # =============================================================== Out of scope
+  out_of_scope:
+    - "Server-side logic and final validation"
+    - "Direct database access"
+    - "Everything else — until the human defines this item, it does nothing at all"
