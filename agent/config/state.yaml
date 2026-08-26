@@ -118,3 +118,8 @@ content:
         question: "schema/frontend.schema.yaml is the backend's shape with the word frontend swapped in — its contracts section offers produces, rule, change_rule, and a version entry, but no field for a contract this item consumes, and its tech section asks a client for an ORM, a migrations framework, and a database. Is that intended, or should the frontend have a shape of its own?"
         why_it_matters: "The frontend is a consumer, not a producer. frontend.yaml carries consumes and contract_location so it can name the contract it reads, and those two keys have no place in the shape. A schema file is human-owned and may not be corrected by an agent"
         blocks: "nothing yet"
+
+      - id: "Q11"
+        question: "root.yaml is the only file in config/ with no shape of its own — schema/ holds one file per config file except this one. Should schema/root.schema.yaml exist, fixing the two sections root.yaml carries — structure and modes — the way every other file's shape is fixed?"
+        why_it_matters: "root.yaml is the index every agent reads first, and it is the one file whose sections nothing checks. Every other config file names its shape in meta.shape and can be validated against it; root.yaml carries no such field because there is nothing to point at. A schema file is human-owned and may not be created by an agent"
+        blocks: "nothing yet"
