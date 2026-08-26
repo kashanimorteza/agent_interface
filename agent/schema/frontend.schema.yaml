@@ -1,0 +1,141 @@
+schema:
+  id: agent-interface-frontend
+  version: "1.0"
+  purpose: "The shape of frontend.yaml — every parameter an agent reads to understand the frontend project"
+
+structure:
+  - enabled
+  - code_path
+  - code_path_note
+  - summary
+  - needs_test
+  - verify_cwd
+  - responsibility
+  - tech
+  - code_layout
+  - contracts
+  - boundaries
+  - out_of_scope
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Enabled -->
+  enabled:
+    required: true
+    purpose: "Whether the frontend is in play — false leaves the entry standing and takes the item out of the build."
+
+  # <!--------------------------------------------------------------------------------- Code_Path -->
+  code_path:
+    required: true
+    purpose: "The folder holding the frontend's actual code — the one place this item may write."
+
+  # <!--------------------------------------------------------------------------------- Code_Path_Note -->
+  code_path_note:
+    required: true
+    purpose: "Explains what code_path is relative to, so it is never read as a path inside the interface."
+
+  # <!--------------------------------------------------------------------------------- Summary -->
+  summary:
+    required: true
+    purpose: "The frontend in one line — read before any of its settings."
+
+  # <!--------------------------------------------------------------------------------- Needs_Test -->
+  needs_test:
+    required: true
+    purpose: "Whether every task that produces code is proven by a written test in tests/ — true means a task's verify is that test run; set by the human."
+
+  # <!--------------------------------------------------------------------------------- Verify_Cwd -->
+  verify_cwd:
+    required: true
+    purpose: "The directory every verify command runs from, and the environment it runs inside — for the frontend, always inside its virtual environment."
+
+  # <!--------------------------------------------------------------------------------- Responsibility -->
+  responsibility:
+    required: true
+    purpose: "What the frontend is answerable for — one sentence, wider than summary and narrower than the product."
+
+  # <!--------------------------------------------------------------------------------- Tech -->
+  tech:
+    required: true
+    purpose: "What the frontend is built with — the choices an agent follows and never re-decides."
+    fields:
+      language:
+        required: true
+        purpose: "The language, its version when pinned, and the frameworks carried on top of it — one framework per role: API layer, ORM, migrations, test runner."
+      database:
+        required: true
+        purpose: "The data engine, where the data physically lives, who owns the schema, and the only permitted route to it."
+      environment:
+        required: true
+        purpose: "The isolated environment every command and every install happens inside — never committed."
+      run:
+        required: true
+        purpose: "The command that starts the frontend."
+
+  # <!--------------------------------------------------------------------------------- Code_Layout -->
+  code_layout:
+    required: true
+    purpose: "Every path inside code_path and what it holds — the key is the path, the value is its responsibility in one line; a folder ends with a slash, a file carries its extension. Entry point, configuration, database access, models, validation schemas, services, routes, errors, migrations, and tests each have their own place."
+
+  # <!--------------------------------------------------------------------------------- Contracts -->
+  contracts:
+    required: true
+    purpose: "The frontend's only connection to the other items — the contract it publishes."
+    fields:
+      produces:
+        required: true
+        purpose: "The contract version the frontend publishes."
+      rule:
+        required: true
+        purpose: "What the contract binds the frontend to — the implementation must match the frozen contract exactly."
+      change_rule:
+        required: true
+        purpose: "What happens when the contract must change — a frozen contract is versioned, never edited, and that is a human decision."
+      "<version>":
+        required: true
+        purpose: "One entry per contract version — the full surface a consumer may build against."
+        fields:
+          lifecycle:
+            required: true
+            purpose: "Where the version stands — draft, frozen, or deprecated; only a frozen contract may be defined against."
+          lifecycle_note:
+            required: true
+            purpose: "What the lifecycle means for this version, and what a change to it would cost."
+          consumed_by:
+            required: true
+            purpose: "The item reading this contract."
+          contract_read_order:
+            required: true
+            purpose: "The order the contract is read in, and why."
+          conventions:
+            required: true
+            purpose: "What holds across the whole surface — transport, identifiers, timestamps, and the answer to an unknown id."
+          error_shape:
+            required: true
+            purpose: "The single shape every failure takes — its rule, its exact fields, and the codes a consumer may branch on."
+          models:
+            required: true
+            purpose: "The data shapes the surface returns — the key is the model, the value is its fields and their limits."
+          routes:
+            required: true
+            purpose: "The surface itself, read last — each route carries method, path, summary, its body when it takes one, its success response, and the error codes it may answer with."
+
+  # <!--------------------------------------------------------------------------------- Boundaries -->
+  boundaries:
+    required: true
+    purpose: "The limits of the frontend."
+    fields:
+      owns:
+        required: true
+        purpose: "What belongs to the frontend — its code and the whole database schema."
+      does_not_own:
+        required: true
+        purpose: "What is explicitly not the frontend's, however close it sits — client code."
+      interface:
+        required: true
+        purpose: "The only thing the frontend offers the outside — its contract."
+
+  # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    required: true
+    purpose: "What the frontend does not do — named so it is never inferred into a task."
