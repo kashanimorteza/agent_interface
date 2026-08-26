@@ -21,7 +21,7 @@ read_order:
   steps:
     - step: 1
       read: "root.yaml"
-      why: "This file — read protocol and working modes; the write rules of each file are read with that file, under its own policy section"
+      why: "This file — read protocol, the file index, and the working modes; the write rules of each file are read with that file, under its own policy section"
     - step: 2
       read: "definition.yaml"
       why: "Understand what product is being built"
@@ -29,8 +29,8 @@ read_order:
       read: "rules.yaml"
       why: "Read in full — every rule lives here and security overrides everything"
     - step: 4
-      read: "develop.yaml"
-      why: "Learn the frame of the build layer — which items exist and which file holds each, the shape of a plan, and how items connect"
+      read: "The item files named in content.structure — backend.yaml and frontend.yaml"
+      why: "Learn which items exist, which are enabled, and which contract each produces or consumes; there is no separate frame file — content.structure below is the index"
     - step: 5
       read: "task.yaml"
       why: "Know the shape of a task, its states, and where every plan stands"
@@ -38,14 +38,14 @@ read_order:
       read: "state.yaml"
       why: "Learn the active mode, the active item, the blockers, and the open questions"
     - step: 7
-      read: "Active item: its own file — named on its entry in develop.yaml — and its plan in task.yaml"
+      read: "Active item: its own file, and its plan in task.yaml"
       why: "Understand the item you are working on and where each of its tasks stands"
   no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its own log field"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  structure: "The files of the interface — the layer, path, and responsibility of each"
+  structure: "The files of the interface — the layer, path, and responsibility of each; this is the index, and no other file holds one"
   modes: "The working modes — planning, development, review — and what each may write"
 
 
@@ -57,7 +57,7 @@ content:
     root:
       layer: 1
       path: "root.yaml"
-      responsibility: "Entry point — read protocol and working modes"
+      responsibility: "Entry point — read protocol, the file index, and working modes"
       note: "The only file an agent finds without guidance"
 
     definition:
@@ -72,17 +72,11 @@ content:
       responsibility: "Rules governing agent behavior — security, quality, and their precedence"
       note: "No rule lives anywhere else — read rules.yaml before doing anything"
 
-    develop:
-      layer: 4
-      path: "develop.yaml"
-      responsibility: "Build layer frame — the item index, the plan structure, the contract lifecycle, and the boundaries"
-      note: "For any work in this layer, read develop.yaml first — it names the file of every item"
-
     items:
       layer: 4
       path: "backend.yaml, frontend.yaml"
       responsibility: "The items themselves — one file per item: its settings and the contracts it produces or consumes"
-      note: "An item's settings live in its own file and nowhere else; the shape they follow is schema/backend.schema.yaml"
+      note: "An item's settings live in its own file and nowhere else; each follows its own shape — schema/backend.schema.yaml and schema/frontend.schema.yaml. An item with enabled false stands in this index and is out of the build"
 
     task:
       layer: 5
@@ -96,6 +90,12 @@ content:
       responsibility: "Project-wide state — active mode, active item, blockers, and open questions"
       note: "Task status does not live here — every task carries its own status field in task.yaml"
 
+    schema:
+      layer: 0
+      path: "schema/"
+      responsibility: "The shape of each file above — what sections it has, in what order, and what every parameter means"
+      note: "Not a layer of the interface but the format behind it; a file's own shape is read before that file"
+
 
   modes:
     rule: "Exactly one mode is active at a time — it is named in state.yaml under active.mode"
@@ -105,23 +105,24 @@ content:
       purpose: "Decide what will be built and in what order — no product code is written"
       may_write:
         - "The item files — backend.yaml and frontend.yaml — their settings and draft contracts, never a frozen contract"
-        - "task.yaml — the plans only, never task_schema and task_states"
-        - "state.yaml"
+        - "task.yaml — the plans only, never task_schema, task_states, and phase_titles"
+        - "state.yaml — blockers and open questions, never active"
       may_not_write:
         - "Any file under an item's code_path"
         - "A frozen contract"
-        - "root.yaml, definition.yaml, rules.yaml, and develop.yaml — the frame of the build layer"
+        - "root.yaml, definition.yaml, and rules.yaml — the frame above the build layer"
+        - "schema/ — the shape of a file is never changed by an agent"
 
     development:
       purpose: "Implement the tasks that planning defined"
       may_write:
         - "Files under the active item's code_path, limited to the touches of the claimed task"
         - "task.yaml — the status, blocker, and log fields of a task only, never the plan"
-        - "state.yaml"
+        - "state.yaml — blockers and open questions, never active"
       may_not_write:
         - "Another item's code_path"
         - "A frozen contract"
-        - "root.yaml, definition.yaml, rules.yaml, develop.yaml, and the item files"
+        - "root.yaml, definition.yaml, rules.yaml, the item files, and schema/"
       plan_change: "Changing a task in this mode requires the reason written into that task's log and human approval — an agent never silently rewrites the plan it is executing"
 
     review:

@@ -5,6 +5,7 @@ meta:
   purpose: "Product definition — what is being built and why"
   shape: "schema/definition.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
   scope_note: "This file states the what, not the how — the how lives in rules.yaml and the item files"
+  phase_scope: "Phase 1 only — data entry: the models, their storage, and the APIs that manage them; nothing of the later phases is defined here"
   reason: "The product definition is a human decision, not an agent inference"
   updated: "2026-08-26"
 
@@ -35,33 +36,38 @@ content_map:
 content:
 
   identity:
-    id: "todo-app"
-    name: "Todo App"
-    one_liner: "A web application for managing daily tasks, with user accounts and sync."
+    id: "trading-assistant"
+    name: "Trading Assistant"
+    one_liner: "A platform for defining the trading information a strategy runs on — accounts, assets, strategies, risk parameters, and the actions built from them."
 
 
   goals:
-    - "A user can create a group of tasks"
-    - "A user can create, edit, complete, and delete tasks"
-    - "A user registers, logs in, and sees only their own groups and tasks"
+    - "A user can add a trading account and manage it — its name, its username, its password, its status, and its description"
+    - "A user can add an asset and manage it"
+    - "A user can add a strategy and manage it, including the risk parameter it carries"
+    - "A user can add an action group and manage it"
+    - "A user can add an action and manage it, binding it to an asset, a strategy, and an action group"
+    - "A user can add an execute entry and manage it, binding it to an action and carrying its profit and its state"
+    - "A user can change the status of any of the six records without changing anything else about it"
+    - "A user can delete any of the six records"
 
 
   architecture:
-    shape: "Two independent parts — a web client and an HTTP API — joined only by a versioned contract"
-    reason: "Each part is built and verified on its own, so an agent working in one never has to read the other"
+    shape: "Two parts — a backend that owns the models, the database, and the management APIs, and a frontend that is not yet defined — joined only by a versioned contract"
+    reason: "Each part is built and verified on its own, so an agent working in one never has to read the other; the frontend can stay undefined without holding the backend up"
 
     parts:
 
       backend:
-        responsibility: "The HTTP API, the task and user logic, and the database"
+        responsibility: "The HTTP API for the six Phase 1 models, their logic, and the database that holds them"
         owns: "The API implementation and the whole database schema"
         does_not_own: "Anything the user sees — not one line of the client"
         produces: "Its contracts — published in its own file, backend.yaml"
 
       frontend:
-        responsibility: "The web client — the user interface for registration, login, and task management"
-        owns: "All client code"
-        does_not_own: "Business logic, final validation, and the database"
+        responsibility: "To be defined — Phase 1 names a frontend but defines nothing about it"
+        owns: "To be defined"
+        does_not_own: "The models, the database schema, and the management APIs — those are the backend's"
         consumes: "The backend's contracts — from backend.yaml"
 
     connection:

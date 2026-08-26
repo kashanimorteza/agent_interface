@@ -4,8 +4,9 @@ meta:
   path_note: "The address of this file — layer 4, the backend item: its settings and the contract it publishes"
   purpose: "The backend item — what it is built with, how its code is laid out, and the contract it promises the outside"
   shape: "schema/backend.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
+  phase_scope: "Phase 1 only — the six data-entry models, their storage, and the APIs that manage them"
   plan_location: "This item's plan lives in task.yaml — never here"
-  contract_gap: "api-v1 defines no registration, login, session, or owner field, while the root goals and the security rules require per-user ownership — recorded as Q1 and Q2 in state.yaml"
+  contract_gap: "api-v1 is a draft, not frozen — Phase 1 names the operations Add, Edit, Update, Delete, and Status without separating Edit from Update, names no read or list operation, and fixes no type or permitted value for any field; recorded as B1 and Q1 through Q7 in state.yaml"
   updated: "2026-08-26"
 
 
@@ -51,23 +52,23 @@ content:
   enabled: true
   code_path: "backend/"
   code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
-  summary: "API, task and user logic, database"
-  needs_test: true
+  summary: "Management APIs, model logic, and the database for the six Phase 1 records"
+  needs_test: false
   verify_cwd: "Every verify command runs from backend/ — inside its virtual environment"
 
-  responsibility: "HTTP API — task and group logic, validation, and the database"
+  responsibility: "The HTTP API that adds, changes, deletes, and sets the status of the six Phase 1 records, together with their validation and the database that holds them"
 
 
   # =============================================================== Tech
   tech:
     language:
       name: "Python"
-      version: "3.12"
+      version: "The latest stable Python release available when development starts — pinned at that moment and not re-decided afterwards"
       frameworks:
         api: "FastAPI — HTTP layer, routing, and request validation"
         orm: "SQLAlchemy — data models and queries"
-        migrations: "Alembic — schema changes, one migration per change"
-        test: "pytest — test runner"
+        migrations: "Alembic — the standard migration framework for SQLAlchemy; one migration per schema change"
+        test: "None — Phase 1 requires no automated tests, so no test runner is chosen; choosing one is a human decision"
     database:
       engine: "SQLite"
       storage: "A single file on disk — its path comes from configuration, never hardcoded"
@@ -82,24 +83,24 @@ content:
     "app/main.py": "Entry point — the application object and the router registrations"
     "app/config.py": "Configuration — the database path and every other setting, read from the environment"
     "app/db/": "Engine and session — the only place a connection is opened"
-    "app/models/": "ORM models — the database schema in Python"
+    "app/models/": "ORM models — the six Phase 1 records as the database schema in Python"
     "app/schemas/": "Validation models — every API input and output is bound to one"
     "app/services/": "Business logic — the only layer permitted to query the database"
     "app/api/": "Routes — accept input, call a service, return output, nothing else"
     "app/errors.py": "The uniform error shape and its handlers"
     "migrations/": "Alembic — one migration per schema change, each with its downgrade"
-    "tests/": "Tests — mirror the structure of app/"
+    "tests/": "Tests — the place a test would live; Phase 1 requires none, so it stays empty until the human asks for one"
 
 
   # =============================================================== Contracts
   contracts:
     produces: "api-v1"
     rule: "This item's implementation must match the frozen contract exactly — the contract is the promise, not a sketch"
-    change_rule: "api-v1 is frozen — a needed change means api-v2, a new entry beside it, and that is a human decision"
+    change_rule: "A frozen contract is never edited — a needed change means a new version beside it, and that is a human decision"
 
     api-v1:
-      lifecycle: "frozen"
-      lifecycle_note: "Final — the implementation matches it and the frontend may define tasks against it. This version never changes; a change means api-v2."
+      lifecycle: "draft"
+      lifecycle_note: "Draft — no task may be defined against it, because only a frozen contract may be built on. It stays a draft until Q1 through Q7 in state.yaml are answered: Phase 1 does not separate Edit from Update, names no read or list operation (Q2), and fixes no type, length, or permitted value for any field. Freezing it is a human decision."
       consumed_by: "frontend"
       contract_read_order:
         - "conventions — they apply to everything that follows"
@@ -110,8 +111,8 @@ content:
       conventions:
         transport: "HTTP with JSON bodies"
         ids: "Integers, assigned by the server; a client never chooses one"
-        timestamps: "ISO 8601, UTC"
-        unknown_id: "Any route addressing a missing group or task answers 404 with the error shape below"
+        timestamps: "Phase 1 puts no timestamp field on any model — none is added, and no route returns one"
+        unknown_id: "Any route addressing a record that does not exist answers 404 with the error shape below"
 
       error_shape:
         rule: "Every non-2xx response has exactly these three fields, with no others"
@@ -120,97 +121,220 @@ content:
           message: "One human-readable sentence, safe to show a user"
           details: "An object with anything specific to this error; may be empty"
         codes:
-          not_found: "404 — no group or task with that id"
+          not_found: "404 — no record with that id"
           invalid_input: "422 — the body failed validation; details.fields lists field and problem"
           http_error: "4xx raised by the transport layer, such as an unknown route"
           internal_error: "500 — the service failed; details is always empty and no internals are exposed"
 
       models:
-        Group:
-          id: "integer"
-          name: "string, 1 to 120 characters"
-          created_at: "timestamp"
-        Task:
-          id: "integer"
-          group_id: "integer — the group this task belongs to"
-          title: "string, 1 to 200 characters"
-          done: "boolean, false when created"
-          created_at: "timestamp"
+        Account:
+          id: "integer — assigned by the server"
+          name: "string"
+          username: "string"
+          password: "string — accepted on write, never returned in any response; how it is stored at rest is not settled by Phase 1 (Q7)"
+          status: "the status of the record — its permitted values are not fixed by Phase 1 (Q3)"
+          description: "string"
+        Asset:
+          id: "integer — assigned by the server"
+          name: "string"
+          status: "the status of the record — its permitted values are not fixed by Phase 1 (Q3)"
+          description: "string"
+        Strategy:
+          id: "integer — assigned by the server"
+          name: "string"
+          risk_parameter: "the risk parameter of the strategy — Phase 1 names it without fixing its type or shape (Q5)"
+          status: "the status of the record — its permitted values are not fixed by Phase 1 (Q3)"
+          description: "string"
+        ActionGroup:
+          id: "integer — assigned by the server"
+          name: "string"
+          status: "the status of the record — its permitted values are not fixed by Phase 1 (Q3)"
+          description: "string"
+        Action:
+          id: "integer — assigned by the server"
+          name: "string"
+          asset_id: "integer — the asset this action is bound to"
+          strategy_id: "integer — the strategy this action is bound to"
+          group_id: "integer — the action group this action belongs to"
+          status: "the status of the record — its permitted values are not fixed by Phase 1 (Q3)"
+          description: "string"
+        Execute:
+          id: "integer — assigned by the server"
+          name: "string"
+          action_id: "integer — the action this entry belongs to"
+          profit: "the profit of the entry — Phase 1 names it without fixing its type or unit (Q6)"
+          state: "the state of the entry — Phase 1 carries it beside status without saying what separates them (Q4)"
+          status: "the status of the record — its permitted values are not fixed by Phase 1 (Q3)"
+          description: "string"
 
       routes:
 
-        - method: "GET"
-          path: "/health"
-          summary: "Liveness"
-          response: "200 — {status, service}"
-
         - method: "POST"
-          path: "/groups"
-          summary: "Create a group"
-          body: "{name}"
-          response: "201 — Group"
+          path: "/accounts"
+          summary: "Add an account"
+          body: "{name, username, password, status, description}"
+          response: "201 — Account"
           errors: ["invalid_input"]
 
-        - method: "GET"
-          path: "/groups"
-          summary: "List every group, ordered by id"
-          response: "200 — array of Group, empty array when there are none"
-
-        - method: "GET"
-          path: "/groups/{group_id}"
-          summary: "Read one group"
-          response: "200 — Group"
-          errors: ["not_found"]
+        - method: "PATCH"
+          path: "/accounts/{account_id}"
+          summary: "Change an account — the single update route Phase 1's Edit and Update collapse into (Q1)"
+          body: "{name?, username?, password?, description?}"
+          response: "200 — Account"
+          errors: ["not_found", "invalid_input"]
 
         - method: "PATCH"
-          path: "/groups/{group_id}"
-          summary: "Rename a group"
-          body: "{name}"
-          response: "200 — Group"
+          path: "/accounts/{account_id}/status"
+          summary: "Set an account's status and nothing else"
+          body: "{status}"
+          response: "200 — Account"
           errors: ["not_found", "invalid_input"]
 
         - method: "DELETE"
-          path: "/groups/{group_id}"
-          summary: "Delete a group and every task inside it"
+          path: "/accounts/{account_id}"
+          summary: "Delete an account"
           response: "204 — no body"
           errors: ["not_found"]
 
         - method: "POST"
-          path: "/groups/{group_id}/tasks"
-          summary: "Create a task inside a group"
-          body: "{title}"
-          response: "201 — Task"
-          errors: ["not_found", "invalid_input"]
-
-        - method: "GET"
-          path: "/groups/{group_id}/tasks"
-          summary: "List the tasks of one group, ordered by id"
-          response: "200 — array of Task, empty array when the group has none"
-          errors: ["not_found"]
-
-        - method: "GET"
-          path: "/tasks/{task_id}"
-          summary: "Read one task"
-          response: "200 — Task"
-          errors: ["not_found"]
+          path: "/assets"
+          summary: "Add an asset"
+          body: "{name, status, description}"
+          response: "201 — Asset"
+          errors: ["invalid_input"]
 
         - method: "PATCH"
-          path: "/tasks/{task_id}"
-          summary: "Change a task's title, its done state, or both"
-          body: "{title?, done?}"
-          response: "200 — Task"
+          path: "/assets/{asset_id}"
+          summary: "Change an asset — the single update route Phase 1's Edit and Update collapse into (Q1)"
+          body: "{name?, description?}"
+          response: "200 — Asset"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/assets/{asset_id}/status"
+          summary: "Set an asset's status and nothing else"
+          body: "{status}"
+          response: "200 — Asset"
           errors: ["not_found", "invalid_input"]
 
         - method: "DELETE"
-          path: "/tasks/{task_id}"
-          summary: "Delete a task"
+          path: "/assets/{asset_id}"
+          summary: "Delete an asset"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/strategies"
+          summary: "Add a strategy"
+          body: "{name, risk_parameter, status, description}"
+          response: "201 — Strategy"
+          errors: ["invalid_input"]
+
+        - method: "PATCH"
+          path: "/strategies/{strategy_id}"
+          summary: "Change a strategy — the single update route Phase 1's Edit and Update collapse into (Q1)"
+          body: "{name?, risk_parameter?, description?}"
+          response: "200 — Strategy"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/strategies/{strategy_id}/status"
+          summary: "Set a strategy's status and nothing else"
+          body: "{status}"
+          response: "200 — Strategy"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/strategies/{strategy_id}"
+          summary: "Delete a strategy"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/action-groups"
+          summary: "Add an action group"
+          body: "{name, status, description}"
+          response: "201 — ActionGroup"
+          errors: ["invalid_input"]
+
+        - method: "PATCH"
+          path: "/action-groups/{group_id}"
+          summary: "Change an action group — the single update route Phase 1's Edit and Update collapse into (Q1)"
+          body: "{name?, description?}"
+          response: "200 — ActionGroup"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/action-groups/{group_id}/status"
+          summary: "Set an action group's status and nothing else"
+          body: "{status}"
+          response: "200 — ActionGroup"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/action-groups/{group_id}"
+          summary: "Delete an action group"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/actions"
+          summary: "Add an action, bound to an asset, a strategy, and an action group"
+          body: "{name, asset_id, strategy_id, group_id, status, description}"
+          response: "201 — Action"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/actions/{action_id}"
+          summary: "Change an action — the single update route Phase 1's Edit and Update collapse into (Q1)"
+          body: "{name?, asset_id?, strategy_id?, group_id?, description?}"
+          response: "200 — Action"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/actions/{action_id}/status"
+          summary: "Set an action's status and nothing else"
+          body: "{status}"
+          response: "200 — Action"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/actions/{action_id}"
+          summary: "Delete an action"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/executes"
+          summary: "Add an execute entry, bound to an action"
+          body: "{name, action_id, profit, state, status, description}"
+          response: "201 — Execute"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/executes/{execute_id}"
+          summary: "Change an execute entry — the single update route Phase 1's Edit and Update collapse into (Q1)"
+          body: "{name?, action_id?, profit?, state?, description?}"
+          response: "200 — Execute"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/executes/{execute_id}/status"
+          summary: "Set an execute entry's status and nothing else"
+          body: "{status}"
+          response: "200 — Execute"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/executes/{execute_id}"
+          summary: "Delete an execute entry"
           response: "204 — no body"
           errors: ["not_found"]
 
 
   # =============================================================== Boundaries
   boundaries:
-    owns: "All code inside backend/, and the whole database schema"
+    owns: "All code inside backend/, and the whole database schema for the six Phase 1 records"
     does_not_own: "Client code — not a single line"
     interface: "The only thing this item promises the outside is the api-v1 contract"
 
@@ -218,4 +342,6 @@ content:
   # =============================================================== Out of scope
   out_of_scope:
     - "Rendering and user interface"
+    - "Authentication — Phase 1 requires none, and no route performs an identity check"
+    - "Automated tests — Phase 1 requires none"
     - "Deployment infrastructure and CI"

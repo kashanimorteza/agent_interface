@@ -3,10 +3,12 @@ meta:
   path: "frontend.yaml"
   path_note: "The address of this file — layer 4, the frontend item: its settings and the contract it consumes"
   purpose: "The frontend item — what it is built with, how its code is laid out, and the contract it reads"
-  shape: "schema/backend.schema.yaml — the shape of an item file, drawn from the backend"
-  frame: "develop.yaml — the frame this item sits in: the item index, the plan structure, the contract lifecycle, and the boundaries"
+  shape: "schema/frontend.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
+  phase_scope: "Phase 1 only — and Phase 1 says of the frontend exactly one thing: to be defined"
   plan_location: "This item's plan lives in task.yaml — never here"
-  contract_gap: "api-v1 offers no registration, login, session, or owner field, so the authentication surface of this item cannot be planned — recorded as B1, Q1, and Q2 in state.yaml"
+  entry_stands: "The entry stands with enabled false — the item is out of the build, not removed from the interface"
+  contract_gap: "Nothing about this item can be settled until the human defines it — recorded as B2 and Q8 in state.yaml"
+  shape_gap: "schema/frontend.schema.yaml gives a consuming item no field for the contract it reads, so consumes and contract_location are written here beside the shape — raised as Q10 in state.yaml, never fixed by an agent"
   updated: "2026-08-26"
 
 
@@ -16,31 +18,32 @@ policy:
   editable_in_mode: "planning may write the settings; development and review never write this file — a task's status moves in task.yaml"
   scope: "The settings are the working surface — this item produces no contract, and it never edits the one it consumes"
   settings: "The settings — responsibility through out_of_scope — are written in planning mode only; a change wanted during development is recorded in the affected task's log and raised with the human"
+  undefined_settings: "A setting Phase 1 does not define is written as to be defined and left there — an agent never fills it with a guess"
   consumed_contract: "The consumed contract lives on the producing item and is never copied here — a change to it is raised with the human, never applied"
   task_protocols: "How a task is claimed, done, blocked, and logged is the policy of task.yaml — it is not repeated here"
-  on_change_needed: "A wanted change to the shape of an item is raised as an open question in state.yaml, never applied here"
+  on_change_needed: "A wanted change to the shape of this file — schema/frontend.schema.yaml — is raised as an open question in state.yaml, never applied here"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "develop.yaml first — the frame: the item index, plan_structure, contracts, boundaries"
-  - "then the settings here, in order — responsibility, tech, code_layout, contracts, boundaries, out_of_scope"
-  - "then the consumed contract where it lives — backend.yaml, content.contracts.api-v1 — by its own contract_read_order"
-  - "then this item's plan in task.yaml, by that file's own read_order"
+  - "schema/frontend.schema.yaml first — know the shape of this file and what each parameter means"
+  - "enabled here, before anything else — it is false, so this item is out of the build and nothing below it is acted on"
+  - "then the settings in the order of the shape — every one of them is to be defined"
+  - "then B2 and Q8 in state.yaml — what is missing, and who decides it"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   enabled: "Whether this item is in play"
   code_path: "The one folder this item may write inside"
+  code_path_note: "What code_path is relative to"
   summary: "The item in one line"
   needs_test: "Whether every task producing code is proven by a written test"
   verify_cwd: "Where every verify command of this item runs from"
-  cross_item_rule: "How this item may lean on the other — the contract version, never a backend task"
   responsibility: "What this item is answerable for"
-  tech: "What the item is built with — language, frameworks, state handling, and the run command"
+  tech: "What the item is built with"
   code_layout: "Every path inside code_path and what it holds"
-  contracts: "The contract this item consumes, and where it lives"
+  contracts: "The contract this item reads, and where it lives"
   boundaries: "What is this item's, what is not, and the one route to the other item"
   out_of_scope: "What this item does not do"
 
@@ -48,59 +51,47 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  enabled: true
-  code_path: "frontend/"
-  code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
-  summary: "Web client — consumer of the api-v1 contract"
-  needs_test: true
-  verify_cwd: "Every verify command runs from frontend/"
-  cross_item_rule: "No task here depends on a backend task — the only dependency is on the contract version, via needs_contract"
+  enabled: false
+  code_path: "to be defined"
+  code_path_note: "Actual code of this item — relative to the repository root, not the interface root; the folder itself is named when the item is defined"
+  summary: "To be defined — Phase 1 names a frontend and defines nothing about it"
+  needs_test: "to be defined — Phase 1 requires no automated tests, but this item has no settings of its own yet"
+  verify_cwd: "to be defined — it follows from code_path, which is not yet named"
 
-  responsibility: "Web client — user interface for login, registration, and task management"
+  responsibility: "To be defined"
 
 
   # =============================================================== Tech
   tech:
-    language:
-      name: "TypeScript"
-      frameworks:
-        ui: "React — components and rendering"
-        build: "Vite — dev server and bundling"
-        routing: "React Router — one route per page"
-        test: "Vitest + Testing Library — test runner and component testing"
-    database:
-      engine: "none — this item never touches a database; all data arrives through api-v1"
-    state: "Server state via a request cache; local state via React's own hooks"
-    run: "npm run dev"
+    language: "to be defined"
+    database: "to be defined — no part of the frontend is defined yet, including whether it touches data at all"
+    environment: "to be defined"
+    run: "to be defined"
 
 
   # =============================================================== Code layout
   code_layout:
-    "src/main.tsx": "Entry point"
-    "src/api/": "API client — the only layer that talks to the network"
-    "src/pages/": "Pages — one file per route"
-    "src/components/": "Reusable components"
-    "src/auth/": "Session handling and route protection"
-    "tests/": "Tests — mirror the structure of src/"
+    "to be defined": "No path of this item is named yet — the layout is written when the item is defined"
 
 
   # =============================================================== Contracts
   contracts:
-    consumes: "api-v1"
+    produces: "none — this item publishes no contract"
+    consumes: "api-v1 — the backend's contract, once it is frozen"
     contract_location: "backend.yaml — content.contracts.api-v1, on the producing item"
-    rule: "Tasks in this item depend on the contract version, not on backend tasks"
-    before_frozen: "Until the contract is frozen, work proceeds against mock data derived from that same contract"
+    rule: "A task in this item depends on the contract version, never on a backend task"
+    change_rule: "The consumed contract is never edited here — a needed change is raised with the human on the producing item"
 
 
   # =============================================================== Boundaries
   boundaries:
-    owns: "All code inside frontend/"
+    owns: "To be defined — nothing until the item is defined"
     does_not_own: "Backend code and the database schema — not a single line"
-    interface: "The only way to communicate with the backend is the api-v1 contract"
+    interface: "The only route to the backend is the api-v1 contract"
 
 
   # =============================================================== Out of scope
   out_of_scope:
-    - "Server-side business logic and final validation"
+    - "Server-side logic and final validation"
     - "Direct database access"
-    - "Deployment infrastructure and CI"
+    - "Everything else — until the human defines this item, it does nothing at all"

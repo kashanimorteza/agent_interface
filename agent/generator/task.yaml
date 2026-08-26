@@ -1,13 +1,14 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "task.yaml"
-  path_note: "The address of this file — the task layer: the configuration of tasks and the plans that hold them"
+  path_note: "The address of this file — layer 5, the task layer: the configuration of tasks and the plans that hold them"
   purpose: "Task configuration — the fields every task carries, the states it may hold — and the plans of the items"
   shape: "schema/task.schema.yaml — the shape of this file: its sections, their order, and the three levels of a plan"
   plan_source: "The three-level shape of a plan — phases, groups, tasks — is defined in schema/task.schema.yaml, under sections.phases"
   creation_rule_source: "Whether and when a task may be written here is governed by policy.task_creation below — no task is added speculatively"
   status_lives_here: "Every task carries its own status field — this file both defines the task and says where it stands; there is no separate status list"
-  contract_gap: "api-v1 defines no registration, login, session, or owner field, while the root goals and the security rules require per-user ownership — no task here is written against that missing surface; it is recorded as Q1 and Q2 in state.yaml"
+  phase_scope: "Phase 1 only — the phase titles below are the stages of the data-entry build and nothing beyond it"
+  contract_gap: "api-v1 is a draft, not frozen — no task may be defined against it, so no plan is written here; recorded as B1 and Q1 through Q7 in state.yaml"
   points_to: "backend.yaml — content.contracts.api-v1, the contract a task names in needs_contract"
   updated: "2026-08-26"
 
@@ -23,10 +24,10 @@ policy:
   claim_protocol: "Before starting, set the task's status to claimed and write this file immediately — so two agents never take the same task"
   done_gate: "A task becomes done only after its verify has been run and passed from inside the item's code_path — the code being written is not the gate"
   blocked_protocol: "On a blocker, set the task to blocked, name the blocker id, state what is missing in state.yaml, and stop — an agent never invents its way past a missing contract or a missing decision"
-  coverage_rule: "A task may only name a contract that exists — a task needing a surface no contract provides is blocked, not written against a guess"
+  coverage_rule: "A task may only name a contract that is frozen — a task needing a surface that exists only as a draft, or not at all, is blocked, not written against a guess"
   decision: "A decision about a task goes into that task's log with its date and reason — a decision the human must still make is an open question in state.yaml, not a log entry"
   log: "Append-only — a past entry is never rewritten"
-  plan_change: "In development mode the plan fields of a task change only with the reason written into its log and human approval; in planning mode the plan may be written freely, but never against a contract that does not exist"
+  plan_change: "In development mode the plan fields of a task change only with the reason written into its log and human approval; in planning mode the plan may be written freely, but never against a contract that is not frozen"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -43,8 +44,8 @@ read_order:
 content_map:
   task_schema: "The fields every task carries"
   task_states: "The status vocabulary a task's status field may hold, and the protocols around it"
-  phase_titles: "Quick lookup from phase id to its title — the ten phases the completed backend build followed"
-  phases: "The plans — empty; the backend's 76-task plan was executed to done and cleared, and per policy.task_creation a new plan is written only on explicit request"
+  phase_titles: "Quick lookup from phase id to its title — the stages the Phase 1 build follows, in build order"
+  phases: "The plans — empty; api-v1 is still a draft, so no task may be defined against it, and per policy.task_creation a plan is written only on explicit request"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -91,9 +92,13 @@ content:
     P5: "Migrations"
     P6: "Validation schemas"
     P7: "Error surface"
-    P8: "Groups feature"
-    P9: "Tasks feature"
-    P10: "Conformance"
+    P8: "Account"
+    P9: "Asset"
+    P10: "Strategy"
+    P11: "Action group"
+    P12: "Action"
+    P13: "Execute"
+    P14: "Conformance"
 
 
   phases: []
