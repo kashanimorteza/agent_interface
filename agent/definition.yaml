@@ -55,15 +55,15 @@ content:
         responsibility: "The HTTP API, the task and user logic, and the database"
         owns: "The API implementation and the whole database schema"
         does_not_own: "Anything the user sees — not one line of the client"
-        produces: "The contracts under develop/shared/contracts/"
+        produces: "Its contracts — published on its own entry in develop.yaml"
 
       frontend:
         responsibility: "The web client — the user interface for registration, login, and task management"
         owns: "All client code"
         does_not_own: "Business logic, final validation, and the database"
-        consumes: "The contracts under develop/shared/contracts/"
+        consumes: "The backend's contracts — from the backend entry in develop.yaml"
 
     connection:
-      path: "develop/shared/contracts/"
+      path: "develop.yaml — content.items.<producing item>.contracts"
       rule: "The contract is the only connection point — no part reaches into the other by any other route"
       versioning: "A frozen contract never changes — a change means a new version"

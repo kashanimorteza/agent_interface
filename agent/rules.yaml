@@ -5,7 +5,7 @@ meta:
   purpose: "Rules governing agent behavior — security, quality, and design, all in this file"
   completeness: "A rule that is not in this file is not a rule"
   reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
-  no_item_rules: "An item has no rules file of its own — every rule is here, and an item's specifics live in its definition.yaml"
+  no_item_rules: "An item has no rules file of its own — every rule is here, and an item's specifics live on its entry in develop.yaml, under content.items"
   updated: "2026-08-25"
 
 

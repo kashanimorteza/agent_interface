@@ -3,7 +3,7 @@ meta:
   path: "state.yaml"
   path_note: "The address of this file — layer 5, the operational state"
   purpose: "The project-wide state — active mode, active item, blockers, and open questions"
-  scope_note: "This file holds no definition, no rule, and no task status — the status of a task lives on the task itself, in its item's task.yaml"
+  scope_note: "This file holds no definition, no rule, and no task status — the status of a task lives on the task itself, in task.yaml"
   reason: "Only what belongs to no single task lives here — per-task state travels with the task, so definition and status can never drift apart"
   updated: "2026-08-25"
 
@@ -13,7 +13,7 @@ policy:
   agent_may_edit: true
   editable_in_mode: "planning, development, and review — review may write blockers and open questions only"
   rule: "Every result is recorded in the file that owns it — this file owns blockers and open questions, nothing else"
-  blocker: "Written under blockers — with an id, what is actually missing, and its consequence; the affected tasks point at it by id from their own task.yaml"
+  blocker: "Written under blockers — with an id, what is actually missing, and its consequence; the affected tasks point at it by id from task.yaml"
   open_question: "Written under open_questions — addressed to the human, with why it matters and which blocker it blocks; an agent never answers one on its own"
   decision_pending: "A decision the human must still make is an open question here — it is not a decision, and nothing is built on its assumed answer"
   active: "Never written by an agent — active.mode and active.item are set by the human"

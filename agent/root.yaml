@@ -29,14 +29,17 @@ read_order:
       read: "rules.yaml"
       why: "Read in full — every rule lives here and security overrides everything"
     - step: 4
-      read: "develop/develop.yaml"
+      read: "develop.yaml"
       why: "Learn which items exist, the shape of a task, and the boundaries of the build layer"
     - step: 5
+      read: "task.yaml"
+      why: "Know the shape of a task, its states, and where every plan stands"
+    - step: 6
       read: "state.yaml"
       why: "Learn the active mode, the active item, the blockers, and the open questions"
-    - step: 6
-      read: "Active item: definition.yaml → task.yaml"
-      why: "Understand the item you are working on and where each of its tasks stands — order comes from read_order in develop.yaml"
+    - step: 7
+      read: "Active item: its settings under content.items in develop.yaml, and its plan in task.yaml"
+      why: "Understand the item you are working on and where each of its tasks stands"
   no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its own log field"
 
 
@@ -71,15 +74,21 @@ content:
 
     develop:
       layer: 4
-      path: "develop/develop.yaml"
+      path: "develop.yaml"
       responsibility: "Build layer index — items, the file template of each item, and the contracts between them"
       note: "For any work in this layer, read develop.yaml first"
 
-    state:
+    task:
       layer: 5
+      path: "task.yaml"
+      responsibility: "Task layer — the shape of a task, its states, and the plans that hold the tasks"
+      note: "A task and its status live here — the plan is both definition and state"
+
+    state:
+      layer: 6
       path: "state.yaml"
       responsibility: "Project-wide state — active mode, active item, blockers, and open questions"
-      note: "Task status does not live here — every task carries its own status field in its item's task.yaml"
+      note: "Task status does not live here — every task carries its own status field in task.yaml"
 
 
   modes:
@@ -89,31 +98,30 @@ content:
     planning:
       purpose: "Decide what will be built and in what order — no product code is written"
       may_write:
-        - "develop/<item>/definition.yaml"
-        - "develop/<item>/task.yaml"
-        - "develop/shared/contracts/ — draft versions only"
+        - "develop.yaml — the items' settings and draft contracts under content.items only, never the frame and never a frozen contract"
+        - "task.yaml — the plans only, never task_schema and task_states"
         - "state.yaml"
       may_not_write:
         - "Any file under an item's code_path"
         - "A frozen contract"
-        - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
+        - "root.yaml, definition.yaml, rules.yaml, and the frame of develop.yaml — everything outside content.items"
 
     development:
       purpose: "Implement the tasks that planning defined"
       may_write:
         - "Files under the active item's code_path, limited to the touches of the claimed task"
-        - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, never the plan"
+        - "task.yaml — the status, blocker, and log fields of a task only, never the plan"
         - "state.yaml"
       may_not_write:
         - "Another item's code_path"
         - "A frozen contract"
-        - "root.yaml, definition.yaml, rules.yaml, develop/develop.yaml"
+        - "root.yaml, definition.yaml, rules.yaml, and the frame of develop.yaml — everything outside content.items"
       plan_change: "Changing a task in this mode requires the reason written into that task's log and human approval — an agent never silently rewrites the plan it is executing"
 
     review:
       purpose: "Read the result and report — nothing is repaired in this mode"
       may_write:
         - "state.yaml — blockers and open questions only"
-        - "develop/<item>/task.yaml — the status, blocker, and log fields of a task only, to mark it blocked and record what was found"
+        - "task.yaml — the status, blocker, and log fields of a task only, to mark it blocked and record what was found"
       may_not_write:
         - "Anything else"
