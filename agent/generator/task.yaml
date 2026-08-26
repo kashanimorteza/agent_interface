@@ -3,8 +3,9 @@ meta:
   path: "task.yaml"
   path_note: "The address of this file — the task layer: the configuration of tasks and the plans that hold them"
   purpose: "Task configuration — the fields every task carries, the states it may hold — and the plans of the items"
-  plan_source: "The three-level shape of a plan — phases, groups, tasks — is defined in develop.yaml, under content.plan_structure"
-  creation_rule_source: "Whether and when a task may be written here is governed by develop.yaml, under policy.task_creation — no task is added speculatively"
+  shape: "schema/task.schema.yaml — the shape of this file: its sections, their order, and the three levels of a plan"
+  plan_source: "The three-level shape of a plan — phases, groups, tasks — is defined in schema/task.schema.yaml, under sections.phases"
+  creation_rule_source: "Whether and when a task may be written here is governed by policy.task_creation below — no task is added speculatively"
   status_lives_here: "Every task carries its own status field — this file both defines the task and says where it stands; there is no separate status list"
   contract_gap: "api-v1 defines no registration, login, session, or owner field, while the root goals and the security rules require per-user ownership — no task here is written against that missing surface; it is recorded as Q1 and Q2 in state.yaml"
   points_to: "backend.yaml — content.contracts.api-v1, the contract a task names in needs_contract"
@@ -15,12 +16,14 @@ meta:
 policy:
   agent_may_edit: true
   editable_in_mode: "planning may write plans; in development, only the status, blocker, and log fields of a task may change"
-  scope: "The plans are the working surface; task_schema and task_states are the frame — fixed by the human, never rewritten by an agent"
+  scope: "The plans are the working surface; task_schema, task_states, and phase_titles are the frame — fixed by the human, never rewritten by an agent"
   rule: "Every result about a task is recorded here, on the task itself — an agent that writes nowhere has done nothing"
+  task_creation: "An agent never writes a task into a plan speculatively — a plan stays as it is, empty or not, until the human explicitly asks for tasks to be created. When asked, tasks are created for exactly what was requested, no more"
   task_status: "The status field on the task — the one field that moves; a blocked task also names its blocker id from state.yaml"
   claim_protocol: "Before starting, set the task's status to claimed and write this file immediately — so two agents never take the same task"
   done_gate: "A task becomes done only after its verify has been run and passed from inside the item's code_path — the code being written is not the gate"
   blocked_protocol: "On a blocker, set the task to blocked, name the blocker id, state what is missing in state.yaml, and stop — an agent never invents its way past a missing contract or a missing decision"
+  coverage_rule: "A task may only name a contract that exists — a task needing a surface no contract provides is blocked, not written against a guess"
   decision: "A decision about a task goes into that task's log with its date and reason — a decision the human must still make is an open question in state.yaml, not a log entry"
   log: "Append-only — a past entry is never rewritten"
   plan_change: "In development mode the plan fields of a task change only with the reason written into its log and human approval; in planning mode the plan may be written freely, but never against a contract that does not exist"
@@ -28,7 +31,8 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "task_schema and task_states first — know the shape of a task and its states before reading any plan"
+  - "schema/task.schema.yaml first — know the shape of a task, its states, and the three levels of a plan"
+  - "task_schema and task_states here — the frame itself, before any plan is read"
   - "then the plan — phases in order, P1 first; a later phase assumes the earlier ones are done"
   - "inside a phase, its does line first, then its groups in order — each group's does says what its tasks accomplish together"
   - "inside a group, tasks by id — depends_on names what must be done before, and is the actual order when it disagrees"
@@ -40,7 +44,7 @@ content_map:
   task_schema: "The fields every task carries"
   task_states: "The status vocabulary a task's status field may hold, and the protocols around it"
   phase_titles: "Quick lookup from phase id to its title — the ten phases the completed backend build followed"
-  phases: "The plans — empty; the backend's 76-task plan was executed to done and cleared, and per policy.task_creation in develop.yaml a new plan is written only on explicit request"
+  phases: "The plans — empty; the backend's 76-task plan was executed to done and cleared, and per policy.task_creation a new plan is written only on explicit request"
 
 
 # <!--------------------------------------------------------------------------------- Content -->

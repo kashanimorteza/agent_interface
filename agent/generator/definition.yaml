@@ -3,9 +3,10 @@ meta:
   path: "definition.yaml"
   path_note: "The address of this file — layer 2, the product definition"
   purpose: "Product definition — what is being built and why"
-  scope_note: "This file states the what, not the how — the how lives in rules.yaml and develop.yaml"
+  shape: "schema/definition.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
+  scope_note: "This file states the what, not the how — the how lives in rules.yaml and the item files"
   reason: "The product definition is a human decision, not an agent inference"
-  updated: "2026-08-25"
+  updated: "2026-08-26"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -55,15 +56,15 @@ content:
         responsibility: "The HTTP API, the task and user logic, and the database"
         owns: "The API implementation and the whole database schema"
         does_not_own: "Anything the user sees — not one line of the client"
-        produces: "Its contracts — published on its own entry in develop.yaml"
+        produces: "Its contracts — published in its own file, backend.yaml"
 
       frontend:
         responsibility: "The web client — the user interface for registration, login, and task management"
         owns: "All client code"
         does_not_own: "Business logic, final validation, and the database"
-        consumes: "The backend's contracts — from the backend entry in develop.yaml"
+        consumes: "The backend's contracts — from backend.yaml"
 
     connection:
-      path: "develop.yaml — content.items.<producing item>.contracts"
+      path: "backend.yaml — content.contracts.<version>, on the producing item"
       rule: "The contract is the only connection point — no part reaches into the other by any other route"
       versioning: "A frozen contract never changes — a change means a new version"

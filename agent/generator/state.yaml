@@ -3,6 +3,7 @@ meta:
   path: "state.yaml"
   path_note: "The address of this file — layer 5, the operational state"
   purpose: "The project-wide state — active mode, active item, blockers, and open questions"
+  shape: "schema/state.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
   scope_note: "This file holds no definition, no rule, and no task status — the status of a task lives on the task itself, in task.yaml"
   reason: "Only what belongs to no single task lives here — per-task state travels with the task, so definition and status can never drift apart"
   updated: "2026-08-26"
@@ -48,8 +49,8 @@ content:
   blockers:
 
     - id: "B1"
-      blocks: "The frontend authentication surface — the tasks for it cannot even be written, because develop.yaml forbids writing a task against a contract that does not exist"
-      what_is_missing: "A contract defining registration, login, logout, and session. api-v1 is frozen and contains no such route, and develop.yaml forbids writing a task against a contract that does not exist"
+      blocks: "The frontend authentication surface — the tasks for it cannot even be written, because a task may only name a contract that exists"
+      what_is_missing: "A contract defining registration, login, logout, and session. api-v1 is frozen and contains no such route, and task.yaml forbids writing a task against a contract that does not exist"
       consequence: "Authentication cannot be built, and everything behind it — the whole of frontend G4 and G5 — cannot be reached"
       decision_belongs_to: "human"
       raised: "2026-08-24"
@@ -75,6 +76,7 @@ content:
         blocks: "nothing yet"
 
       - id: "Q4"
-        question: "definition.yaml names the connection point as 'develop.yaml — content.items.<producing item>.contracts', and rules.yaml requires one design page per interface file. Both are human-owned, and both are now out of step with the build layer being split into develop.yaml plus one file per item"
-        why_it_matters: "An agent following definition.yaml looks for a contract where there is no longer one, and the design rule now asks for pages that do not exist — neither file may be corrected by an agent"
+        question: "rules.yaml requires one design page per interface file, and the interface files have changed — develop.yaml is gone, backend.yaml and frontend.yaml exist, and the schema folder has grown. rules.yaml is human-owned"
+        why_it_matters: "The design rule now asks for pages that do not exist and no longer matches the files that do — the rule may not be corrected by an agent"
+        answered_so_far: "The definition.yaml half was settled on 2026-08-26 — regenerated, its connection path now points at backend.yaml. rules.yaml was regenerated the same day with the design rule kept as it is — what remains open is only that the pages in design/file.drawio have not caught up with the current files"
         blocks: "nothing yet"

@@ -1,0 +1,136 @@
+schema:
+  id: agent-interface-task
+  version: "1.0"
+  purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
+  frame_and_surface: "task_schema, task_states, and phase_titles are the frame — fixed by the human; phases is the working surface an agent writes in planning mode"
+
+structure:
+  - task_schema
+  - task_states
+  - phase_titles
+  - phases
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Task_Schema -->
+  task_schema:
+    required: true
+    purpose: "The fields every task carries — the definition of a task, not a task itself."
+    fields:
+      rule:
+        required: true
+        purpose: "That every task carries exactly these fields — no more, no fewer."
+      fields:
+        required: true
+        purpose: "One entry per field of a task, each saying what that field holds."
+        fields:
+          id:
+            required: true
+            purpose: "Identifier unique within the item — each item numbers its own tasks."
+          title:
+            required: true
+            purpose: "The task in one sentence."
+          goal:
+            required: true
+            purpose: "What becomes possible after this task that was not possible before."
+          depends_on:
+            required: true
+            purpose: "Ids of tasks in the same item — depending on another item is forbidden."
+          needs_contract:
+            required: true
+            purpose: "The contract version required — used instead of depending on another item's task; omitted when the task needs none."
+          acceptance:
+            required: true
+            purpose: "Human-readable acceptance criterion — what must actually work."
+          verify:
+            required: true
+            purpose: "A runnable command that proves acceptance — without it a task is never done."
+          touches:
+            required: true
+            purpose: "Paths this task touches, written relative to the item's code_path."
+          status:
+            required: true
+            purpose: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
+          blocker:
+            required: true
+            purpose: "Id of the blocker in state.yaml — present only when status is blocked, absent otherwise."
+          log:
+            required: true
+            purpose: "Append-only list of dated entries carried with the task — absent until the task first moves."
+      status_lives_here:
+        required: true
+        purpose: "That status is written on the task itself, so definition and state can never drift apart."
+      history_lives_here_too:
+        required: true
+        purpose: "That there is no history file — how a task reached its state is in its own log, and a past entry is never rewritten."
+
+  # <!--------------------------------------------------------------------------------- Task_States -->
+  task_states:
+    required: true
+    purpose: "The vocabulary a task's status field may hold, and the protocols around it."
+    fields:
+      path:
+        required: true
+        purpose: "Where a state is written — the status field on each task."
+      states:
+        required: true
+        purpose: "One entry per permitted status, each saying what it means — todo, claimed, blocked, done, cancelled, superseded."
+      derived_ready:
+        required: true
+        purpose: "That ready is not a stored status — a task is ready when it is todo and all of its depends_on are done."
+      done_gate:
+        required: true
+        purpose: "That without a passing verify run no task becomes done, even if the code is written."
+      claim_protocol:
+        required: true
+        purpose: "That a task is set to claimed and the file written before work starts, so two agents never take the same task."
+      status_only_in_development:
+        required: true
+        purpose: "That in development mode status, blocker, and log are the only fields an agent may change — the rest is the plan."
+
+  # <!--------------------------------------------------------------------------------- Phase_Titles -->
+  phase_titles:
+    required: true
+    purpose: "Quick lookup from phase id to its title — the stages a build follows, in build order."
+
+  # <!--------------------------------------------------------------------------------- Phases -->
+  phases:
+    required: true
+    purpose: "The plans — three levels deep: phases at the top, groups inside a phase, tasks inside a group; a task never sits directly in a phase, and nothing sits outside a phase. Empty until the human explicitly asks for tasks to be created."
+    fields:
+      "<phase>":
+        required: true
+        purpose: "One stage of the build — the plan moves phase by phase, and a later phase assumes the earlier ones are done."
+        fields:
+          id:
+            required: true
+            purpose: "P1, P2, ... — numbered in build order, unique within the item."
+          title:
+            required: true
+            purpose: "The stage in a few words — the same title the phase carries in phase_titles."
+          does:
+            required: true
+            purpose: "What this phase accomplishes — what exists at its end that did not exist at its start."
+          groups:
+            required: true
+            purpose: "The groups of this phase — every task of the phase lives inside exactly one of them."
+            fields:
+              "<group>":
+                required: true
+                purpose: "One area of work inside a phase — related tasks side by side."
+                fields:
+                  id:
+                    required: true
+                    purpose: "P1-G1, P1-G2, ... — the phase id plus a group number, unique within the item."
+                  title:
+                    required: true
+                    purpose: "The area in a few words."
+                  does:
+                    required: true
+                    purpose: "What this group of tasks is doing, and what is true when all of them are done."
+                  task_count:
+                    required: true
+                    purpose: "How many tasks the group holds — stated so the size is visible without counting."
+                  tasks:
+                    required: true
+                    purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one concrete act, naming the file it creates or the piece it changes, and one sitting finishes it."

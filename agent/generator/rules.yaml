@@ -3,10 +3,11 @@ meta:
   path: "rules.yaml"
   path_note: "The address of this file — layer 3, the global rules"
   purpose: "Rules governing agent behavior — security, quality, and design, all in this file"
+  shape: "schema/rules.schema.yaml — the shape of this file: its groups, their order, and the form every rule takes"
   completeness: "A rule that is not in this file is not a rule"
   reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
-  no_item_rules: "An item has no rules file of its own — every rule is here, and an item's specifics live on its entry in develop.yaml, under content.items"
-  updated: "2026-08-25"
+  no_item_rules: "An item has no rules file of its own — every rule is here, and an item's specifics live in that item's own file"
+  updated: "2026-08-26"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->

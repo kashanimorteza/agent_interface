@@ -1,0 +1,90 @@
+schema:
+  id: agent-interface-state
+  version: "1.0"
+  purpose: "The shape of state.yaml — the project-wide state that belongs to no single task"
+  scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
+
+structure:
+  - active
+  - blockers
+  - open_questions
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Active -->
+  active:
+    required: true
+    purpose: "The one mode and the one item currently in play — never written by an agent."
+    fields:
+      mode:
+        required: true
+        purpose: "The active working mode — one of the modes defined in root.yaml, and exactly one at a time."
+      mode_reason:
+        required: true
+        purpose: "Why this mode is the active one — what about the project's state puts it here."
+      item:
+        required: true
+        purpose: "The item currently being worked on, or none when no item is active."
+      set_by:
+        required: true
+        purpose: "Who set the active mode and item — the human, always."
+
+  # <!--------------------------------------------------------------------------------- Blockers -->
+  blockers:
+    required: true
+    purpose: "What is actually missing — one entry per blocker, each addressed by id from the tasks it stops."
+    fields:
+      "<blocker>":
+        required: true
+        purpose: "One blocker — a list entry."
+        fields:
+          id:
+            required: true
+            purpose: "B1, B2, ... — the id a blocked task names in its blocker field."
+          blocks:
+            required: true
+            purpose: "What cannot move because of this — the work this blocker stops."
+          what_is_missing:
+            required: true
+            purpose: "The thing that does not exist — stated concretely, never as a guess at its answer."
+          consequence:
+            required: true
+            purpose: "What stays unreachable while this is missing."
+          decision_belongs_to:
+            required: true
+            purpose: "Who must resolve it — the human, when it is a decision an agent may not make."
+          raised:
+            required: true
+            purpose: "The date the blocker was raised."
+
+  # <!--------------------------------------------------------------------------------- Open_Questions -->
+  open_questions:
+    required: true
+    purpose: "What the human still has to decide — an agent writes these and never answers one on its own."
+    fields:
+      note:
+        required: true
+        purpose: "That these are addressed to the human, and that an agent does not answer them."
+      questions:
+        required: true
+        purpose: "The questions themselves — one entry per question."
+        fields:
+          "<question>":
+            required: true
+            purpose: "One open question — a list entry."
+            fields:
+              id:
+                required: true
+                purpose: "Q1, Q2, ... — the id this question is referred to by."
+              question:
+                required: true
+                purpose: "The decision the human must make, stated so it can be answered."
+              why_it_matters:
+                required: true
+                purpose: "What in the project depends on the answer — the goal, rule, or contract that cannot be satisfied without it."
+              answered_so_far:
+                required: false
+                purpose: "What of this question has already been settled, and when — present only on a question that was partly answered."
+              blocks:
+                required: true
+                purpose: "The id of the blocker this question would release, or nothing yet when it blocks none."

@@ -1,0 +1,57 @@
+schema:
+  id: agent-interface-rules
+  version: "1.0"
+  purpose: "The shape of rules.yaml — every parameter an agent reads to know the boundaries of its behavior"
+  group_shape: "Every group after precedence is a list of rules — one rule per line, each a single imperative sentence, stating the forbidden or required thing and the reason or consequence when it is not obvious"
+
+structure:
+  - precedence
+  - environment
+  - code
+  - database
+  - security
+  - test
+  - contract
+  - design
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Precedence -->
+  precedence:
+    required: true
+    purpose: "Which rule wins when two collide — one sentence, and the only entry that is not a list."
+
+  # <!--------------------------------------------------------------------------------- Environment -->
+  environment:
+    required: true
+    purpose: "Where code runs — the isolated environment, what is installed into it, what runs inside it, and what is never committed."
+
+  # <!--------------------------------------------------------------------------------- Code -->
+  code:
+    required: true
+    purpose: "How code is shaped — where logic lives, what a route may do, how input is validated, and the one structure every error takes."
+
+  # <!--------------------------------------------------------------------------------- Database -->
+  database:
+    required: true
+    purpose: "How the schema moves — migrations and their reversibility, indexes, and the engine's specific traps."
+
+  # <!--------------------------------------------------------------------------------- Security -->
+  security:
+    required: true
+    purpose: "What must never leak — passwords, sessions, ownership, and what an error message may reveal; by precedence, these rules override every other group."
+
+  # <!--------------------------------------------------------------------------------- Test -->
+  test:
+    required: true
+    purpose: "What must be proven — the tests every route needs, the database tests run against, and the ownership proof that is mandatory."
+
+  # <!--------------------------------------------------------------------------------- Contract -->
+  contract:
+    required: true
+    purpose: "How the API surface and its contract stay in step — no surface change without the contract, and no change to a frozen version."
+
+  # <!--------------------------------------------------------------------------------- Design -->
+  design:
+    required: true
+    purpose: "How the interface is drawn — the design file and its pages, what a page shows, the shared look every page follows, and how a page is exported."

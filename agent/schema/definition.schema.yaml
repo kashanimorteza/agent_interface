@@ -1,0 +1,79 @@
+schema:
+  id: agent-interface-definition
+  version: "1.0"
+  purpose: "The shape of definition.yaml — every parameter an agent reads to understand what the product is"
+
+structure:
+  - identity
+  - goals
+  - architecture
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Identity -->
+  identity:
+    required: true
+    purpose: "Who the product is — set by the human, never inferred."
+    fields:
+      id:
+        required: true
+        purpose: "The product's identifier — short, stable, machine-readable."
+      name:
+        required: true
+        purpose: "The product's human-readable name."
+      one_liner:
+        required: true
+        purpose: "One sentence naming the product's promise — everything the product must eventually make true."
+
+  # <!--------------------------------------------------------------------------------- Goals -->
+  goals:
+    required: true
+    purpose: "What a user can do when the product is finished — one capability per line, and the list every task traces back to; a goal no contract can satisfy is raised as an open question, never fixed here."
+
+  # <!--------------------------------------------------------------------------------- Architecture -->
+  architecture:
+    required: true
+    purpose: "The parts of the product, what each owns, and the single connection point between them."
+    fields:
+      shape:
+        required: true
+        purpose: "The whole architecture in one sentence — how many parts, and what joins them."
+      reason:
+        required: true
+        purpose: "Why this shape — what it buys the build."
+      parts:
+        required: true
+        purpose: "One entry per part of the product — its fields below."
+        fields:
+          "<part>":
+            required: true
+            purpose: "One part of the product, named by its item — an entry per part."
+            fields:
+              responsibility:
+                required: true
+                purpose: "What this part does — one sentence."
+              owns:
+                required: true
+                purpose: "What belongs to this part."
+              does_not_own:
+                required: true
+                purpose: "What is explicitly not this part's, however close it sits."
+              produces:
+                required: false
+                purpose: "The contracts this part publishes, and where they live — on a producing part."
+              consumes:
+                required: false
+                purpose: "The contracts this part reads, and where they live — on a consuming part."
+      connection:
+        required: true
+        purpose: "The single bridge between the parts."
+        fields:
+          path:
+            required: true
+            purpose: "Where the contract lives — the one place a part looks for it."
+          rule:
+            required: true
+            purpose: "The contract is the only connection point — no part reaches into another by any other route."
+          versioning:
+            required: true
+            purpose: "How the contract may change — a frozen contract never changes; a change means a new version."
