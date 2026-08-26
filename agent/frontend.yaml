@@ -3,7 +3,7 @@ meta:
   path: "frontend.yaml"
   path_note: "The address of this file — layer 4, the frontend item: its settings and the contract it consumes"
   purpose: "The frontend item — what it is built with, how its code is laid out, and the contract it reads"
-  shape: "schema/item.schema.yaml — the shape every item file follows"
+  shape: "schema/backend.schema.yaml — the shape of an item file, drawn from the backend"
   frame: "develop.yaml — the frame this item sits in: the item index, the plan structure, the contract lifecycle, and the boundaries"
   plan_location: "This item's plan lives in task.yaml — never here"
   contract_gap: "api-v1 offers no registration, login, session, or owner field, so the authentication surface of this item cannot be planned — recorded as B1, Q1, and Q2 in state.yaml"

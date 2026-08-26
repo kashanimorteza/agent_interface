@@ -1,10 +1,9 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: "backend.yaml"
-  path_note: "The address of this file — layer 4, the backend item: its settings and the contracts it publishes"
+  path_note: "The address of this file — layer 4, the backend item: its settings and the contract it publishes"
   purpose: "The backend item — what it is built with, how its code is laid out, and the contract it promises the outside"
-  shape: "schema/item.schema.yaml — the shape every item file follows"
-  frame: "develop.yaml — the frame this item sits in: the item index, the plan structure, the contract lifecycle, and the boundaries"
+  shape: "schema/backend.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
   plan_location: "This item's plan lives in task.yaml — never here"
   contract_gap: "api-v1 defines no registration, login, session, or owner field, while the root goals and the security rules require per-user ownership — recorded as Q1 and Q2 in state.yaml"
   updated: "2026-08-26"
@@ -18,14 +17,15 @@ policy:
   settings: "The settings — responsibility through out_of_scope — are written in planning mode only; a change wanted during development is recorded in the affected task's log and raised with the human"
   new_contract_version: "A new contract version is a new entry under contracts, written in planning mode as a draft — it becomes frozen only by the human"
   task_protocols: "How a task is claimed, done, blocked, and logged is the policy of task.yaml — it is not repeated here"
-  on_change_needed: "A wanted change to the shape of an item is raised as an open question in state.yaml, never applied here"
+  on_change_needed: "A wanted change to the shape of this file — schema/backend.schema.yaml — is raised as an open question in state.yaml, never applied here"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "develop.yaml first — the frame: the item index, plan_structure, contracts, boundaries"
-  - "then the settings here, in order — responsibility, tech, code_layout, contracts, boundaries, out_of_scope"
-  - "inside contracts, the contract itself by its own contract_read_order — conventions, error_shape, models, routes"
+  - "schema/backend.schema.yaml first — know the shape of this file and what each parameter means"
+  - "then the settings here, in the order of the shape — enabled through responsibility, then tech, code_layout"
+  - "then contracts — the contract itself by its own contract_read_order: conventions, error_shape, models, routes"
+  - "then boundaries and out_of_scope — know the limits before touching anything"
   - "then this item's plan in task.yaml, by that file's own read_order"
 
 
@@ -33,6 +33,7 @@ read_order:
 content_map:
   enabled: "Whether this item is in play"
   code_path: "The one folder this item may write inside"
+  code_path_note: "What code_path is relative to"
   summary: "The item in one line"
   needs_test: "Whether every task producing code is proven by a written test"
   verify_cwd: "Where every verify command of this item runs from"

@@ -82,7 +82,7 @@ content:
       layer: 4
       path: "backend.yaml, frontend.yaml"
       responsibility: "The items themselves — one file per item: its settings and the contracts it produces or consumes"
-      note: "An item's settings live in its own file and nowhere else; the shape they follow is schema/item.schema.yaml"
+      note: "An item's settings live in its own file and nowhere else; the shape they follow is schema/backend.schema.yaml"
 
     task:
       layer: 5
