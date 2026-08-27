@@ -2,13 +2,12 @@ schema:
   id: agent-interface-task
   version: "1.0"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
-  frame_and_surface: "task_schema, task_states, and phase_titles are the frame — fixed by the human; phases is the working surface an agent writes in planning mode"
+  frame_and_surface: "task_schema, task_states, and each plan's phase_titles are the frame — fixed by the human; the phases under each item are the working surface an agent writes in planning mode"
 
 structure:
   - task_schema
   - task_states
-  - phase_titles
-  - phases
+  - plans
 
 sections:
 
@@ -88,49 +87,55 @@ sections:
         required: true
         purpose: "That in development mode status, blocker, and log are the only fields an agent may change — the rest is the plan."
 
-  # <!--------------------------------------------------------------------------------- Phase_Titles -->
-  phase_titles:
+  # <!--------------------------------------------------------------------------------- Plans -->
+  plans:
     required: true
-    purpose: "Quick lookup from phase id to its title — the stages a build follows, in build order."
-
-  # <!--------------------------------------------------------------------------------- Phases -->
-  phases:
-    required: true
-    purpose: "The plans — three levels deep: phases at the top, groups inside a phase, tasks inside a group; a task never sits directly in a phase, and nothing sits outside a phase. Empty until the human explicitly asks for tasks to be created."
+    purpose: "The plans — one per item, each under its own key; a task of one item never appears under another, and there is no plan that belongs to no item. Empty until the human explicitly asks for tasks to be created."
     fields:
-      "<phase>":
+      "<item>":
         required: true
-        purpose: "One stage of the build — the plan moves phase by phase, and a later phase assumes the earlier ones are done."
+        purpose: "One item's plan — the key is the item's name as root.yaml indexes it under content.structure.items; every phase, group, and task below belongs to that item alone."
         fields:
-          id:
+          phase_titles:
             required: true
-            purpose: "P1, P2, ... — numbered in build order, unique within the item."
-          title:
+            purpose: "Quick lookup from phase id to its title — this item's build stages, in build order; ids are numbered within the item, so P1 of one item is not P1 of another."
+          phases:
             required: true
-            purpose: "The stage in a few words — the same title the phase carries in phase_titles."
-          does:
-            required: true
-            purpose: "What this phase accomplishes — what exists at its end that did not exist at its start."
-          groups:
-            required: true
-            purpose: "The groups of this phase — every task of the phase lives inside exactly one of them."
+            purpose: "This item's plan — three levels deep: phases at the top, groups inside a phase, tasks inside a group; a task never sits directly in a phase, and nothing sits outside a phase."
             fields:
-              "<group>":
+              "<phase>":
                 required: true
-                purpose: "One area of work inside a phase — related tasks side by side."
+                purpose: "One stage of this item's build — the plan moves phase by phase, and a later phase assumes the earlier ones are done."
                 fields:
                   id:
                     required: true
-                    purpose: "P1-G1, P1-G2, ... — the phase id plus a group number, unique within the item."
+                    purpose: "P1, P2, ... — numbered in build order, unique within the item."
                   title:
                     required: true
-                    purpose: "The area in a few words."
+                    purpose: "The stage in a few words — the same title the phase carries in this item's phase_titles."
                   does:
                     required: true
-                    purpose: "What this group of tasks is doing, and what is true when all of them are done."
-                  task_count:
+                    purpose: "What this phase accomplishes — what exists at its end that did not exist at its start."
+                  groups:
                     required: true
-                    purpose: "How many tasks the group holds — stated so the size is visible without counting."
-                  tasks:
-                    required: true
-                    purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one concrete act, naming the file it creates or the piece it changes, and one sitting finishes it."
+                    purpose: "The groups of this phase — every task of the phase lives inside exactly one of them."
+                    fields:
+                      "<group>":
+                        required: true
+                        purpose: "One area of work inside a phase — related tasks side by side."
+                        fields:
+                          id:
+                            required: true
+                            purpose: "P1-G1, P1-G2, ... — the phase id plus a group number, unique within the item."
+                          title:
+                            required: true
+                            purpose: "The area in a few words."
+                          does:
+                            required: true
+                            purpose: "What this group of tasks is doing, and what is true when all of them are done."
+                          task_count:
+                            required: true
+                            purpose: "How many tasks the group holds — stated so the size is visible without counting."
+                          tasks:
+                            required: true
+                            purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one concrete act, naming the file it creates or the piece it changes, and one sitting finishes it."

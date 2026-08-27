@@ -38,7 +38,7 @@ read_order:
       read: "state.yaml"
       why: "Learn the active mode, the active item, the blockers, and the open questions"
     - step: 7
-      read: "Active item: its own file, and its plan in task.yaml"
+      read: "Active item: its own file, and its own plan in task.yaml — content.plans, under that item's key"
       why: "Understand the item you are working on and where each of its tasks stands"
   no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its own log field"
 
@@ -81,7 +81,7 @@ content:
     task:
       layer: 5
       path: "task.yaml"
-      responsibility: "Task layer — the shape of a task, its states, and the plans that hold the tasks"
+      responsibility: "Task layer — the shape of a task, its states, and the plans that hold the tasks, one plan per item"
       note: "A task and its status live here — the plan is both definition and state"
 
     state:
@@ -105,7 +105,7 @@ content:
       purpose: "Decide what will be built and in what order — no product code is written"
       may_write:
         - "The item files — backend.yaml and frontend.yaml — their settings and draft contracts, never a frozen contract"
-        - "task.yaml — the plans only, never task_schema, task_states, and phase_titles"
+        - "task.yaml — the phases of an item's plan only, never task_schema, task_states, and the phase_titles of a plan"
         - "state.yaml — blockers and open questions, never active"
       may_not_write:
         - "Any file under an item's code_path"

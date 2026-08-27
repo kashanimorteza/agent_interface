@@ -5,7 +5,7 @@ meta:
   purpose: "The frontend item — what it is built with, how its code is laid out, and the contract it reads"
   shape: "schema/frontend.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
   phase_scope: "Phase 1 only — the user interface for entering, viewing, and managing the six Phase 1 records"
-  plan_location: "This item's plan lives in task.yaml — never here"
+  plan_location: "This item's plan lives in task.yaml — under content.plans.frontend, never here and never mixed with another item's plan"
   in_phase_but_undefined: "Phase 1 requires a working frontend, so the item is enabled — but Phase 1 states that its technology and framework are defined separately, so every technical setting below stands as to be defined"
   contract_gap: "No task for this item can be written until the human names its technology — recorded as B2 and Q5 in state.yaml"
   shape_gap: "schema/frontend.schema.yaml gives a consuming item no field for the contract it reads, so consumes and contract_location are written here beside the shape — raised as Q7 in state.yaml, never fixed by an agent"

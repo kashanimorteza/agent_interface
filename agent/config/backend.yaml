@@ -5,7 +5,7 @@ meta:
   purpose: "The backend item — what it is built with, how its code is laid out, and the contract it promises the outside"
   shape: "schema/backend.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
   phase_scope: "Phase 1 only — the six records, their storage, and the APIs that add, list, read, update, delete, enable, and disable them"
-  plan_location: "This item's plan lives in task.yaml — never here"
+  plan_location: "This item's plan lives in task.yaml — under content.plans.backend, never here and never mixed with another item's plan"
   contract_gap: "api-v1 is a draft, not frozen — Phase 1 names Risk Parameter, Profit, and Execute's State without fixing a type or a permitted value for any of them, and does not say how an Account's password is held at rest; recorded as B1 and Q1 through Q4 in state.yaml"
   updated: "2026-08-27"
 
@@ -27,7 +27,7 @@ read_order:
   - "then the settings here, in the order of the shape — enabled through responsibility, then tech, code_layout"
   - "then contracts — the contract itself by its own contract_read_order: conventions, error_shape, models, routes"
   - "then boundaries and out_of_scope — know the limits before touching anything"
-  - "then this item's plan in task.yaml, by that file's own read_order"
+  - "then this item's plan in task.yaml — content.plans.backend, by that file's own read_order"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
