@@ -1,0 +1,105 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "state.yaml"
+  path_note: "The address of this file — layer 6, the operational state"
+  purpose: "The project-wide state — active mode, active item, blockers, and open questions"
+  shape: "schema/state.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
+  scope_note: "This file holds no definition, no rule, and no task status — the status of a task lives on the task itself, in task.yaml"
+  phase_scope: "Phase 1 only — every blocker and every question below is about the data-entry and data-management build"
+  reason: "Only what belongs to no single task lives here — per-task state travels with the task, so definition and status can never drift apart"
+  updated: "2026-08-27"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning, development, and review — review may write blockers and open questions only"
+  rule: "Every result is recorded in the file that owns it — this file owns blockers and open questions, nothing else"
+  blocker: "Written under blockers — with an id, what is actually missing, and its consequence; the affected tasks point at it by id from task.yaml"
+  open_question: "Written under open_questions — addressed to the human, with why it matters and which blocker it blocks; an agent never answers one on its own"
+  decision_pending: "A decision the human must still make is an open question here — it is not a decision, and nothing is built on its assumed answer"
+  active: "Never written by an agent — active.mode and active.item are set by the human"
+  by_mode: "planning and development may write blockers and open questions; review may write blockers and open questions only"
+  agent_may_edit_field: "Every file carries agent_may_edit in its policy — false means the human owns it, and an agent that wants it changed raises an open question here instead"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active — know the mode you are in and the item you are on before anything else"
+  - "blockers — know what cannot move and why"
+  - "open_questions — know what is waiting on the human, so you do not answer it yourself"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The one mode and the one item currently in play — set by the human"
+  blockers: "What is actually missing, by id — the tasks that cannot move point here"
+  open_questions: "What the human still has to decide, by id — each names the blocker it would release"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  active:
+    mode: "planning"
+    mode_reason: "No code exists yet and no plan has been written — api-v1 is still a draft, so nothing is implementable until the questions below are answered and the contract is frozen"
+    item: "none"
+    set_by: "human"
+
+
+  blockers:
+
+    - id: "B1"
+      blocks: "The whole backend plan — not one task can be written, because a task may only be defined against a frozen contract"
+      what_is_missing: "A frozen api-v1. Phase 1 settles the operations — add, list, read one, edit and update, delete, enable and disable — but fixes no type or permitted value for Strategy's Risk Parameter, Execute's Profit, or Execute's State, and does not say how an Account's password is held at rest"
+      consequence: "The six records can be described but none of them can be built — every backend task stays unwritten"
+      decision_belongs_to: "human"
+      raised: "2026-08-27"
+
+    - id: "B2"
+      blocks: "The frontend item entirely — its technical settings cannot be written and no task for it can exist"
+      what_is_missing: "The frontend's technology and framework. Phase 1 requires a working frontend and states that its technology and framework are defined separately — no language, no framework, no code path, no run command"
+      consequence: "The item stands enabled in the interface with every technical setting as to be defined, and nothing can be built inside it"
+      decision_belongs_to: "human"
+      raised: "2026-08-27"
+
+
+  open_questions:
+    note: "Addressed to the human — an agent does not answer these on its own"
+    questions:
+
+      - id: "Q1"
+        question: "Execute carries both State and Status. Status is the enable or disable flag every model has — what is State, and what values does it take?"
+        why_it_matters: "Two fields of the same kind of name on one record will be built wrong if the difference is guessed; Execute cannot be modelled until it is stated"
+        blocks: "B1"
+
+      - id: "Q2"
+        question: "What is a Strategy's Risk Parameter — a single number, a named choice, or a structure of several values?"
+        why_it_matters: "It is the one field that makes a strategy more than a name, and its type decides the column, the validation, and the body of two routes"
+        blocks: "B1"
+
+      - id: "Q3"
+        question: "What is Execute's Profit — a decimal amount, and in what unit or currency?"
+        why_it_matters: "A money value stored as the wrong type is a defect that survives every later phase; Phase 1 fixes neither type nor unit"
+        blocks: "B1"
+
+      - id: "Q4"
+        question: "An Account carries a Password, but Phase 1 requires no authentication and nothing in Phase 1 reads it back. Is it a credential to be hashed irreversibly, or a secret that must stay recoverable?"
+        why_it_matters: "The security rules forbid returning it, but how it is stored cannot be decided by an agent — hashing it is irreversible, and storing it recoverably is a deliberate risk. No task may write that field until this is answered"
+        blocks: "B1"
+
+      - id: "Q5"
+        question: "What is the frontend built with? Phase 1 requires a working frontend and says its technology and framework will be defined separately — no language, no framework, no code path"
+        why_it_matters: "The item is enabled and its responsibility is settled, but every technical setting stands as to be defined; until the technology is named it has no code path, no run command, and no plan"
+        blocks: "B2"
+
+      - id: "Q6"
+        question: "rules.yaml requires one design page per interface file, and the interface files have moved — they now live in agent/config/, with backend.yaml and frontend.yaml each carrying their own shape. rules.yaml is human-owned"
+        why_it_matters: "The design rule asks for pages that do not match the files that exist — the rule may not be corrected by an agent"
+        answered_so_far: "On 2026-08-27 the interface was regenerated from the rewritten Phase 1 of project.md into agent/config/, with the design rules kept exactly as they stand — what remains open is only that the pages in design/file.drawio have not caught up with the current files"
+        blocks: "nothing yet"
+
+      - id: "Q7"
+        question: "schema/frontend.schema.yaml is the backend's shape with the word frontend swapped in — its contracts section offers produces, rule, change_rule, and a version entry, but no field for a contract this item consumes, and its tech section asks a client for an ORM, a migrations framework, and a database. Is that intended, or should the frontend have a shape of its own?"
+        why_it_matters: "The frontend is a consumer, not a producer. frontend.yaml carries consumes and contract_location so it can name the contract it reads, and those two keys have no place in the shape. A schema file is human-owned and may not be corrected by an agent"
+        blocks: "nothing yet"

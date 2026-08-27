@@ -1,0 +1,424 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "backend.yaml"
+  path_note: "The address of this file — layer 4, the backend item: its settings and the contract it publishes"
+  purpose: "The backend item — what it is built with, how its code is laid out, and the contract it promises the outside"
+  shape: "schema/backend.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
+  phase_scope: "Phase 1 only — the six records, their storage, and the APIs that add, list, read, update, delete, enable, and disable them"
+  plan_location: "This item's plan lives in task.yaml — never here"
+  contract_gap: "api-v1 is a draft, not frozen — Phase 1 names Risk Parameter, Profit, and Execute's State without fixing a type or a permitted value for any of them, and does not say how an Account's password is held at rest; recorded as B1 and Q1 through Q4 in state.yaml"
+  updated: "2026-08-27"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning may write the settings and a draft contract; development and review never write this file — a task's status moves in task.yaml"
+  scope: "The settings and a draft contract are the working surface — a frozen contract is frame, never rewritten, only versioned"
+  settings: "The settings — responsibility through out_of_scope — are written in planning mode only; a change wanted during development is recorded in the affected task's log and raised with the human"
+  new_contract_version: "A new contract version is a new entry under contracts, written in planning mode as a draft — it becomes frozen only by the human"
+  task_protocols: "How a task is claimed, done, blocked, and logged is the policy of task.yaml — it is not repeated here"
+  on_change_needed: "A wanted change to the shape of this file — schema/backend.schema.yaml — is raised as an open question in state.yaml, never applied here"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "schema/backend.schema.yaml first — know the shape of this file and what each parameter means"
+  - "then the settings here, in the order of the shape — enabled through responsibility, then tech, code_layout"
+  - "then contracts — the contract itself by its own contract_read_order: conventions, error_shape, models, routes"
+  - "then boundaries and out_of_scope — know the limits before touching anything"
+  - "then this item's plan in task.yaml, by that file's own read_order"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether this item is in play"
+  code_path: "The one folder this item may write inside"
+  code_path_note: "What code_path is relative to"
+  summary: "The item in one line"
+  needs_test: "Whether every task producing code is proven by a written test"
+  verify_cwd: "Where every verify command of this item runs from"
+  responsibility: "What this item is answerable for"
+  tech: "What the item is built with — language, frameworks, database, environment, and the run command"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract this item publishes, and its versions"
+  boundaries: "What is this item's, what is not, and the one thing it promises outward"
+  out_of_scope: "What this item does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  enabled: true
+  code_path: "backend/"
+  code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
+  summary: "Management APIs, model logic, and the database for the six Phase 1 records"
+  needs_test: false
+  verify_cwd: "Every verify command runs from backend/ — inside its virtual environment"
+
+  responsibility: "The HTTP API that adds, lists, reads, updates, deletes, and sets the status of the six Phase 1 records, together with their validation and the database that holds them"
+
+
+  # =============================================================== Tech
+  tech:
+    language:
+      name: "Python"
+      version: "The latest stable Python release available when development starts — pinned at that moment and not re-decided afterwards"
+      frameworks:
+        api: "FastAPI — HTTP layer, routing, and request validation"
+        orm: "SQLAlchemy — data models and queries"
+        migrations: "Alembic — the standard Python migration framework for SQLAlchemy; one migration per schema change"
+        test: "None — Phase 1 requires no automated tests, so no test runner is chosen; choosing one is a human decision"
+    database:
+      engine: "SQLite"
+      storage: "A single file on disk — its path comes from configuration, never hardcoded"
+      owned_by: "This item — the schema belongs to the backend and no other item reaches it"
+      access: "Only through the ORM — a route never opens a connection of its own"
+    environment: "A virtual environment inside code_path — every command and every install happens inside it, and it is never committed"
+    run: "uvicorn app.main:app --reload"
+
+
+  # =============================================================== Code layout
+  code_layout:
+    "app/main.py": "Entry point — the application object and the router registrations"
+    "app/config.py": "Configuration — the database path and every other setting, read from the environment"
+    "app/db/": "Engine and session — the only place a connection is opened"
+    "app/models/": "ORM models — the six Phase 1 records as the database schema in Python"
+    "app/schemas/": "Validation models — every API input and output is bound to one"
+    "app/services/": "Business logic — the only layer permitted to query the database"
+    "app/api/": "Routes — accept input, call a service, return output, nothing else"
+    "app/errors.py": "The uniform error shape and its handlers"
+    "migrations/": "Migrations — one per schema change, each with its downgrade"
+    "tests/": "Tests — the place a test would live; Phase 1 requires none, so it stays empty until the human asks for one"
+
+
+  # =============================================================== Contracts
+  contracts:
+    produces: "api-v1"
+    rule: "This item's implementation must match the frozen contract exactly — the contract is the promise, not a sketch"
+    change_rule: "A frozen contract is never edited — a needed change means a new version beside it, and that is a human decision"
+
+    api-v1:
+      lifecycle: "draft"
+      lifecycle_note: "Draft — no task may be defined against it, because only a frozen contract may be built on. The operations are settled: Phase 1 names adding, listing, reading one, editing and updating, deleting, and enabling or disabling through status. What is not settled is the shape of four fields — Strategy's Risk Parameter, Execute's Profit, Execute's State, and how an Account's password is held at rest — open as Q1 through Q4 in state.yaml. Freezing this version is a human decision."
+      consumed_by: "frontend"
+      contract_read_order:
+        - "conventions — they apply to everything that follows"
+        - "error_shape — every route's errors point at its codes"
+        - "models — every route's response is one of them"
+        - "routes — last, because each one is read against the three above"
+
+      conventions:
+        transport: "HTTP with JSON bodies"
+        ids: "Integers, assigned by the server; a client never chooses one"
+        timestamps: "Phase 1 puts no timestamp field on any model — none is added, and no route returns one"
+        unknown_id: "Any route addressing a record that does not exist answers 404 with the error shape below"
+        listing: "A list route returns every record of its kind, enabled and disabled alike — Phase 1 defines no filter, no sort, and no paging, and an agent adds none"
+        status_operation: "Status carries exactly two states — enabled and disabled — and the status route moves a record between them without touching any other field"
+
+      error_shape:
+        rule: "Every non-2xx response has exactly these three fields, with no others"
+        fields:
+          code: "A stable machine-readable string — a client may branch on it"
+          message: "One human-readable sentence, safe to show a user"
+          details: "An object with anything specific to this error; may be empty"
+        codes:
+          not_found: "404 — no record with that id"
+          invalid_input: "422 — the body failed validation; details.fields lists field and problem"
+          http_error: "4xx raised by the transport layer, such as an unknown route"
+          internal_error: "500 — the service failed; details is always empty and no internals are exposed"
+
+      models:
+        Account:
+          id: "integer — assigned by the server"
+          name: "string"
+          username: "string"
+          password: "string — accepted on write, never returned in any response; how it is stored at rest is not settled by Phase 1 (Q4)"
+          status: "enabled or disabled — the two states Phase 1 names"
+          description: "string"
+        Asset:
+          id: "integer — assigned by the server"
+          name: "string"
+          status: "enabled or disabled — the two states Phase 1 names"
+          description: "string"
+        Strategy:
+          id: "integer — assigned by the server"
+          name: "string"
+          risk_parameter: "the risk parameter of the strategy — Phase 1 names it without fixing its type or shape (Q2)"
+          status: "enabled or disabled — the two states Phase 1 names"
+          description: "string"
+        ActionGroup:
+          id: "integer — assigned by the server"
+          name: "string"
+          status: "enabled or disabled — the two states Phase 1 names"
+          description: "string"
+        Action:
+          id: "integer — assigned by the server"
+          name: "string"
+          asset_id: "integer — the asset this action is bound to"
+          strategy_id: "integer — the strategy this action is bound to"
+          group_id: "integer — the action group this action belongs to"
+          status: "enabled or disabled — the two states Phase 1 names"
+          description: "string"
+        Execute:
+          id: "integer — assigned by the server"
+          name: "string"
+          action_id: "integer — the action this entry belongs to"
+          profit: "the profit of the entry — Phase 1 names it without fixing its type or unit (Q3)"
+          state: "the state of the entry — Phase 1 carries it beside status without saying what separates them (Q1)"
+          status: "enabled or disabled — the two states Phase 1 names"
+          description: "string"
+
+      routes:
+
+        - method: "POST"
+          path: "/accounts"
+          summary: "Add an account"
+          body: "{name, username, password, status, description}"
+          response: "201 — Account"
+          errors: ["invalid_input"]
+
+        - method: "GET"
+          path: "/accounts"
+          summary: "List every account"
+          response: "200 — Account[]"
+          errors: []
+
+        - method: "GET"
+          path: "/accounts/{account_id}"
+          summary: "Read one account"
+          response: "200 — Account"
+          errors: ["not_found"]
+
+        - method: "PATCH"
+          path: "/accounts/{account_id}"
+          summary: "Edit and update an account — the one change operation Phase 1 names"
+          body: "{name?, username?, password?, description?}"
+          response: "200 — Account"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/accounts/{account_id}/status"
+          summary: "Enable or disable an account and change nothing else"
+          body: "{status}"
+          response: "200 — Account"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/accounts/{account_id}"
+          summary: "Delete an account"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/assets"
+          summary: "Add an asset"
+          body: "{name, status, description}"
+          response: "201 — Asset"
+          errors: ["invalid_input"]
+
+        - method: "GET"
+          path: "/assets"
+          summary: "List every asset"
+          response: "200 — Asset[]"
+          errors: []
+
+        - method: "GET"
+          path: "/assets/{asset_id}"
+          summary: "Read one asset"
+          response: "200 — Asset"
+          errors: ["not_found"]
+
+        - method: "PATCH"
+          path: "/assets/{asset_id}"
+          summary: "Edit and update an asset — the one change operation Phase 1 names"
+          body: "{name?, description?}"
+          response: "200 — Asset"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/assets/{asset_id}/status"
+          summary: "Enable or disable an asset and change nothing else"
+          body: "{status}"
+          response: "200 — Asset"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/assets/{asset_id}"
+          summary: "Delete an asset"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/strategies"
+          summary: "Add a strategy"
+          body: "{name, risk_parameter, status, description}"
+          response: "201 — Strategy"
+          errors: ["invalid_input"]
+
+        - method: "GET"
+          path: "/strategies"
+          summary: "List every strategy"
+          response: "200 — Strategy[]"
+          errors: []
+
+        - method: "GET"
+          path: "/strategies/{strategy_id}"
+          summary: "Read one strategy"
+          response: "200 — Strategy"
+          errors: ["not_found"]
+
+        - method: "PATCH"
+          path: "/strategies/{strategy_id}"
+          summary: "Edit and update a strategy — the one change operation Phase 1 names"
+          body: "{name?, risk_parameter?, description?}"
+          response: "200 — Strategy"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/strategies/{strategy_id}/status"
+          summary: "Enable or disable a strategy and change nothing else"
+          body: "{status}"
+          response: "200 — Strategy"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/strategies/{strategy_id}"
+          summary: "Delete a strategy"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/action-groups"
+          summary: "Add an action group"
+          body: "{name, status, description}"
+          response: "201 — ActionGroup"
+          errors: ["invalid_input"]
+
+        - method: "GET"
+          path: "/action-groups"
+          summary: "List every action group"
+          response: "200 — ActionGroup[]"
+          errors: []
+
+        - method: "GET"
+          path: "/action-groups/{group_id}"
+          summary: "Read one action group"
+          response: "200 — ActionGroup"
+          errors: ["not_found"]
+
+        - method: "PATCH"
+          path: "/action-groups/{group_id}"
+          summary: "Edit and update an action group — the one change operation Phase 1 names"
+          body: "{name?, description?}"
+          response: "200 — ActionGroup"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/action-groups/{group_id}/status"
+          summary: "Enable or disable an action group and change nothing else"
+          body: "{status}"
+          response: "200 — ActionGroup"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/action-groups/{group_id}"
+          summary: "Delete an action group"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/actions"
+          summary: "Add an action, bound to an asset, a strategy, and an action group"
+          body: "{name, asset_id, strategy_id, group_id, status, description}"
+          response: "201 — Action"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "GET"
+          path: "/actions"
+          summary: "List every action"
+          response: "200 — Action[]"
+          errors: []
+
+        - method: "GET"
+          path: "/actions/{action_id}"
+          summary: "Read one action"
+          response: "200 — Action"
+          errors: ["not_found"]
+
+        - method: "PATCH"
+          path: "/actions/{action_id}"
+          summary: "Edit and update an action — the one change operation Phase 1 names"
+          body: "{name?, asset_id?, strategy_id?, group_id?, description?}"
+          response: "200 — Action"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/actions/{action_id}/status"
+          summary: "Enable or disable an action and change nothing else"
+          body: "{status}"
+          response: "200 — Action"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/actions/{action_id}"
+          summary: "Delete an action"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+        - method: "POST"
+          path: "/executes"
+          summary: "Add an execute entry, bound to an action"
+          body: "{name, action_id, profit, state, status, description}"
+          response: "201 — Execute"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "GET"
+          path: "/executes"
+          summary: "List every execute entry"
+          response: "200 — Execute[]"
+          errors: []
+
+        - method: "GET"
+          path: "/executes/{execute_id}"
+          summary: "Read one execute entry"
+          response: "200 — Execute"
+          errors: ["not_found"]
+
+        - method: "PATCH"
+          path: "/executes/{execute_id}"
+          summary: "Edit and update an execute entry — the one change operation Phase 1 names"
+          body: "{name?, action_id?, profit?, state?, description?}"
+          response: "200 — Execute"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "PATCH"
+          path: "/executes/{execute_id}/status"
+          summary: "Enable or disable an execute entry and change nothing else"
+          body: "{status}"
+          response: "200 — Execute"
+          errors: ["not_found", "invalid_input"]
+
+        - method: "DELETE"
+          path: "/executes/{execute_id}"
+          summary: "Delete an execute entry"
+          response: "204 — no body"
+          errors: ["not_found"]
+
+
+  # =============================================================== Boundaries
+  boundaries:
+    owns: "All code inside backend/, and the whole database schema for the six Phase 1 records"
+    does_not_own: "Client code — not a single line"
+    interface: "The only thing this item promises the outside is the api-v1 contract"
+
+
+  # =============================================================== Out of scope
+  out_of_scope:
+    - "Rendering and user interface — that is the frontend item"
+    - "MetaTrader integration — Phase 1 excludes it"
+    - "Trade execution — Phase 1 excludes it"
+    - "Reporting — Phase 1 excludes it"
+    - "Authentication — Phase 1 requires none, and no route performs an identity check"
+    - "Automated tests — Phase 1 requires none"
+    - "Deployment infrastructure and CI"

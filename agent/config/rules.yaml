@@ -1,0 +1,99 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "rules.yaml"
+  path_note: "The address of this file — layer 3, the global rules"
+  purpose: "Rules governing agent behavior — security, quality, and design, all in this file"
+  shape: "schema/rules.schema.yaml — the shape of this file: its groups, their order, and the form every rule takes"
+  phase_scope: "Phase 1 only — the rules here bound the data-entry and data-management build and nothing beyond it"
+  completeness: "A rule that is not in this file is not a rule"
+  reason: "Rules are the boundary of agent behavior — an agent never moves its own boundary"
+  no_item_rules: "An item has no rules file of its own — every rule is here, and an item's specifics live in that item's own file"
+  updated: "2026-08-27"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "An agent never writes this file — a rule is a boundary, and an agent never moves its own boundary"
+  on_conflict: "A rule that cannot be satisfied is not relaxed here — the affected task is set to blocked and the conflict is raised in state.yaml"
+  on_change_needed: "A missing or wrong rule is raised with the human as an open question, never added or edited by an agent"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "All of it, in full — no group is skipped, because a rule that is not read is still a rule"
+  - "security first, then the group of the work at hand, then the rest"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  precedence: "Which rule wins when two collide"
+  environment: "Where code runs — the isolated environment of each item"
+  code: "How code is shaped — services, routes, validation, errors"
+  database: "How the schema moves — migrations, indexes, SQLite specifics"
+  security: "What must never leak — the stored password, and what an error message may reveal"
+  test: "What must be proven — and that Phase 1 asks for no automated test"
+  contract: "How the API surface and its contract stay in step"
+  design: "How the interface is drawn — the drawio pages and their exports"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  precedence: "security overrides everything — when two rules collide, the security rule wins"
+
+
+  environment:
+    - "All Python work happens inside the backend's virtual environment — never the system interpreter"
+    - "The Python version is the latest stable release available when development starts, and it is pinned there — an agent never re-decides it mid-build"
+    - "Every dependency is installed into that environment and never globally"
+    - "Every command in a task's verify runs from inside that environment — a result produced outside it does not count"
+    - "The virtual environment is never committed"
+    - "The frontend's technology, framework, and toolchain are a human decision defined separately — an agent never chooses one and never installs one on its own initiative"
+
+  code:
+    - "Business logic stays in services — routes only accept input and return output"
+    - "Direct database access from inside routes is forbidden — go through a service"
+    - "Every API input is validated against a model — raw input never reaches a service"
+    - "Error responses always have the same structure — code, message, details"
+    - "A field Phase 1 leaves undefined is never given a type, a length, or a permitted value by an agent — the task is blocked and the question is raised"
+    - "Editing a record and updating a record are one operation — Phase 1 names them together and an agent never splits them into two surfaces"
+    - "Setting a record's status enables or disables it and changes nothing else about that record"
+
+  database:
+    - "Every schema change comes with a migration from the project's migration framework — changing a table by hand is forbidden"
+    - "A migration that has already run is never edited — create a new migration"
+    - "Every migration must be reversible — write the downgrade"
+    - "Do not write a query that filters on a column without an index"
+    - "Every foreign key of an action or an execute entry points at a row that exists — a reference to a missing record is rejected, not stored"
+    - "SQLite cannot alter a column or drop a constraint in place — any such migration uses the migration framework's batch mode, or it will fail on upgrade"
+    - "The database file path comes from configuration — never a hardcoded path, and never a path inside the repository"
+    - "Foreign keys are off by default in SQLite — enable them on every connection, or the reference constraints above are silently unenforced"
+
+  security:
+    - "An account password is never returned in an API response, never written to a log, and never carried in an error message"
+    - "Phase 1 requires no authentication — no route performs an identity check, no session is issued, and neither is added on an agent's initiative"
+    - "Because there is no authentication there is no ownership either — no route filters by a user, and no such filter is invented"
+    - "How the stored password is protected at rest is a human decision and is open as Q4 in state.yaml — until it is answered, no task writes the storage of that field"
+    - "An error message never reveals an internal detail — not a file path, not a query, not a stack trace"
+
+  test:
+    - "Phase 1 requires no automated tests — a test is written only when the human explicitly asks for one"
+    - "needs_test is false on both items, so a task's verify is a runnable command that proves acceptance without a test suite"
+    - "A verify command never runs against the development database — it uses a throwaway database file from configuration"
+    - "Without a passing verify run a task is never done, whether or not a test exists"
+
+  contract:
+    - "Changing the API surface without updating the contract is forbidden"
+    - "A frozen contract does not change — create a new version"
+    - "A draft contract is never built against — a task that needs one is blocked until the human freezes it"
+
+  design:
+    - "Every design lives as a page in design/file.drawio — one page per interface file, named after the file without its extension"
+    - "A page shows only the main items of its file — the top-level keys — as plain boxes, with no explanation text"
+    - "Every page follows the design of the main page: one colored header bar carrying the name, and boxes of the same size, font, and spacing beneath it"
+    - "Names in headers and boxes never carry a file extension"
+    - "No item in a design may overlap or sit underneath another item"
+    - "Every PNG export has the dark theme, a transparent background, and shadows on — all three, every time"
+    - "Shadows are set on each cell's style, never on the page — a page-level shadow breaks the export"
+    - "An exported PNG sits next to the design file and is named after its page — design/<page>.png"

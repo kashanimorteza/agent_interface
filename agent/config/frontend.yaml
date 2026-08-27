@@ -1,0 +1,101 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "frontend.yaml"
+  path_note: "The address of this file — layer 4, the frontend item: its settings and the contract it consumes"
+  purpose: "The frontend item — what it is built with, how its code is laid out, and the contract it reads"
+  shape: "schema/frontend.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
+  phase_scope: "Phase 1 only — the user interface for entering, viewing, and managing the six Phase 1 records"
+  plan_location: "This item's plan lives in task.yaml — never here"
+  in_phase_but_undefined: "Phase 1 requires a working frontend, so the item is enabled — but Phase 1 states that its technology and framework are defined separately, so every technical setting below stands as to be defined"
+  contract_gap: "No task for this item can be written until the human names its technology — recorded as B2 and Q5 in state.yaml"
+  shape_gap: "schema/frontend.schema.yaml gives a consuming item no field for the contract it reads, so consumes and contract_location are written here beside the shape — raised as Q7 in state.yaml, never fixed by an agent"
+  updated: "2026-08-27"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  editable_in_mode: "planning may write the settings; development and review never write this file — a task's status moves in task.yaml"
+  scope: "The settings are the working surface — this item produces no contract, and it never edits the one it consumes"
+  settings: "The settings — responsibility through out_of_scope — are written in planning mode only; a change wanted during development is recorded in the affected task's log and raised with the human"
+  undefined_settings: "A setting Phase 1 does not define is written as to be defined and left there — an agent never fills it with a guess, and choosing this item's technology is a human decision"
+  consumed_contract: "The consumed contract lives on the producing item and is never copied here — a change to it is raised with the human, never applied"
+  task_protocols: "How a task is claimed, done, blocked, and logged is the policy of task.yaml — it is not repeated here"
+  on_change_needed: "A wanted change to the shape of this file — schema/frontend.schema.yaml — is raised as an open question in state.yaml, never applied here"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "schema/frontend.schema.yaml first — know the shape of this file and what each parameter means"
+  - "enabled here, before anything else — it is true, so this item is part of the Phase 1 build"
+  - "then responsibility and out_of_scope — what this item is answerable for is settled even though its technology is not"
+  - "then tech and code_layout — every technical setting is to be defined, so nothing below can be acted on yet"
+  - "then B2 and Q5 in state.yaml — what is missing, and who decides it"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether this item is in play"
+  code_path: "The one folder this item may write inside"
+  code_path_note: "What code_path is relative to"
+  summary: "The item in one line"
+  needs_test: "Whether every task producing code is proven by a written test"
+  verify_cwd: "Where every verify command of this item runs from"
+  responsibility: "What this item is answerable for"
+  tech: "What the item is built with"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract this item reads, and where it lives"
+  boundaries: "What is this item's, what is not, and the one route to the other item"
+  out_of_scope: "What this item does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  enabled: true
+  code_path: "to be defined — the folder is named when the technology is chosen"
+  code_path_note: "Actual code of this item — relative to the repository root, not the interface root"
+  summary: "The user interface for entering, viewing, and managing the six Phase 1 records"
+  needs_test: false
+  verify_cwd: "to be defined — it follows from code_path, which is not yet named"
+
+  responsibility: "Presenting the six Phase 1 records to the user — adding one, listing them, opening one on its own, editing and updating it, deleting it, and enabling or disabling it through its status"
+
+
+  # =============================================================== Tech
+  tech:
+    language: "to be defined — Phase 1 states that the frontend technology and framework are defined separately"
+    database: "None — the backend owns the whole database schema; this item reaches data only through the contract"
+    environment: "to be defined — it follows from the technology, which is not yet chosen"
+    run: "to be defined — it follows from the technology, which is not yet chosen"
+
+
+  # =============================================================== Code layout
+  code_layout:
+    "to be defined": "No path of this item is named yet — the layout is written when the technology is chosen"
+
+
+  # =============================================================== Contracts
+  contracts:
+    produces: "none — this item publishes no contract"
+    consumes: "api-v1 — the backend's contract, once it is frozen"
+    contract_location: "backend.yaml — content.contracts.api-v1, on the producing item"
+    rule: "A task in this item depends on the contract version, never on a backend task"
+    change_rule: "The consumed contract is never edited here — a needed change is raised with the human on the producing item"
+
+
+  # =============================================================== Boundaries
+  boundaries:
+    owns: "The user interface and the client code behind it, inside its own code_path once that folder is named"
+    does_not_own: "Backend code and the database schema — not a single line"
+    interface: "The only route to the backend is the api-v1 contract"
+
+
+  # =============================================================== Out of scope
+  out_of_scope:
+    - "Server-side logic and final validation — those are the backend's"
+    - "Direct database access"
+    - "MetaTrader integration, trade execution, and reporting — Phase 1 excludes all three"
+    - "Authentication — Phase 1 requires none"
+    - "Automated tests — Phase 1 requires none"
+    - "Choosing its own technology — that is a human decision, open as Q5"

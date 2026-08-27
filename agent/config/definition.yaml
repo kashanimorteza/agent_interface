@@ -1,0 +1,80 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "definition.yaml"
+  path_note: "The address of this file — layer 2, the product definition"
+  purpose: "Product definition — what is being built and why"
+  shape: "schema/definition.schema.yaml — the shape of this file: its sections, their order, and what each parameter means"
+  scope_note: "This file states the what, not the how — the how lives in rules.yaml and the item files"
+  phase_scope: "Phase 1 only — data entry and data management: the six records, the lists and single views over them, and the operations that manage them; nothing beyond that phase is defined here"
+  reason: "The product definition is a human decision, not an agent inference"
+  updated: "2026-08-27"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "An agent never writes this file — identity, goals, and architecture are human decisions"
+  on_gap: "A goal that no contract can satisfy is not fixed here — it is raised as an open question in state.yaml"
+  on_change_needed: "A wanted change to the product definition is raised with the human, never applied"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "identity — know what is being built"
+  - "goals — know what must become possible"
+  - "architecture — know which part owns what, and that the contract is the only bridge"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  identity: "Who the product is — id, name, and the one-liner that names its promise"
+  goals: "What a user can do when the product is finished — the list every task traces back to"
+  architecture: "The parts of the product, what each owns, and the single connection point between them"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  identity:
+    id: "trading-assistant"
+    name: "Trading Assistant"
+    one_liner: "A platform for defining and managing trading information, strategies, actions, and related data — the information the trading system runs on."
+
+
+  goals:
+    - "A user can add a trading account and manage it — its name, its username, its password, its status, and its description"
+    - "A user can add an asset and manage it"
+    - "A user can add a strategy and manage it, including the risk parameter it carries"
+    - "A user can add an action group and manage it"
+    - "A user can add an action and manage it, binding it to an asset, a strategy, and an action group"
+    - "A user can add an execute entry and manage it, binding it to an action and carrying its profit and its state"
+    - "A user can see every record of a kind in a list"
+    - "A user can open a single record and see it on its own"
+    - "A user can edit and update any of the six records"
+    - "A user can delete any of the six records"
+    - "A user can enable or disable any of the six records through its status, without changing anything else about it"
+    - "A user can do all of the above through a user interface, not only through the API"
+
+
+  architecture:
+    shape: "Two parts — a backend that owns the models, the database, and the management APIs, and a frontend that presents them to the user — joined only by a versioned contract"
+    reason: "Each part is built and verified on its own, so an agent working in one never has to read the other; the backend can be built while the frontend's technology is still being chosen"
+
+    parts:
+
+      backend:
+        responsibility: "The HTTP API for the six Phase 1 records, their logic, and the database that holds them"
+        owns: "The API implementation and the whole database schema"
+        does_not_own: "Anything the user sees — not one line of the client"
+        produces: "Its contracts — published in its own file, backend.yaml"
+
+      frontend:
+        responsibility: "The user interface for entering, viewing, and managing the six Phase 1 records — its technology and framework are defined separately and are not yet chosen"
+        owns: "The user interface and the client code behind it"
+        does_not_own: "The models, the database schema, and the management APIs — those are the backend's"
+        consumes: "The backend's contracts — from backend.yaml"
+
+    connection:
+      path: "backend.yaml — content.contracts.<version>, on the producing item"
+      rule: "The contract is the only connection point — no part reaches into the other by any other route"
+      versioning: "A frozen contract never changes — a change means a new version"
