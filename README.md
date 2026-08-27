@@ -12,7 +12,7 @@ Agent Interface provides a standardized layer between a Developer and an AI Agen
 
 Instead of requiring an Agent to understand an entire project directly from conversations, the project is progressively transformed into a structured representation.
 
-The Developer defines the project in natural language, the Interface standardizes the project's understanding, the Planner converts that understanding into Tasks, and the Developer Agent implements those Tasks.
+The Developer defines the project in natural language, and the Interface standardizes the project's understanding into a structured representation that an Agent can use.
 
 The Interface is designed to remain independent of any specific AI model or Agent.
 
@@ -31,8 +31,6 @@ In this architecture:
 - The Developer defines the project and its requirements in `project.md`.
 - `Schema` defines the structure and standard for the required information.
 - `Configure` reads and understands the project and produces Config according to the Schema.
-- `Planner` uses the structured project information to create Tasks and a development plan.
-- `Developer` uses the generated Tasks to develop the project.
 
 <br > <br>
 
@@ -66,14 +64,11 @@ Agent Interface does not replace the Developer's project definition. Instead, it
 - **Standardized Configuration**  
   Project Understanding is represented in a predictable format through Config.
 
-- **Task Planning**  
-  The Planner converts structured project information into actionable Tasks and a development plan.
-
 - **Agent-independent interface**  
   The interface is not tied to a specific AI model or Agent.
 
 - **Separation of responsibilities**  
-  Understanding, configuration, planning, and development are handled as separate stages.
+  Project definition, understanding, and configuration are handled as separate stages.
 
 - **Extensible architecture**  
   Schemas, Configs, and instructions can evolve as the standard develops.
@@ -100,24 +95,6 @@ Use:
 The Configure process reads `project.md`, develops an Understanding of the project, reads the relevant Schemas, and produces the corresponding Config.
 
 
-### 3. Plan the Project
-
-Use:
-
-`agent/planner.md`
-
-The Planner reads the structured project information and creates the Tasks and development plan required to implement the project.
-
-
-### 4. Develop the Project
-
-Use:
-
-`agent/developer.md`
-
-The Developer Agent uses the Tasks and project information produced by the previous stages to implement the project.
-
-
 <br > <br>
 
 ## Project Structure
@@ -138,14 +115,6 @@ Contains the overall project definition and the Developer's requirements in natu
 
 Defines how to understand `project.md` and transform the project's Understanding into Config.
 
-### `planner.md`
-
-Creates Tasks and a development plan based on the project's Config.
-
-### `developer.md`
-
-Develops the project based on the Tasks created by the Planner.
-
 <br > <br>
 
 ## Agent Interface Workflow
@@ -162,17 +131,11 @@ The overall process is:
 
 → **Config**
 
-→ **Planner**
-
-→ Create Tasks and a development plan
-
-→ **Developer**
-
-→ Implement the Tasks
+→ Consumed by an Agent to develop the project
 
 → **Software Project**
 
-This process transforms project information from a human definition into a standardized structure, then into an executable development plan and code.
+This process transforms project information from a human definition into a standardized structure that an Agent can reliably work from.
 
 <br > <br>
 
@@ -186,8 +149,6 @@ Each part of Agent Interface has a specific responsibility:
 | `schema/` | Defines the structure and information standard |
 | `configure.md` | Understands the project and produces Config according to the Schema |
 | `config/` | Maintains the structured representation of the project |
-| `planner.md` | Transforms the project's Understanding into Tasks and a Plan |
-| `developer.md` | Executes the Tasks and develops the project |
 
 This separation keeps the Interface simple, understandable, and extensible.
 
@@ -218,10 +179,6 @@ Agent Interface is based on a simple principle:
 > **The Schema defines how that information is structured.**
 >
 > **Configure understands the project and transforms it into the standardized structure.**
->
-> **Planner defines what needs to be done.**
->
-> **The Developer Agent defines how those tasks are implemented.**
 
 This separation transforms the communication between humans and Agents from a free-form, model-dependent conversation into a structured and repeatable process.
 
@@ -237,9 +194,6 @@ The current structure defines the following core concepts:
 - Schema
 - Project Understanding
 - Configuration
-- Planning
-- Tasks
-- Development
 
 As the project evolves, the Schemas, Configs, and instructions can evolve as well without changing the fundamental concept of the Interface.
 
