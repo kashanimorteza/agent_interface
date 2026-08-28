@@ -25,17 +25,18 @@ Every rule of this project lives in `.agent/config/rules.yaml`, which states tha
 
 Exactly one mode is active at a time, named in `.agent/config/state.yaml` under `content.active.mode`. What each mode may write is defined in `root.yaml` under `content.modes` — read it there, not here.
 
-- `/plan` — planning
-- `/develop` — development
-- `/review` — review
-- `/configure` — regenerate `.agent/config/` from Phase 1 of `.agent/project.md` and `.agent/schema/`
+Each command is an entry point only. The standing definition of the job lives in the Skill it names, under `.claude/skills/`.
+
+- `/plan` — planning — `planner` Skill
+- `/develop` — development — `developer` Skill
+- `/review` — review — `reviewer` Skill
+- `/configure` — regenerate `.agent/config/` from Phase 1 of `.agent/project.md` and `.agent/schema/` — `configurator` Skill
 
 ## Layout
 
 ```
 .agent/
   project.md      the source — Phase 1 only, never modified
-  configure.md    the standing job that generates config/ from project.md + schema/
   schema/         the shape of each interface file — never modified
   config/         the interface: root, definition, rules, backend, frontend, task, state
 ```
