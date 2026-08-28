@@ -1,6 +1,6 @@
 ---
-name: my_configurator
-description: Generate or update `.agent/config/` from Phase 1 of `.agent/project.md` and the shapes defined in `.agent/schema/` — the agent-oriented representation of the project that the my_planner and my_developer work from. Use when the project definition changes, when config files are missing, outdated, or inconsistent with Phase 1, or when `/configure` is run.
+name: my_skl_configurator
+description: Generate or update `.agent/config/` from Phase 1 of `.agent/project.md` and the shapes defined in `.agent/schema/` — the agent-oriented representation of the project that the my_skl_planner and my_skl_developer work from. Use when the project definition changes, when config files are missing, outdated, or inconsistent with Phase 1, or when `/my_cmd_configure` is run.
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 
@@ -40,7 +40,7 @@ Do not perform any planning, implementation, development, testing, refactoring, 
 
 ## What the Config is for
 
-The generated Config is the agent-oriented representation of the project. It is what the `my_planner` Skill plans from and what the `my_developer` Skill builds from — neither of them reads `project.md`. Anything those two need in order to understand how the project is planned and developed has to be in `config/`, expressed in the shape the Schema defines.
+The generated Config is the agent-oriented representation of the project. It is what the `my_skl_planner` Skill plans from and what the `my_skl_developer` Skill builds from — neither of them reads `project.md`. Anything those two need in order to understand how the project is planned and developed has to be in `config/`, expressed in the shape the Schema defines.
 
 ## Before starting
 
