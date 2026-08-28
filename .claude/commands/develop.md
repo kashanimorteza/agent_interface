@@ -2,9 +2,9 @@
 description: Development mode — implement the tasks planning defined
 ---
 
-Development mode. Read `agent/config/root.yaml` and follow its `read_order` before anything else.
+Development mode. Read `.agent/config/root.yaml` and follow its `read_order` before anything else.
 
-Check `agent/config/state.yaml`: `content.active.mode` must be `development`, and `content.active.item` names the item you are on. If either disagrees with what you were asked to do, stop and tell the human.
+Check `.agent/config/state.yaml`: `content.active.mode` must be `development`, and `content.active.item` names the item you are on. If either disagrees with what you were asked to do, stop and tell the human.
 
 Take a task from `content.plans.<active item>` in `task.yaml`. A task is ready when its `status` is `todo` and every id in its `depends_on` is `done` — `ready` is not a stored status. Never take a task from another item's plan.
 

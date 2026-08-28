@@ -1,12 +1,12 @@
 # Generate Config Files
 
-Read and understand `agent/Project.md` completely.
+Read and understand `.agent/Project.md` completely.
 
 **Only consider Phase 1 of the project. Ignore Phase 2 and Phase 3 entirely. Do not use any information, concepts, parameters, requirements, or development context that belongs to Phase 2 or Phase 3.**
 
 From Phase 1 of `Project.md`, identify and understand the project's relevant concepts, parameters, requirements, structure, and context.
 
-Then read the files inside `agent/Schema/` and understand the structure, format, fields, and organization defined by the Schema.
+Then read the files inside `.agent/Schema/` and understand the structure, format, fields, and organization defined by the Schema.
 
 Use the following relationship:
 
@@ -16,7 +16,7 @@ Use the following relationship:
 
 `Project Understanding + Schema` → `Config/`
 
-Based on your understanding of the concepts and parameters defined in **Phase 1**, update the existing files inside `agent/Config/` or regenerate them when necessary.
+Based on your understanding of the concepts and parameters defined in **Phase 1**, update the existing files inside `.agent/Config/` or regenerate them when necessary.
 
 The Config files must reflect the current understanding of **Phase 1** while strictly following the structure and format defined by the corresponding Schema files.
 
@@ -26,9 +26,9 @@ Do not simply copy the Schema into the Config files. Populate and adapt the Sche
 
 Do not invent project concepts, parameters, requirements, or information that cannot be derived from Phase 1 of `Project.md`.
 
-Do not modify `agent/Project.md`.
+Do not modify `.agent/Project.md`.
 
-Do not modify `agent/Schema/`.
+Do not modify `.agent/Schema/`.
 
 Do not perform any planning, implementation, development, testing, refactoring, or other project work.
 

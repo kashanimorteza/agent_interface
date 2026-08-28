@@ -2,9 +2,9 @@
 description: Planning mode — decide what will be built and in what order
 ---
 
-Planning mode. Read `agent/config/root.yaml` and follow its `read_order` before anything else.
+Planning mode. Read `.agent/config/root.yaml` and follow its `read_order` before anything else.
 
-Check `agent/config/state.yaml`: `content.active.mode` must be `planning`. If it says otherwise, stop and tell the human — an agent never changes the active mode.
+Check `.agent/config/state.yaml`: `content.active.mode` must be `planning`. If it says otherwise, stop and tell the human — an agent never changes the active mode.
 
 What this mode may write is defined in `root.yaml` under `content.modes.planning`:
 

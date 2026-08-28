@@ -2,7 +2,7 @@
 description: Review mode — read the result and report; repair nothing
 ---
 
-Review mode. Read `agent/config/root.yaml` and follow its `read_order` before anything else.
+Review mode. Read `.agent/config/root.yaml` and follow its `read_order` before anything else.
 
 Nothing is repaired in this mode. You may write exactly two things:
 
