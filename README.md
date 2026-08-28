@@ -30,7 +30,7 @@ In this architecture:
 
 - The Developer defines the project and its requirements in `project.md`.
 - `Schema` defines the structure and standard for the required information.
-- The `configurator` Skill reads and understands the project and produces Config according to the Schema.
+- The `my_configurator` Skill reads and understands the project and produces Config according to the Schema.
 
 <br > <br>
 
@@ -88,9 +88,9 @@ Write the project in natural language from the Developer's perspective.
 
 ### 2. Configure the Project
 
-Use the `configurator` Skill:
+Use the `my_configurator` Skill:
 
-`.claude/skills/configurator/SKILL.md`
+`.claude/skills/my_configurator/SKILL.md`
 
 The Configure process reads `project.md`, develops an Understanding of the project, reads the relevant Schemas, and produces the corresponding Config.
 
@@ -111,9 +111,9 @@ The `.agent/` directory contains three main parts:
 
 Contains the overall project definition and the Developer's requirements in natural language.
 
-### `configurator` Skill
+### `my_configurator` Skill
 
-Defined in `.claude/skills/configurator/SKILL.md`. Defines how to understand `project.md` and transform the project's Understanding into Config.
+Defined in `.claude/skills/my_configurator/SKILL.md`. Defines how to understand `project.md` and transform the project's Understanding into Config.
 
 <br > <br>
 
@@ -147,7 +147,7 @@ Each part of Agent Interface has a specific responsibility:
 |<br > <br>|<br > <br>|
 | `project.md` | Defines the project and requirements from the Developer |
 | `schema/` | Defines the structure and information standard |
-| `configurator` Skill | Understands the project and produces Config according to the Schema |
+| `my_configurator` Skill | Understands the project and produces Config according to the Schema |
 | `config/` | Maintains the structured representation of the project |
 
 This separation keeps the Interface simple, understandable, and extensible.
@@ -159,25 +159,25 @@ This separation keeps the Interface simple, understandable, and extensible.
 Agent Interface defines four main operations, each implemented as a Skill and exposed through a simple Command:
 
 **1. Configurator** — `/configure`
-- Uses the `configurator` Skill
+- Uses the `my_configurator` Skill
 - Reads the project definition in `project.md` and understands it according to Phase 1
 - Reads the structure and format defined in `schema/`
 - Generates the project configuration — the agent-oriented representation stored in `config/`
 
 **2. Planner** — `/plan`
-- Uses the `planner` Skill
+- Uses the `my_planner` Skill
 - Reads the generated project configuration
 - Understands the project's task structure and format
 - Generates tasks and phases according to that structure
 
 **3. Developer** — `/develop`
-- Uses the `developer` Skill
+- Uses the `my_developer` Skill
 - Reads the planned tasks from `config/task.yaml`
 - Executes tasks one by one, implementing the required changes
 - Verifies each task passes its acceptance criteria before marking it done
 
 **4. Reviewer** — `/review`
-- Uses the `reviewer` Skill
+- Uses the `my_reviewer` Skill
 - Re-runs the verification for completed tasks
 - Checks that implementation matches the contracts and task specifications
 - Reports findings without making repairs
@@ -185,10 +185,10 @@ Agent Interface defines four main operations, each implemented as a Skill and ex
 Each Command is a simple entry point that uses its corresponding Skill to perform the operation:
 
 ```
-/configure → configurator Skill → Configuration
-/plan      → planner Skill      → Tasks
-/develop   → developer Skill     → Implementation
-/review    → reviewer Skill      → Review
+/configure → my_configurator Skill → Configuration
+/plan      → my_planner Skill      → Tasks
+/develop   → my_developer Skill    → Implementation
+/review    → my_reviewer Skill     → Review
 ```
 
 This workflow transforms a natural-language project definition through structured stages into a completed implementation.
@@ -218,7 +218,7 @@ Agent Interface is based on a simple principle:
 >
 > **The Schema defines how that information is structured.**
 >
-> **The `configurator` Skill understands the project and transforms it into the standardized structure.**
+> **The `my_configurator` Skill understands the project and transforms it into the standardized structure.**
 
 This separation transforms the communication between humans and Agents from a free-form, model-dependent conversation into a structured and repeatable process.
 
