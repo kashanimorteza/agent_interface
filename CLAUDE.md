@@ -27,10 +27,10 @@ Exactly one mode is active at a time, named in `.agent/config/state.yaml` under 
 
 Each command is an entry point only. The standing definition of the job lives in the Skill it names, under `.claude/skills/`.
 
-- `/plan` — planning — `my_planner` Skill
-- `/develop` — development — `my_developer` Skill
-- `/review` — review — `my_reviewer` Skill
-- `/configure` — regenerate `.agent/config/` from Phase 1 of `.agent/project.md` and `.agent/schema/` — `my_configurator` Skill
+- `/plan` — planning — `my_my_skl_planner` Skill
+- `/develop` — development — `my_my_skl_developer` Skill
+- `/review` — review — `my_my_skl_reviewer` Skill
+- `/configure` — regenerate `.agent/config/` from Phase 1 of `.agent/project.md` and `.agent/schema/` — `my_my_skl_configurator` Skill
 
 ## Layout
 
