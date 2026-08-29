@@ -1,100 +1,111 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: "root.yaml"
-  path_note: "Layer 1, the entry point of the Agent Project Interface — the only file an agent finds without guidance"
+  path: ".interface/root.yaml"
+  path_note: "Entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "1.0"
-  updated: "2026-08-27"
+  version: "1.1"
+  updated: "2026-08-29"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: true
-  rule: "This file holds no write protocol for results — every other file carries its own write rules, scoped to what that file owns"
-  by_mode: "What may be written where is decided per mode — see content.modes — never here"
-  on_change_needed: "A wanted change to the read order, the layers, or the modes is raised with the human, never applied by an agent"
+  rule: "This file holds no write protocol for results — every other file carries its own write rules in its own policy section"
+  by_mode: "What may be written where is decided per mode — see content.modes"
+  on_change_needed: "A change to the structure, the skills, or the modes is raised with the human, never applied by an agent"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  enforcement: "Exactly this order — no less, no more"
-  steps:
-    - step: 1
-      read: "root.yaml"
-      why: "This file — read protocol, the file index, and the working modes; the write rules of each file are read with that file, under its own policy section"
-    - step: 2
-      read: "config/definition.yaml"
-      why: "Understand what product is being built"
-    - step: 3
-      read: "config/rules.yaml"
-      why: "Read in full — every rule lives here and security overrides everything"
-    - step: 4
-      read: "The item files named in content.structure — config/backend.yaml and config/frontend.yaml"
-      why: "Learn which items exist, which are enabled, and which contract each produces or consumes; there is no separate frame file — content.structure below is the index"
-    - step: 5
-      read: "config/task.yaml"
-      why: "Know the shape of a task, its states, and where every plan stands"
-    - step: 6
-      read: "config/state.yaml"
-      why: "Learn the active mode, the active item, the blockers, and the open questions"
-    - step: 7
-      read: "Active item: its own file, and its own plan in config/task.yaml — content.plans, under that item's key"
-      why: "Understand the item you are working on and where each of its tasks stands"
-  no_history_layer: "There is no history file — the reason behind a task's current state travels with the task, in its own log field"
+  - read: "project"
+    why: "What is being built"
+  - read: "structure"
+    why: "Where every file lives and what it is for"
+  - read: "skills"
+    why: "Which Skill carries which stage"
+  - read: "modes"
+    why: "What may be written right now"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  structure: "The files of the interface — the layer, path, and responsibility of each; this is the index, and no other file holds one"
-  modes: "The working modes — planning, development, review — and what each may write"
+  project: "The project this interface governs, and where its definition lives"
+  structure: "Every folder and file of the interface, and the purpose of each"
+  skills: "The Skills that carry the stages of the workflow"
+  modes: "The working modes and what each may write"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
+  project:
+    name: "Trading Assistant"
+    purpose: "A platform for defining and managing trading information, strategies, actions, and related data"
+    definition: ".interface/project.md"
+    phase: "Phase 1 — data entry and management"
+
+
   structure:
 
-    root:
-      layer: 1
-      path: "root.yaml"
-      responsibility: "Entry point — read protocol, the file index, and working modes"
-      note: "The only file an agent finds without guidance"
-
-    definition:
-      layer: 2
-      path: "config/definition.yaml"
-      responsibility: "Product definition — identity, goals, and architecture"
-      note: "To understand what is being built, read config/definition.yaml"
-
-    rules:
-      layer: 3
-      path: "config/rules.yaml"
-      responsibility: "Rules governing agent behavior — security, quality, and their precedence"
-      note: "No rule lives anywhere else — read config/rules.yaml before doing anything"
-
-    items:
-      layer: 4
-      path: "backend.yaml, frontend.yaml"
-      responsibility: "The items themselves — one file per item: its settings and the contracts it produces or consumes"
-      note: "An item's settings live in its own file and nowhere else; each follows its own shape — schema/backend.schema.yaml and schema/frontend.schema.yaml. Both items are in Phase 1: the backend is defined, the frontend is named and its technology is not yet chosen"
-
-    task:
-      layer: 5
-      path: "config/task.yaml"
-      responsibility: "Task layer — the shape of a task, its states, and the plans that hold the tasks, one plan per item"
-      note: "A task and its status live here — the plan is both definition and state"
-
-    state:
-      layer: 6
-      path: "config/state.yaml"
-      responsibility: "Project-wide state — active mode, active item, blockers, and open questions"
-      note: "Task status does not live here — every task carries its own status field in config/task.yaml"
+    project_md:
+      path: ".interface/project.md"
+      purpose: "The project definition in natural language — what the application does, phase by phase"
+      owner: "human"
 
     schema:
-      layer: 0
-      path: "schema/"
-      responsibility: "The shape of each file above — what sections it has, in what order, and what every parameter means"
-      note: "Not a layer of the interface but the format behind it; a file's own shape is read before that file"
+      path: ".interface/schema/"
+      purpose: "The shape of every config file — its sections, their order, and the meaning of each parameter"
+      owner: "human"
+      files:
+        "file.schema.yaml": "The outer shape every interface file follows"
+        "definition.schema.yaml": "Shape of config/definition.yaml"
+        "rules.schema.yaml": "Shape of config/rules.yaml"
+        "backend.schema.yaml": "Shape of config/backend.yaml"
+        "frontend.schema.yaml": "Shape of config/frontend.yaml"
+        "task.schema.yaml": "Shape of config/task.yaml"
+        "state.schema.yaml": "Shape of config/state.yaml"
+
+    config:
+      path: ".interface/config/"
+      purpose: "The project's understanding, generated from project.md against schema/ — what an agent plans and builds from"
+      owner: "my-interface-configurator"
+      files:
+        "definition.yaml": "Product definition — identity, goals, architecture"
+        "rules.yaml": "Every rule governing agent behavior — no rule lives anywhere else"
+        "backend.yaml": "The backend item — its settings and the contracts it produces or consumes"
+        "frontend.yaml": "The frontend item — its settings and the contracts it produces or consumes"
+        "task.yaml": "The shape of a task, its states, and one plan per item"
+        "state.yaml": "Active mode, active item, blockers, and open questions"
+
+    claude:
+      path: ".claude/"
+      purpose: "How the agent is wired to this interface — Skills, subagent, rules, output style, permissions"
+      files:
+        "skills/": "The Skills of the workflow — see content.skills"
+        "agents/interface-reader.md": "Read-only subagent — reports mode, plans, ready tasks, blockers, and open questions"
+        "rules/interface-files.md": "The rules that apply when editing anything under .interface/"
+        "output-styles/interface-review.md": "Every claim about the project cites the file and section it came from"
+        "settings.json": "Permissions — project.md and schema/ are denied, definition.yaml and rules.yaml are asked"
+
+
+  skills:
+    path: ".claude/skills/"
+
+    my-interface-configurator:
+      purpose: "Reads project.md and schema/, and generates config/"
+      mode: "none — runs before planning"
+
+    my-interface-planner:
+      purpose: "Reads config/, and writes the tasks and the plan into config/task.yaml"
+      mode: "planning"
+
+    my-interface-developer:
+      purpose: "Implements the planned tasks under the active item's code_path"
+      mode: "development"
+
+    my-interface-reviewer:
+      purpose: "Checks the result against the plan, the contracts, and rules.yaml, and reports"
+      mode: "review"
 
 
   modes:
@@ -104,31 +115,30 @@ content:
     planning:
       purpose: "Decide what will be built and in what order — no product code is written"
       may_write:
-        - "The item files — backend.yaml and frontend.yaml — their settings and draft contracts, never a frozen contract"
-        - "config/task.yaml — the phases of an item's plan only, never task_schema, task_states, and the phase_titles of a plan"
+        - "config/backend.yaml and config/frontend.yaml — settings and draft contracts, never a frozen contract"
+        - "config/task.yaml — the phases of an item's plan only"
         - "config/state.yaml — blockers and open questions, never active"
       may_not_write:
         - "Any file under an item's code_path"
         - "A frozen contract"
-        - "root.yaml, config/definition.yaml, and config/rules.yaml — the frame above the build layer"
-        - "schema/ — the shape of a file is never changed by an agent"
+        - "root.yaml, config/definition.yaml, config/rules.yaml, and schema/"
 
     development:
       purpose: "Implement the tasks that planning defined"
       may_write:
         - "Files under the active item's code_path, limited to the touches of the claimed task"
-        - "config/task.yaml — the status, blocker, and log fields of a task only, never the plan"
+        - "config/task.yaml — the status, blocker, and log fields of a task only"
         - "config/state.yaml — blockers and open questions, never active"
       may_not_write:
         - "Another item's code_path"
         - "A frozen contract"
         - "root.yaml, config/definition.yaml, config/rules.yaml, the item files, and schema/"
-      plan_change: "Changing a task in this mode requires the reason written into that task's log and human approval — an agent never silently rewrites the plan it is executing"
+      plan_change: "Changing a task requires the reason written into that task's log and human approval"
 
     review:
       purpose: "Read the result and report — nothing is repaired in this mode"
       may_write:
         - "config/state.yaml — blockers and open questions only"
-        - "config/task.yaml — the status, blocker, and log fields of a task only, to mark it blocked and record what was found"
+        - "config/task.yaml — the status, blocker, and log fields of a task, to mark it blocked and record what was found"
       may_not_write:
         - "Anything else"
