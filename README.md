@@ -77,16 +77,16 @@ Reviews the implementation against the Tasks and project specifications.
 
 <br > <br>
 
+
 ## Quick Start
 
-### 1. Define the Project
+### 1. Understand the Project
 
-Start by describing the project and its requirements in:
+Read the project definition:
 
-`.interface/project.md`
+`.agent/project.md`
 
-Write the project in natural language from the Developer's perspective.
-
+Understand the project requirements and overall definition.
 
 ### 2. Configure the Project
 
@@ -94,4 +94,20 @@ Use the `my-interface-configurator` Skill:
 
 `.claude/skills/my-interface-configurator/SKILL.md`
 
-The Configure process reads `project.md`, develops an Understanding of the project, reads the relevant Schemas, and produces the corresponding Config.
+Use the project Understanding and the `schema/` structure to generate the project configuration files in `config/`.
+
+### 3. Plan the Project
+
+Use the `my-interface-planner` Skill:
+
+`.claude/skills/my-interface-planner/SKILL.md`
+
+Read the generated Config and create the required Tasks according to the defined Task structure.
+
+### 4. Develop the Project
+
+Use the `my-interface-developer` Skill:
+
+`.claude/skills/my-interface-developer/SKILL.md`
+
+Execute the planned Tasks and implement the required changes.
