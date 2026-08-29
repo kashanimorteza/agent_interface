@@ -51,11 +51,6 @@ The `.interface/` directory contains three main parts:
 
 Contains the overall project definition and the Developer's requirements in natural language.
 
-### `my-interface-configurator` Skill
-
-Defined in `.claude/skills/my-interface-configurator/SKILL.md`. Defines how to understand `project.md` and transform the project's Understanding into Config.
-
-
 
 <br > <br>
 
