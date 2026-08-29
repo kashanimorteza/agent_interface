@@ -1,0 +1,80 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/rules.yaml"
+  path_note: "Project and agent rules — generated from Phase 1 of .interface/project.md, owned by the human from this point on."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "The human owns this file. An agent never moves its own boundary — a needed change is raised as an open question in config/state.yaml."
+  regenerated_by: "my-interface-configurator, and only when re-run against a changed project.md — never as a side effect of planning, development, or review."
+  unstated_fields: "Where Phase 1 states no rule for a required group, that group is written as 'to be defined' and raised as an open question in state.yaml — never filled with a plausible convention."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "precedence"
+  - "environment"
+  - "code"
+  - "database"
+  - "security"
+  - "test"
+  - "contract"
+  - "design"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  precedence: "Which rule wins when two collide."
+  environment: "Where code runs, what is installed, and what is never committed."
+  code: "How code is shaped — mostly still open, since project.md defines what the app does, not how it is implemented."
+  database: "How the schema moves, and the engine's traps."
+  security: "What must never leak — including the one field Phase 1 names that needs a decision."
+  test: "What must be proven — settled directly by project.md's 'Automated tests are not required.'"
+  contract: "How the API surface and its contract stay in step."
+  design: "How the interface is drawn — blocked entirely on the frontend technology choice."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Precedence -->
+  precedence: "Security rules override every other group when they conflict; where a rule below and a stated fact of project.md would conflict, the stated fact of project.md wins."
+
+  # <!-------------------------------------------- Environment -->
+  environment:
+    - "All backend code runs inside an isolated Python virtual environment; the environment itself is never committed to version control."
+    - "Backend dependencies are installed only through the environment's own package tool, never installed globally."
+    - "Frontend environment and tooling are to be defined — project.md states the frontend technology and framework will be decided separately (open question Q1)."
+
+  # <!-------------------------------------------- Code -->
+  code:
+    - "To be defined — project.md states only what the application must do (Models and their fields, and the six operations in Phase 1's goal list), not how the code implementing it should be shaped. Route structure, service-layer conventions, input-validation conventions, and the error structure are all open (open question Q5)."
+
+  # <!-------------------------------------------- Database -->
+  database:
+    - "The database engine is SQLite, stated by project.md, and its file is never committed to version control."
+    - "The schema moves only through the standard Python migration framework named by project.md (Alembic, per backend.yaml's tech.packages.migration default) — a schema change is never applied by hand against the running database."
+    - "Indexing strategy and any engine-specific traps beyond the choice of SQLite are to be defined (open question Q5)."
+
+  # <!-------------------------------------------- Security -->
+  security:
+    - "No authentication or session management is required — project.md states 'Authentication is not required'; no route is gated by login or user identity."
+    - "Account.Password holds a trading/broker account credential, not a login credential for this application — whether it is stored encrypted, hashed, or in plain text is not stated by project.md and is not decided here (open question Q2); until answered, it is treated as sensitive and is never written to logs or included in an error message."
+    - "Every error message states what went wrong without exposing internal detail (query text, stack traces, file paths)."
+
+  # <!-------------------------------------------- Test -->
+  test:
+    - "Automated tests are not required — project.md states this directly; needs_test is false for both backend.yaml and frontend.yaml, and no task's verify depends on a written test."
+    - "A task's verify command may instead be a manual or runtime check (for example, a request against the running backend) — see each task's own verify field."
+
+  # <!-------------------------------------------- Contract -->
+  contract:
+    - "No route, model, or field is added to the backend's published surface without first updating backend.yaml's contracts section — the config file is never behind the code."
+    - "A frozen contract version is never edited; a needed change is written as a new version, and freezing or versioning a contract is a human decision, never an agent's."
+    - "The frontend builds only against a frozen contract version — never against one still marked draft."
+
+  # <!-------------------------------------------- Design -->
+  design:
+    - "To be defined — no design file, page, or shared visual convention can be set until the frontend technology and framework are chosen (open question Q1); project.md does not name a design deliverable at all for Phase 1."

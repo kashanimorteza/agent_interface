@@ -1,0 +1,64 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/definition.yaml"
+  path_note: "The product definition — generated from Phase 1 of .interface/project.md, owned by the human from this point on."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "The human owns this file. An agent never edits it directly — a needed change is raised as an open question in config/state.yaml."
+  regenerated_by: "my-interface-configurator, and only when re-run against a changed project.md — never as a side effect of planning, development, or review."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "identity"
+  - "goals"
+  - "architecture"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  identity: "Who the product is — its id, name, and one-sentence promise."
+  goals: "What a user can do once the product is finished — the list every task traces back to."
+  architecture: "The parts of the product, what each owns, and the single contract that joins them."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Identity -->
+  identity:
+    id: "trading_assistant"
+    name: "Trading Assistant"
+    one_liner: "A platform where a user enters, views, and manages the accounts, assets, strategies, action groups, actions, and executes that make up their trading setup."
+
+  # <!-------------------------------------------- Goals -->
+  goals:
+    - "Add a new record — Account, Asset, Strategy, Action Group, Action, or Execute."
+    - "View records of any of these kinds in a list."
+    - "View a single record's full detail."
+    - "Edit and update an existing record."
+    - "Delete a record."
+    - "Enable or disable a record through its status."
+
+  # <!-------------------------------------------- Architecture -->
+  architecture:
+    shape: "Two parts — a Python/FastAPI backend that owns all trading data, and a frontend (technology not yet chosen) that presents it — joined by a single API contract the backend publishes."
+    reason: "project.md separates 'Backend — manages application data and functionality' from 'Frontend — provides the user interface' as its own stated Project Structure, and leaves the frontend's technology to be decided separately; keeping the two parts joined only by a contract lets that choice be made later without touching the backend."
+    parts:
+      backend:
+        responsibility: "Stores and serves all trading data — Account, Asset, Strategy, Action Group, Action, and Execute — through an HTTP API."
+        owns: "The database schema and every trading record: Account, Asset, Strategy, Action Group, Action, Execute."
+        does_not_own: "The user interface, or how a record is visually entered, listed, or displayed."
+        produces: "The API contract — backend.yaml, content.contracts."
+      frontend:
+        responsibility: "Provides the interface for entering, viewing, editing, deleting, and enabling/disabling trading records."
+        owns: "The presentation layer and user interaction for every record kind."
+        does_not_own: "Trading data storage, or any business rule about what a record's fields may hold — those belong to the backend."
+        consumes: "The backend's API contract — backend.yaml, content.contracts."
+    connection:
+      path: ".interface/config/backend.yaml — content.contracts"
+      rule: "The backend's contract is the only connection point between the two parts — the frontend never reaches the database or the backend's code by any other route."
+      versioning: "A frozen contract version never changes; a needed change becomes a new version, and freezing or versioning is a human decision, never an agent's."

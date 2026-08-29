@@ -1,0 +1,71 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/task.yaml"
+  path_note: "The frame that defines a task, and the plans — one per item — that hold the tasks themselves."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "task_schema and task_states are the frame, set once here and not rewritten task by task. Under content.plans, planning mode may write phases/groups/tasks; development mode may change only a task's status, blocker, and log."
+  task_creation: "A plan stays empty until the human explicitly asks for tasks to be created — writing a task speculatively is forbidden."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_schema"
+  - "task_states"
+  - "plans"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_schema: "The fields every task carries."
+  task_states: "The vocabulary a task's status may hold, and the protocols around it."
+  plans: "This project's items — backend and frontend — each with its own, currently empty, plan."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Task_Schema -->
+  task_schema:
+    rule: "Every task carries exactly these fields — no more, no fewer."
+    fields:
+      id: "Identifier unique within the item — each item numbers its own tasks (e.g. T1, T2)."
+      title: "The task in one sentence."
+      goal: "What becomes possible after this task that was not possible before."
+      depends_on: "Ids of tasks in the same item — depending on another item's task is forbidden."
+      needs_contract: "The contract version this task needs — used instead of depending on another item's task; omitted when the task needs none."
+      acceptance: "Human-readable acceptance criterion — what must actually work."
+      verify: "A runnable command that proves acceptance — without it a task is never done."
+      touches: "Paths this task touches, written relative to the item's code_path."
+      status: "Where the task stands right now — the only field of a task that moves; its vocabulary is task_states."
+      blocker: "Id of the blocker in state.yaml — present only when status is blocked, absent otherwise."
+      log: "Append-only list of dated entries carried with the task — absent until the task first moves."
+    status_lives_here: "Status is written on the task itself, so the task's definition and its state can never drift apart."
+    history_lives_here_too: "There is no separate history file — how a task reached its state is in its own log, and a past log entry is never rewritten."
+
+  # <!-------------------------------------------- Task_States -->
+  task_states:
+    path: "content.plans.<item>.phases.<phase>.groups.<group>.tasks.<task>.status"
+    states:
+      todo: "Defined, not yet started, and not blocked."
+      claimed: "An agent has taken this task and is working it — set before work starts, so two agents never take the same task."
+      blocked: "Cannot proceed — the blocker field names the id of the blocker in state.yaml."
+      done: "Acceptance is met and verify has passed."
+      cancelled: "No longer needed — will not be done."
+      superseded: "Replaced by a different task — the replacing task is named in this task's log."
+    derived_ready: "Ready is not a stored status — a task is ready when it is todo and every task named in its depends_on is done."
+    done_gate: "No task becomes done without a passing run of its verify command, even if the code is written."
+    claim_protocol: "A task is set to claimed and the file written before work on it starts."
+    status_only_in_development: "In development mode, status, blocker, and log are the only fields an agent may change on a task — everything else is the plan, set by planning mode."
+
+  # <!-------------------------------------------- Plans -->
+  plans:
+    backend:
+      phase_titles: {}
+      phases: {}
+    frontend:
+      phase_titles: {}
+      phases: {}

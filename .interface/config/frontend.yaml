@@ -1,0 +1,84 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/frontend.yaml"
+  path_note: "The frontend item's configuration — generated from Phase 1 of .interface/project.md. Most of tech and code_layout stay 'to be defined' until the frontend technology is chosen."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Planning mode may write settings and draft contracts here, never a frozen one. Development mode may write nothing in this file. Freezing a contract version is a human decision."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled"
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "code_layout"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the frontend is in play."
+  code_path: "Where the frontend's code lives."
+  code_path_note: "What code_path is relative to."
+  summary: "The frontend in one line."
+  needs_test: "Whether a written test gates every task — false, per project.md."
+  verify_cwd: "Where and inside what environment a verify command runs."
+  responsibility: "What the frontend is answerable for."
+  tech: "What the frontend is built with — open, pending the technology choice."
+  code_layout: "Every path inside code_path and what it holds — open, pending the technology choice."
+  contracts: "The frontend's own published surface — none; it only consumes the backend's."
+  boundaries: "The limits of the frontend."
+  out_of_scope: "What the frontend does not do."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  enabled: true
+
+  code_path: "frontend/"
+  code_path_note: "Relative to the repository root."
+
+  summary: "The interface for entering, viewing, editing, deleting, and enabling/disabling trading records — technology not yet chosen."
+
+  needs_test: false
+
+  verify_cwd: "to be defined — depends on the frontend technology chosen (open question Q1)."
+
+  responsibility: "Presents every trading record kind (Account, Asset, Strategy, Action Group, Action, Execute) so a user can add, list, view, edit, delete, and enable/disable them, by calling the backend's contract exclusively."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+    language: "to be defined — project.md states the frontend technology and framework will be defined separately (open question Q1)."
+    database: "None — the frontend holds no data of its own and has no direct database access; it reaches trading data only through the backend's contract."
+    environment: "to be defined — depends on the frontend technology chosen (open question Q1)."
+    run: "to be defined — depends on the frontend technology chosen (open question Q1)."
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout: "to be defined — cannot be laid out until the frontend technology is chosen (open question Q1)."
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+    produces: "None — the frontend publishes no contract of its own; nothing else in this project consumes it."
+    rule: "N/A — there is no frontend-published surface to match."
+    change_rule: "N/A."
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns: "The presentation layer and user interaction for every trading record kind."
+    does_not_own: "Trading data storage, the database schema, or any business rule about what a record's fields may hold — all owned by the backend."
+    interface: "The backend's published API contract (backend.yaml, contracts.v1) — the frontend's only route to trading data."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope: "MetaTrader integration, trade execution, and reporting — project.md excludes these from Phase 1. Login or authentication screens — project.md states authentication is not required."
