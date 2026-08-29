@@ -37,7 +37,7 @@ In this architecture:
 
 <br > <br>
 
-## Files Project Structure
+## Project Structure : Directories and files
 
 The core of Agent Interface is located in the `.interface/` directory.
 
@@ -59,29 +59,29 @@ Defined in `.claude/skills/my-interface-configurator/SKILL.md`. Defines how to u
 
 <br > <br>
 
-## Agent Skills Project Structure
+## Project Structure : Agent Skills
 
 Agent Interface defines four Skills for the main stages of the development workflow.
 
-#### Configurator
+### Configurator
 
 `/my_cmd_configure`
 
 Reads `project.md` and generates the project configuration according to the Schema.
 
-#### Planner
+### Planner
 
 `/my_cmd_plan`
 
 Reads the project configuration and generates Tasks and the development plan.
 
-#### Developer
+### Developer
 
 `/my_cmd_develop`
 
 Executes the planned Tasks and implements the required changes.
 
-#### Reviewer
+### Reviewer
 
 `/my_cmd_review`
 
