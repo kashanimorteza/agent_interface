@@ -1,7 +1,10 @@
 schema:
   id: agent-interface-backend
-  version: "1.0"
+  version: "1.1"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
+  defaults:
+    rule: "A field carrying `default` is always written into backend.yaml — the project's stated value when the project states one, the schema's default when it does not."
+    note: "A default is an answer, not a guess — an unstated field that has one is never written as 'to be defined' and never becomes an open question. A field with no default keeps that behaviour unchanged."
 
 structure:
   - enabled
@@ -12,6 +15,7 @@ structure:
   - verify_cwd
   - responsibility
   - tech
+  - standards
   - code_layout
   - contracts
   - boundaries
@@ -57,20 +61,122 @@ sections:
   # <!--------------------------------------------------------------------------------- Tech -->
   tech:
     required: true
-    purpose: "What the backend is built with — the choices an agent follows and never re-decides."
+    purpose: "What the backend is built with — the choices an agent follows and never re-decides; every choice carries a default, so a choice the project leaves unstated is answered by the schema rather than guessed."
     fields:
       language:
         required: true
-        purpose: "The language, its version when pinned, and the frameworks carried on top of it — one framework per role: API layer, ORM, migrations, test runner."
+        purpose: "The programming language the backend is written in, and the parent of everything language-specific — its environment tool and its packages hang beneath it."
+        fields:
+          name:
+            required: true
+            default: "Python"
+            purpose: "The language itself."
+          version:
+            required: true
+            default: "latest"
+            purpose: "The language version — the pinned version when the project names one, otherwise the latest stable release available when development starts."
+          environment:
+            required: true
+            purpose: "The isolated environment every command and every install happens inside — created and driven by one named tool, and never committed."
+            fields:
+              name:
+                required: true
+                default: "uv"
+                purpose: "The tool that creates the virtual environment and installs into it — the only route a dependency enters the project by."
+              version:
+                required: true
+                default: "latest"
+                purpose: "The version of that tool."
+          packages:
+            required: true
+            purpose: "The frameworks, libraries, and tools the backend is built on — one structured entry per role, never a single combined line; a role the project leaves unstated takes its default."
+            fields:
+              api:
+                required: true
+                purpose: "The framework serving the HTTP surface the contract is published over."
+                fields:
+                  name:
+                    required: true
+                    default: "FastAPI"
+                    purpose: "The API framework."
+                  version:
+                    required: true
+                    default: "latest"
+                    purpose: "Its version."
+              orm:
+                required: true
+                purpose: "The layer every read and write of the database goes through."
+                fields:
+                  name:
+                    required: true
+                    default: "SQLAlchemy"
+                    purpose: "The ORM."
+                  version:
+                    required: true
+                    default: "latest"
+                    purpose: "Its version."
+              migration:
+                required: true
+                purpose: "The tool that carries the database schema from one version to the next — the only way the schema changes."
+                fields:
+                  name:
+                    required: true
+                    default: "Alembic"
+                    purpose: "The migration tool."
+                  version:
+                    required: true
+                    default: "latest"
+                    purpose: "Its version."
+              "<package>":
+                required: false
+                purpose: "One entry per further package the project names — same two fields, set by the human, never inferred by an agent from the code."
+                fields:
+                  name:
+                    required: true
+                    purpose: "The package."
+                  version:
+                    required: true
+                    purpose: "Its version."
       database:
         required: true
         purpose: "The data engine, where the data physically lives, who owns the schema, and the only permitted route to it."
-      environment:
-        required: true
-        purpose: "The isolated environment every command and every install happens inside — never committed."
       run:
         required: true
         purpose: "The command that starts the backend."
+
+  # <!--------------------------------------------------------------------------------- Standards -->
+  standards:
+    required: true
+    purpose: "How the backend's code is written — conventions the project settles once so an agent follows them instead of deciding them file by file; each carries a default, and the project's value wins wherever it states one."
+    fields:
+      naming:
+        required: true
+        purpose: "The case style each kind of name takes — the defaults are the conventions of the default language and hold until the project states otherwise."
+        fields:
+          variables:
+            required: true
+            default: "snake_case"
+            purpose: "How a variable is named."
+          functions:
+            required: true
+            default: "snake_case"
+            purpose: "How a function or method is named."
+          classes:
+            required: true
+            default: "PascalCase"
+            purpose: "How a class is named."
+          constants:
+            required: true
+            default: "UPPER_SNAKE_CASE"
+            purpose: "How a constant is named."
+          files:
+            required: true
+            default: "snake_case"
+            purpose: "How a file inside code_path is named."
+          folders:
+            required: true
+            default: "snake_case"
+            purpose: "How a folder inside code_path is named."
 
   # <!--------------------------------------------------------------------------------- Code_Layout -->
   code_layout:

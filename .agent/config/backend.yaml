@@ -1,0 +1,234 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".agent/config/backend.yaml"
+  path_note: "The backend item of the interface. Generated from Phase 1 of `.agent/project.md` against `.agent/schema/backend.schema.yaml` (schema 1.1), inside the outer shape of `.agent/schema/file.schema.yaml`. This is the file the developer builds the backend from — it never describes the frontend, and it is not the product definition."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  source: "Phase 1 of `.agent/project.md` and the defaults declared in `backend.schema.yaml`. Phase 2 and Phase 3 contribute nothing — not a concept, not a parameter, not a requirement."
+  defaults: "A value carrying a `# schema default` comment was not stated by Phase 1 and was taken from the schema. A default is an answer, not a guess: it is written in, and it is never raised as an open question. A value stated by the project always wins over a default."
+  never_invent: "Anything Phase 1 leaves open that the schema has no default for is written `to be defined` and raised with the human. It is never filled with a plausible value, and no task is written against it."
+  contract_change: "A frozen contract is never edited. `api-v1` is a draft and may still move; freezing it is the human's decision, and after that it can only be superseded by a new version."
+  write_boundary: "This item writes only inside `code_path`. It never writes into `.agent/`, and never into the code of another item."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "1. `enabled` — whether the backend is in play at all. False ends the read."
+  - "2. `code_path`, `code_path_note`, `summary` — where the code lives and what this item is, before any setting is read."
+  - "3. `needs_test`, `verify_cwd` — how work on this item is proven, and where that proof runs."
+  - "4. `responsibility`, `tech`, `standards` — what the backend answers for, what it is built with, and how its code is written."
+  - "5. `code_layout` — where each kind of code belongs inside `code_path`."
+  - "6. `contracts` — read last of the substance, and inside it read in the contract's own `contract_read_order`. This is the only thing another item may build against."
+  - "7. `boundaries`, `out_of_scope` — the limits, read last so nothing above is stretched past them."
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the backend takes part in the build."
+  code_path: "The one folder this item may write code into."
+  code_path_note: "What that path is relative to."
+  summary: "The backend in one line."
+  needs_test: "Whether a written test proves every code task."
+  verify_cwd: "Where and inside what environment a verify command runs."
+  responsibility: "What the backend is answerable for."
+  tech: "The technology the backend is built with — language, its environment and packages, the database, and the run command."
+  standards: "The naming conventions the backend's code follows."
+  code_layout: "Every path inside `code_path` and what it holds."
+  contracts: "The contract the backend publishes — its only connection to another item."
+  boundaries: "What the backend owns, what it does not, and the one thing it offers outward."
+  out_of_scope: "What the backend does not do, named so it is never inferred into a task."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!--------------------------------------------------------------------------------- Enabled -->
+  enabled: true
+
+  # <!--------------------------------------------------------------------------------- Code_Path -->
+  code_path: "backend/"
+
+  # <!--------------------------------------------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root, alongside `.agent/` and never inside it. `.agent/` carries the interface; `backend/` carries the backend's actual code. A path in this file is never read as a path inside the interface."
+
+  # <!--------------------------------------------------------------------------------- Summary -->
+  summary: "The data side of the Trading Assistant — it stores the trading information and serves every read and write of it over one HTTP contract."
+
+  # <!--------------------------------------------------------------------------------- Needs_Test -->
+  needs_test: false   # from Phase 1 — "Automated tests are not required."
+
+  # <!--------------------------------------------------------------------------------- Verify_Cwd -->
+  verify_cwd: "`backend/`, inside the project's virtual environment — every verify command is run through the environment tool from that directory, never against a system interpreter."
+
+  # <!--------------------------------------------------------------------------------- Responsibility -->
+  responsibility: "The backend is answerable for the trading information itself — its shape, its storage, its rules, and the one interface every change to it passes through."
+
+  # <!--------------------------------------------------------------------------------- Tech -->
+  tech:
+    language:
+      name: "Python"                    # from Phase 1
+      version: "latest"                 # from Phase 1 — "Latest stable version available when development starts"
+      environment:
+        name: "uv"                      # schema default — Phase 1 names no environment or package manager
+        version: "latest"               # schema default
+      packages:
+        api:
+          name: "FastAPI"               # from Phase 1
+          version: "latest"             # schema default
+        orm:
+          name: "SQLAlchemy"            # from Phase 1
+          version: "latest"             # schema default
+        migration:
+          name: "Alembic"               # schema default — Phase 1 asks only for a "Standard Python migration framework"
+          version: "latest"             # schema default
+    database: "SQLite — from Phase 1. The data lives in a single file inside `code_path`, the backend owns the whole schema, and the ORM is the only permitted route to it; no other item and no raw connection reaches the file."
+    run: "`uv run uvicorn app.main:app --reload`, from `backend/`."
+
+  # <!--------------------------------------------------------------------------------- Standards -->
+  standards:
+    naming:
+      variables: "snake_case"           # schema default
+      functions: "snake_case"           # schema default
+      classes: "PascalCase"             # schema default
+      constants: "UPPER_SNAKE_CASE"     # schema default
+      files: "snake_case"               # schema default
+      folders: "snake_case"             # schema default
+
+  # <!--------------------------------------------------------------------------------- Code_Layout -->
+  code_layout:
+    "app/main.py": "The entry point — builds the application, mounts every router, and registers the error handler. No business logic."
+    "app/config.py": "Configuration — the database location and anything else the application reads at startup, in one place."
+    "app/database.py": "Database access — the engine, the session, and the declarative base. The only module that opens a connection."
+    "app/models/": "The ORM models, one file per entity. The schema of the database and nothing else."
+    "app/schemas/": "The validation schemas, one file per entity — what a request body must be and what a response looks like. Every request is validated here before it reaches a service."
+    "app/services/": "The business logic, one file per entity. A route calls a service; a service is the only thing that touches a model."
+    "app/routes/": "The HTTP surface, one router per entity. A route validates, calls a service, and returns — it holds no logic and never touches a model directly."
+    "app/errors.py": "The single error shape and the handler that produces it. Every failure the API answers with is built here."
+    "migrations/": "The migration history. The schema only ever moves through a migration — never by hand, and never by the ORM creating tables at startup."
+    "tests/": "Where tests live when they are written. `needs_test` is false in Phase 1, so nothing here is required and no task's verify depends on it."
+    "pyproject.toml": "The project and its dependencies, as the environment tool reads them."
+
+  # <!--------------------------------------------------------------------------------- Contracts -->
+  contracts:
+    produces: "api-v1"
+    rule: "The contract is the whole of what the backend offers outward. The implementation matches it exactly — a route that is not in the contract does not exist, and a field the contract does not name is not returned."
+    change_rule: "A frozen contract is versioned, never edited: a change means api-v2, and the decision to freeze or supersede belongs to the human. While a version is a draft it may still move, and nothing may be built against it."
+    api-v1:
+      lifecycle: "draft"
+      lifecycle_note: "Draft because four field-level facts are still open — the type of Strategy's Risk Parameter, the type and unit of Execute's Profit, the values of Execute's State, and whether Account's Password is ever returned or how it is held. No task may be written against this version until it is frozen, and freezing it is the human's decision."
+      consumed_by: "frontend"
+      contract_read_order: "conventions first — they hold everywhere; then error_shape, because every route can answer with it; then models, because routes are described in terms of them; then routes last."
+      conventions:
+        transport: "JSON over HTTP. Every request body and every response body is JSON."
+        identifiers: "Every record carries an `id` assigned by the backend. A client never sends an id in a body — it names one in the path. The id's type is not stated in Phase 1 — to be defined."
+        timestamps: "None. Phase 1 names no created or updated field on any model, so the contract returns none."
+        status: "Every model carries `status`, and it has exactly two values — `enabled` and `disabled`. Disabling is a status change through the update route; it is not a delete."
+        unknown_id: "A path naming an id that does not exist answers 404 with the error shape — never an empty 200, and never a null body."
+      error_shape:
+        rule: "Every failure takes this one shape, whatever produced it. A route never invents a second failure format, and a success body never carries an error field."
+        note: "Phase 1 states nothing about errors. This shape is the interface's own convention and is one of the reasons api-v1 is still a draft — the human confirms it before it is frozen."
+        fields:
+          error.code: "A stable, machine-readable string. The consumer branches on this and on nothing else."
+          error.message: "One human-readable sentence. It never leaks a password, a query, or a stack trace."
+          error.details: "Present only on a validation failure — the fields that failed and why."
+        codes:
+          not_found: "404 — no record with that id."
+          validation_error: "422 — the body did not satisfy the model's rules."
+          conflict: "409 — the write would break a constraint the model states."
+          internal_error: "500 — anything the backend did not anticipate."
+      models:
+        Account:
+          id: "Assigned by the backend. Type to be defined."
+          name: "Text, required."
+          username: "Text, required."
+          password: "Text, required on create. Whether it is ever returned, and how it is held at rest, is to be defined — until that is settled the contract does not list it in any response."
+          status: "`enabled` or `disabled`. Required."
+          description: "Text, optional."
+        Asset:
+          id: "Assigned by the backend. Type to be defined."
+          name: "Text, required."
+          status: "`enabled` or `disabled`. Required."
+          description: "Text, optional."
+        Strategy:
+          id: "Assigned by the backend. Type to be defined."
+          name: "Text, required."
+          risk_parameter: "Required. Type and range to be defined — Phase 1 names the field and not its shape."
+          status: "`enabled` or `disabled`. Required."
+          description: "Text, optional."
+        ActionGroup:
+          id: "Assigned by the backend. Type to be defined."
+          name: "Text, required."
+          status: "`enabled` or `disabled`. Required."
+          description: "Text, optional."
+        Action:
+          id: "Assigned by the backend. Type to be defined."
+          name: "Text, required."
+          asset_id: "The Asset this action belongs to. Required, and must name an existing Asset."
+          strategy_id: "The Strategy this action follows. Required, and must name an existing Strategy."
+          group_id: "The Action Group this action sits in. Required, and must name an existing Action Group."
+          status: "`enabled` or `disabled`. Required."
+          description: "Text, optional."
+        Execute:
+          id: "Assigned by the backend. Type to be defined."
+          name: "Text, required."
+          action_id: "The Action this execution belongs to. Required, and must name an existing Action."
+          profit: "Type and unit to be defined — Phase 1 names the field and not its shape."
+          state: "Distinct from `status`. Its permitted values are to be defined."
+          status: "`enabled` or `disabled`. Required."
+          description: "Text, optional."
+      routes:
+
+        # <!--------------------------------------------------------------------------------- Account -->
+        - { method: GET,    path: "/accounts",           summary: "List every account.",        response: "200 — a list of Account.",  errors: [internal_error] }
+        - { method: GET,    path: "/accounts/{id}",      summary: "Read one account.",          response: "200 — one Account.",        errors: [not_found, internal_error] }
+        - { method: POST,   path: "/accounts",           summary: "Add an account.",            body: "Account without id.",           response: "201 — the created Account.", errors: [validation_error, conflict, internal_error] }
+        - { method: PATCH,  path: "/accounts/{id}",      summary: "Edit an account, including enabling or disabling it through status.", body: "Any subset of Account's editable fields.", response: "200 — the updated Account.", errors: [not_found, validation_error, conflict, internal_error] }
+        - { method: DELETE, path: "/accounts/{id}",      summary: "Delete an account.",         response: "204 — no body.",            errors: [not_found, conflict, internal_error] }
+
+        # <!--------------------------------------------------------------------------------- Asset -->
+        - { method: GET,    path: "/assets",             summary: "List every asset.",          response: "200 — a list of Asset.",    errors: [internal_error] }
+        - { method: GET,    path: "/assets/{id}",        summary: "Read one asset.",            response: "200 — one Asset.",          errors: [not_found, internal_error] }
+        - { method: POST,   path: "/assets",             summary: "Add an asset.",              body: "Asset without id.",             response: "201 — the created Asset.",   errors: [validation_error, conflict, internal_error] }
+        - { method: PATCH,  path: "/assets/{id}",        summary: "Edit an asset, including enabling or disabling it through status.", body: "Any subset of Asset's editable fields.", response: "200 — the updated Asset.", errors: [not_found, validation_error, conflict, internal_error] }
+        - { method: DELETE, path: "/assets/{id}",        summary: "Delete an asset.",           response: "204 — no body.",            errors: [not_found, conflict, internal_error] }
+
+        # <!--------------------------------------------------------------------------------- Strategy -->
+        - { method: GET,    path: "/strategies",         summary: "List every strategy.",       response: "200 — a list of Strategy.", errors: [internal_error] }
+        - { method: GET,    path: "/strategies/{id}",    summary: "Read one strategy.",         response: "200 — one Strategy.",       errors: [not_found, internal_error] }
+        - { method: POST,   path: "/strategies",         summary: "Add a strategy.",            body: "Strategy without id.",          response: "201 — the created Strategy.", errors: [validation_error, conflict, internal_error] }
+        - { method: PATCH,  path: "/strategies/{id}",    summary: "Edit a strategy, including enabling or disabling it through status.", body: "Any subset of Strategy's editable fields.", response: "200 — the updated Strategy.", errors: [not_found, validation_error, conflict, internal_error] }
+        - { method: DELETE, path: "/strategies/{id}",    summary: "Delete a strategy.",         response: "204 — no body.",            errors: [not_found, conflict, internal_error] }
+
+        # <!--------------------------------------------------------------------------------- Action_Group -->
+        - { method: GET,    path: "/action-groups",      summary: "List every action group.",   response: "200 — a list of ActionGroup.", errors: [internal_error] }
+        - { method: GET,    path: "/action-groups/{id}", summary: "Read one action group.",     response: "200 — one ActionGroup.",    errors: [not_found, internal_error] }
+        - { method: POST,   path: "/action-groups",      summary: "Add an action group.",       body: "ActionGroup without id.",       response: "201 — the created ActionGroup.", errors: [validation_error, conflict, internal_error] }
+        - { method: PATCH,  path: "/action-groups/{id}", summary: "Edit an action group, including enabling or disabling it through status.", body: "Any subset of ActionGroup's editable fields.", response: "200 — the updated ActionGroup.", errors: [not_found, validation_error, conflict, internal_error] }
+        - { method: DELETE, path: "/action-groups/{id}", summary: "Delete an action group.",    response: "204 — no body.",            errors: [not_found, conflict, internal_error] }
+
+        # <!--------------------------------------------------------------------------------- Action -->
+        - { method: GET,    path: "/actions",            summary: "List every action.",         response: "200 — a list of Action.",   errors: [internal_error] }
+        - { method: GET,    path: "/actions/{id}",       summary: "Read one action.",           response: "200 — one Action.",         errors: [not_found, internal_error] }
+        - { method: POST,   path: "/actions",            summary: "Add an action.",             body: "Action without id — asset_id, strategy_id and group_id must each name an existing record.", response: "201 — the created Action.", errors: [validation_error, conflict, internal_error] }
+        - { method: PATCH,  path: "/actions/{id}",       summary: "Edit an action, including enabling or disabling it through status.", body: "Any subset of Action's editable fields.", response: "200 — the updated Action.", errors: [not_found, validation_error, conflict, internal_error] }
+        - { method: DELETE, path: "/actions/{id}",       summary: "Delete an action.",          response: "204 — no body.",            errors: [not_found, conflict, internal_error] }
+
+        # <!--------------------------------------------------------------------------------- Execute -->
+        - { method: GET,    path: "/executes",           summary: "List every execute.",        response: "200 — a list of Execute.",  errors: [internal_error] }
+        - { method: GET,    path: "/executes/{id}",      summary: "Read one execute.",          response: "200 — one Execute.",        errors: [not_found, internal_error] }
+        - { method: POST,   path: "/executes",           summary: "Add an execute.",            body: "Execute without id — action_id must name an existing Action.", response: "201 — the created Execute.", errors: [validation_error, conflict, internal_error] }
+        - { method: PATCH,  path: "/executes/{id}",      summary: "Edit an execute, including enabling or disabling it through status.", body: "Any subset of Execute's editable fields.", response: "200 — the updated Execute.", errors: [not_found, validation_error, conflict, internal_error] }
+        - { method: DELETE, path: "/executes/{id}",      summary: "Delete an execute.",         response: "204 — no body.",            errors: [not_found, conflict, internal_error] }
+
+  # <!--------------------------------------------------------------------------------- Boundaries -->
+  boundaries:
+    owns: "Everything under `code_path` — the application, its models, its services, its routes, and the whole database schema together with every migration that moves it."
+    does_not_own: "Client code of any kind. How the information is displayed, entered, or navigated is the frontend's, however close a screen sits to a route."
+    interface: "`api-v1`, and nothing else. No shared module, no shared file, no direct database access is offered outward."
+
+  # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "Authentication and authorization — Phase 1 states they are not required. An Account is data the user manages, not a way to log in."
+    - "Automated tests — Phase 1 states they are not required, and `needs_test` is false."
+    - "MetaTrader integration, trade execution, and reporting — named by Phase 1 as outside it."
+    - "Any user interface. The backend serves the contract and renders nothing."
+    - "Anything Phase 2 or Phase 3 introduces. Neither contributes a concept, a parameter, or a requirement here."

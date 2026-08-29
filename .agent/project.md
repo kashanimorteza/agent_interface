@@ -30,7 +30,6 @@ It does not define how the application should be implemented.
 - ORM: SQLAlchemy
 - Database: SQLite
 - Database Migration: Standard Python migration framework
-- Python Version: Latest stable version available when development starts
 
 ### Frontend
 
