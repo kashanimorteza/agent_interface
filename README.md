@@ -1,8 +1,12 @@
 # Agent Interface
 
+### Description
 An independent interface between **Developers** and **AI Agents** for creating a common protocol, structure, and standard for software development.
 
 The goal of Agent Interface is to allow Developers to express project requirements and definitions in natural language and transform that information into a standardized structure that Agents can understand, plan against, and ultimately use to develop the project.
+
+
+### Overview
 
 Agent Interface provides a standardized layer between a Developer and an AI Agent.
 
@@ -12,6 +16,8 @@ The Developer defines the project in natural language, and the Interface standar
 
 The Interface is designed to remain independent of any specific AI model or Agent.
 
+
+### Concept
 
 Developers typically describe their projects and requirements using human language and in a flexible form.
 
@@ -30,7 +36,7 @@ In this architecture:
 
 <br > <br>
 
-## Structure : Directories and files
+## Directories and files
 
 The core of Agent Interface is located in the `.interface/` directory.
 
@@ -44,9 +50,7 @@ The `.interface/` directory contains four main parts:
 
 <br > <br>
 
-## Structure : Agent Skills
-
-Agent Interface defines four Skills for the main stages of the development workflow.
+## Agent Skills
 
 ### `my-interface-configurator`
 
