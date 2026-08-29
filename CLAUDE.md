@@ -27,10 +27,10 @@ Exactly one mode is active at a time, named in `.interface/config/state.yaml` un
 
 Each command is an entry point only. The standing definition of the job lives in the Skill it names, under `.claude/skills/`.
 
-- `/my_cmd_plan` — planning — `my_skl_planner` Skill
-- `/my_cmd_develop` — development — `my_skl_developer` Skill
-- `/my_cmd_review` — review — `my_skl_reviewer` Skill
-- `/my_cmd_configure` — regenerate `.interface/config/` from Phase 1 of `.interface/project.md` and `.interface/schema/` — `my_skl_configurator` Skill
+- `/my_cmd_plan` — planning — `my-interface-planner` Skill
+- `/my_cmd_develop` — development — `my-interface-developer` Skill
+- `/my_cmd_review` — review — `my-interface-reviewer` Skill
+- `/my_cmd_configure` — regenerate `.interface/config/` from Phase 1 of `.interface/project.md` and `.interface/schema/` — `my-interface-configurator` Skill
 
 ## Layout
 

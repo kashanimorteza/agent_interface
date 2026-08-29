@@ -1,12 +1,12 @@
 ---
-name: my-skl-planner
+name: my-interface-planner
 description: Planning mode — decide what will be built and in what order, and write tasks into `.interface/config/task.yaml` in the shape `task_schema` defines. Use when the human asks for a plan or for tasks, or when `/my_cmd_plan` is run. Plans only; never implements.
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 
 # Plan the build
 
-Planning mode. Read `.interface/config/root.yaml` and follow its `read_order` before anything else. The generated Config is your understanding of the project — plan from it, not from `.interface/project.md`, which the `my_skl_configurator` Skill owns.
+Planning mode. Read `.interface/config/root.yaml` and follow its `read_order` before anything else. The generated Config is your understanding of the project — plan from it, not from `.interface/project.md`, which the `my-interface-configurator` Skill owns.
 
 Check `.interface/config/state.yaml`: `content.active.mode` must be `planning`. If it says otherwise, stop and tell the human — an agent never changes the active mode.
 
@@ -31,6 +31,6 @@ Read `task_schema` and `task_states` in `task.yaml` first — they are the frame
 
 ## Not this mode's work
 
-Do not implement, test, or refactor anything, and do not run a task's `verify` to see whether it would pass. Executing tasks is the `my_skl_developer` Skill's job. Planning produces the plan and stops.
+Do not implement, test, or refactor anything, and do not run a task's `verify` to see whether it would pass. Executing tasks is the `my-interface-developer` Skill's job. Planning produces the plan and stops.
 
 Anything Phase 1 leaves undefined stays undefined: write it as an open question in `state.yaml`, never as a plausible value in a contract or a task.

@@ -1,5 +1,5 @@
 ---
-name: my-skl-reviewer
+name: my-interface-reviewer
 description: Review mode — re-run what the plan claims is done, check the result against the contracts, `touches`, and `rules.yaml`, and report to the human. Use when the human asks whether the build is sound, or when `/my_cmd_review` is run. Reports only; repairs nothing.
 allowed-tools: Read, Grep, Glob, Bash
 ---
@@ -32,4 +32,4 @@ Everything else is read-only, code under an item's `code_path` included.
 
 ## Not this mode's work
 
-Do not fix what you found — not the code, not the plan, not a contract. Writing tasks belongs to the `my_skl_planner` Skill and implementing them to the `my_skl_developer` Skill. Report to the human and stop.
+Do not fix what you found — not the code, not the plan, not a contract. Writing tasks belongs to the `my-interface-planner` Skill and implementing them to the `my-interface-developer` Skill. Report to the human and stop.

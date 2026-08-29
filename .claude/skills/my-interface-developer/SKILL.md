@@ -1,5 +1,5 @@
 ---
-name: my-skl-developer
+name: my-interface-developer
 description: Development mode — take the ready tasks from `.interface/config/task.yaml` and implement them one at a time, under the active item's `code_path`, gated on each task's `verify`. Use when the human asks for a task to be built or continued, or when `/my_cmd_develop` is run. Builds only; never plans.
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
@@ -32,4 +32,4 @@ Then take the next ready task and start the loop again.
 
 ## Not this mode's work
 
-Do not write, renumber, or re-scope tasks, and do not change `task_schema`, `task_states`, or a plan's `phase_titles`. Planning belongs to the `my_skl_planner` Skill. If the plan is wrong, say so and stop.
+Do not write, renumber, or re-scope tasks, and do not change `task_schema`, `task_states`, or a plan's `phase_titles`. Planning belongs to the `my-interface-planner` Skill. If the plan is wrong, say so and stop.
