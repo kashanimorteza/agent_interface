@@ -131,21 +131,21 @@ content:
   agent_skills:
 
     configurator:
-      name: "my_skl_configurator"
-      path: ".claude/skills/my_skl_configurator/"
+      name: "my-interface-configurator"
+      path: ".claude/skills/my-interface-configurator/"
       responsibility: "Understands project.md and generates the project configuration according to the Schemas"
 
     planner:
-      name: "my_skl_planner"
-      path: ".claude/skills/my_skl_planner/"
+      name: "my-interface-planner"
+      path: ".claude/skills/my-interface-planner/"
       responsibility: "Generates project Tasks and plans from the project configuration"
 
     developer:
-      name: "my_skl_developer"
-      path: ".claude/skills/my_skl_developer/"
+      name: "my-interface-developer"
+      path: ".claude/skills/my-interface-developer/"
       responsibility: "Executes planned Tasks and implements the required changes"
 
     reviewer:
-      name: "my_skl_reviewer"
-      path: ".claude/skills/my_skl_reviewer/"
+      name: "my-interface-reviewer"
+      path: ".claude/skills/my-interface-reviewer/"
       responsibility: "Reviews the implementation against the Tasks and project specifications"
