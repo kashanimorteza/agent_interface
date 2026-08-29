@@ -2,7 +2,7 @@
 
 name: my-skl-configurator
 
-description: Generate or update `.agent/config/` from Phase 1 of `.agent/project.md` and the shapes defined in `.agent/schema/` — the agent-oriented representation of the project that the my-skl-planner and my-skl-developer work from. Use when the project definition changes, when config files are missing, outdated, or inconsistent with Phase 1, or when `/my-cmd-configure` is run.
+description: Generate or update `.interface/config/` from Phase 1 of `.interface/project.md` and the shapes defined in `.interface/schema/` — the agent-oriented representation of the project that the my-skl-planner and my-skl-developer work from. Use when the project definition changes, when config files are missing, outdated, or inconsistent with Phase 1, or when `/my-cmd-configure` is run.
 
 allowed-tools: Read, Write, Edit, Grep, Glob
 
@@ -10,13 +10,13 @@ allowed-tools: Read, Write, Edit, Grep, Glob
 
 # Generate Config Files
 
-Read and understand `.agent/project.md` completely.
+Read and understand `.interface/project.md` completely.
 
 **Only consider Phase 1 of the project. Ignore Phase 2 and Phase 3 entirely. Do not use any information, concepts, parameters, requirements, or development context that belongs to Phase 2 or Phase 3.**
 
 From Phase 1 of `project.md`, identify and understand the project's relevant concepts, parameters, requirements, structure, and context.
 
-Then read the files inside `.agent/schema/` and understand the structure, format, fields, and organization defined by the Schema.
+Then read the files inside `.interface/schema/` and understand the structure, format, fields, and organization defined by the Schema.
 
 Use the following relationship:
 
@@ -26,7 +26,7 @@ Use the following relationship:
 
 `Project Understanding + Schema` → `config/`
 
-Based on your understanding of the concepts and parameters defined in **Phase 1**, update the existing files inside `.agent/config/` or regenerate them when necessary.
+Based on your understanding of the concepts and parameters defined in **Phase 1**, update the existing files inside `.interface/config/` or regenerate them when necessary.
 
 The Config files must reflect the current understanding of **Phase 1** while strictly following the structure and format defined by the corresponding Schema files.
 
@@ -36,9 +36,9 @@ Do not simply copy the Schema into the Config files. Populate and adapt the Sche
 
 Do not invent project concepts, parameters, requirements, or information that cannot be derived from Phase 1 of `project.md`.
 
-Do not modify `.agent/project.md`.
+Do not modify `.interface/project.md`.
 
-Do not modify `.agent/schema/`.
+Do not modify `.interface/schema/`.
 
 Do not perform any planning, implementation, development, testing, refactoring, or other project work.
 
@@ -62,13 +62,13 @@ Apply only the rules that are explicitly defined below.
 
 Confirm both:
 
-* You have read `.agent/project.md` in full and are using **Phase 1 only**. Phase 2 and Phase 3 contribute nothing — not a concept, not a parameter, not a requirement.
+* You have read `.interface/project.md` in full and are using **Phase 1 only**. Phase 2 and Phase 3 contribute nothing — not a concept, not a parameter, not a requirement.
 
-* You have read every file in `.agent/schema/`. `file.schema.yaml` gives the outer shape every interface file follows (meta, policy, read_order, content_map, content); each `<name>.schema.yaml` gives the shape of that file's `content`. `root.yaml` has no schema of its own — outer shape only, and its `content.structure` is the item index.
+* You have read every file in `.interface/schema/`. `file.schema.yaml` gives the outer shape every interface file follows (meta, policy, read_order, content_map, content); each `<name>.schema.yaml` gives the shape of that file's `content`. `root.yaml` has no schema of its own — outer shape only, and its `content.structure` is the item index.
 
 ## While working
 
-* `.agent/project.md` and `.agent/schema/` are inputs. Do not modify either.
+* `.interface/project.md` and `.interface/schema/` are inputs. Do not modify either.
 
 * `definition.yaml` and `rules.yaml` carry `agent_may_edit: false`. Regenerating them from `project.md` is the one time they are touched, and only inside this job.
 

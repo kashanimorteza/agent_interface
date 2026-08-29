@@ -1,14 +1,14 @@
 ---
 name: my-skl-planner
-description: Planning mode — decide what will be built and in what order, and write tasks into `.agent/config/task.yaml` in the shape `task_schema` defines. Use when the human asks for a plan or for tasks, or when `/my_cmd_plan` is run. Plans only; never implements.
+description: Planning mode — decide what will be built and in what order, and write tasks into `.interface/config/task.yaml` in the shape `task_schema` defines. Use when the human asks for a plan or for tasks, or when `/my_cmd_plan` is run. Plans only; never implements.
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 
 # Plan the build
 
-Planning mode. Read `.agent/config/root.yaml` and follow its `read_order` before anything else. The generated Config is your understanding of the project — plan from it, not from `.agent/project.md`, which the `my_skl_configurator` Skill owns.
+Planning mode. Read `.interface/config/root.yaml` and follow its `read_order` before anything else. The generated Config is your understanding of the project — plan from it, not from `.interface/project.md`, which the `my_skl_configurator` Skill owns.
 
-Check `.agent/config/state.yaml`: `content.active.mode` must be `planning`. If it says otherwise, stop and tell the human — an agent never changes the active mode.
+Check `.interface/config/state.yaml`: `content.active.mode` must be `planning`. If it says otherwise, stop and tell the human — an agent never changes the active mode.
 
 ## What this mode may write
 

@@ -1,7 +1,7 @@
 ---
 paths:
-  - ".agent/config/**"
-  - ".agent/schema/**"
+  - ".interface/config/**"
+  - ".interface/schema/**"
 ---
 
 # Working inside the interface
@@ -10,9 +10,9 @@ These files are the standard itself, not code. They are read in the order `root.
 
 ## Before editing
 
-- Check `policy.agent_may_edit` on the file. `false` means the human owns it (`definition.yaml`, `rules.yaml`); raise an open question in `state.yaml` instead of editing.
+- Check `policy.interface_may_edit` on the file. `false` means the human owns it (`definition.yaml`, `rules.yaml`); raise an open question in `state.yaml` instead of editing.
 - Check `content.active.mode` in `state.yaml`. What may be written where is decided per mode, in `root.yaml` under `content.modes`. Never change the mode yourself.
-- `.agent/schema/` and `.agent/project.md` are inputs to the pipeline. They are not edited to make a config file fit.
+- `.interface/schema/` and `.interface/project.md` are inputs to the pipeline. They are not edited to make a config file fit.
 
 ## Shape
 

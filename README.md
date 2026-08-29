@@ -81,7 +81,7 @@ Agent Interface does not replace the Developer's project definition. Instead, it
 
 Start by describing the project and its requirements in:
 
-`.agent/project.md`
+`.interface/project.md`
 
 Write the project in natural language from the Developer's perspective.
 
@@ -99,9 +99,9 @@ The Configure process reads `project.md`, develops an Understanding of the proje
 
 ## Project Structure
 
-The core of Agent Interface is located in the `.agent/` directory.
+The core of Agent Interface is located in the `.interface/` directory.
 
-The `.agent/` directory contains three main parts:
+The `.interface/` directory contains three main parts:
 
 - **`schema/`** — Defines the standard structure and format of information.
 - **`config/`** — Represents and maintains the project's Understanding according to the Schema.

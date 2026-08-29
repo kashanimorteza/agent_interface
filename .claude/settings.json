@@ -2,16 +2,16 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "deny": [
-      "Edit(./.agent/project.md)",
-      "Write(./.agent/project.md)",
-      "Edit(./.agent/schema/**)",
-      "Write(./.agent/schema/**)"
+      "Edit(./.interface/project.md)",
+      "Write(./.interface/project.md)",
+      "Edit(./.interface/schema/**)",
+      "Write(./.interface/schema/**)"
     ],
     "ask": [
-      "Edit(./.agent/config/definition.yaml)",
-      "Write(./.agent/config/definition.yaml)",
-      "Edit(./.agent/config/rules.yaml)",
-      "Write(./.agent/config/rules.yaml)"
+      "Edit(./.interface/config/definition.yaml)",
+      "Write(./.interface/config/definition.yaml)",
+      "Edit(./.interface/config/rules.yaml)",
+      "Write(./.interface/config/rules.yaml)"
     ]
   }
 }

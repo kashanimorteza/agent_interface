@@ -6,9 +6,9 @@ allowed-tools: Read, Grep, Glob, Bash
 
 # Review the result
 
-Review mode. Read `.agent/config/root.yaml` and follow its `read_order` before anything else. The Config and the plan inside `task.yaml` are what the result is judged against — `.agent/project.md` is not read here.
+Review mode. Read `.interface/config/root.yaml` and follow its `read_order` before anything else. The Config and the plan inside `task.yaml` are what the result is judged against — `.interface/project.md` is not read here.
 
-Check `.agent/config/state.yaml`: `content.active.mode` must be `review`. If it says otherwise, stop and tell the human — an agent never changes the active mode.
+Check `.interface/config/state.yaml`: `content.active.mode` must be `review`. If it says otherwise, stop and tell the human — an agent never changes the active mode.
 
 Nothing is repaired in this mode. You may write exactly two things:
 

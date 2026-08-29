@@ -1,14 +1,14 @@
 ---
 name: my-skl-developer
-description: Development mode — take the ready tasks from `.agent/config/task.yaml` and implement them one at a time, under the active item's `code_path`, gated on each task's `verify`. Use when the human asks for a task to be built or continued, or when `/my_cmd_develop` is run. Builds only; never plans.
+description: Development mode — take the ready tasks from `.interface/config/task.yaml` and implement them one at a time, under the active item's `code_path`, gated on each task's `verify`. Use when the human asks for a task to be built or continued, or when `/my_cmd_develop` is run. Builds only; never plans.
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 # Execute the plan
 
-Development mode. Read `.agent/config/root.yaml` and follow its `read_order` before anything else. The Config and the plan inside `task.yaml` are what you build from — `.agent/project.md` is not read here.
+Development mode. Read `.interface/config/root.yaml` and follow its `read_order` before anything else. The Config and the plan inside `task.yaml` are what you build from — `.interface/project.md` is not read here.
 
-Check `.agent/config/state.yaml`: `content.active.mode` must be `development`, and `content.active.item` names the item you are on. If either disagrees with what you were asked to do, stop and tell the human.
+Check `.interface/config/state.yaml`: `content.active.mode` must be `development`, and `content.active.item` names the item you are on. If either disagrees with what you were asked to do, stop and tell the human.
 
 Take a task from `content.plans.<active item>` in `task.yaml`. A task is ready when its `status` is `todo` and every id in its `depends_on` is `done` — `ready` is not a stored status. Never take a task from another item's plan.
 
