@@ -1,5 +1,5 @@
 ---
-name: my_skl_planner
+name: my-skl-planner
 description: Planning mode — decide what will be built and in what order, and write tasks into `.agent/config/task.yaml` in the shape `task_schema` defines. Use when the human asks for a plan or for tasks, or when `/my_cmd_plan` is run. Plans only; never implements.
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---

@@ -1,6 +1,6 @@
 ---
-name: my_skl_configurator
-description: Generate or update `.agent/config/` from Phase 1 of `.agent/project.md` and the shapes defined in `.agent/schema/` — the agent-oriented representation of the project that the my_skl_planner and my_skl_developer work from. Use when the project definition changes, when config files are missing, outdated, or inconsistent with Phase 1, or when `/my_cmd_configure` is run.
+name: my-skl-configurator
+description: Generate or update `.agent/config/` from Phase 1 of `.agent/project.md` and the shapes defined in `.agent/schema/` — the agent-oriented representation of the project that the my-skl-planner and my-skl-developer work from. Use when the project definition changes, when config files are missing, outdated, or inconsistent with Phase 1, or when `/my-cmd-configure` is run.
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 

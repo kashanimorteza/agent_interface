@@ -1,5 +1,5 @@
 ---
-name: my_skl_developer
+name: my-skl-developer
 description: Development mode — take the ready tasks from `.agent/config/task.yaml` and implement them one at a time, under the active item's `code_path`, gated on each task's `verify`. Use when the human asks for a task to be built or continued, or when `/my_cmd_develop` is run. Builds only; never plans.
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
