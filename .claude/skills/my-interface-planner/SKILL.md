@@ -1,6 +1,6 @@
 ---
 name: my-interface-planner
-description: Planning mode — decide what will be built and in what order, and write tasks into `.interface/config/task.yaml` in the shape `task_schema` defines. Use when the human asks for a plan or for tasks, or when `/my_cmd_plan` is run. Plans only; never implements.
+description: Planning mode — decide what will be built and in what order, and write tasks into `.interface/config/task.yaml` in the shape `task_schema` defines. Use when the human asks for a plan or for tasks. Plans only; never implements.
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 

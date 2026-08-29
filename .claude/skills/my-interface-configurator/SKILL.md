@@ -2,7 +2,7 @@
 
 name: my-interface-configurator
 
-description: Generate or update `.interface/config/` from Phase 1 of `.interface/project.md` and the shapes defined in `.interface/schema/` — the agent-oriented representation of the project that the my-interface-planner and my-interface-developer work from. Use when the project definition changes, when config files are missing, outdated, or inconsistent with Phase 1, or when `/my-cmd-configure` is run.
+description: Generate or update `.interface/config/` from Phase 1 of `.interface/project.md` and the shapes defined in `.interface/schema/` — the agent-oriented representation of the project that the my-interface-planner and my-interface-developer work from. Use when the project definition changes, or when config files are missing, outdated, or inconsistent with Phase 1.
 
 allowed-tools: Read, Write, Edit, Grep, Glob
 

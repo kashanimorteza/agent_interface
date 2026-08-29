@@ -58,27 +58,19 @@ Contains the overall project definition and the Developer's requirements in natu
 
 Agent Interface defines four Skills for the main stages of the development workflow.
 
-### Configurator
-
-`/my_cmd_configure`
+### `my-interface-configurator`
 
 Reads `project.md` and generates the project configuration according to the Schema.
 
-### Planner
-
-`/my_cmd_plan`
+### `my-interface-planner`
 
 Reads the project configuration and generates Tasks and the development plan.
 
-### Developer
-
-`/my_cmd_develop`
+### `my-interface-developer`
 
 Executes the planned Tasks and implements the required changes.
 
-### Reviewer
-
-`/my_cmd_review`
+### `my-interface-reviewer`
 
 Reviews the implementation against the Tasks and project specifications.
 
