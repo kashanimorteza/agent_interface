@@ -54,8 +54,6 @@ Rules do not replace the Schema and do not change the Schema structure.
 
 Apply only the rules that are explicitly defined below.
 
-### Developer
-
 #### Backend
 
 * API routes do not need to be defined in detailed, route-by-route form inside `backend.yaml`.
