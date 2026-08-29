@@ -50,16 +50,15 @@ Exactly one mode is active at a time, named in `config/state.yaml` under `active
 
 `planning` · `development` · `review`
 
-## Never edited
+## Who may write what
 
-| Path | Why |
-|---|---|
-| `.interface/project.md` | The source. The interface is generated from it, never the reverse. |
-| `.interface/schema/` | The shape of every config file. An agent never changes the shape of a file. |
-| `.interface/config/definition.yaml` | `agent_may_edit: false` — the human owns it. |
-| `.interface/config/rules.yaml` | `agent_may_edit: false` — an agent never moves its own boundary. |
+Three tiers. Every file states its own in `policy` — read it there before editing.
 
-`config/state.yaml` is writable, but `active` inside it is not.
+**Never written by an agent.** `.interface/project.md` and `.interface/schema/` are inputs. The interface is generated from them, never the reverse.
+
+**Written by the configurator only.** `config/definition.yaml` and `config/rules.yaml` carry `agent_may_edit: false` and `regenerated_by: my-interface-configurator`. They are rewritten when the configurator re-runs against a changed `project.md`, and never as a side effect of planning, development, or review. In those three modes a needed change is an open question in `state.yaml`.
+
+**Written by the working modes.** `config/backend.yaml`, `config/frontend.yaml`, `config/task.yaml` and `config/state.yaml` carry `agent_may_edit: true`, each scoped by its own `policy.rule` and by the active mode. Two limits hold across all of them: `state.yaml`'s `active` is set by the human alone, and a contract is frozen by the human alone.
 
 ## Scope
 
