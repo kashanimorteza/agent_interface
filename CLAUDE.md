@@ -18,7 +18,7 @@ Then read what the job needs. `config/rules.yaml` is read in full before any wor
   config/         the project's configuration, generated from project.md against schema/
 
 .claude/
-  skills/         the four Agent Skills — one per stage of the workflow
+  skills/         the four Agent Skills — one per stage of the workflow — and clear, outside it
   agents/         interface-reader — read-only reporter of where the build stands
   rules/          what applies when editing the interface files
   output-styles/  every claim cites the file and section it came from
@@ -43,6 +43,7 @@ Under `.claude/skills/`. The standing definition of each job is its `SKILL.md` �
 | `my-interface-planner` | Generates Tasks and plans from the project configuration |
 | `my-interface-developer` | Executes planned Tasks and implements the required changes |
 | `my-interface-reviewer` | Reviews the implementation against the Tasks and project specifications |
+| `clear` | Removes the generated files under `config/` so the configurator can run again from nothing |
 
 ## Modes
 
@@ -52,13 +53,15 @@ Exactly one mode is active at a time, named in `config/state.yaml` under `active
 
 ## Who may write what
 
-Three tiers. Every file states its own in `policy` — read it there before editing.
+Three tiers, and one job outside them. Every file states its own in `policy` — read it there before editing.
 
 **Never written by an agent.** `.interface/project.md` and `.interface/schema/` are inputs. The interface is generated from them, never the reverse.
 
 **Written by the configurator only.** `config/definition.yaml` and `config/rules.yaml` carry `agent_may_edit: false` and `regenerated_by: my-interface-configurator`. They are rewritten when the configurator re-runs against a changed `project.md`, and never as a side effect of planning, development, or review. In those three modes a needed change is an open question in `state.yaml`.
 
 **Written by the working modes.** `config/backend.yaml`, `config/frontend.yaml`, `config/task.yaml` and `config/state.yaml` carry `agent_may_edit: true`, each scoped by its own `policy.rule` and by the active mode. Two limits hold across all of them: `state.yaml`'s `active` is set by the human alone, and a contract is frozen by the human alone.
+
+**Cleared, not written.** The `clear` Skill deletes every file under `config/` — the two the configurator owns included, and `state.yaml`'s `active` with them — and only when the human asks for that job by name. It writes nothing, and never touches `project.md`, `schema/`, `root.yaml`, or an item's `code_path`.
 
 ## Scope
 
