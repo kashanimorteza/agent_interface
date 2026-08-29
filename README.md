@@ -37,7 +37,7 @@ In this architecture:
 
 <br > <br>
 
-## Project Structure : Directories and files
+## Structure : Directories and files
 
 The core of Agent Interface is located in the `.interface/` directory.
 
@@ -54,7 +54,7 @@ Contains the overall project definition and the Developer's requirements in natu
 
 <br > <br>
 
-## Project Structure : Agent Skills
+## Structure : Agent Skills
 
 Agent Interface defines four Skills for the main stages of the development workflow.
 
