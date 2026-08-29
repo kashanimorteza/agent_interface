@@ -32,46 +32,61 @@ In this architecture:
 - `Schema` defines the structure and standard for the required information.
 - The `my-interface-configurator` Skill reads and understands the project and produces Config according to the Schema.
 
-<br > <br>
 
-## Main Goal
 
-The main goal of Agent Interface is to create a common language and structure between Developers and Agents.
-
-The project aims to reduce the gap between:
-
-**Human Requirements**
-
-and
-
-**Information Consumable by Agents**
-
-Agent Interface does not replace the Developer's project definition. Instead, it transforms the human definition of the project into a structured and standardized representation that Agents can reliably use.
 
 <br > <br>
 
-## Features
+## Files Project Structure
 
-- **Human-readable project definition**  
-  Developers can describe their project and requirements using natural language.
+The core of Agent Interface is located in the `.interface/` directory.
 
-- **Schema-driven structure**  
-  Project information follows a defined and consistent structure.
+The `.interface/` directory contains three main parts:
 
-- **Project Understanding**  
-  The project definition is interpreted before being transformed into structured configuration.
+- **`schema/`** — Defines the standard structure and format of information.
+- **`config/`** — Represents and maintains the project's Understanding according to the Schema.
+- **Instruction Files** — Define the instructions for the different stages of working with the project.
 
-- **Standardized Configuration**  
-  Project Understanding is represented in a predictable format through Config.
+### `project.md`
 
-- **Agent-independent interface**  
-  The interface is not tied to a specific AI model or Agent.
+Contains the overall project definition and the Developer's requirements in natural language.
 
-- **Separation of responsibilities**  
-  Project definition, understanding, and configuration are handled as separate stages.
+### `my-interface-configurator` Skill
 
-- **Extensible architecture**  
-  Schemas, Configs, and instructions can evolve as the standard develops.
+Defined in `.claude/skills/my-interface-configurator/SKILL.md`. Defines how to understand `project.md` and transform the project's Understanding into Config.
+
+
+
+<br > <br>
+
+## Agent Skills Project Structure
+
+Agent Interface defines four Skills for the main stages of the development workflow.
+
+#### Configurator
+
+`/my_cmd_configure`
+
+Reads `project.md` and generates the project configuration according to the Schema.
+
+#### Planner
+
+`/my_cmd_plan`
+
+Reads the project configuration and generates Tasks and the development plan.
+
+#### Developer
+
+`/my_cmd_develop`
+
+Executes the planned Tasks and implements the required changes.
+
+#### Reviewer
+
+`/my_cmd_review`
+
+Reviews the implementation against the Tasks and project specifications.
+
 
 <br > <br>
 
@@ -93,164 +108,3 @@ Use the `my-interface-configurator` Skill:
 `.claude/skills/my-interface-configurator/SKILL.md`
 
 The Configure process reads `project.md`, develops an Understanding of the project, reads the relevant Schemas, and produces the corresponding Config.
-
-
-<br > <br>
-
-## Project Structure
-
-The core of Agent Interface is located in the `.interface/` directory.
-
-The `.interface/` directory contains three main parts:
-
-- **`schema/`** — Defines the standard structure and format of information.
-- **`config/`** — Represents and maintains the project's Understanding according to the Schema.
-- **Instruction Files** — Define the instructions for the different stages of working with the project.
-
-### `project.md`
-
-Contains the overall project definition and the Developer's requirements in natural language.
-
-### `my-interface-configurator` Skill
-
-Defined in `.claude/skills/my-interface-configurator/SKILL.md`. Defines how to understand `project.md` and transform the project's Understanding into Config.
-
-<br > <br>
-
-## Agent Interface Workflow
-
-The overall process is:
-
-**Developer**
-
-→ Define the project in `project.md`
-
-→ **Configure**
-
-→ Understand the project and transform it according to the `Schema`
-
-→ **Config**
-
-→ Consumed by an Agent to develop the project
-
-→ **Software Project**
-
-This process transforms project information from a human definition into a standardized structure that an Agent can reliably work from.
-
-<br > <br>
-
-## Responsibilities
-
-Each part of Agent Interface has a specific responsibility:
-
-| Component | Responsibility |
-|<br > <br>|<br > <br>|
-| `project.md` | Defines the project and requirements from the Developer |
-| `schema/` | Defines the structure and information standard |
-| `my-interface-configurator` Skill | Understands the project and produces Config according to the Schema |
-| `config/` | Maintains the structured representation of the project |
-
-This separation keeps the Interface simple, understandable, and extensible.
-
-<br > <br>
-
-## Agents
-
-Agent Interface defines four main operations, each implemented as a Skill and exposed through a simple Command:
-
-**1. Configurator** — `/my_cmd_configure`
-- Uses the `my-interface-configurator` Skill
-- Reads the project definition in `project.md` and understands it according to Phase 1
-- Reads the structure and format defined in `schema/`
-- Generates the project configuration — the agent-oriented representation stored in `config/`
-
-**2. Planner** — `/my_cmd_plan`
-- Uses the `my-interface-planner` Skill
-- Reads the generated project configuration
-- Understands the project's task structure and format
-- Generates tasks and phases according to that structure
-
-**3. Developer** — `/my_cmd_develop`
-- Uses the `my-interface-developer` Skill
-- Reads the planned tasks from `config/task.yaml`
-- Executes tasks one by one, implementing the required changes
-- Verifies each task passes its acceptance criteria before marking it done
-
-**4. Reviewer** — `/my_cmd_review`
-- Uses the `my-interface-reviewer` Skill
-- Re-runs the verification for completed tasks
-- Checks that implementation matches the contracts and task specifications
-- Reports findings without making repairs
-
-Each Command is a simple entry point that uses its corresponding Skill to perform the operation:
-
-```
-/my_cmd_configure → my-interface-configurator Skill → Configuration
-/my_cmd_plan      → my-interface-planner Skill      → Tasks
-/my_cmd_develop   → my-interface-developer Skill    → Implementation
-/my_cmd_review    → my-interface-reviewer Skill     → Review
-```
-
-This workflow transforms a natural-language project definition through structured stages into a completed implementation.
-
-<br > <br>
-
-## Why Agent Interface?
-
-In a conventional workflow, the Developer communicates directly with an Agent, and the Agent must derive the project's meaning from conversations and various files.
-
-This can cause different Agents to understand the same project differently.
-
-Agent Interface aims to solve this problem by introducing a common standard.
-
-In this model, the Developer defines the project once, and the Interface transforms it into a structure that different Agents can use.
-
-The goal is not to make Agents identical.
-
-The goal is to make **the information Agents work with standardized and predictable**.
-
-<br > <br>
-
-## Project Philosophy
-
-Agent Interface is based on a simple principle:
-
-> **The Developer defines what the project is.**
->
-> **The Schema defines how that information is structured.**
->
-> **The `my-interface-configurator` Skill understands the project and transforms it into the standardized structure.**
-
-This separation transforms the communication between humans and Agents from a free-form, model-dependent conversation into a structured and repeatable process.
-
-<br > <br>
-
-## Project Status
-
-Agent Interface is an evolving standard.
-
-The current structure defines the following core concepts:
-
-- Project Definition
-- Schema
-- Project Understanding
-- Configuration
-
-As the project evolves, the Schemas, Configs, and instructions can evolve as well without changing the fundamental concept of the Interface.
-
-<br > <br>
-
-## Final Goal
-
-The ultimate goal of Agent Interface is to create a **lightweight, standardized, and Agent-independent protocol** for communication between Developers and AI Agents.
-
-A project should be able to provide its information in a defined format, allowing different Agents to:
-
-- Understand the project
-- Understand its structure
-- Create a development plan
-- Create Tasks
-- Develop the project
-- Manage the project state in future stages
-
-Ultimately, Agent Interface aims to become a standardized layer between **Humans, Projects, and Agents**.
