@@ -68,7 +68,7 @@ Executes the planned Tasks and implements the required changes.
 
 Reviews the implementation against the Tasks and project specifications.
 
-### `clear`
+### `my-interface-clear`
 
 Removes the generated Config and Tasks and returns the project to a clean state, ready for the Configurator to run again.
 

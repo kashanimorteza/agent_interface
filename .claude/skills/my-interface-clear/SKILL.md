@@ -1,5 +1,5 @@
 ---
-name: clear
+name: my-interface-clear
 description: Reset the Agent Interface to a clean state — remove the generated files under `.interface/config/` so `my-interface-configurator` can run again from nothing. Use when the human asks to clear, reset, or regenerate the interface from scratch. Clears generated files only; never `project.md`, `schema/`, `root.yaml`, the Skills, or any item's built code.
 allowed-tools: Read, Grep, Glob, Bash
 ---
