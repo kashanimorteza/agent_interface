@@ -1,0 +1,116 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/frontend.yaml"
+  path_note: "Generated configuration — the frontend item; produced from Phase 1 of .interface/project.md in the shape of .interface/schema/frontend.schema.yaml"
+  schema: ".interface/schema/frontend.schema.yaml"
+  generated_from: ".interface/project.md — Phase 1 only"
+  version: "1.0"
+  updated: "2026-08-29"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Planning mode writes this item's settings. The frontend publishes no contract; the contract it reads belongs to the backend and is never edited from here"
+  on_change_needed: "In development and review a change this file needs is an open question in state.yaml, never an edit"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled"
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "code_layout"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the frontend is in play"
+  code_path: "The one folder this item may write in"
+  code_path_note: "What code_path is relative to"
+  summary: "The frontend in one line"
+  needs_test: "Whether a written test proves every task"
+  verify_cwd: "Where every verify command runs from"
+  responsibility: "What the frontend is answerable for"
+  tech: "What the frontend is built with"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract the frontend reads"
+  boundaries: "The limits of the frontend"
+  out_of_scope: "What the frontend does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Enabled -->
+  enabled: true
+
+  # <!-------------------------------------------- Code_Path -->
+  code_path: "frontend/"
+
+  # <!-------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root, not to .interface/. It is the frontend's own source folder — nothing inside .interface/ is code, and the frontend writes nowhere else."
+
+  # <!-------------------------------------------- Summary -->
+  summary: "The user interface for entering, viewing, and managing the six Phase 1 models, drawn over contract v1."
+
+  # <!-------------------------------------------- Needs_Test -->
+  needs_test: false
+
+  # <!-------------------------------------------- Verify_Cwd -->
+  verify_cwd: "to be defined — it follows the technology and its environment, see open question Q1 in state.yaml"
+
+  # <!-------------------------------------------- Responsibility -->
+  responsibility: "Answerable for the interface a person uses to add information, view it in lists, view an individual item, edit and update it, delete it, and enable or disable it through its status."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+
+    language: "to be defined — project.md states the frontend technology and framework will be defined separately, see open question Q1 in state.yaml"
+
+    database: "None. The frontend holds no data engine and no schema — the backend owns the whole schema, and the frontend reaches data only through contract v1."
+
+    environment: "to be defined — it follows the technology, see open question Q1 in state.yaml"
+
+    run: "to be defined — it follows the technology, see open question Q1 in state.yaml"
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout: "to be defined — a layout cannot be written before the technology and framework are chosen, see open question Q1 in state.yaml. Until then no path inside frontend/ is named, and no task may name one."
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+
+    produces: "none — the frontend publishes no contract of its own. It consumes contract v1, defined in .interface/config/backend.yaml under content.contracts.v1, which is currently draft"
+    rule: "The frontend is bound to the backend's contract and reaches the backend by no other route — not the database, not an internal module, not a shared file. Once v1 is frozen, what the frontend sends and expects must match it exactly."
+    change_rule: "The frontend never changes the contract. A change it needs is an open question in state.yaml for the human, who alone versions and freezes."
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns:
+      - "Everything under frontend/"
+      - "The screens for adding, listing, viewing, editing, deleting, and enabling or disabling a record"
+      - "Its own presentation and navigation"
+    does_not_own:
+      - "The database, the schema, and every migration"
+      - "The validation that decides whether data is accepted — that answer is the backend's"
+      - "The contract — it reads it, it does not define it"
+      - "Anything under backend/"
+    interface: "None published. The frontend offers the outside nothing; it consumes contract v1."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "MetaTrader integration"
+    - "Trade execution"
+    - "Reporting"
+    - "Authentication, login, sessions, and tokens — project.md states authentication is not required"
+    - "Automated tests — project.md states they are not required"
+    - "Any direct access to the database or to the backend's internals"
+    - "Anything belonging to a phase after Phase 1"

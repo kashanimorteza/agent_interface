@@ -1,0 +1,87 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/definition.yaml"
+  path_note: "Generated configuration — the product definition every agent reads first; produced from Phase 1 of .interface/project.md in the shape of .interface/schema/definition.schema.yaml"
+  schema: ".interface/schema/definition.schema.yaml"
+  generated_from: ".interface/project.md — Phase 1 only"
+  scope_note: "Phase 1 alone. Later phases contribute nothing — not a concept, not a parameter, not a requirement"
+  version: "1.0"
+  updated: "2026-08-29"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  regenerated_by: "my-interface-configurator"
+  rule: "No working mode writes this file — planning, development, and review read it and leave it as it is"
+  on_change_needed: "A change this file needs is an open question in state.yaml, never an edit"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "identity"
+  - "goals"
+  - "architecture"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  identity: "Who the product is — its id, its name, and the one sentence it must make true"
+  goals: "What a user can do when Phase 1 is finished — the list every task traces back to"
+  architecture: "The parts of the product, what each owns, and the single connection point between them"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Identity -->
+  identity:
+    id: "trading-assistant"
+    name: "Trading Assistant"
+    one_liner: "A platform for defining and managing trading information, strategies, actions, and related data."
+
+  # <!-------------------------------------------- Goals -->
+  goals:
+    - "Add information — create a record of any of the Phase 1 models"
+    - "View information in lists — see the records of a model together"
+    - "View an individual item — see one record on its own"
+    - "Edit and update an item — change the values of an existing record"
+    - "Delete an item — remove a record"
+    - "Enable or disable an item through its status"
+
+  # <!-------------------------------------------- Architecture -->
+  architecture:
+
+    shape: "Two parts — a backend that holds the data and the functionality, and a frontend that draws the interface over it — joined by one HTTP contract the backend publishes."
+    reason: "project.md fixes the backend's technology and leaves the frontend's to be defined separately; a single published contract lets the backend be built and proven before the frontend's technology is chosen."
+
+    parts:
+
+      backend:
+        responsibility: "Manages the application's data and functionality, and publishes the HTTP surface the frontend reads."
+        owns:
+          - "The whole database schema and its migrations"
+          - "The six Phase 1 models and their persistence"
+          - "The create, list, read, update, delete and status behaviour of every model"
+          - "Validation of everything entering the application"
+          - "The published contract"
+        does_not_own:
+          - "Any user interface, screen, or client code"
+          - "How the frontend renders or navigates the data"
+        produces: "Contract v1 — defined in .interface/config/backend.yaml under content.contracts.v1"
+
+      frontend:
+        responsibility: "Provides the user interface for entering, viewing, and managing the information."
+        owns:
+          - "The screens for adding, listing, viewing, editing, deleting, and enabling or disabling a record"
+          - "Its own client code and presentation"
+        does_not_own:
+          - "The database, the schema, and every migration"
+          - "Validation that decides whether data is accepted — that answer belongs to the backend"
+          - "The contract — it reads it, it does not define it"
+        consumes: "Contract v1 — read from .interface/config/backend.yaml under content.contracts.v1"
+
+    connection:
+      path: ".interface/config/backend.yaml — content.contracts"
+      rule: "The contract is the only connection between the parts. The frontend reaches the backend through the published contract and by no other route — not the database, not an internal module, not a shared file."
+      versioning: "A frozen contract never changes. A change to a frozen version is a new version, and freezing is the human's decision alone. Only a frozen version may be built against."

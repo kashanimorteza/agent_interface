@@ -1,0 +1,232 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/backend.yaml"
+  path_note: "Generated configuration — the backend item; produced from Phase 1 of .interface/project.md in the shape of .interface/schema/backend.schema.yaml"
+  schema: ".interface/schema/backend.schema.yaml"
+  generated_from: ".interface/project.md — Phase 1 only"
+  version: "1.0"
+  updated: "2026-08-29"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Planning mode writes this item's settings and its draft contract. A frozen contract is never edited by an agent, in any mode, and freezing is the human's decision alone"
+  on_change_needed: "In development and review a change this file needs is an open question in state.yaml, never an edit"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled"
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "standards"
+  - "code_layout"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the backend is in play"
+  code_path: "The one folder this item may write in"
+  code_path_note: "What code_path is relative to"
+  summary: "The backend in one line"
+  needs_test: "Whether a written test proves every task"
+  verify_cwd: "Where every verify command runs from"
+  responsibility: "What the backend is answerable for"
+  tech: "What the backend is built with"
+  standards: "How the backend's code is written"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract the backend publishes"
+  boundaries: "The limits of the backend"
+  out_of_scope: "What the backend does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Enabled -->
+  enabled: true
+
+  # <!-------------------------------------------- Code_Path -->
+  code_path: "backend/"
+
+  # <!-------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root, not to .interface/. It is the backend's own source folder — nothing inside .interface/ is code, and the backend writes nowhere else."
+
+  # <!-------------------------------------------- Summary -->
+  summary: "The Python service that holds the six Phase 1 models, manages their data, and publishes the HTTP surface the frontend reads."
+
+  # <!-------------------------------------------- Needs_Test -->
+  needs_test: false
+
+  # <!-------------------------------------------- Verify_Cwd -->
+  verify_cwd: "backend/ — every verify command runs from this folder, inside the virtual environment created by the tool named in tech.language.environment."
+
+  # <!-------------------------------------------- Responsibility -->
+  responsibility: "Answerable for the application's data and functionality — the schema, the persistence, the validation, and the published surface through which every piece of information is added, listed, viewed, updated, deleted, enabled, and disabled."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+
+    language:
+      name: "Python"
+      version: "latest"
+
+      environment:
+        name: "uv"
+        version: "latest"
+
+      packages:
+        api:
+          name: "FastAPI"
+          version: "latest"
+        orm:
+          name: "SQLAlchemy"
+          version: "latest"
+        migration:
+          name: "Alembic"
+          version: "latest"
+
+    database:
+      engine: "SQLite"
+      location: "to be defined — see open question Q4 in state.yaml"
+      schema_owner: "backend — it owns the whole schema, and no other item creates, alters, or reads a table"
+      access: "SQLAlchemy only; no raw connection and no direct file access from anywhere in the application"
+
+    run: "to be defined — see open question Q3 in state.yaml"
+
+  # <!-------------------------------------------- Standards -->
+  standards:
+    naming:
+      variables: "snake_case"
+      functions: "snake_case"
+      classes: "PascalCase"
+      constants: "UPPER_SNAKE_CASE"
+      files: "snake_case"
+      folders: "snake_case"
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout:
+    "pyproject.toml": "The project manifest and the declared dependencies — the only place a package is added."
+    "app/": "The backend's Python package — all application code lives beneath it."
+    "app/main.py": "Entry point — builds the application and mounts the routers."
+    "app/config.py": "Configuration — the settings the application reads at startup, including the database location."
+    "app/database.py": "Database access — the SQLAlchemy engine, the session, and the declarative base."
+    "app/models/": "The SQLAlchemy models — one file per Phase 1 model, and the schema they define."
+    "app/schemas/": "The validation schemas — the shape of every request body and every response, one file per model."
+    "app/services/": "The business logic — one file per model, holding everything a route calls into."
+    "app/routes/": "The HTTP routes — one router per model, thin, calling only into services."
+    "app/errors.py": "The single error shape every failure takes, and the exception handlers that produce it."
+    "migrations/": "The Alembic environment and its versions — the only way the database schema changes."
+    "tests/": "Automated tests. Phase 1 does not require them (needs_test is false) and this folder stays empty until it does."
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+
+    produces: "v1"
+    rule: "The contract is the backend's only connection to the frontend. Once v1 is frozen the implementation must match it exactly — a route, a field, or an error code the contract does not carry does not exist."
+    change_rule: "A frozen contract is never edited. A change to a frozen version is a new version, and both freezing and versioning are the human's decision alone."
+
+    v1:
+      lifecycle: "draft"
+      lifecycle_note: "Draft. Nothing may be built against it and no task may name it. It cannot be frozen while the surface below still reads 'to be defined' — the gaps are blocker B2 in state.yaml, released by open questions Q2, Q5, Q6, Q7, and Q8."
+      consumed_by: "frontend"
+
+      contract_read_order:
+        - "conventions — what holds everywhere, read before anything specific"
+        - "error_shape — the one shape a failure takes, so every route below can refer to it"
+        - "models — the data shapes the routes return"
+        - "routes — the surface itself, read last, because it is written in terms of everything above"
+
+      conventions:
+        transport: "HTTP with JSON request and response bodies, served by FastAPI."
+        base_path: "to be defined — see open question Q8 in state.yaml"
+        identifiers: "Every model carries an ID field. Its type, how it is generated, and whether a client may supply one are to be defined — see open question Q2 in state.yaml."
+        timestamps: "None. No Phase 1 model carries a created or updated field; adding one is a change to project.md, not a contract decision."
+        unknown_id: "to be defined — the response to a request naming an id that does not exist, see open question Q8 in state.yaml"
+
+      error_shape:
+        rule: "Every failure on this surface answers in one shape — no route invents its own failure body."
+        fields: "to be defined — see open question Q8 in state.yaml"
+        codes: "to be defined — the vocabulary a consumer may branch on, see open question Q8 in state.yaml"
+
+      models:
+
+        Account:
+          fields: "ID, Name, Username, Password, Status, Description"
+          field_types: "to be defined — see open question Q2 in state.yaml"
+          status: "to be defined — the vocabulary and the enable/disable meaning, see open question Q6 in state.yaml"
+          notes: "Whether Password is ever returned by this surface is to be defined — see open question Q7 in state.yaml. Authentication is not part of Phase 1."
+
+        Asset:
+          fields: "ID, Name, Status, Description"
+          field_types: "to be defined — see open question Q2 in state.yaml"
+          status: "to be defined — see open question Q6 in state.yaml"
+
+        Strategy:
+          fields: "ID, Name, Risk Parameter, Status, Description"
+          field_types: "to be defined — the type and the permitted range of Risk Parameter included, see open question Q2 in state.yaml"
+          status: "to be defined — see open question Q6 in state.yaml"
+
+        ActionGroup:
+          fields: "ID, Name, Status, Description"
+          field_types: "to be defined — see open question Q2 in state.yaml"
+          status: "to be defined — see open question Q6 in state.yaml"
+
+        Action:
+          fields: "ID, Name, Asset ID, Strategy ID, Group ID, Status, Description"
+          field_types: "to be defined — see open question Q2 in state.yaml"
+          references: "Asset ID names an Asset, Strategy ID names a Strategy, Group ID names an Action Group. Whether each is required, and what deleting a referenced record does, are to be defined — see open question Q5 in state.yaml."
+          status: "to be defined — see open question Q6 in state.yaml"
+
+        Execute:
+          fields: "ID, Name, Action ID, Profit, State, Status, Description"
+          field_types: "to be defined — the type of Profit included, see open question Q2 in state.yaml"
+          references: "Action ID names an Action. Whether it is required, and what deleting that Action does, are to be defined — see open question Q5 in state.yaml."
+          state: "to be defined — its vocabulary, and how it differs from Status, see open question Q6 in state.yaml"
+          status: "to be defined — see open question Q6 in state.yaml"
+
+      routes:
+        form_note: "Written as the operation set the surface carries, not route by route — the route-by-route form is not required here."
+        resources: "One resource per model above: Account, Asset, Strategy, ActionGroup, Action, Execute."
+        operations:
+          - "Create — add one record of the resource."
+          - "List — return the records of the resource together."
+          - "Read — return one record by its id."
+          - "Update — change the values of an existing record."
+          - "Delete — remove a record."
+          - "Status — enable or disable a record through its Status field."
+        paths: "to be defined — the base path and the path of each operation, see open question Q8 in state.yaml"
+        list_behaviour: "to be defined — whether a list paginates, filters, or orders, see open question Q8 in state.yaml"
+        request_bodies: "to be defined — they follow the field types, see open question Q2 in state.yaml"
+        responses: "to be defined — they follow the models above, see open question Q2 in state.yaml"
+        errors: "to be defined — the codes each operation may answer with, see error_shape and open question Q8 in state.yaml"
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns:
+      - "Everything under backend/"
+      - "The whole database schema and every migration"
+      - "The persistence, the validation, and the business logic of the six Phase 1 models"
+      - "The published contract"
+    does_not_own:
+      - "Any user interface, screen, or client code — however close it sits"
+      - "The frontend's technology, structure, or presentation"
+    interface: "Contract v1, published under content.contracts of this file. It is the only thing the backend offers the outside."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "MetaTrader integration"
+    - "Trade execution"
+    - "Reporting"
+    - "Authentication, login, sessions, and tokens — project.md states authentication is not required"
+    - "Automated tests — project.md states they are not required"
+    - "Anything belonging to a phase after Phase 1"

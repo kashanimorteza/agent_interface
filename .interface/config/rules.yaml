@@ -1,0 +1,100 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/rules.yaml"
+  path_note: "Generated configuration — the boundaries every task inherits; produced from Phase 1 of .interface/project.md in the shape of .interface/schema/rules.schema.yaml"
+  schema: ".interface/schema/rules.schema.yaml"
+  generated_from: ".interface/project.md — Phase 1 only"
+  rule_note: "A rule that is not in this file is not a rule"
+  version: "1.0"
+  updated: "2026-08-29"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  regenerated_by: "my-interface-configurator"
+  rule: "No working mode writes this file — planning, development, and review read it in full before any work and leave it as it is"
+  on_change_needed: "A rule this project needs and this file does not carry is an open question in state.yaml, never an edit"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "precedence"
+  - "environment"
+  - "code"
+  - "database"
+  - "security"
+  - "test"
+  - "contract"
+  - "design"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  precedence: "Which rule wins when two collide"
+  environment: "Where code runs, what is installed into it, and what is never committed"
+  code: "How code is shaped — where logic lives, what a route may do, and the one shape an error takes"
+  database: "How the schema moves — migrations, indexes, and the engine's traps"
+  security: "What must never leak"
+  test: "What must be proven before a task is done"
+  contract: "How the surface and its contract stay in step"
+  design: "How the interface is drawn"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Precedence -->
+  precedence: "Security wins over every other group; after it, a rule stated here wins over a convention an agent would otherwise follow, and anything this file does not state is an open question in state.yaml rather than a decision an agent makes."
+
+  # <!-------------------------------------------- Environment -->
+  environment:
+    - "Run every command and every install inside the item's own isolated environment, named in that item's tech.language.environment — never against a system interpreter."
+    - "Install a dependency only through that environment's named tool; a package that arrives any other way is not installed."
+    - "Add no package the item file does not name — a package an agent thinks the code needs is an open question in state.yaml, never a quiet install."
+    - "Never commit the virtual environment, the database file, or any local environment file."
+    - "Run every verify command from the item's verify_cwd, inside that environment — a command that passes anywhere else has proven nothing."
+
+  # <!-------------------------------------------- Code -->
+  code:
+    - "Keep business logic in the services layer; a route receives a request, calls a service, and returns its result."
+    - "Let a route do no database work of its own — every read and write goes through the ORM, from a service."
+    - "Validate every value entering the application against a declared validation schema before it reaches a service — never trust a request body, a query value, or a path parameter."
+    - "Return every failure in the single error shape the contract defines; no route invents its own failure body."
+    - "Put every file in the place the item's code_layout names for it — a file with no place in code_layout is not written."
+    - "Write nothing outside the active item's code_path; another item's code_path is out of reach in every mode."
+    - "Follow the item's standards.naming for every name — the convention is settled there, not decided file by file."
+
+  # <!-------------------------------------------- Database -->
+  database:
+    - "Change the schema only through a migration produced by the item's named migration tool — never by editing a table by hand and never by letting the ORM create tables at startup."
+    - "Give every migration a working downgrade; a migration that cannot be reversed is not written."
+    - "Index every foreign key column, and every column a list is filtered or ordered by."
+    - "Alter an existing SQLite table through the migration tool's batch mode — SQLite cannot drop, rename, or retype a column in place, and a plain ALTER will fail."
+    - "Let the backend own the schema alone; no other item creates, alters, or reads a table."
+
+  # <!-------------------------------------------- Security -->
+  security:
+    - "Authentication is not part of Phase 1 — build no login, no session, and no token, and add no ownership check that Phase 1 does not define."
+    - "Never commit a credential, a secret, or the contents of the Account model's Password field to the repository, a fixture, a log line, or a test."
+    - "Never write a password, a raw exception, a stack trace, a file path, or an SQL statement into a response body — an error message names what the caller did wrong and nothing about the inside of the application."
+    - "How the Account model's Password field is stored and whether it is ever returned by the surface is to be defined — see open question Q7 in state.yaml; until it is answered, no task writes that field's handling."
+
+  # <!-------------------------------------------- Test -->
+  test:
+    - "Automated tests are not required in Phase 1 — both items carry needs_test: false, and no task is written whose only purpose is a test."
+    - "Prove every task with a runnable verify command that actually exercises what the task's acceptance claims; a runtime check stands in for the written test that Phase 1 does not require."
+    - "Never mark a task done without a passing verify run, whatever the code looks like."
+    - "Write no verify that passes without the change — a command that would pass before the task started proves nothing."
+
+  # <!-------------------------------------------- Contract -->
+  contract:
+    - "Change the published surface only together with the contract — a route, a field, or an error code that is not in the contract does not exist."
+    - "Never edit a frozen contract version; a change to a frozen version is a new version, and only the human freezes or versions one."
+    - "Build only against a frozen version — a task that needs a draft contract is not written, and the gap is a blocker in state.yaml."
+    - "Let the frontend read the backend only through the published contract — never the database, never an internal module."
+
+  # <!-------------------------------------------- Design -->
+  design:
+    - "No design specification exists for Phase 1 — the design file, its pages, the shared look, and how a page is exported are all to be defined, together with the frontend's technology; see open question Q1 in state.yaml."
+    - "Write no design decision into a task or a contract while that question stands open — an assumed screen, layout, or style is an invention, not a plan."
