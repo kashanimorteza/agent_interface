@@ -65,9 +65,14 @@ content:
   plans:
 
     backend:
-      phase_titles_lifecycle: "empty"
-      phase_titles_derived_from: "not derived yet"
-      phase_titles: []
+      phase_titles_lifecycle: "derived"
+      phase_titles_derived_from: "backend.yaml — content.code_layout (entry point, configuration, database access, models, migrations, schemas, errors, services, routes) and content.contracts.api-v1 (error_shape, models, routes); definition.yaml — content.goals (add, list, view, edit, delete, enable/disable)"
+      phase_titles:
+        P1: "Application skeleton — entry point, configuration, and database access"
+        P2: "Models and migrations — the six models and the schema that stores them"
+        P3: "Error shape and validation schemas"
+        P4: "Services — the management operations behind the routes"
+        P5: "Routes — the management surface of api-v1"
       phases: {}
 
     frontend:
