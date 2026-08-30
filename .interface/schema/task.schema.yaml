@@ -1,8 +1,9 @@
 schema:
   id: agent-interface-task
-  version: "1.0"
+  version: "1.1"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
-  frame_and_surface: "task_schema, task_states, and each plan's phase_titles are the frame — fixed by the human; the phases under each item are the working surface an agent writes in planning mode"
+  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Each plan's phase_titles are DERIVED from that item's own configuration by my-interface-planner and then confirmed by the human; the phases under each item are the working surface an agent writes in planning mode"
+  authority: "Who may write each of these, and when, is decided in .interface/root.yaml under content.state_authority and content.modes — this file gives the shape and the lifecycle, not the permission"
 
 structure:
   - task_schema
@@ -90,15 +91,21 @@ sections:
   # <!--------------------------------------------------------------------------------- Plans -->
   plans:
     required: true
-    purpose: "The plans — one per item, each under its own key; a task of one item never appears under another, and there is no plan that belongs to no item. Empty until the human explicitly asks for tasks to be created."
+    purpose: "The plans — one per item, each under its own key; a task of one item never appears under another, and there is no plan that belongs to no item. An item's phase_titles are derived from that item's own configuration as soon as planning runs; its phases stay empty until the human explicitly asks for tasks to be created."
     fields:
       "<item>":
         required: true
-        purpose: "One item's plan — the key is the item's name as root.yaml indexes it under content.structure.items; every phase, group, and task below belongs to that item alone."
+        purpose: "One item's plan — the key is the item's name as definition.yaml indexes it under content.architecture.parts; every phase, group, and task below belongs to that item alone."
         fields:
+          phase_titles_lifecycle:
+            required: true
+            purpose: "Where this item's stage list stands — empty, derived, or confirmed. empty: nothing has been derived yet. derived: my-interface-planner derived the stages from this item's configuration and the human has not confirmed them; the planner may rewrite them in a later run. confirmed: the human has accepted them, and from then on only the human changes them."
+          phase_titles_derived_from:
+            required: true
+            purpose: "The configuration the stages were derived from — the exact sections read, so every title can be traced back. A title with no source in the configuration is an invention and is not written. Reads 'not derived yet' while the lifecycle is empty."
           phase_titles:
             required: true
-            purpose: "Quick lookup from phase id to its title — this item's build stages, in build order; ids are numbered within the item, so P1 of one item is not P1 of another."
+            purpose: "Quick lookup from phase id to its title — this item's build stages, in build order; ids are numbered within the item, so P1 of one item is not P1 of another. Derived, never invented: each title names something the item's own configuration already carries — an entry of its code_layout, a model or an operation of the contract it produces or consumes, or a goal in definition.yaml. An item whose configuration reads 'to be defined' has no derivable stages, and its list stays empty behind the blocker that says so."
           phases:
             required: true
             purpose: "This item's plan — three levels deep: phases at the top, groups inside a phase, tasks inside a group; a task never sits directly in a phase, and nothing sits outside a phase."

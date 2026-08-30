@@ -1,10 +1,10 @@
 # Agent Interface
 
 ### Description
+
 An independent interface between **Developers** and **AI Agents** for creating a common protocol, structure, and standard for software development.
 
 The goal of Agent Interface is to allow Developers to express project requirements and definitions in natural language and transform that information into a standardized structure that Agents can understand, plan against, and ultimately use to develop the project.
-
 
 ### Overview
 
@@ -15,7 +15,6 @@ Instead of requiring an Agent to understand an entire project directly from conv
 The Developer defines the project in natural language, and the Interface standardizes the project's understanding into a structured representation that an Agent can use.
 
 The Interface is designed to remain independent of any specific AI model or Agent.
-
 
 ### Concept
 
@@ -71,6 +70,20 @@ Reviews the implementation against the Tasks and project specifications.
 ### `my-interface-clear`
 
 Removes the generated Config and Tasks and returns the project to a clean state, ready for the Configurator to run again.
+
+
+<br > <br>
+
+
+## Modes and State
+
+Exactly one mode is active at a time — `planning`, `development`, or `review` — named in `.interface/config/state.yaml` under `content.active.mode`, together with the item in play.
+
+A mode is entered by invoking the Skill that owns it. The invocation is the Developer's decision, and the Skill records it: `/my-interface-planner backend` sets the mode to `planning` and the item to `backend`. Nothing is hand-edited into `state.yaml` first.
+
+A Skill may write only the mode it owns, only on an invocation of itself, and only an item the configuration indexes. Where the invocation leaves the item ambiguous, the Skill stops and asks rather than choosing.
+
+The single source of truth for all of it — every state field, its owner, the allowed transitions, which Skill may perform each, and what stays the Developer's alone — is `.interface/root.yaml` under `content.state_authority`. Every other file defers to it.
 
 
 <br > <br>

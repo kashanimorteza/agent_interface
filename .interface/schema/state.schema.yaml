@@ -1,8 +1,9 @@
 schema:
   id: agent-interface-state
-  version: "1.0"
+  version: "1.1"
   purpose: "The shape of state.yaml — the project-wide state that belongs to no single task"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
+  authority: "This file gives the SHAPE of the state. Who may write each field, on which transition, and which Skill may perform it is decided in .interface/root.yaml under content.state_authority — that section governs, and nothing here restates or narrows it"
 
 structure:
   - active
@@ -14,25 +15,28 @@ sections:
   # <!--------------------------------------------------------------------------------- Active -->
   active:
     required: true
-    purpose: "The one mode and the one item currently in play — never written by an agent."
+    purpose: "The one mode and the one item currently in play. The human decides them; the Skill the human invokes records them, under transitions S1, S2, S3, and S4 in root.yaml — content.state_authority. A Skill writes only the mode it owns, and only an item the configuration indexes."
     fields:
       mode:
         required: true
-        purpose: "The active working mode — one of the modes defined in root.yaml, and exactly one at a time."
+        purpose: "The active working mode — one of the modes defined in root.yaml, and exactly one at a time; 'not set' before any Skill has been invoked."
       mode_reason:
         required: true
-        purpose: "Why this mode is the active one — what about the project's state puts it here."
+        purpose: "Why this mode is the active one — the invocation that set it, and, after a run, what that run concluded."
       item:
         required: true
-        purpose: "The item currently being worked on, or none when no item is active."
+        purpose: "The item currently being worked on, or none when no item is active. Only an item indexed under content.architecture.parts in definition.yaml."
       set_by:
         required: true
-        purpose: "Who set the active mode and item — the human, always."
+        purpose: "Who wrote these values — 'the human' for a direct edit, or the Skill name and the invocation it acted on. The provenance of a state change is always readable."
+      set_at:
+        required: false
+        purpose: "The date the active values were last written — absent only while they have never been written."
 
   # <!--------------------------------------------------------------------------------- Blockers -->
   blockers:
     required: true
-    purpose: "What is actually missing — one entry per blocker, each addressed by id from the tasks it stops."
+    purpose: "What is actually missing — one entry per blocker, each addressed by id from the tasks it stops. Raised and released under transition S7."
     fields:
       "<blocker>":
         required: true
@@ -52,7 +56,7 @@ sections:
             purpose: "What stays unreachable while this is missing."
           decision_belongs_to:
             required: true
-            purpose: "Who must resolve it — the human, when it is a decision an agent may not make."
+            purpose: "Who must resolve it — the human when it is a decision an agent may not make, or a named Skill when the work itself releases it."
           raised:
             required: true
             purpose: "The date the blocker was raised."
@@ -60,7 +64,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Open_Questions -->
   open_questions:
     required: true
-    purpose: "What the human still has to decide — an agent writes these and never answers one on its own."
+    purpose: "What the human still has to decide. An agent raises a question and records the human's answer, and never supplies one — transition S8 in root.yaml, content.state_authority."
     fields:
       note:
         required: true
@@ -84,7 +88,7 @@ sections:
                 purpose: "What in the project depends on the answer — the goal, rule, or contract that cannot be satisfied without it."
               answered_so_far:
                 required: false
-                purpose: "What of this question has already been settled, and when — present only on a question that was partly answered."
+                purpose: "What of this question the human has already settled, and when — recorded in the human's own terms, present only on a question that was partly answered."
               blocks:
                 required: true
                 purpose: "The id of the blocker this question would release, or nothing yet when it blocks none."

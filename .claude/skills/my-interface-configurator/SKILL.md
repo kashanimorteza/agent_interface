@@ -64,7 +64,7 @@ Confirm both:
 
 * You have read `.interface/project.md` in full and are using **Phase 1 only**. Phase 2 and Phase 3 contribute nothing — not a concept, not a parameter, not a requirement.
 
-* You have read every file in `.interface/schema/`. `file.schema.yaml` gives the outer shape every interface file follows (meta, policy, read_order, content_map, content); each `<name>.schema.yaml` gives the shape of that file's `content`. `root.yaml` has no schema of its own — outer shape only, and its `content.structure` is the item index.
+* You have read every file in `.interface/schema/`. `file.schema.yaml` gives the outer shape every interface file follows (meta, policy, read_order, content_map, content); each `<name>.schema.yaml` gives the shape of that file's `content`. `root.yaml` has no schema of its own — outer shape only. The item index is `definition.yaml` under `content.architecture.parts`.
 
 ## While working
 
@@ -72,9 +72,13 @@ Confirm both:
 
 * `definition.yaml` and `rules.yaml` carry `agent_may_edit: false`. Regenerating them from `project.md` is the one time they are touched, and only inside this job.
 
+* This job runs **outside the modes**, and does not enter one. Carry `content.active` in `state.yaml` through a regeneration exactly as you found it — the mode and item a Skill or the human set are runtime state, not something a regeneration decides. Write `active` only when `state.yaml` does not yet exist — transition **S0** — and then as `mode: "not set"`, `item: "none"`, `set_by: "my-interface-configurator, generating state.yaml"`, `set_at` today, and a `mode_reason` saying that the next Skill the human invokes will set the mode. Never write `set_by: "the human"` for a value the human did not type. Who may write `active`, and when, is fixed in `.interface/root.yaml` under `content.state_authority`.
+
+* You may raise blockers and open questions — transitions **S7** and **S8** — and record the human's own answer to a question under `answered_so_far` — dated and in the human's terms. You never answer one yourself, and you never close one by supplying its answer.
+
 * Do not invent. Anything Phase 1 leaves undefined is written as "to be defined" and raised as an open question in `state.yaml` — never filled with a plausible value.
 
-* Write no tasks. This job produces configuration, not a plan, and `policy.task_creation` in `task.yaml` forbids speculative tasks. Plans stay under `content.plans.<item>`, one per item, and stay empty.
+* Write no tasks and no build stages. This job produces configuration, not a plan, and `policy.task_creation` in `task.yaml` forbids speculative tasks. Plans stay under `content.plans.<item>`, one per item, with `phases` empty. An item's `phase_titles` are derived from that item's configuration by `my-interface-planner`, not here — a regeneration carries an existing `phase_titles`, its `phase_titles_lifecycle`, and its `phase_titles_derived_from` through untouched, and writes an empty list with lifecycle `empty` only where the plan is new.
 
 * Do not plan, implement, test, or refactor anything.
 
@@ -97,6 +101,8 @@ Your task is only to:
 6. Update or regenerate `config/` based on the Phase 1 project understanding and the Schema.
 
 7. Ensure the resulting Config files follow the Schema and represent the current Phase 1 project understanding.
+
+8. Ensure the runtime state survived: `content.active` in `state.yaml`, and every plan's `phase_titles` with its lifecycle, are as they were before the run unless the file was created by it.
 
 Once the Config files correctly represent Phase 1 according to the Schema and applicable Rules, stop. This task is complete.
 

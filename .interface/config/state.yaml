@@ -3,16 +3,19 @@ meta:
   path: ".interface/config/state.yaml"
   path_note: "Generated configuration — the project-wide state that belongs to no single task; produced in the shape of .interface/schema/state.schema.yaml"
   schema: ".interface/schema/state.schema.yaml"
+  authority: ".interface/root.yaml — content.state_authority. Every field below, its owner, and the transition that may write it are decided there and nowhere else"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
-  version: "1.0"
-  updated: "2026-08-29"
+  version: "1.1"
+  updated: "2026-08-30"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: true
-  rule: "Every mode may write blockers and open questions here. No mode writes active — the human sets the mode and the item, always"
-  answering: "An agent raises an open question and never answers one on its own"
+  rule: "Ownership is per field, not per section — read root.yaml, content.state_authority, before writing anything here"
+  active: "The human decides the mode and the item; the Skill the human invokes records them, under transitions S1, S2, S3, and S4. A Skill writes only the mode it owns, and only an item the configuration indexes. It never sets a mode it was not invoked into"
+  blockers_and_questions: "Any working mode raises a blocker or a question, and releases a blocker once what was missing exists — transitions S7 and S8"
+  answering: "An agent raises an open question and never answers one. Only the human's own answer, recorded in the human's terms, closes it"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -35,24 +38,25 @@ content:
   # <!-------------------------------------------- Active -->
   active:
     mode: "not set"
-    mode_reason: "The configuration has just been generated from Phase 1 and no mode has been chosen. An agent never sets this — until the human names a mode, no Skill that depends on it may run. See open question Q10."
+    mode_reason: "No Skill has been invoked since the configuration was generated. Invoking a Skill sets this — /my-interface-planner <item> enters planning, /my-interface-developer <item> enters development, /my-interface-reviewer enters review. Nothing has to be edited here by hand first."
     item: "none"
-    set_by: "the human"
+    set_by: "the human — state.yaml was regenerated on the human's instruction on 2026-08-30, and no Skill has been invoked since"
+    set_at: "2026-08-30"
 
   # <!-------------------------------------------- Blockers -->
   blockers:
 
     - id: "B1"
-      blocks: "Every piece of frontend work — its tech, its verify_cwd, its code_layout, its plan, and any task under frontend/."
+      blocks: "Every piece of frontend work — its tech, its verify_cwd, its code_layout, its build stages in task.yaml, its plan, and any task under frontend/."
       what_is_missing: "The frontend's technology and framework. project.md states they will be defined separately and Phase 1 names none."
-      consequence: "The frontend item stays enabled but unplannable and unbuildable. No path inside frontend/ can be named and no verify command can be written for it."
+      consequence: "The frontend item stays enabled but unplannable and unbuildable. No path inside frontend/ can be named, no verify command can be written for it, and its phase_titles cannot be derived — a stage list is derived from an item's code_layout and contract, and the frontend's read 'to be defined'."
       decision_belongs_to: "the human"
       raised: "2026-08-29"
 
     - id: "B2"
       blocks: "Freezing contract v1, and therefore every backend task that would name it — the models, the validation schemas, the routes, and the responses."
       what_is_missing: "The surface of contract v1. Phase 1 gives each model's field names and the six operations, and leaves the field types and limits, the Status vocabulary, the relationship and delete behaviour, the handling of Account's Password, the base path, the list behaviour, and the error shape undefined."
-      consequence: "v1 stays draft. Nothing may be built against it, so no task that touches the models, the schemas, or the routes can be written."
+      consequence: "v1 stays draft. Nothing may be built against it, so no task that touches the models, the schemas, or the routes can be written. The backend's build stages can still be derived — a stage is a title, not a task, and names no contract."
       decision_belongs_to: "the human"
       raised: "2026-08-29"
 
@@ -70,23 +74,16 @@ content:
       decision_belongs_to: "the human"
       raised: "2026-08-29"
 
-    - id: "B5"
-      blocks: "Writing any phase, group, or task into task.yaml, for either item."
-      what_is_missing: "The build stages — phase_titles — of each item's plan. They are the human's frame and both are empty."
-      consequence: "Planning mode can write nothing: a phase's title must match an entry in phase_titles, and there are none."
-      decision_belongs_to: "the human"
-      raised: "2026-08-29"
-
   # <!-------------------------------------------- Open_Questions -->
   open_questions:
 
-    note: "These are addressed to the human. An agent raises them and never answers one on its own — an answer written by an agent is an invention, not a decision."
+    note: "These are addressed to the human. An agent raises them and never answers one on its own — an answer written by an agent is an invention, not a decision. An agent may record the human's own answer under answered_so_far, dated and in the human's terms."
 
     questions:
 
       - id: "Q1"
         question: "What technology and framework does the frontend use, and is there a design specification — a design file, its pages, the shared look, and how a page is exported?"
-        why_it_matters: "project.md defers the frontend's technology and says nothing about design. Without it the frontend item has no tech, no environment, no run command, no verify_cwd, and no code_layout, and the design group in rules.yaml stands empty."
+        why_it_matters: "project.md defers the frontend's technology and says nothing about design. Without it the frontend item has no tech, no environment, no run command, no verify_cwd, and no code_layout; the design group in rules.yaml stands empty; and the frontend's build stages cannot be derived, because there is no configuration to derive them from."
         blocks: "B1"
 
       - id: "Q2"
@@ -123,13 +120,3 @@ content:
         question: "What is the API's base path and the path of each operation, does a list paginate, filter, or order, what exact fields does an error carry, which error codes may a consumer branch on, and what is the answer to a request naming an id that does not exist?"
         why_it_matters: "Contract v1's conventions, error_shape, and routes cannot be completed without them, and rules.yaml requires every failure to take one declared shape."
         blocks: "B2"
-
-      - id: "Q9"
-        question: "What are the build stages — the phase titles, in build order — for the backend, and for the frontend?"
-        why_it_matters: "phase_titles is the frame the human fixes, and both are empty. A phase's title must match an entry there, so planning mode can write no plan for either item."
-        blocks: "B5"
-
-      - id: "Q10"
-        question: "Which mode is active — planning, development, or review — and which item is active with it?"
-        why_it_matters: "content.active is set by the human alone and is currently not set. Every Skill checks it before working, so none of them may run until it is named."
-        blocks: "none"

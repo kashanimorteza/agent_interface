@@ -8,6 +8,8 @@
       "Write(./.interface/schema/**)"
     ],
     "ask": [
+      "Edit(./.interface/root.yaml)",
+      "Write(./.interface/root.yaml)",
       "Edit(./.interface/config/definition.yaml)",
       "Write(./.interface/config/definition.yaml)",
       "Edit(./.interface/config/rules.yaml)",

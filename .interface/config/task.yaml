@@ -3,16 +3,19 @@ meta:
   path: ".interface/config/task.yaml"
   path_note: "Generated configuration — the frame that defines a task, and the plans that hold the tasks; produced in the shape of .interface/schema/task.schema.yaml"
   schema: ".interface/schema/task.schema.yaml"
-  frame_and_surface: "task_schema, task_states, and each plan's phase_titles are the frame, fixed by the human; the phases under each item are the surface an agent writes in planning mode"
-  version: "1.0"
-  updated: "2026-08-29"
+  frame_and_surface: "task_schema and task_states are the frame, fixed by the human. Each plan's phase_titles are derived by my-interface-planner from that item's own configuration and then confirmed by the human; the phases under each item are the surface an agent writes in planning mode"
+  authority: ".interface/root.yaml — content.state_authority and content.modes. Who may write what in this file is decided there"
+  version: "1.1"
+  updated: "2026-08-30"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: true
-  rule: "Planning mode writes the phases of an item's plan. Development and review write only the status, blocker, and log of an existing task"
-  frame_is_the_humans: "task_schema, task_states, and phase_titles are never written by an agent"
+  rule: "Planning mode writes an item's phase_titles and the phases of that item's plan. Development and review write only the status, blocker, and log of an existing task"
+  frame_is_the_humans: "task_schema and task_states are never written by an agent — they define what a task is, and that definition is the human's"
+  phase_titles: "Derived, not invented and not hand-written. my-interface-planner derives an item's stages from that item's own configuration — its code_layout, the contract it produces or consumes, and the goals in definition.yaml — and every title must trace to something the configuration already carries. While phase_titles_lifecycle is empty or derived the planner may write them; once the human sets it to confirmed, only the human changes them"
+  phase_titles_gap: "An item whose configuration reads 'to be defined' has nothing to derive from. Its stages stay empty behind the blocker that says so, and are never guessed"
   task_creation: "A plan stays empty until the human explicitly asks for tasks. No task is written speculatively, and a task that names a contract is written only against a frozen version"
 
 
@@ -76,9 +79,13 @@ content:
   plans:
 
     backend:
+      phase_titles_lifecycle: "empty"
+      phase_titles_derived_from: "not derived yet — my-interface-planner derives them on its first run from backend.yaml (content.code_layout, and content.contracts.v1 for its models and operations) and definition.yaml (content.goals)"
       phase_titles: {}
       phases: {}
 
     frontend:
+      phase_titles_lifecycle: "empty"
+      phase_titles_derived_from: "not derived yet, and not derivable — frontend.yaml carries no code_layout and no technology, both 'to be defined' behind blocker B1 and open question Q1. Nothing is guessed in their place"
       phase_titles: {}
       phases: {}

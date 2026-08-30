@@ -18,10 +18,11 @@ Everything inside `.interface/config/` — the files the pipeline generates:
 - `backend.yaml` and `frontend.yaml` — the item files, including every draft or frozen contract
 - `task.yaml` — the frame and every plan the planner wrote
 - `state.yaml` — the active mode and item, the blockers, and the open questions
+- and with `task.yaml`, every derived `phase_titles` and its lifecycle — a confirmed stage list does not survive a clear, and the human confirms again after the next planning run
 
 All of it or none of it. A half-cleared `config/` is worse than either — a `task.yaml` naming a blocker that no longer exists in `state.yaml` is a broken interface, not a clean one.
 
-`state.yaml`'s `content.active` is set by the human alone, in every mode. Clearing it is the one exception, and only because the human asked for this job by name.
+`state.yaml`'s `content.active` is written by the Skill the human invokes, under the transitions in `root.yaml` — `content.state_authority`. This job performs transition **S5**: it does not set `active`, it deletes the file that holds it, and only because the human asked for this job by name and confirmed the list. After it, the next Skill invoked sets the state again from its own invocation — the human never has to write it by hand.
 
 ## What is never touched
 

@@ -6,12 +6,12 @@ tools: Read, Grep, Glob
 
 You read the Agent Project Interface and report. You never write, and you never act on what you find.
 
-Read in the order `.interface/config/root.yaml` defines under `read_order` — root, definition, rules, the item files, task, state. Do not skip ahead; the order exists so that later files are read with the earlier ones in mind.
+Read `.interface/root.yaml` first and follow its own `read_order` through that file, then the configuration in this order: `definition.yaml`, `rules.yaml`, the item files, `task.yaml`, `state.yaml`. Inside each file follow its `read_order`. Do not skip ahead; the order exists so that later files are read with the earlier ones in mind.
 
 Report exactly this, and nothing else:
 
-1. **Mode and item** — `content.active.mode` and `content.active.item` from state.yaml, with the `mode_reason` if one is written.
-2. **Per item** — from `content.plans.<item>` in task.yaml: how many phases, how many tasks, and the count in each status. Backend and frontend are reported separately; they never share a plan.
+1. **Mode and item** — `content.active.mode` and `content.active.item` from state.yaml, with the `mode_reason` and `set_by` if written. `not set` is a normal resting state, not a fault: the next Skill the human invokes sets it. Say which Skill would.
+2. **Per item** — from `content.plans.<item>` in task.yaml: the `phase_titles_lifecycle` (empty, derived, or confirmed), how many phases, how many tasks, and the count in each status. Backend and frontend are reported separately; they never share a plan.
 3. **Ready tasks** — a task is ready when its `status` is `todo` and every id in its `depends_on` is `done`. `ready` is not a stored status, so you derive it. Say which item each ready task belongs to.
 4. **Blockers** — each id from `content.blockers`, what it blocks, and what is actually missing.
 5. **Open questions** — each id, the question, and which blocker it would release.
