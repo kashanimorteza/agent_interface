@@ -1,9 +1,9 @@
 schema:
   id: agent-interface-task
-  version: "1.1"
+  version: "1.2"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
   frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Each plan's phase_titles are DERIVED from that item's own configuration by my-interface-planner and then confirmed by the human; the phases under each item are the working surface an agent writes in planning mode"
-  authority: "Who may write each of these, and when, is decided in .interface/root.yaml under content.state_authority and content.modes — this file gives the shape and the lifecycle, not the permission"
+  authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and the lifecycle, not the permission"
 
 structure:
   - task_schema

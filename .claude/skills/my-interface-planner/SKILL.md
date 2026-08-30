@@ -8,7 +8,7 @@ allowed-tools: Read, Edit, Grep, Glob
 
 Planning mode. The pipeline is `.interface/config/` → this Skill → a structured task plan. Nothing enters from anywhere else.
 
-Read `.interface/root.yaml` first and follow its `read_order`. `content.state_authority` is the authority over every state change below — read it before writing anything into `state.yaml`. Then read the configuration. `.interface/project.md` is **not read here** — the `my-interface-configurator` Skill owns it, and `config/` is the understanding it produced. You form no understanding of the project of your own; where the configuration is silent, the project is silent.
+Read `.interface/root.yaml` first and follow its `read_order`, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below; read it before writing anything into `state.yaml`. Where `state.yaml` does not exist yet, stop: the `my-interface-configurator` Skill creates it, seeded with the default authority from `schema/state.schema.yaml`. Then read the configuration. `.interface/project.md` is **not read here** — the `my-interface-configurator` Skill owns it, and `config/` is the understanding it produced. You form no understanding of the project of your own; where the configuration is silent, the project is silent.
 
 ## Entering planning mode
 

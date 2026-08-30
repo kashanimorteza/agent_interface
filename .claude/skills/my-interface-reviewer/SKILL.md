@@ -6,7 +6,7 @@ allowed-tools: Read, Edit, Grep, Glob, Bash
 
 # Review the result
 
-Review mode. Read `.interface/root.yaml` and follow its `read_order` before anything else — `content.state_authority` is the authority over every state change below. The Config and the plan inside `task.yaml` are what the result is judged against — `.interface/project.md` is not read here.
+Review mode. Read `.interface/root.yaml` and follow its `read_order` before anything else, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below. The Config and the plan inside `task.yaml` are what the result is judged against — `.interface/project.md` is not read here.
 
 ## Entering review mode
 
@@ -31,7 +31,7 @@ Nothing is repaired in this mode. You may write exactly two things:
 - Does the code touch only the paths its task listed in `touches`?
 - Does the built surface still match the contract version the task named in `needs_contract`?
 - Does anything violate `rules.yaml`? Security overrides everything — report a security finding first.
-- Do the state checks in `root.yaml` under `content.state_authority.validation` all hold? A state change that matches no transition, an `active.set_by` naming a Skill that may not write that field, or a `phase_titles` altered after the human confirmed it is a finding — reported, never repaired.
+- Do the state checks in `config/state.yaml` under `content.state_authority.validation` all hold? Is `content.state_authority` itself unchanged by any agent — still the schema default, or the human's own edit of it? A state change that matches no transition, an `active.set_by` naming a Skill that may not write that field, or a `phase_titles` altered after the human confirmed it is a finding — reported, never repaired.
 
 ## Reporting
 

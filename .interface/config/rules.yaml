@@ -45,7 +45,7 @@ content_map:
 content:
 
   # <!-------------------------------------------- Precedence -->
-  precedence: "Security wins over every other group. Anything touching the runtime state is decided by .interface/root.yaml under content.state_authority, which governs over this file and every other. After those two, a rule stated here wins over a convention an agent would otherwise follow, and anything this file does not state is an open question in state.yaml rather than a decision an agent makes."
+  precedence: "Security wins over every other group. Anything touching the runtime state is decided by the State Authority — state.yaml itself, under content.state_authority — which governs over this file and every other. After those two, a rule stated here wins over a convention an agent would otherwise follow, and anything this file does not state is an open question in state.yaml rather than a decision an agent makes."
 
   # <!-------------------------------------------- Environment -->
   environment:

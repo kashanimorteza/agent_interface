@@ -83,7 +83,7 @@ A mode is entered by invoking the Skill that owns it. The invocation is the Deve
 
 A Skill may write only the mode it owns, only on an invocation of itself, and only an item the configuration indexes. Where the invocation leaves the item ambiguous, the Skill stops and asks rather than choosing.
 
-The single source of truth for all of it — every state field, its owner, the allowed transitions, which Skill may perform each, and what stays the Developer's alone — is `.interface/root.yaml` under `content.state_authority`. Every other file defers to it.
+The single source of truth for all of it — every state field, its owner, the allowed transitions, which Skill may perform each, and what stays the Developer's alone — is the State contract itself: `.interface/config/state.yaml` under `content.state_authority`, seeded from the default in `.interface/schema/state.schema.yaml` whenever a new State is created, and the Developer's alone after that seed. `root.yaml` maps the Interface and defines the modes; it references the State Authority and does not own it. Every other file defers to the State contract.
 
 
 <br > <br>

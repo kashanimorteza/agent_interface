@@ -72,7 +72,7 @@ Confirm both:
 
 * `definition.yaml` and `rules.yaml` carry `agent_may_edit: false`. Regenerating them from `project.md` is the one time they are touched, and only inside this job.
 
-* This job runs **outside the modes**, and does not enter one. Carry `content.active` in `state.yaml` through a regeneration exactly as you found it — the mode and item a Skill or the human set are runtime state, not something a regeneration decides. Write `active` only when `state.yaml` does not yet exist — transition **S0** — and then as `mode: "not set"`, `item: "none"`, `set_by: "my-interface-configurator, generating state.yaml"`, `set_at` today, and a `mode_reason` saying that the next Skill the human invokes will set the mode. Never write `set_by: "the human"` for a value the human did not type. Who may write `active`, and when, is fixed in `.interface/root.yaml` under `content.state_authority`.
+* This job runs **outside the modes**, and does not enter one. Carry `content.active` in `state.yaml` through a regeneration exactly as you found it — the mode and item a Skill or the human set are runtime state, not something a regeneration decides. Write `active` only when `state.yaml` does not yet exist — transition **S0** — and then as `mode: "not set"`, `item: "none"`, `set_by: "my-interface-configurator, generating state.yaml"`, `set_at` today, and a `mode_reason` saying that the next Skill the human invokes will set the mode. Under S0 you also seed `content.state_authority` **verbatim** from the `default` in `.interface/schema/state.schema.yaml` — no `state.yaml` is ever created without it. A regeneration carries the live `content.state_authority` through untouched, exactly like `active`. Never write `set_by: "the human"` for a value the human did not type. Who may write `active`, and when, is fixed in the State contract — `config/state.yaml` under `content.state_authority`; for a file being created, the schema's default governs its own seeding.
 
 * You may raise blockers and open questions — transitions **S7** and **S8** — and record the human's own answer to a question under `answered_so_far` — dated and in the human's terms. You never answer one yourself, and you never close one by supplying its answer.
 
@@ -102,7 +102,7 @@ Your task is only to:
 
 7. Ensure the resulting Config files follow the Schema and represent the current Phase 1 project understanding.
 
-8. Ensure the runtime state survived: `content.active` in `state.yaml`, and every plan's `phase_titles` with its lifecycle, are as they were before the run unless the file was created by it.
+8. Ensure the runtime state survived: `content.active` and `content.state_authority` in `state.yaml`, and every plan's `phase_titles` with its lifecycle, are as they were before the run unless the file was created by it — and where it was created, that `content.state_authority` equals the schema's default verbatim.
 
 Once the Config files correctly represent Phase 1 according to the Schema and applicable Rules, stop. This task is complete.
 

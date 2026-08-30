@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 
 # Execute the plan
 
-Development mode. Read `.interface/root.yaml` and follow its `read_order` before anything else — `content.state_authority` is the authority over every state change below. The Config and the plan inside `task.yaml` are what you build from — `.interface/project.md` is not read here.
+Development mode. Read `.interface/root.yaml` and follow its `read_order` before anything else, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below. The Config and the plan inside `task.yaml` are what you build from — `.interface/project.md` is not read here.
 
 ## Entering development mode
 

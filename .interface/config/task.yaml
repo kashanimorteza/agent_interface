@@ -4,7 +4,7 @@ meta:
   path_note: "Generated configuration — the frame that defines a task, and the plans that hold the tasks; produced in the shape of .interface/schema/task.schema.yaml"
   schema: ".interface/schema/task.schema.yaml"
   frame_and_surface: "task_schema and task_states are the frame, fixed by the human. Each plan's phase_titles are derived from that item's own configuration by my-interface-planner and then confirmed by the human; the phases under each item are the surface an agent writes in planning mode"
-  authority: "Who may write each of these, and when, is decided in .interface/root.yaml under content.state_authority and content.modes — this file gives the shape and the lifecycle, not the permission"
+  authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and the lifecycle, not the permission"
   version: "1.0"
   updated: "2026-08-30"
 
@@ -78,7 +78,7 @@ content:
 
     backend:
 
-      phase_titles_lifecycle: "derived"
+      phase_titles_lifecycle: "confirmed"
 
       phase_titles_derived_from: "backend.yaml — content.code_layout (pyproject.toml, app/config.py, app/database.py, app/models/, migrations/, app/schemas/, app/errors.py, app/services/, app/routes/, app/main.py) and content.tech.language.environment for P1; contract v1 — content.contracts.v1.models for P3 and P4, content.contracts.v1.error_shape for P5, content.contracts.v1.routes.operations for P6 and P7. definition.yaml — content.goals, which the six operations of P6 and P7 carry. Every title names a place the code_layout already defines; none is invented."
 
