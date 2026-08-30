@@ -36,10 +36,10 @@ content:
 
   # <!-------------------------------------------- Active -->
   active:
-    mode: "not set"
-    mode_reason: "state.yaml has just been generated from Phase 1 and no Skill has been invoked yet. The next Skill the human invokes records the mode it owns and the item the invocation names — transitions S1, S2, and S3 in root.yaml, content.state_authority. Nothing has to be edited here by hand."
-    item: "none"
-    set_by: "my-interface-configurator, generating state.yaml"
+    mode: "planning"
+    mode_reason: "Entered on /my-interface-planner backend (S1). The run derived seven build stages for the backend from its own code_layout, contract v1, and the goals in definition.yaml, and set that list to lifecycle derived, awaiting the human's confirmation. No phase, group, or task was written: the human has not asked for tasks, and contract v1 is still draft, so stages P3 to P7 are gated by B2 in any case. Frontend untouched — B1 leaves it nothing to derive from."
+    item: "backend"
+    set_by: "my-interface-planner, on the human's invocation"
     set_at: "2026-08-30"
 
   # <!-------------------------------------------- Blockers -->
@@ -53,21 +53,21 @@ content:
       raised: "2026-08-30"
 
     - id: "B2"
-      blocks: "Freezing contract v1, and therefore every backend task that would name it — the models, the validation schemas, the routes, and the responses."
+      blocks: "Freezing contract v1, and therefore every backend task under the derived stages P3 Models and migrations, P4 Validation schemas, P5 Error shape, P6 Services, and P7 Routes and entry point — each of those builds against the contract's models, its error shape, or its operations."
       what_is_missing: "The surface of contract v1. Phase 1 gives each model's field names and the six operations, and leaves the field types and limits, the Status vocabulary, the relationship and delete behaviour, the handling of Account's Password, the base path, the list behaviour, and the error shape undefined."
       consequence: "v1 stays draft. Nothing may be built against it, so no task that touches the models, the schemas, or the routes can be written."
       decision_belongs_to: "the human"
       raised: "2026-08-30"
 
     - id: "B3"
-      blocks: "Any verify command that exercises the running backend — the runtime check that stands in for the written test Phase 1 does not require."
+      blocks: "Any verify command that exercises the running backend — the runtime check that stands in for the written test Phase 1 does not require. It stops the verify of the derived stage P7 Routes and entry point in particular."
       what_is_missing: "The command that starts the backend. project.md names FastAPI but no server, and no start command."
       consequence: "A task whose acceptance is about the HTTP surface has no way to be proven, so it cannot be written."
       decision_belongs_to: "the human"
       raised: "2026-08-30"
 
     - id: "B4"
-      blocks: "Configuring the database connection and the Alembic environment — every task that creates or runs a migration."
+      blocks: "Configuring the database connection and the Alembic environment — the derived stage P2 Configuration and database access, and the migrations of the derived stage P3 Models and migrations."
       what_is_missing: "Where the SQLite database file lives. project.md names SQLite as the engine and no location."
       consequence: "No database URL can be written, so the schema cannot be created or moved."
       decision_belongs_to: "the human"

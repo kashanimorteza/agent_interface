@@ -77,9 +77,20 @@ content:
   plans:
 
     backend:
-      phase_titles_lifecycle: "empty"
-      phase_titles_derived_from: "not derived yet"
-      phase_titles: {}
+
+      phase_titles_lifecycle: "derived"
+
+      phase_titles_derived_from: "backend.yaml — content.code_layout (pyproject.toml, app/config.py, app/database.py, app/models/, migrations/, app/schemas/, app/errors.py, app/services/, app/routes/, app/main.py) and content.tech.language.environment for P1; contract v1 — content.contracts.v1.models for P3 and P4, content.contracts.v1.error_shape for P5, content.contracts.v1.routes.operations for P6 and P7. definition.yaml — content.goals, which the six operations of P6 and P7 carry. Every title names a place the code_layout already defines; none is invented."
+
+      phase_titles:
+        P1: "Environment and manifest"
+        P2: "Configuration and database access"
+        P3: "Models and migrations"
+        P4: "Validation schemas"
+        P5: "Error shape"
+        P6: "Services"
+        P7: "Routes and entry point"
+
       phases: {}
 
     frontend:
