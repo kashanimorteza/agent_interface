@@ -91,18 +91,11 @@ Fields: ID, Name, Action ID, Profit, State, Status, Description
 
 <br> <br>
 
-# Phase 1
+## Phase 1
 
-**Title:** Data Entry and Management  
+**Title:** Backend API  
 **Target:** Backend
 
-The goal of Phase 1 is to create a working Backend for entering and managing the application's trading information.
+### Goal
 
-The user should be able to:
-
-- Add information.
-- View information in lists.
-- View individual items.
-- Edit and update items.
-- Delete items.
-- Enable or disable items through their status.
+Create and run the API for all defined project models.
