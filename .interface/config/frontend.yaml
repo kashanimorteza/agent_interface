@@ -1,0 +1,85 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/frontend.yaml"
+  path_note: "Generated configuration — everything an agent reads to understand the frontend item"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Written in planning mode by my-interface-planner — settings and draft contracts only, never a frozen contract. Development and review modes read this file and do not write it. The technology itself is the human's decision (Q1), not the planner's"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled, code_path, summary — is this item in play, where it lives, what it is"
+  - "needs_test, verify_cwd — how its tasks are proven"
+  - "responsibility, tech — what it must do and what it is built with"
+  - "code_layout — where every kind of code lives"
+  - "contracts — what it consumes; it publishes nothing"
+  - "boundaries, out_of_scope — where it ends"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the frontend is in the build"
+  code_path: "The one folder this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The frontend in one line"
+  needs_test: "Whether tasks are proven by written tests"
+  verify_cwd: "Where and in what environment verify commands run"
+  responsibility: "What the frontend is answerable for"
+  tech: "Language, environment, run command — largely open behind Q1"
+  code_layout: "Every path inside code_path and what it holds — open behind Q1"
+  contracts: "What the frontend consumes — it publishes no contract"
+  boundaries: "What the frontend owns and what it does not"
+  out_of_scope: "What the frontend does not do in Phase 1"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  enabled: true
+
+  code_path: "frontend/"
+  code_path_note: "Relative to the project root (the repository root), beside .interface/ — never a path inside the interface."
+
+  summary: "The user interface for entering, viewing, and managing the trading information — its technology is not yet chosen (Q1)."
+
+  needs_test: false
+
+  verify_cwd: "frontend/ — inside whatever isolated environment the chosen technology brings; to be defined with Q1."
+
+  responsibility: "Give the user screens to add, list, view, edit, delete, and enable or disable every kind of trading information, through the backend's contract and nothing else."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+    language: "to be defined — project.md defers the frontend technology and framework to a separate decision (Q1)."
+    database: "None — the frontend stores nothing; all data lives behind the backend's contract api-v1."
+    environment: "to be defined — follows the technology chosen in Q1; whatever it is, it is isolated and never committed."
+    run: "to be defined — follows the technology chosen in Q1."
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout:
+    "./": "to be defined — the layout follows the framework chosen in Q1, and is written here in planning mode before any frontend task exists."
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+    produces: "none — the frontend publishes no contract; it is a pure consumer."
+    rule: "The frontend consumes the backend's api-v1 and builds only against a frozen version of it, never against a draft."
+    change_rule: "Not applicable to a contract of its own — it has none. A change in what it consumes is the backend's versioning, decided by the human."
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns: "Everything under frontend/ — the screens, forms, and lists the user works in."
+    does_not_own: "Data storage, the database schema, validation of record rules — all the backend's, behind api-v1."
+    interface: "The screens it shows the user — toward the other items it publishes nothing."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "MetaTrader integration — excluded from Phase 1 by project.md"
+    - "Trade execution — excluded from Phase 1 by project.md"
+    - "Reporting — excluded from Phase 1 by project.md"
+    - "Authentication — the project states it is not required"
+    - "Automated tests — the project states they are not required"
+    - "Direct database access — everything goes through api-v1"
