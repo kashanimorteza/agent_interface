@@ -35,10 +35,12 @@ content:
 
   # <!-------------------------------------------- Goals -->
   goals:
-    - "Enter the information the trading system requires — its six models: accounts, assets, strategies, action groups, actions, and executes"
-    - "View the entered information"
-    - "Manage the entered information — the exact set of management operations is an open question (Q5 in state.yaml)"
-    - "Reach all of it through the backend API — Phase 1 (Backend API) creates and runs the API for all defined project models"
+    - "Add trading information — records of all six models: accounts, assets, strategies, action groups, actions, and executes"
+    - "View information in lists, and view individual items"
+    - "Edit and update items"
+    - "Delete items"
+    - "Enable or disable items through their status"
+    - "Reach all of it through the backend API — Phase 1 (Backend API) is limited to data entry and data management"
 
   # <!-------------------------------------------- Architecture -->
   architecture:

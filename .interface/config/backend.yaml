@@ -131,7 +131,7 @@ content:
 
     api-v1:
       lifecycle: "draft"
-      lifecycle_note: "Drafted at generation from the project's models. The tasker may refine it; only the human freezes it, and nothing is built against it until frozen. It cannot be frozen while blocker B1 stands — risk_parameter, execute.state, the status vocabulary, password handling, the management operations, and the API key mechanics are undecided (Q1–Q6)."
+      lifecycle_note: "Drafted at generation from the project's models and Phase 1 operations. The tasker may refine it; only the human freezes it, and nothing is built against it until frozen. It cannot be frozen while blocker B1 stands — risk_parameter, execute.state, password handling, delete-of-referenced behavior, and the API key mechanics are undecided (Q1–Q5)."
       consumed_by: "frontend"
 
       contract_read_order:
@@ -143,8 +143,9 @@ content:
       conventions:
         transport: "JSON over plain HTTP — HTTPS is disabled (capabilities.https: false)."
         identifiers: "Every model has an integer id, assigned by the backend."
-        api_key: "Requests carry an API key (capabilities.api_key: true) — how the key is issued and carried is undecided (Q6)."
+        api_key: "Requests carry an API key (capabilities.api_key: true) — how the key is issued and carried is undecided (Q5)."
         documentation: "The API serves its interactive Docs page (capabilities.api_documentation); ReDoc is disabled."
+        status: "Every model carries status with the vocabulary enabled | disabled — items are enabled or disabled through it (Phase 1)."
         timestamps: "None — the project defines no timestamp fields."
         unknown_id: "A request naming an id that does not exist is answered 404 with the framework's built-in error body."
 
@@ -157,21 +158,21 @@ content:
 
       models:
         account:
-          fields: "id (integer), name (string), username (string), password (string — storage and exposure are Q4), status (vocabulary is Q3), description (string)"
+          fields: "id (integer), name (string), username (string), password (string — storage and exposure are Q3), status (enabled | disabled), description (string)"
         asset:
-          fields: "id (integer), name (string), status (vocabulary is Q3), description (string)"
+          fields: "id (integer), name (string), status (enabled | disabled), description (string)"
         strategy:
-          fields: "id (integer), name (string), risk_parameter (to be defined — Q1), status (vocabulary is Q3), description (string)"
+          fields: "id (integer), name (string), risk_parameter (to be defined — Q1), status (enabled | disabled), description (string)"
         action_group:
-          fields: "id (integer), name (string), status (vocabulary is Q3), description (string)"
+          fields: "id (integer), name (string), status (enabled | disabled), description (string)"
         action:
-          fields: "id (integer), name (string), asset_id (integer — references asset), strategy_id (integer — references strategy), group_id (integer — references action_group), status (vocabulary is Q3), description (string)"
+          fields: "id (integer), name (string), asset_id (integer — references asset), strategy_id (integer — references strategy), group_id (integer — references action_group), status (enabled | disabled), description (string)"
         execute:
-          fields: "id (integer), name (string), action_id (integer — references action), profit (number), state (to be defined — Q2), status (vocabulary is Q3), description (string)"
+          fields: "id (integer), name (string), action_id (integer — references action), profit (number), state (to be defined — Q2), status (enabled | disabled), description (string)"
 
       routes:
-        rule: "One management surface per model — the API Phase 1 creates and runs for all defined models lets the user enter, view, and manage each model's records. The exact set of operations is undecided (Q5), and per the interpreter's rules the routes are not spelled out route by route here; they are drafted in planning mode once Q5 is answered."
-        summary: "Six models, each with the operations that answer the product's stated purpose — enter, view, manage. Which operations that includes (update? delete? and what a delete does to referrers) is Q5."
+        rule: "One management surface per model, from Phase 1's stated operations: add a record, view records in a list, view one record, edit and update a record, delete a record, and enable or disable a record through its status. Per the interpreter's rules the routes are not spelled out route by route here; the tasker drafts them in planning mode from these operations."
+        summary: "Six models, each with the same management surface — add, list, view one, update, delete, enable/disable via status. What a delete does to a referenced item's referrers is undecided (Q4)."
 
   # <!-------------------------------------------- Boundaries -->
   boundaries:
@@ -187,4 +188,7 @@ content:
     - "Application logging — the project states Logging: false"
     - "Automated tests — the project states Testing: false"
     - "ReDoc documentation — the project states ReDoc: false"
-    - "The frontend and anything the user sees — Phase 1 targets the backend"
+    - "MetaTrader integration — Phase 1 excludes it"
+    - "Trade execution — Phase 1 excludes it"
+    - "Reporting — Phase 1 excludes it"
+    - "The frontend and anything the user sees — Phase 1's Target is the backend (the goal sentence also names the frontend; that contradiction is Q6)"

@@ -59,12 +59,12 @@ content:
     - "The database schema changes only through an Alembic migration, and every migration has a working downgrade."
     - "SQLite does not enforce foreign keys by default — enforcement is turned on per connection, or references silently break."
     - "Every cross-model reference (asset_id, strategy_id, group_id, action_id) is a real foreign key."
-    - "Whether managing includes deleting, and what happens to referrers when a referenced item is deleted, is an open question (Q5) — until the human decides, no cascade and no silent orphaning is implemented."
+    - "Deleting is part of managing (Phase 1 states it), but what happens to referrers when a referenced item is deleted is an open question (Q4) — until the human decides, no cascade and no silent orphaning is implemented."
 
   # <!-------------------------------------------- Security -->
   security:
-    - "Account passwords never appear in an API response other than the account's own record, and never in an error message — how the password is stored and shown is the human's decision (Q4)."
-    - "API key values are checked on requests and never included in any response body — api_key is enabled, and its mechanics are the human's decision (Q6)."
+    - "Account passwords never appear in an API response other than the account's own record, and never in an error message — how the password is stored and shown is the human's decision (Q3)."
+    - "API key values are checked on requests and never included in any response body — api_key is enabled, and its mechanics are the human's decision (Q5)."
     - "An error message never reveals internals — no stack traces, no SQL, no file paths in any API response."
 
   # <!-------------------------------------------- Test -->
