@@ -12,8 +12,8 @@ The project is developed incrementally in phases.
 
 The project consists of:
 
-- **Backend** — manages application data and functionality.
-- **Frontend** — provides the user interface for entering, viewing, and managing information.
+* **Backend** — manages application data and functionality.
+* **Frontend** — provides the user interface for entering, viewing, and managing information.
 
 This document defines **what the application should do** and what should be delivered in each phase.
 
@@ -25,22 +25,33 @@ It does not define how the application should be implemented.
 
 ### Backend
 
-- Language: Python
-- API: FastAPI
-- ORM: SQLAlchemy
-- Database: SQLite
-- Database Migration: Standard Python migration framework
+#### Technology
+
+* Language: Python
+* API: FastAPI
+* ORM: SQLAlchemy
+* Database: SQLite
+* Database Migration: Standard Python migration framework
+
+#### Settings
+
+* Error Handling: false
+* Authentication: false
+* Logging: false
+* Testing: false
+
+#### API
+
+* HTTPS: false
+* Key: true
+* Documentation: true
+* Documentation Type: Docs
 
 ### Frontend
 
 A Frontend is required for interacting with the application and managing its information.
 
 The Frontend technology and framework will be defined separately.
-
-### General
-
-- Authentication is not required.
-- Automated tests are not required.
 
 <br> <br>
 
@@ -50,12 +61,12 @@ The goal of Phase 1 is to create a working Backend and Frontend for entering and
 
 The user should be able to:
 
-- Add information.
-- View information in lists.
-- View individual items.
-- Edit and update items.
-- Delete items.
-- Enable or disable items through their status.
+* Add information.
+* View information in lists.
+* View individual items.
+* Edit and update items.
+* Delete items.
+* Enable or disable items through their status.
 
 Phase 1 is limited to data entry and data management.
 
