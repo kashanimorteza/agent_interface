@@ -98,7 +98,10 @@ content:
                   verify: "uv run python --version"
                   touches:
                     - "pyproject.toml — the uv project manifest at the code_path root, created and managed by uv per tech.language.environment"
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - date: "2026-09-01"
+                      entry: "uv init --bare created pyproject.toml; requires-python set to >=3.12 before the venv was created, so the environment resolved straight onto Python 3.14.0 per tech.language.version: latest (the system default python3 is an outdated 3.7.1). Verify passed: uv run python --version -> Python 3.14.0."
 
                 - id: "T2"
                   title: "Add the FastAPI package as a dependency."
@@ -109,7 +112,10 @@ content:
                   touches:
                     - "pyproject.toml"
                     - "uv.lock"
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - date: "2026-09-01"
+                      entry: "uv add fastapi -> fastapi==0.141.1. Verify passed."
 
                 - id: "T3"
                   title: "Add the uvicorn package as a dependency."
@@ -120,7 +126,10 @@ content:
                   touches:
                     - "pyproject.toml"
                     - "uv.lock"
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - date: "2026-09-01"
+                      entry: "uv add uvicorn -> uvicorn==0.52.4. Verify passed."
 
                 - id: "T4"
                   title: "Add the SQLAlchemy package as a dependency."
@@ -131,7 +140,10 @@ content:
                   touches:
                     - "pyproject.toml"
                     - "uv.lock"
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - date: "2026-09-01"
+                      entry: "uv add sqlalchemy -> sqlalchemy==2.0.52. Verify passed."
 
                 - id: "T5"
                   title: "Add the Alembic package as a dependency."
@@ -142,7 +154,10 @@ content:
                   touches:
                     - "pyproject.toml"
                     - "uv.lock"
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - date: "2026-09-01"
+                      entry: "uv add alembic -> alembic==1.19.1. Verify passed."
 
                 - id: "T6"
                   title: "Create a .gitignore at the code_path root covering the virtual environment, the data/ database file, and generated caches."
@@ -152,7 +167,10 @@ content:
                   verify: "git check-ignore -q data/placeholder.db && git check-ignore -q .venv/placeholder"
                   touches:
                     - ".gitignore"
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - date: "2026-09-01"
+                      entry: "Created .gitignore covering .venv/, data/, __pycache__/, *.pyc. Verify passed."
 
             P1-G2:
               id: "P1-G2"
@@ -170,7 +188,10 @@ content:
                   touches:
                     - "app/config.py"
                     - "tests/verify_t7.py"
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - date: "2026-09-01"
+                      entry: "Created app/config.py with Settings.database_path = backend/data/app.db and its sqlite URL, plus tests/verify_t7.py (adds backend/ to sys.path to import the app package). Verify passed."
 
                 - id: "T8"
                   title: "Create app/main.py — the FastAPI application instance the run command starts."
