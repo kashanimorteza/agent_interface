@@ -1,0 +1,84 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/rules.yaml"
+  path_note: "Generated configuration — the boundaries of agent behavior, read in every mode before work starts"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "Regenerated only by my-interface-interpreter from Phase 1 of project.md. No mode edits it; a change it needs is raised as an open question in config/state.yaml"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "precedence — which rule wins, before any rule is applied"
+  - "environment"
+  - "code"
+  - "database"
+  - "security"
+  - "test"
+  - "contract"
+  - "design"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  precedence: "Which rule wins when two collide"
+  environment: "Where code runs and what is never committed"
+  code: "How code is shaped"
+  database: "How the schema moves"
+  security: "What must never leak — overrides every other group"
+  test: "What must be proven"
+  contract: "How the API surface and its contract stay in step"
+  design: "How the interface is drawn"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Precedence -->
+  precedence: "Security rules override every other group; where any two other rules collide, the more restrictive one is followed and the collision is raised as an open question in state.yaml."
+
+  # <!-------------------------------------------- Environment -->
+  environment:
+    - "Every backend command and every install runs inside the uv-managed virtual environment under the backend's code_path — never against system Python."
+    - "A dependency enters the project only through uv — no install by any other route."
+    - "The virtual environment, the SQLite database file, and generated caches are never committed."
+
+  # <!-------------------------------------------- Code -->
+  code:
+    - "Business logic lives in services — a route only validates input, calls a service, and shapes the response."
+    - "Every request body is validated by a schema before it reaches a service, because unvalidated input otherwise reaches the database."
+    - "Every failure the API returns takes the single error shape defined in contract api-v1 — no route invents its own."
+    - "Names follow the standards section of backend.yaml — they are settled there, not re-decided per file."
+
+  # <!-------------------------------------------- Database -->
+  database:
+    - "The database schema changes only through an Alembic migration, and every migration has a working downgrade."
+    - "SQLite does not enforce foreign keys by default — enforcement is turned on per connection, or references silently break."
+    - "Every cross-model reference (asset_id, strategy_id, group_id, action_id) is a real foreign key."
+    - "What happens when a referenced item is deleted is an open question (Q5) — until the human decides, no cascade and no silent orphaning is implemented."
+
+  # <!-------------------------------------------- Security -->
+  security:
+    - "Account passwords never appear in logs or in error messages."
+    - "How the Account password is stored and shown is the human's decision (Q4) — until decided it is treated as sensitive and never returned anywhere except its own record."
+    - "An error message never reveals internals — no stack traces, no SQL, no file paths in any API response."
+
+  # <!-------------------------------------------- Test -->
+  test:
+    - "Automated tests are not required in Phase 1 — the project states this, and needs_test is false on both items."
+    - "Every task still carries a runnable verify command that proves its acceptance against the running application — without a passing verify no task becomes done."
+    - "A verify command runs from the item's verify_cwd, inside its environment."
+
+  # <!-------------------------------------------- Contract -->
+  contract:
+    - "No change to the API surface without the same change in contract api-v1 in backend.yaml — the surface and the contract never drift."
+    - "A frozen contract version is never edited — a change is a new version, and freezing or versioning is the human's decision."
+    - "The frontend is defined and built only against a frozen contract version, never against a draft."
+
+  # <!-------------------------------------------- Design -->
+  design:
+    - "No design file exists yet — the frontend technology is undefined (Q1), and the design rules are written when the human decides it."
+    - "Whatever is decided, every page follows one shared look, and Phase 1 pages show data entry and management only — lists, single items, forms, and status."

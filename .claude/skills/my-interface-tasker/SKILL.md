@@ -6,9 +6,11 @@ allowed-tools: Read, Edit, Grep, Glob
 
 # Plan the build
 
-Planning mode. The pipeline is `.interface/config/` → this Skill → a structured task plan. Nothing enters from anywhere else.
+Planning mode. The pipeline is `.interface/config/` → this Skill → a structured task plan. Nothing project-specific enters from anywhere else.
 
-Read `.interface/root.yaml` first and follow its `read_order`, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below; read it before writing anything into `state.yaml`. Where `state.yaml` does not exist yet, stop: the `my-interface-interpreter` Skill creates it, seeded with the default authority from `schema/state.schema.yaml`. Then read the configuration. `.interface/project.md` is **not read here** — the `my-interface-interpreter` Skill owns it, and `config/` is the understanding it produced. You form no understanding of the project of your own; where the configuration is silent, the project is silent.
+Read the repository's `README.md` first. It establishes what Agent Interface is, the workflow it runs (define → configure → plan → develop → review), and this Skill's own place in it: the Interpreter interprets the project specification and produces the configuration; the Tasker consumes that configuration and converts it into precise, implementation-ready tasks. The README orients you in the system — it carries no project information, and nothing in it enters a plan.
+
+Then read `.interface/root.yaml` and follow its `read_order`, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below; read it before writing anything into `state.yaml`. Where `state.yaml` does not exist yet, stop: the `my-interface-interpreter` Skill creates it, seeded with the default authority from `schema/state.schema.yaml`. Then read the configuration. `.interface/project.md` is **not read here** — interpreting the project specification is the `my-interface-interpreter` Skill's job, and `config/` is the understanding it produced: your primary and sufficient source of everything project-specific — structure, requirements, parts, dependencies, contracts, and implementation expectations all resolve there. You form no understanding of the project of your own and never reinterpret the specification; where the configuration is silent, the project is silent — a gap is the Interpreter's to fill, and this Skill raises it, never guesses around it.
 
 ## Entering planning mode
 
@@ -23,7 +25,7 @@ You may set the mode to `planning` and to nothing else, and only on an invocatio
 
 ## What to read
 
-All of it, in this order — the plan is derived from these files and from nothing else:
+All of it, in this order — the plan is derived from these files and from nothing else. The README read above frames why each file exists; project facts come only from here:
 
 1. `definition.yaml` — the product, its goals, and the parts the architecture is divided into. `content.architecture.parts` is the list of scopes that can be planned.
 2. `rules.yaml` — the boundaries every task inherits. A rule that is not in this file is not a rule.
@@ -70,6 +72,7 @@ A phase holds groups and a group holds tasks, so no phase is written until tasks
 - `verify` is a runnable command that actually proves `acceptance`, run from the item's `verify_cwd`. What may serve as a verify is governed by `rules.yaml` — where the item's `needs_test` is false, a runtime check stands in for a written test.
 - `touches` lists paths relative to the item's `code_path`, and stays inside the `code_layout` that item file defines.
 - `status` starts at `todo`; `blocker` and `log` are absent until the task moves.
+- Every task traces to the configuration — the `code_layout` entry it builds, the contract model or operation it serves, the rule it satisfies, or the goal it advances. A task that traces to nothing in `config/` is an invention, exactly as an underived phase title is.
 - No task is written speculatively — `policy.task_creation` in `task.yaml` holds a plan empty until the human asks for tasks. Write what was asked for, and no more.
 
 ## What this Skill writes

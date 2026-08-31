@@ -1,0 +1,172 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/backend.yaml"
+  path_note: "Generated configuration — everything an agent reads to understand the backend item, including the contract it publishes"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Written in planning mode by my-interface-tasker — settings and draft contracts only, never a frozen contract. Freezing or versioning a contract is the human's decision. Development and review modes read this file and do not write it"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled, code_path, summary — is this item in play, where it lives, what it is"
+  - "needs_test, verify_cwd — how its tasks are proven"
+  - "responsibility, tech, standards — what it must do and what it is built with"
+  - "code_layout — where every kind of code lives"
+  - "contracts — the surface it publishes, read conventions first, routes last"
+  - "boundaries, out_of_scope — where it ends"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the backend is in the build"
+  code_path: "The one folder this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The backend in one line"
+  needs_test: "Whether tasks are proven by written tests"
+  verify_cwd: "Where and in what environment verify commands run"
+  responsibility: "What the backend is answerable for"
+  tech: "Language, environment, packages, database, run command"
+  standards: "Naming conventions"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract the backend publishes — api-v1"
+  boundaries: "What the backend owns and what it does not"
+  out_of_scope: "What the backend does not do in Phase 1"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  enabled: true
+
+  code_path: "backend/"
+  code_path_note: "Relative to the project root (the repository root), beside .interface/ — never a path inside the interface."
+
+  summary: "A FastAPI service over SQLite that stores and manages the trading information and serves it through contract api-v1."
+
+  needs_test: false
+
+  verify_cwd: "backend/ — every verify command runs from there, inside the uv virtual environment."
+
+  responsibility: "Own the trading data — its storage, its schema, its validation — and offer everything the user manages through one HTTP API."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+
+    language:
+      name: "Python"
+      version: "latest"
+      environment:
+        name: "uv"
+        version: "latest"
+      packages:
+        api:
+          name: "FastAPI"
+          version: "latest"
+        orm:
+          name: "SQLAlchemy"
+          version: "latest"
+        migration:
+          name: "Alembic"
+          version: "latest"
+
+    database:
+      engine: "SQLite"
+      lives_at: "A single database file under backend/data/, created by migrations and never committed."
+      schema_owner: "The backend — the schema exists and changes only through its Alembic migrations."
+      access_route: "Every read and write goes through the SQLAlchemy ORM — no raw connection anywhere else."
+
+    run: "uv run uvicorn app.main:app --reload — from backend/."
+
+  # <!-------------------------------------------- Standards -->
+  standards:
+    naming:
+      variables: "snake_case"
+      functions: "snake_case"
+      classes: "PascalCase"
+      constants: "UPPER_SNAKE_CASE"
+      files: "snake_case"
+      folders: "snake_case"
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout:
+    "app/main.py": "Entry point — creates the FastAPI application and mounts the routes"
+    "app/config.py": "Configuration — settings, including the database file path"
+    "app/database.py": "Database access — engine, session, and the SQLite foreign-key pragma"
+    "app/models/": "SQLAlchemy models — one file per model"
+    "app/schemas/": "Validation schemas — the shapes request bodies are checked against"
+    "app/services/": "Business logic — everything a route calls"
+    "app/routes/": "API routes — one file per model, thin over the services"
+    "app/errors.py": "The single error shape of api-v1 and the handlers that produce it"
+    "migrations/": "Alembic migrations — the only way the database schema changes"
+    "data/": "The SQLite database file — git-ignored, never committed"
+    "tests/": "Verification scripts where a task's verify needs one — automated tests are not required in Phase 1"
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+
+    produces: "api-v1"
+    rule: "The implementation must match the frozen contract exactly — the contract binds the backend, not the other way round."
+    change_rule: "A frozen contract is versioned, never edited. A change means a new version, and freezing or versioning is the human's decision."
+
+    api-v1:
+      lifecycle: "draft"
+      lifecycle_note: "Drafted at generation from the Phase 1 models. The tasker may refine it; only the human freezes it, and nothing is built against it until frozen. It cannot be frozen while blocker B2 stands — risk_parameter, execute.state, password handling, and delete-of-referenced behavior are undecided (Q2–Q5)."
+      consumed_by: "frontend"
+
+      contract_read_order:
+        - "conventions — what holds everywhere, before any specific shape"
+        - "error_shape — how every failure looks, before any success"
+        - "models — the data shapes, before the routes that carry them"
+        - "routes — the surface itself, last, once everything it uses is known"
+
+      conventions:
+        transport: "JSON over HTTP."
+        identifiers: "Every model has an integer id, assigned by the backend."
+        status: "Every model carries status — enabled or disabled — and the user toggles it through a normal update."
+        timestamps: "None — Phase 1 defines no timestamp fields."
+        unknown_id: "A request naming an id that does not exist is answered 404 with the error shape."
+
+      error_shape:
+        rule: "Every non-success response carries exactly this body — no route invents its own."
+        fields:
+          error.code: "A machine-readable code the consumer branches on"
+          error.message: "A human-readable sentence — never internals, per rules.yaml security"
+        codes:
+          - "validation_error — the request body failed validation"
+          - "not_found — the id does not exist"
+
+      models:
+        account:
+          fields: "id (integer), name (string), username (string), password (string — handling is Q4), status (enabled | disabled), description (string)"
+        asset:
+          fields: "id (integer), name (string), status (enabled | disabled), description (string)"
+        strategy:
+          fields: "id (integer), name (string), risk_parameter (to be defined — Q2), status (enabled | disabled), description (string)"
+        action_group:
+          fields: "id (integer), name (string), status (enabled | disabled), description (string)"
+        action:
+          fields: "id (integer), name (string), asset_id (integer — references asset), strategy_id (integer — references strategy), group_id (integer — references action_group), status (enabled | disabled), description (string)"
+        execute:
+          fields: "id (integer), name (string), action_id (integer — references action), profit (number), state (to be defined — Q3), status (enabled | disabled), description (string)"
+
+      routes:
+        rule: "Every model gets the same management surface — list, get one, create, update, delete — and nothing else in Phase 1. The exact paths and payloads are drafted by the tasker in planning mode; per the interpreter's rules they are not spelled out route by route here."
+        summary: "Five operations per model, six models. Create and update take the model's fields except id; list returns all items; delete of a referenced item behaves per the human's answer to Q5."
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns: "Everything under backend/, and the whole database schema and its data."
+    does_not_own: "Client code — nothing under the frontend's code_path, and nothing the user sees."
+    interface: "Contract api-v1 — the only thing the backend offers the outside."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "MetaTrader integration — excluded from Phase 1 by project.md"
+    - "Trade execution — excluded from Phase 1 by project.md"
+    - "Reporting — excluded from Phase 1 by project.md"
+    - "Authentication — the project states it is not required"
+    - "Automated tests — the project states they are not required"
