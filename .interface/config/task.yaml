@@ -65,10 +65,204 @@ content:
   plans:
 
     backend:
-      phase_titles_lifecycle: "empty"
-      phase_titles_derived_from: "not derived yet"
-      phase_titles: []
-      phases: {}
+      phase_titles_lifecycle: "derived"
+      phase_titles_derived_from: "backend.yaml — content.code_layout (app/main.py, app/config.py, app/errors.py; app/database.py, migrations/, data/; app/models/; app/schemas/; app/services/; app/routes/) and content.contracts.api-v1 (error_shape, models, routes); definition.yaml — content.goals (the management operations the routes must carry)"
+      phase_titles:
+        P1: "Application skeleton — entry point, configuration, and error shape"
+        P2: "Database access and migrations"
+        P3: "Models"
+        P4: "Validation schemas"
+        P5: "Services"
+        P6: "Routes — the api-v1 surface"
+
+      phases:
+
+        P1:
+          id: "P1"
+          title: "Application skeleton — entry point, configuration, and error shape"
+          does: "At its end a runnable FastAPI application exists inside the uv environment — configured, with an entry point and the single api-v1 error shape — where before there was an empty code_path. Later phases only add database access, models, schemas, services, and routes onto it."
+          groups:
+
+            P1-G1:
+              id: "P1-G1"
+              title: "Environment"
+              does: "The uv project exists with each package of the stack installed one by one, and the files that must never be committed are ignored — when all six are done, every later command has an isolated environment to run inside."
+              task_count: 6
+              tasks:
+
+                - id: "T1"
+                  title: "Create the uv project at the backend's code_path root."
+                  goal: "An isolated environment exists that every later command and install runs inside — the only route a dependency enters the project by."
+                  depends_on: []
+                  acceptance: "From backend/, uv resolves the project and runs Python inside its virtual environment."
+                  verify: "uv run python --version"
+                  touches:
+                    - "pyproject.toml — the uv project manifest at the code_path root, created and managed by uv per tech.language.environment"
+                  status: "todo"
+
+                - id: "T2"
+                  title: "Add the FastAPI package as a dependency."
+                  goal: "The API framework the contract is served over is installed."
+                  depends_on: ["T1"]
+                  acceptance: "fastapi imports inside the environment."
+                  verify: "uv run python -c \"import fastapi\""
+                  touches:
+                    - "pyproject.toml"
+                    - "uv.lock"
+                  status: "todo"
+
+                - id: "T3"
+                  title: "Add the uvicorn package as a dependency."
+                  goal: "The server named by the run command — uv run uvicorn app.main:app --reload — is installed."
+                  depends_on: ["T1"]
+                  acceptance: "uvicorn imports inside the environment."
+                  verify: "uv run python -c \"import uvicorn\""
+                  touches:
+                    - "pyproject.toml"
+                    - "uv.lock"
+                  status: "todo"
+
+                - id: "T4"
+                  title: "Add the SQLAlchemy package as a dependency."
+                  goal: "The ORM every read and write of the database goes through is installed."
+                  depends_on: ["T1"]
+                  acceptance: "sqlalchemy imports inside the environment."
+                  verify: "uv run python -c \"import sqlalchemy\""
+                  touches:
+                    - "pyproject.toml"
+                    - "uv.lock"
+                  status: "todo"
+
+                - id: "T5"
+                  title: "Add the Alembic package as a dependency."
+                  goal: "The migration tool — the only way the database schema changes — is installed."
+                  depends_on: ["T1"]
+                  acceptance: "alembic imports inside the environment."
+                  verify: "uv run python -c \"import alembic\""
+                  touches:
+                    - "pyproject.toml"
+                    - "uv.lock"
+                  status: "todo"
+
+                - id: "T6"
+                  title: "Create a .gitignore at the code_path root covering the virtual environment, the data/ database file, and generated caches."
+                  goal: "What rules.yaml says is never committed — the virtual environment, the SQLite file, caches — cannot be committed by accident."
+                  depends_on: ["T1"]
+                  acceptance: "git ignores a file under data/ and the virtual environment directory."
+                  verify: "git check-ignore -q data/placeholder.db && git check-ignore -q .venv/placeholder"
+                  touches:
+                    - ".gitignore"
+                  status: "todo"
+
+            P1-G2:
+              id: "P1-G2"
+              title: "Entry point and configuration"
+              does: "Configuration has one home and the application has a runnable entry point — when both are done, uv run uvicorn app.main:app --reload serves from backend/."
+              task_count: 2
+              tasks:
+
+                - id: "T7"
+                  title: "Create app/config.py holding the application settings, including the SQLite database file path under data/."
+                  goal: "Configuration has one home, and the database location is settled before anything opens it."
+                  depends_on: ["T1"]
+                  acceptance: "Importing the configuration yields the settings, and its database path points to a file under data/."
+                  verify: "uv run python tests/verify_t7.py"
+                  touches:
+                    - "app/config.py"
+                    - "tests/verify_t7.py"
+                  status: "todo"
+
+                - id: "T8"
+                  title: "Create app/main.py — the FastAPI application instance the run command starts."
+                  goal: "The backend has a runnable entry point."
+                  depends_on: ["T2", "T7"]
+                  acceptance: "The application object imports as a FastAPI instance, exposing no route of its own yet — the api-v1 surface arrives with its own phase."
+                  verify: "uv run python -c \"import fastapi; from app.main import app; assert isinstance(app, fastapi.FastAPI)\""
+                  touches:
+                    - "app/main.py"
+                  status: "todo"
+
+            P1-G3:
+              id: "P1-G3"
+              title: "Error shape"
+              does: "Every failure the API will ever return already has its single shape — when both tasks are done, app/errors.py defines the api-v1 error body and its handlers are registered on the application, so no later route can invent its own."
+              task_count: 2
+              tasks:
+
+                - id: "T9"
+                  title: "Create app/errors.py defining the api-v1 error body — error.code and error.message — and its two codes, validation_error and not_found."
+                  goal: "The single shape of every non-success response exists in one place."
+                  depends_on: ["T2"]
+                  acceptance: "Building an error body yields exactly error.code and error.message, with a code from the contract's vocabulary and never internals."
+                  verify: "uv run python tests/verify_t9.py"
+                  touches:
+                    - "app/errors.py"
+                    - "tests/verify_t9.py"
+                  status: "todo"
+
+                - id: "T10"
+                  title: "Register the validation_error and not_found handlers from app/errors.py on the application in app/main.py."
+                  goal: "Every failure the application answers with now takes the shape errors.py defines."
+                  depends_on: ["T8", "T9"]
+                  acceptance: "A validation failure and an unknown-id failure each produce the error body, not FastAPI's default."
+                  verify: "uv run python tests/verify_t10.py"
+                  touches:
+                    - "app/main.py"
+                    - "tests/verify_t10.py"
+                  status: "todo"
+
+        P2:
+          id: "P2"
+          title: "Database access and migrations"
+          does: "At its end the database layer exists — engine and session behind app/database.py with SQLite foreign keys enforced, and Alembic wired under migrations/ as the only way the schema will ever change. No table exists yet; the models phase adds them through migrations."
+          groups:
+
+            P2-G1:
+              id: "P2-G1"
+              title: "Database access"
+              does: "Every later read and write has one route to the database — when both tasks are done, app/database.py yields sessions over the configured SQLite file with foreign keys enforced per connection."
+              task_count: 2
+              tasks:
+
+                - id: "T11"
+                  title: "Create app/database.py — the engine and session factory over the database path from app/config.py."
+                  goal: "The one place the database is opened exists; no raw connection anywhere else."
+                  depends_on: ["T4", "T7"]
+                  acceptance: "A session opens against the configured SQLite path and closes cleanly."
+                  verify: "uv run python tests/verify_t11.py"
+                  touches:
+                    - "app/database.py"
+                    - "tests/verify_t11.py"
+                  status: "todo"
+
+                - id: "T12"
+                  title: "Enable SQLite foreign-key enforcement per connection in app/database.py."
+                  goal: "The engine trap rules.yaml names is closed — references cannot silently break."
+                  depends_on: ["T11"]
+                  acceptance: "A connection from the engine reports PRAGMA foreign_keys as on."
+                  verify: "uv run python tests/verify_t12.py"
+                  touches:
+                    - "app/database.py"
+                    - "tests/verify_t12.py"
+                  status: "todo"
+
+            P2-G2:
+              id: "P2-G2"
+              title: "Migration scaffold"
+              does: "The schema has its only door — when done, Alembic runs under migrations/ against the configured database path, ready for the models phase to add the first migration."
+              task_count: 1
+              tasks:
+
+                - id: "T13"
+                  title: "Initialize Alembic under migrations/, wired to the database path from app/config.py."
+                  goal: "The only way the schema changes exists and points at the right database."
+                  depends_on: ["T5", "T7"]
+                  acceptance: "Alembic runs from backend/ against the configured database without error, with no migrations yet."
+                  verify: "uv run alembic current"
+                  touches:
+                    - "alembic.ini — Alembic's own entry file at the code_path root, created by its init and owned by the migrations/ scaffold"
+                    - "migrations/"
+                  status: "todo"
 
     frontend:
       phase_titles_lifecycle: "empty"
