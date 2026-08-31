@@ -145,4 +145,4 @@ sections:
                             purpose: "How many tasks the group holds — stated so the size is visible without counting."
                           tasks:
                             required: true
-                            purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one concrete act, naming the file it creates or the piece it changes, and one sitting finishes it."
+                            purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one atomic act, naming the one thing it creates or changes — create one file, add one method, implement one function, install one package, add one model, create one endpoint, add one migration, add one specific validation — never a broad or multi-purpose implementation goal. Anything larger is split into several tasks before it is written; many precise tasks are preferred over a few broad ones, however much the count grows, and one sitting finishes each."
