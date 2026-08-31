@@ -65,10 +65,133 @@ content:
   plans:
 
     backend:
-      phase_titles_lifecycle: "empty"
-      phase_titles_derived_from: "not derived yet"
-      phase_titles: []
-      phases: {}
+      phase_titles_lifecycle: "derived"
+      phase_titles_derived_from: "backend.yaml — content.code_layout (app/main.py, app/config.py; app/database.py, migrations/, data/; app/models/; app/schemas/; app/services/; app/routes/), content.capabilities (api_documentation — served with the entry point; api_key — checked at the surface), and content.contracts.api-v1 (models, routes); definition.yaml — content.goals (reach everything through the backend API)"
+      phase_titles:
+        P1: "Application skeleton — entry point, configuration, and the Docs page"
+        P2: "Database access and migrations"
+        P3: "Models"
+        P4: "Validation schemas"
+        P5: "Services"
+        P6: "Routes — the api-v1 surface and its API key"
+
+      phases:
+
+        P1:
+          id: "P1"
+          title: "Application skeleton — entry point, configuration, and the Docs page"
+          does: "At its end a runnable FastAPI application exists inside the uv environment — configured, serving its interactive Docs page with ReDoc disabled per capabilities.api_documentation — where before the code_path held no configured application. Later phases add database access, models, schemas, services, and routes onto it."
+          groups:
+
+            P1-G1:
+              id: "P1-G1"
+              title: "Environment"
+              does: "The uv project exists with each package of the stack installed one by one, and the files that must never be committed are ignored — when all six are done, every later command has an isolated environment to run inside."
+              task_count: 6
+              tasks:
+
+                - id: "T1"
+                  title: "Create the uv project at the backend's code_path root."
+                  goal: "An isolated environment exists that every later command and install runs inside — the only route a dependency enters the project by."
+                  depends_on: []
+                  acceptance: "From backend/, uv resolves the project and runs Python inside its virtual environment."
+                  verify: "uv run python --version"
+                  touches:
+                    - "pyproject.toml — the uv project manifest at the code_path root, created and managed by uv per tech.language.environment"
+                  status: "todo"
+
+                - id: "T2"
+                  title: "Add the FastAPI package as a dependency."
+                  goal: "The API framework the contract is served over is installed."
+                  depends_on: ["T1"]
+                  acceptance: "fastapi imports inside the environment."
+                  verify: "uv run python -c \"import fastapi\""
+                  touches:
+                    - "pyproject.toml"
+                    - "uv.lock"
+                  status: "todo"
+
+                - id: "T3"
+                  title: "Add the uvicorn package as a dependency."
+                  goal: "The server named by the run command — uv run uvicorn app.main:app --reload — is installed."
+                  depends_on: ["T1"]
+                  acceptance: "uvicorn imports inside the environment."
+                  verify: "uv run python -c \"import uvicorn\""
+                  touches:
+                    - "pyproject.toml"
+                    - "uv.lock"
+                  status: "todo"
+
+                - id: "T4"
+                  title: "Add the SQLAlchemy package as a dependency."
+                  goal: "The ORM every read and write of the database goes through is installed."
+                  depends_on: ["T1"]
+                  acceptance: "sqlalchemy imports inside the environment."
+                  verify: "uv run python -c \"import sqlalchemy\""
+                  touches:
+                    - "pyproject.toml"
+                    - "uv.lock"
+                  status: "todo"
+
+                - id: "T5"
+                  title: "Add the Alembic package as a dependency."
+                  goal: "The migration tool — the only way the database schema changes — is installed."
+                  depends_on: ["T1"]
+                  acceptance: "alembic imports inside the environment."
+                  verify: "uv run python -c \"import alembic\""
+                  touches:
+                    - "pyproject.toml"
+                    - "uv.lock"
+                  status: "todo"
+
+                - id: "T6"
+                  title: "Create a .gitignore at the code_path root covering the virtual environment, the data/ database file, and generated caches."
+                  goal: "What rules.yaml says is never committed — the virtual environment, the SQLite file, caches — cannot be committed by accident."
+                  depends_on: ["T1"]
+                  acceptance: "git ignores a file under data/ and the virtual environment directory."
+                  verify: "git check-ignore -q data/placeholder.db && git check-ignore -q .venv/placeholder"
+                  touches:
+                    - ".gitignore"
+                  status: "todo"
+
+            P1-G2:
+              id: "P1-G2"
+              title: "Entry point, configuration, and documentation"
+              does: "Configuration has one home, the application has a runnable entry point, and its documentation matches capabilities.api_documentation — when all three are done, uv run uvicorn app.main:app --reload serves the application and its Docs page from backend/."
+              task_count: 3
+              tasks:
+
+                - id: "T7"
+                  title: "Create app/config.py holding the application settings, including the SQLite database file path under data/."
+                  goal: "Configuration has one home, and the database location is settled before anything opens it."
+                  depends_on: ["T1"]
+                  acceptance: "Importing the configuration yields the settings, and its database path points to a file under data/."
+                  verify: "uv run python tests/verify_t7.py"
+                  touches:
+                    - "app/config.py"
+                    - "tests/verify_t7.py"
+                  status: "todo"
+
+                - id: "T8"
+                  title: "Create app/main.py — the FastAPI application instance the run command starts."
+                  goal: "The backend has a runnable entry point."
+                  depends_on: ["T2", "T7"]
+                  acceptance: "The application object imports as a FastAPI instance, exposing no route of its own yet — the api-v1 surface arrives with its own phase."
+                  verify: "uv run python -c \"import fastapi; from app.main import app; assert isinstance(app, fastapi.FastAPI)\""
+                  touches:
+                    - "app/main.py"
+                  status: "todo"
+
+                - id: "T9"
+                  title: "Configure the application's documentation in app/main.py — the interactive Docs page enabled, ReDoc disabled."
+                  goal: "The served documentation matches capabilities.api_documentation: Docs on, ReDoc off."
+                  depends_on: ["T8"]
+                  acceptance: "The application serves its Docs page and does not serve ReDoc."
+                  verify: "uv run python tests/verify_t9.py"
+                  touches:
+                    - "app/main.py"
+                    - "tests/verify_t9.py"
+                  status: "todo"
 
     frontend:
       phase_titles_lifecycle: "empty"
