@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-backend
-  version: "1.1"
+  version: "1.2"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
   defaults:
     rule: "A field carrying `default` is always written into backend.yaml — the project's stated value when the project states one, the schema's default when it does not."
@@ -16,6 +16,7 @@ structure:
   - responsibility
   - tech
   - standards
+  - capabilities
   - code_layout
   - contracts
   - boundaries
@@ -46,7 +47,8 @@ sections:
   # <!--------------------------------------------------------------------------------- Needs_Test -->
   needs_test:
     required: true
-    purpose: "Whether every task that produces code is proven by a written test in tests/ — true means a task's verify is that test run; set by the human."
+    default: false
+    purpose: "Whether every task that produces code is proven by a written test in tests/ — true means a task's verify is that test run; set by the human, and disabled unless the project states otherwise."
 
   # <!--------------------------------------------------------------------------------- Verify_Cwd -->
   verify_cwd:
@@ -177,6 +179,63 @@ sections:
             required: true
             default: "snake_case"
             purpose: "How a folder inside code_path is named."
+
+  # <!--------------------------------------------------------------------------------- Capabilities -->
+  capabilities:
+    required: true
+    purpose: "The optional backend capabilities, each switched on or off here — every one carries a default of false, so a capability the project does not ask for stays disabled, produces no code, no task, and no dependency, and never becomes an open question; testing has its own switch, needs_test above."
+    fields:
+      error_handling:
+        required: true
+        purpose: "Centralized error handling in the backend's code — a dedicated error layer beyond what the framework does on its own."
+        fields:
+          enabled:
+            required: true
+            default: false
+            purpose: "Whether the backend implements centralized error handling — false means only the framework's built-in behavior."
+      logging:
+        required: true
+        purpose: "Application logging."
+        fields:
+          enabled:
+            required: true
+            default: false
+            purpose: "Whether the backend writes application logs — false means no logging is set up or required."
+      api_documentation:
+        required: true
+        purpose: "Generated documentation of the API surface, and the format it takes when it is wanted."
+        fields:
+          enabled:
+            required: true
+            default: false
+            purpose: "Whether the backend serves API documentation — false means none is generated or exposed."
+          type:
+            required: false
+            purpose: "The documentation format or standard used — for example OpenAPI/Swagger, or another format the project names; present only when enabled is true, absent while api_documentation is disabled."
+      authentication:
+        required: true
+        purpose: "User authentication on the API."
+        fields:
+          enabled:
+            required: true
+            default: false
+            purpose: "Whether the API authenticates its callers — false means every route is open."
+      https:
+        required: true
+        purpose: "Serving the API over HTTPS."
+        fields:
+          enabled:
+            required: true
+            default: false
+            purpose: "Whether the backend serves HTTPS — false means plain HTTP."
+      api_key:
+        required: true
+        purpose: "API key support on the API surface."
+        fields:
+          enabled:
+            required: true
+            default: false
+            purpose: "Whether requests carry an API key — false means no key is issued or checked."
 
   # <!--------------------------------------------------------------------------------- Code_Layout -->
   code_layout:
