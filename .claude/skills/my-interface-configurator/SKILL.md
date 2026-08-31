@@ -8,104 +8,80 @@ allowed-tools: Read, Write, Edit, Grep, Glob
 
 ---
 
-# Generate Config Files
+# My Interface Configurator
 
-Read and understand `.interface/project.md` completely.
+The Configurator is the transformation layer between the human's project definition and the agent-oriented configuration:
 
-**Only consider Phase 1 of the project. Ignore Phase 2 and Phase 3 entirely. Do not use any information, concepts, parameters, requirements, or development context that belongs to Phase 2 or Phase 3.**
+`README.md + root.yaml + project.md + schema/` → **Project Understanding** → `.interface/config/`
 
-From Phase 1 of `project.md`, identify and understand the project's relevant concepts, parameters, requirements, structure, and context.
+It understands the target project and represents that understanding as structured configuration under `.interface/config/`, in exactly the shapes the Schema defines. It does not copy text from `project.md` into config files — it interprets the project and restructures it according to the meaning and format each Schema assigns.
 
-Then read the files inside `.interface/schema/` and understand the structure, format, fields, and organization defined by the Schema.
+## The understanding sequence
 
-Use the following relationship:
+Perform these four readings **in order**, before writing anything. Each answers one question, and the later readings depend on the earlier ones.
 
-`project.md (Phase 1 only)` → Project Concepts & Parameters
+### 1. `README.md` — what Agent Interface is
 
-`schema/` → Config Structure & Format
+Read the repository's `README.md` first. It establishes what Agent Interface is, the problem it solves, the overall workflow (define → configure → plan → develop → review), and the Configurator's own place in that workflow: reading `project.md` and producing Config according to the Schema. This is the high-level purpose everything below serves.
 
-`Project Understanding + Schema` → `config/`
+### 2. `.interface/root.yaml` — how the Interface is structured
 
-Based on your understanding of the concepts and parameters defined in **Phase 1**, update the existing files inside `.interface/config/` or regenerate them when necessary.
+Read `.interface/root.yaml`, the entry point of the Interface. It maps the folders and files of `.interface/`, names each config file and its responsibility, defines the working modes and what each may write, and indexes the Skills. Use it to know which config files exist, how they relate, and where the Configurator sits: it **runs outside the modes** (transitions S0, S7, S8) and enters none.
 
-The Config files must reflect the current understanding of **Phase 1** while strictly following the structure and format defined by the corresponding Schema files.
+### 3. `.interface/project.md` — the target project
 
-If the existing Config files are incomplete, outdated, or inconsistent with the current Phase 1 content of `project.md`, modify or regenerate them accordingly.
+Read `.interface/project.md` in full. It is the human-managed source of truth for the target project — what the product is, its parts, its technology decisions, and what each phase must deliver.
 
-Do not simply copy the Schema into the Config files. Populate and adapt the Schema structure using the concepts and parameters you understand from Phase 1 of `project.md`.
+Build an agent-oriented understanding of the project from it, under these constraints:
 
-Do not invent project concepts, parameters, requirements, or information that cannot be derived from Phase 1 of `project.md`.
+* **Phase 1 only.** The project is defined incrementally in phases; configure only what Phase 1 states. Any later phase, if present, contributes nothing — not a concept, not a parameter, not a requirement.
+* **No invention.** Do not invent requirements, architecture, behavior, models, parameters, or any other project information that `project.md` does not support. What Phase 1 leaves undefined is written as `"to be defined"` and raised as an open question in `state.yaml` — never filled with a plausible value. The one exception is a field for which a Schema supplies a `default` (see step 4): a default is an answer, not a guess.
 
-Do not modify `.interface/project.md`.
+### 4. `.interface/schema/` — how the understanding is represented
 
-Do not modify `.interface/schema/`.
+Read **every** file in `.interface/schema/`. The Schema is the authoritative definition of the output: which config files exist, what each represents, the structure and required format of each, and how the files relate. Never invent a configuration structure of your own, and never copy a Schema verbatim into a config file — populate its structure with the Phase 1 understanding.
 
-Do not perform any planning, implementation, development, testing, refactoring, or other project work.
+What the schemas give you:
 
-## What the Config is for
+* `file.schema.yaml` — the outer shape **every** config file follows: `meta`, `policy`, `read_order`, `content_map`, `content`. Each `<name>.schema.yaml` gives the shape of that file's `content`. `root.yaml` has no schema of its own — outer shape only.
+* `definition.schema.yaml` → `config/definition.yaml`. The item index is `content.architecture.parts` — every other file's notion of an "item" resolves against it.
+* `rules.schema.yaml` → `config/rules.yaml`. Each group after `precedence` is a list of single-sentence imperative rules derived from the project and its stated constraints.
+* `backend.schema.yaml` / `frontend.schema.yaml` → the per-item files. Honor each schema's `defaults` rule where it declares one: a field carrying a `default` is always written — the project's stated value when the project states one, the schema's default when it does not; such a field is never `"to be defined"` and never becomes an open question. A field with **no** default and no stated value stays `"to be defined"` and is raised as a question.
+* `task.schema.yaml` → `config/task.yaml` — frame and empty plans only; see "State and carry-through" below.
+* `state.schema.yaml` → `config/state.yaml` — the State contract; see below.
 
-The generated Config is the agent-oriented representation of the project. It is what the `my-interface-planner` Skill plans from and what the `my-interface-developer` Skill builds from — neither of them reads `project.md`. Anything those two need in order to understand how the project is planned and developed has to be in `config/`, expressed in the shape the Schema defines.
+## Generating `.interface/config/`
 
-## Rules
+With the four readings done, update the existing files under `.interface/config/` or generate them where missing, so that they represent the current Phase 1 understanding and strictly follow the Schema. If existing config files are incomplete, outdated, or inconsistent with the current Phase 1 content of `project.md`, modify or regenerate them accordingly — and change nothing that is already correct and current.
 
-Rules provide additional constraints for specific agent responsibilities when generating Config files.
+* `definition.yaml` and `rules.yaml` carry `agent_may_edit: false`. Regenerating them from `project.md` is the one time they are touched, and only inside this job.
+* Apply the Skill Rules below, and — on a run where `config/rules.yaml` already exists — stay consistent with the rules it carries.
 
-Rules do not replace the Schema and do not change the Schema structure.
+## State and carry-through
 
-Apply only the rules that are explicitly defined below.
+This job runs **outside the modes** and does not enter one. Its state writes are limited to transitions **S0**, **S7**, and **S8** as the State contract defines them (`config/state.yaml` under `content.state_authority`; for a file being created, the default in `schema/state.schema.yaml` governs its own seeding).
+
+* **S0 — only when `state.yaml` does not exist:** create it with `active.mode: "not set"`, `active.item: "none"`, `set_by: "my-interface-configurator, generating state.yaml"`, `set_at` today, and a `mode_reason` saying the next Skill the human invokes will set the mode. Seed `content.state_authority` **verbatim** from the `default` in `schema/state.schema.yaml` — no `state.yaml` is ever created without it. Never write `set_by: "the human"` for a value the human did not type.
+* **Regeneration carries runtime state through untouched:** `content.active` and the live `content.state_authority` in `state.yaml`, and every plan's `phase_titles` with its `phase_titles_lifecycle` and `phase_titles_derived_from` in `task.yaml`, stay exactly as found. A regeneration never resets state and never rewrites the live authority.
+* **S7 / S8:** you may raise blockers and open questions, and record the human's own answer under `answered_so_far` — dated and in the human's terms. You never answer a question yourself, and never close one by supplying its answer.
+* **No tasks, no build stages:** this job produces configuration, not a plan. Plans stay under `content.plans.<item>` in `task.yaml`, one per indexed item, with `phases` empty. `phase_titles` are derived by `my-interface-planner`, not here — write an empty list with lifecycle `empty` only where the plan is new.
+
+## What this job is not
+
+The Configurator understands the project, structures that understanding, and generates configuration. It does **not** plan tasks, implement code, modify the target project's implementation, test, refactor, or perform any other development work — and it does not invent project requirements.
+
+Its inputs are read-only: `README.md`, `.interface/root.yaml`, `.interface/project.md`, and `.interface/schema/` are never modified, renamed, or deleted by this job — as `root.yaml`'s policy and the State contract's `human_only_decisions` already establish.
+
+## Skill Rules
+
+Rules provide additional constraints for specific responsibilities when generating Config files. They do not replace the Schema and do not change its structure. Apply only the rules explicitly defined here.
 
 #### Backend
 
 * API routes do not need to be defined in detailed, route-by-route form inside `backend.yaml`.
 
-## Before starting
+## Completion
 
-Confirm both:
-
-* You have read `.interface/project.md` in full and are using **Phase 1 only**. Phase 2 and Phase 3 contribute nothing — not a concept, not a parameter, not a requirement.
-
-* You have read every file in `.interface/schema/`. `file.schema.yaml` gives the outer shape every interface file follows (meta, policy, read_order, content_map, content); each `<name>.schema.yaml` gives the shape of that file's `content`. `root.yaml` has no schema of its own — outer shape only. The item index is `definition.yaml` under `content.architecture.parts`.
-
-## While working
-
-* `.interface/project.md` and `.interface/schema/` are inputs. Do not modify either.
-
-* `definition.yaml` and `rules.yaml` carry `agent_may_edit: false`. Regenerating them from `project.md` is the one time they are touched, and only inside this job.
-
-* `content.default` in `rules.yaml` is seeded **verbatim** from the `default` in `.interface/schema/rules.schema.yaml`, on every generation — the one section of `rules.yaml` that is not derived from `project.md`. No `rules.yaml` is written without it, it is never narrowed, reworded, or dropped by a regeneration, and it is read before every other rule group. A change it needs is the human's, raised as an open question in `state.yaml`.
-
-* This job runs **outside the modes**, and does not enter one. Carry `content.active` in `state.yaml` through a regeneration exactly as you found it — the mode and item a Skill or the human set are runtime state, not something a regeneration decides. Write `active` only when `state.yaml` does not yet exist — transition **S0** — and then as `mode: "not set"`, `item: "none"`, `set_by: "my-interface-configurator, generating state.yaml"`, `set_at` today, and a `mode_reason` saying that the next Skill the human invokes will set the mode. Under S0 you also seed `content.state_authority` **verbatim** from the `default` in `.interface/schema/state.schema.yaml` — no `state.yaml` is ever created without it. A regeneration carries the live `content.state_authority` through untouched, exactly like `active`. Never write `set_by: "the human"` for a value the human did not type. Who may write `active`, and when, is fixed in the State contract — `config/state.yaml` under `content.state_authority`; for a file being created, the schema's default governs its own seeding.
-
-* You may raise blockers and open questions — transitions **S7** and **S8** — and record the human's own answer to a question under `answered_so_far` — dated and in the human's terms. You never answer one yourself, and you never close one by supplying its answer.
-
-* Do not invent. Anything Phase 1 leaves undefined is written as "to be defined" and raised as an open question in `state.yaml` — never filled with a plausible value.
-
-* Write no tasks and no build stages. This job produces configuration, not a plan, and `policy.task_creation` in `task.yaml` forbids speculative tasks. Plans stay under `content.plans.<item>`, one per item, with `phases` empty. An item's `phase_titles` are derived from that item's configuration by `my-interface-planner`, not here — a regeneration carries an existing `phase_titles`, its `phase_titles_lifecycle`, and its `phase_titles_derived_from` through untouched, and writes an empty list with lifecycle `empty` only where the plan is new.
-
-* Do not plan, implement, test, or refactor anything.
-
-* Apply the applicable Rules when generating Config files.
-
-## The task
-
-Your task is only to:
-
-1. Read and understand `project.md`.
-
-2. **Limit your understanding strictly to Phase 1.**
-
-3. Ignore Phase 2 and Phase 3.
-
-4. Understand the structure and format defined by `schema/`.
-
-5. Apply the applicable Rules defined in this Skill.
-
-6. Update or regenerate `config/` based on the Phase 1 project understanding and the Schema.
-
-7. Ensure the resulting Config files follow the Schema and represent the current Phase 1 project understanding.
-
-8. Ensure the runtime state survived: `content.active` and `content.state_authority` in `state.yaml`, and every plan's `phase_titles` with its lifecycle, are as they were before the run unless the file was created by it — and where it was created, that `content.state_authority` equals the schema's default verbatim.
-
-Once the Config files correctly represent Phase 1 according to the Schema and applicable Rules, stop. This task is complete.
+Once the Config files correctly represent Phase 1 according to the Schema and the applicable rules — and the runtime state survived (`content.active` and `content.state_authority` as they were unless this run created the file, and where it created the file, `content.state_authority` equal to the schema's default verbatim; every existing plan's `phase_titles` and lifecycle unchanged) — stop. The task is complete.
 
 Report which files changed, and which open questions in `state.yaml` are new or now closed.
