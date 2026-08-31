@@ -41,7 +41,7 @@ Nothing is repaired in this mode. You may write exactly two things:
 
 ## Not this mode's work
 
-Do not fix what you found — not the code, not the plan, not a contract, not a state field another Skill wrote wrongly. Writing tasks belongs to the `my-interface-planner` Skill and implementing them to the `my-interface-developer` Skill. Do not enter or set another Skill's mode. Report to the human and stop.
+Do not fix what you found — not the code, not the plan, not a contract, not a state field another Skill wrote wrongly. Writing tasks belongs to the `my-interface-tasker` Skill and implementing them to the `my-interface-developer` Skill. Do not enter or set another Skill's mode. Report to the human and stop.
 
 ## Ending the run
 

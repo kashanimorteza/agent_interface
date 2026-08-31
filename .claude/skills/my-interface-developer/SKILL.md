@@ -13,7 +13,7 @@ Development mode. Read `.interface/root.yaml` and follow its `read_order` before
 This Skill owns development mode and enters it itself — transition **S2**. The human's invocation is the decision; you record it.
 
 1. **Resolve the item.** It is the one named in the invocation — `/my-interface-developer backend` names `backend`. If the invocation names none and exactly one item is enabled, that is it. If it names none and more than one is enabled, stop and ask. Never guess an item.
-2. **Check it is buildable.** The item must be indexed, enabled, and hold at least one task in `content.plans.<item>.phases`. A mode with nothing to build is not entered: if the plan is empty, stop and say so — planning belongs to `my-interface-planner`.
+2. **Check it is buildable.** The item must be indexed, enabled, and hold at least one task in `content.plans.<item>.phases`. A mode with nothing to build is not entered: if the plan is empty, stop and say so — planning belongs to `my-interface-tasker`.
 3. **Write `active`.** Set `mode` to `development`, `item` to the resolved item, `mode_reason` to the invocation, `set_by` to `my-interface-developer, on the human's invocation`, and `set_at` to today. Write `state.yaml` before touching any code.
 4. **Where the human set `active` by hand** and it disagrees with the invocation, stop and ask — transition S6 stands above you, and you never overwrite what the human wrote.
 
@@ -46,4 +46,4 @@ Record what the run concluded — transition **S4**: rewrite `content.active.mod
 
 ## Not this mode's work
 
-Do not write, renumber, or re-scope tasks, and do not change `task_schema`, `task_states`, a plan's `phase_titles`, or its `phase_titles_lifecycle`. Planning belongs to the `my-interface-planner` Skill. Do not enter or set another Skill's mode. If the plan is wrong, say so and stop.
+Do not write, renumber, or re-scope tasks, and do not change `task_schema`, `task_states`, a plan's `phase_titles`, or its `phase_titles_lifecycle`. Planning belongs to the `my-interface-tasker` Skill. Do not enter or set another Skill's mode. If the plan is wrong, say so and stop.

@@ -1,16 +1,16 @@
 ---
 
-name: my-interface-configurator
+name: my-interface-interpreter
 
-description: Generate or update `.interface/config/` from Phase 1 of `.interface/project.md` and the shapes defined in `.interface/schema/` — the agent-oriented representation of the project that the my-interface-planner and my-interface-developer work from. Use when the project definition changes, or when config files are missing, outdated, or inconsistent with Phase 1.
+description: Generate or update `.interface/config/` from Phase 1 of `.interface/project.md` and the shapes defined in `.interface/schema/` — the agent-oriented representation of the project that the my-interface-tasker and my-interface-developer work from. Use when the project definition changes, or when config files are missing, outdated, or inconsistent with Phase 1.
 
 allowed-tools: Read, Write, Edit, Grep, Glob
 
 ---
 
-# My Interface Configurator
+# My Interface Interpreter
 
-The Configurator is the transformation layer between the human's project definition and the agent-oriented configuration:
+The Interpreter is the transformation layer between the human's project definition and the agent-oriented configuration:
 
 `README.md + root.yaml + project.md + schema/` → **Project Understanding** → `.interface/config/`
 
@@ -22,11 +22,11 @@ Perform these four readings **in order**, before writing anything. Each answers 
 
 ### 1. `README.md` — what Agent Interface is
 
-Read the repository's `README.md` first. It establishes what Agent Interface is, the problem it solves, the overall workflow (define → configure → plan → develop → review), and the Configurator's own place in that workflow: reading `project.md` and producing Config according to the Schema. This is the high-level purpose everything below serves.
+Read the repository's `README.md` first. It establishes what Agent Interface is, the problem it solves, the overall workflow (define → configure → plan → develop → review), and the Interpreter's own place in that workflow: reading `project.md` and producing Config according to the Schema. This is the high-level purpose everything below serves.
 
 ### 2. `.interface/root.yaml` — how the Interface is structured
 
-Read `.interface/root.yaml`, the entry point of the Interface. It maps the folders and files of `.interface/`, names each config file and its responsibility, defines the working modes and what each may write, and indexes the Skills. Use it to know which config files exist, how they relate, and where the Configurator sits: it **runs outside the modes** (transitions S0, S7, S8) and enters none.
+Read `.interface/root.yaml`, the entry point of the Interface. It maps the folders and files of `.interface/`, names each config file and its responsibility, defines the working modes and what each may write, and indexes the Skills. Use it to know which config files exist, how they relate, and where the Interpreter sits: it **runs outside the modes** (transitions S0, S7, S8) and enters none.
 
 ### 3. `.interface/project.md` — the target project
 
@@ -61,14 +61,14 @@ With the four readings done, update the existing files under `.interface/config/
 
 This job runs **outside the modes** and does not enter one. Its state writes are limited to transitions **S0**, **S7**, and **S8** as the State contract defines them (`config/state.yaml` under `content.state_authority`; for a file being created, the default in `schema/state.schema.yaml` governs its own seeding).
 
-* **S0 — only when `state.yaml` does not exist:** create it with `active.mode: "not set"`, `active.item: "none"`, `set_by: "my-interface-configurator, generating state.yaml"`, `set_at` today, and a `mode_reason` saying the next Skill the human invokes will set the mode. Seed `content.state_authority` **verbatim** from the `default` in `schema/state.schema.yaml` — no `state.yaml` is ever created without it. Never write `set_by: "the human"` for a value the human did not type.
+* **S0 — only when `state.yaml` does not exist:** create it with `active.mode: "not set"`, `active.item: "none"`, `set_by: "my-interface-interpreter, generating state.yaml"`, `set_at` today, and a `mode_reason` saying the next Skill the human invokes will set the mode. Seed `content.state_authority` **verbatim** from the `default` in `schema/state.schema.yaml` — no `state.yaml` is ever created without it. Never write `set_by: "the human"` for a value the human did not type.
 * **Regeneration carries runtime state through untouched:** `content.active` and the live `content.state_authority` in `state.yaml`, and every plan's `phase_titles` with its `phase_titles_lifecycle` and `phase_titles_derived_from` in `task.yaml`, stay exactly as found. A regeneration never resets state and never rewrites the live authority.
 * **S7 / S8:** you may raise blockers and open questions, and record the human's own answer under `answered_so_far` — dated and in the human's terms. You never answer a question yourself, and never close one by supplying its answer.
-* **No tasks, no build stages:** this job produces configuration, not a plan. Plans stay under `content.plans.<item>` in `task.yaml`, one per indexed item, with `phases` empty. `phase_titles` are derived by `my-interface-planner`, not here — write an empty list with lifecycle `empty` only where the plan is new.
+* **No tasks, no build stages:** this job produces configuration, not a plan. Plans stay under `content.plans.<item>` in `task.yaml`, one per indexed item, with `phases` empty. `phase_titles` are derived by `my-interface-tasker`, not here — write an empty list with lifecycle `empty` only where the plan is new.
 
 ## What this job is not
 
-The Configurator understands the project, structures that understanding, and generates configuration. It does **not** plan tasks, implement code, modify the target project's implementation, test, refactor, or perform any other development work — and it does not invent project requirements.
+The Interpreter understands the project, structures that understanding, and generates configuration. It does **not** plan tasks, implement code, modify the target project's implementation, test, refactor, or perform any other development work — and it does not invent project requirements.
 
 Its inputs are read-only: `README.md`, `.interface/root.yaml`, `.interface/project.md`, and `.interface/schema/` are never modified, renamed, or deleted by this job — as `root.yaml`'s policy and the State contract's `human_only_decisions` already establish.
 

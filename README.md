@@ -28,7 +28,7 @@ In this architecture:
 
 - The Developer defines the project and its requirements in `project.md`.
 - `Schema` defines the structure and standard for the required information.
-- The `my-interface-configurator` Skill reads and understands the project and produces Config according to the Schema.
+- The `my-interface-interpreter` Skill reads and understands the project and produces Config according to the Schema.
 
 
 
@@ -51,11 +51,11 @@ The `.interface/` directory contains four main parts:
 
 ## Agent Skills
 
-### `my-interface-configurator`
+### `my-interface-interpreter`
 
 Reads `project.md` and generates the project configuration according to the Schema.
 
-### `my-interface-planner`
+### `my-interface-tasker`
 
 Reads the project configuration and generates Tasks and the development plan.
 
@@ -69,7 +69,7 @@ Reviews the implementation against the Tasks and project specifications.
 
 ### `my-interface-clear`
 
-Removes the generated Config and Tasks and returns the project to a clean state, ready for the Configurator to run again.
+Removes the generated Config and Tasks and returns the project to a clean state, ready for the Interpreter to run again.
 
 
 <br > <br>
@@ -79,7 +79,7 @@ Removes the generated Config and Tasks and returns the project to a clean state,
 
 Exactly one mode is active at a time — `planning`, `development`, or `review` — named in `.interface/config/state.yaml` under `content.active.mode`, together with the item in play.
 
-A mode is entered by invoking the Skill that owns it. The invocation is the Developer's decision, and the Skill records it: `/my-interface-planner backend` sets the mode to `planning` and the item to `backend`. Nothing is hand-edited into `state.yaml` first.
+A mode is entered by invoking the Skill that owns it. The invocation is the Developer's decision, and the Skill records it: `/my-interface-tasker backend` sets the mode to `planning` and the item to `backend`. Nothing is hand-edited into `state.yaml` first.
 
 A Skill may write only the mode it owns, only on an invocation of itself, and only an item the configuration indexes. Where the invocation leaves the item ambiguous, the Skill stops and asks rather than choosing.
 
@@ -101,17 +101,17 @@ Understand the project requirements and overall definition.
 
 ### 2. Configure the Project
 
-Use the `my-interface-configurator` Skill:
+Use the `my-interface-interpreter` Skill:
 
-`.claude/skills/my-interface-configurator/SKILL.md`
+`.claude/skills/my-interface-interpreter/SKILL.md`
 
 Use the project Understanding and the `schema/` structure to generate the project configuration files in `config/`.
 
 ### 3. Plan the Project
 
-Use the `my-interface-planner` Skill:
+Use the `my-interface-tasker` Skill:
 
-`.claude/skills/my-interface-planner/SKILL.md`
+`.claude/skills/my-interface-tasker/SKILL.md`
 
 Read the generated Config and create the required Tasks according to the defined Task structure.
 

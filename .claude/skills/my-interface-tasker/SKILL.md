@@ -1,6 +1,6 @@
 ---
-name: my-interface-planner
-description: Planning mode — turn the generated configuration in `.interface/config/` into a structured task plan for one scope (backend, frontend, or any other item the configuration indexes), written into `task.yaml` in the shape the schema defines. Invoked with the scope, as `/my-interface-planner backend`. Owns planning mode and enters it itself; no manual editing of `state.yaml` is needed first. Plans only; never implements, and never reads `project.md`.
+name: my-interface-tasker
+description: Planning mode — turn the generated configuration in `.interface/config/` into a structured task plan for one scope (backend, frontend, or any other item the configuration indexes), written into `task.yaml` in the shape the schema defines. Invoked with the scope, as `/my-interface-tasker backend`. Owns planning mode and enters it itself; no manual editing of `state.yaml` is needed first. Plans only; never implements, and never reads `project.md`.
 allowed-tools: Read, Edit, Grep, Glob
 ---
 
@@ -8,15 +8,15 @@ allowed-tools: Read, Edit, Grep, Glob
 
 Planning mode. The pipeline is `.interface/config/` → this Skill → a structured task plan. Nothing enters from anywhere else.
 
-Read `.interface/root.yaml` first and follow its `read_order`, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below; read it before writing anything into `state.yaml`. Where `state.yaml` does not exist yet, stop: the `my-interface-configurator` Skill creates it, seeded with the default authority from `schema/state.schema.yaml`. Then read the configuration. `.interface/project.md` is **not read here** — the `my-interface-configurator` Skill owns it, and `config/` is the understanding it produced. You form no understanding of the project of your own; where the configuration is silent, the project is silent.
+Read `.interface/root.yaml` first and follow its `read_order`, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below; read it before writing anything into `state.yaml`. Where `state.yaml` does not exist yet, stop: the `my-interface-interpreter` Skill creates it, seeded with the default authority from `schema/state.schema.yaml`. Then read the configuration. `.interface/project.md` is **not read here** — the `my-interface-interpreter` Skill owns it, and `config/` is the understanding it produced. You form no understanding of the project of your own; where the configuration is silent, the project is silent.
 
 ## Entering planning mode
 
 This Skill owns planning mode and enters it itself. The human's invocation *is* the decision — you record it, you do not make it.
 
-1. **Resolve the scope.** The item is the one named in the invocation — `/my-interface-planner backend` names `backend`. If the invocation names none and exactly one item is `enabled` in the configuration, that is the scope. If it names none and more than one is enabled, **stop and ask the human which item.** Never guess an item, and never carry one over from a previous run.
+1. **Resolve the scope.** The item is the one named in the invocation — `/my-interface-tasker backend` names `backend`. If the invocation names none and exactly one item is `enabled` in the configuration, that is the scope. If it names none and more than one is enabled, **stop and ask the human which item.** Never guess an item, and never carry one over from a previous run.
 2. **Check it is plannable.** The item must be indexed under `content.architecture.parts` in `definition.yaml`, hold its own key under `content.plans` in `task.yaml`, and carry `enabled: true`. If not, stop and tell the human — do not adjust the state to fit.
-3. **Write `active`** — transition **S1**. Set `content.active.mode` to `planning`, `content.active.item` to the resolved item, `mode_reason` to the invocation that put it there, `set_by` to `my-interface-planner, on the human's invocation`, and `set_at` to today. Write `state.yaml` before planning anything.
+3. **Write `active`** — transition **S1**. Set `content.active.mode` to `planning`, `content.active.item` to the resolved item, `mode_reason` to the invocation that put it there, `set_by` to `my-interface-tasker, on the human's invocation`, and `set_at` to today. Write `state.yaml` before planning anything.
 4. **Where the human has already set `active` by hand**, transition S6 stands above you. S6 bites only when what the human wrote *disagrees* with the invocation — another mode, another item; then stop and ask, do not overwrite it, and do not quietly plan the other item. `mode: not set` with `item: none` disagrees with nothing and is the normal resting state: proceed.
 
 You may set the mode to `planning` and to nothing else, and only on an invocation of this Skill. Setting a mode you were not invoked into, or setting one for another Skill to find, is outside this Skill's authority.
@@ -79,7 +79,7 @@ A phase holds groups and a group holds tasks, so no phase is written until tasks
 - `task.yaml` — the scope's `phase_titles`, `phase_titles_lifecycle` and `phase_titles_derived_from` while the lifecycle is `empty` or `derived`, and the `phases` of that scope's plan. Never `task_schema`, never `task_states`, and never a `phase_titles` the human has confirmed.
 - `state.yaml` — `content.active` under transitions **S1** and **S4**, blockers under **S7**, and open questions under **S8**. An answer to a question is never written here; only the human's own answer, recorded as theirs.
 
-The rest of the configuration is input. `definition.yaml`, `rules.yaml`, the item files, `root.yaml`, and `schema/` are read and left as they are — a change any of them needs is an open question in `state.yaml`, not an edit. The grant on the item files stays unused here: this Skill plans, and settling an item's settings or its draft contract is the configurator's work.
+The rest of the configuration is input. `definition.yaml`, `rules.yaml`, the item files, `root.yaml`, and `schema/` are read and left as they are — a change any of them needs is an open question in `state.yaml`, not an edit. The grant on the item files stays unused here: this Skill plans, and settling an item's settings or its draft contract is the interpreter's work.
 
 ## Ending the run
 
