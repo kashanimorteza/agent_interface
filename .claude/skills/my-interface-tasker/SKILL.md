@@ -1,7 +1,8 @@
 ---
 name: my-interface-tasker
 description: Planning mode — read the generated Understanding and the current task standard from `.interface/config/`, then create or update the authorized plan for the project phase or phases named by the Developer. Plans only; never implements and never interprets `project.md`.
-allowed-tools: Read, Edit, Grep, Glob
+argument-hint: "[phase-id ...]"
+disable-model-invocation: true
 ---
 
 # Plan from the generated configuration
@@ -34,7 +35,7 @@ If a required value is absent, ambiguous, inconsistent, or marked as undefined, 
 
 Planning begins only from the Developer's invocation.
 
-Treat the project phase or phases named in the invocation as the planning scope. Resolve each requested phase from the current generated Understanding before selecting targets or writing anything.
+Treat the project phase or phases named in `$ARGUMENTS` as the planning scope. Resolve each requested phase from the current generated Understanding before selecting targets or writing anything. If no phase is named, ask the Developer rather than selecting one.
 
 - When one phase is named, plan only that phase.
 - When several phases or all phases are requested, plan exactly those phases in the project's defined order.

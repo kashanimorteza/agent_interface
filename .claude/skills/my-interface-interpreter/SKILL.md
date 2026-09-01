@@ -1,87 +1,46 @@
 ---
-
 name: my-interface-interpreter
-
-description: Generate or update `.interface/config/` from Phase 1 of `.interface/project.md` and the shapes defined in `.interface/schema/` — the agent-oriented representation of the project that the my-interface-tasker and my-interface-developer work from. Use when the project definition changes, or when config files are missing, outdated, or inconsistent with Phase 1.
-
-allowed-tools: Read, Write, Edit, Grep, Glob
-
+description: Interpret `.interface/project.md` into the generated Understanding under `.interface/config/` using the Interface map and Schemas. Use when the Developer explicitly asks to generate, refresh, or reconcile Config after the target project definition changes.
+disable-model-invocation: true
 ---
 
-# My Interface Interpreter
+# Interpret the target project
 
-The Interpreter is the transformation layer between the human's project definition and the agent-oriented configuration:
+Transform the Developer's natural-language target-project definition into the structured configuration consumed by the other Agent Interface Skills.
 
-`README.md + root.yaml + project.md + schema/` → **Project Understanding** → `.interface/config/`
+## Read before interpreting
 
-It understands the target project and represents that understanding as structured configuration under `.interface/config/`, in exactly the shapes the Schema defines. It does not copy text from `project.md` into config files — it interprets the project and restructures it according to the meaning and format each Schema assigns.
+1. Read `README.md` to understand Agent Interface, its workflow, and the Interpreter's role. README content is system context only; never treat it as a target-project fact.
+2. Read `.interface/root.yaml` as the Interface entry point. Follow its mappings, read order, mode boundaries, and authority references rather than relying on paths or permissions remembered by this Skill.
+3. Read `.interface/project.md` completely. The Interpreter is the only workflow Skill that reads it, and it must read it because it is the human-managed source for the target project.
+4. Read the Schemas required by the Interface map before generating their corresponding Config files.
+5. Read existing Config and the live State contract before writing so protected state and human-owned values are preserved exactly as their current authorities require.
 
-## The understanding sequence
+## Sources of truth
 
-Perform these four readings **in order**, before writing anything. Each answers one question, and the later readings depend on the earlier ones.
+- Target-project facts come only from `.interface/project.md`.
+- Output structure, defaults, relationships, and validation requirements come only from the mapped Schemas.
+- Write permissions, state transitions, carry-through rules, and human-only decisions come only from the current Interface map, file policies, and live State contract.
+- Other generated Config may be used for consistency, but it never overrides the human's current project definition or the Schemas that shape it.
 
-### 1. `README.md` — what Agent Interface is
+Do not reproduce configuration keys, Schema fields, transition identifiers, defaults, or mode permissions inside this Skill. Read them fresh from the files that own them.
 
-Read the repository's `README.md` first. It establishes what Agent Interface is, the problem it solves, the overall workflow (define → configure → plan → develop → review), and the Interpreter's own place in that workflow: reading `project.md` and producing Config according to the Schema. This is the high-level purpose everything below serves.
+## Generate the Understanding
 
-### 2. `.interface/root.yaml` — how the Interface is structured
+Represent all project information supported by the current project definition and required by the current Schemas. Preserve the project's stated meaning without copying its prose mechanically and without inventing missing decisions.
 
-Read `.interface/root.yaml`, the entry point of the Interface. It maps the folders and files of `.interface/`, names each config file and its responsibility, defines the working modes and what each may write, and indexes the Skills. Use it to know which config files exist, how they relate, and where the Interpreter sits: it **runs outside the modes** (transitions S0, S7, S8) and enters none.
+Ensure the generated Understanding represents every project phase the Developer defined, including the information the applicable Schema requires to identify, order, target, and explain each phase. Later Skills must be able to resolve a requested phase entirely from Config without reading `project.md`.
 
-### 3. `.interface/project.md` — the target project
+When required information is absent or ambiguous, use the live Config's question and blocker mechanisms. Apply a Schema default only when the Schema actually defines one.
 
-Read `.interface/project.md` in full. It is the human-managed source of truth for the target project — what the product is, its parts, its technology decisions, and what each phase must deliver.
+Generate or update only the files and fields authorized for this Interpreter run. Preserve protected runtime state and human-owned content according to their live policies. If current authorities conflict and their configured precedence does not resolve the conflict, stop and ask the Developer.
 
-Build an agent-oriented understanding of the project from it, under these constraints:
+## Boundaries
 
-* **Phase 1 only.** The project is defined incrementally in phases; configure only what Phase 1 states. Any later phase, if present, contributes nothing — not a concept, not a parameter, not a requirement.
-* **No invention.** Do not invent requirements, architecture, behavior, models, parameters, or any other project information that `project.md` does not support. What Phase 1 leaves undefined is written as `"to be defined"` and raised as an open question in `state.yaml` — never filled with a plausible value. The one exception is a field for which a Schema supplies a `default` (see step 4): a default is an answer, not a guess.
+This Skill creates Understanding, not plans or product code. Do not create tasks, execute tasks, implement, test, refactor, or modify the target project's source code.
 
-### 4. `.interface/schema/` — how the understanding is represented
-
-Read **every** file in `.interface/schema/`. The Schema is the authoritative definition of the output: which config files exist, what each represents, the structure and required format of each, and how the files relate. Never invent a configuration structure of your own, and never copy a Schema verbatim into a config file — populate its structure with the Phase 1 understanding.
-
-What the schemas give you:
-
-* `file.schema.yaml` — the outer shape **every** config file follows: `meta`, `policy`, `read_order`, `content_map`, `content`. Each `<name>.schema.yaml` gives the shape of that file's `content`. `root.yaml` has no schema of its own — outer shape only.
-* `definition.schema.yaml` → `config/definition.yaml`. The item index is `content.architecture.parts` — every other file's notion of an "item" resolves against it.
-* `rules.schema.yaml` → `config/rules.yaml`. Each group after `precedence` is a list of single-sentence imperative rules derived from the project and its stated constraints.
-* `backend.schema.yaml` / `frontend.schema.yaml` → the per-item files. Honor each schema's `defaults` rule where it declares one: a field carrying a `default` is always written — the project's stated value when the project states one, the schema's default when it does not; such a field is never `"to be defined"` and never becomes an open question. A field with **no** default and no stated value stays `"to be defined"` and is raised as a question.
-* `task.schema.yaml` → `config/task.yaml` — frame and empty plans only; see "State and carry-through" below.
-* `state.schema.yaml` → `config/state.yaml` — the State contract; see below.
-
-## Generating `.interface/config/`
-
-With the four readings done, update the existing files under `.interface/config/` or generate them where missing, so that they represent the current Phase 1 understanding and strictly follow the Schema. If existing config files are incomplete, outdated, or inconsistent with the current Phase 1 content of `project.md`, modify or regenerate them accordingly — and change nothing that is already correct and current.
-
-* `definition.yaml` and `rules.yaml` carry `agent_may_edit: false`. Regenerating them from `project.md` is the one time they are touched, and only inside this job.
-* Apply the Skill Rules below, and — on a run where `config/rules.yaml` already exists — stay consistent with the rules it carries.
-
-## State and carry-through
-
-This job runs **outside the modes** and does not enter one. Its state writes are limited to transitions **S0**, **S7**, and **S8** as the State contract defines them (`config/state.yaml` under `content.state_authority`; for a file being created, the default in `schema/state.schema.yaml` governs its own seeding).
-
-* **S0 — only when `state.yaml` does not exist:** create it with `active.mode: "not set"`, `active.item: "none"`, `set_by: "my-interface-interpreter, generating state.yaml"`, `set_at` today, and a `mode_reason` saying the next Skill the human invokes will set the mode. Seed `content.state_authority` **verbatim** from the `default` in `schema/state.schema.yaml` — no `state.yaml` is ever created without it. Never write `set_by: "the human"` for a value the human did not type.
-* **Regeneration carries runtime state through untouched:** `content.active` and the live `content.state_authority` in `state.yaml`, and every plan's `phase_titles` with its `phase_titles_lifecycle` and `phase_titles_derived_from` in `task.yaml`, stay exactly as found. A regeneration never resets state and never rewrites the live authority.
-* **S7 / S8:** you may raise blockers and open questions, and record the human's own answer under `answered_so_far` — dated and in the human's terms. You never answer a question yourself, and never close one by supplying its answer.
-* **No tasks, no build stages:** this job produces configuration, not a plan. Plans stay under `content.plans.<item>` in `task.yaml`, one per indexed item, with `phases` empty. `phase_titles` are derived by `my-interface-tasker`, not here — write an empty list with lifecycle `empty` only where the plan is new.
-
-## What this job is not
-
-The Interpreter understands the project, structures that understanding, and generates configuration. It does **not** plan tasks, implement code, modify the target project's implementation, test, refactor, or perform any other development work — and it does not invent project requirements.
-
-Its inputs are read-only: `README.md`, `.interface/root.yaml`, `.interface/project.md`, and `.interface/schema/` are never modified, renamed, or deleted by this job — as `root.yaml`'s policy and the State contract's `human_only_decisions` already establish.
-
-## Skill Rules
-
-Rules provide additional constraints for specific responsibilities when generating Config files. They do not replace the Schema and do not change its structure. Apply only the rules explicitly defined here.
-
-#### Backend
-
-* API routes do not need to be defined in detailed, route-by-route form inside `backend.yaml`.
+Do not modify `README.md`, `.interface/root.yaml`, `.interface/project.md`, or the Schemas. A needed change to an input or authority is reported through the configured mechanism rather than applied here.
 
 ## Completion
 
-Once the Config files correctly represent Phase 1 according to the Schema and the applicable rules — and the runtime state survived (`content.active` and `content.state_authority` as they were unless this run created the file, and where it created the file, `content.state_authority` equal to the schema's default verbatim; every existing plan's `phase_titles` and lifecycle unchanged) — stop. The task is complete.
-
-Report which files changed, and which open questions in `state.yaml` are new or now closed.
+Validate the generated files against their current Schemas and report which Config files changed, which gaps were recorded, and anything that prevented a complete interpretation.

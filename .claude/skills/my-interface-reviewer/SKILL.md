@@ -1,48 +1,42 @@
 ---
 name: my-interface-reviewer
-description: Review mode — re-run what the plan claims is done, check the result against the contracts, `touches`, and `rules.yaml`, and report to the human. Invoked as `/my-interface-reviewer` or with an item. Owns review mode and enters it itself; no manual editing of `state.yaml` is needed first. Reports only; repairs nothing.
-allowed-tools: Read, Edit, Grep, Glob, Bash
+description: Review mode — verify the implemented result for the project phase named by the Developer against its current plan, Config, contracts, and rules. Reports evidence and records only authorized review state; never repairs the result.
+argument-hint: "[phase-id]"
+disable-model-invocation: true
 ---
 
-# Review the result
+# Review one project phase
 
-Review mode. Read `.interface/root.yaml` and follow its `read_order` before anything else, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below. The Config and the plan inside `task.yaml` are what the result is judged against — `.interface/project.md` is not read here.
+Review the implemented result for the project phase named in `$ARGUMENTS`.
 
-## Entering review mode
+## Read before reviewing
 
-This Skill owns review mode and enters it itself — transition **S3**. The human's invocation is the decision; you record it.
+1. Read `README.md` to understand Agent Interface, its workflow, and the Reviewer Skill's role. README content is system context only; never use it as a target-project requirement.
+2. Read `.interface/root.yaml` and follow its mappings, read order, mode boundaries, and authority references.
+3. Read the live State contract before recording any review state.
+4. Read the current Task file and its governing Schema completely.
+5. Resolve the requested phase from the generated Understanding and its plan, then read every mapped Config file, rule set, contract, and implementation location required to review that phase.
 
-1. **Resolve the item.** The one named in the invocation; failing that, the one already in `content.active.item`; failing that, the single enabled item. Where more than one is enabled and none is named or active, stop and ask.
-2. **Write `active`.** Set `mode` to `review`, `item` to the resolved item, `mode_reason` to the invocation, `set_by` to `my-interface-reviewer, on the human's invocation`, and `set_at` to today.
-3. **Where the human set `active` by hand** and it disagrees with the invocation, stop and ask — you never overwrite what the human wrote.
+Do not read `.interface/project.md`. Review the result only against the generated Understanding and the plan that downstream development was authorized to execute.
 
-You may set the mode to `review` and to nothing else, and only on an invocation of this Skill.
+## Phase scope
 
-Nothing is repaired in this mode. You may write exactly two things:
+Exactly one project phase must be named. If it is missing, ambiguous, absent from the Understanding, or has no reviewable plan, stop and ask or use the configured gap mechanism. Do not select a phase or target implicitly and do not carry one over from an earlier run.
 
-- `state.yaml` — `content.active` under transitions S3 and S4, and blockers and open questions under S7 and S8. Never an answer to a question
-- `task.yaml` — the `status`, `blocker`, and `log` fields of a task, only to mark it blocked and record what was found
+Enter review mode only as the live State contract authorizes for this invocation. Review only the requested phase; do not expand into another phase.
 
-`Edit` exists for exactly those two files and for nothing else. Everything else is read-only, code under an item's `code_path` included.
+## Review
 
-## What to check
+Derive every check from the current Config, Task standard, project Rules, contracts, and task evidence. Re-run the verification required by completed tasks in the context their target Config defines. Check that implementation scope, dependencies, contracts, state, and recorded outcomes satisfy their current authorities.
 
-- Does each `done` task's `verify` still pass when re-run from the item's `verify_cwd`? A task marked done whose verify fails goes back to `blocked`, with what you found in its log.
-- Does the code touch only the paths its task listed in `touches`?
-- Does the built surface still match the contract version the task named in `needs_contract`?
-- Does anything violate `rules.yaml`? Security overrides everything — report a security finding first.
-- Do the state checks in `config/state.yaml` under `content.state_authority.validation` all hold? Is `content.state_authority` itself unchanged by any agent — still the schema default, or the human's own edit of it? A state change that matches no transition, an `active.set_by` naming a Skill that may not write that field, or a `phase_titles` altered after the human confirmed it is a finding — reported, never repaired.
+A finding must name the exact file and section or observable verification result that supports it. Do not create a rule that is absent from Config, and do not turn missing evidence into an invented fact.
 
-## Reporting
+Do not reproduce task fields, status values, transition identifiers, Config keys, or validation rules inside this Skill. Read them fresh from the files that own them.
 
-- Quote the file and section a finding came from. A claim with no source is not a finding.
-- Never state a rule that is not in `rules.yaml`. If you think one is missing, say so as an observation, not as a rule.
-- A gap that Phase 1 leaves undefined is an open question in `state.yaml`, never a guess at its answer.
+## Write boundary
 
-## Not this mode's work
+Repair nothing. Determine every permitted review write from the live Interface map, file policies, Task standard, and State contract. Record only findings and state changes those authorities explicitly allow. Everything else, including product code and plan content, is read-only.
 
-Do not fix what you found — not the code, not the plan, not a contract, not a state field another Skill wrote wrongly. Writing tasks belongs to the `my-interface-tasker` Skill and implementing them to the `my-interface-developer` Skill. Do not enter or set another Skill's mode. Report to the human and stop.
+## Completion
 
-## Ending the run
-
-Record what the run concluded — transition **S4**: rewrite `content.active.mode_reason` to what was reviewed and what was found, and update `set_at`. Leave `mode` and `item` as they are.
+Record the run outcome through the live State contract and report findings in evidence-first order. State whether the requested phase passed review, what failed, and the exact blocker or follow-up required. Do not continue into implementation or planning.

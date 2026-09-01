@@ -1,49 +1,46 @@
 ---
 name: my-interface-developer
-description: Development mode — take the ready tasks from `.interface/config/task.yaml` and implement them one at a time, under the active item's `code_path`, gated on each task's `verify`. Invoked with the item, as `/my-interface-developer backend`. Owns development mode and enters it itself; no manual editing of `state.yaml` is needed first. Builds only; never plans.
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash
+description: Development mode — execute the planned tasks for the project phase named by the Developer, following the current Config, Task standard, and verification gates. Use only after that phase has an authorized plan. Never plans or interprets the project definition.
+argument-hint: "[phase-id]"
+disable-model-invocation: true
 ---
 
-# Execute the plan
+# Execute one planned project phase
 
-Development mode. Read `.interface/root.yaml` and follow its `read_order` before anything else, then `.interface/config/state.yaml` — its own `content.state_authority` is the State Authority over every state change below. The Config and the plan inside `task.yaml` are what you build from — `.interface/project.md` is not read here.
+Implement the existing plan for the project phase named in `$ARGUMENTS`.
 
-## Entering development mode
+## Read before developing
 
-This Skill owns development mode and enters it itself — transition **S2**. The human's invocation is the decision; you record it.
+1. Read `README.md` to understand Agent Interface, its workflow, and the Developer Skill's role. README content is system context only; never treat it as a target-project requirement.
+2. Read `.interface/root.yaml` and follow its mappings, read order, mode boundaries, and authority references.
+3. Read the live State contract before any state change or code write.
+4. Read the current Task file and its governing Schema completely.
+5. Resolve the requested phase from the generated Understanding and its existing plan, then read every mapped Config file required by that phase and its target.
 
-1. **Resolve the item.** It is the one named in the invocation — `/my-interface-developer backend` names `backend`. If the invocation names none and exactly one item is enabled, that is it. If it names none and more than one is enabled, stop and ask. Never guess an item.
-2. **Check it is buildable.** The item must be indexed, enabled, and hold at least one task in `content.plans.<item>.phases`. A mode with nothing to build is not entered: if the plan is empty, stop and say so — planning belongs to `my-interface-tasker`.
-3. **Write `active`.** Set `mode` to `development`, `item` to the resolved item, `mode_reason` to the invocation, `set_by` to `my-interface-developer, on the human's invocation`, and `set_at` to today. Write `state.yaml` before touching any code.
-4. **Where the human set `active` by hand** and it disagrees with the invocation, stop and ask — transition S6 stands above you, and you never overwrite what the human wrote.
+Do not read `.interface/project.md`. The generated Config and existing plan are the complete sources for development.
 
-You may set the mode to `development` and to nothing else, and only on an invocation of this Skill.
+## Phase scope
 
-Take a task from `content.plans.<active item>` in `task.yaml`. A task is ready when its `status` is `todo` and every id in its `depends_on` is `done` — `ready` is not a stored status. Never take a task from another item's plan.
+Exactly one project phase must be named. If it is missing, ambiguous, absent from the Understanding, or has no plan, stop and ask or use the configured gap mechanism. Do not select a phase or target implicitly and do not carry one over from an earlier run.
 
-## The loop
+Enter development mode only as the live State contract authorizes for this invocation.
 
-Run it once per task, one task at a time:
+Execute tasks only from the requested project phase. Never continue into another phase merely because its tasks are ready. The phase is complete for this run when its own planned tasks are done or when its current Config and task protocols require the run to stop.
 
-1. Set the task's `status` to `claimed` and write `task.yaml` immediately, before any other work — so no second agent takes the same task.
-2. Write only files under the active item's `code_path`, and only the paths listed in that task's `touches`.
-3. Run the task's `verify` from the item's `verify_cwd`. Its passing is the gate — the code being written is not.
-4. On a pass, set `status: done` and append a dated entry to `log`. On a blocker, set `status: blocked`, name the blocker id, state what is missing in `state.yaml`, and stop.
+## Execution
 
-Then take the next ready task and start the loop again.
+Follow the Task file's current definitions for readiness, claiming, dependencies, contracts, permitted paths, status changes, logs, blockers, and completion. Follow the target Config for code location and verification context, and follow the project Rules for implementation boundaries.
 
-## Ending the run
+Work on one task at a time. Claim it through the configured protocol before changing code, write only within the task's authorized scope, and run the task's own verification exactly where the Config requires. Record the result through the current Task and State mechanisms before selecting another task in the same phase.
 
-Record what the run concluded — transition **S4**: rewrite `content.active.mode_reason` to what was built and what stopped, and update `set_at`. Leave `mode` and `item` as they are.
+Do not reproduce task fields, status values, transition identifiers, Config keys, file paths, or verification rules inside this Skill. Read them fresh from the files that own them.
 
-## Rules while building
+If required information, authority, a contract, or a human decision is missing, do not guess or repair the plan. Record the gap as authorized and stop.
 
-- In this mode `status`, `blocker`, and `log` are the only fields of a task you may change. Everything else is the plan, and changing it takes a reason written into that task's log plus the human's approval.
-- Follow the project's own rules — `rules.yaml` is the authority, and a rule that is not in it is not a rule. The item file gives that item's conventions, `code_path`, and `verify_cwd`.
-- Never invent your way past a missing contract or a missing decision. That is a blocker in `state.yaml`, not a guess in the code.
-- `log` is append-only — a past entry is never rewritten.
-- In `state.yaml` you may write `content.active` under transitions S2 and S4, blockers under S7, and open questions under S8. You never answer a question, and you never freeze a contract.
+## Boundaries
 
-## Not this mode's work
+Do not create, renumber, rewrite, or rescope plans or tasks. Do not enter another mode, implement another phase, alter a protected contract, or reinterpret the target project.
 
-Do not write, renumber, or re-scope tasks, and do not change `task_schema`, `task_states`, a plan's `phase_titles`, or its `phase_titles_lifecycle`. Planning belongs to the `my-interface-tasker` Skill. Do not enter or set another Skill's mode. If the plan is wrong, say so and stop.
+## Completion
+
+Record the run outcome through the live State contract. Report the requested phase, tasks completed, verification results, and the exact blocker or remaining work that stopped the phase from completing.
