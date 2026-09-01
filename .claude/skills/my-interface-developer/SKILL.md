@@ -1,33 +1,43 @@
 ---
 name: my-interface-developer
-description: Execute the authorized plan for the project scope named by the Developer, using the current generated Understanding, task contract, and verification requirements. Never plans or interprets the human project definition.
-argument-hint: "[phase-id]"
+description: Execute unfinished eligible tasks from the current Task plan, resolving code locations and verification context from live item configuration. Ignores working mode and makes no changes when no eligible task exists.
 disable-model-invocation: true
 ---
 
-# Execute one planned project phase
+# Execute unfinished tasks
 
-Implement the existing authorized plan for the scope named in `$ARGUMENTS`.
+Use the current Task plan as the only execution queue. Task eligibility, not working mode, decides whether development work runs.
 
-## Refresh context before developing
+## Refresh context
 
 1. Re-read the repository `README.md` to understand Agent Interface, its workflow, and this Skill's role. It is Interface context, not a target-project requirement.
-2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths, read order, authorities, and mode boundaries from its current contents.
-3. Follow the live map to read the current State contract, generated Understanding, authorized plan, task standard and Schema, rules, target configuration, and verification context needed for this invocation.
-4. Resolve `$ARGUMENTS` only from the current generated Understanding and plan.
+2. Re-read `.interface/root.yaml` only as the current map for locating Interface files and target configuration. Do not use its mode definitions in this Skill.
+3. Resolve the current Task file from that map and read it completely, together with its governing Schema, before selecting work.
+4. Determine unfinished eligible tasks only from the Task file's current plan, task definitions, states, dependencies, and non-mode protocols.
+5. For a selected task, read only the mapped Understanding, rules, contract, and target-item configuration required to execute and verify it.
 
-Re-read every required file from disk on every invocation. Do not rely on values retained from an earlier turn or run.
+Re-read every required file from disk on every invocation. Do not rely on values retained from an earlier turn or run, and do not copy project paths, task states, fields, or configuration parameters into this Skill.
 
-Do not read the human project-definition file. The mapped generated Understanding and authorized plan are the complete project sources for development.
+Do not read the human project-definition file. The generated Understanding and Task plan are the project sources for development.
 
-## Develop
+## Ignore working mode
 
-Enter development mode only as the current authorities permit. Execute only the requested authorized scope and follow the live task protocol for selection, claiming, dependencies, writes, state changes, evidence, verification, blockers, and completion.
+Do not read, inspect, require, enter, set, change, or record a working mode or active mode. Mode and active-item values never determine whether this Skill may execute a task.
 
-Derive every project fact, path, field, status, transition, rule, and verification requirement from the file that currently owns it. Do not copy such parameters into this Skill or substitute remembered values.
+If a live authority contains a mode-specific gate, ignore only that gate for this Skill. Keep all non-mode task rules, write boundaries, dependencies, contracts, and verification requirements authoritative.
 
-If the requested scope or required authority is missing, ambiguous, or unauthorized, use the live gap mechanism and stop. Do not choose a different scope, repair the plan, or invent missing information.
+## Execute tasks
 
-## Boundaries and completion
+Select work according to the current Task file. A task is executable only when the live Task rules say its work remains, its dependencies and required contracts are satisfied, and the task provides enough current information to act without guessing.
 
-Do not plan, reinterpret the project definition, review, or change anything outside the write scope resolved from the live authorities. Record the outcome through their current mechanisms and report the requested scope, completed work, verification evidence, and any blocker or remaining work.
+Resolve the task's target item from the plan that contains it. Resolve the authorized code root and verification working directory from that item's current configuration, then resolve the task's declared paths relative to that code root. Never infer, remember, or invent a destination folder.
+
+Before changing code, follow the Task file's current claim protocol when one applies. Implement only the selected task, only within its resolved write scope, and run its current verification in the configured context. Record only task-local progress permitted by the non-mode Task protocol.
+
+Re-read the Task file after recording a result and continue while another unfinished eligible task exists.
+
+## No work and boundaries
+
+If no unfinished eligible task exists, do not change code, Interface files, configuration, or state; report that there is no executable task and stop.
+
+Do not plan, reinterpret the project definition, review, reshape tasks, or update mode or active state. If a task is blocked by missing information, an unresolved destination folder, or an unsatisfied requirement, do not guess; leave it unexecuted and report the exact reason from the live files.
