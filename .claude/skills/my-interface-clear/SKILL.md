@@ -1,28 +1,32 @@
 ---
 name: my-interface-clear
-description: Clear the generated Agent Interface Config so the Interpreter can regenerate it from scratch. Use only when the Developer explicitly asks to clear or reset generated Config and confirms the exact deletion list.
+description: Clear only the currently mapped generated Agent Interface files after the Developer explicitly requests a reset and confirms the resolved deletion list.
 disable-model-invocation: true
 ---
 
-# Clear generated Config safely
+# Clear generated Interface files safely
 
-Remove only the generated Config authorized by the current Interface.
+Remove only the generated files authorized by the live Interface.
 
-## Resolve the clear operation
+## Refresh context and resolve scope
 
-1. Read `README.md` to understand Agent Interface, its workflow, and the Clear Skill's role. README content is system context only.
-2. Read `.interface/root.yaml` to locate generated Config and the authority governing a reset. Do not rely on a deletion path or file list embedded in this Skill.
-3. Read the live State contract and the policies of the files that would be removed.
-4. Enumerate the exact existing files the authorized clear operation would delete.
+1. Re-read the repository `README.md` to understand Agent Interface and this Skill's role.
+2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths from its current map.
+3. Follow that map to read every live policy, authority, and state file needed to determine what the current reset may remove.
+4. Derive and enumerate the exact existing deletion set from those files.
 
-Show that exact list to the Developer and request confirmation in the current run. Do not delete anything before the Developer confirms the list. The original request to invoke this Skill does not substitute for confirmation of an unresolved or newly discovered deletion scope.
+Read these sources from disk on every invocation. Do not reuse a path, file list, policy, or parameter from an earlier run or from this Skill.
+
+Do not read the human project-definition file. It is not needed to resolve a generated-file reset.
+
+Show the exact resolved list to the Developer and obtain confirmation in the current run. Invocation alone is not confirmation of a newly resolved deletion scope.
 
 ## Delete
 
 After confirmation, delete exactly the confirmed generated files and nothing else. Keep any directory the Interface map says must remain. Do not use an unresolved variable, wildcard, broad recursive target, or remembered path to determine deletion scope.
 
-Do not modify or delete `README.md`, `.interface/root.yaml`, `.interface/project.md`, Schemas, Skills, target-project code, or anything outside the confirmed generated Config set.
+Treat everything outside the confirmed generated set as out of scope, including every source or authority the live Interface marks as protected or human-managed.
 
 ## Completion
 
-Report the files removed, whether the generated Config directory remains ready for regeneration, and whether recovery is available through version control. Stop without invoking the Interpreter automatically.
+Report what was removed, whether the mapped generated area is ready for regeneration, and whether recovery is available. Do not invoke another Skill automatically.

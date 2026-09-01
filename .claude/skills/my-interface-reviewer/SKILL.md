@@ -1,42 +1,33 @@
 ---
 name: my-interface-reviewer
-description: Review mode — verify the implemented result for the project phase named by the Developer against its current plan, Config, contracts, and rules. Reports evidence and records only authorized review state; never repairs the result.
+description: Verify the implemented result for the project scope named by the Developer against its current plan, generated Understanding, contracts, rules, and required evidence. Reports findings but never repairs the result.
 argument-hint: "[phase-id]"
 disable-model-invocation: true
 ---
 
 # Review one project phase
 
-Review the implemented result for the project phase named in `$ARGUMENTS`.
+Review the implemented result for the scope named in `$ARGUMENTS`.
 
-## Read before reviewing
+## Refresh context before reviewing
 
-1. Read `README.md` to understand Agent Interface, its workflow, and the Reviewer Skill's role. README content is system context only; never use it as a target-project requirement.
-2. Read `.interface/root.yaml` and follow its mappings, read order, mode boundaries, and authority references.
-3. Read the live State contract before recording any review state.
-4. Read the current Task file and its governing Schema completely.
-5. Resolve the requested phase from the generated Understanding and its plan, then read every mapped Config file, rule set, contract, and implementation location required to review that phase.
+1. Re-read the repository `README.md` to understand Agent Interface, its workflow, and this Skill's role. It is Interface context, not a target-project requirement.
+2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths, read order, authorities, and mode boundaries from its current contents.
+3. Follow the live map to read the current State contract, generated Understanding, authorized plan, task standard and Schema, rules, contracts, implementation locations, and verification evidence needed for this invocation.
+4. Resolve `$ARGUMENTS` only from the current generated Understanding and plan.
 
-Do not read `.interface/project.md`. Review the result only against the generated Understanding and the plan that downstream development was authorized to execute.
+Re-read every required file from disk on every invocation. Do not rely on values retained from an earlier turn or run.
 
-## Phase scope
-
-Exactly one project phase must be named. If it is missing, ambiguous, absent from the Understanding, or has no reviewable plan, stop and ask or use the configured gap mechanism. Do not select a phase or target implicitly and do not carry one over from an earlier run.
-
-Enter review mode only as the live State contract authorizes for this invocation. Review only the requested phase; do not expand into another phase.
+Do not read the human project-definition file. Review only against the current generated Understanding and the plan development was authorized to execute.
 
 ## Review
 
-Derive every check from the current Config, Task standard, project Rules, contracts, and task evidence. Re-run the verification required by completed tasks in the context their target Config defines. Check that implementation scope, dependencies, contracts, state, and recorded outcomes satisfy their current authorities.
+Enter review mode only as the current authorities permit. Review only the requested authorized scope and derive every check, location, expected result, write permission, and state change from the live files that own it.
 
-A finding must name the exact file and section or observable verification result that supports it. Do not create a rule that is absent from Config, and do not turn missing evidence into an invented fact.
+Re-run required verification in its configured context and ground every finding in an exact file location or observable result. Missing evidence remains missing evidence; do not invent a fact or requirement.
 
-Do not reproduce task fields, status values, transition identifiers, Config keys, or validation rules inside this Skill. Read them fresh from the files that own them.
+Do not copy task fields, statuses, transitions, configuration keys, paths, or validation rules into this Skill. Resolve them fresh from the current authorities.
 
-## Write boundary
+## Boundaries and completion
 
-Repair nothing. Determine every permitted review write from the live Interface map, file policies, Task standard, and State contract. Record only findings and state changes those authorities explicitly allow. Everything else, including product code and plan content, is read-only.
-
-## Completion
-
-Record the run outcome through the live State contract and report findings in evidence-first order. State whether the requested phase passed review, what failed, and the exact blocker or follow-up required. Do not continue into implementation or planning.
+Repair nothing and do not enter planning or development. Record only the review information and state changes the current authorities permit. Report findings in evidence-first order, the result for the requested scope, and any exact blocker or follow-up required.

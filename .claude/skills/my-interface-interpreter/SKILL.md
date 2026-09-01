@@ -1,46 +1,32 @@
 ---
 name: my-interface-interpreter
-description: Interpret `.interface/project.md` into the generated Understanding under `.interface/config/` using the Interface map and Schemas. Use when the Developer explicitly asks to generate, refresh, or reconcile Config after the target project definition changes.
+description: Translate the human-managed target-project definition into the generated Agent Interface Understanding using the current Interface map and Schemas. Use for explicit generation, refresh, or reconciliation requests.
 disable-model-invocation: true
 ---
 
 # Interpret the target project
 
-Transform the Developer's natural-language target-project definition into the structured configuration consumed by the other Agent Interface Skills.
+Transform the Developer's target-project definition into the structured Understanding consumed by the other Agent Interface Skills.
 
-## Read before interpreting
+## Refresh context before interpreting
 
-1. Read `README.md` to understand Agent Interface, its workflow, and the Interpreter's role. README content is system context only; never treat it as a target-project fact.
-2. Read `.interface/root.yaml` as the Interface entry point. Follow its mappings, read order, mode boundaries, and authority references rather than relying on paths or permissions remembered by this Skill.
-3. Read `.interface/project.md` completely. The Interpreter is the only workflow Skill that reads it, and it must read it because it is the human-managed source for the target project.
-4. Read the Schemas required by the Interface map before generating their corresponding Config files.
-5. Read existing Config and the live State contract before writing so protected state and human-owned values are preserved exactly as their current authorities require.
+1. Re-read the repository `README.md` to understand Agent Interface, its workflow, and this Skill's role. It is Interface context, not a target-project fact.
+2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths, read order, authorities, and write boundaries from its current contents.
+3. Resolve the human-managed project-definition file from the live map and read it completely. This is the only workflow Skill permitted to read that file.
+4. Follow the map to read the current Schemas, existing generated files, live State contract, and policies required for this interpretation.
 
-## Sources of truth
+Re-read every required file from disk on every invocation. Do not rely on values retained from an earlier turn or run.
 
-- Target-project facts come only from `.interface/project.md`.
-- Output structure, defaults, relationships, and validation requirements come only from the mapped Schemas.
-- Write permissions, state transitions, carry-through rules, and human-only decisions come only from the current Interface map, file policies, and live State contract.
-- Other generated Config may be used for consistency, but it never overrides the human's current project definition or the Schemas that shape it.
+## Interpret
 
-Do not reproduce configuration keys, Schema fields, transition identifiers, defaults, or mode permissions inside this Skill. Read them fresh from the files that own them.
+Take target-project facts only from the current human-managed definition. Derive output structure, defaults, relationships, validation, permissions, preservation rules, and state behavior only from their current mapped authorities.
 
-## Generate the Understanding
+Generate only the Understanding those authorities support and authorize. Preserve the stated meaning without copying prose mechanically, inventing decisions, or overwriting protected or human-owned values.
 
-Represent all project information supported by the current project definition and required by the current Schemas. Preserve the project's stated meaning without copying its prose mechanically and without inventing missing decisions.
+Do not copy configuration keys, Schema fields, defaults, paths, transition identifiers, or other parameters into this Skill. Resolve them fresh from the files that own them.
 
-Ensure the generated Understanding represents every project phase the Developer defined, including the information the applicable Schema requires to identify, order, target, and explain each phase. Later Skills must be able to resolve a requested phase entirely from Config without reading `project.md`.
+When information is absent, ambiguous, or conflicting, use the current gap and precedence mechanisms. Do not fill gaps with plausible assumptions.
 
-When required information is absent or ambiguous, use the live Config's question and blocker mechanisms. Apply a Schema default only when the Schema actually defines one.
+## Boundaries and completion
 
-Generate or update only the files and fields authorized for this Interpreter run. Preserve protected runtime state and human-owned content according to their live policies. If current authorities conflict and their configured precedence does not resolve the conflict, stop and ask the Developer.
-
-## Boundaries
-
-This Skill creates Understanding, not plans or product code. Do not create tasks, execute tasks, implement, test, refactor, or modify the target project's source code.
-
-Do not modify `README.md`, `.interface/root.yaml`, `.interface/project.md`, or the Schemas. A needed change to an input or authority is reported through the configured mechanism rather than applied here.
-
-## Completion
-
-Validate the generated files against their current Schemas and report which Config files changed, which gaps were recorded, and anything that prevented a complete interpretation.
+Create Understanding only; do not plan, implement, test, review, or modify input and authority sources. Validate generated output using the current Schemas, record state through the live mechanism, and report changed outputs, recorded gaps, and anything that prevented a complete interpretation.

@@ -1,23 +1,23 @@
 ---
 name: my-interface-skill-installer
-description: Discover and install compatible AI Agent Skills for technologies represented in the generated project Config. Use when the Developer explicitly asks to install, synchronize, or refresh technology Skills without changing application dependencies or code.
+description: Discover and install compatible AI Agent Skills for technologies represented in the current generated Understanding. Use for explicit install, synchronization, or refresh requests without changing application dependencies or code.
 disable-model-invocation: true
 ---
 
 # Install technology Skills
 
-Install compatible AI Agent Skills for the technologies used by the configured target project.
+Install compatible AI Agent Skills for verified technologies in the configured target project.
 
-## Read and detect
+## Refresh context and detect
 
-1. Read `README.md` to understand Agent Interface and this Skill's supporting role. README content describes the Interface, not the target project's technologies.
-2. Read `.interface/root.yaml` and follow its mappings to the generated Config.
-3. Read the Config files that own the target project's parts, technologies, code locations, and enabled state. Do not read `.interface/project.md` and do not hardcode currently known parts or technologies in this Skill.
-4. Inspect dependency manifests and existing installations only within the code locations resolved from Config, and only to verify the configured technology and determine its actual installed version.
+1. Re-read the repository `README.md` to understand Agent Interface and this Skill's supporting role. It is Interface context, not a source of target-project technologies.
+2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths and authorities from its current map.
+3. Follow the live map to read the generated Understanding that owns project parts, technologies, code locations, and enabled state.
+4. Inspect dependency manifests and existing Skill installations only where the current Understanding permits, and only to verify configured technologies and their installed versions.
 
-Config is the source of target-project Understanding. Files in the target code may verify that a configured technology is installed, but they do not authorize adding a technology or expanding the configured project.
+Re-read every required file from disk on every invocation. Do not rely on remembered technologies, versions, locations, settings, or installation state, and do not copy them into this Skill.
 
-Detection must be read-only. Do not install, synchronize, upgrade, or downgrade application dependencies while determining versions.
+Do not read the human project-definition file. The generated Understanding is the source of configured technology facts; target code may verify them but cannot expand them. Detection is read-only.
 
 ## Match and install
 
@@ -34,10 +34,10 @@ If no supported discovery or installation mechanism is available, report that li
 
 ## Boundaries
 
-Do not modify Agent Interface Config, application code, architecture, dependency manifests, lockfiles, or runtime dependencies. Do not install a Skill for an absent or unverified technology, remove a compatible Skill, or install duplicates.
+Determine all write boundaries from the current authorities. Do not change Interface data, application code, architecture, manifests, lockfiles, or runtime dependencies. Do not install for an absent or unverified technology, remove a compatible Skill, or install duplicates.
 
 The operation must be idempotent: a second run against unchanged Config, dependencies, and installed Skills makes no changes.
 
 ## Completion
 
-Report each configured technology as installed, updated, skipped, or blocked, including its detected version, selected Skill and source where applicable, and the reason for the outcome.
+Report each configured technology as installed, updated, skipped, or blocked, including its detected version, selected Skill and source where applicable, and the reason.
