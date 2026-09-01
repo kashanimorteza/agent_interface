@@ -1,0 +1,164 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/backend.yaml"
+  path_note: "Generated configuration layer of the Agent Project Interface — the backend item's configuration and its contract, produced by my-interface-interpreter from Phase 1 of .interface/project.md"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Written only in planning mode by my-interface-planner — settings and draft contracts, never a frozen contract. Development and review modes read it and write nothing here"
+  changed_by: "my-interface-planner on the human's invocation, my-interface-interpreter regenerating from project.md, or the human directly"
+  contract_rule: "A contract version whose lifecycle is frozen is never edited by any agent — a change means a new version, and freezing or versioning is the human's decision"
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled, code_path, code_path_note, summary — whether and where this item exists"
+  - "needs_test, verify_cwd — how its work is proven"
+  - "responsibility, tech, standards, capabilities — what it is and how it is built"
+  - "code_layout — where everything lives inside code_path"
+  - "contracts — the surface it publishes, read last so the general rules are known first"
+  - "boundaries, out_of_scope — its limits"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the backend is in play"
+  code_path: "The one folder this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The backend in one line"
+  needs_test: "Whether tasks are proven by written tests"
+  verify_cwd: "Where and inside what every verify command runs"
+  responsibility: "What the backend is answerable for"
+  tech: "The technology choices an agent follows and never re-decides"
+  standards: "The code conventions settled once"
+  capabilities: "The optional capabilities, each switched on or off"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract the backend publishes — its only connection to the other items"
+  boundaries: "What the backend owns, does not own, and offers"
+  out_of_scope: "What the backend does not do, named so it is never inferred into a task"
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Enabled -->
+  enabled: true
+
+  # <!-------------------------------------------- Code_Path -->
+  code_path: "to be defined"
+
+  # <!-------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root and outside .interface/ — the folder holding the backend's actual code, the one place this item may write. The human has not yet named it; see Q1 in config/state.yaml and blocker B1."
+
+  # <!-------------------------------------------- Summary -->
+  summary: "A FastAPI service over SQLite that stores the Trading Assistant's models and serves them through a JSON API."
+
+  # <!-------------------------------------------- Needs_Test -->
+  needs_test: false
+
+  # <!-------------------------------------------- Verify_Cwd -->
+  verify_cwd: "to be defined — the backend's code_path once Q1 is answered; every verify command runs from that directory, inside the backend's uv virtual environment"
+
+  # <!-------------------------------------------- Responsibility -->
+  responsibility: "Manages the application's data and functionality — owns the trading models, their storage in SQLite, and the API that exposes them."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+    language:
+      name: "Python"
+      version: "latest"
+      environment:
+        name: "uv"
+        version: "latest"
+      packages:
+        api:
+          name: "FastAPI"
+          version: "latest"
+        orm:
+          name: "SQLAlchemy"
+          version: "latest"
+        migration:
+          name: "Alembic"
+          version: "latest"
+    database: "SQLite — a single database file inside the backend's code_path (app.db in code_layout), never committed. The backend owns the whole schema; the schema changes only through Alembic migrations, and every read and write goes through SQLAlchemy."
+    run: "uv run uvicorn main:app — from the backend's code_path, inside its uv environment; main.py in code_layout is the entry point it serves."
+
+  # <!-------------------------------------------- Standards -->
+  standards:
+    naming:
+      variables: "snake_case"
+      functions: "snake_case"
+      classes: "PascalCase"
+      constants: "UPPER_SNAKE_CASE"
+      files: "snake_case"
+      folders: "snake_case"
+
+  # <!-------------------------------------------- Capabilities -->
+  capabilities:
+    error_handling:
+      enabled: false
+    logging:
+      enabled: false
+    api_documentation:
+      enabled: true
+      type: "Docs — FastAPI's built-in Swagger UI served at /docs; ReDoc stays disabled"
+    authentication:
+      enabled: false
+    https:
+      enabled: false
+    api_key:
+      enabled: true
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout:
+    "pyproject.toml": "The project file — dependencies and metadata, managed only through uv"
+    "main.py": "Entry point — creates the FastAPI app, wires the API-key requirement, and mounts the routers"
+    "config.py": "Configuration — the database location and the API key setting"
+    "database.py": "Database access — the SQLAlchemy engine, session, and model base"
+    "security.py": "The API-key check every request passes through"
+    "models/": "SQLAlchemy models — one file per project model"
+    "schemas/": "Validation schemas — the request and response shapes, one file per project model"
+    "routers/": "API routes — one file per project model, translating between the API and the models"
+    "migrations/": "The Alembic environment and its versions — the only way the database schema changes"
+    "app.db": "The SQLite database file — created at runtime, never committed"
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+    produces: "v1"
+    rule: "The implementation must match the frozen contract exactly; while v1 is a draft, the implementation follows the draft as planning last shaped it."
+    change_rule: "A frozen contract is never edited — a change means a new version, and freezing or versioning is the human's decision."
+    v1:
+      lifecycle: "draft"
+      lifecycle_note: "v1 is a draft — planning may still reshape it, and no consumer may be defined against it until the human freezes it. Once frozen, any change costs a new version."
+      consumed_by: "frontend — in a later phase; no consumer exists inside Phase 1"
+      contract_read_order: "conventions, error_shape, models, routes — the rules that hold everywhere first, then the failure shape, then the data shapes, then the surface that uses them"
+      conventions: "JSON over plain HTTP — HTTPS is disabled. Every request carries the API key. Every model is addressed by its ID field; the identifier's exact type, like every field type, is settled while this draft is detailed in planning. A request for an unknown id answers 404."
+      error_shape: "FastAPI's built-in error response — a JSON body with a detail field and the framework's standard status codes. No custom error layer exists while error_handling is disabled."
+      models:
+        trading_platform: "ID, Name, Status, Description — the trading software or infrastructure providing market access; field types and limits settled in the draft during planning"
+        broker: "ID, Name, Trading Platform ID, Status, Description — a provider of trading services, connected to its supported trading platform"
+        account: "ID, Name, Username, Password, Broker ID, Status, Description — the credentials and settings for a trading account managed by a broker"
+        asset: "ID, Name, Status, Description — a tradable instrument such as a currency pair, stock, commodity, or cryptocurrency"
+        strategy: "ID, Name, Risk Parameter, Status, Description — a trading approach and its risk settings"
+        trailing_group: "ID, Name, Status, Description — a reusable set of trailing rules"
+        trailing_rule: "ID, Name, Status, Description — one condition or adjustment moving a trade's protective level"
+        partial_group: "ID, Name, Status, Description — a reusable set of partial-exit rules"
+        partial_rule: "ID, Name, Status, Description — one condition and portion for reducing an open position"
+        action_group: "ID, Name, Status, Description — a unit grouping related trading actions"
+        action: "ID, Name, Asset ID, Strategy ID, Group ID, Status, Description — a planned trading instruction for an asset and strategy within an action group"
+        execute: "ID, Name, Action ID, Profit, State, Status, Description — an execution attempt or result for an action"
+        position: "ID, Name, Status, Description — a trading position tracked through its lifecycle"
+      routes: "A standard create, read, list, update, and delete surface for every model above — not defined route-by-route here; the route-level detail of this draft is written during planning."
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns: "The backend's code under its code_path, and the whole database schema."
+    does_not_own: "Client code — the frontend and anything that renders a user interface, however close it sits."
+    interface: "Its contract — content.contracts above; nothing else is offered to the outside."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "User authentication — Authentication is disabled; the API key is the only gate"
+    - "HTTPS — the API serves plain HTTP"
+    - "Centralized error handling and application logging — both disabled"
+    - "A written test suite — Testing is disabled"
+    - "Connecting to live trading platforms or executing real trades — Phase 1 only stores and serves the defined models"
+    - "The frontend and any user interface"

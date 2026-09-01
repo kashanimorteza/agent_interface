@@ -1,0 +1,71 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/definition.yaml"
+  path_note: "Generated configuration layer of the Agent Project Interface — the structured project definition, produced by my-interface-interpreter from Phase 1 of .interface/project.md"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "No mode edits this file. It is regenerated only by my-interface-interpreter, from project.md, and that regeneration is the one time it is touched"
+  changed_by: "The human, or a my-interface-interpreter run the human invoked. A change it needs outside that is raised as an open question in config/state.yaml"
+  item_index: "content.architecture.parts is the item index — every other config file's notion of an item resolves against it"
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "identity — what the product is, before anything about how it is built"
+  - "goals — what a user can do when it is finished"
+  - "architecture — the parts, their limits, and the one bridge between them"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  identity: "Who the product is — id, name, and its one promise"
+  goals: "The capabilities every task traces back to"
+  architecture: "The parts of the product, what each owns, and the single connection point"
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Identity -->
+  identity:
+    id: "trading-assistant"
+    name: "Trading Assistant"
+    one_liner: "A platform for defining and managing trading information, strategies, actions, and related data."
+
+  # <!-------------------------------------------- Goals -->
+  goals:
+    - "Manage the trading infrastructure records — trading platforms, brokers, and the accounts that access them — through the backend API"
+    - "Manage the tradable assets through the backend API"
+    - "Define strategies, each carrying its risk parameter, through the backend API"
+    - "Organize trailing rules into reusable trailing groups, and partial rules into reusable partial groups, through the backend API"
+    - "Plan actions for an asset and strategy inside action groups, and record executions with their state and profit, through the backend API"
+    - "Track positions through the backend API"
+
+  # <!-------------------------------------------- Architecture -->
+  architecture:
+    shape: "Two parts — a backend that owns the data and its API, and a frontend that renders the user interface — joined only by the backend's API contract."
+    reason: "The stated structure of the project: data and functionality live in one place, the interface in another, so each side can be built and changed against the contract without reaching into the other."
+    parts:
+
+      backend:
+        responsibility: "Manages application data and functionality — the trading models, their storage, and the API that exposes them."
+        owns:
+          - "Its code under its code_path"
+          - "The whole database schema and the data behind the API"
+        does_not_own:
+          - "Client code — the frontend and anything that renders a user interface"
+        produces:
+          - "The API contract — .interface/config/backend.yaml under content.contracts"
+
+      frontend:
+        responsibility: "Provides the user interface for interacting with the application."
+        owns:
+          - "Its code under its code_path, and everything the user sees"
+        does_not_own:
+          - "The data, the database schema, or any business functionality — those are the backend's"
+        consumes:
+          - "The backend's API contract — .interface/config/backend.yaml under content.contracts"
+
+    connection:
+      path: ".interface/config/backend.yaml under content.contracts"
+      rule: "The contract is the only connection point — no part reaches into another by any other route, not the database, not the code."
+      versioning: "A frozen contract never changes — a change means a new version, and freezing or versioning a contract is the human's decision."
