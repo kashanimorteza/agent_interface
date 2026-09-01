@@ -70,10 +70,593 @@ content:
   plans:
 
     backend:
-      phase_titles_lifecycle: "empty"
-      phase_titles_derived_from: "not derived yet"
-      phase_titles: []
-      phases: {}
+      phase_titles_lifecycle: "derived"
+      phase_titles_derived_from: ".interface/config/definition.yaml — content.phases"
+      phase_titles:
+        P1: "Backend API"
+      phases:
+
+        phase_1:
+          id: "P1"
+          title: "Backend API"
+          does: "Creates and runs the API for all thirteen models the project defines — the whole of contract v1's surface, served over the migrated SQLite database."
+          groups:
+
+            environment_and_scaffold:
+              id: "P1-G1"
+              title: "Environment and application scaffold"
+              does: "Creates the uv project, installs the four configured packages one at a time, and stands up the application package — configuration, database session, the FastAPI entry point with Docs on and ReDoc off, and the API-key check. When every task here is done an empty application runs."
+              task_count: 10
+              tasks:
+                - id: "T1"
+                  title: "Initialize the backend project with uv"
+                  goal: "A uv-managed project exists, so every later install and command runs inside its virtual environment."
+                  depends_on: []
+                  acceptance: "pyproject.toml exists in code_path and uv runs commands inside the project's own environment."
+                  verify: "uv run python --version"
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+                - id: "T2"
+                  title: "Install FastAPI"
+                  goal: "FastAPI is importable — the API framework contract v1 is served over."
+                  depends_on: ["T1"]
+                  acceptance: "FastAPI is a dependency in pyproject.toml, installed through uv."
+                  verify: "uv run python -c \"import fastapi\""
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+                - id: "T3"
+                  title: "Install Uvicorn"
+                  goal: "Uvicorn is importable — the server named by tech.run."
+                  depends_on: ["T1"]
+                  acceptance: "Uvicorn is a dependency in pyproject.toml, installed through uv."
+                  verify: "uv run python -c \"import uvicorn\""
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+                - id: "T4"
+                  title: "Install SQLAlchemy"
+                  goal: "SQLAlchemy is importable — the only permitted route to the data."
+                  depends_on: ["T1"]
+                  acceptance: "SQLAlchemy is a dependency in pyproject.toml, installed through uv."
+                  verify: "uv run python -c \"import sqlalchemy\""
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+                - id: "T5"
+                  title: "Install Alembic"
+                  goal: "Alembic is importable — the only way the database schema may change."
+                  depends_on: ["T1"]
+                  acceptance: "Alembic is a dependency in pyproject.toml, installed through uv."
+                  verify: "uv run python -c \"import alembic\""
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+                - id: "T6"
+                  title: "Create the app package"
+                  goal: "The importable package every backend module lives under exists."
+                  depends_on: ["T1"]
+                  acceptance: "app/__init__.py exists and the package imports."
+                  verify: "uv run python -c \"import app\""
+                  touches: ["app/__init__.py"]
+                  status: "todo"
+                - id: "T7"
+                  title: "Create the configuration module"
+                  goal: "The database location and the API-key setting have one home, read from the environment so no credential is committed."
+                  depends_on: ["T6"]
+                  acceptance: "app/config.py exposes the SQLite file location inside code_path and the API-key setting, reading both from the environment."
+                  verify: "uv run python -c \"from app import config\""
+                  touches: ["app/config.py"]
+                  status: "todo"
+                - id: "T8"
+                  title: "Create the database module"
+                  goal: "One module makes the engine, the session and the declarative base — the only place a connection is opened."
+                  depends_on: ["T4", "T7"]
+                  acceptance: "app/database.py builds the SQLAlchemy engine from config and exposes the session and the declarative base the models will use."
+                  verify: "uv run python -c \"from app import database\""
+                  touches: ["app/database.py"]
+                  status: "todo"
+                - id: "T9"
+                  title: "Create the FastAPI entry point with Docs on and ReDoc off"
+                  goal: "A runnable application exists that serves Swagger UI and no ReDoc, ready for routers to register into."
+                  depends_on: ["T2", "T7"]
+                  acceptance: "app/main.py creates the FastAPI app with docs at /docs and redoc disabled, and the configured run command starts it."
+                  verify: "uv run python -c \"from app.main import app; assert app.docs_url == '/docs' and app.redoc_url is None\""
+                  touches: ["app/main.py"]
+                  status: "todo"
+                - id: "T10"
+                  title: "Add the API-key check to the application"
+                  goal: "Every route a router registers can require the API key, which is the project's only access control."
+                  depends_on: ["T9"]
+                  acceptance: "A request without a valid API key is rejected, and the key is read from configuration rather than the repository."
+                  verify: "uv run python -c \"from app.main import app; assert app.openapi().get('components',{}).get('securitySchemes')\""
+                  touches: ["app/main.py", "app/config.py"]
+                  status: "todo"
+
+            migration_environment:
+              id: "P1-G2"
+              title: "Migration environment"
+              does: "Wires Alembic to the declarative metadata and the configured SQLite file, so the schema can only ever move by migration. When this is done migrations can be generated and applied."
+              task_count: 1
+              tasks:
+                - id: "T11"
+                  title: "Initialize the Alembic migration environment"
+                  goal: "Migrations can be generated against the models' metadata and applied to the configured SQLite file."
+                  depends_on: ["T5", "T8"]
+                  acceptance: "alembic.ini and migrations/ exist, point at the app's metadata and the configured database location, and an upgrade runs cleanly on the empty history."
+                  verify: "uv run alembic upgrade head"
+                  touches: ["alembic.ini", "migrations/"]
+                  status: "todo"
+
+            models:
+              id: "P1-G3"
+              title: "SQLAlchemy models"
+              does: "Adds one model per entity of contract v1, in an order that lets each foreign key point at a table that already exists. When every task here is done the whole metadata is ready for the initial migration."
+              task_count: 13
+              tasks:
+                - id: "T12"
+                  title: "Add the SQLAlchemy model for trading_platform"
+                  goal: "The trading_platform table exists in the metadata."
+                  depends_on: ["T8"]
+                  acceptance: "app/models/trading_platform.py defines TradingPlatform with contract v1's fields (ID, Name, Status, Description)."
+                  verify: "uv run python -c \"from app.models.trading_platform import TradingPlatform\""
+                  touches: ["app/models/trading_platform.py"]
+                  status: "todo"
+                - id: "T13"
+                  title: "Add the SQLAlchemy model for broker"
+                  goal: "The broker table exists in the metadata."
+                  depends_on: ["T12"]
+                  acceptance: "app/models/broker.py defines Broker with contract v1's fields (ID, Name, Trading Platform ID, Status, Description), Trading Platform ID referencing trading_platform."
+                  verify: "uv run python -c \"from app.models.broker import Broker\""
+                  touches: ["app/models/broker.py"]
+                  status: "todo"
+                - id: "T14"
+                  title: "Add the SQLAlchemy model for account"
+                  goal: "The account table exists in the metadata."
+                  depends_on: ["T13"]
+                  acceptance: "app/models/account.py defines Account with contract v1's fields (ID, Name, Username, Password, Broker ID, Status, Description), Broker ID referencing broker."
+                  verify: "uv run python -c \"from app.models.account import Account\""
+                  touches: ["app/models/account.py"]
+                  status: "todo"
+                - id: "T15"
+                  title: "Add the SQLAlchemy model for asset"
+                  goal: "The asset table exists in the metadata."
+                  depends_on: ["T8"]
+                  acceptance: "app/models/asset.py defines Asset with contract v1's fields (ID, Name, Status, Description)."
+                  verify: "uv run python -c \"from app.models.asset import Asset\""
+                  touches: ["app/models/asset.py"]
+                  status: "todo"
+                - id: "T16"
+                  title: "Add the SQLAlchemy model for strategy"
+                  goal: "The strategy table exists in the metadata."
+                  depends_on: ["T8"]
+                  acceptance: "app/models/strategy.py defines Strategy with contract v1's fields (ID, Name, Risk Parameter, Status, Description)."
+                  verify: "uv run python -c \"from app.models.strategy import Strategy\""
+                  touches: ["app/models/strategy.py"]
+                  status: "todo"
+                - id: "T17"
+                  title: "Add the SQLAlchemy model for trailing_group"
+                  goal: "The trailing_group table exists in the metadata."
+                  depends_on: ["T8"]
+                  acceptance: "app/models/trailing_group.py defines TrailingGroup with contract v1's fields (ID, Name, Status, Description)."
+                  verify: "uv run python -c \"from app.models.trailing_group import TrailingGroup\""
+                  touches: ["app/models/trailing_group.py"]
+                  status: "todo"
+                - id: "T18"
+                  title: "Add the SQLAlchemy model for trailing_rule"
+                  goal: "The trailing_rule table exists in the metadata."
+                  depends_on: ["T17"]
+                  acceptance: "app/models/trailing_rule.py defines TrailingRule with contract v1's fields (ID, Name, Trailing Group ID, Status, Description), Trailing Group ID referencing trailing_group."
+                  verify: "uv run python -c \"from app.models.trailing_rule import TrailingRule\""
+                  touches: ["app/models/trailing_rule.py"]
+                  status: "todo"
+                - id: "T19"
+                  title: "Add the SQLAlchemy model for partial_group"
+                  goal: "The partial_group table exists in the metadata."
+                  depends_on: ["T8"]
+                  acceptance: "app/models/partial_group.py defines PartialGroup with contract v1's fields (ID, Name, Status, Description)."
+                  verify: "uv run python -c \"from app.models.partial_group import PartialGroup\""
+                  touches: ["app/models/partial_group.py"]
+                  status: "todo"
+                - id: "T20"
+                  title: "Add the SQLAlchemy model for partial_rule"
+                  goal: "The partial_rule table exists in the metadata."
+                  depends_on: ["T19"]
+                  acceptance: "app/models/partial_rule.py defines PartialRule with contract v1's fields (ID, Name, Partial Group ID, Profit Threshold, Close Portion, Status, Description), Partial Group ID referencing partial_group."
+                  verify: "uv run python -c \"from app.models.partial_rule import PartialRule\""
+                  touches: ["app/models/partial_rule.py"]
+                  status: "todo"
+                - id: "T21"
+                  title: "Add the SQLAlchemy model for action_group"
+                  goal: "The action_group table exists in the metadata."
+                  depends_on: ["T8"]
+                  acceptance: "app/models/action_group.py defines ActionGroup with contract v1's fields (ID, Name, Status, Description)."
+                  verify: "uv run python -c \"from app.models.action_group import ActionGroup\""
+                  touches: ["app/models/action_group.py"]
+                  status: "todo"
+                - id: "T22"
+                  title: "Add the SQLAlchemy model for action"
+                  goal: "The action table exists in the metadata."
+                  depends_on: ["T15", "T14", "T16", "T21"]
+                  acceptance: "app/models/action.py defines Action with contract v1's fields (ID, Name, Asset ID, Account ID, Strategy ID, Group ID, Status, Description), Asset ID, Account ID, Strategy ID and Group ID referencing asset, account, strategy and action_group."
+                  verify: "uv run python -c \"from app.models.action import Action\""
+                  touches: ["app/models/action.py"]
+                  status: "todo"
+                - id: "T23"
+                  title: "Add the SQLAlchemy model for execute"
+                  goal: "The execute table exists in the metadata."
+                  depends_on: ["T22"]
+                  acceptance: "app/models/execute.py defines Execute with contract v1's fields (ID, Name, Action ID, Profit, State, Status, Description), Action ID referencing action."
+                  verify: "uv run python -c \"from app.models.execute import Execute\""
+                  touches: ["app/models/execute.py"]
+                  status: "todo"
+                - id: "T24"
+                  title: "Add the SQLAlchemy model for position"
+                  goal: "The position table exists in the metadata."
+                  depends_on: ["T8"]
+                  acceptance: "app/models/position.py defines Position with contract v1's fields (ID, Name, Entry Price, Take Profit, Stop Loss, Status, Description)."
+                  verify: "uv run python -c \"from app.models.position import Position\""
+                  touches: ["app/models/position.py"]
+                  status: "todo"
+
+            initial_migration:
+              id: "P1-G4"
+              title: "Initial migration"
+              does: "Turns the complete metadata into the first Alembic migration and applies it, so the SQLite database physically holds every table."
+              task_count: 1
+              tasks:
+                - id: "T25"
+                  title: "Create and apply the initial migration for all thirteen models"
+                  goal: "The SQLite database holds the schema of every entity the project defines."
+                  depends_on: ["T11", "T12", "T13", "T14", "T15", "T16", "T17", "T18", "T19", "T20", "T21", "T22", "T23", "T24"]
+                  acceptance: "One reversible Alembic migration creates all thirteen tables with their foreign keys, and applying it brings the configured database to head."
+                  verify: "uv run alembic upgrade head"
+                  touches: ["migrations/versions/"]
+                  status: "todo"
+
+            validation_schemas:
+              id: "P1-G5"
+              title: "Validation schemas"
+              does: "Adds the request and response shapes for each entity, matching contract v1. When every task here is done each route can validate what it receives and shape what it returns."
+              task_count: 13
+              tasks:
+                - id: "T26"
+                  title: "Add the validation schemas for trading_platform"
+                  goal: "The create, update and read shapes for trading_platform exist for its service and router to use."
+                  depends_on: ["T12"]
+                  acceptance: "app/schemas/trading_platform.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import trading_platform\""
+                  touches: ["app/schemas/trading_platform.py"]
+                  status: "todo"
+                - id: "T27"
+                  title: "Add the validation schemas for broker"
+                  goal: "The create, update and read shapes for broker exist for its service and router to use."
+                  depends_on: ["T13"]
+                  acceptance: "app/schemas/broker.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import broker\""
+                  touches: ["app/schemas/broker.py"]
+                  status: "todo"
+                - id: "T28"
+                  title: "Add the validation schemas for account"
+                  goal: "The create, update and read shapes for account exist for its service and router to use."
+                  depends_on: ["T14"]
+                  acceptance: "app/schemas/account.py defines the create, update and read shapes matching contract v1. No response shape carries the Password field."
+                  verify: "uv run python -c \"from app.schemas import account\""
+                  touches: ["app/schemas/account.py"]
+                  status: "todo"
+                - id: "T29"
+                  title: "Add the validation schemas for asset"
+                  goal: "The create, update and read shapes for asset exist for its service and router to use."
+                  depends_on: ["T15"]
+                  acceptance: "app/schemas/asset.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import asset\""
+                  touches: ["app/schemas/asset.py"]
+                  status: "todo"
+                - id: "T30"
+                  title: "Add the validation schemas for strategy"
+                  goal: "The create, update and read shapes for strategy exist for its service and router to use."
+                  depends_on: ["T16"]
+                  acceptance: "app/schemas/strategy.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import strategy\""
+                  touches: ["app/schemas/strategy.py"]
+                  status: "todo"
+                - id: "T31"
+                  title: "Add the validation schemas for trailing_group"
+                  goal: "The create, update and read shapes for trailing_group exist for its service and router to use."
+                  depends_on: ["T17"]
+                  acceptance: "app/schemas/trailing_group.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import trailing_group\""
+                  touches: ["app/schemas/trailing_group.py"]
+                  status: "todo"
+                - id: "T32"
+                  title: "Add the validation schemas for trailing_rule"
+                  goal: "The create, update and read shapes for trailing_rule exist for its service and router to use."
+                  depends_on: ["T18"]
+                  acceptance: "app/schemas/trailing_rule.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import trailing_rule\""
+                  touches: ["app/schemas/trailing_rule.py"]
+                  status: "todo"
+                - id: "T33"
+                  title: "Add the validation schemas for partial_group"
+                  goal: "The create, update and read shapes for partial_group exist for its service and router to use."
+                  depends_on: ["T19"]
+                  acceptance: "app/schemas/partial_group.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import partial_group\""
+                  touches: ["app/schemas/partial_group.py"]
+                  status: "todo"
+                - id: "T34"
+                  title: "Add the validation schemas for partial_rule"
+                  goal: "The create, update and read shapes for partial_rule exist for its service and router to use."
+                  depends_on: ["T20"]
+                  acceptance: "app/schemas/partial_rule.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import partial_rule\""
+                  touches: ["app/schemas/partial_rule.py"]
+                  status: "todo"
+                - id: "T35"
+                  title: "Add the validation schemas for action_group"
+                  goal: "The create, update and read shapes for action_group exist for its service and router to use."
+                  depends_on: ["T21"]
+                  acceptance: "app/schemas/action_group.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import action_group\""
+                  touches: ["app/schemas/action_group.py"]
+                  status: "todo"
+                - id: "T36"
+                  title: "Add the validation schemas for action"
+                  goal: "The create, update and read shapes for action exist for its service and router to use."
+                  depends_on: ["T22"]
+                  acceptance: "app/schemas/action.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import action\""
+                  touches: ["app/schemas/action.py"]
+                  status: "todo"
+                - id: "T37"
+                  title: "Add the validation schemas for execute"
+                  goal: "The create, update and read shapes for execute exist for its service and router to use."
+                  depends_on: ["T23"]
+                  acceptance: "app/schemas/execute.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import execute\""
+                  touches: ["app/schemas/execute.py"]
+                  status: "todo"
+                - id: "T38"
+                  title: "Add the validation schemas for position"
+                  goal: "The create, update and read shapes for position exist for its service and router to use."
+                  depends_on: ["T24"]
+                  acceptance: "app/schemas/position.py defines the create, update and read shapes matching contract v1."
+                  verify: "uv run python -c \"from app.schemas import position\""
+                  touches: ["app/schemas/position.py"]
+                  status: "todo"
+
+            services:
+              id: "P1-G6"
+              title: "CRUD services"
+              does: "Adds the layer each router calls — list, get, create, update and delete per entity, reaching the data only through SQLAlchemy — so no logic ever sits in a route. When every task here is done every operation of the surface exists exactly once."
+              task_count: 13
+              tasks:
+                - id: "T39"
+                  title: "Add the CRUD service for trading_platform"
+                  goal: "Every trading_platform operation exists for its router to call."
+                  depends_on: ["T26"]
+                  acceptance: "app/services/trading_platform.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import trading_platform\""
+                  touches: ["app/services/trading_platform.py"]
+                  status: "todo"
+                - id: "T40"
+                  title: "Add the CRUD service for broker"
+                  goal: "Every broker operation exists for its router to call."
+                  depends_on: ["T27"]
+                  acceptance: "app/services/broker.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import broker\""
+                  touches: ["app/services/broker.py"]
+                  status: "todo"
+                - id: "T41"
+                  title: "Add the CRUD service for account"
+                  goal: "Every account operation exists for its router to call."
+                  depends_on: ["T28"]
+                  acceptance: "app/services/account.py implements list, get, create, update and delete through SQLAlchemy only, never returning the Password field."
+                  verify: "uv run python -c \"from app.services import account\""
+                  touches: ["app/services/account.py"]
+                  status: "todo"
+                - id: "T42"
+                  title: "Add the CRUD service for asset"
+                  goal: "Every asset operation exists for its router to call."
+                  depends_on: ["T29"]
+                  acceptance: "app/services/asset.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import asset\""
+                  touches: ["app/services/asset.py"]
+                  status: "todo"
+                - id: "T43"
+                  title: "Add the CRUD service for strategy"
+                  goal: "Every strategy operation exists for its router to call."
+                  depends_on: ["T30"]
+                  acceptance: "app/services/strategy.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import strategy\""
+                  touches: ["app/services/strategy.py"]
+                  status: "todo"
+                - id: "T44"
+                  title: "Add the CRUD service for trailing_group"
+                  goal: "Every trailing_group operation exists for its router to call."
+                  depends_on: ["T31"]
+                  acceptance: "app/services/trailing_group.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import trailing_group\""
+                  touches: ["app/services/trailing_group.py"]
+                  status: "todo"
+                - id: "T45"
+                  title: "Add the CRUD service for trailing_rule"
+                  goal: "Every trailing_rule operation exists for its router to call."
+                  depends_on: ["T32"]
+                  acceptance: "app/services/trailing_rule.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import trailing_rule\""
+                  touches: ["app/services/trailing_rule.py"]
+                  status: "todo"
+                - id: "T46"
+                  title: "Add the CRUD service for partial_group"
+                  goal: "Every partial_group operation exists for its router to call."
+                  depends_on: ["T33"]
+                  acceptance: "app/services/partial_group.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import partial_group\""
+                  touches: ["app/services/partial_group.py"]
+                  status: "todo"
+                - id: "T47"
+                  title: "Add the CRUD service for partial_rule"
+                  goal: "Every partial_rule operation exists for its router to call."
+                  depends_on: ["T34"]
+                  acceptance: "app/services/partial_rule.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import partial_rule\""
+                  touches: ["app/services/partial_rule.py"]
+                  status: "todo"
+                - id: "T48"
+                  title: "Add the CRUD service for action_group"
+                  goal: "Every action_group operation exists for its router to call."
+                  depends_on: ["T35"]
+                  acceptance: "app/services/action_group.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import action_group\""
+                  touches: ["app/services/action_group.py"]
+                  status: "todo"
+                - id: "T49"
+                  title: "Add the CRUD service for action"
+                  goal: "Every action operation exists for its router to call."
+                  depends_on: ["T36"]
+                  acceptance: "app/services/action.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import action\""
+                  touches: ["app/services/action.py"]
+                  status: "todo"
+                - id: "T50"
+                  title: "Add the CRUD service for execute"
+                  goal: "Every execute operation exists for its router to call."
+                  depends_on: ["T37"]
+                  acceptance: "app/services/execute.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import execute\""
+                  touches: ["app/services/execute.py"]
+                  status: "todo"
+                - id: "T51"
+                  title: "Add the CRUD service for position"
+                  goal: "Every position operation exists for its router to call."
+                  depends_on: ["T38"]
+                  acceptance: "app/services/position.py implements list, get, create, update and delete through SQLAlchemy only."
+                  verify: "uv run python -c \"from app.services import position\""
+                  touches: ["app/services/position.py"]
+                  status: "todo"
+
+            routers:
+              id: "P1-G7"
+              title: "CRUD routers"
+              does: "Adds one thin router per entity — the five CRUD routes of contract v1's pattern, requiring the API key and delegating to that entity's service — and registers each one in the entry point. When every task here is done the whole surface is served."
+              task_count: 13
+              tasks:
+                - id: "T52"
+                  title: "Add and register the CRUD router for trading_platform"
+                  goal: "The trading_platform surface of contract v1 is served."
+                  depends_on: ["T39", "T10"]
+                  acceptance: "app/routers/trading_platform.py exposes contract v1's CRUD pattern for trading_platform, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import trading_platform; from app.main import app\""
+                  touches: ["app/routers/trading_platform.py", "app/main.py"]
+                  status: "todo"
+                - id: "T53"
+                  title: "Add and register the CRUD router for broker"
+                  goal: "The broker surface of contract v1 is served."
+                  depends_on: ["T40", "T10"]
+                  acceptance: "app/routers/broker.py exposes contract v1's CRUD pattern for broker, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import broker; from app.main import app\""
+                  touches: ["app/routers/broker.py", "app/main.py"]
+                  status: "todo"
+                - id: "T54"
+                  title: "Add and register the CRUD router for account"
+                  goal: "The account surface of contract v1 is served."
+                  depends_on: ["T41", "T10"]
+                  acceptance: "app/routers/account.py exposes contract v1's CRUD pattern for account, requires the API key, delegates to its service, and is registered in app/main.py, and no response carries the Password field."
+                  verify: "uv run python -c \"from app.routers import account; from app.main import app\""
+                  touches: ["app/routers/account.py", "app/main.py"]
+                  status: "todo"
+                - id: "T55"
+                  title: "Add and register the CRUD router for asset"
+                  goal: "The asset surface of contract v1 is served."
+                  depends_on: ["T42", "T10"]
+                  acceptance: "app/routers/asset.py exposes contract v1's CRUD pattern for asset, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import asset; from app.main import app\""
+                  touches: ["app/routers/asset.py", "app/main.py"]
+                  status: "todo"
+                - id: "T56"
+                  title: "Add and register the CRUD router for strategy"
+                  goal: "The strategy surface of contract v1 is served."
+                  depends_on: ["T43", "T10"]
+                  acceptance: "app/routers/strategy.py exposes contract v1's CRUD pattern for strategy, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import strategy; from app.main import app\""
+                  touches: ["app/routers/strategy.py", "app/main.py"]
+                  status: "todo"
+                - id: "T57"
+                  title: "Add and register the CRUD router for trailing_group"
+                  goal: "The trailing_group surface of contract v1 is served."
+                  depends_on: ["T44", "T10"]
+                  acceptance: "app/routers/trailing_group.py exposes contract v1's CRUD pattern for trailing_group, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import trailing_group; from app.main import app\""
+                  touches: ["app/routers/trailing_group.py", "app/main.py"]
+                  status: "todo"
+                - id: "T58"
+                  title: "Add and register the CRUD router for trailing_rule"
+                  goal: "The trailing_rule surface of contract v1 is served."
+                  depends_on: ["T45", "T10"]
+                  acceptance: "app/routers/trailing_rule.py exposes contract v1's CRUD pattern for trailing_rule, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import trailing_rule; from app.main import app\""
+                  touches: ["app/routers/trailing_rule.py", "app/main.py"]
+                  status: "todo"
+                - id: "T59"
+                  title: "Add and register the CRUD router for partial_group"
+                  goal: "The partial_group surface of contract v1 is served."
+                  depends_on: ["T46", "T10"]
+                  acceptance: "app/routers/partial_group.py exposes contract v1's CRUD pattern for partial_group, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import partial_group; from app.main import app\""
+                  touches: ["app/routers/partial_group.py", "app/main.py"]
+                  status: "todo"
+                - id: "T60"
+                  title: "Add and register the CRUD router for partial_rule"
+                  goal: "The partial_rule surface of contract v1 is served."
+                  depends_on: ["T47", "T10"]
+                  acceptance: "app/routers/partial_rule.py exposes contract v1's CRUD pattern for partial_rule, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import partial_rule; from app.main import app\""
+                  touches: ["app/routers/partial_rule.py", "app/main.py"]
+                  status: "todo"
+                - id: "T61"
+                  title: "Add and register the CRUD router for action_group"
+                  goal: "The action_group surface of contract v1 is served."
+                  depends_on: ["T48", "T10"]
+                  acceptance: "app/routers/action_group.py exposes contract v1's CRUD pattern for action_group, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import action_group; from app.main import app\""
+                  touches: ["app/routers/action_group.py", "app/main.py"]
+                  status: "todo"
+                - id: "T62"
+                  title: "Add and register the CRUD router for action"
+                  goal: "The action surface of contract v1 is served."
+                  depends_on: ["T49", "T10"]
+                  acceptance: "app/routers/action.py exposes contract v1's CRUD pattern for action, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import action; from app.main import app\""
+                  touches: ["app/routers/action.py", "app/main.py"]
+                  status: "todo"
+                - id: "T63"
+                  title: "Add and register the CRUD router for execute"
+                  goal: "The execute surface of contract v1 is served."
+                  depends_on: ["T50", "T10"]
+                  acceptance: "app/routers/execute.py exposes contract v1's CRUD pattern for execute, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import execute; from app.main import app\""
+                  touches: ["app/routers/execute.py", "app/main.py"]
+                  status: "todo"
+                - id: "T64"
+                  title: "Add and register the CRUD router for position"
+                  goal: "The position surface of contract v1 is served."
+                  depends_on: ["T51", "T10"]
+                  acceptance: "app/routers/position.py exposes contract v1's CRUD pattern for position, requires the API key, delegates to its service, and is registered in app/main.py."
+                  verify: "uv run python -c \"from app.routers import position; from app.main import app\""
+                  touches: ["app/routers/position.py", "app/main.py"]
+                  status: "todo"
+
+            run_and_prove:
+              id: "P1-G8"
+              title: "Run and prove the surface"
+              does: "Proves the phase's goal — that the API for all defined models is created and runs. When this is done P1 is complete."
+              task_count: 1
+              tasks:
+                - id: "T65"
+                  title: "Prove the application runs and serves all thirteen models"
+                  goal: "P1's goal is demonstrably met — the API for every defined model runs over the migrated database."
+                  depends_on: ["T25", "T52", "T53", "T54", "T55", "T56", "T57", "T58", "T59", "T60", "T61", "T62", "T63", "T64"]
+                  acceptance: "The application starts with the configured run command against a database at head, serves Swagger UI at /docs, and its OpenAPI document carries routes for all thirteen models."
+                  verify: "uv run alembic upgrade head && uv run python -c \"from app.main import app; s=app.openapi(); assert app.docs_url=='/docs' and len(s['paths'])>=13\""
+                  touches: []
+                  status: "todo"
 
     frontend:
       phase_titles_lifecycle: "empty"
