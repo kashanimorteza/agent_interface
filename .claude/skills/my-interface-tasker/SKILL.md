@@ -1,6 +1,6 @@
 ---
 name: my-interface-tasker
-description: Planning mode — read the generated Understanding and the current task standard from `.interface/config/`, then create or update the authorized task plan. Use when the Developer asks to plan configured project work. Plans only; never implements and never interprets `project.md`.
+description: Planning mode — read the generated Understanding and the current task standard from `.interface/config/`, then create or update the authorized plan for the project phase or phases named by the Developer. Plans only; never implements and never interprets `project.md`.
 allowed-tools: Read, Edit, Grep, Glob
 ---
 
@@ -34,7 +34,18 @@ If a required value is absent, ambiguous, inconsistent, or marked as undefined, 
 
 Planning begins only from the Developer's invocation.
 
-Resolve the requested planning scope and targets from the invocation and current configuration. Do not assume a particular project part, carry scope from an earlier run, or hardcode currently known items.
+Treat the project phase or phases named in the invocation as the planning scope. Resolve each requested phase from the current generated Understanding before selecting targets or writing anything.
+
+- When one phase is named, plan only that phase.
+- When several phases or all phases are requested, plan exactly those phases in the project's defined order.
+- Obtain each phase's identity, target, and goal from the generated Understanding, then read the mapped configuration required for that target.
+- Write the generated work only into the matching project phase location allowed by the current Task standard.
+- Do not turn technical implementation areas into additional phases. Decompose the requested project phase only through the grouping and task mechanisms defined by the current Task standard.
+- Do not create, rename, reorder, merge, split, or silently select a project phase.
+
+If a requested phase is absent, ambiguous, or not represented in the generated Understanding, stop and use the configured blocker or question mechanism. Do not infer it from `project.md` or from another phase.
+
+Do not carry a phase or target over from an earlier run, and do not hardcode currently known phases or project parts.
 
 Enter and finish planning mode exactly as authorized by the live State contract.
 
@@ -44,7 +55,6 @@ Read structural and behavioral requirements from the files that own them. This S
 
 - the shape of a plan;
 - the fields of a phase, group, or task;
-- how project phases map to task phases;
 - task states or lifecycle rules;
 - dependency, contract, verification, or path rules;
 - which fields or files planning may write.
