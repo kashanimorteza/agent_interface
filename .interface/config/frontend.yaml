@@ -3,7 +3,7 @@ meta:
   path: ".interface/config/frontend.yaml"
   path_note: "Config layer of the Agent Project Interface — the frontend item's configuration, generated from Phase 1 of project.md by my-interface-interpreter"
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-01"
 
 
@@ -49,10 +49,10 @@ content:
   enabled_note: "The project defines the frontend as a part of the product, but Phase 1 targets the backend and no defined phase targets the frontend. The entry stands; the item is out of the build until a phase names it."
 
   # <!-------------------------------------------- Code_Path -->
-  code_path: "to be defined"
+  code_path: "frontend/"
 
   # <!-------------------------------------------- Code_Path_Note -->
-  code_path_note: "A folder relative to the repository root, outside .interface/ — never a path inside the interface. The project names no folder for the frontend's code; see open question Q2 in config/state.yaml."
+  code_path_note: "Relative to the repository root, outside .interface/ — never a path inside the interface. Every path in a task's touches, and the verify_cwd below, resolve against this folder."
 
   # <!-------------------------------------------- Summary -->
   summary: "A Next.js and React application written in TypeScript, providing the user interface over the backend's API."
@@ -61,7 +61,7 @@ content:
   needs_test: false
 
   # <!-------------------------------------------- Verify_Cwd -->
-  verify_cwd: "The frontend's code_path — to be defined, see Q2 — inside its npm-managed environment."
+  verify_cwd: "frontend/ — every verify command runs from there, inside its npm-managed environment."
 
   # <!-------------------------------------------- Responsibility -->
   responsibility: "The frontend is answerable for everything the user sees and touches — the interface through which the application is used, built entirely on the backend's contract."
@@ -92,10 +92,11 @@ content:
   # <!-------------------------------------------- Boundaries -->
   boundaries:
     owns:
-      - "Everything under its code_path"
+      - "Everything under frontend/"
       - "The user interface and its presentation logic"
     does_not_own:
       - "The database, the application data, and the API surface — however close they sit to what it displays"
+      - "Anything under backend/"
     interface: "The user interface itself — the frontend offers no contract to any other item."
 
   # <!-------------------------------------------- Out_Of_Scope -->
