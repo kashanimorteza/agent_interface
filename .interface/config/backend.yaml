@@ -1,0 +1,234 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/backend.yaml"
+  path_note: "Config layer of the Agent Project Interface — the backend item's configuration, generated from Phase 1 of project.md by my-interface-interpreter"
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Planning mode may write settings and draft contracts here, never a frozen contract — per content.modes in root.yaml. Development and review may not write this file at all"
+  changed_by: "my-interface-interpreter on regeneration from project.md; my-interface-tasker in planning mode; the human at any time"
+  frozen_contracts: "A contract version whose lifecycle is frozen is never edited by any agent — a change means a new version, and that is the human's decision"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled, code_path, code_path_note, summary — whether this item is in play and where it lives"
+  - "needs_test, verify_cwd — how work on it is proven"
+  - "responsibility, tech, standards, capabilities — what it answers for and what it is built with"
+  - "code_layout — where everything sits inside code_path"
+  - "contracts — the surface it publishes, read before boundaries so the limits are read knowing the surface"
+  - "boundaries, out_of_scope — its limits, read last"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the backend is in the build"
+  code_path: "The one place this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The backend in one line"
+  needs_test: "Whether tasks are proven by written tests"
+  verify_cwd: "Where, and inside what, every verify command runs"
+  responsibility: "What the backend is answerable for"
+  tech: "What the backend is built with — never re-decided by an agent"
+  standards: "How the code is written — settled once"
+  capabilities: "The optional capabilities, each switched on or off"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The API contract the backend publishes"
+  boundaries: "What the backend owns, does not own, and offers"
+  out_of_scope: "What the backend does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Enabled -->
+  enabled: true
+
+  # <!-------------------------------------------- Code_Path -->
+  code_path: "backend/"
+
+  # <!-------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root, outside .interface/ — never a path inside the interface. Every path in a task's touches, and the verify_cwd below, resolve against this folder."
+
+  # <!-------------------------------------------- Summary -->
+  summary: "A FastAPI service over SQLite that manages every Trading Assistant entity and serves them as an API-key-protected, documented API."
+
+  # <!-------------------------------------------- Needs_Test -->
+  needs_test: false
+
+  # <!-------------------------------------------- Verify_Cwd -->
+  verify_cwd: "backend/ — every verify command runs from there, inside the uv-managed virtual environment."
+
+  # <!-------------------------------------------- Responsibility -->
+  responsibility: "The backend is answerable for the application's data and functionality — it owns the database schema, every entity the project defines, and the API surface through which all of it is reached."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+    language:
+      name: "Python"
+      version: "latest"
+      environment:
+        name: "uv"
+        version: "latest"
+      packages:
+        api:
+          name: "FastAPI"
+          version: "latest"
+        orm:
+          name: "SQLAlchemy"
+          version: "latest"
+        migration:
+          name: "Alembic"
+          version: "latest"
+          note: "The project asks for a standard Python migration framework without naming one; Alembic is the schema's declared default for this role, and a default is an answer rather than a guess."
+    database:
+      engine: "SQLite"
+      location: "A single database file inside code_path, never committed"
+      schema_owner: "The backend — the schema moves only through Alembic migrations"
+      access_route: "SQLAlchemy is the only permitted route to the data; no raw connection outside the database module"
+    run: "uv run uvicorn app.main:app --reload, from backend/ inside the uv environment"
+
+  # <!-------------------------------------------- Standards -->
+  standards:
+    naming:
+      variables: "snake_case"
+      functions: "snake_case"
+      classes: "PascalCase"
+      constants: "UPPER_SNAKE_CASE"
+      files: "snake_case"
+      folders: "snake_case"
+
+  # <!-------------------------------------------- Capabilities -->
+  capabilities:
+    error_handling:
+      enabled: false
+    logging:
+      enabled: false
+    api_documentation:
+      enabled: true
+      type: "Docs — FastAPI's built-in Swagger UI at /docs, generated from OpenAPI; ReDoc is switched off by the project"
+    authentication:
+      enabled: false
+    https:
+      enabled: false
+    api_key:
+      enabled: true
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout:
+    "app/": "The backend application package — everything importable lives beneath it"
+    "app/main.py": "Entry point — creates the FastAPI application, registers the routers, and applies the API-key dependency"
+    "app/config.py": "Configuration — the database file location and the API-key setting, read from the environment"
+    "app/database.py": "SQLAlchemy engine, session, and declarative base — the only place a connection is made"
+    "app/models/": "SQLAlchemy models — one file per entity"
+    "app/schemas/": "Validation schemas — the request and response shapes, one file per entity"
+    "app/services/": "The business logic the routes call — one file per entity"
+    "app/routers/": "FastAPI routers — one thin file per entity"
+    "migrations/": "The Alembic environment and its version scripts"
+    "alembic.ini": "Alembic configuration"
+    "pyproject.toml": "Project metadata and dependencies, managed by uv"
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+    produces: "v1"
+    rule: "The implementation must match the frozen contract exactly — the contract binds the backend, never the other way around."
+    change_rule: "A frozen contract is versioned, never edited; creating a new version and freezing it are the human's decisions alone."
+
+    v1:
+      lifecycle: "draft"
+      lifecycle_note: "Draft — planning may still shape it, and no consumer may build against it until the human freezes it. While it is draft a change costs only a re-read; once frozen a change costs a new version. It cannot be completed while blocker B1 stands, since the field types are still unstated."
+      consumed_by: "frontend"
+      contract_read_order:
+        - "conventions — what holds across the whole surface, before any route"
+        - "error_shape — the one shape every failure takes"
+        - "models — the data shapes the surface carries"
+        - "routes — the surface itself, read last so each route is read knowing its shapes"
+      conventions:
+        transport: "HTTP with JSON request and response bodies; HTTPS is switched off by the project"
+        api_key: "Every request carries the API key; a request without a valid one is rejected"
+        identifiers: "Every entity is addressed by its ID field"
+        timestamps: "to be defined — the project states no timestamp field on any entity"
+        unknown_id: "A request naming an id that does not exist answers 404 in the standard error shape"
+      error_shape:
+        rule: "Every failure takes FastAPI's built-in shape, because the project disables a custom error layer"
+        fields:
+          detail: "What went wrong — a message, or the framework's validation detail list"
+        codes:
+          "401_or_403": "The API key is missing or invalid"
+          "404": "No entity exists for the given id"
+          "422": "The request body or a parameter failed validation"
+      models:
+        note: "Field names and relationships are the project's own. Types, lengths, and allowed values are still unstated and are not invented here — see open question Q2 and blocker B1 in config/state.yaml."
+        trading_platform:
+          purpose: "The trading integration used to execute trades — initially Binance and MetaTrader 5, with more addable later; each may offer its own library for trading operations."
+          fields: "ID, Name, Status, Description"
+        broker:
+          purpose: "A broker, its broker-specific parameters, and the trading platform it uses; the parent under which its accounts are defined."
+          fields: "ID, Name, Trading Platform ID, Status, Description"
+          references: "Trading Platform ID → trading_platform"
+        account:
+          purpose: "A trading account belonging to a broker, used to perform trading operations."
+          fields: "ID, Name, Username, Password, Broker ID, Status, Description"
+          references: "Broker ID → broker"
+          security_note: "Password is never carried in any response — see the security rules in rules.yaml"
+        asset:
+          purpose: "A tradable asset and its parameters, such as EURUSD or XAUUSD."
+          fields: "ID, Name, Status, Description"
+        strategy:
+          purpose: "The trading settings an action uses, including values such as stop loss and take profit."
+          fields: "ID, Name, Risk Parameter, Status, Description"
+        trailing_group:
+          purpose: "A group for the rules deciding when and how stop loss and take profit change during a trade."
+          fields: "ID, Name, Status, Description"
+        trailing_rule:
+          purpose: "One rule inside a trailing group — for example, adjusting take profit and stop loss once profit reaches a stated percentage of the take-profit target."
+          fields: "ID, Name, Trailing Group ID, Status, Description"
+          references: "Trailing Group ID → trailing_group"
+        partial_group:
+          purpose: "A group of rules for closing part or all of a position at stated profit levels, such as 10%, 30%, or the whole position."
+          fields: "ID, Name, Status, Description"
+        partial_rule:
+          purpose: "One rule inside a partial group, carrying the profit threshold and the portion of the position to close once it is reached."
+          fields: "ID, Name, Partial Group ID, Profit Threshold, Close Portion, Status, Description"
+          references: "Partial Group ID → partial_group"
+        action_group:
+          purpose: "Groups trading actions by an operating or risk profile, such as Standard or High Risk."
+          fields: "ID, Name, Status, Description"
+        action:
+          purpose: "A trading action inside an action group, combining an asset, an account, and a strategy — for example a High Risk action trading EURUSD through one account using one strategy."
+          fields: "ID, Name, Asset ID, Account ID, Strategy ID, Group ID, Status, Description"
+          references: "Asset ID → asset, Account ID → account, Strategy ID → strategy, Group ID → action_group"
+        execute:
+          purpose: "Tracks actions that have been activated and executed, with the stage and state of each execution."
+          fields: "ID, Name, Action ID, Profit, State, Status, Description"
+          references: "Action ID → action"
+        position:
+          purpose: "The complete information of a position created from an executed order, including its entry price, take profit, stop loss, and the settings applied through its related groups."
+          fields: "ID, Name, Entry Price, Take Profit, Stop Loss, Status, Description"
+      routes:
+        note: "Routes are not defined route by route here — the pattern below is the surface, per the interpreter's backend rule."
+        pattern: "Standard CRUD for each model — list, get by id, create, update, delete — under a path named for that model; every route requires the API key, carries JSON, and may fail with the codes in error_shape."
+        detail: "The exact paths, bodies, and success responses are settled by planning inside this contract before the human freezes v1."
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns:
+      - "Everything under backend/"
+      - "The whole database schema and the data in it"
+      - "The API surface and contract v1"
+    does_not_own:
+      - "Client code and the user interface, however close they sit to the surface it publishes"
+      - "Anything under frontend/"
+    interface: "Contract v1 above — the only thing the backend offers the outside."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "Executing real trades — connecting to Binance, MetaTrader 5, or any platform library is not asked for by the defined phase, whose goal is to create and run the API for the defined models"
+    - "User authentication — switched off by the project; the API key is the only access control"
+    - "HTTPS, application logging, a centralized error layer, and written tests — each switched off by the project"
+    - "Any user interface — that belongs to the frontend"
