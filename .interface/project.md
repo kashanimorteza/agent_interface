@@ -58,9 +58,17 @@ Defines the technologies, tools, and development settings used to build the proj
 
 Defines the core entities of the project and the data fields that belong to each entity.
 
+### Trading Platform
+
+Fields: ID, Name, Status, Description
+
+### Broker
+
+Fields: ID, Name, Trading Platform ID, Status, Description
+
 ### Account
 
-Fields: ID, Name, Username, Password, Status, Description
+Fields: ID, Name, Username, Password, Broker ID, Status, Description
 
 ### Asset
 
@@ -69,6 +77,22 @@ Fields: ID, Name, Status, Description
 ### Strategy
 
 Fields: ID, Name, Risk Parameter, Status, Description
+
+### Trailing Group
+
+Fields: ID, Name, Status, Description
+
+### Trailing Rule
+
+Fields: ID, Name, Status, Description
+
+### Partial Group
+
+Fields: ID, Name, Status, Description
+
+### Partial Rule
+
+Fields: ID, Name, Status, Description
 
 ### Action Group
 
@@ -81,6 +105,10 @@ Fields: ID, Name, Asset ID, Strategy ID, Group ID, Status, Description
 ### Execute
 
 Fields: ID, Name, Action ID, Profit, State, Status, Description
+
+### Position
+
+Fields: ID, Name, Status, Description
 
 <br><br>
 
