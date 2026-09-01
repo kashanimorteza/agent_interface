@@ -223,11 +223,12 @@ sections:
           from: "any"
           to: "no state.yaml at all — active, blockers, questions, and the live State Authority deleted with the file, reseeded from the schema default at the next S0"
           performed_by: "my-interface-clear"
-          authorized_by: "The human asking for the clear job by name, and confirming the file list"
+          authorized_by: "The human invoking my-interface-clear by name; that invocation itself authorizes deletion of the exact currently mapped generated files, with no second confirmation"
           requires:
-            - "The human has confirmed the exact list of files, in this run"
+            - "The exact existing deletion set is resolved fresh from the current Interface map"
+            - "Every target is a mapped generated file; no protected, human-managed, unresolved, or unmapped path is included"
           writes: "the whole of state.yaml, by deleting it with the rest of config/"
-          refused_when: "No explicit confirmation was given in this run"
+          refused_when: "The deletion set cannot be resolved exactly, or it includes a protected, human-managed, unresolved, or unmapped path"
 
         - id: "S6"
           name: "human override"

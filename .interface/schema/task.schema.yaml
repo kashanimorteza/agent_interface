@@ -1,8 +1,8 @@
 schema:
   id: agent-interface-task
-  version: "1.3"
+  version: "1.4"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
-  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans keep the established item → phase → group → task structure. Their phases are the project phases from the generated Understanding, placed under the item named by each phase's target; planning decomposes a requested phase only through its groups and tasks"
+  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans keep the established item → phase → group → task structure. Their phases come from definition.yaml under content.phases and are placed under the item named by each phase's target; planning decomposes a requested phase only through its groups and tasks"
   authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and invariants, not the permission"
 
 structure:
@@ -91,7 +91,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Plans -->
   plans:
     required: true
-    purpose: "The plans — one per indexed item, each under its own key. Across all item plans, task phases correspond one for one to the project phases in the generated Understanding. A project phase appears only under the item named by its target. The planner never creates independent technical phases; it creates groups and tasks inside the requested project phase."
+    purpose: "The plans — one per indexed item, each under its own key. Across all item plans, task phases correspond one for one to the project phases in definition.yaml under content.phases. A project phase appears only under the item named by its target. The planner never creates independent technical phases; it creates groups and tasks inside the requested project phase."
     fields:
       "<item>":
         required: true
@@ -99,30 +99,30 @@ sections:
         fields:
           phase_titles_lifecycle:
             required: true
-            purpose: "Where this item's project-phase title list stands — empty, derived, or confirmed. empty: no project phase titles have been copied yet. derived: the Tasker copied them from the generated Understanding and the human has not confirmed the list. confirmed: the human accepted the list, and from then on only the human changes it."
+            purpose: "Where this item's project-phase title list stands — empty, derived, or confirmed. empty: no project phase titles have been copied yet. derived: the Tasker copied them from definition.yaml under content.phases and the human has not confirmed the list. confirmed: the human accepted the list, and from then on only the human changes it."
           phase_titles_derived_from:
             required: true
-            purpose: "The exact generated-Understanding section from which the project phase ids, titles, order, and targets were read. It reads 'not derived yet' while the lifecycle is empty."
+            purpose: "The exact source of the project phase ids, titles, order, targets, and goals. Once derived, it must read '.interface/config/definition.yaml — content.phases'; it reads 'not derived yet' while the lifecycle is empty."
           phase_titles:
             required: true
-            purpose: "Quick lookup from project phase id to title for the phases whose target is this item. The ids, titles, and project order come from the generated Understanding. Technical implementation areas never become entries here."
+            purpose: "Quick lookup from project phase id to title for the phases whose target is this item. The ids, titles, and project order come from definition.yaml under content.phases. Technical implementation areas never become entries here."
           phases:
             required: true
             purpose: "This item's plan — project phases at the top, groups inside a phase, and tasks inside a group. Only a project phase requested by the human is populated; no independent technical phase is created."
             fields:
               "<phase>":
                 required: true
-                purpose: "One project phase from the generated Understanding whose target is this item. The Tasker writes planning work only into the matching requested phase."
+                purpose: "One project phase from definition.yaml under content.phases whose target is this item. The Tasker writes planning work only into the matching requested phase."
                 fields:
                   id:
                     required: true
-                    purpose: "The project phase id — P1, P2, ... — preserved from the generated Understanding and unique across the project."
+                    purpose: "The project phase id — P1, P2, ... — preserved from definition.yaml under content.phases and unique across the project."
                   title:
                     required: true
-                    purpose: "The project phase title, copied faithfully from the generated Understanding."
+                    purpose: "The project phase title, copied faithfully from definition.yaml under content.phases."
                   does:
                     required: true
-                    purpose: "What the project phase accomplishes, derived only from that phase's stated goal in the generated Understanding."
+                    purpose: "What the project phase accomplishes, derived only from that phase's goal in definition.yaml under content.phases."
                   groups:
                     required: true
                     purpose: "The technical decomposition of this project phase. Environment, configuration, database, models, migrations, routes, or any other implementation area belongs here rather than becoming another phase."

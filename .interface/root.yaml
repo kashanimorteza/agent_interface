@@ -169,7 +169,7 @@ content:
       name: "my-interface-clear"
       path: ".claude/skills/my-interface-clear/"
       responsibility: "Removes the generated files under config/ so the interpreter can run again from nothing"
-      state: "Transition S5, and only on the human's confirmed request. It writes no state field — it deletes the file that holds them"
+      state: "Transition S5. Invoking my-interface-clear by name authorizes deletion of the exact currently mapped generated files without a second confirmation; it writes no state field — it deletes the file that holds them"
 
     skill_installer:
       name: "my-interface-skill-installer"

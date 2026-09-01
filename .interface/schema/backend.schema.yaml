@@ -280,7 +280,7 @@ sections:
             purpose: "The single shape every failure takes — its rule, its exact fields, and the codes a consumer may branch on."
           models:
             required: true
-            purpose: "The data shapes the surface returns — the key is the model, the value is its fields and their limits."
+            purpose: "The data shapes named by the project — the key is the model, and the value contains only the model details explicitly stated by the project. Unstated implementation details are outside this contract and do not create interpretation gaps."
           routes:
             required: true
             purpose: "The surface itself, read last — each route carries method, path, summary, its body when it takes one, its success response, and the error codes it may answer with."

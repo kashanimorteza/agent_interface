@@ -1,6 +1,6 @@
 ---
 name: my-interface-clear
-description: Clear only the currently mapped generated Agent Interface files after the Developer explicitly requests a reset and confirms the resolved deletion list.
+description: Clear only the currently mapped generated Agent Interface files when the Developer explicitly invokes this Skill; the invocation itself authorizes the resolved deletion set without a second confirmation.
 disable-model-invocation: true
 ---
 
@@ -19,13 +19,13 @@ Read these sources from disk on every invocation. Do not reuse a path, file list
 
 Do not read the human project-definition file. It is not needed to resolve a generated-file reset.
 
-Show the exact resolved list to the Developer and obtain confirmation in the current run. Invocation alone is not confirmation of a newly resolved deletion scope.
+The explicit invocation of this Skill authorizes deletion of the exact currently mapped generated files. Resolve and report that list, then proceed without requesting a second confirmation.
 
 ## Delete
 
-After confirmation, delete exactly the confirmed generated files and nothing else. Keep any directory the Interface map says must remain. Do not use an unresolved variable, wildcard, broad recursive target, or remembered path to determine deletion scope.
+Delete exactly the resolved generated files and nothing else. Keep any directory the Interface map says must remain. Do not use an unresolved variable, wildcard, broad recursive target, or remembered path to determine deletion scope.
 
-Treat everything outside the confirmed generated set as out of scope, including every source or authority the live Interface marks as protected or human-managed.
+Treat everything outside the resolved generated set as out of scope, including every source or authority the live Interface marks as protected or human-managed.
 
 ## Completion
 

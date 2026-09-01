@@ -1,12 +1,13 @@
 schema:
   id: agent-interface-definition
-  version: "1.0"
+  version: "1.1"
   purpose: "The shape of definition.yaml — every parameter an agent reads to understand what the product is"
 
 structure:
   - identity
   - goals
   - architecture
+  - phases
 
 sections:
 
@@ -77,3 +78,28 @@ sections:
           versioning:
             required: true
             purpose: "How the contract may change — a frozen contract never changes; a change means a new version."
+
+  # <!--------------------------------------------------------------------------------- Phases -->
+  phases:
+    required: true
+    purpose: "The authoritative ordered project phase index copied from project.md. Planning reads phase identity, title, order, target, and goal only from this section and never invents an independent phase."
+    fields:
+      "<phase>":
+        required: true
+        purpose: "One project phase — a list entry, kept in the same order as project.md."
+        fields:
+          id:
+            required: true
+            purpose: "P1, P2, ... — derived mechanically as P plus the number in the project's Phase heading and unique across the project."
+          title:
+            required: true
+            purpose: "The phase title stated by the project, copied faithfully."
+          order:
+            required: true
+            purpose: "The phase's one-based position in project.md."
+          target:
+            required: true
+            purpose: "The architecture item named by the project's phase target, resolved to its indexed item key."
+          goal:
+            required: true
+            purpose: "What the project states this phase must accomplish, copied faithfully."
