@@ -1,14 +1,14 @@
 schema:
   id: agent-interface-task
-  version: "1.3"
-  purpose: "The shape of task.yaml — the frame that defines a task, and the project-phase-aligned plan that holds the tasks"
-  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. The plan's phases mirror the project phases in the generated Understanding one for one, in the same order and with the same title and target; groups and tasks are the working surface an agent writes inside those phases in planning mode"
-  authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and the lifecycle, not the permission"
+  version: "2.0"
+  purpose: "The shape of task.yaml — the fixed task frame and the single project plan whose phases mirror the project phases in the generated Understanding"
+  frame_and_surface: "task_schema and task_states are the frame fixed by the human. plan is the working surface: its phases correspond one for one to definition.yaml under content.phases, and planning decomposes each phase only through groups and their tasks"
+  authority: "Who may write each section, and when, is decided by the live State contract in .interface/config/state.yaml and the mode permissions in .interface/root.yaml; this file defines shape and invariants, not write permission"
 
 structure:
   - task_schema
   - task_states
-  - plans
+  - plan
 
 sections:
 
@@ -47,7 +47,7 @@ sections:
             purpose: "A runnable command that proves acceptance — without it a task is never done."
           touches:
             required: true
-            purpose: "Paths this task touches, written relative to the code_path of the project part named by its phase target."
+            purpose: "Paths this task touches, written relative to the code_path of the project part named by the parent phase's target."
           status:
             required: true
             purpose: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
@@ -88,57 +88,51 @@ sections:
         required: true
         purpose: "That in development mode status, blocker, and log are the only fields an agent may change — the rest is the plan."
 
-  # <!--------------------------------------------------------------------------------- Plans -->
-  plans:
+  # <!--------------------------------------------------------------------------------- Plan -->
+  plan:
     required: true
-    purpose: "The project plan. Its phases are not an independent technical staging invented by the planner: they are the task representation of the project phases already present in the generated Understanding. If the Understanding has ten project phases, this plan has exactly ten phases, in the same order. Each phase then contains its own implementation groups and tasks."
+    purpose: "The single project plan. Its phases are the task representation of the project phases in definition.yaml under content.phases, not an independent technical staging. The phase count and order are identical to the Understanding, and each phase preserves its source id, title, target, and goal. Technical decomposition happens only through groups inside those phases."
     fields:
-      project_phases_source:
-        required: true
-        purpose: "The exact generated-Understanding section from which the project phases were read, so the plan's phase alignment is traceable."
-      phase_alignment:
-        required: true
-        purpose: "The invariant that phases below have a one-to-one correspondence with the project phases in project_phases_source: the count and order are identical, and every phase preserves its source phase's identity, title, and target. The planner may create groups and tasks inside a phase, but may not create, remove, merge, split, reorder, rename, or retarget project phases."
       phases:
         required: true
-        purpose: "The project-phase-aligned plan — phases at the top, groups inside a phase, and tasks inside a group; a task never sits directly in a phase, and nothing sits outside a phase. The phase entries exist in the same count and order as the source project phases; their groups and tasks stay empty until the human explicitly asks for tasks to be created."
+        purpose: "The project phases in their defined order. If the Understanding has one phase, the plan has one phase; if it has ten, the plan has ten. Planning may not create, remove, merge, split, reorder, rename, or retarget them."
         fields:
           "<phase>":
             required: true
-            purpose: "The task representation of exactly one project phase from the generated Understanding. A later phase assumes the earlier project phases exist in their defined order."
+            purpose: "Exactly one project phase from definition.yaml under content.phases, carrying its identity and containing only the groups and tasks that deliver its goal."
             fields:
               id:
                 required: true
-                purpose: "P1, P2, ... — the identifier corresponding to the same project phase, numbered in the project's defined order."
+                purpose: "The source project phase id — P1, P2, ... — preserved in the project's defined order."
               title:
                 required: true
-                purpose: "The project phase title, copied faithfully from the generated Understanding and never independently derived or renamed by the planner."
+                purpose: "The source project phase title, copied faithfully from the generated Understanding."
               target:
                 required: true
-                purpose: "The project phase target, copied faithfully from the generated Understanding; it must name a project part indexed by the Understanding. Every group and task in this phase belongs to this target."
-              does:
+                purpose: "The source project phase target, copied faithfully from the generated Understanding; it names the project part whose configuration governs every group and task in this phase."
+              goal:
                 required: true
-                purpose: "What the source project phase accomplishes, derived only from that phase's stated goal and carrying no requirement from another phase."
+                purpose: "The source project phase goal, copied faithfully from the generated Understanding."
               groups:
                 required: true
-                purpose: "The implementation groups for this project phase — every task of the phase lives inside exactly one of them and serves the phase's target and goal."
+                purpose: "The only technical decomposition level inside the project phase. Environment, configuration, models, migrations, routes, or any other implementation area are groups here, never additional phases."
                 fields:
                   "<group>":
                     required: true
-                    purpose: "One area of work inside the project phase — related tasks side by side."
+                    purpose: "One coherent area of work inside the project phase; every task in the phase belongs to exactly one group."
                     fields:
                       id:
                         required: true
-                        purpose: "P1-G1, P1-G2, ... — the project phase id plus a group number, unique within the plan."
+                        purpose: "The parent phase id plus a group number — P1-G1, P1-G2, ... — unique within the project plan."
                       title:
                         required: true
-                        purpose: "The area in a few words."
-                      does:
+                        purpose: "The implementation area in a few words."
+                      goal:
                         required: true
-                        purpose: "What this group of tasks is doing, and what is true when all of them are done."
+                        purpose: "What becomes true when every task in this group is done, within the parent phase's goal and target."
                       task_count:
                         required: true
                         purpose: "How many tasks the group holds — stated so the size is visible without counting."
                       tasks:
                         required: true
-                        purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one atomic act, naming the one thing it creates or changes — create one file, add one method, implement one function, install one package, add one model, create one endpoint, add one migration, add one specific validation — never a broad or multi-purpose implementation goal. Anything larger is split into several tasks before it is written; many precise tasks are preferred over a few broad ones, however much the count grows, and one sitting finishes each."
+                        purpose: "The tasks of this group, each carrying exactly the fields of task_schema. A task is one atomic act naming the one thing it creates or changes; anything broader is split into multiple tasks within the appropriate group."
