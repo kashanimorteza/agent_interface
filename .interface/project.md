@@ -28,6 +28,8 @@ Defines the technologies, tools, and development settings used to build the proj
 
 ### Backend
 
+- Code Path: backend/
+
 #### Technology
 
 - Language: Python
@@ -44,6 +46,8 @@ Defines the technologies, tools, and development settings used to build the proj
 - ReDoc: false
 
 ### Frontend
+
+- Code Path: frontend/
 
 #### Technology
 
@@ -98,7 +102,7 @@ Fields: ID, Name, Status, Description
 
 Purpose: Defines an individual rule within a trailing group. For example, when profit reaches a specified percentage of the take-profit target, the rule can adjust the take profit and stop loss.
 
-Fields: ID, Name, Status, Description
+Fields: ID, Name, Trailing Group ID, Status, Description
 
 ### Partial Group
 
@@ -110,7 +114,7 @@ Fields: ID, Name, Status, Description
 
 Purpose: Defines an individual rule within a partial group, including the profit threshold and the portion of the position to close when that threshold is reached.
 
-Fields: ID, Name, Status, Description
+Fields: ID, Name, Partial Group ID, Profit Threshold, Close Portion, Status, Description
 
 ### Action Group
 
@@ -122,7 +126,7 @@ Fields: ID, Name, Status, Description
 
 Purpose: Defines a trading action within an action group by combining an asset, an account, and a strategy. For example, a High Risk action can trade EURUSD through Account A using Strategy B.
 
-Fields: ID, Name, Asset ID, Strategy ID, Group ID, Status, Description
+Fields: ID, Name, Asset ID, Account ID, Strategy ID, Group ID, Status, Description
 
 ### Execute
 
@@ -134,7 +138,7 @@ Fields: ID, Name, Action ID, Profit, State, Status, Description
 
 Purpose: Stores the complete information for a position created from an executed order, including its entry price, take profit, stop loss, and the settings applied through its related groups.
 
-Fields: ID, Name, Status, Description
+Fields: ID, Name, Entry Price, Take Profit, Stop Loss, Status, Description
 
 <br><br>
 

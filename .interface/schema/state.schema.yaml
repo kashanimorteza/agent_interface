@@ -39,7 +39,7 @@ sections:
           tier: "human_only"
           holds: "This section — the live State Authority"
           writable_by:
-            - "my-interface-configurator — only under transition S0, seeding the default from schema/state.schema.yaml because state.yaml does not yet exist"
+            - "my-interface-interpreter — only under transition S0, seeding the default from schema/state.schema.yaml because state.yaml does not yet exist"
           constraint: "After the seed it is the human's alone. A regeneration carries it through untouched, no Skill edits, extends, or narrows it, and a change it needs is an open question in this file — never a quiet rewrite"
           human_may_set: true
 
@@ -47,32 +47,32 @@ sections:
           tier: "agent_writable"
           holds: "One of the modes defined in .interface/root.yaml under content.modes, or 'not set' when no Skill has been invoked yet"
           writable_by:
-            - "my-interface-planner"
+            - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
-            - "my-interface-configurator — only under transition S0, when state.yaml does not yet exist"
-          constraint: "A Skill writes only the mode it owns — the planner writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-clear does not write this field: it deletes the file that holds it, under transition S5"
+            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+          constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-clear does not write this field: it deletes the file that holds it, under transition S5"
           human_may_set: true
 
         active.item:
           tier: "agent_writable"
           holds: "The name of one item as definition.yaml indexes it under content.architecture.parts, or 'none'"
           writable_by:
-            - "my-interface-planner"
+            - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
-            - "my-interface-configurator — only under transition S0, when state.yaml does not yet exist"
-          constraint: "Only an item the configuration indexes and whose enabled is true. The item comes from the invocation. When the invocation names none and more than one enabled item exists, the Skill writes nothing and asks the human — an item is never guessed, and never carried over from a previous run. Under S0 the configurator writes only 'none'"
+            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+          constraint: "Only an item the configuration indexes and whose enabled is true. The item comes from the invocation. When the invocation names none and more than one enabled item exists, the Skill writes nothing and asks the human — an item is never guessed, and never carried over from a previous run. Under S0 the interpreter writes only 'none'"
           human_may_set: true
 
         active.mode_reason:
           tier: "agent_writable"
           holds: "Why this mode and this item are the active ones — the invocation that set them, and after a run what that run concluded"
           writable_by:
-            - "my-interface-planner"
+            - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
-            - "my-interface-configurator — only under transition S0, when state.yaml does not yet exist"
+            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
           constraint: "Written together with mode and item, and rewritten at the end of a run under transition S4. It states what happened; it never argues for a mode the Skill was not invoked into"
           human_may_set: true
 
@@ -80,21 +80,21 @@ sections:
           tier: "agent_writable"
           holds: "Who wrote the active values — either 'the human' for a direct edit, or the Skill name followed by 'on the human's invocation'"
           writable_by:
-            - "my-interface-planner"
+            - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
-            - "my-interface-configurator — only under transition S0, when state.yaml does not yet exist"
-          constraint: "A Skill writes its own name and the invocation it acted on. It never writes 'the human' for a value the human did not type directly — the provenance of every state change stays readable. Under S0 the configurator writes its own name, not the human's"
+            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+          constraint: "A Skill writes its own name and the invocation it acted on. It never writes 'the human' for a value the human did not type directly — the provenance of every state change stays readable. Under S0 the interpreter writes its own name, not the human's"
           human_may_set: true
 
         active.set_at:
           tier: "agent_writable"
           holds: "The date the active values were last written"
           writable_by:
-            - "my-interface-planner"
+            - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
-            - "my-interface-configurator — only under transition S0, when state.yaml does not yet exist"
+            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
           constraint: "Written with every change to active, and never backdated"
           human_may_set: true
 
@@ -102,10 +102,10 @@ sections:
           tier: "agent_writable"
           holds: "What is actually missing, what each thing stops, and whose decision would release it"
           writable_by:
-            - "my-interface-planner"
+            - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
-            - "my-interface-configurator — during a generation run, which is outside the modes"
+            - "my-interface-interpreter — during a generation run, which is outside the modes"
           constraint: "Any mode, and a generation run, may raise a blocker, update what it stops, and remove it once the thing that was missing exists. A blocker whose decision_belongs_to is the human is removed only after the human has decided — recording that decision is transition S8"
           human_may_set: true
 
@@ -113,10 +113,10 @@ sections:
           tier: "agent_writable"
           holds: "The questions themselves — raised by an agent, addressed to the human"
           writable_by:
-            - "my-interface-planner"
+            - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
-            - "my-interface-configurator — during a generation run, which is outside the modes"
+            - "my-interface-interpreter — during a generation run, which is outside the modes"
           constraint: "An agent raises a question and states why it matters. Raising is not answering"
           human_may_set: true
 
@@ -124,10 +124,10 @@ sections:
           tier: "agent_writable"
           holds: "What of a question the human has already settled, and when"
           writable_by:
-            - "my-interface-planner"
+            - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
-            - "my-interface-configurator"
+            - "my-interface-interpreter"
           constraint: "Only the human's stated decision is recorded here, in the human's own terms and dated. An agent that writes anything here it was not told is inventing — see transition S8"
           human_may_set: true
 
@@ -149,7 +149,7 @@ sections:
           - "The answer to any open question in state.yaml"
           - "Freezing or versioning a contract — see the change_rule in the item files"
           - "Confirming an item's phase_titles — see content.plans.<item>.phase_titles_lifecycle in task.yaml"
-          - "The content of config/definition.yaml and config/rules.yaml, outside a my-interface-configurator run"
+          - "The content of config/definition.yaml and config/rules.yaml, outside a my-interface-interpreter run"
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
           - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
           - "The State Authority itself, after its seed — this section, and its default in schema/state.schema.yaml"
@@ -161,8 +161,8 @@ sections:
           name: "generate the state file"
           from: "no state.yaml at all"
           to: "active.mode: 'not set', active.item: 'none', and the live State Authority seeded"
-          performed_by: "my-interface-configurator"
-          authorized_by: "The human's invocation of my-interface-configurator, on a project that has no state.yaml yet — governed by the default authority in schema/state.schema.yaml, which authorizes its own seeding while no live state exists"
+          performed_by: "my-interface-interpreter"
+          authorized_by: "The human's invocation of my-interface-interpreter, on a project that has no state.yaml yet — governed by the default authority in schema/state.schema.yaml, which authorizes its own seeding while no live state exists"
           requires:
             - "config/state.yaml does not exist. Where it does, a regeneration carries content.active and content.state_authority through untouched — a regeneration never resets the runtime state and never rewrites the live authority"
             - "content.state_authority is seeded verbatim from the default in schema/state.schema.yaml — a state.yaml without it is not created"
@@ -173,8 +173,8 @@ sections:
           name: "enter planning"
           from: "any value of active.mode, 'not set' included"
           to: "active.mode: planning, active.item: the item named by the invocation"
-          performed_by: "my-interface-planner"
-          authorized_by: "The human's invocation of my-interface-planner, which names the scope — for example /my-interface-planner backend"
+          performed_by: "my-interface-tasker"
+          authorized_by: "The human's invocation of my-interface-tasker, which names the scope — for example /my-interface-tasker backend"
           requires:
             - "The named item is indexed under content.architecture.parts in definition.yaml and holds a key under content.plans in task.yaml"
             - "That item's enabled is true"
@@ -211,7 +211,7 @@ sections:
           name: "record the outcome of a run"
           from: "the mode the run was performed in"
           to: "the same mode and the same item — only active.mode_reason and active.set_at change"
-          performed_by: "my-interface-planner, my-interface-developer, my-interface-reviewer — each for its own run"
+          performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer — each for its own run"
           authorized_by: "Finishing the run the human invoked"
           requires:
             - "The run has finished, and what is recorded is what it actually did or was stopped by"
@@ -243,7 +243,7 @@ sections:
           name: "raise or release a blocker"
           from: "any mode, and a generation run outside the modes"
           to: "the same mode"
-          performed_by: "my-interface-planner, my-interface-developer, my-interface-reviewer, my-interface-configurator"
+          performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer, my-interface-interpreter"
           authorized_by: "The work itself — a blocker is what stopped it, and a generation run raises what the configuration cannot supply"
           requires:
             - "The blocker states what is missing, never a guess at its answer"
@@ -255,7 +255,7 @@ sections:
           name: "raise a question, or record the human's answer"
           from: "any mode, and a generation run outside the modes"
           to: "the same mode"
-          performed_by: "my-interface-planner, my-interface-developer, my-interface-reviewer, my-interface-configurator"
+          performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer, my-interface-interpreter"
           authorized_by: "A gap found while working, or an answer the human has stated"
           requires:
             - "Raising: the question is stated so it can be answered, and why_it_matters names what depends on it"
