@@ -287,10 +287,10 @@ content:
 
   # <!-------------------------------------------- Active -->
   active:
-    mode: "planning"
+    mode: "development"
     item: "backend"
-    mode_reason: "Invoked as /my-interface-tasker backend phase 1. Derived the backend's six build stages from its code_layout, capabilities, and contract api-v1 (lifecycle 'derived', awaiting the human's confirmation) and wrote the P1 plan — 2 groups, 9 atomic tasks, all todo. P2–P6 hold no tasks: only phase 1 was asked for; note P3 (models) and P6 (routes) still sit behind blocker B1 (Q1–Q5) even though the operation set is now settled."
-    set_by: "my-interface-tasker, on the human's invocation"
+    mode_reason: "Invoked as /my-interface-developer: no ready task — P1's 9 tasks are all done (every verify re-ran and passed this invocation) and P2–P6 hold no tasks. Nothing to build until the tasker plans P2 (unblocked) or B1's Q1–Q5 are answered for P3/P6."
+    set_by: "my-interface-developer, on the human's invocation"
     set_at: "2026-09-01"
 
   # <!-------------------------------------------- Blockers -->
