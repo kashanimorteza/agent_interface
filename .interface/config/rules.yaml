@@ -1,0 +1,95 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/rules.yaml"
+  path_note: "Config layer of the Agent Project Interface — the boundaries of agent behavior on this project, generated from project.md by my-interface-interpreter"
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "No mode edits this file — planning, development, and review all name it under may_not_write in root.yaml. It is regenerated only by a my-interface-interpreter run"
+  changed_by: "The human, by editing project.md and re-running my-interface-interpreter. A change this file needs is raised as an open question in config/state.yaml"
+  source: ".interface/project.md, plus the defaults the schemas declare"
+  authority: "A rule that is not written here is not a rule — an agent follows this file and does not add constraints of its own"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "precedence — which rule wins, read before any rule is applied"
+  - "environment — where code runs, before code is written"
+  - "code — how the code itself is shaped"
+  - "database — how the schema moves"
+  - "security — what must never leak; by precedence it overrides every other group"
+  - "test — what must be proven"
+  - "contract — how the surface and its contract stay in step"
+  - "design — how the interface is drawn, read last because no current phase draws one"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  precedence: "Which rule wins when two collide"
+  environment: "The isolated environment, what enters it, and what is never committed"
+  code: "Where logic lives, what a route may do, and how errors behave"
+  database: "Migrations, the engine's traps, and the only route to the data"
+  security: "What must never leak — overriding every other group"
+  test: "What must be proven, given the project disables written tests"
+  contract: "No surface change without the contract, and no change to a frozen version"
+  design: "The design surface — nothing is drawn while no phase targets the frontend"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Precedence -->
+  precedence: "Security wins over every other group, and within any group the more specific rule wins over the more general one."
+
+  # <!-------------------------------------------- Environment -->
+  environment:
+    - "Run every backend command and every install inside the uv-managed virtual environment of the backend's code_path — never against the system Python."
+    - "Add a dependency only through uv, so the environment is reproducible from the project files alone."
+    - "Never commit the virtual environment, the SQLite database file, or any generated artifact."
+    - "Install nothing the configuration does not call for — a capability switched off produces no dependency."
+
+  # <!-------------------------------------------- Code -->
+  code:
+    - "Keep business logic out of route handlers — a route validates its input, calls the service layer, and shapes the response."
+    - "Validate every request body and parameter through the framework's validation schemas before it reaches the database."
+    - "Rely on FastAPI's built-in error behavior alone, because the project disables centralized error handling — do not build a custom error layer."
+    - "Write no application logging, because the project disables logging."
+    - "Follow the naming standards fixed in backend.yaml rather than deciding case style file by file."
+
+  # <!-------------------------------------------- Database -->
+  database:
+    - "Change the database schema only through an Alembic migration — never by editing the database directly and never by letting the ORM create tables at startup."
+    - "Write every migration so it can be reversed, because SQLite's limited ALTER TABLE support makes a wrong step otherwise unrecoverable."
+    - "Reach the data only through SQLAlchemy — no raw connection outside the database module."
+    - "Keep the SQLite file inside the backend's code_path and out of version control."
+
+  # <!-------------------------------------------- Security -->
+  security:
+    - "Never return, log, or echo an account's Password field in any response, error, or documentation example."
+    - "Check the API key on every route, and reject a request that does not carry a valid one."
+    - "Never commit an API key, a password, or any other credential — configuration reads them from the environment."
+    - "Reveal nothing in an error beyond what the caller needs — no stack traces, no file paths, no internal identifiers."
+    - "Add no authentication layer, because the project disables authentication — the API key is the only access control."
+
+  # <!-------------------------------------------- Test -->
+  test:
+    - "Write no test files, because the project disables testing and needs_test is false for every item."
+    - "Prove every task by its verify command instead, since no written test will exist to prove it."
+    - "Run every verify command from the item's verify_cwd, inside that item's environment."
+
+  # <!-------------------------------------------- Contract -->
+  contract:
+    - "Change the API surface only together with the contract in backend.yaml — the two never drift apart."
+    - "Never edit a frozen contract version; a change means a new version, and freezing or versioning is the human's decision."
+    - "Build a consumer only against a frozen contract version, never against a draft."
+    - "Treat a detail the project does not state as outside the contract rather than as a gap — the contract carries what the project states, and implementation settles the rest within these rules."
+
+  # <!-------------------------------------------- Design -->
+  design:
+    - "Produce no design file and no design pages while no phase targets the frontend — P1, the only phase, targets the backend."
+    - "Raise a design need as an open question in state.yaml rather than inventing pages, a shared look, or an export route."

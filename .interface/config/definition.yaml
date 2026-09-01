@@ -1,0 +1,96 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/definition.yaml"
+  path_note: "Config layer of the Agent Project Interface — the structured project definition, generated from project.md by my-interface-interpreter"
+  standard: "Agent Project Interface"
+  version: "1.1"
+  updated: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "No mode edits this file — planning, development, and review all name it under may_not_write in root.yaml. It is regenerated only by a my-interface-interpreter run"
+  changed_by: "The human, by editing project.md and re-running my-interface-interpreter. A change this file needs is raised as an open question in config/state.yaml"
+  source: ".interface/project.md"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "identity — what the product is, before anything else"
+  - "goals — what must eventually be possible, before how it is split"
+  - "architecture — the parts and their single connection point; every other config file resolves its items against it"
+  - "phases — the ordered project phase index, read last because each phase's target resolves against architecture.parts"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  identity: "Who the product is — id, name, and its one-sentence promise"
+  goals: "What a user can do when the product is finished — the list every task traces back to"
+  architecture: "The parts of the product, what each owns, and the single connection between them"
+  phases: "The authoritative ordered project phase index — the only place planning reads phase identity, title, order, target, and goal"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Identity -->
+  identity:
+    id: "trading-assistant"
+    name: "Trading Assistant"
+    one_liner: "A platform for defining and managing trading information, strategies, actions, and related data."
+
+  # <!-------------------------------------------- Goals -->
+  goals:
+    - "Define and manage the trading platforms used to execute trades — initially Binance and MetaTrader 5, with more addable later"
+    - "Define and manage brokers, their broker-specific parameters, and the trading platform each uses"
+    - "Define and manage trading accounts under the broker they belong to"
+    - "Define and manage tradable assets such as EURUSD or XAUUSD"
+    - "Define and manage strategies carrying the trading settings an action uses, such as stop loss and take profit"
+    - "Define and manage trailing groups and the trailing rules inside them, governing how stop loss and take profit change during a trade"
+    - "Define and manage partial groups and the partial rules inside them, governing closing part or all of a position at stated profit levels"
+    - "Define and manage action groups that organize actions by operating or risk profile"
+    - "Define and manage actions that combine an asset, an account, and a strategy inside a group"
+    - "Track executions of activated actions, including each execution's stage and state"
+    - "Store the complete information of positions created from executed orders, including their entry price, take profit, and stop loss"
+
+  # <!-------------------------------------------- Architecture -->
+  architecture:
+    shape: "Two parts — a backend owning the application's data and functionality, and a frontend owning the user interface — joined only by the backend's API contract."
+    reason: "The project states the two parts separately, which lets the first phase create and run the whole API for the defined models without any interface existing yet, and lets the frontend later be built against a frozen contract rather than against the backend's internals."
+
+    parts:
+
+      backend:
+        responsibility: "Manages the application's data and functionality, and exposes them as an API."
+        owns:
+          - "All backend code under its code_path"
+          - "The whole database schema and the data held in it"
+          - "The API surface and the contract published over it"
+        does_not_own:
+          - "Client code, the user interface, and anything a user sees"
+        produces:
+          - "The backend API contract — .interface/config/backend.yaml under content.contracts"
+
+      frontend:
+        responsibility: "Provides the user interface for interacting with the application."
+        owns:
+          - "All frontend code under its code_path"
+          - "The user interface and its presentation logic"
+        does_not_own:
+          - "The database, the application data, and the API surface"
+        consumes:
+          - "The backend API contract — .interface/config/backend.yaml under content.contracts"
+
+    connection:
+      path: ".interface/config/backend.yaml under content.contracts"
+      rule: "The backend's API contract is the only connection point between the parts — neither part reaches into the other by any other route, and the frontend never touches the database."
+      versioning: "A frozen contract never changes; a change means a new version. Freezing and versioning are the human's decisions, never an agent's."
+
+  # <!-------------------------------------------- Phases -->
+  phases:
+    - id: "P1"
+      title: "Backend API"
+      order: 1
+      target: "backend"
+      goal: "Create and run the API for all defined project models."
