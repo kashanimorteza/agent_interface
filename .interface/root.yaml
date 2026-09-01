@@ -4,7 +4,7 @@ meta:
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
   version: "1.3"
-  updated: "2026-08-30"
+  updated: "2026-09-01"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -100,11 +100,11 @@ content:
 
     rule: "Exactly one mode is active at a time — it is named in config/state.yaml under active.mode"
     set_by: "The human decides the mode; the Skill the human invokes records that decision. Which Skill may record which mode, and under what conditions, is fixed in the State contract — config/state.yaml under content.state_authority — and no mode is ever chosen by an agent"
-    entered_by: "A mode is entered by invoking the Skill that owns it — planning by my-interface-planner, development by my-interface-developer, review by my-interface-reviewer"
+    entered_by: "A mode is entered by invoking the Skill that owns it — planning by my-interface-tasker, development by my-interface-developer, review by my-interface-reviewer"
 
     planning:
       purpose: "Decide what will be built and in what order — no product code is written"
-      owned_by: "my-interface-planner"
+      owned_by: "my-interface-tasker"
       may_write:
         - ".interface/config/backend.yaml and config/frontend.yaml — settings and draft contracts, never a frozen contract"
         - ".interface/config/task.yaml — an item's phase_titles, phase_titles_lifecycle and phase_titles_derived_from while that lifecycle is empty or derived, and the phases of that item's plan"
@@ -141,15 +141,15 @@ content:
   # <!-------------------------------------------- Agent_Skills -->
   agent_skills:
 
-    configurator:
-      name: "my-interface-configurator"
-      path: ".claude/skills/my-interface-configurator/"
+    interpreter:
+      name: "my-interface-interpreter"
+      path: ".claude/skills/my-interface-interpreter/"
       responsibility: "Understands project.md and generates the project configuration according to the Schemas"
       state: "Runs outside the modes — transitions S0, S7, and S8. S0 creates state.yaml with content.state_authority seeded verbatim from the default in schema/state.schema.yaml; a regeneration carries the existing active values and the live State Authority through untouched"
 
-    planner:
-      name: "my-interface-planner"
-      path: ".claude/skills/my-interface-planner/"
+    tasker:
+      name: "my-interface-tasker"
+      path: ".claude/skills/my-interface-tasker/"
       responsibility: "Generates project Tasks and plans from the project configuration"
       state: "Owns planning mode — transitions S1, S4, S7, S8"
 
@@ -168,5 +168,11 @@ content:
     clear:
       name: "my-interface-clear"
       path: ".claude/skills/my-interface-clear/"
-      responsibility: "Removes the generated files under config/ so the configurator can run again from nothing"
+      responsibility: "Removes the generated files under config/ so the interpreter can run again from nothing"
       state: "Transition S5, and only on the human's confirmed request. It writes no state field — it deletes the file that holds them"
+
+    skill_installer:
+      name: "my-interface-skill-installer"
+      path: ".claude/skills/my-interface-skill-installer/"
+      responsibility: "Discovers and installs compatible AI Agent Skills for technologies represented in the generated project configuration"
+      state: "Runs outside the modes as a supporting Skill. It does not write Interface Config or State"
