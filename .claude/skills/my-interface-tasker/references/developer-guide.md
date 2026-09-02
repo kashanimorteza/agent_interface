@@ -5,6 +5,7 @@ This guide defines the Developer's shared defaults for `my-interface-tasker`. Th
 ## Understand the Interface
 
 - At the start of every invocation, read the repository `README.md` completely to understand Agent Interface, its workflow, and this Skill's role. Treat it as Interface context, not as a source of target-project requirements.
+- Inspect the repository root and the top-level structure of `.interface/` to understand how the Interface, generated Config, and mapped target-project locations relate. This structural inspection does not make unrelated repository contents a source of project knowledge.
 - Then read `.interface/root.yaml` as the Interface entry point and current map. Resolve every other path, read order, policy, authority, and boundary from the files currently named by that map.
 - Re-read every required source from disk on every invocation. Do not rely on remembered paths, values, state, configuration, or conclusions from an earlier run.
 
@@ -12,6 +13,13 @@ This guide defines the Developer's shared defaults for `my-interface-tasker`. Th
 
 - Do not read the human-managed project-definition file. Only `my-interface-interpreter` may read and interpret it.
 - Use the current generated Understanding as the source of project intent and scope for planning. Target files may verify operational facts only where this Skill explicitly permits; they do not authorize reinterpretation or expansion of requirements.
+
+## Planning Understanding
+
+- Use the generated Understanding to determine what the requested project phases mean and what their target item must accomplish.
+- Use the current Task file and its governing Schema to determine how planning output is structured, while the live State contract and file policies determine what this Skill may change.
+- Use current rules, item configuration, and contracts as implementation constraints and verification context. They refine how authorized work is planned; they do not create additional project requirements.
+- Treat existing plans and generated configuration as stateful material to reconcile and preserve according to their live ownership, not as disposable output to regenerate blindly.
 
 ## Role Discipline
 
@@ -24,6 +32,7 @@ This guide defines the Developer's shared defaults for `my-interface-tasker`. Th
 
 - Prefer current mapped evidence over memory or inference.
 - Produce the smallest complete plan that satisfies the authorized scope and current task standard.
+- Keep every requested phase within the item named by the invocation; a cross-item request is not one planning scope.
 - Do not invent missing requirements, priorities, dependencies, contracts, verification, or acceptance criteria.
 
 ## Reporting
