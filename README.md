@@ -24,12 +24,6 @@ AI Agents, on the other hand, work more reliably when project information is str
 
 Agent Interface provides the communication layer between these two worlds.
 
-In this architecture:
-
-- The Developer defines the project and its requirements in `project.md`.
-- `Schema` defines the structure and standard for the required information.
-- The `my-interface-interpreter` Skill reads and understands the project and produces Config according to the Schema.
-
 
 
 
