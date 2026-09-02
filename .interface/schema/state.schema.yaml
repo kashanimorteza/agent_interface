@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "2.0"
+  version: "2.1"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
   authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
@@ -51,7 +51,7 @@ sections:
             - "my-interface-developer"
             - "my-interface-reviewer"
             - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-          constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-clear does not write this field: it deletes the file that holds it, under transition S5"
+          constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-reset does not write this field: it deletes the file that holds it, under transition S5"
           human_may_set: true
 
         active.item:
@@ -153,7 +153,7 @@ sections:
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
           - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
           - "The State Authority itself, after its seed — this section, and its default in schema/state.schema.yaml"
-          - "Asking for tasks to be created, and asking for the generated configuration to be cleared"
+          - "Asking for tasks to be created, and asking for the generated project state to be reset"
 
       transitions:
 
@@ -219,16 +219,17 @@ sections:
           refused_when: "The Skill did not perform the run"
 
         - id: "S5"
-          name: "reset the state"
+          name: "reset the generated project state"
           from: "any"
-          to: "no state.yaml at all — active, blockers, questions, and the live State Authority deleted with the file, reseeded from the schema default at the next S0"
-          performed_by: "my-interface-clear"
-          authorized_by: "The human invoking my-interface-clear by name; that invocation itself authorizes deletion of the exact currently mapped generated files, with no second confirmation"
+          to: "no mapped generated config files and no validated project code_path directories; state.yaml and its active values, blockers, questions, and live State Authority are deleted and reseeded from the schema default at the next S0"
+          performed_by: "my-interface-reset"
+          authorized_by: "The human invoking my-interface-reset by name; that invocation itself authorizes deletion of the exact currently mapped generated config files and validated code_path directories, with no second confirmation"
           requires:
-            - "The exact existing deletion set is resolved fresh from the current Interface map"
-            - "Every target is a mapped generated file; no protected, human-managed, unresolved, or unmapped path is included"
-          writes: "the whole of state.yaml, by deleting it with the rest of config/"
-          refused_when: "The deletion set cannot be resolved exactly, or it includes a protected, human-managed, unresolved, or unmapped path"
+            - "Before any deletion, the exact existing config-file targets are resolved fresh from the current Interface map and every code-directory target is resolved from a code_path in those current generated config files"
+            - "Every config target is a mapped generated file, and every code-directory target is a non-empty relative path that resolves to a strict descendant of the repository root outside .interface/, .claude/, and .git/"
+            - "No protected, human-managed, symlinked, unresolved, unsafe, or unmapped path is included"
+          writes: "the mapped generated config files and validated project code_path directories, by deleting them; state.yaml is deleted with the rest of config/"
+          refused_when: "The complete deletion set cannot be resolved and validated before deletion, or it includes a protected, human-managed, symlinked, unresolved, unsafe, or unmapped path"
 
         - id: "S6"
           name: "human override"

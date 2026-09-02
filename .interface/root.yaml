@@ -3,8 +3,8 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "1.3"
-  updated: "2026-09-01"
+  version: "1.4"
+  updated: "2026-09-02"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -165,11 +165,11 @@ content:
       responsibility: "Reviews the implementation against the Tasks and project specifications"
       state: "Owns review mode — transitions S3, S4, S7, S8, and the validation checks in the State contract"
 
-    clear:
-      name: "my-interface-clear"
-      path: ".claude/skills/my-interface-clear/"
-      responsibility: "Removes the generated files under config/ so the interpreter can run again from nothing"
-      state: "Transition S5. Invoking my-interface-clear by name authorizes deletion of the exact currently mapped generated files without a second confirmation; it writes no state field — it deletes the file that holds them"
+    reset:
+      name: "my-interface-reset"
+      path: ".claude/skills/my-interface-reset/"
+      responsibility: "Removes the generated files under config/ and the exact project code directories resolved from their code_path values, so the interpreter can run again from nothing"
+      state: "Transition S5. Invoking my-interface-reset by name authorizes deletion of the exact currently mapped generated files and validated code_path directories without a second confirmation; it writes no state field — it deletes the file that holds them"
 
     skill_installer:
       name: "my-interface-skill-installer"

@@ -67,9 +67,9 @@ Executes the planned Tasks and implements the required changes.
 
 Reviews the implementation against the Tasks and project specifications.
 
-### `my-interface-clear`
+### `my-interface-reset`
 
-Removes the generated Config and Tasks and returns the project to a clean state, ready for the Interpreter to run again.
+Removes the generated Config and the exact project code directories resolved from it, returning the repository to a clean state ready for the Interpreter to run again.
 
 
 <br > <br>

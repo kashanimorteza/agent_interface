@@ -3,7 +3,7 @@ meta:
   path: ".interface/config/state.yaml"
   path_note: "The State contract — the project-wide runtime state and the live State Authority that governs it; lives in the config layer of the Agent Project Interface, created by my-interface-interpreter under transition S0 against schema/state.schema.yaml"
   schema: ".interface/schema/state.schema.yaml"
-  schema_version: "2.0"
+  schema_version: "2.1"
   generated_by: "my-interface-interpreter"
   generated_at: "2026-09-02"
 
@@ -66,7 +66,7 @@ content:
           - "my-interface-developer"
           - "my-interface-reviewer"
           - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-        constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-clear does not write this field: it deletes the file that holds it, under transition S5"
+        constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-reset does not write this field: it deletes the file that holds it, under transition S5"
         human_may_set: true
 
       active.item:
@@ -168,7 +168,7 @@ content:
         - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
         - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
         - "The State Authority itself, after its seed — this section, and its default in schema/state.schema.yaml"
-        - "Asking for tasks to be created, and asking for the generated configuration to be cleared"
+        - "Asking for tasks to be created, and asking for the generated project state to be reset"
 
     transitions:
 
@@ -234,16 +234,17 @@ content:
         refused_when: "The Skill did not perform the run"
 
       - id: "S5"
-        name: "reset the state"
+        name: "reset the generated project state"
         from: "any"
-        to: "no state.yaml at all — active, blockers, questions, and the live State Authority deleted with the file, reseeded from the schema default at the next S0"
-        performed_by: "my-interface-clear"
-        authorized_by: "The human invoking my-interface-clear by name; that invocation itself authorizes deletion of the exact currently mapped generated files, with no second confirmation"
+        to: "no mapped generated config files and no validated project code_path directories; state.yaml and its active values, blockers, questions, and live State Authority are deleted and reseeded from the schema default at the next S0"
+        performed_by: "my-interface-reset"
+        authorized_by: "The human invoking my-interface-reset by name; that invocation itself authorizes deletion of the exact currently mapped generated config files and validated code_path directories, with no second confirmation"
         requires:
-          - "The exact existing deletion set is resolved fresh from the current Interface map"
-          - "Every target is a mapped generated file; no protected, human-managed, unresolved, or unmapped path is included"
-        writes: "the whole of state.yaml, by deleting it with the rest of config/"
-        refused_when: "The deletion set cannot be resolved exactly, or it includes a protected, human-managed, unresolved, or unmapped path"
+          - "Before any deletion, the exact existing config-file targets are resolved fresh from the current Interface map and every code-directory target is resolved from a code_path in those current generated config files"
+          - "Every config target is a mapped generated file, and every code-directory target is a non-empty relative path that resolves to a strict descendant of the repository root outside .interface/, .claude/, and .git/"
+          - "No protected, human-managed, symlinked, unresolved, unsafe, or unmapped path is included"
+        writes: "the mapped generated config files and validated project code_path directories, by deleting them; state.yaml is deleted with the rest of config/"
+        refused_when: "The complete deletion set cannot be resolved and validated before deletion, or it includes a protected, human-managed, symlinked, unresolved, unsafe, or unmapped path"
 
       - id: "S6"
         name: "human override"
