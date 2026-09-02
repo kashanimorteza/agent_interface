@@ -96,7 +96,10 @@ content:
                   acceptance: "uv sync creates .venv from pyproject.toml and the Python inside it runs."
                   verify: "uv sync && uv run python --version"
                   touches: ["pyproject.toml"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T2"
                   title: "Add fastapi with the standard extra as a dependency"
@@ -105,7 +108,10 @@ content:
                   acceptance: "fastapi and fastapi.testclient import, and the fastapi command exists."
                   verify: "uv add 'fastapi[standard]' && uv run python -c \"import fastapi, fastapi.testclient\" && uv run fastapi --help"
                   touches: ["pyproject.toml"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T3"
                   title: "Add sqlalchemy as a dependency"
@@ -114,7 +120,10 @@ content:
                   acceptance: "sqlalchemy imports."
                   verify: "uv add sqlalchemy && uv run python -c \"import sqlalchemy\""
                   touches: ["pyproject.toml"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T4"
                   title: "Add alembic as a dependency"
@@ -123,7 +132,10 @@ content:
                   acceptance: "The alembic command runs."
                   verify: "uv add alembic && uv run alembic --version"
                   touches: ["pyproject.toml"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T5"
                   title: "Create backend/.gitignore excluding the virtual environment, the SQLite files, and Python caches"
@@ -132,7 +144,12 @@ content:
                   acceptance: "git reports each of those paths as ignored."
                   verify: "git check-ignore -q .venv && git check-ignore -q app.db && git check-ignore -q verify.db && git check-ignore -q app/__pycache__"
                   touches: [".gitignore"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify failed (exit 1); claim released by my-interface-developer"
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
             G2:
               id: "P1-G2"
@@ -147,7 +164,10 @@ content:
                   acceptance: "import app succeeds."
                   verify: "uv run python -c \"import app\""
                   touches: ["app/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T7"
                   title: "Create app/config.py exposing DATABASE_URL read from the environment with sqlite:///./app.db as its default"
@@ -156,7 +176,10 @@ content:
                   acceptance: "DATABASE_URL defaults to app.db and follows the DATABASE_URL environment variable when set."
                   verify: "uv run python -c \"from app.config import DATABASE_URL; assert DATABASE_URL=='sqlite:///./app.db'\" && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.config import DATABASE_URL; assert DATABASE_URL=='sqlite:///./verify.db'\""
                   touches: ["app/config.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T8"
                   title: "Create app/database.py with the engine, SessionLocal, Base, get_db, and the SQLite connection settings"
@@ -165,7 +188,10 @@ content:
                   acceptance: "A connection from the engine reports PRAGMA foreign_keys as 1, and SessionLocal yields a working session."
                   verify: "DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import engine, SessionLocal, Base, get_db; from sqlalchemy import text; c=engine.connect(); assert c.execute(text('PRAGMA foreign_keys')).scalar()==1; SessionLocal().close()\""
                   touches: ["app/database.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T9"
                   title: "Create app/errors.py with NotFoundError and the handlers that render every failure in the contract error shape"
@@ -174,7 +200,10 @@ content:
                   acceptance: "A NotFoundError answers 404 with error.code not_found and error.message; a request validation failure answers 422 with error.code validation_error and error.field; neither body carries any other top-level key."
                   verify: "uv run python -c \"from fastapi import FastAPI; from fastapi.testclient import TestClient; from pydantic import BaseModel; from app.errors import NotFoundError, register_error_handlers; a=FastAPI(); register_error_handlers(a)\nclass B(BaseModel):\n    n: int\n@a.get('/x')\ndef x(): raise NotFoundError('row')\n@a.post('/y')\ndef y(b: B): return b\nc=TestClient(a); r=c.get('/x'); assert r.status_code==404 and list(r.json())==['error'] and r.json()['error']['code']=='not_found' and r.json()['error']['message']; r=c.post('/y', json={'n':'no'}); assert r.status_code==422 and list(r.json())==['error'] and r.json()['error']['code']=='validation_error' and r.json()['error']['field']\""
                   touches: ["app/errors.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T10"
                   title: "Create app/main.py building the FastAPI application with the error handlers registered, docs at /docs, the schema at /openapi.json, and ReDoc disabled"
@@ -183,7 +212,10 @@ content:
                   acceptance: "The app serves /docs and /openapi.json, /redoc does not exist, and the run command in backend.yaml starts it."
                   verify: "uv run python -c \"from fastapi.testclient import TestClient; from app.main import app; c=TestClient(app); assert c.get('/docs').status_code==200; assert c.get('/openapi.json').status_code==200; assert c.get('/redoc').status_code==404\""
                   touches: ["app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
             G3:
               id: "P1-G3"
@@ -198,7 +230,10 @@ content:
                   acceptance: "alembic current runs against a throwaway database and reports no revision."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic current"
                   touches: ["alembic.ini", "alembic/", "alembic/env.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
             G4:
               id: "P1-G4"
@@ -213,7 +248,10 @@ content:
                   acceptance: "import app.models succeeds."
                   verify: "uv run python -c \"import app.models\""
                   touches: ["app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T13"
                   title: "Add the TradingPlatform model in app/models/trading_platform.py mapped to table trading_platforms"
@@ -222,7 +260,10 @@ content:
                   acceptance: "Table trading_platforms carries exactly the columns id, name, status, description, id is the integer primary key."
                   verify: "uv run python -c \"import app.models; from app.models.trading_platform import TradingPlatform; from app.database import Base; t=Base.metadata.tables['trading_platforms']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
                   touches: ["app/models/trading_platform.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T14"
                   title: "Add the Broker model in app/models/broker.py mapped to table brokers"
@@ -231,7 +272,10 @@ content:
                   acceptance: "Table brokers carries exactly the columns id, name, trading_platform_id, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
                   verify: "uv run python -c \"import app.models; from app.models.broker import Broker; from app.database import Base; t=Base.metadata.tables['brokers']; assert set(t.columns.keys())=={'id', 'name', 'trading_platform_id', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.trading_platform_id.foreign_keys and t.c.trading_platform_id.index\""
                   touches: ["app/models/broker.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T15"
                   title: "Add the Account model in app/models/account.py mapped to table accounts"
@@ -240,7 +284,10 @@ content:
                   acceptance: "Table accounts carries exactly the columns id, name, username, password, broker_id, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key. The password column holds whatever the account service stores; how it is stored at rest is open question Q2, answered by the human before the service task moves."
                   verify: "uv run python -c \"import app.models; from app.models.account import Account; from app.database import Base; t=Base.metadata.tables['accounts']; assert set(t.columns.keys())=={'id', 'name', 'username', 'password', 'broker_id', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.broker_id.foreign_keys and t.c.broker_id.index\""
                   touches: ["app/models/account.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T16"
                   title: "Add the Asset model in app/models/asset.py mapped to table assets"
@@ -249,7 +296,10 @@ content:
                   acceptance: "Table assets carries exactly the columns id, name, status, description, id is the integer primary key."
                   verify: "uv run python -c \"import app.models; from app.models.asset import Asset; from app.database import Base; t=Base.metadata.tables['assets']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
                   touches: ["app/models/asset.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T17"
                   title: "Add the Strategy model in app/models/strategy.py mapped to table strategies"
@@ -258,7 +308,10 @@ content:
                   acceptance: "Table strategies carries exactly the columns id, name, risk_parameter, status, description, id is the integer primary key."
                   verify: "uv run python -c \"import app.models; from app.models.strategy import Strategy; from app.database import Base; t=Base.metadata.tables['strategies']; assert set(t.columns.keys())=={'id', 'name', 'risk_parameter', 'status', 'description'}; assert t.c.id.primary_key\""
                   touches: ["app/models/strategy.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T18"
                   title: "Add the TrailingGroup model in app/models/trailing_group.py mapped to table trailing_groups"
@@ -267,7 +320,10 @@ content:
                   acceptance: "Table trailing_groups carries exactly the columns id, name, status, description, id is the integer primary key."
                   verify: "uv run python -c \"import app.models; from app.models.trailing_group import TrailingGroup; from app.database import Base; t=Base.metadata.tables['trailing_groups']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
                   touches: ["app/models/trailing_group.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T19"
                   title: "Add the TrailingRule model in app/models/trailing_rule.py mapped to table trailing_rules"
@@ -276,7 +332,10 @@ content:
                   acceptance: "Table trailing_rules carries exactly the columns id, name, trailing_group_id, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
                   verify: "uv run python -c \"import app.models; from app.models.trailing_rule import TrailingRule; from app.database import Base; t=Base.metadata.tables['trailing_rules']; assert set(t.columns.keys())=={'id', 'name', 'trailing_group_id', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.trailing_group_id.foreign_keys and t.c.trailing_group_id.index\""
                   touches: ["app/models/trailing_rule.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T20"
                   title: "Add the PartialGroup model in app/models/partial_group.py mapped to table partial_groups"
@@ -285,7 +344,10 @@ content:
                   acceptance: "Table partial_groups carries exactly the columns id, name, status, description, id is the integer primary key."
                   verify: "uv run python -c \"import app.models; from app.models.partial_group import PartialGroup; from app.database import Base; t=Base.metadata.tables['partial_groups']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
                   touches: ["app/models/partial_group.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T21"
                   title: "Add the PartialRule model in app/models/partial_rule.py mapped to table partial_rules"
@@ -294,7 +356,10 @@ content:
                   acceptance: "Table partial_rules carries exactly the columns id, name, partial_group_id, profit_threshold, close_portion, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
                   verify: "uv run python -c \"import app.models; from app.models.partial_rule import PartialRule; from app.database import Base; t=Base.metadata.tables['partial_rules']; assert set(t.columns.keys())=={'id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.partial_group_id.foreign_keys and t.c.partial_group_id.index\""
                   touches: ["app/models/partial_rule.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T22"
                   title: "Add the ActionGroup model in app/models/action_group.py mapped to table action_groups"
@@ -303,7 +368,10 @@ content:
                   acceptance: "Table action_groups carries exactly the columns id, name, status, description, id is the integer primary key."
                   verify: "uv run python -c \"import app.models; from app.models.action_group import ActionGroup; from app.database import Base; t=Base.metadata.tables['action_groups']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
                   touches: ["app/models/action_group.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T23"
                   title: "Add the Action model in app/models/action.py mapped to table actions"
@@ -312,7 +380,10 @@ content:
                   acceptance: "Table actions carries exactly the columns id, name, asset_id, account_id, strategy_id, group_id, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
                   verify: "uv run python -c \"import app.models; from app.models.action import Action; from app.database import Base; t=Base.metadata.tables['actions']; assert set(t.columns.keys())=={'id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.asset_id.foreign_keys and t.c.asset_id.index; assert t.c.account_id.foreign_keys and t.c.account_id.index; assert t.c.strategy_id.foreign_keys and t.c.strategy_id.index; assert t.c.group_id.foreign_keys and t.c.group_id.index\""
                   touches: ["app/models/action.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T24"
                   title: "Add the Execute model in app/models/execute.py mapped to table executes"
@@ -321,7 +392,10 @@ content:
                   acceptance: "Table executes carries exactly the columns id, name, action_id, profit, state, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
                   verify: "uv run python -c \"import app.models; from app.models.execute import Execute; from app.database import Base; t=Base.metadata.tables['executes']; assert set(t.columns.keys())=={'id', 'name', 'action_id', 'profit', 'state', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.action_id.foreign_keys and t.c.action_id.index\""
                   touches: ["app/models/execute.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T25"
                   title: "Add the Position model in app/models/position.py mapped to table positions"
@@ -330,7 +404,10 @@ content:
                   acceptance: "Table positions carries exactly the columns id, name, entry_price, take_profit, stop_loss, status, description, id is the integer primary key."
                   verify: "uv run python -c \"import app.models; from app.models.position import Position; from app.database import Base; t=Base.metadata.tables['positions']; assert set(t.columns.keys())=={'id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'}; assert t.c.id.primary_key\""
                   touches: ["app/models/position.py", "app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
             G5:
               id: "P1-G5"
@@ -345,7 +422,10 @@ content:
                   acceptance: "After upgrade head the table trading_platforms exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'trading_platforms' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('trading_platforms'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'trading_platforms' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/001_trading_platforms.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T27"
                   title: "Add migration 002_brokers creating table brokers with a downgrade that drops it"
@@ -354,7 +434,10 @@ content:
                   acceptance: "After upgrade head the table brokers exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'brokers' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('brokers'))=={'id', 'name', 'trading_platform_id', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'brokers' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/002_brokers.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T28"
                   title: "Add migration 003_assets creating table assets with a downgrade that drops it"
@@ -363,7 +446,10 @@ content:
                   acceptance: "After upgrade head the table assets exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'assets' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('assets'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'assets' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/003_assets.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T29"
                   title: "Add migration 004_strategies creating table strategies with a downgrade that drops it"
@@ -372,7 +458,10 @@ content:
                   acceptance: "After upgrade head the table strategies exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'strategies' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('strategies'))=={'id', 'name', 'risk_parameter', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'strategies' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/004_strategies.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T30"
                   title: "Add migration 005_trailing_groups creating table trailing_groups with a downgrade that drops it"
@@ -381,7 +470,10 @@ content:
                   acceptance: "After upgrade head the table trailing_groups exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'trailing_groups' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('trailing_groups'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'trailing_groups' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/005_trailing_groups.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T31"
                   title: "Add migration 006_trailing_rules creating table trailing_rules with a downgrade that drops it"
@@ -390,7 +482,10 @@ content:
                   acceptance: "After upgrade head the table trailing_rules exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'trailing_rules' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('trailing_rules'))=={'id', 'name', 'trailing_group_id', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'trailing_rules' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/006_trailing_rules.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T32"
                   title: "Add migration 007_partial_groups creating table partial_groups with a downgrade that drops it"
@@ -399,7 +494,10 @@ content:
                   acceptance: "After upgrade head the table partial_groups exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'partial_groups' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('partial_groups'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'partial_groups' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/007_partial_groups.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T33"
                   title: "Add migration 008_partial_rules creating table partial_rules with a downgrade that drops it"
@@ -408,7 +506,10 @@ content:
                   acceptance: "After upgrade head the table partial_rules exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'partial_rules' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('partial_rules'))=={'id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'partial_rules' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/008_partial_rules.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T34"
                   title: "Add migration 009_action_groups creating table action_groups with a downgrade that drops it"
@@ -417,7 +518,10 @@ content:
                   acceptance: "After upgrade head the table action_groups exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'action_groups' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('action_groups'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'action_groups' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/009_action_groups.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T35"
                   title: "Add migration 010_positions creating table positions with a downgrade that drops it"
@@ -426,7 +530,10 @@ content:
                   acceptance: "After upgrade head the table positions exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'positions' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('positions'))=={'id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'positions' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/010_positions.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T36"
                   title: "Add migration 011_accounts creating table accounts with a downgrade that drops it"
@@ -435,7 +542,10 @@ content:
                   acceptance: "After upgrade head the table accounts exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'accounts' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('accounts'))=={'id', 'name', 'username', 'password', 'broker_id', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'accounts' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/011_accounts.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T37"
                   title: "Add migration 012_actions creating table actions with a downgrade that drops it"
@@ -444,7 +554,10 @@ content:
                   acceptance: "After upgrade head the table actions exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'actions' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('actions'))=={'id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'actions' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/012_actions.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T38"
                   title: "Add migration 013_executes creating table executes with a downgrade that drops it"
@@ -453,7 +566,10 @@ content:
                   acceptance: "After upgrade head the table executes exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'executes' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('executes'))=={'id', 'name', 'action_id', 'profit', 'state', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'executes' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
                   touches: ["alembic/versions/013_executes.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
             G6:
               id: "P1-G6"
@@ -468,7 +584,10 @@ content:
                   acceptance: "import app.schemas succeeds."
                   verify: "uv run python -c \"import app.schemas\""
                   touches: ["app/schemas/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T40"
                   title: "Add the TradingPlatformCreate and TradingPlatformRead validation schemas in app/schemas/trading_platform.py"
@@ -477,7 +596,10 @@ content:
                   acceptance: "TradingPlatformCreate carries every contract field except ID and is the body of create and update; TradingPlatformRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.trading_platform import TradingPlatformCreate, TradingPlatformRead; assert set(TradingPlatformCreate.model_fields)=={'name', 'status', 'description'}; assert set(TradingPlatformRead.model_fields)=={'id', 'name', 'status', 'description'}\""
                   touches: ["app/schemas/trading_platform.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T41"
                   title: "Add the BrokerCreate and BrokerRead validation schemas in app/schemas/broker.py"
@@ -486,7 +608,10 @@ content:
                   acceptance: "BrokerCreate carries every contract field except ID and is the body of create and update; BrokerRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.broker import BrokerCreate, BrokerRead; assert set(BrokerCreate.model_fields)=={'name', 'trading_platform_id', 'status', 'description'}; assert set(BrokerRead.model_fields)=={'id', 'name', 'trading_platform_id', 'status', 'description'}\""
                   touches: ["app/schemas/broker.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T42"
                   title: "Add the AccountCreate and AccountRead validation schemas in app/schemas/account.py"
@@ -495,7 +620,10 @@ content:
                   acceptance: "AccountCreate carries every contract field except ID and is the body of create and update; AccountRead carries every field with id and never password."
                   verify: "uv run python -c \"from app.schemas.account import AccountCreate, AccountRead; assert set(AccountCreate.model_fields)=={'name', 'username', 'password', 'broker_id', 'status', 'description'}; assert set(AccountRead.model_fields)=={'id', 'name', 'username', 'broker_id', 'status', 'description'}\""
                   touches: ["app/schemas/account.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T43"
                   title: "Add the AssetCreate and AssetRead validation schemas in app/schemas/asset.py"
@@ -504,7 +632,10 @@ content:
                   acceptance: "AssetCreate carries every contract field except ID and is the body of create and update; AssetRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.asset import AssetCreate, AssetRead; assert set(AssetCreate.model_fields)=={'name', 'status', 'description'}; assert set(AssetRead.model_fields)=={'id', 'name', 'status', 'description'}\""
                   touches: ["app/schemas/asset.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T44"
                   title: "Add the StrategyCreate and StrategyRead validation schemas in app/schemas/strategy.py"
@@ -513,7 +644,10 @@ content:
                   acceptance: "StrategyCreate carries every contract field except ID and is the body of create and update; StrategyRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.strategy import StrategyCreate, StrategyRead; assert set(StrategyCreate.model_fields)=={'name', 'risk_parameter', 'status', 'description'}; assert set(StrategyRead.model_fields)=={'id', 'name', 'risk_parameter', 'status', 'description'}\""
                   touches: ["app/schemas/strategy.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T45"
                   title: "Add the TrailingGroupCreate and TrailingGroupRead validation schemas in app/schemas/trailing_group.py"
@@ -522,7 +656,10 @@ content:
                   acceptance: "TrailingGroupCreate carries every contract field except ID and is the body of create and update; TrailingGroupRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.trailing_group import TrailingGroupCreate, TrailingGroupRead; assert set(TrailingGroupCreate.model_fields)=={'name', 'status', 'description'}; assert set(TrailingGroupRead.model_fields)=={'id', 'name', 'status', 'description'}\""
                   touches: ["app/schemas/trailing_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T46"
                   title: "Add the TrailingRuleCreate and TrailingRuleRead validation schemas in app/schemas/trailing_rule.py"
@@ -531,7 +668,10 @@ content:
                   acceptance: "TrailingRuleCreate carries every contract field except ID and is the body of create and update; TrailingRuleRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.trailing_rule import TrailingRuleCreate, TrailingRuleRead; assert set(TrailingRuleCreate.model_fields)=={'name', 'trailing_group_id', 'status', 'description'}; assert set(TrailingRuleRead.model_fields)=={'id', 'name', 'trailing_group_id', 'status', 'description'}\""
                   touches: ["app/schemas/trailing_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T47"
                   title: "Add the PartialGroupCreate and PartialGroupRead validation schemas in app/schemas/partial_group.py"
@@ -540,7 +680,10 @@ content:
                   acceptance: "PartialGroupCreate carries every contract field except ID and is the body of create and update; PartialGroupRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.partial_group import PartialGroupCreate, PartialGroupRead; assert set(PartialGroupCreate.model_fields)=={'name', 'status', 'description'}; assert set(PartialGroupRead.model_fields)=={'id', 'name', 'status', 'description'}\""
                   touches: ["app/schemas/partial_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T48"
                   title: "Add the PartialRuleCreate and PartialRuleRead validation schemas in app/schemas/partial_rule.py"
@@ -549,7 +692,10 @@ content:
                   acceptance: "PartialRuleCreate carries every contract field except ID and is the body of create and update; PartialRuleRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.partial_rule import PartialRuleCreate, PartialRuleRead; assert set(PartialRuleCreate.model_fields)=={'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'}; assert set(PartialRuleRead.model_fields)=={'id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'}\""
                   touches: ["app/schemas/partial_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T49"
                   title: "Add the ActionGroupCreate and ActionGroupRead validation schemas in app/schemas/action_group.py"
@@ -558,7 +704,10 @@ content:
                   acceptance: "ActionGroupCreate carries every contract field except ID and is the body of create and update; ActionGroupRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.action_group import ActionGroupCreate, ActionGroupRead; assert set(ActionGroupCreate.model_fields)=={'name', 'status', 'description'}; assert set(ActionGroupRead.model_fields)=={'id', 'name', 'status', 'description'}\""
                   touches: ["app/schemas/action_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T50"
                   title: "Add the ActionCreate and ActionRead validation schemas in app/schemas/action.py"
@@ -567,7 +716,10 @@ content:
                   acceptance: "ActionCreate carries every contract field except ID and is the body of create and update; ActionRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.action import ActionCreate, ActionRead; assert set(ActionCreate.model_fields)=={'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'}; assert set(ActionRead.model_fields)=={'id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'}\""
                   touches: ["app/schemas/action.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T51"
                   title: "Add the ExecuteCreate and ExecuteRead validation schemas in app/schemas/execute.py"
@@ -576,7 +728,10 @@ content:
                   acceptance: "ExecuteCreate carries every contract field except ID and is the body of create and update; ExecuteRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.execute import ExecuteCreate, ExecuteRead; assert set(ExecuteCreate.model_fields)=={'name', 'action_id', 'profit', 'state', 'status', 'description'}; assert set(ExecuteRead.model_fields)=={'id', 'name', 'action_id', 'profit', 'state', 'status', 'description'}\""
                   touches: ["app/schemas/execute.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T52"
                   title: "Add the PositionCreate and PositionRead validation schemas in app/schemas/position.py"
@@ -585,7 +740,10 @@ content:
                   acceptance: "PositionCreate carries every contract field except ID and is the body of create and update; PositionRead carries every field with id."
                   verify: "uv run python -c \"from app.schemas.position import PositionCreate, PositionRead; assert set(PositionCreate.model_fields)=={'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'}; assert set(PositionRead.model_fields)=={'id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'}\""
                   touches: ["app/schemas/position.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
             G7:
               id: "P1-G7"
@@ -600,7 +758,10 @@ content:
                   acceptance: "import app.services succeeds."
                   verify: "uv run python -c \"import app.services\""
                   touches: ["app/services/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T54"
                   title: "Add the Trading Platform service in app/services/trading_platform.py with list_all, create, get, update, and delete"
@@ -609,7 +770,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import trading_platform as s\nfrom app.schemas.trading_platform import TradingPlatformCreate\ndb=SessionLocal()\nr=s.create(db, TradingPlatformCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, TradingPlatformCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/trading_platform.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T55"
                   title: "Add the Broker service in app/services/broker.py with list_all, create, get, update, and delete"
@@ -618,7 +782,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import broker as s\nfrom app.schemas.broker import BrokerCreate\ndb=SessionLocal()\nfrom app.services import trading_platform as s_trading_platform; from app.schemas.trading_platform import TradingPlatformCreate\np1=s_trading_platform.create(db, TradingPlatformCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nr=s.create(db, BrokerCreate(**{'name': 'a', 'trading_platform_id': p1, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, BrokerCreate(**{'name': 'b', 'trading_platform_id': p1, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, BrokerCreate(**{'name': 'c', 'trading_platform_id': 999999, 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='trading_platform_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/broker.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T56"
                   title: "Add the Account service in app/services/account.py with list_all, create, get, update, and delete"
@@ -637,7 +804,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import asset as s\nfrom app.schemas.asset import AssetCreate\ndb=SessionLocal()\nr=s.create(db, AssetCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, AssetCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/asset.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T58"
                   title: "Add the Strategy service in app/services/strategy.py with list_all, create, get, update, and delete"
@@ -646,7 +816,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import strategy as s\nfrom app.schemas.strategy import StrategyCreate\ndb=SessionLocal()\nr=s.create(db, StrategyCreate(**{'name': 'a', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, StrategyCreate(**{'name': 'b', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/strategy.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T59"
                   title: "Add the Trailing Group service in app/services/trailing_group.py with list_all, create, get, update, and delete"
@@ -655,7 +828,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import trailing_group as s\nfrom app.schemas.trailing_group import TrailingGroupCreate\ndb=SessionLocal()\nr=s.create(db, TrailingGroupCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, TrailingGroupCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/trailing_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T60"
                   title: "Add the Trailing Rule service in app/services/trailing_rule.py with list_all, create, get, update, and delete"
@@ -664,7 +840,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import trailing_rule as s\nfrom app.schemas.trailing_rule import TrailingRuleCreate\ndb=SessionLocal()\nfrom app.services import trailing_group as s_trailing_group; from app.schemas.trailing_group import TrailingGroupCreate\np1=s_trailing_group.create(db, TrailingGroupCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nr=s.create(db, TrailingRuleCreate(**{'name': 'a', 'trailing_group_id': p1, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, TrailingRuleCreate(**{'name': 'b', 'trailing_group_id': p1, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, TrailingRuleCreate(**{'name': 'c', 'trailing_group_id': 999999, 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='trailing_group_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/trailing_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T61"
                   title: "Add the Partial Group service in app/services/partial_group.py with list_all, create, get, update, and delete"
@@ -673,7 +852,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import partial_group as s\nfrom app.schemas.partial_group import PartialGroupCreate\ndb=SessionLocal()\nr=s.create(db, PartialGroupCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, PartialGroupCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/partial_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T62"
                   title: "Add the Partial Rule service in app/services/partial_rule.py with list_all, create, get, update, and delete"
@@ -682,7 +864,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import partial_rule as s\nfrom app.schemas.partial_rule import PartialRuleCreate\ndb=SessionLocal()\nfrom app.services import partial_group as s_partial_group; from app.schemas.partial_group import PartialGroupCreate\np1=s_partial_group.create(db, PartialGroupCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nr=s.create(db, PartialRuleCreate(**{'name': 'a', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, PartialRuleCreate(**{'name': 'b', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, PartialRuleCreate(**{'name': 'c', 'partial_group_id': 999999, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='partial_group_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/partial_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T63"
                   title: "Add the Action Group service in app/services/action_group.py with list_all, create, get, update, and delete"
@@ -691,7 +876,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import action_group as s\nfrom app.schemas.action_group import ActionGroupCreate\ndb=SessionLocal()\nr=s.create(db, ActionGroupCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, ActionGroupCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/action_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T64"
                   title: "Add the Action service in app/services/action.py with list_all, create, get, update, and delete"
@@ -718,7 +906,10 @@ content:
                   acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import position as s\nfrom app.schemas.position import PositionCreate\ndb=SessionLocal()\nr=s.create(db, PositionCreate(**{'name': 'a', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, PositionCreate(**{'name': 'b', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
                   touches: ["app/services/position.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
             G8:
               id: "P1-G8"
@@ -733,7 +924,10 @@ content:
                   acceptance: "import app.routes succeeds."
                   verify: "uv run python -c \"import app.routes\""
                   touches: ["app/routes/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T68"
                   title: "Add the /trading-platforms router in app/routes/trading_platform.py with the five contract routes, and mount it in app/main.py"
@@ -742,7 +936,10 @@ content:
                   acceptance: "GET /trading-platforms answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /trading-platforms/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/trading-platforms', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/trading-platforms'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/trading-platforms/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/trading-platforms/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/trading-platforms', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/trading-platforms/{i}'); assert r.status_code==204\nr=c.get(f'/trading-platforms/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/trading-platforms/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/trading-platforms/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/trading_platform.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T69"
                   title: "Add the /brokers router in app/routes/broker.py with the five contract routes, and mount it in app/main.py"
@@ -751,7 +948,10 @@ content:
                   acceptance: "GET /brokers answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /brokers/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/trading-platforms', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/brokers', json={'name': 'a', 'trading_platform_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/brokers'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/brokers/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/brokers/{i}', json={'name': 'b', 'trading_platform_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/brokers', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/brokers', json={'name': 'c', 'trading_platform_id': 999999, 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='trading_platform_id'\nr=c.delete(f'/brokers/{i}'); assert r.status_code==204\nr=c.get(f'/brokers/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/brokers/{i}', json={'name': 'b', 'trading_platform_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/brokers/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/broker.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T70"
                   title: "Add the /accounts router in app/routes/account.py with the five contract routes, and mount it in app/main.py"
@@ -769,7 +969,10 @@ content:
                   acceptance: "GET /assets answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /assets/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/assets', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/assets'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/assets/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/assets/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/assets', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/assets/{i}'); assert r.status_code==204\nr=c.get(f'/assets/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/assets/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/assets/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/asset.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T72"
                   title: "Add the /strategies router in app/routes/strategy.py with the five contract routes, and mount it in app/main.py"
@@ -778,7 +981,10 @@ content:
                   acceptance: "GET /strategies answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /strategies/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/strategies', json={'name': 'a', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/strategies'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/strategies/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/strategies/{i}', json={'name': 'b', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/strategies', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/strategies/{i}'); assert r.status_code==204\nr=c.get(f'/strategies/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/strategies/{i}', json={'name': 'b', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/strategies/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/strategy.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T73"
                   title: "Add the /trailing-groups router in app/routes/trailing_group.py with the five contract routes, and mount it in app/main.py"
@@ -787,7 +993,10 @@ content:
                   acceptance: "GET /trailing-groups answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /trailing-groups/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/trailing-groups', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/trailing-groups'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/trailing-groups/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/trailing-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/trailing-groups', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/trailing-groups/{i}'); assert r.status_code==204\nr=c.get(f'/trailing-groups/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/trailing-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/trailing-groups/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/trailing_group.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T74"
                   title: "Add the /trailing-rules router in app/routes/trailing_rule.py with the five contract routes, and mount it in app/main.py"
@@ -796,7 +1005,10 @@ content:
                   acceptance: "GET /trailing-rules answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /trailing-rules/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/trailing-groups', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/trailing-rules', json={'name': 'a', 'trailing_group_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/trailing-rules'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/trailing-rules/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/trailing-rules/{i}', json={'name': 'b', 'trailing_group_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/trailing-rules', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/trailing-rules', json={'name': 'c', 'trailing_group_id': 999999, 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='trailing_group_id'\nr=c.delete(f'/trailing-rules/{i}'); assert r.status_code==204\nr=c.get(f'/trailing-rules/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/trailing-rules/{i}', json={'name': 'b', 'trailing_group_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/trailing-rules/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/trailing_rule.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T75"
                   title: "Add the /partial-groups router in app/routes/partial_group.py with the five contract routes, and mount it in app/main.py"
@@ -805,7 +1017,10 @@ content:
                   acceptance: "GET /partial-groups answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /partial-groups/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/partial-groups', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/partial-groups'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/partial-groups/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/partial-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/partial-groups', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/partial-groups/{i}'); assert r.status_code==204\nr=c.get(f'/partial-groups/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/partial-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/partial-groups/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/partial_group.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T76"
                   title: "Add the /partial-rules router in app/routes/partial_rule.py with the five contract routes, and mount it in app/main.py"
@@ -814,7 +1029,10 @@ content:
                   acceptance: "GET /partial-rules answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /partial-rules/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/partial-groups', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/partial-rules', json={'name': 'a', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/partial-rules'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/partial-rules/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/partial-rules/{i}', json={'name': 'b', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/partial-rules', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/partial-rules', json={'name': 'c', 'partial_group_id': 999999, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='partial_group_id'\nr=c.delete(f'/partial-rules/{i}'); assert r.status_code==204\nr=c.get(f'/partial-rules/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/partial-rules/{i}', json={'name': 'b', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/partial-rules/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/partial_rule.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T77"
                   title: "Add the /action-groups router in app/routes/action_group.py with the five contract routes, and mount it in app/main.py"
@@ -823,7 +1041,10 @@ content:
                   acceptance: "GET /action-groups answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /action-groups/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/action-groups', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/action-groups'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/action-groups/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/action-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/action-groups', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/action-groups/{i}'); assert r.status_code==204\nr=c.get(f'/action-groups/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/action-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/action-groups/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/action_group.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
                 - id: "T78"
                   title: "Add the /actions router in app/routes/action.py with the five contract routes, and mount it in app/main.py"
@@ -850,7 +1071,10 @@ content:
                   acceptance: "GET /positions answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /positions/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
                   verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/positions', json={'name': 'a', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/positions'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/positions/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/positions/{i}', json={'name': 'b', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/positions', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/positions/{i}'); assert r.status_code==204\nr=c.get(f'/positions/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/positions/{i}', json={'name': 'b', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/positions/{i}'); assert r.status_code==404\""
                   touches: ["app/routes/position.py", "app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed; done by my-interface-developer"
 
             G9:
               id: "P1-G9"

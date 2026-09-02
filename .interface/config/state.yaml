@@ -293,10 +293,10 @@ content:
 
   # <!-------------------------------------------- Active -->
   active:
-    mode: "planning"
-    mode_reason: "Entered under transition S1 by the invocation '/my-interface-tasker phase 1'. The invocation names project phase P1, whose target in .interface/config/definition.yaml under content.phases is backend — an indexed, enabled item with a plan key in task.yaml — so the item is resolved from the requested phase, not chosen. Outcome (S4): P1 'Backend API' is planned for backend in task.yaml — 9 groups, 81 tasks, phase_titles derived and awaiting the human's confirmation. Task T56 (Account service) is blocked on B2 pending Q2; every other task is todo. Contract v1 was left as the interpreter drafted it and stays draft until the human freezes it (B1, Q1)."
+    mode: "development"
+    mode_reason: "Entered under transition S2 by the invocation '/my-interface-developer phase 1'. The invocation names project phase P1, whose target in .interface/config/definition.yaml under content.phases is backend — indexed, enabled, and holding a plan of 81 tasks in task.yaml — so the item is resolved from the requested phase, not chosen. Outcome (S4): 74 of 81 backend tasks are done with their verify commands passed — environment, application core, Alembic, all 13 models, all 13 migrations, all 13 schemas, 12 of 13 services, and 10 of 13 routers. T56 (Account service) stays blocked on B2 pending Q2; T64, T65, T70, T78, T79, and T81 stay todo because they depend on T56. No eligible task remains until the human answers Q2."
     item: "backend"
-    set_by: "my-interface-tasker on the human's invocation"
+    set_by: "my-interface-developer on the human's invocation"
     set_at: "2026-09-02"
 
   # <!-------------------------------------------- Blockers -->
