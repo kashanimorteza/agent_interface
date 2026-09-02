@@ -39,10 +39,11 @@ In this architecture:
 
 The core of Agent Interface is located in the `.interface/` directory.
 
-The `.interface/` directory contains four main parts:
+The `.interface/` directory contains five main parts:
 
 - **`root.yaml`** — The entry point. Maps the folders and files of the Interface, the Agent Skills, and the working modes.
 - **`project.md`** — The project definition and the Developer's requirements, in natural language.
+- **`preferences/`** — Human-owned development structure and technical defaults used only when `project.md` leaves a supported choice unstated.
 - **`schema/`** — Defines the standard structure and format of information.
 - **`config/`** — Represents and maintains the project's Understanding according to the Schema.
 

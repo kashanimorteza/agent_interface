@@ -7,13 +7,6 @@ Defines what the project is and the main parts that make up the system.
 
 <br><br>
 
-## Structure
-
-- **Backend** — manages application data and functionality.
-- **Frontend** — provides the user interface for interacting with the application.
-
-<br><br>
-
 ## Models
 
 Defines the core entities of the project and the data fields that belong to each entity.

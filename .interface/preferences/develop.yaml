@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/schema/develop.preferences.yaml"
-  path_note: "Human-owned programming preferences and conditional defaults for backend and frontend projects. It supplies an answer only when the project itself leaves that choice unstated."
-  version: "0.3"
+  path: ".interface/preferences/develop.yaml"
+  path_note: "Human-owned development structure, programming preferences, and conditional defaults for backend and frontend projects. It supplies an answer only when the project itself leaves that choice unstated."
+  version: "0.5"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,12 +16,14 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
+  - "structure"
   - "backend"
   - "frontend"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
+  structure: "Default project parts and their responsibilities."
   backend: "Default backend language and the conditional preferences for its language, API framework, database, tooling, conventions, and optional capabilities."
   frontend: "Default frontend language and the conditional preferences for its language, library, framework, package manager, tooling, and conventions."
 
@@ -29,9 +31,18 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
+  # <!----------------------------------------------------------------------------- Structure -->
+  structure:
+    defaults:
+      backend:
+        responsibility: "Manages application data and functionality."
+      frontend:
+        responsibility: "Provides the user interface for interacting with the application."
+
   # <!------------------------------------------------------------------------------- Backend -->
   backend:
     defaults:
+      enabled: true
       code_path: "backend/"
       needs_test: false
       language: "Python"
@@ -99,6 +110,7 @@ content:
   # <!------------------------------------------------------------------------------ Frontend -->
   frontend:
     defaults:
+      enabled: true
       code_path: "frontend/"
       needs_test: false
       language: "TypeScript"

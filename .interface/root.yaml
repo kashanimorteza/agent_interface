@@ -3,7 +3,7 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "1.4"
+  version: "1.6"
   updated: "2026-09-02"
 
 
@@ -44,6 +44,14 @@ content:
     project:
       path: ".interface/project.md"
       responsibility: "Human-readable project definition provided by the Developer"
+
+    preferences:
+      path: ".interface/preferences/"
+      responsibility: "Human-owned development structure, defaults, and conditional preferences used only when project.md leaves a supported choice unstated"
+
+      files:
+        - path: "develop.yaml"
+          responsibility: "Default backend/frontend project structure plus programming preferences and conditional defaults; explicit project.md values always take precedence"
 
     schema:
       path: ".interface/schema/"
