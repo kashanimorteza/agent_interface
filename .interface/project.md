@@ -7,14 +7,6 @@ Defines what the project is and the main parts that make up the system.
 
 <br><br>
 
-## Structure
-
-- **Database** — owns persistent storage, schema, and migrations.
-- **Backend** — manages application behavior and publishes the HTTP API by consuming the Database contract.
-- **Frontend** — provides the user interface by consuming the Backend API contract.
-
-<br><br>
-
 ## Models
 
 Defines the core entities of the project and the data fields that belong to each entity.
