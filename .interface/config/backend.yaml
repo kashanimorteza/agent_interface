@@ -1,0 +1,704 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/backend.yaml"
+  path_note: "Generated configuration of the backend item — lives in the config layer of the Agent Project Interface, produced by my-interface-interpreter from .interface/project.md against schema/backend.schema.yaml"
+  schema: ".interface/schema/backend.schema.yaml"
+  schema_version: "1.2"
+  generated_by: "my-interface-interpreter"
+  generated_at: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Written by my-interface-interpreter during a generation run. In planning mode my-interface-tasker may write settings and a draft contract, never a frozen one — see content.modes in .interface/root.yaml. No other mode writes this file"
+  frozen_contract: "A contract version whose lifecycle is frozen is never edited by an agent; a change is a new version, and freezing or versioning is the human's decision — see human_only_decisions in config/state.yaml under content.state_authority"
+  defaults: "A field the project leaves unstated carries the default from schema/backend.schema.yaml — a default is an answer, not a guess, and raises no question"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled"
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "standards"
+  - "capabilities"
+  - "code_layout"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the backend is in play"
+  code_path: "The folder holding the backend's code — the one place this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The backend in one line"
+  needs_test: "Whether every code-producing task is proven by a written test"
+  verify_cwd: "Where and inside what every verify command runs"
+  responsibility: "What the backend is answerable for"
+  tech: "What the backend is built with — followed, never re-decided"
+  standards: "How the backend's code is written"
+  capabilities: "The optional capabilities, each switched on or off"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract the backend publishes — its only connection to other items"
+  boundaries: "The limits of the backend"
+  out_of_scope: "What the backend does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Enabled -->
+  enabled: true
+
+  # <!-------------------------------------------- Code_Path -->
+  code_path: "backend/"
+
+  # <!-------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root, beside .interface/ — never a path inside the interface."
+
+  # <!-------------------------------------------- Summary -->
+  summary: "A FastAPI service over SQLite that exposes the Trading Assistant's models through an API-key-protected HTTP API."
+
+  # <!-------------------------------------------- Needs_Test -->
+  needs_test: false
+
+  # <!-------------------------------------------- Verify_Cwd -->
+  verify_cwd:
+    directory: "backend/"
+    environment: "Inside the uv-managed virtual environment — every verify command is run through uv so it never touches the system interpreter."
+
+  # <!-------------------------------------------- Responsibility -->
+  responsibility: "Manages the application's data and functionality — the project's entities, their storage, and the API that serves them."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+    language:
+      name: "Python"
+      version: "latest"
+      environment:
+        name: "uv"
+        version: "latest"
+      packages:
+        api:
+          name: "FastAPI"
+          version: "latest"
+        orm:
+          name: "SQLAlchemy"
+          version: "latest"
+        migration:
+          name: "Alembic"
+          version: "latest"
+          note: "The project asks for the standard Python migration framework; Alembic is the schema default for that role."
+    database:
+      engine: "SQLite"
+      location: "A single database file inside code_path — backend/trading_assistant.db"
+      schema_owner: "The backend — the database schema belongs to it entirely."
+      access: "Only through the SQLAlchemy ORM; no raw connection outside the ORM and the migration tool."
+    run:
+      command: "uv run uvicorn app.main:app --reload"
+      cwd: "backend/"
+      transport: "Plain HTTP — HTTPS is false."
+
+  # <!-------------------------------------------- Standards -->
+  standards:
+    naming:
+      variables: "snake_case"
+      functions: "snake_case"
+      classes: "PascalCase"
+      constants: "UPPER_SNAKE_CASE"
+      files: "snake_case"
+      folders: "snake_case"
+
+  # <!-------------------------------------------- Capabilities -->
+  capabilities:
+    error_handling:
+      enabled: false
+    logging:
+      enabled: false
+    api_documentation:
+      enabled: true
+      type: "OpenAPI — the interactive Docs endpoint (Swagger UI at /docs); ReDoc disabled"
+    authentication:
+      enabled: false
+    https:
+      enabled: false
+    api_key:
+      enabled: true
+      header: "X-API-Key"
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout:
+    "pyproject.toml": "The uv project manifest — the dependencies and the Python requirement."
+    "alembic.ini": "Alembic configuration pointing at the SQLite database file."
+    "app/": "The application package."
+    "app/main.py": "Entry point — creates the FastAPI app, mounts the routers, applies the API key dependency, serves /docs."
+    "app/config.py": "Configuration — database URL and the API key value."
+    "app/database.py": "Database access — engine, session factory, declarative base, session dependency."
+    "app/models/": "One SQLAlchemy model per project entity."
+    "app/schemas/": "One Pydantic module per entity — create, update, and read shapes."
+    "app/services/": "One service module per entity — every read and write of the database."
+    "app/routers/": "One router per entity — the routes of the contract, delegating to services."
+    "migrations/": "Alembic environment and versions — the only way the schema changes."
+    "migrations/versions/": "The migration scripts."
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+    produces: "v1"
+    rule: "The implementation must match the frozen contract exactly — every route, model, and convention listed under the version."
+    change_rule: "A frozen contract is versioned, never edited; the human decides when a version freezes and when a new one is opened."
+
+    v1:
+      lifecycle: "draft"
+      lifecycle_note: "Draft — the backend may still be shaped against it and planning may refine it; a consumer may not build against it until the human freezes it, and freezing makes any later change a new version."
+      consumed_by: "frontend"
+      contract_read_order:
+        - "conventions — what holds everywhere"
+        - "error_shape — what every failure looks like"
+        - "models — the data shapes"
+        - "routes — the surface itself"
+      conventions:
+        transport: "HTTP with JSON bodies and responses; plain HTTP, no HTTPS."
+        identifiers: "Every entity carries an integer ID assigned by the backend; a route addresses an entity by that ID in its path."
+        timestamps: "No entity carries a timestamp field — the project states none."
+        unknown_id: "A route addressed with an ID that does not exist answers 404."
+        api_key: "Every route requires the API key in the X-API-Key header; a missing or wrong key answers 401."
+        documentation: "The interactive Docs endpoint at /docs describes this surface; ReDoc is disabled."
+      error_shape:
+        rule: "Error handling is disabled, so every failure takes the framework's built-in shape and no custom error layer exists."
+        fields:
+          detail: "The framework's error detail — a string, or for a validation failure a list of the failing locations and messages."
+        codes:
+          401: "Missing or invalid API key."
+          404: "No entity with the given ID."
+          422: "The request body or path parameter failed validation."
+      models:
+        note: "Each model lists exactly the fields the project states; unstated implementation details are outside this contract and do not create interpretation gaps."
+        trading_platform:
+          name: "Trading Platform"
+          purpose: "Defines the trading integration used to execute trades. Initial platforms include Binance and MetaTrader 5, and additional platforms may be added later. Each platform can provide its own development interface for performing trading operations through its related library."
+          fields:
+            - "ID"
+            - "Name"
+            - "Status"
+            - "Description"
+        broker:
+          name: "Broker"
+          purpose: "Defines a broker, its broker-specific parameters, and the trading platform it uses. A broker also acts as the parent under which its trading accounts are defined."
+          fields:
+            - "ID"
+            - "Name"
+            - "Trading Platform ID"
+            - "Status"
+            - "Description"
+          references:
+            - "Trading Platform ID refers to trading_platform"
+        account:
+          name: "Account"
+          purpose: "Defines a trading account that belongs to a specific broker and is used to perform trading operations."
+          fields:
+            - "ID"
+            - "Name"
+            - "Username"
+            - "Password"
+            - "Broker ID"
+            - "Status"
+            - "Description"
+          references:
+            - "Broker ID refers to broker"
+        asset:
+          name: "Asset"
+          purpose: "Defines a tradable asset and its related parameters, such as EURUSD or XAUUSD."
+          fields:
+            - "ID"
+            - "Name"
+            - "Status"
+            - "Description"
+        strategy:
+          name: "Strategy"
+          purpose: "Defines the trading settings used by an action, including values such as stop loss and take profit."
+          fields:
+            - "ID"
+            - "Name"
+            - "Risk Parameter"
+            - "Status"
+            - "Description"
+        trailing_group:
+          name: "Trailing Group"
+          purpose: "Defines a group for managing the rules that determine when and how stop loss and take profit values should change during a trade."
+          fields:
+            - "ID"
+            - "Name"
+            - "Status"
+            - "Description"
+        trailing_rule:
+          name: "Trailing Rule"
+          purpose: "Defines an individual rule within a trailing group. For example, when profit reaches a specified percentage of the take-profit target, the rule can adjust the take profit and stop loss."
+          fields:
+            - "ID"
+            - "Name"
+            - "Trailing Group ID"
+            - "Status"
+            - "Description"
+          references:
+            - "Trailing Group ID refers to trailing_group"
+        partial_group:
+          name: "Partial Group"
+          purpose: "Defines a group of rules for closing all or part of a position at specified profit levels, such as closing 10%, 30%, or the entire position."
+          fields:
+            - "ID"
+            - "Name"
+            - "Status"
+            - "Description"
+        partial_rule:
+          name: "Partial Rule"
+          purpose: "Defines an individual rule within a partial group, including the profit threshold and the portion of the position to close when that threshold is reached."
+          fields:
+            - "ID"
+            - "Name"
+            - "Partial Group ID"
+            - "Profit Threshold"
+            - "Close Portion"
+            - "Status"
+            - "Description"
+          references:
+            - "Partial Group ID refers to partial_group"
+        action_group:
+          name: "Action Group"
+          purpose: "Groups trading actions by an operating or risk profile, such as Standard or High Risk."
+          fields:
+            - "ID"
+            - "Name"
+            - "Status"
+            - "Description"
+        action:
+          name: "Action"
+          purpose: "Defines a trading action within an action group by combining an asset, an account, and a strategy. For example, a High Risk action can trade EURUSD through Account A using Strategy B."
+          fields:
+            - "ID"
+            - "Name"
+            - "Asset ID"
+            - "Account ID"
+            - "Strategy ID"
+            - "Group ID"
+            - "Status"
+            - "Description"
+          references:
+            - "Asset ID refers to asset"
+            - "Account ID refers to account"
+            - "Strategy ID refers to strategy"
+            - "Group ID refers to action_group"
+        execute:
+          name: "Execute"
+          purpose: "Tracks actions that have been activated and executed, including the current stage and state of each execution."
+          fields:
+            - "ID"
+            - "Name"
+            - "Action ID"
+            - "Profit"
+            - "State"
+            - "Status"
+            - "Description"
+          references:
+            - "Action ID refers to action"
+        position:
+          name: "Position"
+          purpose: "Stores the complete information for a position created from an executed order, including its entry price, take profit, stop loss, and the settings applied through its related groups."
+          fields:
+            - "ID"
+            - "Name"
+            - "Entry Price"
+            - "Take Profit"
+            - "Stop Loss"
+            - "Status"
+            - "Description"
+      routes:
+        trading_platform:
+          - method: "GET"
+            path: "/trading-platforms"
+            summary: "List every trading platform"
+            success: "200 — a list of trading_platform"
+            errors: [401]
+          - method: "POST"
+            path: "/trading-platforms"
+            summary: "Create one trading platform"
+            body: "trading_platform without ID"
+            success: "201 — the created trading_platform"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/trading-platforms/{id}"
+            summary: "Read one trading platform by ID"
+            success: "200 — the trading_platform"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/trading-platforms/{id}"
+            summary: "Update one trading platform by ID"
+            body: "trading_platform without ID"
+            success: "200 — the updated trading_platform"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/trading-platforms/{id}"
+            summary: "Delete one trading platform by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        broker:
+          - method: "GET"
+            path: "/brokers"
+            summary: "List every broker"
+            success: "200 — a list of broker"
+            errors: [401]
+          - method: "POST"
+            path: "/brokers"
+            summary: "Create one broker"
+            body: "broker without ID"
+            success: "201 — the created broker"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/brokers/{id}"
+            summary: "Read one broker by ID"
+            success: "200 — the broker"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/brokers/{id}"
+            summary: "Update one broker by ID"
+            body: "broker without ID"
+            success: "200 — the updated broker"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/brokers/{id}"
+            summary: "Delete one broker by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        account:
+          - method: "GET"
+            path: "/accounts"
+            summary: "List every account"
+            success: "200 — a list of account"
+            errors: [401]
+          - method: "POST"
+            path: "/accounts"
+            summary: "Create one account"
+            body: "account without ID"
+            success: "201 — the created account"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/accounts/{id}"
+            summary: "Read one account by ID"
+            success: "200 — the account"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/accounts/{id}"
+            summary: "Update one account by ID"
+            body: "account without ID"
+            success: "200 — the updated account"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/accounts/{id}"
+            summary: "Delete one account by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        asset:
+          - method: "GET"
+            path: "/assets"
+            summary: "List every asset"
+            success: "200 — a list of asset"
+            errors: [401]
+          - method: "POST"
+            path: "/assets"
+            summary: "Create one asset"
+            body: "asset without ID"
+            success: "201 — the created asset"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/assets/{id}"
+            summary: "Read one asset by ID"
+            success: "200 — the asset"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/assets/{id}"
+            summary: "Update one asset by ID"
+            body: "asset without ID"
+            success: "200 — the updated asset"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/assets/{id}"
+            summary: "Delete one asset by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        strategy:
+          - method: "GET"
+            path: "/strategies"
+            summary: "List every strategy"
+            success: "200 — a list of strategy"
+            errors: [401]
+          - method: "POST"
+            path: "/strategies"
+            summary: "Create one strategy"
+            body: "strategy without ID"
+            success: "201 — the created strategy"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/strategies/{id}"
+            summary: "Read one strategy by ID"
+            success: "200 — the strategy"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/strategies/{id}"
+            summary: "Update one strategy by ID"
+            body: "strategy without ID"
+            success: "200 — the updated strategy"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/strategies/{id}"
+            summary: "Delete one strategy by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        trailing_group:
+          - method: "GET"
+            path: "/trailing-groups"
+            summary: "List every trailing group"
+            success: "200 — a list of trailing_group"
+            errors: [401]
+          - method: "POST"
+            path: "/trailing-groups"
+            summary: "Create one trailing group"
+            body: "trailing_group without ID"
+            success: "201 — the created trailing_group"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/trailing-groups/{id}"
+            summary: "Read one trailing group by ID"
+            success: "200 — the trailing_group"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/trailing-groups/{id}"
+            summary: "Update one trailing group by ID"
+            body: "trailing_group without ID"
+            success: "200 — the updated trailing_group"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/trailing-groups/{id}"
+            summary: "Delete one trailing group by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        trailing_rule:
+          - method: "GET"
+            path: "/trailing-rules"
+            summary: "List every trailing rule"
+            success: "200 — a list of trailing_rule"
+            errors: [401]
+          - method: "POST"
+            path: "/trailing-rules"
+            summary: "Create one trailing rule"
+            body: "trailing_rule without ID"
+            success: "201 — the created trailing_rule"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/trailing-rules/{id}"
+            summary: "Read one trailing rule by ID"
+            success: "200 — the trailing_rule"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/trailing-rules/{id}"
+            summary: "Update one trailing rule by ID"
+            body: "trailing_rule without ID"
+            success: "200 — the updated trailing_rule"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/trailing-rules/{id}"
+            summary: "Delete one trailing rule by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        partial_group:
+          - method: "GET"
+            path: "/partial-groups"
+            summary: "List every partial group"
+            success: "200 — a list of partial_group"
+            errors: [401]
+          - method: "POST"
+            path: "/partial-groups"
+            summary: "Create one partial group"
+            body: "partial_group without ID"
+            success: "201 — the created partial_group"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/partial-groups/{id}"
+            summary: "Read one partial group by ID"
+            success: "200 — the partial_group"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/partial-groups/{id}"
+            summary: "Update one partial group by ID"
+            body: "partial_group without ID"
+            success: "200 — the updated partial_group"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/partial-groups/{id}"
+            summary: "Delete one partial group by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        partial_rule:
+          - method: "GET"
+            path: "/partial-rules"
+            summary: "List every partial rule"
+            success: "200 — a list of partial_rule"
+            errors: [401]
+          - method: "POST"
+            path: "/partial-rules"
+            summary: "Create one partial rule"
+            body: "partial_rule without ID"
+            success: "201 — the created partial_rule"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/partial-rules/{id}"
+            summary: "Read one partial rule by ID"
+            success: "200 — the partial_rule"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/partial-rules/{id}"
+            summary: "Update one partial rule by ID"
+            body: "partial_rule without ID"
+            success: "200 — the updated partial_rule"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/partial-rules/{id}"
+            summary: "Delete one partial rule by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        action_group:
+          - method: "GET"
+            path: "/action-groups"
+            summary: "List every action group"
+            success: "200 — a list of action_group"
+            errors: [401]
+          - method: "POST"
+            path: "/action-groups"
+            summary: "Create one action group"
+            body: "action_group without ID"
+            success: "201 — the created action_group"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/action-groups/{id}"
+            summary: "Read one action group by ID"
+            success: "200 — the action_group"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/action-groups/{id}"
+            summary: "Update one action group by ID"
+            body: "action_group without ID"
+            success: "200 — the updated action_group"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/action-groups/{id}"
+            summary: "Delete one action group by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        action:
+          - method: "GET"
+            path: "/actions"
+            summary: "List every action"
+            success: "200 — a list of action"
+            errors: [401]
+          - method: "POST"
+            path: "/actions"
+            summary: "Create one action"
+            body: "action without ID"
+            success: "201 — the created action"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/actions/{id}"
+            summary: "Read one action by ID"
+            success: "200 — the action"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/actions/{id}"
+            summary: "Update one action by ID"
+            body: "action without ID"
+            success: "200 — the updated action"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/actions/{id}"
+            summary: "Delete one action by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        execute:
+          - method: "GET"
+            path: "/executes"
+            summary: "List every execute"
+            success: "200 — a list of execute"
+            errors: [401]
+          - method: "POST"
+            path: "/executes"
+            summary: "Create one execute"
+            body: "execute without ID"
+            success: "201 — the created execute"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/executes/{id}"
+            summary: "Read one execute by ID"
+            success: "200 — the execute"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/executes/{id}"
+            summary: "Update one execute by ID"
+            body: "execute without ID"
+            success: "200 — the updated execute"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/executes/{id}"
+            summary: "Delete one execute by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+        position:
+          - method: "GET"
+            path: "/positions"
+            summary: "List every position"
+            success: "200 — a list of position"
+            errors: [401]
+          - method: "POST"
+            path: "/positions"
+            summary: "Create one position"
+            body: "position without ID"
+            success: "201 — the created position"
+            errors: [401, 422]
+          - method: "GET"
+            path: "/positions/{id}"
+            summary: "Read one position by ID"
+            success: "200 — the position"
+            errors: [401, 404]
+          - method: "PUT"
+            path: "/positions/{id}"
+            summary: "Update one position by ID"
+            body: "position without ID"
+            success: "200 — the updated position"
+            errors: [401, 404, 422]
+          - method: "DELETE"
+            path: "/positions/{id}"
+            summary: "Delete one position by ID"
+            success: "204 — no body"
+            errors: [401, 404]
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns:
+      - "Everything under backend/ and the whole database schema."
+    does_not_own:
+      - "Client code and the user interface — the frontend's, however close it sits."
+    interface: "The contract under content.contracts — the only thing the backend offers the outside."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "HTTPS — the project sets it to false."
+    - "Centralized error handling — the project sets it to false."
+    - "Application logging — the project sets it to false."
+    - "A test suite — the project sets Testing to false."
+    - "User authentication — the project sets it to false; the API key is the only access check."
+    - "ReDoc documentation — the project sets it to false."
+    - "Executing trades against a trading platform — the models describe the integration; no platform library is called in this contract."

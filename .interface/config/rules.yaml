@@ -1,0 +1,99 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/rules.yaml"
+  path_note: "Generated boundaries of agent behavior for this project — lives in the config layer of the Agent Project Interface, produced by my-interface-interpreter from .interface/project.md against schema/rules.schema.yaml"
+  schema: ".interface/schema/rules.schema.yaml"
+  schema_version: "1.0"
+  generated_by: "my-interface-interpreter"
+  generated_at: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "Written only by my-interface-interpreter during a generation run. Outside that run its content is the human's alone — see human_only_decisions in config/state.yaml under content.state_authority"
+  source: "Every rule follows from a setting the project states in .interface/project.md or from a default the schemas carry; none is invented"
+  on_change_needed: "A rule that needs to change is changed in project.md and regenerated, or raised as an open question in config/state.yaml"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "precedence"
+  - "environment"
+  - "code"
+  - "database"
+  - "security"
+  - "test"
+  - "contract"
+  - "design"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  precedence: "Which rule wins when two collide"
+  environment: "Where code runs and what is never committed"
+  code: "How code is shaped"
+  database: "How the schema moves"
+  security: "What must never leak — overrides every other group"
+  test: "What must be proven"
+  contract: "How the API surface and its contract stay in step"
+  design: "How the interface is drawn"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Precedence -->
+  precedence: "When two rules collide, a security rule wins over every other group, a contract rule wins over a code rule, and the project's stated setting wins over a schema default."
+
+  # <!-------------------------------------------- Environment -->
+  environment:
+    - "Run every backend command inside the virtual environment created by uv under backend/, because no command runs against the system interpreter."
+    - "Add a backend dependency only through uv so the project manifest and lockfile stay the single record of what is installed."
+    - "Run every frontend command through npm inside frontend/ once a phase targets the frontend, and not before."
+    - "Never commit a virtual environment, node_modules, a local SQLite database file, or a secret."
+    - "Serve the API over plain HTTP, because the project sets HTTPS to false."
+
+  # <!-------------------------------------------- Code -->
+  code:
+    - "Keep business logic in the services layer and let a route only validate input, call a service, and return its result."
+    - "Validate every request body and path parameter through a Pydantic schema, because FastAPI enforces nothing that is not declared."
+    - "Define one SQLAlchemy model per project entity carrying exactly the fields the project lists for it, and nothing more."
+    - "Rely on the framework's built-in error responses and add no centralized error layer, because the project sets Error Handling to false."
+    - "Add no application logging, because the project sets Logging to false."
+    - "Add no user authentication, because the project sets Authentication to false."
+    - "Follow the naming standards in config/backend.yaml under content.standards for every name inside code_path."
+
+  # <!-------------------------------------------- Database -->
+  database:
+    - "Change the database schema only through an Alembic migration, so the schema in the database and the models in code never drift apart."
+    - "Write every migration with a working downgrade, so any schema step can be reversed."
+    - "Keep the SQLite database file at the path config/backend.yaml names and nowhere else."
+    - "Use batch mode for a SQLite migration that alters a table, because SQLite cannot alter most column definitions in place."
+    - "Enable SQLite foreign key enforcement on every connection, because SQLite leaves it off by default and every reference in the models depends on it."
+
+  # <!-------------------------------------------- Security -->
+  security:
+    - "Require a valid API key on every route in the X-API-Key header and answer a missing or wrong key with 401, because the project sets API Key to true."
+    - "Never return an account password in any response, however the account is fetched or listed."
+    - "Never write an API key or an account password into a log, an error message, or the API documentation."
+    - "Never reveal internal details such as stack traces or SQL in an error response."
+
+  # <!-------------------------------------------- Test -->
+  test:
+    - "Write no test suite, because the project sets Testing to false and needs_test is false on every item."
+    - "Prove every task through its own verify command in the item's verify_cwd, because without a passing verify no task becomes done."
+    - "Prove the API is running by starting the backend and requesting a route through the documented surface, because the phase goal is a running API."
+
+  # <!-------------------------------------------- Contract -->
+  contract:
+    - "Change the API surface only together with the contract in config/backend.yaml, so the two never disagree."
+    - "Never edit a frozen contract version; a change means a new version, and only the human freezes or versions a contract."
+    - "Build the frontend only against a frozen backend contract, never against a draft."
+    - "Treat a detail the project does not state as outside the contract rather than as a gap, so no open question is raised for an unstated implementation detail."
+    - "Expose the interactive API documentation at the Docs endpoint and disable ReDoc, because the project sets API Documentation Type to Docs and ReDoc to false."
+
+  # <!-------------------------------------------- Design -->
+  design:
+    - "Create no design file, page, or export until a project phase targets the frontend, because no phase does and the project names no design source."
+    - "Draw every frontend page against the frozen backend contract when the frontend is in play, so the interface never shows a field the API does not serve."

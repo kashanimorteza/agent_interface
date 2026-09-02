@@ -1,0 +1,127 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/frontend.yaml"
+  path_note: "Generated configuration of the frontend item — lives in the config layer of the Agent Project Interface, produced by my-interface-interpreter from .interface/project.md against schema/frontend.schema.yaml"
+  schema: ".interface/schema/frontend.schema.yaml"
+  schema_version: "1.0"
+  generated_by: "my-interface-interpreter"
+  generated_at: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Written by my-interface-interpreter during a generation run. In planning mode my-interface-tasker may write settings and a draft contract, never a frozen one — see content.modes in .interface/root.yaml. No other mode writes this file"
+  frozen_contract: "A contract version whose lifecycle is frozen is never edited by an agent; a change is a new version, and freezing or versioning is the human's decision — see human_only_decisions in config/state.yaml under content.state_authority"
+  enabled_note: "enabled is false because no project phase targets the frontend; the entry stands so the item is indexed, and the human enables it by adding a phase in project.md and regenerating"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled"
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "code_layout"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the frontend is in play"
+  code_path: "The folder holding the frontend's code — the one place this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The frontend in one line"
+  needs_test: "Whether every code-producing task is proven by a written test"
+  verify_cwd: "Where and inside what every verify command runs"
+  responsibility: "What the frontend is answerable for"
+  tech: "What the frontend is built with — followed, never re-decided"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "The contract the frontend publishes and the one it consumes"
+  boundaries: "The limits of the frontend"
+  out_of_scope: "What the frontend does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Enabled -->
+  enabled: false
+
+  # <!-------------------------------------------- Code_Path -->
+  code_path: "frontend/"
+
+  # <!-------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root, beside .interface/ — never a path inside the interface."
+
+  # <!-------------------------------------------- Summary -->
+  summary: "A Next.js and React application in TypeScript that gives users the interface for the Trading Assistant over the backend's API."
+
+  # <!-------------------------------------------- Needs_Test -->
+  needs_test: false
+
+  # <!-------------------------------------------- Verify_Cwd -->
+  verify_cwd:
+    directory: "frontend/"
+    environment: "Inside the npm-managed project — every verify command runs through npm against the local node_modules, never a global install."
+
+  # <!-------------------------------------------- Responsibility -->
+  responsibility: "Provides the user interface for interacting with the application — every screen a user sees, drawn against the backend's contract."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+    language:
+      name: "TypeScript"
+      version: "not pinned — the project names no version"
+      library:
+        name: "React"
+        version: "not pinned — the project names no version"
+      framework:
+        name: "Next.js"
+        version: "not pinned — the project names no version"
+      package_manager:
+        name: "npm"
+        version: "not pinned — the project names no version"
+    database: "None — the frontend holds no data of its own; every read and write goes through the backend contract."
+    environment:
+      name: "npm"
+      note: "Dependencies install into frontend/node_modules — never committed."
+    run:
+      command: "not stated — the project names no start command; settled when a phase targets this item"
+      cwd: "frontend/"
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout:
+    note: "Settled when a phase targets this item — the project states the technology but no layout, and no phase currently targets the frontend."
+    "package.json": "The npm manifest — dependencies and scripts."
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+    produces: "none"
+    rule: "The frontend publishes no contract; it consumes the backend's — config/backend.yaml under content.contracts — and must match the frozen version it builds against exactly."
+    change_rule: "A frozen contract is versioned, never edited; the human decides when a version freezes and when a new one is opened."
+    consumes:
+      path: ".interface/config/backend.yaml — content.contracts"
+      version: "v1"
+      condition: "Only once v1 is frozen — the frontend never builds against a draft."
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns:
+      - "Everything under frontend/ — the user interface and its client code."
+    does_not_own:
+      - "Application data, its storage, and the API that serves it — the backend's."
+    interface: "The screens it draws; it offers no contract of its own to the outside."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "Any work at all while no project phase targets the frontend — enabled is false."
+    - "Holding or migrating data — the frontend has no database."
+    - "Executing trades — the frontend only calls the backend's API."
+    - "A test suite — the project sets Testing to false."
