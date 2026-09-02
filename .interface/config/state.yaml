@@ -293,10 +293,10 @@ content:
 
   # <!-------------------------------------------- Active -->
   active:
-    mode: "not set"
-    mode_reason: "No Skill that owns a mode has been invoked yet. my-interface-interpreter generated the Config from .interface/project.md under transition S0 on 2026-09-02; the next step is the human's — invoking my-interface-tasker with an item enters planning."
-    item: "none"
-    set_by: "my-interface-interpreter on the human's invocation"
+    mode: "planning"
+    mode_reason: "Entered under transition S1 by the invocation '/my-interface-tasker phase 1'. The invocation names project phase P1, whose target in .interface/config/definition.yaml under content.phases is backend — an indexed, enabled item with a plan key in task.yaml — so the item is resolved from the requested phase, not chosen. Outcome (S4): P1 'Backend API' is planned for backend in task.yaml — 9 groups, 81 tasks, phase_titles derived and awaiting the human's confirmation. Task T56 (Account service) is blocked on B2 pending Q2; every other task is todo. Contract v1 was left as the interpreter drafted it and stays draft until the human freezes it (B1, Q1)."
+    item: "backend"
+    set_by: "my-interface-tasker on the human's invocation"
     set_at: "2026-09-02"
 
   # <!-------------------------------------------- Blockers -->
@@ -305,6 +305,13 @@ content:
       blocks: "Any task that declares needs_contract v1, and any consumer defining against the backend's API surface"
       what_is_missing: "A frozen backend contract v1 — the version in .interface/config/backend.yaml under content.contracts is draft, because project.md names the models but states no route, and the route set was derived from the phase goal rather than copied"
       consequence: "The backend surface can be planned in draft, but nothing may be defined against it and its shape is not yet binding until the human confirms the routes and freezes the version"
+      decision_belongs_to: "the human"
+      raised: "2026-09-02"
+
+    - id: "B2"
+      blocks: "Task T56 in the backend plan — the Account service — and, through depends_on, the /accounts router, the /actions and /executes routers, and the final run task T81"
+      what_is_missing: "The human's decision on how the Account password is stored at rest — open question Q2. The security rules forbid an agent deciding it, and the service that writes the password is the place the decision lands"
+      consequence: "The Account model, its migration, its schemas, and every other resource can be built, but no Account row can be created through the service or the API, so Phase 1's goal of running the API for all models cannot be fully met until Q2 is answered"
       decision_belongs_to: "the human"
       raised: "2026-09-02"
 
@@ -320,8 +327,8 @@ content:
 
       - id: "Q2"
         question: "How is the Account password stored at rest, and may any API response ever return it?"
-        why_it_matters: "The Account model carries Username and Password used to perform trading operations through a broker, which suggests the password must be recoverable, not hashed. The security rules forbid returning it and forbid an agent deciding its storage. The contract for the Account routes cannot be frozen without this answer."
-        blocks: "B1"
+        why_it_matters: "The Account model carries Username and Password used to perform trading operations through a broker, which suggests the password must be recoverable, not hashed. The security rules forbid returning it and forbid an agent deciding its storage. The contract for the Account routes cannot be frozen without this answer, and the Account service task T56 in the backend plan is blocked on it."
+        blocks: "B1, B2"
 
       - id: "Q3"
         question: "What does the frontend show, when does a project phase target it, and what command starts it?"

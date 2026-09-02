@@ -73,10 +73,800 @@ content:
   plans:
 
     backend:
-      phase_titles_lifecycle: "empty"
-      phase_titles_derived_from: "not derived yet"
-      phase_titles: {}
-      phases: {}
+      phase_titles_lifecycle: "derived"
+      phase_titles_derived_from: ".interface/config/definition.yaml — content.phases"
+      phase_titles:
+        P1: "Backend API"
+      phases:
+        P1:
+          id: "P1"
+          title: "Backend API"
+          does: "Creates and runs the API for all defined project models — every model of contract v1 persisted through the ORM behind a migrated SQLite schema, and served over the five contract routes per resource by the FastAPI application started with the run command in backend.yaml."
+          groups:
+            G1:
+              id: "P1-G1"
+              title: "Environment"
+              does: "Create the uv project, declare every dependency, and make sure nothing generated can be committed; when done, every later command runs inside backend/.venv."
+              task_count: 5
+              tasks:
+                - id: "T1"
+                  title: "Create pyproject.toml as the uv project for the backend"
+                  goal: "A uv-managed virtual environment exists under backend/ and every later install has a project file to land in."
+                  depends_on: []
+                  acceptance: "uv sync creates .venv from pyproject.toml and the Python inside it runs."
+                  verify: "uv sync && uv run python --version"
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+
+                - id: "T2"
+                  title: "Add fastapi with the standard extra as a dependency"
+                  goal: "FastAPI, its dev server command, and the test client are importable inside the environment."
+                  depends_on: ["T1"]
+                  acceptance: "fastapi and fastapi.testclient import, and the fastapi command exists."
+                  verify: "uv add 'fastapi[standard]' && uv run python -c \"import fastapi, fastapi.testclient\" && uv run fastapi --help"
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+
+                - id: "T3"
+                  title: "Add sqlalchemy as a dependency"
+                  goal: "The ORM every database access goes through is importable inside the environment."
+                  depends_on: ["T1"]
+                  acceptance: "sqlalchemy imports."
+                  verify: "uv add sqlalchemy && uv run python -c \"import sqlalchemy\""
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+
+                - id: "T4"
+                  title: "Add alembic as a dependency"
+                  goal: "The migration tool that is the only route for schema change is runnable inside the environment."
+                  depends_on: ["T1"]
+                  acceptance: "The alembic command runs."
+                  verify: "uv add alembic && uv run alembic --version"
+                  touches: ["pyproject.toml"]
+                  status: "todo"
+
+                - id: "T5"
+                  title: "Create backend/.gitignore excluding the virtual environment, the SQLite files, and Python caches"
+                  goal: "The virtual environment, app.db, verify.db, and __pycache__ can never be committed from backend/."
+                  depends_on: ["T1"]
+                  acceptance: "git reports each of those paths as ignored."
+                  verify: "git check-ignore -q .venv && git check-ignore -q app.db && git check-ignore -q verify.db && git check-ignore -q app/__pycache__"
+                  touches: [".gitignore"]
+                  status: "todo"
+
+            G2:
+              id: "P1-G2"
+              title: "Application core"
+              does: "Create the package, configuration, database access, the single error shape, and the FastAPI entry point; when done the application starts, serves its docs, and every failure has one shape — with no resource mounted yet."
+              task_count: 5
+              tasks:
+                - id: "T6"
+                  title: "Create the app package marker app/__init__.py"
+                  goal: "The application package exists and can be imported."
+                  depends_on: ["T1"]
+                  acceptance: "import app succeeds."
+                  verify: "uv run python -c \"import app\""
+                  touches: ["app/__init__.py"]
+                  status: "todo"
+
+                - id: "T7"
+                  title: "Create app/config.py exposing DATABASE_URL read from the environment with sqlite:///./app.db as its default"
+                  goal: "Every module finds the database location in one place, and a verify run can point it at a throwaway file."
+                  depends_on: ["T6"]
+                  acceptance: "DATABASE_URL defaults to app.db and follows the DATABASE_URL environment variable when set."
+                  verify: "uv run python -c \"from app.config import DATABASE_URL; assert DATABASE_URL=='sqlite:///./app.db'\" && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.config import DATABASE_URL; assert DATABASE_URL=='sqlite:///./verify.db'\""
+                  touches: ["app/config.py"]
+                  status: "todo"
+
+                - id: "T8"
+                  title: "Create app/database.py with the engine, SessionLocal, Base, get_db, and the SQLite connection settings"
+                  goal: "Every model can declare against Base and every route can obtain a session; foreign keys are enforced and check_same_thread is off on every connection."
+                  depends_on: ["T3", "T7"]
+                  acceptance: "A connection from the engine reports PRAGMA foreign_keys as 1, and SessionLocal yields a working session."
+                  verify: "DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import engine, SessionLocal, Base, get_db; from sqlalchemy import text; c=engine.connect(); assert c.execute(text('PRAGMA foreign_keys')).scalar()==1; SessionLocal().close()\""
+                  touches: ["app/database.py"]
+                  status: "todo"
+
+                - id: "T9"
+                  title: "Create app/errors.py with NotFoundError and the handlers that render every failure in the contract error shape"
+                  goal: "Any route can raise NotFoundError and any validation failure answers in the single error object the contract defines."
+                  depends_on: ["T2", "T6"]
+                  acceptance: "A NotFoundError answers 404 with error.code not_found and error.message; a request validation failure answers 422 with error.code validation_error and error.field; neither body carries any other top-level key."
+                  verify: "uv run python -c \"from fastapi import FastAPI; from fastapi.testclient import TestClient; from pydantic import BaseModel; from app.errors import NotFoundError, register_error_handlers; a=FastAPI(); register_error_handlers(a)\nclass B(BaseModel):\n    n: int\n@a.get('/x')\ndef x(): raise NotFoundError('row')\n@a.post('/y')\ndef y(b: B): return b\nc=TestClient(a); r=c.get('/x'); assert r.status_code==404 and list(r.json())==['error'] and r.json()['error']['code']=='not_found' and r.json()['error']['message']; r=c.post('/y', json={'n':'no'}); assert r.status_code==422 and list(r.json())==['error'] and r.json()['error']['code']=='validation_error' and r.json()['error']['field']\""
+                  touches: ["app/errors.py"]
+                  status: "todo"
+
+                - id: "T10"
+                  title: "Create app/main.py building the FastAPI application with the error handlers registered, docs at /docs, the schema at /openapi.json, and ReDoc disabled"
+                  goal: "The application starts, serves its generated documentation, and renders every failure in the contract shape; routers are mounted here by later tasks."
+                  depends_on: ["T9"]
+                  acceptance: "The app serves /docs and /openapi.json, /redoc does not exist, and the run command in backend.yaml starts it."
+                  verify: "uv run python -c \"from fastapi.testclient import TestClient; from app.main import app; c=TestClient(app); assert c.get('/docs').status_code==200; assert c.get('/openapi.json').status_code==200; assert c.get('/redoc').status_code==404\""
+                  touches: ["app/main.py"]
+                  status: "todo"
+
+            G3:
+              id: "P1-G3"
+              title: "Migration environment"
+              does: "Initialize Alembic against DATABASE_URL and Base.metadata; when done a migration can be written and applied to any database the environment names."
+              task_count: 1
+              tasks:
+                - id: "T11"
+                  title: "Initialize Alembic in alembic/ with alembic.ini, and wire env.py to DATABASE_URL from app.config and Base.metadata from app.database"
+                  goal: "Migrations can be written and applied against whatever database DATABASE_URL names."
+                  depends_on: ["T4", "T8"]
+                  acceptance: "alembic current runs against a throwaway database and reports no revision."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic current"
+                  touches: ["alembic.ini", "alembic/", "alembic/env.py"]
+                  status: "todo"
+
+            G4:
+              id: "P1-G4"
+              title: "Models"
+              does: "One SQLAlchemy model per contract v1 model, with exactly the contract's fields. The project states no column types; the plan fixes them so every verify is runnable: id is an integer primary key, name, username, password, status, state, and description are text, risk_parameter, profit_threshold, close_portion, profit, entry_price, take_profit, and stop_loss are floats, and every referenced-id column is an integer foreign key with an index. These are planning choices, not project requirements. Every stated field is required. When done Base.metadata holds all thirteen tables."
+              task_count: 14
+              tasks:
+                - id: "T12"
+                  title: "Create app/models/__init__.py importing every model module so Base.metadata sees every table"
+                  goal: "One import of app.models registers every table on Base.metadata."
+                  depends_on: ["T8"]
+                  acceptance: "import app.models succeeds."
+                  verify: "uv run python -c \"import app.models\""
+                  touches: ["app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T13"
+                  title: "Add the TradingPlatform model in app/models/trading_platform.py mapped to table trading_platforms"
+                  goal: "The Trading Platform entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12"]
+                  acceptance: "Table trading_platforms carries exactly the columns id, name, status, description, id is the integer primary key."
+                  verify: "uv run python -c \"import app.models; from app.models.trading_platform import TradingPlatform; from app.database import Base; t=Base.metadata.tables['trading_platforms']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
+                  touches: ["app/models/trading_platform.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T14"
+                  title: "Add the Broker model in app/models/broker.py mapped to table brokers"
+                  goal: "The Broker entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12", "T13"]
+                  acceptance: "Table brokers carries exactly the columns id, name, trading_platform_id, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
+                  verify: "uv run python -c \"import app.models; from app.models.broker import Broker; from app.database import Base; t=Base.metadata.tables['brokers']; assert set(t.columns.keys())=={'id', 'name', 'trading_platform_id', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.trading_platform_id.foreign_keys and t.c.trading_platform_id.index\""
+                  touches: ["app/models/broker.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T15"
+                  title: "Add the Account model in app/models/account.py mapped to table accounts"
+                  goal: "The Account entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12", "T14"]
+                  acceptance: "Table accounts carries exactly the columns id, name, username, password, broker_id, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key. The password column holds whatever the account service stores; how it is stored at rest is open question Q2, answered by the human before the service task moves."
+                  verify: "uv run python -c \"import app.models; from app.models.account import Account; from app.database import Base; t=Base.metadata.tables['accounts']; assert set(t.columns.keys())=={'id', 'name', 'username', 'password', 'broker_id', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.broker_id.foreign_keys and t.c.broker_id.index\""
+                  touches: ["app/models/account.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T16"
+                  title: "Add the Asset model in app/models/asset.py mapped to table assets"
+                  goal: "The Asset entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12"]
+                  acceptance: "Table assets carries exactly the columns id, name, status, description, id is the integer primary key."
+                  verify: "uv run python -c \"import app.models; from app.models.asset import Asset; from app.database import Base; t=Base.metadata.tables['assets']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
+                  touches: ["app/models/asset.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T17"
+                  title: "Add the Strategy model in app/models/strategy.py mapped to table strategies"
+                  goal: "The Strategy entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12"]
+                  acceptance: "Table strategies carries exactly the columns id, name, risk_parameter, status, description, id is the integer primary key."
+                  verify: "uv run python -c \"import app.models; from app.models.strategy import Strategy; from app.database import Base; t=Base.metadata.tables['strategies']; assert set(t.columns.keys())=={'id', 'name', 'risk_parameter', 'status', 'description'}; assert t.c.id.primary_key\""
+                  touches: ["app/models/strategy.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T18"
+                  title: "Add the TrailingGroup model in app/models/trailing_group.py mapped to table trailing_groups"
+                  goal: "The Trailing Group entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12"]
+                  acceptance: "Table trailing_groups carries exactly the columns id, name, status, description, id is the integer primary key."
+                  verify: "uv run python -c \"import app.models; from app.models.trailing_group import TrailingGroup; from app.database import Base; t=Base.metadata.tables['trailing_groups']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
+                  touches: ["app/models/trailing_group.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T19"
+                  title: "Add the TrailingRule model in app/models/trailing_rule.py mapped to table trailing_rules"
+                  goal: "The Trailing Rule entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12", "T18"]
+                  acceptance: "Table trailing_rules carries exactly the columns id, name, trailing_group_id, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
+                  verify: "uv run python -c \"import app.models; from app.models.trailing_rule import TrailingRule; from app.database import Base; t=Base.metadata.tables['trailing_rules']; assert set(t.columns.keys())=={'id', 'name', 'trailing_group_id', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.trailing_group_id.foreign_keys and t.c.trailing_group_id.index\""
+                  touches: ["app/models/trailing_rule.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T20"
+                  title: "Add the PartialGroup model in app/models/partial_group.py mapped to table partial_groups"
+                  goal: "The Partial Group entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12"]
+                  acceptance: "Table partial_groups carries exactly the columns id, name, status, description, id is the integer primary key."
+                  verify: "uv run python -c \"import app.models; from app.models.partial_group import PartialGroup; from app.database import Base; t=Base.metadata.tables['partial_groups']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
+                  touches: ["app/models/partial_group.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T21"
+                  title: "Add the PartialRule model in app/models/partial_rule.py mapped to table partial_rules"
+                  goal: "The Partial Rule entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12", "T20"]
+                  acceptance: "Table partial_rules carries exactly the columns id, name, partial_group_id, profit_threshold, close_portion, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
+                  verify: "uv run python -c \"import app.models; from app.models.partial_rule import PartialRule; from app.database import Base; t=Base.metadata.tables['partial_rules']; assert set(t.columns.keys())=={'id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.partial_group_id.foreign_keys and t.c.partial_group_id.index\""
+                  touches: ["app/models/partial_rule.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T22"
+                  title: "Add the ActionGroup model in app/models/action_group.py mapped to table action_groups"
+                  goal: "The Action Group entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12"]
+                  acceptance: "Table action_groups carries exactly the columns id, name, status, description, id is the integer primary key."
+                  verify: "uv run python -c \"import app.models; from app.models.action_group import ActionGroup; from app.database import Base; t=Base.metadata.tables['action_groups']; assert set(t.columns.keys())=={'id', 'name', 'status', 'description'}; assert t.c.id.primary_key\""
+                  touches: ["app/models/action_group.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T23"
+                  title: "Add the Action model in app/models/action.py mapped to table actions"
+                  goal: "The Action entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12", "T16", "T15", "T17", "T22"]
+                  acceptance: "Table actions carries exactly the columns id, name, asset_id, account_id, strategy_id, group_id, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
+                  verify: "uv run python -c \"import app.models; from app.models.action import Action; from app.database import Base; t=Base.metadata.tables['actions']; assert set(t.columns.keys())=={'id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.asset_id.foreign_keys and t.c.asset_id.index; assert t.c.account_id.foreign_keys and t.c.account_id.index; assert t.c.strategy_id.foreign_keys and t.c.strategy_id.index; assert t.c.group_id.foreign_keys and t.c.group_id.index\""
+                  touches: ["app/models/action.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T24"
+                  title: "Add the Execute model in app/models/execute.py mapped to table executes"
+                  goal: "The Execute entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12", "T23"]
+                  acceptance: "Table executes carries exactly the columns id, name, action_id, profit, state, status, description, id is the integer primary key, and each referenced-id column is an indexed foreign key."
+                  verify: "uv run python -c \"import app.models; from app.models.execute import Execute; from app.database import Base; t=Base.metadata.tables['executes']; assert set(t.columns.keys())=={'id', 'name', 'action_id', 'profit', 'state', 'status', 'description'}; assert t.c.id.primary_key; assert t.c.action_id.foreign_keys and t.c.action_id.index\""
+                  touches: ["app/models/execute.py", "app/models/__init__.py"]
+                  status: "todo"
+
+                - id: "T25"
+                  title: "Add the Position model in app/models/position.py mapped to table positions"
+                  goal: "The Position entity of contract v1 can be persisted through the ORM."
+                  depends_on: ["T12"]
+                  acceptance: "Table positions carries exactly the columns id, name, entry_price, take_profit, stop_loss, status, description, id is the integer primary key."
+                  verify: "uv run python -c \"import app.models; from app.models.position import Position; from app.database import Base; t=Base.metadata.tables['positions']; assert set(t.columns.keys())=={'id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'}; assert t.c.id.primary_key\""
+                  touches: ["app/models/position.py", "app/models/__init__.py"]
+                  status: "todo"
+
+            G5:
+              id: "P1-G5"
+              title: "Migrations"
+              does: "One hand-written Alembic migration per table, each with a working downgrade, chained in the order listed so that parents precede children and the accounts, actions, and executes tables come last; when done upgrade head builds the whole schema and downgrade removes it step by step."
+              task_count: 13
+              tasks:
+                - id: "T26"
+                  title: "Add migration 001_trading_platforms creating table trading_platforms with a downgrade that drops it"
+                  goal: "The trading_platforms table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T13"]
+                  acceptance: "After upgrade head the table trading_platforms exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'trading_platforms' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('trading_platforms'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'trading_platforms' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/001_trading_platforms.py"]
+                  status: "todo"
+
+                - id: "T27"
+                  title: "Add migration 002_brokers creating table brokers with a downgrade that drops it"
+                  goal: "The brokers table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T14", "T26"]
+                  acceptance: "After upgrade head the table brokers exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'brokers' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('brokers'))=={'id', 'name', 'trading_platform_id', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'brokers' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/002_brokers.py"]
+                  status: "todo"
+
+                - id: "T28"
+                  title: "Add migration 003_assets creating table assets with a downgrade that drops it"
+                  goal: "The assets table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T16", "T27"]
+                  acceptance: "After upgrade head the table assets exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'assets' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('assets'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'assets' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/003_assets.py"]
+                  status: "todo"
+
+                - id: "T29"
+                  title: "Add migration 004_strategies creating table strategies with a downgrade that drops it"
+                  goal: "The strategies table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T17", "T28"]
+                  acceptance: "After upgrade head the table strategies exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'strategies' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('strategies'))=={'id', 'name', 'risk_parameter', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'strategies' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/004_strategies.py"]
+                  status: "todo"
+
+                - id: "T30"
+                  title: "Add migration 005_trailing_groups creating table trailing_groups with a downgrade that drops it"
+                  goal: "The trailing_groups table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T18", "T29"]
+                  acceptance: "After upgrade head the table trailing_groups exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'trailing_groups' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('trailing_groups'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'trailing_groups' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/005_trailing_groups.py"]
+                  status: "todo"
+
+                - id: "T31"
+                  title: "Add migration 006_trailing_rules creating table trailing_rules with a downgrade that drops it"
+                  goal: "The trailing_rules table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T19", "T30"]
+                  acceptance: "After upgrade head the table trailing_rules exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'trailing_rules' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('trailing_rules'))=={'id', 'name', 'trailing_group_id', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'trailing_rules' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/006_trailing_rules.py"]
+                  status: "todo"
+
+                - id: "T32"
+                  title: "Add migration 007_partial_groups creating table partial_groups with a downgrade that drops it"
+                  goal: "The partial_groups table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T20", "T31"]
+                  acceptance: "After upgrade head the table partial_groups exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'partial_groups' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('partial_groups'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'partial_groups' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/007_partial_groups.py"]
+                  status: "todo"
+
+                - id: "T33"
+                  title: "Add migration 008_partial_rules creating table partial_rules with a downgrade that drops it"
+                  goal: "The partial_rules table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T21", "T32"]
+                  acceptance: "After upgrade head the table partial_rules exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'partial_rules' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('partial_rules'))=={'id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'partial_rules' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/008_partial_rules.py"]
+                  status: "todo"
+
+                - id: "T34"
+                  title: "Add migration 009_action_groups creating table action_groups with a downgrade that drops it"
+                  goal: "The action_groups table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T22", "T33"]
+                  acceptance: "After upgrade head the table action_groups exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'action_groups' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('action_groups'))=={'id', 'name', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'action_groups' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/009_action_groups.py"]
+                  status: "todo"
+
+                - id: "T35"
+                  title: "Add migration 010_positions creating table positions with a downgrade that drops it"
+                  goal: "The positions table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T25", "T34"]
+                  acceptance: "After upgrade head the table positions exists with its columns; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'positions' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('positions'))=={'id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'positions' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/010_positions.py"]
+                  status: "todo"
+
+                - id: "T36"
+                  title: "Add migration 011_accounts creating table accounts with a downgrade that drops it"
+                  goal: "The accounts table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T15", "T35"]
+                  acceptance: "After upgrade head the table accounts exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'accounts' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('accounts'))=={'id', 'name', 'username', 'password', 'broker_id', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'accounts' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/011_accounts.py"]
+                  status: "todo"
+
+                - id: "T37"
+                  title: "Add migration 012_actions creating table actions with a downgrade that drops it"
+                  goal: "The actions table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T23", "T36"]
+                  acceptance: "After upgrade head the table actions exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'actions' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('actions'))=={'id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'actions' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/012_actions.py"]
+                  status: "todo"
+
+                - id: "T38"
+                  title: "Add migration 013_executes creating table executes with a downgrade that drops it"
+                  goal: "The executes table exists in any database migrated to head, and can be removed again."
+                  depends_on: ["T11", "T24", "T37"]
+                  acceptance: "After upgrade head the table executes exists with its columns, foreign keys, and indexes; after downgrade -1 it is gone; the revision chains onto the previous migration."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; i=inspect(create_engine('sqlite:///./verify.db')); assert 'executes' in i.get_table_names(); assert set(c['name'] for c in i.get_columns('executes'))=={'id', 'name', 'action_id', 'profit', 'state', 'status', 'description'}\" && DATABASE_URL=sqlite:///./verify.db uv run alembic downgrade -1 && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from sqlalchemy import create_engine, inspect; assert 'executes' not in inspect(create_engine('sqlite:///./verify.db')).get_table_names()\""
+                  touches: ["alembic/versions/013_executes.py"]
+                  status: "todo"
+
+            G6:
+              id: "P1-G6"
+              title: "Validation schemas"
+              does: "One module per model with a Create schema — the body of create and update, every contract field except ID — and a Read schema carrying every field with id; the Account Read schema never carries password. When done every route has a validated request and response shape."
+              task_count: 14
+              tasks:
+                - id: "T39"
+                  title: "Create app/schemas/__init__.py"
+                  goal: "The validation schema package exists."
+                  depends_on: ["T2", "T6"]
+                  acceptance: "import app.schemas succeeds."
+                  verify: "uv run python -c \"import app.schemas\""
+                  touches: ["app/schemas/__init__.py"]
+                  status: "todo"
+
+                - id: "T40"
+                  title: "Add the TradingPlatformCreate and TradingPlatformRead validation schemas in app/schemas/trading_platform.py"
+                  goal: "Request bodies and responses for /trading-platforms have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "TradingPlatformCreate carries every contract field except ID and is the body of create and update; TradingPlatformRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.trading_platform import TradingPlatformCreate, TradingPlatformRead; assert set(TradingPlatformCreate.model_fields)=={'name', 'status', 'description'}; assert set(TradingPlatformRead.model_fields)=={'id', 'name', 'status', 'description'}\""
+                  touches: ["app/schemas/trading_platform.py"]
+                  status: "todo"
+
+                - id: "T41"
+                  title: "Add the BrokerCreate and BrokerRead validation schemas in app/schemas/broker.py"
+                  goal: "Request bodies and responses for /brokers have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "BrokerCreate carries every contract field except ID and is the body of create and update; BrokerRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.broker import BrokerCreate, BrokerRead; assert set(BrokerCreate.model_fields)=={'name', 'trading_platform_id', 'status', 'description'}; assert set(BrokerRead.model_fields)=={'id', 'name', 'trading_platform_id', 'status', 'description'}\""
+                  touches: ["app/schemas/broker.py"]
+                  status: "todo"
+
+                - id: "T42"
+                  title: "Add the AccountCreate and AccountRead validation schemas in app/schemas/account.py"
+                  goal: "Request bodies and responses for /accounts have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "AccountCreate carries every contract field except ID and is the body of create and update; AccountRead carries every field with id and never password."
+                  verify: "uv run python -c \"from app.schemas.account import AccountCreate, AccountRead; assert set(AccountCreate.model_fields)=={'name', 'username', 'password', 'broker_id', 'status', 'description'}; assert set(AccountRead.model_fields)=={'id', 'name', 'username', 'broker_id', 'status', 'description'}\""
+                  touches: ["app/schemas/account.py"]
+                  status: "todo"
+
+                - id: "T43"
+                  title: "Add the AssetCreate and AssetRead validation schemas in app/schemas/asset.py"
+                  goal: "Request bodies and responses for /assets have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "AssetCreate carries every contract field except ID and is the body of create and update; AssetRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.asset import AssetCreate, AssetRead; assert set(AssetCreate.model_fields)=={'name', 'status', 'description'}; assert set(AssetRead.model_fields)=={'id', 'name', 'status', 'description'}\""
+                  touches: ["app/schemas/asset.py"]
+                  status: "todo"
+
+                - id: "T44"
+                  title: "Add the StrategyCreate and StrategyRead validation schemas in app/schemas/strategy.py"
+                  goal: "Request bodies and responses for /strategies have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "StrategyCreate carries every contract field except ID and is the body of create and update; StrategyRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.strategy import StrategyCreate, StrategyRead; assert set(StrategyCreate.model_fields)=={'name', 'risk_parameter', 'status', 'description'}; assert set(StrategyRead.model_fields)=={'id', 'name', 'risk_parameter', 'status', 'description'}\""
+                  touches: ["app/schemas/strategy.py"]
+                  status: "todo"
+
+                - id: "T45"
+                  title: "Add the TrailingGroupCreate and TrailingGroupRead validation schemas in app/schemas/trailing_group.py"
+                  goal: "Request bodies and responses for /trailing-groups have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "TrailingGroupCreate carries every contract field except ID and is the body of create and update; TrailingGroupRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.trailing_group import TrailingGroupCreate, TrailingGroupRead; assert set(TrailingGroupCreate.model_fields)=={'name', 'status', 'description'}; assert set(TrailingGroupRead.model_fields)=={'id', 'name', 'status', 'description'}\""
+                  touches: ["app/schemas/trailing_group.py"]
+                  status: "todo"
+
+                - id: "T46"
+                  title: "Add the TrailingRuleCreate and TrailingRuleRead validation schemas in app/schemas/trailing_rule.py"
+                  goal: "Request bodies and responses for /trailing-rules have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "TrailingRuleCreate carries every contract field except ID and is the body of create and update; TrailingRuleRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.trailing_rule import TrailingRuleCreate, TrailingRuleRead; assert set(TrailingRuleCreate.model_fields)=={'name', 'trailing_group_id', 'status', 'description'}; assert set(TrailingRuleRead.model_fields)=={'id', 'name', 'trailing_group_id', 'status', 'description'}\""
+                  touches: ["app/schemas/trailing_rule.py"]
+                  status: "todo"
+
+                - id: "T47"
+                  title: "Add the PartialGroupCreate and PartialGroupRead validation schemas in app/schemas/partial_group.py"
+                  goal: "Request bodies and responses for /partial-groups have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "PartialGroupCreate carries every contract field except ID and is the body of create and update; PartialGroupRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.partial_group import PartialGroupCreate, PartialGroupRead; assert set(PartialGroupCreate.model_fields)=={'name', 'status', 'description'}; assert set(PartialGroupRead.model_fields)=={'id', 'name', 'status', 'description'}\""
+                  touches: ["app/schemas/partial_group.py"]
+                  status: "todo"
+
+                - id: "T48"
+                  title: "Add the PartialRuleCreate and PartialRuleRead validation schemas in app/schemas/partial_rule.py"
+                  goal: "Request bodies and responses for /partial-rules have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "PartialRuleCreate carries every contract field except ID and is the body of create and update; PartialRuleRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.partial_rule import PartialRuleCreate, PartialRuleRead; assert set(PartialRuleCreate.model_fields)=={'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'}; assert set(PartialRuleRead.model_fields)=={'id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'}\""
+                  touches: ["app/schemas/partial_rule.py"]
+                  status: "todo"
+
+                - id: "T49"
+                  title: "Add the ActionGroupCreate and ActionGroupRead validation schemas in app/schemas/action_group.py"
+                  goal: "Request bodies and responses for /action-groups have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "ActionGroupCreate carries every contract field except ID and is the body of create and update; ActionGroupRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.action_group import ActionGroupCreate, ActionGroupRead; assert set(ActionGroupCreate.model_fields)=={'name', 'status', 'description'}; assert set(ActionGroupRead.model_fields)=={'id', 'name', 'status', 'description'}\""
+                  touches: ["app/schemas/action_group.py"]
+                  status: "todo"
+
+                - id: "T50"
+                  title: "Add the ActionCreate and ActionRead validation schemas in app/schemas/action.py"
+                  goal: "Request bodies and responses for /actions have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "ActionCreate carries every contract field except ID and is the body of create and update; ActionRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.action import ActionCreate, ActionRead; assert set(ActionCreate.model_fields)=={'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'}; assert set(ActionRead.model_fields)=={'id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'}\""
+                  touches: ["app/schemas/action.py"]
+                  status: "todo"
+
+                - id: "T51"
+                  title: "Add the ExecuteCreate and ExecuteRead validation schemas in app/schemas/execute.py"
+                  goal: "Request bodies and responses for /executes have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "ExecuteCreate carries every contract field except ID and is the body of create and update; ExecuteRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.execute import ExecuteCreate, ExecuteRead; assert set(ExecuteCreate.model_fields)=={'name', 'action_id', 'profit', 'state', 'status', 'description'}; assert set(ExecuteRead.model_fields)=={'id', 'name', 'action_id', 'profit', 'state', 'status', 'description'}\""
+                  touches: ["app/schemas/execute.py"]
+                  status: "todo"
+
+                - id: "T52"
+                  title: "Add the PositionCreate and PositionRead validation schemas in app/schemas/position.py"
+                  goal: "Request bodies and responses for /positions have a fixed, validated shape."
+                  depends_on: ["T39"]
+                  acceptance: "PositionCreate carries every contract field except ID and is the body of create and update; PositionRead carries every field with id."
+                  verify: "uv run python -c \"from app.schemas.position import PositionCreate, PositionRead; assert set(PositionCreate.model_fields)=={'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'}; assert set(PositionRead.model_fields)=={'id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'}\""
+                  touches: ["app/schemas/position.py"]
+                  status: "todo"
+
+            G7:
+              id: "P1-G7"
+              title: "Services"
+              does: "One module per model exposing list_all, create, get, update, and delete against a session; get on an unknown id raises NotFoundError, and create or update naming a referenced id no row carries raises ValidationError with the field name, so routes never touch the database. The Account service is blocked on B2 until the human answers Q2 on password storage."
+              task_count: 14
+              tasks:
+                - id: "T53"
+                  title: "Create app/services/__init__.py"
+                  goal: "The services package exists."
+                  depends_on: ["T6"]
+                  acceptance: "import app.services succeeds."
+                  verify: "uv run python -c \"import app.services\""
+                  touches: ["app/services/__init__.py"]
+                  status: "todo"
+
+                - id: "T54"
+                  title: "Add the Trading Platform service in app/services/trading_platform.py with list_all, create, get, update, and delete"
+                  goal: "Every /trading-platforms route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T13", "T40", "T26"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import trading_platform as s\nfrom app.schemas.trading_platform import TradingPlatformCreate\ndb=SessionLocal()\nr=s.create(db, TradingPlatformCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, TradingPlatformCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/trading_platform.py"]
+                  status: "todo"
+
+                - id: "T55"
+                  title: "Add the Broker service in app/services/broker.py with list_all, create, get, update, and delete"
+                  goal: "Every /brokers route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T14", "T41", "T27", "T54"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import broker as s\nfrom app.schemas.broker import BrokerCreate\ndb=SessionLocal()\nfrom app.services import trading_platform as s_trading_platform; from app.schemas.trading_platform import TradingPlatformCreate\np1=s_trading_platform.create(db, TradingPlatformCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nr=s.create(db, BrokerCreate(**{'name': 'a', 'trading_platform_id': p1, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, BrokerCreate(**{'name': 'b', 'trading_platform_id': p1, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, BrokerCreate(**{'name': 'c', 'trading_platform_id': 999999, 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='trading_platform_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/broker.py"]
+                  status: "todo"
+
+                - id: "T56"
+                  title: "Add the Account service in app/services/account.py with list_all, create, get, update, and delete"
+                  goal: "Every /accounts route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T15", "T42", "T36", "T55"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field. Blocked: how the password is stored at rest is open question Q2, and the service must not decide it."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import account as s\nfrom app.schemas.account import AccountCreate\ndb=SessionLocal()\nfrom app.services import trading_platform as s_trading_platform; from app.schemas.trading_platform import TradingPlatformCreate\np1=s_trading_platform.create(db, TradingPlatformCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nfrom app.services import broker as s_broker; from app.schemas.broker import BrokerCreate\np2=s_broker.create(db, BrokerCreate(**{'name': 'p', 'trading_platform_id': p1, 'status': 's', 'description': 's'})).id\nr=s.create(db, AccountCreate(**{'name': 'a', 'username': 's', 'password': 's', 'broker_id': p2, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, AccountCreate(**{'name': 'b', 'username': 's', 'password': 's', 'broker_id': p2, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, AccountCreate(**{'name': 'c', 'username': 's', 'password': 's', 'broker_id': 999999, 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='broker_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/account.py"]
+                  status: "blocked"
+                  blocker: "B2"
+
+                - id: "T57"
+                  title: "Add the Asset service in app/services/asset.py with list_all, create, get, update, and delete"
+                  goal: "Every /assets route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T16", "T43", "T28"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import asset as s\nfrom app.schemas.asset import AssetCreate\ndb=SessionLocal()\nr=s.create(db, AssetCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, AssetCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/asset.py"]
+                  status: "todo"
+
+                - id: "T58"
+                  title: "Add the Strategy service in app/services/strategy.py with list_all, create, get, update, and delete"
+                  goal: "Every /strategies route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T17", "T44", "T29"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import strategy as s\nfrom app.schemas.strategy import StrategyCreate\ndb=SessionLocal()\nr=s.create(db, StrategyCreate(**{'name': 'a', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, StrategyCreate(**{'name': 'b', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/strategy.py"]
+                  status: "todo"
+
+                - id: "T59"
+                  title: "Add the Trailing Group service in app/services/trailing_group.py with list_all, create, get, update, and delete"
+                  goal: "Every /trailing-groups route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T18", "T45", "T30"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import trailing_group as s\nfrom app.schemas.trailing_group import TrailingGroupCreate\ndb=SessionLocal()\nr=s.create(db, TrailingGroupCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, TrailingGroupCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/trailing_group.py"]
+                  status: "todo"
+
+                - id: "T60"
+                  title: "Add the Trailing Rule service in app/services/trailing_rule.py with list_all, create, get, update, and delete"
+                  goal: "Every /trailing-rules route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T19", "T46", "T31", "T59"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import trailing_rule as s\nfrom app.schemas.trailing_rule import TrailingRuleCreate\ndb=SessionLocal()\nfrom app.services import trailing_group as s_trailing_group; from app.schemas.trailing_group import TrailingGroupCreate\np1=s_trailing_group.create(db, TrailingGroupCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nr=s.create(db, TrailingRuleCreate(**{'name': 'a', 'trailing_group_id': p1, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, TrailingRuleCreate(**{'name': 'b', 'trailing_group_id': p1, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, TrailingRuleCreate(**{'name': 'c', 'trailing_group_id': 999999, 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='trailing_group_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/trailing_rule.py"]
+                  status: "todo"
+
+                - id: "T61"
+                  title: "Add the Partial Group service in app/services/partial_group.py with list_all, create, get, update, and delete"
+                  goal: "Every /partial-groups route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T20", "T47", "T32"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import partial_group as s\nfrom app.schemas.partial_group import PartialGroupCreate\ndb=SessionLocal()\nr=s.create(db, PartialGroupCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, PartialGroupCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/partial_group.py"]
+                  status: "todo"
+
+                - id: "T62"
+                  title: "Add the Partial Rule service in app/services/partial_rule.py with list_all, create, get, update, and delete"
+                  goal: "Every /partial-rules route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T21", "T48", "T33", "T61"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import partial_rule as s\nfrom app.schemas.partial_rule import PartialRuleCreate\ndb=SessionLocal()\nfrom app.services import partial_group as s_partial_group; from app.schemas.partial_group import PartialGroupCreate\np1=s_partial_group.create(db, PartialGroupCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nr=s.create(db, PartialRuleCreate(**{'name': 'a', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, PartialRuleCreate(**{'name': 'b', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, PartialRuleCreate(**{'name': 'c', 'partial_group_id': 999999, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='partial_group_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/partial_rule.py"]
+                  status: "todo"
+
+                - id: "T63"
+                  title: "Add the Action Group service in app/services/action_group.py with list_all, create, get, update, and delete"
+                  goal: "Every /action-groups route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T22", "T49", "T34"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import action_group as s\nfrom app.schemas.action_group import ActionGroupCreate\ndb=SessionLocal()\nr=s.create(db, ActionGroupCreate(**{'name': 'a', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, ActionGroupCreate(**{'name': 'b', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/action_group.py"]
+                  status: "todo"
+
+                - id: "T64"
+                  title: "Add the Action service in app/services/action.py with list_all, create, get, update, and delete"
+                  goal: "Every /actions route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T23", "T50", "T37", "T57", "T56", "T58", "T63"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import action as s\nfrom app.schemas.action import ActionCreate\ndb=SessionLocal()\nfrom app.services import asset as s_asset; from app.schemas.asset import AssetCreate\np1=s_asset.create(db, AssetCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nfrom app.services import trading_platform as s_trading_platform; from app.schemas.trading_platform import TradingPlatformCreate\np2=s_trading_platform.create(db, TradingPlatformCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nfrom app.services import broker as s_broker; from app.schemas.broker import BrokerCreate\np3=s_broker.create(db, BrokerCreate(**{'name': 'p', 'trading_platform_id': p2, 'status': 's', 'description': 's'})).id\nfrom app.services import account as s_account; from app.schemas.account import AccountCreate\np4=s_account.create(db, AccountCreate(**{'name': 'p', 'username': 's', 'password': 's', 'broker_id': p3, 'status': 's', 'description': 's'})).id\nfrom app.services import strategy as s_strategy; from app.schemas.strategy import StrategyCreate\np5=s_strategy.create(db, StrategyCreate(**{'name': 'p', 'risk_parameter': 1.5, 'status': 's', 'description': 's'})).id\nfrom app.services import action_group as s_action_group; from app.schemas.action_group import ActionGroupCreate\np6=s_action_group.create(db, ActionGroupCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nr=s.create(db, ActionCreate(**{'name': 'a', 'asset_id': p1, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, ActionCreate(**{'name': 'b', 'asset_id': p1, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, ActionCreate(**{'name': 'c', 'asset_id': 999999, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='asset_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/action.py"]
+                  status: "todo"
+
+                - id: "T65"
+                  title: "Add the Execute service in app/services/execute.py with list_all, create, get, update, and delete"
+                  goal: "Every /executes route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T24", "T51", "T38", "T64"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError; create or update naming a referenced id no row carries raises ValidationError naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import execute as s\nfrom app.schemas.execute import ExecuteCreate\ndb=SessionLocal()\nfrom app.services import asset as s_asset; from app.schemas.asset import AssetCreate\np1=s_asset.create(db, AssetCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nfrom app.services import trading_platform as s_trading_platform; from app.schemas.trading_platform import TradingPlatformCreate\np2=s_trading_platform.create(db, TradingPlatformCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nfrom app.services import broker as s_broker; from app.schemas.broker import BrokerCreate\np3=s_broker.create(db, BrokerCreate(**{'name': 'p', 'trading_platform_id': p2, 'status': 's', 'description': 's'})).id\nfrom app.services import account as s_account; from app.schemas.account import AccountCreate\np4=s_account.create(db, AccountCreate(**{'name': 'p', 'username': 's', 'password': 's', 'broker_id': p3, 'status': 's', 'description': 's'})).id\nfrom app.services import strategy as s_strategy; from app.schemas.strategy import StrategyCreate\np5=s_strategy.create(db, StrategyCreate(**{'name': 'p', 'risk_parameter': 1.5, 'status': 's', 'description': 's'})).id\nfrom app.services import action_group as s_action_group; from app.schemas.action_group import ActionGroupCreate\np6=s_action_group.create(db, ActionGroupCreate(**{'name': 'p', 'status': 's', 'description': 's'})).id\nfrom app.services import action as s_action; from app.schemas.action import ActionCreate\np7=s_action.create(db, ActionCreate(**{'name': 'p', 'asset_id': p1, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'})).id\nr=s.create(db, ExecuteCreate(**{'name': 'a', 'action_id': p7, 'profit': 1.5, 'state': 's', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, ExecuteCreate(**{'name': 'b', 'action_id': p7, 'profit': 1.5, 'state': 's', 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\nfrom app.errors import ValidationError\ntry:\n    s.create(db, ExecuteCreate(**{'name': 'c', 'action_id': 999999, 'profit': 1.5, 'state': 's', 'status': 's', 'description': 's'}))\n    raise SystemExit('unknown reference accepted')\nexcept ValidationError as e:\n    assert e.field=='action_id'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/execute.py"]
+                  status: "todo"
+
+                - id: "T66"
+                  title: "Add the Position service in app/services/position.py with list_all, create, get, update, and delete"
+                  goal: "Every /positions route has one place to call for its business logic, with no database access in the route."
+                  depends_on: ["T53", "T25", "T52", "T35"]
+                  acceptance: "list_all, create, get, update, and delete work against a migrated database; get on an unknown id raises NotFoundError."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from app.database import SessionLocal\nfrom app.services import position as s\nfrom app.schemas.position import PositionCreate\ndb=SessionLocal()\nr=s.create(db, PositionCreate(**{'name': 'a', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='a'\nassert [x.id for x in s.list_all(db)]==[r.id]\ns.update(db, r.id, PositionCreate(**{'name': 'b', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}))\nassert s.get(db, r.id).name=='b'\ns.delete(db, r.id)\nfrom app.errors import NotFoundError\ntry:\n    s.get(db, r.id)\n    raise SystemExit('deleted row still found')\nexcept NotFoundError:\n    pass\""
+                  touches: ["app/services/position.py"]
+                  status: "todo"
+
+            G8:
+              id: "P1-G8"
+              title: "Routes"
+              does: "One router per resource path with exactly the five routes of contract v1, mounted in app/main.py; each route validates through its schema, calls its service, and answers with the contract's status codes and error shape, never returning the Account password. When done every route of the draft contract is served."
+              task_count: 14
+              tasks:
+                - id: "T67"
+                  title: "Create app/routes/__init__.py"
+                  goal: "The routes package exists."
+                  depends_on: ["T10"]
+                  acceptance: "import app.routes succeeds."
+                  verify: "uv run python -c \"import app.routes\""
+                  touches: ["app/routes/__init__.py"]
+                  status: "todo"
+
+                - id: "T68"
+                  title: "Add the /trading-platforms router in app/routes/trading_platform.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Trading Platform entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T54"]
+                  acceptance: "GET /trading-platforms answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /trading-platforms/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/trading-platforms', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/trading-platforms'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/trading-platforms/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/trading-platforms/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/trading-platforms', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/trading-platforms/{i}'); assert r.status_code==204\nr=c.get(f'/trading-platforms/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/trading-platforms/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/trading-platforms/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/trading_platform.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T69"
+                  title: "Add the /brokers router in app/routes/broker.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Broker entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T55"]
+                  acceptance: "GET /brokers answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /brokers/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/trading-platforms', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/brokers', json={'name': 'a', 'trading_platform_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/brokers'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/brokers/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/brokers/{i}', json={'name': 'b', 'trading_platform_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/brokers', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/brokers', json={'name': 'c', 'trading_platform_id': 999999, 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='trading_platform_id'\nr=c.delete(f'/brokers/{i}'); assert r.status_code==204\nr=c.get(f'/brokers/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/brokers/{i}', json={'name': 'b', 'trading_platform_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/brokers/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/broker.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T70"
+                  title: "Add the /accounts router in app/routes/account.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Account entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T56"]
+                  acceptance: "GET /accounts answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /accounts/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field; no response ever carries password."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/trading-platforms', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\np2=c.post('/brokers', json={'name': 'p', 'trading_platform_id': p1, 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/accounts', json={'name': 'a', 'username': 's', 'password': 's', 'broker_id': p2, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nassert 'password' not in r.json()\nr=c.get('/accounts'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/accounts/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nassert 'password' not in r.json()\nr=c.put(f'/accounts/{i}', json={'name': 'b', 'username': 's', 'password': 's', 'broker_id': p2, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/accounts', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/accounts', json={'name': 'c', 'username': 's', 'password': 's', 'broker_id': 999999, 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='broker_id'\nr=c.delete(f'/accounts/{i}'); assert r.status_code==204\nr=c.get(f'/accounts/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/accounts/{i}', json={'name': 'b', 'username': 's', 'password': 's', 'broker_id': p2, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/accounts/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/account.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T71"
+                  title: "Add the /assets router in app/routes/asset.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Asset entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T57"]
+                  acceptance: "GET /assets answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /assets/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/assets', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/assets'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/assets/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/assets/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/assets', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/assets/{i}'); assert r.status_code==204\nr=c.get(f'/assets/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/assets/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/assets/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/asset.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T72"
+                  title: "Add the /strategies router in app/routes/strategy.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Strategy entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T58"]
+                  acceptance: "GET /strategies answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /strategies/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/strategies', json={'name': 'a', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/strategies'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/strategies/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/strategies/{i}', json={'name': 'b', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/strategies', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/strategies/{i}'); assert r.status_code==204\nr=c.get(f'/strategies/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/strategies/{i}', json={'name': 'b', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/strategies/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/strategy.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T73"
+                  title: "Add the /trailing-groups router in app/routes/trailing_group.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Trailing Group entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T59"]
+                  acceptance: "GET /trailing-groups answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /trailing-groups/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/trailing-groups', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/trailing-groups'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/trailing-groups/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/trailing-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/trailing-groups', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/trailing-groups/{i}'); assert r.status_code==204\nr=c.get(f'/trailing-groups/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/trailing-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/trailing-groups/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/trailing_group.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T74"
+                  title: "Add the /trailing-rules router in app/routes/trailing_rule.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Trailing Rule entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T60"]
+                  acceptance: "GET /trailing-rules answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /trailing-rules/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/trailing-groups', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/trailing-rules', json={'name': 'a', 'trailing_group_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/trailing-rules'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/trailing-rules/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/trailing-rules/{i}', json={'name': 'b', 'trailing_group_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/trailing-rules', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/trailing-rules', json={'name': 'c', 'trailing_group_id': 999999, 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='trailing_group_id'\nr=c.delete(f'/trailing-rules/{i}'); assert r.status_code==204\nr=c.get(f'/trailing-rules/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/trailing-rules/{i}', json={'name': 'b', 'trailing_group_id': p1, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/trailing-rules/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/trailing_rule.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T75"
+                  title: "Add the /partial-groups router in app/routes/partial_group.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Partial Group entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T61"]
+                  acceptance: "GET /partial-groups answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /partial-groups/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/partial-groups', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/partial-groups'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/partial-groups/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/partial-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/partial-groups', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/partial-groups/{i}'); assert r.status_code==204\nr=c.get(f'/partial-groups/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/partial-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/partial-groups/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/partial_group.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T76"
+                  title: "Add the /partial-rules router in app/routes/partial_rule.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Partial Rule entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T62"]
+                  acceptance: "GET /partial-rules answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /partial-rules/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/partial-groups', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/partial-rules', json={'name': 'a', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/partial-rules'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/partial-rules/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/partial-rules/{i}', json={'name': 'b', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/partial-rules', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/partial-rules', json={'name': 'c', 'partial_group_id': 999999, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='partial_group_id'\nr=c.delete(f'/partial-rules/{i}'); assert r.status_code==204\nr=c.get(f'/partial-rules/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/partial-rules/{i}', json={'name': 'b', 'partial_group_id': p1, 'profit_threshold': 1.5, 'close_portion': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/partial-rules/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/partial_rule.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T77"
+                  title: "Add the /action-groups router in app/routes/action_group.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Action Group entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T63"]
+                  acceptance: "GET /action-groups answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /action-groups/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/action-groups', json={'name': 'a', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/action-groups'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/action-groups/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/action-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/action-groups', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/action-groups/{i}'); assert r.status_code==204\nr=c.get(f'/action-groups/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/action-groups/{i}', json={'name': 'b', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/action-groups/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/action_group.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T78"
+                  title: "Add the /actions router in app/routes/action.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Action entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T64"]
+                  acceptance: "GET /actions answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /actions/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/assets', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\np2=c.post('/trading-platforms', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\np3=c.post('/brokers', json={'name': 'p', 'trading_platform_id': p2, 'status': 's', 'description': 's'}).json()['id']\np4=c.post('/accounts', json={'name': 'p', 'username': 's', 'password': 's', 'broker_id': p3, 'status': 's', 'description': 's'}).json()['id']\np5=c.post('/strategies', json={'name': 'p', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}).json()['id']\np6=c.post('/action-groups', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/actions', json={'name': 'a', 'asset_id': p1, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/actions'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/actions/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/actions/{i}', json={'name': 'b', 'asset_id': p1, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/actions', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/actions', json={'name': 'c', 'asset_id': 999999, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='asset_id'\nr=c.delete(f'/actions/{i}'); assert r.status_code==204\nr=c.get(f'/actions/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/actions/{i}', json={'name': 'b', 'asset_id': p1, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/actions/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/action.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T79"
+                  title: "Add the /executes router in app/routes/execute.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Execute entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T65"]
+                  acceptance: "GET /executes answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /executes/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error; an unknown referenced id answers 422 validation_error naming the field."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\np1=c.post('/assets', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\np2=c.post('/trading-platforms', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\np3=c.post('/brokers', json={'name': 'p', 'trading_platform_id': p2, 'status': 's', 'description': 's'}).json()['id']\np4=c.post('/accounts', json={'name': 'p', 'username': 's', 'password': 's', 'broker_id': p3, 'status': 's', 'description': 's'}).json()['id']\np5=c.post('/strategies', json={'name': 'p', 'risk_parameter': 1.5, 'status': 's', 'description': 's'}).json()['id']\np6=c.post('/action-groups', json={'name': 'p', 'status': 's', 'description': 's'}).json()['id']\np7=c.post('/actions', json={'name': 'p', 'asset_id': p1, 'account_id': p4, 'strategy_id': p5, 'group_id': p6, 'status': 's', 'description': 's'}).json()['id']\nr=c.post('/executes', json={'name': 'a', 'action_id': p7, 'profit': 1.5, 'state': 's', 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/executes'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/executes/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/executes/{i}', json={'name': 'b', 'action_id': p7, 'profit': 1.5, 'state': 's', 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/executes', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.post('/executes', json={'name': 'c', 'action_id': 999999, 'profit': 1.5, 'state': 's', 'status': 's', 'description': 's'}); assert r.status_code==422 and r.json()['error']['code']=='validation_error' and r.json()['error']['field']=='action_id'\nr=c.delete(f'/executes/{i}'); assert r.status_code==204\nr=c.get(f'/executes/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/executes/{i}', json={'name': 'b', 'action_id': p7, 'profit': 1.5, 'state': 's', 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/executes/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/execute.py", "app/main.py"]
+                  status: "todo"
+
+                - id: "T80"
+                  title: "Add the /positions router in app/routes/position.py with the five contract routes, and mount it in app/main.py"
+                  goal: "The Position entity can be listed, created, read, replaced, and deleted over HTTP exactly as contract v1 states."
+                  depends_on: ["T67", "T66"]
+                  acceptance: "GET /positions answers 200 with an array; POST answers 201 with the created row; GET, PUT, and DELETE on /positions/{id} answer 200, 200, and 204; an unknown id answers 404 not_found; an invalid body answers 422 validation_error."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient\nfrom app.main import app\nc=TestClient(app)\nr=c.post('/positions', json={'name': 'a', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==201, r.text; i=r.json()['id']\nr=c.get('/positions'); assert r.status_code==200 and [x['id'] for x in r.json()]==[i]\nr=c.get(f'/positions/{i}'); assert r.status_code==200 and r.json()['name']=='a'\nr=c.put(f'/positions/{i}', json={'name': 'b', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==200 and r.json()['name']=='b'\nr=c.post('/positions', json={}); assert r.status_code==422 and r.json()['error']['code']=='validation_error'\nr=c.delete(f'/positions/{i}'); assert r.status_code==204\nr=c.get(f'/positions/{i}'); assert r.status_code==404 and r.json()['error']['code']=='not_found'\nr=c.put(f'/positions/{i}', json={'name': 'b', 'entry_price': 1.5, 'take_profit': 1.5, 'stop_loss': 1.5, 'status': 's', 'description': 's'}); assert r.status_code==404\nr=c.delete(f'/positions/{i}'); assert r.status_code==404\""
+                  touches: ["app/routes/position.py", "app/main.py"]
+                  status: "todo"
+
+            G9:
+              id: "P1-G9"
+              title: "Run"
+              does: "Prove the whole surface is served from a migrated database; when done Phase 1's goal — create and run the API for all defined project models — holds."
+              task_count: 1
+              tasks:
+                - id: "T81"
+                  title: "Prove the API runs with every contract resource mounted and every migration applied"
+                  goal: "Phase 1's goal is met: the API for all defined project models runs from a migrated database with every resource answering."
+                  depends_on: ["T68", "T69", "T70", "T71", "T72", "T73", "T74", "T75", "T76", "T77", "T78", "T79", "T80", "T26", "T27", "T28", "T29", "T30", "T31", "T32", "T33", "T34", "T35", "T36", "T37", "T38"]
+                  acceptance: "Against a freshly migrated database, GET on each of the thirteen resource paths answers 200 with an empty array, /openapi.json lists all thirteen paths, and the run command from backend.yaml starts the server."
+                  verify: "rm -f verify.db && DATABASE_URL=sqlite:///./verify.db uv run alembic upgrade head && DATABASE_URL=sqlite:///./verify.db uv run python -c \"from fastapi.testclient import TestClient; from app.main import app; c=TestClient(app); paths=['/trading-platforms', '/brokers', '/accounts', '/assets', '/strategies', '/trailing-groups', '/trailing-rules', '/partial-groups', '/partial-rules', '/action-groups', '/actions', '/executes', '/positions']\nfor p in paths:\n    r=c.get(p); assert r.status_code==200 and r.json()==[], p\nspec=c.get('/openapi.json').json()['paths']; assert all(p in spec and p+'/{id}' in spec for p in paths)\""
+                  touches: ["app/main.py"]
+                  status: "todo"
+
 
     frontend:
       phase_titles_lifecycle: "empty"
