@@ -96,7 +96,10 @@ content:
                   acceptance: "backend/pyproject.toml exists with a project name and Python requirement, and `uv sync` creates .venv/ without error."
                   verify: "uv sync && test -f pyproject.toml && test -d .venv"
                   touches: ["pyproject.toml", "uv.lock", ".venv/"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T2"
                   title: "Add FastAPI as a dependency through uv."
                   goal: "The API framework is importable inside the environment."
@@ -104,7 +107,10 @@ content:
                   acceptance: "`uv add fastapi` records fastapi in pyproject.toml and it imports."
                   verify: "uv run python -c \"import fastapi\""
                   touches: ["pyproject.toml", "uv.lock"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T3"
                   title: "Add Uvicorn as a dependency through uv."
                   goal: "The ASGI server that runs the API is available."
@@ -112,7 +118,10 @@ content:
                   acceptance: "`uv add uvicorn` records uvicorn in pyproject.toml and it imports."
                   verify: "uv run python -c \"import uvicorn\""
                   touches: ["pyproject.toml", "uv.lock"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T4"
                   title: "Add SQLAlchemy as a dependency through uv."
                   goal: "The ORM every database read and write goes through is available."
@@ -120,7 +129,10 @@ content:
                   acceptance: "`uv add sqlalchemy` records sqlalchemy in pyproject.toml and a 2.x version imports."
                   verify: "uv run python -c \"import sqlalchemy; assert sqlalchemy.__version__.startswith('2.')\""
                   touches: ["pyproject.toml", "uv.lock"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T5"
                   title: "Add Alembic as a dependency through uv."
                   goal: "The migration tool that carries the schema between versions is available."
@@ -128,7 +140,10 @@ content:
                   acceptance: "`uv add alembic` records alembic in pyproject.toml and the alembic CLI runs."
                   verify: "uv run alembic --version"
                   touches: ["pyproject.toml", "uv.lock"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T6"
                   title: "Create .gitignore excluding the virtual environment and the SQLite database file."
                   goal: "The environment and local database can never be committed."
@@ -136,7 +151,10 @@ content:
                   acceptance: ".gitignore lists .venv/ and *.db."
                   verify: "grep -q '^\\.venv/' .gitignore && grep -q '^\\*\\.db' .gitignore"
                   touches: [".gitignore"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
             group_2:
               id: "P1-G2"
               title: "Application skeleton and configuration"
@@ -150,7 +168,10 @@ content:
                   acceptance: "app/__init__.py exists and `import app` succeeds."
                   verify: "uv run python -c \"import app\""
                   touches: ["app/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T8"
                   title: "Create app/config.py holding DATABASE_URL and API_KEY."
                   goal: "Every module reads the database location and the API key from one place."
@@ -158,7 +179,10 @@ content:
                   acceptance: "DATABASE_URL is a sqlite URL pointing at trading_assistant.db inside code_path; API_KEY is read from the API_KEY environment variable with a development default."
                   verify: "uv run python -c \"from app.config import DATABASE_URL, API_KEY; assert DATABASE_URL.startswith('sqlite:///') and DATABASE_URL.endswith('trading_assistant.db') and API_KEY\""
                   touches: ["app/config.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T9"
                   title: "Create app/database.py with the engine, SessionLocal, Base, and the get_db dependency."
                   goal: "Models can declare tables and routes can obtain a session."
@@ -166,7 +190,10 @@ content:
                   acceptance: "engine is built from DATABASE_URL; SessionLocal is a sessionmaker; Base is a DeclarativeBase; get_db yields a session and closes it."
                   verify: "uv run python -c \"from app.database import engine, SessionLocal, Base, get_db; import inspect; assert inspect.isgeneratorfunction(get_db) and hasattr(Base, 'metadata')\""
                   touches: ["app/database.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T10"
                   title: "Enable SQLite foreign key enforcement on every connection in app/database.py."
                   goal: "References between entities are enforced by the database."
@@ -174,7 +201,10 @@ content:
                   acceptance: "A connect event listener issues PRAGMA foreign_keys=ON, so a new connection reports foreign_keys = 1."
                   verify: "uv run python -c \"from app.database import engine; from sqlalchemy import text; c = engine.connect(); assert c.execute(text('PRAGMA foreign_keys')).scalar() == 1\""
                   touches: ["app/database.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T11"
                   title: "Create app/main.py with the FastAPI app, docs at /docs and ReDoc disabled."
                   goal: "The API process exists and serves its interactive documentation."
@@ -182,7 +212,10 @@ content:
                   acceptance: "app.main exposes `app`, a FastAPI instance with docs_url '/docs' and redoc_url None."
                   verify: "uv run python -c \"from app.main import app; assert app.docs_url == '/docs' and app.redoc_url is None\""
                   touches: ["app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T12"
                   title: "Add the verify_api_key dependency to app/main.py reading the X-API-Key header."
                   goal: "Every contract route can be guarded by the API key."
@@ -191,7 +224,10 @@ content:
                   acceptance: "verify_api_key uses APIKeyHeader('X-API-Key') and raises HTTPException 401 when the header is missing or differs from API_KEY."
                   verify: "uv run python -c \"import asyncio; from fastapi import HTTPException; from app.main import verify_api_key; exec('try:\\n    asyncio.run(verify_api_key(chr(120)))\\nexcept HTTPException as e:\\n    assert e.status_code == 401\\nelse:\\n    raise SystemExit(1)')\""
                   touches: ["app/main.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
             group_3:
               id: "P1-G3"
               title: "Models"
@@ -205,7 +241,10 @@ content:
                   acceptance: "app/models/__init__.py exists and `import app.models` succeeds."
                   verify: "uv run python -c \"import app.models\""
                   touches: ["app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T14"
                   title: "Add the TradingPlatform model in app/models/trading_platform.py."
                   goal: "The Trading Platform entity can be stored — no references."
@@ -214,7 +253,10 @@ content:
                   acceptance: "class TradingPlatform on Base with __tablename__ 'trading_platforms' and columns exactly ['id', 'name', 'status', 'description']; id is the integer primary key."
                   verify: "uv run python -c \"from app.models.trading_platform import TradingPlatform; cols = [c.name for c in TradingPlatform.__table__.columns]; assert TradingPlatform.__tablename__ == 'trading_platforms' and cols == ['id', 'name', 'status', 'description'], cols\""
                   touches: ["app/models/trading_platform.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T15"
                   title: "Add the Broker model in app/models/broker.py."
                   goal: "The Broker entity can be stored — Trading Platform ID refers to trading_platform."
@@ -223,7 +265,10 @@ content:
                   acceptance: "class Broker on Base with __tablename__ 'brokers' and columns exactly ['id', 'name', 'trading_platform_id', 'status', 'description']; id is the integer primary key; foreign keys: trading_platform_id → trading_platforms.id."
                   verify: "uv run python -c \"from app.models.broker import Broker; cols = [c.name for c in Broker.__table__.columns]; assert Broker.__tablename__ == 'brokers' and cols == ['id', 'name', 'trading_platform_id', 'status', 'description'], cols\""
                   touches: ["app/models/broker.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T16"
                   title: "Add the Account model in app/models/account.py."
                   goal: "The Account entity can be stored — Broker ID refers to broker."
@@ -232,7 +277,10 @@ content:
                   acceptance: "class Account on Base with __tablename__ 'accounts' and columns exactly ['id', 'name', 'username', 'password', 'broker_id', 'status', 'description']; id is the integer primary key; foreign keys: broker_id → brokers.id."
                   verify: "uv run python -c \"from app.models.account import Account; cols = [c.name for c in Account.__table__.columns]; assert Account.__tablename__ == 'accounts' and cols == ['id', 'name', 'username', 'password', 'broker_id', 'status', 'description'], cols\""
                   touches: ["app/models/account.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T17"
                   title: "Add the Asset model in app/models/asset.py."
                   goal: "The Asset entity can be stored — no references."
@@ -241,7 +289,10 @@ content:
                   acceptance: "class Asset on Base with __tablename__ 'assets' and columns exactly ['id', 'name', 'status', 'description']; id is the integer primary key."
                   verify: "uv run python -c \"from app.models.asset import Asset; cols = [c.name for c in Asset.__table__.columns]; assert Asset.__tablename__ == 'assets' and cols == ['id', 'name', 'status', 'description'], cols\""
                   touches: ["app/models/asset.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T18"
                   title: "Add the Strategy model in app/models/strategy.py."
                   goal: "The Strategy entity can be stored — no references."
@@ -250,7 +301,10 @@ content:
                   acceptance: "class Strategy on Base with __tablename__ 'strategies' and columns exactly ['id', 'name', 'risk_parameter', 'status', 'description']; id is the integer primary key."
                   verify: "uv run python -c \"from app.models.strategy import Strategy; cols = [c.name for c in Strategy.__table__.columns]; assert Strategy.__tablename__ == 'strategies' and cols == ['id', 'name', 'risk_parameter', 'status', 'description'], cols\""
                   touches: ["app/models/strategy.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T19"
                   title: "Add the TrailingGroup model in app/models/trailing_group.py."
                   goal: "The Trailing Group entity can be stored — no references."
@@ -259,7 +313,10 @@ content:
                   acceptance: "class TrailingGroup on Base with __tablename__ 'trailing_groups' and columns exactly ['id', 'name', 'status', 'description']; id is the integer primary key."
                   verify: "uv run python -c \"from app.models.trailing_group import TrailingGroup; cols = [c.name for c in TrailingGroup.__table__.columns]; assert TrailingGroup.__tablename__ == 'trailing_groups' and cols == ['id', 'name', 'status', 'description'], cols\""
                   touches: ["app/models/trailing_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T20"
                   title: "Add the TrailingRule model in app/models/trailing_rule.py."
                   goal: "The Trailing Rule entity can be stored — Trailing Group ID refers to trailing_group."
@@ -268,7 +325,10 @@ content:
                   acceptance: "class TrailingRule on Base with __tablename__ 'trailing_rules' and columns exactly ['id', 'name', 'trailing_group_id', 'status', 'description']; id is the integer primary key; foreign keys: trailing_group_id → trailing_groups.id."
                   verify: "uv run python -c \"from app.models.trailing_rule import TrailingRule; cols = [c.name for c in TrailingRule.__table__.columns]; assert TrailingRule.__tablename__ == 'trailing_rules' and cols == ['id', 'name', 'trailing_group_id', 'status', 'description'], cols\""
                   touches: ["app/models/trailing_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T21"
                   title: "Add the PartialGroup model in app/models/partial_group.py."
                   goal: "The Partial Group entity can be stored — no references."
@@ -277,7 +337,10 @@ content:
                   acceptance: "class PartialGroup on Base with __tablename__ 'partial_groups' and columns exactly ['id', 'name', 'status', 'description']; id is the integer primary key."
                   verify: "uv run python -c \"from app.models.partial_group import PartialGroup; cols = [c.name for c in PartialGroup.__table__.columns]; assert PartialGroup.__tablename__ == 'partial_groups' and cols == ['id', 'name', 'status', 'description'], cols\""
                   touches: ["app/models/partial_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T22"
                   title: "Add the PartialRule model in app/models/partial_rule.py."
                   goal: "The Partial Rule entity can be stored — Partial Group ID refers to partial_group."
@@ -286,7 +349,10 @@ content:
                   acceptance: "class PartialRule on Base with __tablename__ 'partial_rules' and columns exactly ['id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description']; id is the integer primary key; foreign keys: partial_group_id → partial_groups.id."
                   verify: "uv run python -c \"from app.models.partial_rule import PartialRule; cols = [c.name for c in PartialRule.__table__.columns]; assert PartialRule.__tablename__ == 'partial_rules' and cols == ['id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'], cols\""
                   touches: ["app/models/partial_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T23"
                   title: "Add the ActionGroup model in app/models/action_group.py."
                   goal: "The Action Group entity can be stored — no references."
@@ -295,7 +361,10 @@ content:
                   acceptance: "class ActionGroup on Base with __tablename__ 'action_groups' and columns exactly ['id', 'name', 'status', 'description']; id is the integer primary key."
                   verify: "uv run python -c \"from app.models.action_group import ActionGroup; cols = [c.name for c in ActionGroup.__table__.columns]; assert ActionGroup.__tablename__ == 'action_groups' and cols == ['id', 'name', 'status', 'description'], cols\""
                   touches: ["app/models/action_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T24"
                   title: "Add the Action model in app/models/action.py."
                   goal: "The Action entity can be stored — Asset ID refers to asset; Account ID refers to account; Strategy ID refers to strategy; Group ID refers to action_group."
@@ -304,7 +373,10 @@ content:
                   acceptance: "class Action on Base with __tablename__ 'actions' and columns exactly ['id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description']; id is the integer primary key; foreign keys: asset_id → assets.id, account_id → accounts.id, strategy_id → strategies.id, group_id → action_groups.id."
                   verify: "uv run python -c \"from app.models.action import Action; cols = [c.name for c in Action.__table__.columns]; assert Action.__tablename__ == 'actions' and cols == ['id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'], cols\""
                   touches: ["app/models/action.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T25"
                   title: "Add the Execute model in app/models/execute.py."
                   goal: "The Execute entity can be stored — Action ID refers to action."
@@ -313,7 +385,10 @@ content:
                   acceptance: "class Execute on Base with __tablename__ 'executes' and columns exactly ['id', 'name', 'action_id', 'profit', 'state', 'status', 'description']; id is the integer primary key; foreign keys: action_id → actions.id."
                   verify: "uv run python -c \"from app.models.execute import Execute; cols = [c.name for c in Execute.__table__.columns]; assert Execute.__tablename__ == 'executes' and cols == ['id', 'name', 'action_id', 'profit', 'state', 'status', 'description'], cols\""
                   touches: ["app/models/execute.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T26"
                   title: "Add the Position model in app/models/position.py."
                   goal: "The Position entity can be stored — no references."
@@ -322,7 +397,10 @@ content:
                   acceptance: "class Position on Base with __tablename__ 'positions' and columns exactly ['id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description']; id is the integer primary key."
                   verify: "uv run python -c \"from app.models.position import Position; cols = [c.name for c in Position.__table__.columns]; assert Position.__tablename__ == 'positions' and cols == ['id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'], cols\""
                   touches: ["app/models/position.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T27"
                   title: "Import every model in app/models/__init__.py so all tables register on Base.metadata."
                   goal: "Alembic and the app see the complete schema from one import."
@@ -331,7 +409,10 @@ content:
                   acceptance: "After `import app.models`, Base.metadata.tables holds exactly the 13 contract tables."
                   verify: "uv run python -c \"import app.models; from app.database import Base; t = set(Base.metadata.tables); assert t == {'accounts', 'action_groups', 'assets', 'strategies', 'actions', 'executes', 'partial_groups', 'trailing_groups', 'brokers', 'trailing_rules', 'positions', 'trading_platforms', 'partial_rules'}, t\""
                   touches: ["app/models/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
             group_4:
               id: "P1-G4"
               title: "Migrations"
@@ -345,7 +426,10 @@ content:
                   acceptance: "`uv run alembic init migrations` produced alembic.ini and migrations/env.py, script.py.mako, versions/."
                   verify: "test -f alembic.ini && test -f migrations/env.py && test -d migrations/versions"
                   touches: ["alembic.ini", "migrations/"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T29"
                   title: "Point alembic.ini sqlalchemy.url at the SQLite database file."
                   goal: "Alembic migrates the same database the app uses."
@@ -353,7 +437,10 @@ content:
                   acceptance: "sqlalchemy.url in alembic.ini is sqlite:///./trading_assistant.db."
                   verify: "grep -q '^sqlalchemy.url = sqlite:///./trading_assistant.db' alembic.ini"
                   touches: ["alembic.ini"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T30"
                   title: "Set target_metadata in migrations/env.py to Base.metadata with all models imported."
                   goal: "Alembic can autogenerate migrations from the models."
@@ -361,7 +448,10 @@ content:
                   acceptance: "env.py imports app.models and sets target_metadata = Base.metadata; render_as_batch is enabled for SQLite."
                   verify: "grep -q 'target_metadata = Base.metadata' migrations/env.py && grep -q 'import app.models' migrations/env.py && grep -q 'render_as_batch=True' migrations/env.py"
                   touches: ["migrations/env.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T31"
                   title: "Autogenerate the initial migration creating every table."
                   goal: "The schema exists as a versioned migration script."
@@ -370,7 +460,10 @@ content:
                   acceptance: "One script exists under migrations/versions/ whose upgrade creates all 13 tables and whose downgrade drops them."
                   verify: "test \"$(ls migrations/versions/*.py | wc -l | tr -d ' ')\" = \"1\" && grep -q 'def downgrade' migrations/versions/*.py"
                   touches: ["migrations/versions/"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T32"
                   title: "Apply the initial migration with alembic upgrade head."
                   goal: "trading_assistant.db exists with every contract table."
@@ -379,7 +472,10 @@ content:
                   acceptance: "`uv run alembic upgrade head` succeeds and the database lists all 13 tables."
                   verify: "uv run alembic upgrade head && uv run python -c \"import sqlite3; n = sqlite3.connect('trading_assistant.db').execute(\\\"select count(*) from sqlite_master where type='table' and name != 'alembic_version'\\\").fetchone()[0]; assert n == 13, n\""
                   touches: ["trading_assistant.db"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T33"
                   title: "Prove the initial migration is reversible with a downgrade and re-upgrade."
                   goal: "Any schema step can be reversed."
@@ -387,7 +483,10 @@ content:
                   acceptance: "`alembic downgrade base` empties the schema and `alembic upgrade head` restores it."
                   verify: "uv run alembic downgrade base && uv run alembic upgrade head && uv run python -c \"import sqlite3; n = sqlite3.connect('trading_assistant.db').execute(\\\"select count(*) from sqlite_master where type='table' and name != 'alembic_version'\\\").fetchone()[0]; assert n == 13\""
                   touches: ["trading_assistant.db"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
             group_5:
               id: "P1-G5"
               title: "Validation schemas"
@@ -401,7 +500,10 @@ content:
                   acceptance: "app/schemas/__init__.py exists and `import app.schemas` succeeds."
                   verify: "uv run python -c \"import app.schemas\""
                   touches: ["app/schemas/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T35"
                   title: "Add the TradingPlatform Pydantic schemas in app/schemas/trading_platform.py."
                   goal: "Trading Platform bodies are validated and its responses shaped."
@@ -410,7 +512,10 @@ content:
                   acceptance: "TradingPlatformCreate and TradingPlatformUpdate carry exactly ['name', 'status', 'description']; TradingPlatformRead carries ['id', 'name', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.trading_platform import TradingPlatformCreate, TradingPlatformUpdate, TradingPlatformRead; assert list(TradingPlatformCreate.model_fields) == ['name', 'status', 'description']; assert list(TradingPlatformUpdate.model_fields) == ['name', 'status', 'description']; assert list(TradingPlatformRead.model_fields) == ['id', 'name', 'status', 'description']; assert TradingPlatformRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/trading_platform.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T36"
                   title: "Add the Broker Pydantic schemas in app/schemas/broker.py."
                   goal: "Broker bodies are validated and its responses shaped."
@@ -419,7 +524,10 @@ content:
                   acceptance: "BrokerCreate and BrokerUpdate carry exactly ['name', 'trading_platform_id', 'status', 'description']; BrokerRead carries ['id', 'name', 'trading_platform_id', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.broker import BrokerCreate, BrokerUpdate, BrokerRead; assert list(BrokerCreate.model_fields) == ['name', 'trading_platform_id', 'status', 'description']; assert list(BrokerUpdate.model_fields) == ['name', 'trading_platform_id', 'status', 'description']; assert list(BrokerRead.model_fields) == ['id', 'name', 'trading_platform_id', 'status', 'description']; assert BrokerRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/broker.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T37"
                   title: "Add the Account Pydantic schemas in app/schemas/account.py."
                   goal: "Account bodies are validated and its responses shaped."
@@ -428,7 +536,10 @@ content:
                   acceptance: "AccountCreate and AccountUpdate carry exactly ['name', 'username', 'password', 'broker_id', 'status', 'description']; AccountRead carries ['id', 'name', 'username', 'broker_id', 'status', 'description'] with from_attributes enabled. The Read shape omits password."
                   verify: "uv run python -c \"from app.schemas.account import AccountCreate, AccountUpdate, AccountRead; assert list(AccountCreate.model_fields) == ['name', 'username', 'password', 'broker_id', 'status', 'description']; assert list(AccountUpdate.model_fields) == ['name', 'username', 'password', 'broker_id', 'status', 'description']; assert list(AccountRead.model_fields) == ['id', 'name', 'username', 'broker_id', 'status', 'description']; assert AccountRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/account.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T38"
                   title: "Add the Asset Pydantic schemas in app/schemas/asset.py."
                   goal: "Asset bodies are validated and its responses shaped."
@@ -437,7 +548,10 @@ content:
                   acceptance: "AssetCreate and AssetUpdate carry exactly ['name', 'status', 'description']; AssetRead carries ['id', 'name', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.asset import AssetCreate, AssetUpdate, AssetRead; assert list(AssetCreate.model_fields) == ['name', 'status', 'description']; assert list(AssetUpdate.model_fields) == ['name', 'status', 'description']; assert list(AssetRead.model_fields) == ['id', 'name', 'status', 'description']; assert AssetRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/asset.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T39"
                   title: "Add the Strategy Pydantic schemas in app/schemas/strategy.py."
                   goal: "Strategy bodies are validated and its responses shaped."
@@ -446,7 +560,10 @@ content:
                   acceptance: "StrategyCreate and StrategyUpdate carry exactly ['name', 'risk_parameter', 'status', 'description']; StrategyRead carries ['id', 'name', 'risk_parameter', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.strategy import StrategyCreate, StrategyUpdate, StrategyRead; assert list(StrategyCreate.model_fields) == ['name', 'risk_parameter', 'status', 'description']; assert list(StrategyUpdate.model_fields) == ['name', 'risk_parameter', 'status', 'description']; assert list(StrategyRead.model_fields) == ['id', 'name', 'risk_parameter', 'status', 'description']; assert StrategyRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/strategy.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T40"
                   title: "Add the TrailingGroup Pydantic schemas in app/schemas/trailing_group.py."
                   goal: "Trailing Group bodies are validated and its responses shaped."
@@ -455,7 +572,10 @@ content:
                   acceptance: "TrailingGroupCreate and TrailingGroupUpdate carry exactly ['name', 'status', 'description']; TrailingGroupRead carries ['id', 'name', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.trailing_group import TrailingGroupCreate, TrailingGroupUpdate, TrailingGroupRead; assert list(TrailingGroupCreate.model_fields) == ['name', 'status', 'description']; assert list(TrailingGroupUpdate.model_fields) == ['name', 'status', 'description']; assert list(TrailingGroupRead.model_fields) == ['id', 'name', 'status', 'description']; assert TrailingGroupRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/trailing_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T41"
                   title: "Add the TrailingRule Pydantic schemas in app/schemas/trailing_rule.py."
                   goal: "Trailing Rule bodies are validated and its responses shaped."
@@ -464,7 +584,10 @@ content:
                   acceptance: "TrailingRuleCreate and TrailingRuleUpdate carry exactly ['name', 'trailing_group_id', 'status', 'description']; TrailingRuleRead carries ['id', 'name', 'trailing_group_id', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.trailing_rule import TrailingRuleCreate, TrailingRuleUpdate, TrailingRuleRead; assert list(TrailingRuleCreate.model_fields) == ['name', 'trailing_group_id', 'status', 'description']; assert list(TrailingRuleUpdate.model_fields) == ['name', 'trailing_group_id', 'status', 'description']; assert list(TrailingRuleRead.model_fields) == ['id', 'name', 'trailing_group_id', 'status', 'description']; assert TrailingRuleRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/trailing_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T42"
                   title: "Add the PartialGroup Pydantic schemas in app/schemas/partial_group.py."
                   goal: "Partial Group bodies are validated and its responses shaped."
@@ -473,7 +596,10 @@ content:
                   acceptance: "PartialGroupCreate and PartialGroupUpdate carry exactly ['name', 'status', 'description']; PartialGroupRead carries ['id', 'name', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.partial_group import PartialGroupCreate, PartialGroupUpdate, PartialGroupRead; assert list(PartialGroupCreate.model_fields) == ['name', 'status', 'description']; assert list(PartialGroupUpdate.model_fields) == ['name', 'status', 'description']; assert list(PartialGroupRead.model_fields) == ['id', 'name', 'status', 'description']; assert PartialGroupRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/partial_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T43"
                   title: "Add the PartialRule Pydantic schemas in app/schemas/partial_rule.py."
                   goal: "Partial Rule bodies are validated and its responses shaped."
@@ -482,7 +608,10 @@ content:
                   acceptance: "PartialRuleCreate and PartialRuleUpdate carry exactly ['name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description']; PartialRuleRead carries ['id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.partial_rule import PartialRuleCreate, PartialRuleUpdate, PartialRuleRead; assert list(PartialRuleCreate.model_fields) == ['name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description']; assert list(PartialRuleUpdate.model_fields) == ['name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description']; assert list(PartialRuleRead.model_fields) == ['id', 'name', 'partial_group_id', 'profit_threshold', 'close_portion', 'status', 'description']; assert PartialRuleRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/partial_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T44"
                   title: "Add the ActionGroup Pydantic schemas in app/schemas/action_group.py."
                   goal: "Action Group bodies are validated and its responses shaped."
@@ -491,7 +620,10 @@ content:
                   acceptance: "ActionGroupCreate and ActionGroupUpdate carry exactly ['name', 'status', 'description']; ActionGroupRead carries ['id', 'name', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.action_group import ActionGroupCreate, ActionGroupUpdate, ActionGroupRead; assert list(ActionGroupCreate.model_fields) == ['name', 'status', 'description']; assert list(ActionGroupUpdate.model_fields) == ['name', 'status', 'description']; assert list(ActionGroupRead.model_fields) == ['id', 'name', 'status', 'description']; assert ActionGroupRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/action_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T45"
                   title: "Add the Action Pydantic schemas in app/schemas/action.py."
                   goal: "Action bodies are validated and its responses shaped."
@@ -500,7 +632,10 @@ content:
                   acceptance: "ActionCreate and ActionUpdate carry exactly ['name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description']; ActionRead carries ['id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.action import ActionCreate, ActionUpdate, ActionRead; assert list(ActionCreate.model_fields) == ['name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description']; assert list(ActionUpdate.model_fields) == ['name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description']; assert list(ActionRead.model_fields) == ['id', 'name', 'asset_id', 'account_id', 'strategy_id', 'group_id', 'status', 'description']; assert ActionRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/action.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T46"
                   title: "Add the Execute Pydantic schemas in app/schemas/execute.py."
                   goal: "Execute bodies are validated and its responses shaped."
@@ -509,7 +644,10 @@ content:
                   acceptance: "ExecuteCreate and ExecuteUpdate carry exactly ['name', 'action_id', 'profit', 'state', 'status', 'description']; ExecuteRead carries ['id', 'name', 'action_id', 'profit', 'state', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.execute import ExecuteCreate, ExecuteUpdate, ExecuteRead; assert list(ExecuteCreate.model_fields) == ['name', 'action_id', 'profit', 'state', 'status', 'description']; assert list(ExecuteUpdate.model_fields) == ['name', 'action_id', 'profit', 'state', 'status', 'description']; assert list(ExecuteRead.model_fields) == ['id', 'name', 'action_id', 'profit', 'state', 'status', 'description']; assert ExecuteRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/execute.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T47"
                   title: "Add the Position Pydantic schemas in app/schemas/position.py."
                   goal: "Position bodies are validated and its responses shaped."
@@ -518,7 +656,10 @@ content:
                   acceptance: "PositionCreate and PositionUpdate carry exactly ['name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description']; PositionRead carries ['id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description'] with from_attributes enabled."
                   verify: "uv run python -c \"from app.schemas.position import PositionCreate, PositionUpdate, PositionRead; assert list(PositionCreate.model_fields) == ['name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description']; assert list(PositionUpdate.model_fields) == ['name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description']; assert list(PositionRead.model_fields) == ['id', 'name', 'entry_price', 'take_profit', 'stop_loss', 'status', 'description']; assert PositionRead.model_config.get('from_attributes')\""
                   touches: ["app/schemas/position.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
             group_6:
               id: "P1-G6"
               title: "Services"
@@ -532,7 +673,10 @@ content:
                   acceptance: "app/services/__init__.py exists and `import app.services` succeeds."
                   verify: "uv run python -c \"import app.services\""
                   touches: ["app/services/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T49"
                   title: "Add the Trading Platform service functions in app/services/trading_platform.py."
                   goal: "Trading Platform rows can be listed, read, created, updated, and deleted through the ORM."
@@ -541,7 +685,10 @@ content:
                   acceptance: "Functions ['list_trading_platforms', 'get_trading_platform', 'create_trading_platform', 'update_trading_platform', 'delete_trading_platform'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.trading_platform as s; assert all(callable(getattr(s, f)) for f in ['list_trading_platforms', 'get_trading_platform', 'create_trading_platform', 'update_trading_platform', 'delete_trading_platform'])\""
                   touches: ["app/services/trading_platform.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T50"
                   title: "Add the Broker service functions in app/services/broker.py."
                   goal: "Broker rows can be listed, read, created, updated, and deleted through the ORM."
@@ -550,7 +697,10 @@ content:
                   acceptance: "Functions ['list_brokers', 'get_broker', 'create_broker', 'update_broker', 'delete_broker'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.broker as s; assert all(callable(getattr(s, f)) for f in ['list_brokers', 'get_broker', 'create_broker', 'update_broker', 'delete_broker'])\""
                   touches: ["app/services/broker.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T51"
                   title: "Add the Account service functions in app/services/account.py."
                   goal: "Account rows can be listed, read, created, updated, and deleted through the ORM."
@@ -559,7 +709,10 @@ content:
                   acceptance: "Functions ['list_accounts', 'get_account', 'create_account', 'update_account', 'delete_account'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.account as s; assert all(callable(getattr(s, f)) for f in ['list_accounts', 'get_account', 'create_account', 'update_account', 'delete_account'])\""
                   touches: ["app/services/account.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T52"
                   title: "Add the Asset service functions in app/services/asset.py."
                   goal: "Asset rows can be listed, read, created, updated, and deleted through the ORM."
@@ -568,7 +721,10 @@ content:
                   acceptance: "Functions ['list_assets', 'get_asset', 'create_asset', 'update_asset', 'delete_asset'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.asset as s; assert all(callable(getattr(s, f)) for f in ['list_assets', 'get_asset', 'create_asset', 'update_asset', 'delete_asset'])\""
                   touches: ["app/services/asset.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T53"
                   title: "Add the Strategy service functions in app/services/strategy.py."
                   goal: "Strategy rows can be listed, read, created, updated, and deleted through the ORM."
@@ -577,7 +733,10 @@ content:
                   acceptance: "Functions ['list_strategys', 'get_strategy', 'create_strategy', 'update_strategy', 'delete_strategy'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.strategy as s; assert all(callable(getattr(s, f)) for f in ['list_strategys', 'get_strategy', 'create_strategy', 'update_strategy', 'delete_strategy'])\""
                   touches: ["app/services/strategy.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T54"
                   title: "Add the Trailing Group service functions in app/services/trailing_group.py."
                   goal: "Trailing Group rows can be listed, read, created, updated, and deleted through the ORM."
@@ -586,7 +745,10 @@ content:
                   acceptance: "Functions ['list_trailing_groups', 'get_trailing_group', 'create_trailing_group', 'update_trailing_group', 'delete_trailing_group'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.trailing_group as s; assert all(callable(getattr(s, f)) for f in ['list_trailing_groups', 'get_trailing_group', 'create_trailing_group', 'update_trailing_group', 'delete_trailing_group'])\""
                   touches: ["app/services/trailing_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T55"
                   title: "Add the Trailing Rule service functions in app/services/trailing_rule.py."
                   goal: "Trailing Rule rows can be listed, read, created, updated, and deleted through the ORM."
@@ -595,7 +757,10 @@ content:
                   acceptance: "Functions ['list_trailing_rules', 'get_trailing_rule', 'create_trailing_rule', 'update_trailing_rule', 'delete_trailing_rule'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.trailing_rule as s; assert all(callable(getattr(s, f)) for f in ['list_trailing_rules', 'get_trailing_rule', 'create_trailing_rule', 'update_trailing_rule', 'delete_trailing_rule'])\""
                   touches: ["app/services/trailing_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T56"
                   title: "Add the Partial Group service functions in app/services/partial_group.py."
                   goal: "Partial Group rows can be listed, read, created, updated, and deleted through the ORM."
@@ -604,7 +769,10 @@ content:
                   acceptance: "Functions ['list_partial_groups', 'get_partial_group', 'create_partial_group', 'update_partial_group', 'delete_partial_group'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.partial_group as s; assert all(callable(getattr(s, f)) for f in ['list_partial_groups', 'get_partial_group', 'create_partial_group', 'update_partial_group', 'delete_partial_group'])\""
                   touches: ["app/services/partial_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T57"
                   title: "Add the Partial Rule service functions in app/services/partial_rule.py."
                   goal: "Partial Rule rows can be listed, read, created, updated, and deleted through the ORM."
@@ -613,7 +781,10 @@ content:
                   acceptance: "Functions ['list_partial_rules', 'get_partial_rule', 'create_partial_rule', 'update_partial_rule', 'delete_partial_rule'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.partial_rule as s; assert all(callable(getattr(s, f)) for f in ['list_partial_rules', 'get_partial_rule', 'create_partial_rule', 'update_partial_rule', 'delete_partial_rule'])\""
                   touches: ["app/services/partial_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T58"
                   title: "Add the Action Group service functions in app/services/action_group.py."
                   goal: "Action Group rows can be listed, read, created, updated, and deleted through the ORM."
@@ -622,7 +793,10 @@ content:
                   acceptance: "Functions ['list_action_groups', 'get_action_group', 'create_action_group', 'update_action_group', 'delete_action_group'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.action_group as s; assert all(callable(getattr(s, f)) for f in ['list_action_groups', 'get_action_group', 'create_action_group', 'update_action_group', 'delete_action_group'])\""
                   touches: ["app/services/action_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T59"
                   title: "Add the Action service functions in app/services/action.py."
                   goal: "Action rows can be listed, read, created, updated, and deleted through the ORM."
@@ -631,7 +805,10 @@ content:
                   acceptance: "Functions ['list_actions', 'get_action', 'create_action', 'update_action', 'delete_action'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.action as s; assert all(callable(getattr(s, f)) for f in ['list_actions', 'get_action', 'create_action', 'update_action', 'delete_action'])\""
                   touches: ["app/services/action.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T60"
                   title: "Add the Execute service functions in app/services/execute.py."
                   goal: "Execute rows can be listed, read, created, updated, and deleted through the ORM."
@@ -640,7 +817,10 @@ content:
                   acceptance: "Functions ['list_executes', 'get_execute', 'create_execute', 'update_execute', 'delete_execute'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.execute as s; assert all(callable(getattr(s, f)) for f in ['list_executes', 'get_execute', 'create_execute', 'update_execute', 'delete_execute'])\""
                   touches: ["app/services/execute.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T61"
                   title: "Add the Position service functions in app/services/position.py."
                   goal: "Position rows can be listed, read, created, updated, and deleted through the ORM."
@@ -649,7 +829,10 @@ content:
                   acceptance: "Functions ['list_positions', 'get_position', 'create_position', 'update_position', 'delete_position'] take a Session; get returns None for an unknown id; delete returns whether a row was removed."
                   verify: "uv run python -c \"import app.services.position as s; assert all(callable(getattr(s, f)) for f in ['list_positions', 'get_position', 'create_position', 'update_position', 'delete_position'])\""
                   touches: ["app/services/position.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
             group_7:
               id: "P1-G7"
               title: "Routers"
@@ -663,7 +846,10 @@ content:
                   acceptance: "app/routers/__init__.py defines `router = APIRouter()`."
                   verify: "uv run python -c \"from app.routers import router; from fastapi import APIRouter; assert isinstance(router, APIRouter)\""
                   touches: ["app/routers/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T63"
                   title: "Add the Trading Platform router in app/routers/trading_platform.py."
                   goal: "The Trading Platform contract routes exist."
@@ -672,7 +858,10 @@ content:
                   acceptance: "APIRouter with prefix '/trading-platforms': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.trading_platform and uses the TradingPlatform schemas."
                   verify: "uv run python -c \"from app.routers.trading_platform import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/trading-platforms', 'GET'), ('/trading-platforms', 'POST'), ('/trading-platforms/{id}', 'DELETE'), ('/trading-platforms/{id}', 'GET'), ('/trading-platforms/{id}', 'PUT')], got\""
                   touches: ["app/routers/trading_platform.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T64"
                   title: "Add the Broker router in app/routers/broker.py."
                   goal: "The Broker contract routes exist."
@@ -681,7 +870,10 @@ content:
                   acceptance: "APIRouter with prefix '/brokers': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.broker and uses the Broker schemas."
                   verify: "uv run python -c \"from app.routers.broker import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/brokers', 'GET'), ('/brokers', 'POST'), ('/brokers/{id}', 'DELETE'), ('/brokers/{id}', 'GET'), ('/brokers/{id}', 'PUT')], got\""
                   touches: ["app/routers/broker.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T65"
                   title: "Add the Account router in app/routers/account.py."
                   goal: "The Account contract routes exist."
@@ -690,7 +882,10 @@ content:
                   acceptance: "APIRouter with prefix '/accounts': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.account and uses the Account schemas."
                   verify: "uv run python -c \"from app.routers.account import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/accounts', 'GET'), ('/accounts', 'POST'), ('/accounts/{id}', 'DELETE'), ('/accounts/{id}', 'GET'), ('/accounts/{id}', 'PUT')], got\""
                   touches: ["app/routers/account.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T66"
                   title: "Add the Asset router in app/routers/asset.py."
                   goal: "The Asset contract routes exist."
@@ -699,7 +894,10 @@ content:
                   acceptance: "APIRouter with prefix '/assets': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.asset and uses the Asset schemas."
                   verify: "uv run python -c \"from app.routers.asset import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/assets', 'GET'), ('/assets', 'POST'), ('/assets/{id}', 'DELETE'), ('/assets/{id}', 'GET'), ('/assets/{id}', 'PUT')], got\""
                   touches: ["app/routers/asset.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T67"
                   title: "Add the Strategy router in app/routers/strategy.py."
                   goal: "The Strategy contract routes exist."
@@ -708,7 +906,10 @@ content:
                   acceptance: "APIRouter with prefix '/strategies': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.strategy and uses the Strategy schemas."
                   verify: "uv run python -c \"from app.routers.strategy import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/strategies', 'GET'), ('/strategies', 'POST'), ('/strategies/{id}', 'DELETE'), ('/strategies/{id}', 'GET'), ('/strategies/{id}', 'PUT')], got\""
                   touches: ["app/routers/strategy.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T68"
                   title: "Add the Trailing Group router in app/routers/trailing_group.py."
                   goal: "The Trailing Group contract routes exist."
@@ -717,7 +918,10 @@ content:
                   acceptance: "APIRouter with prefix '/trailing-groups': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.trailing_group and uses the TrailingGroup schemas."
                   verify: "uv run python -c \"from app.routers.trailing_group import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/trailing-groups', 'GET'), ('/trailing-groups', 'POST'), ('/trailing-groups/{id}', 'DELETE'), ('/trailing-groups/{id}', 'GET'), ('/trailing-groups/{id}', 'PUT')], got\""
                   touches: ["app/routers/trailing_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T69"
                   title: "Add the Trailing Rule router in app/routers/trailing_rule.py."
                   goal: "The Trailing Rule contract routes exist."
@@ -726,7 +930,10 @@ content:
                   acceptance: "APIRouter with prefix '/trailing-rules': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.trailing_rule and uses the TrailingRule schemas."
                   verify: "uv run python -c \"from app.routers.trailing_rule import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/trailing-rules', 'GET'), ('/trailing-rules', 'POST'), ('/trailing-rules/{id}', 'DELETE'), ('/trailing-rules/{id}', 'GET'), ('/trailing-rules/{id}', 'PUT')], got\""
                   touches: ["app/routers/trailing_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T70"
                   title: "Add the Partial Group router in app/routers/partial_group.py."
                   goal: "The Partial Group contract routes exist."
@@ -735,7 +942,10 @@ content:
                   acceptance: "APIRouter with prefix '/partial-groups': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.partial_group and uses the PartialGroup schemas."
                   verify: "uv run python -c \"from app.routers.partial_group import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/partial-groups', 'GET'), ('/partial-groups', 'POST'), ('/partial-groups/{id}', 'DELETE'), ('/partial-groups/{id}', 'GET'), ('/partial-groups/{id}', 'PUT')], got\""
                   touches: ["app/routers/partial_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T71"
                   title: "Add the Partial Rule router in app/routers/partial_rule.py."
                   goal: "The Partial Rule contract routes exist."
@@ -744,7 +954,10 @@ content:
                   acceptance: "APIRouter with prefix '/partial-rules': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.partial_rule and uses the PartialRule schemas."
                   verify: "uv run python -c \"from app.routers.partial_rule import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/partial-rules', 'GET'), ('/partial-rules', 'POST'), ('/partial-rules/{id}', 'DELETE'), ('/partial-rules/{id}', 'GET'), ('/partial-rules/{id}', 'PUT')], got\""
                   touches: ["app/routers/partial_rule.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T72"
                   title: "Add the Action Group router in app/routers/action_group.py."
                   goal: "The Action Group contract routes exist."
@@ -753,7 +966,10 @@ content:
                   acceptance: "APIRouter with prefix '/action-groups': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.action_group and uses the ActionGroup schemas."
                   verify: "uv run python -c \"from app.routers.action_group import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/action-groups', 'GET'), ('/action-groups', 'POST'), ('/action-groups/{id}', 'DELETE'), ('/action-groups/{id}', 'GET'), ('/action-groups/{id}', 'PUT')], got\""
                   touches: ["app/routers/action_group.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T73"
                   title: "Add the Action router in app/routers/action.py."
                   goal: "The Action contract routes exist."
@@ -762,7 +978,10 @@ content:
                   acceptance: "APIRouter with prefix '/actions': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.action and uses the Action schemas."
                   verify: "uv run python -c \"from app.routers.action import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/actions', 'GET'), ('/actions', 'POST'), ('/actions/{id}', 'DELETE'), ('/actions/{id}', 'GET'), ('/actions/{id}', 'PUT')], got\""
                   touches: ["app/routers/action.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T74"
                   title: "Add the Execute router in app/routers/execute.py."
                   goal: "The Execute contract routes exist."
@@ -771,7 +990,10 @@ content:
                   acceptance: "APIRouter with prefix '/executes': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.execute and uses the Execute schemas."
                   verify: "uv run python -c \"from app.routers.execute import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/executes', 'GET'), ('/executes', 'POST'), ('/executes/{id}', 'DELETE'), ('/executes/{id}', 'GET'), ('/executes/{id}', 'PUT')], got\""
                   touches: ["app/routers/execute.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T75"
                   title: "Add the Position router in app/routers/position.py."
                   goal: "The Position contract routes exist."
@@ -780,7 +1002,10 @@ content:
                   acceptance: "APIRouter with prefix '/positions': GET '' list 200, POST '' create 201, GET '/{id}' 200 or 404, PUT '/{id}' 200 or 404, DELETE '/{id}' 204 or 404; each delegates to app.services.position and uses the Position schemas."
                   verify: "uv run python -c \"from app.routers.position import router; got = sorted((r.path, m) for r in router.routes for m in r.methods); assert got == [('/positions', 'GET'), ('/positions', 'POST'), ('/positions/{id}', 'DELETE'), ('/positions/{id}', 'GET'), ('/positions/{id}', 'PUT')], got\""
                   touches: ["app/routers/position.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
                 - id: "T76"
                   title: "Include every model router in the aggregate router in app/routers/__init__.py."
                   goal: "One include mounts the whole contract surface."
@@ -789,7 +1014,10 @@ content:
                   acceptance: "app.routers.router carries all 65 contract routes."
                   verify: "uv run python -c \"from app.routers import router; n = sum(len(r.methods) for r in router.routes); assert n == 65, n\""
                   touches: ["app/routers/__init__.py"]
-                  status: "todo"
+                  status: "done"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify passed — my-interface-developer"
             group_8:
               id: "P1-G8"
               title: "Run the API"
@@ -804,7 +1032,11 @@ content:
                   acceptance: "app.include_router(router, dependencies=[Depends(verify_api_key)]) is applied; the app exposes all 65 contract routes plus /docs."
                   verify: "uv run python -c \"from app.main import app; n = sum(len(r.methods) for r in app.routes if getattr(r, 'methods', None) and not r.path.startswith(('/docs', '/openapi')) and r.path != '/'); assert n == 65, n\""
                   touches: ["app/main.py"]
-                  status: "todo"
+                  status: "blocked"
+                  blocker: "B1"
+                  log:
+                    - "2026-09-02 — claimed by my-interface-developer"
+                    - "2026-09-02 — verify failed (AssertionError: 0) — blocked by B1 — my-interface-developer"
                 - id: "T78"
                   title: "Prove the server starts with the run command and serves /docs."
                   goal: "The API runs."

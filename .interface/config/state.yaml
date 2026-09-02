@@ -300,7 +300,13 @@ content:
     set_at: "2026-09-02"
 
   # <!-------------------------------------------- Blockers -->
-  blockers: []
+  blockers:
+    - id: "B1"
+      blocks: "T77 (mount the aggregate router behind verify_api_key), and through depends_on T78, T79, T80, T81 — the whole P1-G8 Run group."
+      what_is_missing: "A T77 verify that can pass with the FastAPI the configuration selects (backend.yaml tech fastapi 'latest' — installed 0.141.1). Since FastAPI 0.141, app.include_router() registers a lazy _IncludedRouter entry in app.routes instead of copying the APIRoute objects, so the verify's count of routes carrying .methods evaluates to 0 while the acceptance requires that same include_router call. Acceptance and verify cannot both hold on this version; passing needs either a re-planned verify (e.g. counting operations in app.openapi()['paths']) or a decision to pin fastapi below 0.141 — both outside what the developer may change."
+      consequence: "The 65 contract routes cannot be marked served or guarded, and the run proofs (server start, 401, CRUD, OpenAPI) stay unexecuted; app/main.py already carries the include_router call, unverified."
+      decision_belongs_to: "the human"
+      raised: "2026-09-02"
 
   # <!-------------------------------------------- Open_Questions -->
   open_questions:
