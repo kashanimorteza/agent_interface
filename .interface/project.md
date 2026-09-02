@@ -40,7 +40,8 @@ Defines the technologies, tools, and development settings used to build the proj
 
 #### API
 
-- API Key: true
+- URL `key` Parameter: true
+- URL `key` Used for Authentication: false
 - API Documentation: true
 - API Documentation Type: Docs
 - ReDoc: false
