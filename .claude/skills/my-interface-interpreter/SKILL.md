@@ -13,7 +13,8 @@ Transform the Developer's target-project definition into the structured Understa
 ### Understand the Interface
 
 - At the start of every invocation, read the repository `README.md` completely to understand Agent Interface, its workflow, and this Skill's role. Treat it as Interface context, not as a source of target-project facts.
-- Then read `.interface/root.yaml` as the Interface entry point and current map. Resolve every other path, read order, policy, authority, and boundary from the files currently named by that map.
+- Inspect the repository root and the top-level structure of `.interface/` to understand how the Interface, its generated Config, and mapped target-project locations relate. Inspect structure only at this stage; do not use unrelated repository contents as project knowledge.
+- Then read `.interface/root.yaml` as the Interface entry point and current map. Resolve every other path, read order, policy, authority, and boundary from the files currently named by that map, and select Config files according to the needs of the current interpretation rather than scanning them indiscriminately.
 - Re-read every required source from disk on every invocation. Do not rely on remembered paths, values, state, configuration, or conclusions from an earlier run.
 
 ### Respect the project-knowledge boundary
