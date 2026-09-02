@@ -7,9 +7,19 @@ Defines what the project is and the main parts that make up the system.
 
 <br><br>
 
+## Goals
+
+- Manage trading platforms, brokers, and trading accounts.
+- Manage assets and broker-specific asset settings.
+- Define trading strategies, action groups, and trading actions.
+- Configure trailing and partial-close rule groups.
+- Execute trading actions and track positions.
+
+<br><br>
+
 ## Models
 
-Defines the core entities of the project, their purpose, and their relationships. Standard fields are resolved from the database preferences and are not repeated here. Model-specific data requirements belong in the Purpose, while cross-model references are declared explicitly as Relationships.
+Defines the project's domain models, their purposes, relationships, and rules.
 
 ### Trading Platform
 
@@ -36,6 +46,8 @@ Purpose: Defines a tradable asset and its related parameters, such as EURUSD or 
 Purpose: Defines the broker-specific settings for an asset, allowing the same asset to have different settings for different brokers.
 
 Relationships: Belongs to one Broker and one Asset.
+
+Rules: Only one Asset Detail may exist for each Broker and Asset pair.
 
 ### Strategy
 
@@ -71,15 +83,11 @@ Purpose: Defines a trading action within an action group by combining an asset, 
 
 Relationships: Belongs to one Action Group, one Asset, one Account, and one Strategy.
 
-### Execute
-
-Purpose: Tracks actions that have been activated and executed, including the profit and current stage and state of each execution.
-
-Relationships: Belongs to one Action.
-
 ### Position
 
-Purpose: Stores the complete information for a position created from an executed order, including its entry price, take profit, stop loss, and the settings applied through its related groups.
+Purpose: Tracks a trading action after it has been activated and executed, storing complete position information including its profit, current stage and state, entry price, take profit, stop loss, and the settings applied through its related groups.
+
+Relationships: Belongs to one Action.
 
 <br><br>
 

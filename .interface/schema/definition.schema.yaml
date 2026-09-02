@@ -1,12 +1,13 @@
 schema:
   id: agent-interface-definition
-  version: "2.0"
+  version: "2.5"
   purpose: "The shape of definition.yaml — every parameter an agent reads to understand what the product is"
   phase_model: "Project phases are the primary units of planning, development, review, and progress. A phase's target selects the item configuration, Policy, contracts, and code_path used for that phase. Any number of phases may target the same item."
 
 structure:
   - identity
   - goals
+  - models
   - architecture
   - phases
 
@@ -17,20 +18,47 @@ sections:
     required: true
     purpose: "Who the product is — set by the human, never inferred."
     fields:
-      id:
-        required: true
-        purpose: "The product's identifier — short, stable, machine-readable."
       name:
         required: true
         purpose: "The product's human-readable name."
-      one_liner:
+      description:
         required: true
-        purpose: "One sentence naming the product's promise — everything the product must eventually make true."
+        purpose: "The product description stated by the human in project.md, copied faithfully without reinterpretation."
 
   # <!--------------------------------------------------------------------------------- Goals -->
   goals:
     required: true
-    purpose: "What a user can do when the product is finished — one capability per line, and the list every task traces back to; a goal no contract can satisfy is raised as an open question, never fixed here."
+    purpose: "What a user can do when the product is finished — one capability per line, copied faithfully from project.md. Project phases translate these product capabilities into ordered implementation goals."
+
+  # <!--------------------------------------------------------------------------------- Models -->
+  models:
+    required: true
+    purpose: "The project's domain entities, preserved independently of any target item's technical representation. Database columns, foreign keys, indexes, and storage details do not live here."
+    fields:
+      "<model>":
+        required: true
+        purpose: "One domain model from project.md. Its key is the model heading normalized to lower_snake_case, and entries remain in project order."
+        fields:
+          purpose:
+            required: true
+            purpose: "What the model represents, copied faithfully from the model's Purpose in project.md."
+          relationships:
+            required: true
+            purpose: "The model's conceptual relationships, empty when none are declared. Physical foreign-key fields are resolved only by the owning target item."
+            fields:
+              "<relationship>":
+                required: false
+                purpose: "One relationship declared by the project."
+                fields:
+                  type:
+                    required: true
+                    purpose: "The relationship kind stated by the project, such as belongs_to."
+                  target:
+                    required: true
+                    purpose: "The related model key, normalized by the same rule as model keys."
+          rules:
+            required: true
+            purpose: "Model-specific domain rules stated by the project, empty when none are declared. These express meaning and constraints without prescribing database fields."
 
   # <!--------------------------------------------------------------------------------- Architecture -->
   architecture:
@@ -40,9 +68,6 @@ sections:
       shape:
         required: true
         purpose: "The whole architecture in one sentence — how many parts, and what joins them."
-      reason:
-        required: true
-        purpose: "Why this shape — what it buys the build."
       parts:
         required: true
         purpose: "One entry per target item referenced by at least one project phase — its fields below. An available item type with no targeting phase does not enter the generated Understanding."
