@@ -1,0 +1,103 @@
+meta:
+  path: ".interface/config/definition.yaml"
+  path_note: "Generated project Understanding derived from .interface/project.md."
+
+policy:
+  agent_may_edit: true
+  changed_by: "my-interface-interpreter during an explicit generation or reconciliation run; otherwise the human."
+  source_of_truth: ".interface/project.md supplies project intent and facts; mapped Schemas supply structure and meaning."
+  preservation: "No Skill other than my-interface-interpreter rewrites this generated definition."
+
+read_order:
+  - "identity"
+  - "goals"
+  - "architecture"
+  - "phases"
+
+content_map:
+  identity: "The Trading Assistant identity and promise."
+  goals: "The user-visible capabilities stated by the project definition."
+  architecture: "The three independent items and their directed contract relationships."
+  phases: "The ordered implementation phases copied from project.md."
+
+content:
+  identity:
+    id: "trading-assistant"
+    name: "Trading Assistant"
+    one_liner: "A platform for defining and managing trading information, strategies, actions, executions, positions, and related data."
+
+  goals:
+    - "Define and manage trading platforms and their trading integrations."
+    - "Define brokers and the trading accounts that belong to them."
+    - "Define tradable assets and trading strategies."
+    - "Define trailing and partial-position rules grouped by their operating purpose."
+    - "Define action groups and trading actions that combine assets, accounts, and strategies."
+    - "Track activated executions and the positions created through trading activity."
+    - "Persist all defined project models and expose them through an HTTP API."
+
+  architecture:
+    shape: "Three independent items connected by two directed versioned contracts: Database to Backend to Frontend."
+    reason: "Each item owns one concern and consumers depend on published contracts instead of another item's implementation."
+    parts:
+      database:
+        responsibility: "Own persistent storage, schema evolution, and the database contract."
+        owns:
+          - "Database engine and physical storage"
+          - "Tables, columns, constraints, indexes, and relationships"
+          - "Ordered reversible migrations"
+          - "Database contract versions"
+        does_not_own:
+          - "Backend ORM behavior or HTTP API behavior"
+          - "Frontend code"
+          - "Deployment secrets"
+        produces:
+          - ".interface/config/database.yaml — content.contracts"
+      backend:
+        responsibility: "Run application behavior and publish the HTTP API while consuming the database contract."
+        owns:
+          - "Backend application code and business behavior"
+          - "Runtime database client and ORM mappings"
+          - "HTTP API contract versions"
+        does_not_own:
+          - "Database engine, storage, schema, or migrations"
+          - "Frontend pages or components"
+        produces:
+          - ".interface/config/backend.yaml — content.contracts"
+        consumes:
+          - ".interface/config/database.yaml — content.contracts"
+      frontend:
+        responsibility: "Provide the user interface by consuming the backend API contract."
+        owns:
+          - "Pages, components, browser-side behavior, styles, and backend client integration"
+        does_not_own:
+          - "Backend implementation or business behavior"
+          - "Any part of the database item"
+        consumes:
+          - ".interface/config/backend.yaml — content.contracts"
+    connections:
+      database_to_backend:
+        from: "database"
+        to: "backend"
+        contract: "database-v1"
+        path: ".interface/config/database.yaml — content.contracts.database-v1"
+        rule: "The database contract is the only schema connection; the backend never reads migrations or database files to infer it."
+        versioning: "A frozen contract never changes; a change creates a new version."
+      backend_to_frontend:
+        from: "backend"
+        to: "frontend"
+        contract: "backend-v1"
+        path: ".interface/config/backend.yaml — content.contracts.backend-v1"
+        rule: "The backend API contract is the only application-data connection; the frontend never imports backend implementation code."
+        versioning: "A frozen contract never changes; a change creates a new version."
+
+  phases:
+    - id: "P1"
+      title: "Database"
+      order: 1
+      target: "database"
+      goal: "Create the database schema and migrations for all defined project models."
+    - id: "P2"
+      title: "Backend API"
+      order: 2
+      target: "backend"
+      goal: "Create and run the API for all defined project models."

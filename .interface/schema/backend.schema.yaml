@@ -1,7 +1,73 @@
 schema:
   id: agent-interface-backend
-  version: "1.4"
+  version: "2.0"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
+
+policy:
+  preference_resolution:
+    rule: "An explicit project value always wins. When a supported backend technical choice is unstated, resolve it from backend preferences. Ambiguous or conflicting information is an open question and is never resolved from a preference."
+    resolved_by: "my-interface-interpreter only; downstream Skills consume the resolved backend configuration and never reinterpret preferences."
+  database_boundary: "The backend never owns the database engine, storage, schema, or migrations. It consumes the frozen database contract and owns only its runtime connection, ORM mappings, and database client packages."
+  package_resolution: "Resolve runtime packages from the selected language, API framework, ORM, and database contract through an explicitly supported compatibility entry; an unknown combination is an open question, never a package guessed from model knowledge."
+
+preferences:
+  defaults:
+    enabled: true
+    code_path: "backend/"
+    needs_test: false
+    responsibility: "Runs application behavior and publishes the HTTP API while consuming the database contract."
+    language: "Python"
+  languages:
+    Python:
+      version: "latest"
+      environment:
+        name: "uv"
+        version: "latest"
+      naming:
+        variables: "snake_case"
+        functions: "snake_case"
+        classes: "PascalCase"
+        constants: "UPPER_SNAKE_CASE"
+        files: "snake_case"
+        folders: "snake_case"
+      defaults:
+        api_framework: "FastAPI"
+        orm: "SQLAlchemy"
+  api_frameworks:
+    FastAPI:
+      version: "latest"
+      run: "uv run fastapi dev app/main.py"
+      application:
+        entrypoint: "app/main.py"
+        documentation:
+          default_enabled: true
+          type: "Docs"
+          docs_path: "/docs"
+          openapi_path: "/openapi.json"
+          redoc_enabled: false
+  orms:
+    SQLAlchemy:
+      version: "latest"
+  database_integrations:
+    Python:
+      SQLAlchemy:
+        SQLite:
+          driver: "Python sqlite3 standard library"
+          packages: []
+          url_scheme: "sqlite"
+  capabilities:
+    testing:
+      default_enabled: false
+    error_handling:
+      default_enabled: false
+    logging:
+      default_enabled: false
+    authentication:
+      default_enabled: false
+    https:
+      default_enabled: false
+    api_documentation:
+      default_enabled: true
 
 structure:
   - enabled
@@ -12,6 +78,7 @@ structure:
   - verify_cwd
   - responsibility
   - tech
+  - database_connection
   - standards
   - capabilities
   - code_layout
@@ -105,16 +172,16 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
-              migration:
-                required: true
-                purpose: "The tool that carries the database schema from one version to the next — the only way the schema changes."
+              database_driver:
+                required: false
+                purpose: "The runtime adapter required by the resolved database contract and ORM combination; absent when the selected language provides it."
                 fields:
                   name:
                     required: true
-                    purpose: "The migration tool."
+                    purpose: "The adapter package or built-in driver."
                   version:
-                    required: true
-                    purpose: "Its version."
+                    required: false
+                    purpose: "The adapter version when a package is installed."
               "<package>":
                 required: false
                 purpose: "One entry per further package the project names — same two fields, set by the human, never inferred by an agent from the code."
@@ -125,12 +192,30 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
-      database:
-        required: true
-        purpose: "The data engine, where the data physically lives, who owns the schema, and the only permitted route to it."
       run:
         required: true
         purpose: "The command that starts the backend."
+
+  # <!--------------------------------------------------------------------------------- Database_Connection -->
+  database_connection:
+    required: true
+    purpose: "The backend's resolved connection to the independent database item — a contract reference and runtime adapter, never database ownership or schema definition."
+    fields:
+      item:
+        required: true
+        purpose: "The database item key."
+      contract:
+        required: true
+        purpose: "The frozen database contract version the backend consumes."
+      config_path:
+        required: true
+        purpose: "The mapped database configuration that publishes the contract."
+      adapter:
+        required: true
+        purpose: "The resolved runtime driver and package requirements for the selected backend stack."
+      url_source:
+        required: true
+        purpose: "Where the backend reads its connection URL or path at runtime; credentials and deployment values are never committed."
 
   # <!--------------------------------------------------------------------------------- Standards -->
   standards:
@@ -206,16 +291,19 @@ sections:
   # <!--------------------------------------------------------------------------------- Code_Layout -->
   code_layout:
     required: true
-    purpose: "Every path inside code_path and what it holds — the key is the path, the value is its responsibility in one line; a folder ends with a slash, a file carries its extension. Entry point, configuration, database access, models, validation schemas, services, routes, errors, migrations, and tests each have their own place."
+    purpose: "Every path inside code_path and what it holds — the key is the path, the value is its responsibility in one line; a folder ends with a slash, a file carries its extension. Entry point, configuration, database client access, ORM mappings, validation schemas, services, routes, errors, and tests each have their own place. Database schema and migrations never appear here."
 
   # <!--------------------------------------------------------------------------------- Contracts -->
   contracts:
     required: true
-    purpose: "The backend's only connection to the other items — the contract it publishes."
+    purpose: "The backend's contract surface — the database contract it consumes and the API contract it publishes."
     fields:
       produces:
         required: true
         purpose: "The contract version the backend publishes."
+      consumes:
+        required: true
+        purpose: "The frozen database contract the backend consumes and the mapped path that publishes it."
       rule:
         required: true
         purpose: "What the contract binds the backend to — the implementation must match the frozen contract exactly."
@@ -258,10 +346,10 @@ sections:
     fields:
       owns:
         required: true
-        purpose: "What belongs to the backend — its code and the whole database schema."
+        purpose: "What belongs to the backend — its application code, runtime database client and ORM mappings, business behavior, and API contract."
       does_not_own:
         required: true
-        purpose: "What is explicitly not the backend's, however close it sits — client code."
+        purpose: "What is explicitly not the backend's, including frontend code and the database engine, storage, schema, and migrations."
       interface:
         required: true
         purpose: "The only thing the backend offers the outside — its contract."

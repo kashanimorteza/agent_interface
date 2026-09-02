@@ -18,7 +18,7 @@ This guide defines the Developer's shared defaults for `my-interface-tasker`. Th
 
 - Use the generated Understanding to determine what the requested project phases mean and what their target item must accomplish.
 - Use the current Task file and its governing Schema to determine how planning output is structured, while the live State contract and file policies determine what this Skill may change.
-- Use current rules, item configuration, and contracts as implementation constraints and verification context. They refine how authorized work is planned; they do not create additional project requirements.
+- Use the selected item's current Policy, resolved configuration, and contracts as implementation constraints and verification context. They refine how authorized work is planned; they do not create additional project requirements.
 - Treat existing plans and generated configuration as stateful material to reconcile and preserve according to their live ownership, not as disposable output to regenerate blindly.
 
 ## Role Discipline

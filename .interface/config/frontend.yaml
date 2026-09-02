@@ -1,0 +1,115 @@
+meta:
+  path: ".interface/config/frontend.yaml"
+  path_note: "Generated Frontend item configuration awaiting a frozen Backend API contract."
+
+policy:
+  agent_may_edit: true
+  changed_by: "my-interface-interpreter during generation; my-interface-tasker may refine settings and draft contracts during planning."
+  preference_source: ".interface/schema/frontend.schema.yaml — policy and preferences"
+  contract_authority: "Only the human may freeze or version a contract; a frozen contract is never edited."
+  backend_boundary: "Frontend consumes the frozen Backend contract and never imports Backend implementation or connects directly to Database."
+
+read_order:
+  - "enabled"
+  - "code_path"
+  - "summary"
+  - "tech"
+  - "standards"
+  - "capabilities"
+  - "code_layout"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+content_map:
+  enabled: "Whether Frontend participates in the build."
+  code_path: "The only project-code directory owned by Frontend."
+  code_path_note: "How code_path is resolved."
+  summary: "Frontend in one line."
+  needs_test: "Whether every code-producing Frontend task requires a written test."
+  verify_cwd: "Where Frontend verification commands run."
+  responsibility: "What Frontend is answerable for."
+  tech: "Resolved language, library, framework, package manager, and run command."
+  standards: "Resolved Frontend conventions."
+  capabilities: "Optional Frontend behavior."
+  code_layout: "The intended ownership of paths inside code_path."
+  contracts: "The Backend API contract consumed by Frontend."
+  boundaries: "Frontend ownership limits."
+  out_of_scope: "Work excluded from Frontend."
+
+content:
+  enabled: true
+  code_path: "frontend/"
+  code_path_note: "Relative to the repository root, never relative to .interface/."
+  summary: "A Next.js user interface that consumes the Trading Assistant backend contract."
+  needs_test: false
+  verify_cwd: "frontend/ through npm"
+  responsibility: "Provide the user interface and consume the Backend API contract."
+
+  tech:
+    language:
+      name: "TypeScript"
+      version: "latest"
+    library:
+      name: "React"
+      version: "latest"
+    framework:
+      name: "Next.js"
+      version: "latest"
+      router: "App Router"
+    package_manager:
+      name: "npm"
+      version: "latest"
+    run: "npm run dev"
+
+  standards:
+    naming:
+      variables: "camelCase"
+      functions: "camelCase"
+      classes: "PascalCase"
+      components: "PascalCase"
+      constants: "UPPER_SNAKE_CASE"
+      files: "kebab-case"
+      folders: "kebab-case"
+    component_style: "Function components"
+
+  capabilities:
+    logging:
+      enabled: false
+
+  code_layout:
+    "package.json": "Frontend scripts and exact npm-managed dependencies."
+    "next.config.ts": "Next.js configuration."
+    "app/": "App Router pages, layouts, and route-level UI."
+    "components/": "Reusable React function components."
+    "lib/api/": "Typed client integration against frozen backend-v1."
+    "styles/": "Frontend styling."
+    "tests/": "Frontend tests when needs_test becomes true."
+
+  contracts:
+    produces: "none"
+    consumes:
+      contract: "backend-v1"
+      path: ".interface/config/backend.yaml — content.contracts.backend-v1"
+      required_lifecycle: "frozen"
+      current_lifecycle: "draft"
+      blocked_by: "B2"
+    rule: "Frontend client integration must match frozen backend-v1 exactly and may not infer routes from Backend code."
+    change_rule: "A frozen consumed contract is versioned by its owner, never edited by Frontend."
+
+  boundaries:
+    owns:
+      - "Next.js pages and layouts"
+      - "React components and browser-side behavior"
+      - "Typed client integration with backend-v1"
+      - "Frontend styles"
+    does_not_own:
+      - "Backend application behavior or implementation"
+      - "Database engine, storage, schema, migrations, or contract"
+    interface: "No published contract is currently required; Frontend consumes backend-v1."
+
+  out_of_scope:
+    - "Direct Database access"
+    - "Backend implementation"
+    - "Frontend feature screens not stated by project.md"
+    - "A Frontend implementation phase, because project.md currently defines none"

@@ -1,6 +1,6 @@
 ---
 name: my-interface-reviewer
-description: Verify the implemented result for the project scope named by the Developer against its current plan, generated Understanding, contracts, rules, and required evidence. Reports findings but never repairs the result.
+description: Verify the implemented result for the project scope named by the Developer against its current plan, generated Understanding, item Policy, contracts, and required evidence. Reports findings but never repairs the result.
 argument-hint: "[phase-id]"
 disable-model-invocation: true
 ---
@@ -15,7 +15,7 @@ Before performing any other step, read [references/developer-guide.md](reference
 
 ## Refresh context before reviewing
 
-1. Follow the live map to read the current State contract, generated Understanding, authorized plan, task standard and Schema, rules, contracts, implementation locations, and verification evidence needed for this invocation.
+1. Follow the live map to read the current State contract, generated Understanding, authorized plan, task standard and Schema, the selected item's Policy, contracts, implementation locations, and verification evidence needed for this invocation.
 2. Resolve `$ARGUMENTS` only from the current generated Understanding and plan.
 
 ## Review

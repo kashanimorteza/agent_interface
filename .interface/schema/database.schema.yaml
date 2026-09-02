@@ -1,0 +1,255 @@
+schema:
+  id: agent-interface-database
+  version: "1.0"
+  purpose: "The shape of database.yaml — every parameter an agent reads to understand the independent database item"
+
+policy:
+  preference_resolution:
+    rule: "An explicit project value always wins. When a supported database technical choice is unstated, resolve it from database preferences. Ambiguous or conflicting information is an open question and is never resolved from a preference."
+    resolved_by: "my-interface-interpreter only; downstream Skills consume the resolved database configuration and never reinterpret preferences."
+  ownership: "The database item alone owns its engine choice, physical storage, schema, constraints, indexes, migration history, and database contract."
+  schema_changes: "Every schema change is expressed by an ordered reversible migration. Backend code never creates, alters, or drops database objects directly."
+  contract_boundary: "Consumers use only a frozen database contract and runtime connection information; they never infer schema from migrations or database files."
+
+preferences:
+  defaults:
+    enabled: true
+    code_path: "database/"
+    needs_test: false
+    responsibility: "Owns persistent storage, schema evolution, and the database contract consumed by the backend."
+    engine: "SQLite"
+    migration_tool: "Alembic"
+  engines:
+    SQLite:
+      version: "runtime-provided"
+      storage:
+        kind: "file"
+        path: "app.db"
+      connection:
+        url_scheme: "sqlite"
+        foreign_keys: true
+        check_same_thread: false
+      naming:
+        tables: "snake_case"
+        columns: "snake_case"
+        constraints: "snake_case"
+        indexes: "ix_<table>_<column>"
+  migration_tools:
+    Alembic:
+      version: "latest"
+      language: "Python"
+      environment:
+        name: "uv"
+        version: "latest"
+      packages:
+        migration:
+          name: "Alembic"
+          version: "latest"
+        schema_toolkit:
+          name: "SQLAlchemy"
+          version: "latest"
+      commands:
+        upgrade: "uv run alembic upgrade head"
+        downgrade: "uv run alembic downgrade -1"
+  capabilities:
+    testing:
+      default_enabled: false
+    seed_data:
+      default_enabled: false
+    backups:
+      default_enabled: false
+
+structure:
+  - enabled
+  - code_path
+  - code_path_note
+  - summary
+  - needs_test
+  - verify_cwd
+  - responsibility
+  - tech
+  - standards
+  - capabilities
+  - code_layout
+  - contracts
+  - boundaries
+  - out_of_scope
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Enabled -->
+  enabled:
+    required: true
+    purpose: "Whether the database item is in play — false leaves the entry standing and takes the item out of the build."
+
+  # <!--------------------------------------------------------------------------------- Code_Path -->
+  code_path:
+    required: true
+    purpose: "The folder holding database-owned migrations, tooling, and local storage — the one place this item may write."
+
+  # <!--------------------------------------------------------------------------------- Code_Path_Note -->
+  code_path_note:
+    required: true
+    purpose: "Explains what code_path is relative to, so it is never read as a path inside the Interface."
+
+  # <!--------------------------------------------------------------------------------- Summary -->
+  summary:
+    required: true
+    purpose: "The database item in one line — read before any of its settings."
+
+  # <!--------------------------------------------------------------------------------- Needs_Test -->
+  needs_test:
+    required: true
+    purpose: "Whether every task that changes database behavior is proven by a written test."
+
+  # <!--------------------------------------------------------------------------------- Verify_Cwd -->
+  verify_cwd:
+    required: true
+    purpose: "The directory and isolated environment in which every database verification command runs."
+
+  # <!--------------------------------------------------------------------------------- Responsibility -->
+  responsibility:
+    required: true
+    purpose: "What the database item is answerable for — persistent storage, schema evolution, and its published contract."
+
+  # <!--------------------------------------------------------------------------------- Tech -->
+  tech:
+    required: true
+    purpose: "The resolved database engine, storage, migration environment, and packages."
+    fields:
+      engine:
+        required: true
+        purpose: "The database engine and version."
+        fields:
+          name:
+            required: true
+            purpose: "The engine name."
+          version:
+            required: true
+            purpose: "The engine version or the runtime that supplies it."
+      storage:
+        required: true
+        purpose: "Where and how database state is physically stored."
+        fields:
+          kind:
+            required: true
+            purpose: "The storage kind, such as file or server."
+          location:
+            required: true
+            purpose: "The project-relative local path or deployment-owned location description; secrets are never committed."
+      connection:
+        required: true
+        purpose: "Engine-specific connection behavior published to consumers without credentials."
+      migration:
+        required: true
+        purpose: "The one migration tool, its isolated environment, packages, and commands."
+        fields:
+          tool:
+            required: true
+            purpose: "The migration tool and version."
+          environment:
+            required: true
+            purpose: "The isolated environment used only for database tooling."
+          packages:
+            required: true
+            purpose: "The exact packages installed for migration and schema tooling."
+          commands:
+            required: true
+            purpose: "The canonical upgrade, downgrade, and verification commands."
+
+  # <!--------------------------------------------------------------------------------- Standards -->
+  standards:
+    required: true
+    purpose: "The resolved conventions for tables, columns, constraints, indexes, and migrations."
+    fields:
+      naming:
+        required: true
+        purpose: "The database object naming conventions."
+      migrations:
+        required: true
+        purpose: "Ordering, reversibility, and history rules for schema changes."
+
+  # <!--------------------------------------------------------------------------------- Capabilities -->
+  capabilities:
+    required: true
+    purpose: "The resolved state of optional database capabilities; testing has its own switch in needs_test."
+    fields:
+      seed_data:
+        required: true
+        purpose: "Whether managed seed data is part of the database item."
+        fields:
+          enabled:
+            required: true
+            purpose: "The resolved seed-data switch."
+      backups:
+        required: true
+        purpose: "Whether backup and restore automation is part of the database item."
+        fields:
+          enabled:
+            required: true
+            purpose: "The resolved backup switch."
+
+  # <!--------------------------------------------------------------------------------- Code_Layout -->
+  code_layout:
+    required: true
+    purpose: "Every path inside database code_path and what it owns — migration configuration, ordered versions, schema metadata, tests, and local storage. Backend application files never appear here."
+
+  # <!--------------------------------------------------------------------------------- Contracts -->
+  contracts:
+    required: true
+    purpose: "The database contract published to backend consumers."
+    fields:
+      produces:
+        required: true
+        purpose: "The database contract version this item publishes."
+      rule:
+        required: true
+        purpose: "The implemented schema and the published contract must match exactly."
+      change_rule:
+        required: true
+        purpose: "A frozen database contract is versioned, never edited; a change means a new version and migrations between versions."
+      "<version>":
+        required: true
+        purpose: "One database contract version — engine-independent meaning plus the exact schema surface consumers may use."
+        fields:
+          lifecycle:
+            required: true
+            purpose: "Where the contract stands — draft, frozen, or deprecated."
+          lifecycle_note:
+            required: true
+            purpose: "What the lifecycle permits and what a change costs."
+          consumed_by:
+            required: true
+            purpose: "The backend item or items consuming this contract."
+          engine:
+            required: true
+            purpose: "The resolved engine assumptions that affect consumers."
+          connection:
+            required: true
+            purpose: "The credential-free connection shape and runtime configuration source."
+          tables:
+            required: true
+            purpose: "The tables, columns, types, nullability, keys, references, constraints, and indexes exposed by this version."
+          migrations:
+            required: true
+            purpose: "The migration range that realizes this contract version."
+
+  # <!--------------------------------------------------------------------------------- Boundaries -->
+  boundaries:
+    required: true
+    purpose: "The limits of the database item."
+    fields:
+      owns:
+        required: true
+        purpose: "The engine choice, storage, schema, constraints, indexes, migrations, and database contract."
+      does_not_own:
+        required: true
+        purpose: "Backend ORM behavior, API behavior, frontend code, and deployment secrets."
+      interface:
+        required: true
+        purpose: "The frozen database contract and credential-free connection requirements offered to the backend."
+
+  # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    required: true
+    purpose: "What the database item does not do — named so it is never inferred into a task."

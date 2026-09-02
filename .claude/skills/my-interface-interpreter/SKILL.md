@@ -1,6 +1,6 @@
 ---
 name: my-interface-interpreter
-description: Translate the human-managed target-project definition into the generated Agent Interface Understanding using the current Interface map, Schemas, and applicable Preferences. Use for explicit generation, refresh, or reconciliation requests.
+description: Translate the human-managed target-project definition into the generated Agent Interface Understanding using the current Interface map and each item's Schema, Policy, and Preferences. Use for explicit generation, refresh, or reconciliation requests.
 disable-model-invocation: true
 ---
 
@@ -41,11 +41,11 @@ Transform the Developer's target-project definition into the structured Understa
 ## Refresh context before interpreting
 
 1. Resolve the human-managed project-definition file from the live map and read it completely.
-2. Follow the map to read the current Schemas, applicable Preferences, existing generated files, live State contract, and policies required for this interpretation.
+2. Follow the map to read each current item Schema with its local Policy and Preferences, existing generated files, the live State contract, and every other policy required for this interpretation.
 
 ## Interpret
 
-Take target-project intent and facts only from the current human-managed definition. Take output structure and meaning from the current mapped Schemas. Use current mapped Preferences only for supported technical defaults when the definition leaves the corresponding choice unstated. Derive relationships, validation, permissions, preservation rules, and state behavior only from their current mapped authorities.
+Take target-project intent and facts only from the current human-managed definition. Take output structure and meaning from the current mapped Schemas. Enforce the selected item's local Policy, and use its local Preferences only for supported technical defaults when the definition leaves the corresponding choice unstated. Derive relationships, validation, permissions, preservation rules, and state behavior only from their current mapped authorities.
 
 Generate only the Understanding those authorities support and authorize. Preserve the stated meaning without copying prose mechanically, inventing decisions, or overwriting protected or human-owned values.
 

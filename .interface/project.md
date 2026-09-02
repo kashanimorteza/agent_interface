@@ -7,6 +7,14 @@ Defines what the project is and the main parts that make up the system.
 
 <br><br>
 
+## Structure
+
+- **Database** — owns persistent storage, schema, and migrations.
+- **Backend** — manages application behavior and publishes the HTTP API by consuming the Database contract.
+- **Frontend** — provides the user interface by consuming the Backend API contract.
+
+<br><br>
+
 ## Models
 
 Defines the core entities of the project and the data fields that belong to each entity.
@@ -96,6 +104,14 @@ Fields: ID, Name, Entry Price, Take Profit, Stop Loss, Status, Description
 Defines the project's implementation phases. Phases are executed step by step in their defined order, with each phase representing the next intended stage of project development.
 
 ### Phase 1
+
+**Title:** Database
+
+**Target:** Database
+
+**Goal:** Create the database schema and migrations for all defined project models.
+
+### Phase 2
 
 **Title:** Backend API  
 **Target:** Backend

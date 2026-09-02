@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "2.1"
+  version: "2.2"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
   authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
@@ -149,7 +149,7 @@ sections:
           - "The answer to any open question in state.yaml"
           - "Freezing or versioning a contract — see the change_rule in the item files"
           - "Confirming an item's phase_titles — see content.plans.<item>.phase_titles_lifecycle in task.yaml"
-          - "The content of config/definition.yaml and config/rules.yaml, outside a my-interface-interpreter run"
+          - "The content of config/definition.yaml, outside a my-interface-interpreter run"
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
           - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
           - "The State Authority itself, after its seed — this section, and its default in schema/state.schema.yaml"

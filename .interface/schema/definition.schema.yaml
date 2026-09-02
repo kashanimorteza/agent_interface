@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-definition
-  version: "1.1"
+  version: "1.2"
   purpose: "The shape of definition.yaml — every parameter an agent reads to understand what the product is"
 
 structure:
@@ -34,7 +34,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Architecture -->
   architecture:
     required: true
-    purpose: "The parts of the product, what each owns, and the single connection point between them."
+    purpose: "The parts of the product, what each owns, and the directed contract connections between them."
     fields:
       shape:
         required: true
@@ -65,19 +65,32 @@ sections:
               consumes:
                 required: false
                 purpose: "The contracts this part reads, and where they live — on a consuming part."
-      connection:
+      connections:
         required: true
-        purpose: "The single bridge between the parts."
+        purpose: "The directed contract graph between architecture items — one entry per producer-to-consumer connection."
         fields:
-          path:
+          "<connection>":
             required: true
-            purpose: "Where the contract lives — the one place a part looks for it."
-          rule:
-            required: true
-            purpose: "The contract is the only connection point — no part reaches into another by any other route."
-          versioning:
-            required: true
-            purpose: "How the contract may change — a frozen contract never changes; a change means a new version."
+            purpose: "One directed connection, named for its producer and consumer."
+            fields:
+              from:
+                required: true
+                purpose: "The architecture item publishing the contract."
+              to:
+                required: true
+                purpose: "The architecture item consuming the contract."
+              contract:
+                required: true
+                purpose: "The published contract and version used by the consumer."
+              path:
+                required: true
+                purpose: "Where the contract lives — the one mapped place the consumer reads."
+              rule:
+                required: true
+                purpose: "The contract is the only connection point; neither item reaches into the other's implementation."
+              versioning:
+                required: true
+                purpose: "A frozen contract never changes; a change means a new version."
 
   # <!--------------------------------------------------------------------------------- Phases -->
   phases:

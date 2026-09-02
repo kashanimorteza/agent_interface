@@ -15,7 +15,7 @@ Before performing any other step, read [references/developer-guide.md](reference
 
 ## Refresh context
 
-1. Follow the live map to read the current State contract, generated Understanding, Task file and governing Schema, rules, and the mapped item configuration required for this invocation.
+1. Follow the live map to read the current State contract, generated Understanding, Task file and governing Schema, the selected item's Policy, and the mapped item configuration and contracts required for this invocation.
 2. Resolve the requested item in `$ARGUMENTS` only from the current generated Understanding. Do not infer scope from active state, an available task, a prior run, or memory.
 3. Enter and record this Skill's working mode only as the live State contract permits, for the requested item and no other.
 4. Determine unfinished eligible tasks only from that item's current plan, task definitions, states, dependencies, contracts, and protocols.

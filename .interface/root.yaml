@@ -3,7 +3,7 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "1.6"
+  version: "1.7"
   updated: "2026-09-02"
 
 
@@ -45,17 +45,9 @@ content:
       path: ".interface/project.md"
       responsibility: "Human-readable project definition provided by the Developer"
 
-    preferences:
-      path: ".interface/preferences/"
-      responsibility: "Human-owned development structure, defaults, and conditional preferences used only when project.md leaves a supported choice unstated"
-
-      files:
-        - path: "develop.yaml"
-          responsibility: "Default backend/frontend project structure plus programming preferences and conditional defaults; explicit project.md values always take precedence"
-
     schema:
       path: ".interface/schema/"
-      responsibility: "Defines the structure and format of each Interface file"
+      responsibility: "Defines generated-file shapes and, for each project item, owns that item's policy and technical preferences"
 
       files:
         - path: "file.schema.yaml"
@@ -64,9 +56,6 @@ content:
         - path: "definition.schema.yaml"
           responsibility: "Defines the structure and format of definition.yaml"
 
-        - path: "rules.schema.yaml"
-          responsibility: "Defines the structure and format of rules.yaml"
-
         - path: "task.schema.yaml"
           responsibility: "Defines the structure and format of task.yaml"
 
@@ -74,10 +63,13 @@ content:
           responsibility: "Defines the structure and format of state.yaml — the State contract — and the default State Authority seeded into every newly created state.yaml"
 
         - path: "backend.schema.yaml"
-          responsibility: "Defines the structure and format of backend.yaml"
+          responsibility: "Defines backend.yaml plus Backend policy and preferences"
 
         - path: "frontend.schema.yaml"
-          responsibility: "Defines the structure and format of frontend.yaml"
+          responsibility: "Defines frontend.yaml plus Frontend policy and preferences"
+
+        - path: "database.schema.yaml"
+          responsibility: "Defines database.yaml plus Database policy and preferences"
 
     config:
       path: ".interface/config/"
@@ -86,9 +78,6 @@ content:
       files:
         - path: "definition.yaml"
           responsibility: "Project definition in structured format"
-
-        - path: "rules.yaml"
-          responsibility: "Project and Agent rules"
 
         - path: "task.yaml"
           responsibility: "Project tasks and plans"
@@ -102,6 +91,9 @@ content:
         - path: "frontend.yaml"
           responsibility: "Frontend project configuration"
 
+        - path: "database.yaml"
+          responsibility: "Database project configuration and the database contract consumed by the backend"
+
 
   # <!-------------------------------------------- Modes -->
   modes:
@@ -114,14 +106,14 @@ content:
       purpose: "Decide what will be built and in what order — no product code is written"
       owned_by: "my-interface-tasker"
       may_write:
-        - ".interface/config/backend.yaml and config/frontend.yaml — settings and draft contracts, never a frozen contract"
+        - ".interface/config/backend.yaml, config/frontend.yaml, and config/database.yaml — settings and draft contracts, never a frozen contract"
         - ".interface/config/task.yaml — an item's phase_titles, phase_titles_lifecycle and phase_titles_derived_from while that lifecycle is empty or derived, and the phases of that item's plan"
         - ".interface/config/state.yaml — active, per transitions S1 and S4 in its own content.state_authority, and blockers and open questions"
       may_not_write:
         - "Any file under an item's code_path"
         - "A frozen contract"
         - "phase_titles, and its lifecycle, once the human has set that lifecycle to confirmed"
-        - "root.yaml, .interface/config/definition.yaml, .interface/config/rules.yaml, and schema/"
+        - "root.yaml, .interface/config/definition.yaml, and schema/"
 
     development:
       purpose: "Implement the tasks that planning defined"
@@ -134,7 +126,7 @@ content:
         - "Another item's code_path"
         - "A frozen contract"
         - "task_schema, task_states, phase_titles, phase_titles_lifecycle, phase_titles_derived_from, and every field of a task other than status, blocker, and log"
-        - "root.yaml, .interface/config/definition.yaml, .interface/config/rules.yaml, the item files, and schema/"
+        - "root.yaml, .interface/config/definition.yaml, the item files, and schema/"
       plan_change: "Changing a task requires the reason written into that task's log and human approval"
 
     review:
@@ -152,7 +144,7 @@ content:
     interpreter:
       name: "my-interface-interpreter"
       path: ".claude/skills/my-interface-interpreter/"
-      responsibility: "Understands project.md and generates the project configuration according to the Schemas"
+      responsibility: "Understands project.md, resolves each item's local policy and preferences, and generates project configuration according to the Schemas"
       state: "Runs outside the modes — transitions S0, S7, and S8. S0 creates state.yaml with content.state_authority seeded verbatim from the default in schema/state.schema.yaml; a regeneration carries the existing active values and the live State Authority through untouched"
 
     tasker:

@@ -33,13 +33,29 @@ Agent Interface provides the communication layer between these two worlds.
 
 The core of Agent Interface is located in the `.interface/` directory.
 
-The `.interface/` directory contains five main parts:
+The `.interface/` directory contains four main parts:
 
 - **`root.yaml`** — The entry point. Maps the folders and files of the Interface, the Agent Skills, and the working modes.
 - **`project.md`** — The project definition and the Developer's requirements, in natural language.
-- **`preferences/`** — Human-owned development structure and technical defaults used only when `project.md` leaves a supported choice unstated.
-- **`schema/`** — Defines the standard structure and format of information.
+- **`schema/`** — Defines generated-file shapes. Each item Schema also owns that item's Policy and Preferences.
 - **`config/`** — Represents and maintains the project's Understanding according to the Schema.
+
+The project currently has three independent items:
+
+- **Database** — owns the database engine, storage, schema, migrations, and database contract.
+- **Backend** — consumes the database contract and publishes the HTTP API contract.
+- **Frontend** — consumes the backend API contract and publishes the user interface.
+
+Their directed relationship is:
+
+`Database → Backend → Frontend`
+
+Each item keeps two kinds of guidance beside its own Schema:
+
+- **Policy** is mandatory and cannot be overridden by a project preference.
+- **Preferences** supply supported technical choices only when `project.md` leaves the corresponding choice unstated. Explicit project values win; ambiguity or conflict becomes an open question.
+
+There is no global Preferences or Rules layer. Interface-wide authority remains in `root.yaml`, the State contract, and the workflow Skills; item-specific rules live in the Policy of the item that owns them.
 
 
 <br > <br>
@@ -48,7 +64,7 @@ The `.interface/` directory contains five main parts:
 
 ### `my-interface-interpreter`
 
-Reads `project.md` and generates the project configuration according to the Schema.
+Reads `project.md`, resolves each item's local Policy and Preferences, and generates the project configuration according to the Schema.
 
 ### `my-interface-tasker`
 
@@ -100,7 +116,7 @@ Use the `my-interface-interpreter` Skill:
 
 `.claude/skills/my-interface-interpreter/SKILL.md`
 
-Use the project Understanding and the `schema/` structure to generate the project configuration files in `config/`.
+Use `project.md` together with the item-local Policy and Preferences in `schema/` to generate `database.yaml`, `backend.yaml`, `frontend.yaml`, and the shared project configuration in `config/`.
 
 ### 3. Plan the Project
 

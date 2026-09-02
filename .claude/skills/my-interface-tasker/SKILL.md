@@ -15,7 +15,7 @@ Before performing any other step, read [references/developer-guide.md](reference
 
 ## Refresh context before planning
 
-1. Follow the live map to read the current State contract, generated Understanding, task standard and Schema, rules, target configuration, and every other mapped file required for this invocation.
+1. Follow the live map to read the current State contract, generated Understanding, task standard and Schema, the selected item's Policy, target configuration and contracts, and every other mapped file required for this invocation.
 2. Resolve the requested item and project phases in `$ARGUMENTS` only from the current generated Understanding. Require every requested phase to target that item; do not infer scope from active state, prior plans, or memory.
 
 ## Plan

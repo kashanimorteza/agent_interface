@@ -12,6 +12,6 @@ The authoritative project root for this repository is the `.interface/` director
 
 ## Scope and boundaries
 
-- This rule belongs exclusively to the Claude Code configuration layer (`.claude/`). It is not part of the Agent Interface itself and must never be moved into, duplicated in, or treated as one of the project's own rules, schemas, or configuration (`.interface/root.yaml`, `.interface/schema/`, `.interface/config/rules.yaml`, etc.).
+- This rule belongs exclusively to the Claude Code configuration layer (`.claude/`). It is not part of the Agent Interface itself and must never be moved into, duplicated in, or treated as one of the project's own authorities, item Policies, Schemas, or generated configuration (`.interface/root.yaml`, `.interface/schema/`, `.interface/config/`, etc.).
 - This rule establishes discovery order only. It does not grant permission to read `project.md`, generated Config, target-project code, or any other mapped source; the active Skill or capability defines those knowledge boundaries.
 - This rule changes nothing about the interface's own write policies and mode permissions; those remain governed entirely by `.interface/root.yaml`, the schemas, and the State contract.

@@ -18,7 +18,7 @@ This guide defines the Developer's shared defaults for `my-interface-developer`.
 
 - Use the current Task plan as the execution queue and source of the exact work requested; do not derive additional work from nearby code or general project goals.
 - Use the generated Understanding to interpret the requested item's responsibility and the task's intended result.
-- Use current rules, item configuration, and contracts to resolve implementation constraints, code location, environment, and verification context.
+- Use the selected item's current Policy, resolved configuration, and contracts to resolve implementation constraints, code location, environment, and verification context.
 - Use the live State contract and file policies to determine scope, transitions, writable content, and how outcomes, blockers, and questions are recorded.
 - Use target-project code as evidence of the current implementation only within the selected task's scope. A mismatch that requires changing the plan remains a planning issue rather than permission to reshape the task.
 

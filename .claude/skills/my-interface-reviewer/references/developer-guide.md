@@ -11,7 +11,7 @@ This guide defines the Developer's shared defaults for `my-interface-reviewer`. 
 ## Project Knowledge Boundary
 
 - Do not read the human-managed project-definition file. Only `my-interface-interpreter` may read and interpret it.
-- Review against the current generated Understanding, authorized plan, contracts, rules, and required evidence. Target files may establish implementation facts but do not authorize new requirements or reinterpretation of project intent.
+- Review against the current generated Understanding, authorized plan, selected-item Policy, contracts, and required evidence. Target files may establish implementation facts but do not authorize new requirements or reinterpretation of project intent.
 
 ## Role Discipline
 

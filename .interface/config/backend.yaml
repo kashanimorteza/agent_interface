@@ -1,0 +1,177 @@
+meta:
+  path: ".interface/config/backend.yaml"
+  path_note: "Generated Backend item configuration and draft HTTP API contract."
+
+policy:
+  agent_may_edit: true
+  changed_by: "my-interface-interpreter during generation; my-interface-tasker may refine settings and draft contracts during planning."
+  preference_source: ".interface/schema/backend.schema.yaml — policy and preferences"
+  contract_authority: "Only the human may freeze or version a contract; a frozen contract is never edited."
+  database_boundary: "Backend consumes the frozen Database contract and never owns storage, schema, constraints, indexes, or migrations."
+
+read_order:
+  - "enabled"
+  - "code_path"
+  - "summary"
+  - "tech"
+  - "database_connection"
+  - "standards"
+  - "capabilities"
+  - "code_layout"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+content_map:
+  enabled: "Whether Backend participates in the build."
+  code_path: "The only project-code directory owned by Backend."
+  code_path_note: "How code_path is resolved."
+  summary: "Backend in one line."
+  needs_test: "Whether every code-producing Backend task requires a written test."
+  verify_cwd: "Where Backend verification commands run."
+  responsibility: "What Backend is answerable for."
+  tech: "Resolved language, environment, packages, and run command."
+  database_connection: "The resolved contract-only connection to Database."
+  standards: "Resolved Backend coding conventions."
+  capabilities: "Optional Backend behavior."
+  code_layout: "The intended ownership of paths inside code_path."
+  contracts: "The Database contract consumed and HTTP contract published."
+  boundaries: "Backend ownership limits."
+  out_of_scope: "Work excluded from Backend."
+
+content:
+  enabled: true
+  code_path: "backend/"
+  code_path_note: "Relative to the repository root, never relative to .interface/."
+  summary: "A FastAPI application exposing the Trading Assistant models while consuming database-v1."
+  needs_test: false
+  verify_cwd: "backend/ in the uv-managed Python environment"
+  responsibility: "Run application behavior and publish the HTTP API while consuming the Database contract."
+
+  tech:
+    language:
+      name: "Python"
+      version: "latest"
+      environment:
+        name: "uv"
+        version: "latest"
+      packages:
+        api:
+          name: "FastAPI"
+          version: "latest"
+        orm:
+          name: "SQLAlchemy"
+          version: "latest"
+        database_driver:
+          name: "Python sqlite3 standard library"
+    run: "uv run fastapi dev app/main.py"
+
+  database_connection:
+    item: "database"
+    contract: "database-v1 — draft and not consumable until frozen"
+    config_path: ".interface/config/database.yaml — content.contracts.database-v1"
+    adapter:
+      driver: "Python sqlite3 standard library"
+      packages: []
+      url_scheme: "sqlite"
+    url_source: "Resolved project configuration supplies the SQLite path at runtime; no credential or secret is committed."
+
+  standards:
+    naming:
+      variables: "snake_case"
+      functions: "snake_case"
+      classes: "PascalCase"
+      constants: "UPPER_SNAKE_CASE"
+      files: "snake_case"
+      folders: "snake_case"
+
+  capabilities:
+    error_handling:
+      enabled: false
+    logging:
+      enabled: false
+    api_documentation:
+      enabled: true
+      type: "Docs"
+      docs_path: "/docs"
+      openapi_path: "/openapi.json"
+      redoc_enabled: false
+    authentication:
+      enabled: false
+    https:
+      enabled: false
+
+  code_layout:
+    "pyproject.toml": "Backend project metadata and exact uv-managed dependencies."
+    "app/": "Backend application package."
+    "app/main.py": "FastAPI application entry point."
+    "app/config.py": "Runtime configuration, including the Database connection source."
+    "app/database.py": "Database client and session integration against database-v1."
+    "app/models/": "Backend-owned SQLAlchemy mappings that implement database-v1 without owning its schema."
+    "app/schemas/": "API request and response validation shapes."
+    "app/services/": "Application behavior."
+    "app/routes/": "HTTP route modules that implement backend-v1."
+    "app/errors/": "Central error layer only if the capability is enabled later."
+    "tests/": "Backend tests when needs_test becomes true."
+
+  contracts:
+    produces: "backend-v1"
+    consumes:
+      contract: "database-v1"
+      path: ".interface/config/database.yaml — content.contracts.database-v1"
+      required_lifecycle: "frozen"
+      current_lifecycle: "draft"
+      blocked_by: "B1"
+    rule: "Backend implementation must match frozen database-v1 and frozen backend-v1 exactly."
+    change_rule: "The human freezes a complete version; later changes create a new version instead of editing the frozen surface."
+    backend-v1:
+      lifecycle: "draft"
+      lifecycle_note: "The project requires an API for every model but does not state route operations, paths, bodies, responses, or error behavior. Q2/B2 must be resolved before this contract can be frozen."
+      consumed_by:
+        - "frontend"
+      contract_read_order:
+        - "conventions"
+        - "error_shape"
+        - "models"
+        - "routes"
+      conventions:
+        transport: "HTTP"
+        identifiers: "Each project model names an ID field; its representation remains dependent on database-v1."
+        timestamps: "No timestamp fields are stated by the project."
+        unknown_id: "unresolved by Q2"
+      error_shape:
+        rule: "unresolved by Q2"
+        fields: "unresolved by Q2"
+        codes: "unresolved by Q2"
+      models:
+        trading_platform: ["ID", "Name", "Status", "Description"]
+        broker: ["ID", "Name", "Trading Platform ID", "Status", "Description"]
+        account: ["ID", "Name", "Username", "Password", "Broker ID", "Status", "Description"]
+        asset: ["ID", "Name", "Status", "Description"]
+        strategy: ["ID", "Name", "Risk Parameter", "Status", "Description"]
+        trailing_group: ["ID", "Name", "Status", "Description"]
+        trailing_rule: ["ID", "Name", "Trailing Group ID", "Status", "Description"]
+        partial_group: ["ID", "Name", "Status", "Description"]
+        partial_rule: ["ID", "Name", "Partial Group ID", "Profit Threshold", "Close Portion", "Status", "Description"]
+        action_group: ["ID", "Name", "Status", "Description"]
+        action: ["ID", "Name", "Asset ID", "Account ID", "Strategy ID", "Group ID", "Status", "Description"]
+        execute: ["ID", "Name", "Action ID", "Profit", "State", "Status", "Description"]
+        position: ["ID", "Name", "Entry Price", "Take Profit", "Stop Loss", "Status", "Description"]
+      routes:
+        status: "unresolved by Q2"
+        entries: []
+
+  boundaries:
+    owns:
+      - "FastAPI application code and business behavior"
+      - "Runtime SQLite client and SQLAlchemy mappings"
+      - "backend-v1 HTTP contract"
+    does_not_own:
+      - "Database engine, storage, tables, constraints, indexes, or migrations"
+      - "Frontend pages, components, or styles"
+    interface: "The frozen backend-v1 HTTP contract."
+
+  out_of_scope:
+    - "Database schema creation or migration ownership"
+    - "Frontend implementation"
+    - "Authentication, HTTPS, application logging, and centralized error handling unless later enabled"
