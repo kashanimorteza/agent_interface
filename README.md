@@ -29,7 +29,7 @@ Agent Interface provides the communication layer between these two worlds.
 
 <br > <br>
 
-## Directories and files
+## Structure
 
 The core of Agent Interface is located in the `.interface/` directory.
 
@@ -40,15 +40,17 @@ The `.interface/` directory contains four main parts:
 - **`schema/`** — Defines generated-file shapes. Each item Schema also owns that item's Policy and Preferences.
 - **`config/`** — Represents and maintains the project's Understanding according to the Schema.
 
-The project currently has three independent items:
+The Interface currently supports three target item types:
 
 - **Database** — owns the database engine, storage, schema, migrations, and database contract.
 - **Backend** — consumes the database contract and publishes an implemented HTTP API with a framework-generated machine-readable description.
 - **Frontend** — consumes the backend's implemented HTTP API and publishes the user interface.
 
-Their directed relationship is:
+When all three are used, their directed relationship is:
 
 `Database → Backend → Frontend`
+
+Project phases are the primary units of work. Each phase in `project.md` selects one target item, and any number of phases may target the same item. A target supplies the phase's technical configuration, Policy, contracts, and code boundary; it does not replace the phase as the planning or development scope. Only target item types referenced by at least one phase enter the generated Understanding.
 
 Each item keeps two kinds of guidance beside its own Schema:
 
@@ -64,37 +66,33 @@ There is no global Preferences or Rules layer. Interface-wide authority remains 
 
 ### `my-interface-interpreter`
 
-Reads `project.md`, resolves each item's local Policy and Preferences, and generates the project configuration according to the Schema.
+`.claude/skills/my-interface-interpreter/SKILL.md`
+
+Transforms the human-managed definition in `project.md` into the generated project Understanding. It preserves the ordered phases, resolves each referenced target item's Schema, mandatory Policy, and supported Preferences, validates the result, and records unresolved or conflicting information without inventing decisions.
 
 ### `my-interface-tasker`
 
-Reads the project configuration and generates Tasks and the development plan.
+`.claude/skills/my-interface-tasker/SKILL.md`
+
+Transforms one requested project phase from the generated Understanding into an implementation-ready plan, resolving the phase's target item for Policy, configuration, contracts, and code boundaries.
 
 ### `my-interface-developer`
 
-Executes the planned Tasks and implements the required changes.
+`.claude/skills/my-interface-developer/SKILL.md`
+
+Executes eligible planned Tasks for one requested project phase, implements changes only within that phase target's authorized code boundary, verifies the result, and records each Task's actual outcome.
 
 ### `my-interface-reviewer`
 
-Reviews the implementation against the Tasks and project specifications.
+`.claude/skills/my-interface-reviewer/SKILL.md`
+
+Reviews one requested project phase against the generated Understanding, authorized Tasks, target-item Policy and contracts, and verification evidence, then reports findings without modifying the implementation.
 
 ### `my-interface-reset`
 
-Removes the generated Config and the exact project code directories resolved from it, returning the repository to a clean state ready for the Interpreter to run again.
+`.claude/skills/my-interface-reset/SKILL.md`
 
-
-<br > <br>
-
-
-## Modes and State
-
-Exactly one mode is active at a time — `planning`, `development`, or `review` — named in `.interface/config/state.yaml` under `content.active.mode`, together with the item in play.
-
-A mode is entered by invoking the Skill that owns it. The invocation is the Developer's decision, and the Skill records it: `/my-interface-tasker backend` sets the mode to `planning` and the item to `backend`. Nothing is hand-edited into `state.yaml` first.
-
-A Skill may write only the mode it owns, only on an invocation of itself, and only an item the configuration indexes. Where the invocation leaves the item ambiguous, the Skill stops and asks rather than choosing.
-
-The single source of truth for all of it — every state field, its owner, the allowed transitions, which Skill may perform each, and what stays the Developer's alone — is the State contract itself: `.interface/config/state.yaml` under `content.state_authority`, seeded from the default in `.interface/schema/state.schema.yaml` whenever a new State is created, and the Developer's alone after that seed. `root.yaml` maps the Interface and defines the modes; it references the State Authority and does not own it. Every other file defers to the State contract.
+Removes the generated Config and the exact validated project code directories resolved from it, returning the repository to a clean state ready for a new interpretation.
 
 
 <br > <br>
@@ -102,34 +100,20 @@ The single source of truth for all of it — every state field, its owner, the a
 
 ## Quick Start
 
-### 1. Understand the Project
-
-Read the project definition:
+### 1. Define the Project
 
 `.interface/project.md`
 
-Understand the project requirements and overall definition.
+### 2. Interpret the Project
 
-### 2. Configure the Project
+`/my-interface-interpreter`
 
-Use the `my-interface-interpreter` Skill:
+### 3. Generate Tasks
 
-`.claude/skills/my-interface-interpreter/SKILL.md`
+`/my-interface-tasker <phase-id>`
 
-Use `project.md` together with the item-local Policy and Preferences in `schema/` to generate `database.yaml`, `backend.yaml`, `frontend.yaml`, and the shared project configuration in `config/`.
+### 4. Develop the Tasks
 
-### 3. Plan the Project
+`/my-interface-developer <phase-id>`
 
-Use the `my-interface-tasker` Skill:
-
-`.claude/skills/my-interface-tasker/SKILL.md`
-
-Read the generated Config and create the required Tasks according to the defined Task structure.
-
-### 4. Develop the Project
-
-Use the `my-interface-developer` Skill:
-
-`.claude/skills/my-interface-developer/SKILL.md`
-
-Execute the planned Tasks and implement the required changes.
+`<phase-id>` is a phase already defined in `project.md`, such as `P1`, `P2`, or `P3`. Each Skill resolves the phase's target item from the generated Understanding.

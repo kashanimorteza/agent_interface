@@ -1,7 +1,8 @@
 schema:
   id: agent-interface-definition
-  version: "1.2"
+  version: "2.0"
   purpose: "The shape of definition.yaml — every parameter an agent reads to understand what the product is"
+  phase_model: "Project phases are the primary units of planning, development, review, and progress. A phase's target selects the item configuration, Policy, contracts, and code_path used for that phase. Any number of phases may target the same item."
 
 structure:
   - identity
@@ -34,7 +35,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Architecture -->
   architecture:
     required: true
-    purpose: "The parts of the product, what each owns, and the directed contract connections between them."
+    purpose: "The target item types referenced by project phases, what each owns, and the directed contract connections between them. Items provide technical context and boundaries; they are not units of workflow."
     fields:
       shape:
         required: true
@@ -44,11 +45,11 @@ sections:
         purpose: "Why this shape — what it buys the build."
       parts:
         required: true
-        purpose: "One entry per part of the product — its fields below."
+        purpose: "One entry per target item referenced by at least one project phase — its fields below. An available item type with no targeting phase does not enter the generated Understanding."
         fields:
           "<part>":
             required: true
-            purpose: "One part of the product, named by its item — an entry per part."
+            purpose: "One target item selected by one or more project phases — an entry per resolved target."
             fields:
               responsibility:
                 required: true
@@ -67,7 +68,7 @@ sections:
                 purpose: "The contracts this part reads, and where they live — on a consuming part."
       connections:
         required: true
-        purpose: "The directed contract graph between architecture items — one entry per producer-to-consumer connection."
+        purpose: "The directed interface graph between target items — one entry per producer-to-consumer connection."
         fields:
           "<connection>":
             required: true
@@ -81,21 +82,21 @@ sections:
                 purpose: "The architecture item consuming the contract."
               contract:
                 required: true
-                purpose: "The published contract and version used by the consumer."
+                purpose: "The published contract or implemented runtime interface used by the consumer."
               path:
                 required: true
-                purpose: "Where the contract lives — the one mapped place the consumer reads."
+                purpose: "Where the consumer reads the interface — a mapped contract path or a framework-generated machine-readable location."
               rule:
                 required: true
                 purpose: "The contract is the only connection point; neither item reaches into the other's implementation."
               versioning:
-                required: true
-                purpose: "A frozen contract never changes; a change means a new version."
+                required: false
+                purpose: "The versioning rule when this connection uses a frozen versioned contract; omitted for an implementation-generated runtime interface."
 
   # <!--------------------------------------------------------------------------------- Phases -->
   phases:
     required: true
-    purpose: "The authoritative ordered project phase index copied from project.md. Planning reads phase identity, title, order, target, and goal only from this section and never invents an independent phase."
+    purpose: "The authoritative ordered project workflow copied from project.md. Phases are the primary units of planning, development, review, and progress. Their count is unrestricted, and multiple phases may target the same item."
     fields:
       "<phase>":
         required: true
@@ -112,7 +113,7 @@ sections:
             purpose: "The phase's one-based position in project.md."
           target:
             required: true
-            purpose: "The architecture item named by the project's phase target, resolved to its indexed item key."
+            purpose: "The item type named by this phase. It resolves the phase's Policy, configuration, contracts, verification context, and code_path; it does not replace the phase as the workflow scope."
           goal:
             required: true
             purpose: "What the project states this phase must accomplish, copied faithfully."

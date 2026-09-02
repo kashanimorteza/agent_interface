@@ -1,7 +1,7 @@
 ---
 name: my-interface-tasker
-description: Create or update the authorized implementation plan for the project scope named by the Developer, using the current generated Understanding and task standard. Plans only; never implements or interprets the human project definition.
-argument-hint: "[item] [phase-id ...]"
+description: Create or update the authorized implementation plan for the one project phase named by the Developer, resolving its target item from the generated Understanding. Plans only; never implements or interprets the human project definition.
+argument-hint: "[phase-id]"
 disable-model-invocation: true
 ---
 
@@ -15,16 +15,16 @@ Before performing any other step, read [references/developer-guide.md](reference
 
 ## Refresh context before planning
 
-1. Follow the live map to read the current State contract, generated Understanding, task standard and Schema, the selected item's Policy, target configuration and contracts, and every other mapped file required for this invocation.
-2. Resolve the requested item and project phases in `$ARGUMENTS` only from the current generated Understanding. Require every requested phase to target that item; do not infer scope from active state, prior plans, or memory.
+1. Resolve the one requested phase id in `$ARGUMENTS` from the current generated Understanding. Refuse an omitted, additional, or unknown phase rather than choosing one.
+2. Resolve that phase's target item from the phase itself, then follow the live map to read the current State contract, task standard and Schema, target-item Policy, mapped item configuration and contracts, and every other file required for this invocation.
 
 ## Plan
 
-Enter planning mode only as the current authorities permit. Plan exactly the requested authorized phases for the named item, in the order and structure defined by the current Understanding and task standard.
+Enter planning mode only as the current authorities permit. Plan exactly the requested authorized phase under `content.plans.<phase-id>`, using its target item only as technical context and a write boundary.
 
 Derive every project fact, grouping, task field, status, lifecycle, transition, dependency, contract, path, verification rule, and write permission from the current file that owns it. Do not copy these parameters into this Skill or substitute remembered values.
 
-Where an implementation-ready plan requires planning-owned item configuration or a draft contract to be refined, reconcile only the parts authorized by the live files and only for the requested scope. Do not change a frozen, protected, or human-owned value, and do not turn a planning decision into a new project requirement.
+Where an implementation-ready plan requires planning-owned configuration for the phase's target item or a draft contract to be refined, reconcile only the parts authorized by the live files and only for the requested phase. Do not change a frozen, protected, or human-owned value, and do not turn a planning decision into a new project requirement.
 
 Treat an update as reconciliation, not replacement. Preserve existing progress, history, confirmed content, and every value outside this Skill's current write authority. Change only the planning-owned content required by the requested scope, and use the live gap mechanism when the requested change conflicts with protected or already-executed work.
 

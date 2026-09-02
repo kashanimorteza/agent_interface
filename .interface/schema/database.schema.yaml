@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-database
-  version: "1.0"
+  version: "2.0"
   purpose: "The shape of database.yaml — every parameter an agent reads to understand the independent database item"
 
 policy:
@@ -13,7 +13,6 @@ policy:
 
 preferences:
   defaults:
-    enabled: true
     code_path: "database/"
     needs_test: false
     responsibility: "Owns persistent storage, schema evolution, and the database contract consumed by the backend."
@@ -60,7 +59,6 @@ preferences:
       default_enabled: false
 
 structure:
-  - enabled
   - code_path
   - code_path_note
   - summary
@@ -76,11 +74,6 @@ structure:
   - out_of_scope
 
 sections:
-
-  # <!--------------------------------------------------------------------------------- Enabled -->
-  enabled:
-    required: true
-    purpose: "Whether the database item is in play — false leaves the entry standing and takes the item out of the build."
 
   # <!--------------------------------------------------------------------------------- Code_Path -->
   code_path:

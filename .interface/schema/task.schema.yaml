@@ -1,8 +1,8 @@
 schema:
   id: agent-interface-task
-  version: "1.4"
+  version: "2.0"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
-  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans keep the established item → phase → group → task structure. Their phases come from definition.yaml under content.phases and are placed under the item named by each phase's target; planning decomposes a requested phase only through its groups and tasks"
+  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans use the phase → group → task structure. Every plan key is a project phase from definition.yaml; the phase's target resolves the item configuration and code boundary used by its tasks."
   authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and invariants, not the permission"
 
 structure:
@@ -26,7 +26,7 @@ sections:
         fields:
           id:
             required: true
-            purpose: "Identifier unique within the item — each item numbers its own tasks."
+            purpose: "Identifier unique within the project phase — its phase prefix keeps it unique across the project."
           title:
             required: true
             purpose: "The task in one sentence."
@@ -35,7 +35,7 @@ sections:
             purpose: "What becomes possible after this task that was not possible before."
           depends_on:
             required: true
-            purpose: "Ids of tasks in the same item — depending on another item is forbidden."
+            purpose: "Ids of tasks in the same project phase. Cross-phase order comes from definition.yaml, and cross-item dependency uses a contract rather than another phase's task id."
           needs_contract:
             required: true
             purpose: "The contract version required — used instead of depending on another item's task; omitted when the task needs none."
@@ -47,7 +47,7 @@ sections:
             purpose: "A runnable command that proves acceptance — without it a task is never done."
           touches:
             required: true
-            purpose: "Paths this task touches, written relative to the item's code_path."
+            purpose: "Paths this task touches, written relative to the code_path of the item named by its phase target."
           status:
             required: true
             purpose: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
@@ -78,6 +78,12 @@ sections:
       derived_ready:
         required: true
         purpose: "That ready is not a stored status — a task is ready when it is todo and all of its depends_on are done."
+      phase_ready:
+        required: true
+        purpose: "That phase readiness is derived, never stored — a phase may enter development when it has a non-empty plan and every earlier project phase is complete."
+      phase_complete:
+        required: true
+        purpose: "That phase completion is derived, never stored — a phase is complete when its plan is non-empty, every task not cancelled or superseded is done, and no task remains todo, claimed, or blocked."
       done_gate:
         required: true
         purpose: "That without a passing verify run no task becomes done, even if the code is written."
@@ -91,58 +97,47 @@ sections:
   # <!--------------------------------------------------------------------------------- Plans -->
   plans:
     required: true
-    purpose: "The plans — one per indexed item, each under its own key. Across all item plans, task phases correspond one for one to the project phases in definition.yaml under content.phases. A project phase appears only under the item named by its target. The planner never creates independent technical phases; it creates groups and tasks inside the requested project phase."
+    purpose: "The implementation plans — one entry per project phase, keyed by phase id. Phase order and identity come from definition.yaml. The phase target selects its item Policy, configuration, contracts, verification context, and code_path."
     fields:
-      "<item>":
+      "<phase>":
         required: true
-        purpose: "One item's plan — the key is the item's name as indexed by the generated Understanding. It contains only project phases whose target resolves to this item."
+        purpose: "One project phase plan — the key is P1, P2, ... exactly as indexed under definition.yaml content.phases."
         fields:
-          phase_titles_lifecycle:
+          id:
             required: true
-            purpose: "Where this item's project-phase title list stands — empty, derived, or confirmed. empty: no project phase titles have been copied yet. derived: the Tasker copied them from definition.yaml under content.phases and the human has not confirmed the list. confirmed: the human accepted the list, and from then on only the human changes it."
-          phase_titles_derived_from:
+            purpose: "The project phase id, identical to this plan's key and to the id in definition.yaml."
+          title:
             required: true
-            purpose: "The exact source of the project phase ids, titles, order, targets, and goals. Once derived, it must read '.interface/config/definition.yaml — content.phases'; it reads 'not derived yet' while the lifecycle is empty."
-          phase_titles:
+            purpose: "The project phase title, copied faithfully from definition.yaml."
+          order:
             required: true
-            purpose: "Quick lookup from project phase id to title for the phases whose target is this item. The ids, titles, and project order come from definition.yaml under content.phases. Technical implementation areas never become entries here."
-          phases:
+            purpose: "The one-based project phase order copied from definition.yaml."
+          target:
             required: true
-            purpose: "This item's plan — project phases at the top, groups inside a phase, and tasks inside a group. Only a project phase requested by the human is populated; no independent technical phase is created."
+            purpose: "The phase target copied from definition.yaml. It resolves the item-specific configuration and write boundary; it is not the plan key."
+          does:
+            required: true
+            purpose: "What this project phase accomplishes, derived only from that phase's goal in definition.yaml."
+          groups:
+            required: true
+            purpose: "The technical decomposition of this project phase. Environment, configuration, database, models, migrations, endpoints, or any other implementation area belongs here rather than becoming another project phase."
             fields:
-              "<phase>":
+              "<group>":
                 required: true
-                purpose: "One project phase from definition.yaml under content.phases whose target is this item. The Tasker writes planning work only into the matching requested phase."
+                purpose: "One area of work inside the project phase — related tasks side by side."
                 fields:
                   id:
                     required: true
-                    purpose: "The project phase id — P1, P2, ... — preserved from definition.yaml under content.phases and unique across the project."
+                    purpose: "P1-G1, P1-G2, ... — the project phase id plus a group number, unique across the project."
                   title:
                     required: true
-                    purpose: "The project phase title, copied faithfully from definition.yaml under content.phases."
+                    purpose: "The area in a few words."
                   does:
                     required: true
-                    purpose: "What the project phase accomplishes, derived only from that phase's goal in definition.yaml under content.phases."
-                  groups:
+                    purpose: "What this group of tasks is doing, and what is true when all of them are done."
+                  task_count:
                     required: true
-                    purpose: "The technical decomposition of this project phase. Environment, configuration, database, models, migrations, routes, or any other implementation area belongs here rather than becoming another phase."
-                    fields:
-                      "<group>":
-                        required: true
-                        purpose: "One area of work inside the project phase — related tasks side by side."
-                        fields:
-                          id:
-                            required: true
-                            purpose: "P1-G1, P1-G2, ... — the project phase id plus a group number, unique within the item."
-                          title:
-                            required: true
-                            purpose: "The area in a few words."
-                          does:
-                            required: true
-                            purpose: "What this group of tasks is doing, and what is true when all of them are done."
-                          task_count:
-                            required: true
-                            purpose: "How many tasks the group holds — stated so the size is visible without counting."
-                          tasks:
-                            required: true
-                            purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one atomic act, naming the one thing it creates or changes — create one file, add one method, implement one function, install one package, add one model, create one endpoint, add one migration, add one specific validation — never a broad or multi-purpose implementation goal. Anything larger is split into several tasks before it is written; many precise tasks are preferred over a few broad ones, however much the count grows, and one sitting finishes each."
+                    purpose: "How many tasks the group holds — stated so the size is visible without counting."
+                  tasks:
+                    required: true
+                    purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one atomic act, naming the one thing it creates or changes — create one file, add one method, implement one function, install one package, add one model, create one endpoint, add one migration, add one specific validation — never a broad or multi-purpose implementation goal. Anything larger is split into several tasks before it is written; many precise tasks are preferred over a few broad ones, however much the count grows, and one sitting finishes each."

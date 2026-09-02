@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-backend
-  version: "3.0"
+  version: "4.0"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
 
 policy:
@@ -12,7 +12,6 @@ policy:
 
 preferences:
   defaults:
-    enabled: true
     code_path: "backend/"
     needs_test: false
     responsibility: "Runs application behavior and publishes the HTTP API while consuming the database contract."
@@ -61,7 +60,6 @@ preferences:
       default_enabled: true
 
 structure:
-  - enabled
   - code_path
   - code_path_note
   - summary
@@ -77,11 +75,6 @@ structure:
   - out_of_scope
 
 sections:
-
-  # <!--------------------------------------------------------------------------------- Enabled -->
-  enabled:
-    required: true
-    purpose: "Whether the backend is in play — false leaves the entry standing and takes the item out of the build."
 
   # <!--------------------------------------------------------------------------------- Code_Path -->
   code_path:

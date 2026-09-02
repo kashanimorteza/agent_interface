@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-frontend
-  version: "3.0"
+  version: "4.0"
   purpose: "The shape of frontend.yaml — every parameter an agent reads to understand the frontend project"
 
 policy:
@@ -12,7 +12,6 @@ policy:
 
 preferences:
   defaults:
-    enabled: true
     code_path: "frontend/"
     needs_test: false
     responsibility: "Provides the user interface and consumes the backend's implemented HTTP API."
@@ -50,7 +49,6 @@ preferences:
       default_enabled: false
 
 structure:
-  - enabled
   - code_path
   - code_path_note
   - summary
@@ -66,11 +64,6 @@ structure:
   - out_of_scope
 
 sections:
-
-  # <!--------------------------------------------------------------------------------- Enabled -->
-  enabled:
-    required: true
-    purpose: "Whether the frontend is in play — false leaves the entry standing and takes the item out of the build."
 
   # <!--------------------------------------------------------------------------------- Code_Path -->
   code_path:

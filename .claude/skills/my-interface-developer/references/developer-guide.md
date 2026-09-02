@@ -17,8 +17,8 @@ This guide defines the Developer's shared defaults for `my-interface-developer`.
 ## Execution Understanding
 
 - Use the current Task plan as the execution queue and source of the exact work requested; do not derive additional work from nearby code or general project goals.
-- Use the generated Understanding to interpret the requested item's responsibility and the task's intended result.
-- Use the selected item's current Policy, resolved configuration, and contracts to resolve implementation constraints, code location, environment, and verification context.
+- Use the generated Understanding to interpret the requested phase, its goal, its target item, and each task's intended result.
+- Use the requested phase target's current Policy, resolved configuration, and contracts to resolve implementation constraints, code location, environment, and verification context.
 - Use the live State contract and file policies to determine scope, transitions, writable content, and how outcomes, blockers, and questions are recorded.
 - Use target-project code as evidence of the current implementation only within the selected task's scope. A mismatch that requires changing the plan remains a planning issue rather than permission to reshape the task.
 
@@ -33,7 +33,7 @@ This guide defines the Developer's shared defaults for `my-interface-developer`.
 
 - Prefer current file evidence over memory or inference.
 - Inspect and change only the smallest scope required by the selected task.
-- Keep execution within the item named by the Developer, even when another item's task is eligible.
+- Keep execution within the phase named by the Developer, even when another phase targets the same item or has eligible tasks.
 - Persist coordination and progress records before relying on them, and leave every claimed task with an accurate outcome under the live protocols.
 - Do not invent missing requirements, destinations, permissions, verification, or acceptance criteria.
 

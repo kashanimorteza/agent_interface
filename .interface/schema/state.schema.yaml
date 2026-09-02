@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "2.2"
+  version: "3.0"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
   authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
@@ -54,26 +54,32 @@ sections:
           constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-reset does not write this field: it deletes the file that holds it, under transition S5"
           human_may_set: true
 
-        active.item:
+        active.phase:
           tier: "agent_writable"
-          holds: "The name of one item as definition.yaml indexes it under content.architecture.parts, or 'none'"
+          holds: "One project phase id as definition.yaml indexes it under content.phases, or 'none'"
           writable_by:
             - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
             - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-          constraint: "Only an item the configuration indexes and whose enabled is true. The item comes from the invocation. When the invocation names none and more than one enabled item exists, the Skill writes nothing and asks the human — an item is never guessed, and never carried over from a previous run. Under S0 the interpreter writes only 'none'"
+          constraint: "The phase comes from the invocation and must exist under definition.yaml content.phases. The invocation must name exactly one phase; a phase is never guessed, inferred from a target item, or carried over from a previous run. Under S0 the interpreter writes only 'none'."
           human_may_set: true
+
+        active.target:
+          tier: "derived"
+          holds: "The target item of active.phase, resolved from the entry in definition.yaml content.phases whose id equals active.phase"
+          writable_by: []
+          constraint: "Never stored. The active target, item Policy, item configuration, contracts, verification context, and code_path are resolved fresh from active.phase whenever needed."
 
         active.mode_reason:
           tier: "agent_writable"
-          holds: "Why this mode and this item are the active ones — the invocation that set them, and after a run what that run concluded"
+          holds: "Why this mode and this phase are the active ones — the invocation that set them, and after a run what that run concluded"
           writable_by:
             - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
             - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-          constraint: "Written together with mode and item, and rewritten at the end of a run under transition S4. It states what happened; it never argues for a mode the Skill was not invoked into"
+          constraint: "Written together with mode and phase, and rewritten at the end of a run under transition S4. It states what happened; it never argues for a mode the Skill was not invoked into"
           human_may_set: true
 
         active.set_by:
@@ -141,14 +147,14 @@ sections:
           tier: "derived"
           holds: "Whether a task may be started"
           writable_by: []
-          constraint: "Never stored. A task is ready when its status is todo and every id in its depends_on is done — computed at the moment it is needed, and written nowhere"
+          constraint: "Never stored. A task is ready when its phase has a non-empty plan, every earlier project phase is complete, its status is todo, and every id in its depends_on is done — computed at the moment it is needed, and written nowhere"
 
       human_only_decisions:
         note: "These sit outside state.yaml but belong to the same ownership model — they are named here so that one section answers the whole question of who decides what"
         items:
           - "The answer to any open question in state.yaml"
           - "Freezing or versioning a contract — see the change_rule in the item files"
-          - "Confirming an item's phase_titles — see content.plans.<item>.phase_titles_lifecycle in task.yaml"
+          - "Defining a project phase, its order, goal, or target — these come from project.md through the interpreter"
           - "The content of config/definition.yaml, outside a my-interface-interpreter run"
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
           - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
@@ -160,57 +166,58 @@ sections:
         - id: "S0"
           name: "generate the state file"
           from: "no state.yaml at all"
-          to: "active.mode: 'not set', active.item: 'none', and the live State Authority seeded"
+          to: "active.mode: 'not set', active.phase: 'none', and the live State Authority seeded"
           performed_by: "my-interface-interpreter"
           authorized_by: "The human's invocation of my-interface-interpreter, on a project that has no state.yaml yet — governed by the default authority in schema/state.schema.yaml, which authorizes its own seeding while no live state exists"
           requires:
             - "config/state.yaml does not exist. Where it does, a regeneration carries content.active and content.state_authority through untouched — a regeneration never resets the runtime state and never rewrites the live authority"
             - "content.state_authority is seeded verbatim from the default in schema/state.schema.yaml — a state.yaml without it is not created"
-          writes: "active.mode, active.item, active.mode_reason, active.set_by, active.set_at, content.state_authority — seeded from the schema default — and the blockers and questions the generation raised"
+          writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at, content.state_authority — seeded from the schema default — and the blockers and questions the generation raised"
           refused_when: "state.yaml already exists. Rewriting an active a Skill or the human set, or a live authority, is outside this Skill's authority"
 
         - id: "S1"
           name: "enter planning"
           from: "any value of active.mode, 'not set' included"
-          to: "active.mode: planning, active.item: the item named by the invocation"
+          to: "active.mode: planning, active.phase: the phase id named by the invocation"
           performed_by: "my-interface-tasker"
-          authorized_by: "The human's invocation of my-interface-tasker, which names the scope — for example /my-interface-tasker backend"
+          authorized_by: "The human's invocation of my-interface-tasker, which names exactly one project phase — for example /my-interface-tasker P2"
           requires:
-            - "The named item is indexed under content.architecture.parts in definition.yaml and holds a key under content.plans in task.yaml"
-            - "That item's enabled is true"
-            - "When the invocation names no item and more than one enabled item exists, the transition does not happen: the Skill asks the human and writes nothing"
-          writes: "active.mode, active.item, active.mode_reason, active.set_by, active.set_at"
-          refused_when: "The invocation names an item the configuration does not index, or names a mode other than planning. The Skill stops and tells the human; it does not adjust the state to fit"
+            - "The named phase is indexed under content.phases in definition.yaml"
+            - "The phase target resolves to an indexed architecture part and a mapped generated item configuration"
+            - "The invocation names exactly one phase id"
+          writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
+          refused_when: "The invocation omits the phase, names more than one phase, names a phase the Understanding does not index, or names a mode other than planning. The Skill stops and tells the human; it does not adjust the state to fit"
 
         - id: "S2"
           name: "enter development"
           from: "any value of active.mode, 'not set' included"
-          to: "active.mode: development, active.item: the item named by the invocation"
+          to: "active.mode: development, active.phase: the phase id named by the invocation"
           performed_by: "my-interface-developer"
-          authorized_by: "The human's invocation of my-interface-developer, which names the item"
+          authorized_by: "The human's invocation of my-interface-developer, which names exactly one project phase"
           requires:
-            - "The named item is indexed and enabled"
-            - "That item's plan holds at least one task — a mode that has nothing to build is not entered"
-            - "When the invocation names no item and more than one enabled item exists, the Skill asks the human and writes nothing"
-          writes: "active.mode, active.item, active.mode_reason, active.set_by, active.set_at"
-          refused_when: "The item has no plan, or the invocation names a mode other than development"
+            - "The named phase is indexed under definition.yaml content.phases and has a matching plan under task.yaml content.plans"
+            - "The phase plan holds at least one task — a phase with nothing to build is not entered"
+            - "Every earlier project phase is complete: each has a non-empty plan, every task not cancelled or superseded is done, and none remains todo, claimed, or blocked"
+            - "The phase target resolves to an indexed architecture part and a mapped generated item configuration"
+          writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
+          refused_when: "The invocation omits the phase, names more than one phase, the phase has no non-empty plan, an earlier phase is incomplete, its target cannot be resolved, or the invocation names a mode other than development"
 
         - id: "S3"
           name: "enter review"
           from: "any value of active.mode, 'not set' included"
-          to: "active.mode: review, active.item: the item named by the invocation, or the item already active when the invocation names none"
+          to: "active.mode: review, active.phase: the phase id named by the invocation"
           performed_by: "my-interface-reviewer"
-          authorized_by: "The human's invocation of my-interface-reviewer"
+          authorized_by: "The human's invocation of my-interface-reviewer, which names exactly one project phase"
           requires:
-            - "The item is indexed and enabled"
-            - "When no item is named and none is active, the single enabled item is the scope; where more than one is enabled, the Skill asks the human and writes nothing"
-          writes: "active.mode, active.item, active.mode_reason, active.set_by, active.set_at"
-          refused_when: "The invocation names a mode other than review"
+            - "The named phase is indexed under definition.yaml content.phases and has a matching non-empty plan under task.yaml content.plans"
+            - "The phase target resolves to an indexed architecture part and a mapped generated item configuration"
+          writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
+          refused_when: "The invocation omits the phase, names more than one phase, names an unplanned phase, its target cannot be resolved, or names a mode other than review"
 
         - id: "S4"
           name: "record the outcome of a run"
           from: "the mode the run was performed in"
-          to: "the same mode and the same item — only active.mode_reason and active.set_at change"
+          to: "the same mode and the same phase — only active.mode_reason and active.set_at change"
           performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer — each for its own run"
           authorized_by: "Finishing the run the human invoked"
           requires:
@@ -269,18 +276,19 @@ sections:
         note: "These must hold at all times. Any Skill may check them; my-interface-reviewer checks them as part of a review, and a failure is a blocker, not a repair"
         checks:
           - "active.mode holds a mode named under content.modes in .interface/root.yaml, or 'not set'"
-          - "active.item holds an item indexed under content.architecture.parts in definition.yaml, or 'none'"
+          - "active.phase holds a phase id indexed under content.phases in definition.yaml, or 'none'"
+          - "When active.phase is not 'none', its target resolves to an indexed architecture part and mapped item configuration; active.target is derived from that target and is never stored"
           - "active.set_by names either the human or a Skill listed as writable_by for the field it wrote"
           - "Every state change an agent made corresponds to exactly one transition above"
           - "A Skill's mode matches the mode it owns under content.modes in root.yaml — a Skill running in another Skill's mode is a fault, not a state to repair"
-          - "phase_titles that carry lifecycle: confirmed are unchanged since the human confirmed them"
+          - "Each plan key is a phase id from definition.yaml, and its id, title, order, target, and goal-derived meaning match that phase"
           - "No open question carries an answer that no human gave"
           - "content.state_authority was seeded verbatim from the schema default and has changed only by the human's hand since — a difference an agent made is a fault, not a state to repair"
 
   # <!--------------------------------------------------------------------------------- Active -->
   active:
     required: true
-    purpose: "The one mode and the one item currently in play. The human decides them; the Skill the human invokes records them, under transitions S1, S2, S3, and S4 in content.state_authority of the same file. A Skill writes only the mode it owns, and only an item the configuration indexes."
+    purpose: "The one mode and one project phase currently in play. The human decides them by invoking the owning Skill with a phase id. The phase target and item context are derived rather than stored."
     fields:
       mode:
         required: true
@@ -288,9 +296,9 @@ sections:
       mode_reason:
         required: true
         purpose: "Why this mode is the active one — the invocation that set it, and, after a run, what that run concluded."
-      item:
+      phase:
         required: true
-        purpose: "The item currently being worked on, or none when no item is active. Only an item indexed under content.architecture.parts in definition.yaml."
+        purpose: "The project phase currently being worked on, or none when no phase is active. Only a phase id indexed under content.phases in definition.yaml."
       set_by:
         required: true
         purpose: "Who wrote these values — 'the human' for a direct edit, or the Skill name and the invocation it acted on. The provenance of a state change is always readable."

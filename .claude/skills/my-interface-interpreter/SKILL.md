@@ -41,11 +41,14 @@ Transform the Developer's target-project definition into the structured Understa
 ## Refresh context before interpreting
 
 1. Resolve the human-managed project-definition file from the live map and read it completely.
-2. Follow the map to read each current item Schema with its local Policy and Preferences, existing generated files, the live State contract, and every other policy required for this interpretation.
+2. Read the project's ordered phases as the primary workflow definition. Resolve each phase target to an item type currently mapped by the Interface; an unknown target is a gap, never a guessed item.
+3. For each distinct target referenced by at least one phase, follow the map to read that item's current Schema with its local Policy and Preferences, its existing generated file when present, the live State contract, and every other policy required for this interpretation. Do not generate or enable an item merely because its Schema exists.
 
 ## Interpret
 
-Take target-project intent and facts only from the current human-managed definition. Take output structure and meaning from the current mapped Schemas. Enforce the selected item's local Policy, and use its local Preferences only for supported technical defaults when the definition leaves the corresponding choice unstated. Derive relationships, validation, permissions, preservation rules, and state behavior only from their current mapped authorities.
+Take target-project intent and facts only from the current human-managed definition. Preserve every project phase in its stated order and treat the phase—not its target item—as the primary unit later planned, developed, and reviewed. A phase target selects the item Schema, Policy, Preferences, configuration, contracts, verification context, and code boundary used for that phase; any number of phases may select the same target.
+
+Take output structure and meaning from the current mapped Schemas. Generate item configuration only for distinct targets actually referenced by project phases. Enforce each referenced target item's local Policy, and use its local Preferences only for supported technical defaults when the definition leaves the corresponding choice unstated. Derive relationships, validation, permissions, preservation rules, and state behavior only from their current mapped authorities.
 
 Generate only the Understanding those authorities support and authorize. Preserve the stated meaning without copying prose mechanically, inventing decisions, or overwriting protected or human-owned values.
 
