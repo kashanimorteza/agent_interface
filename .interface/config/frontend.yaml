@@ -1,0 +1,153 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/frontend.yaml"
+  path_note: "The frontend item — its resolved settings and its connection to the backend contract; lives in the config layer of the Agent Project Interface, produced by my-interface-interpreter from .interface/project.md and preferences/develop.yaml against schema/frontend.schema.yaml"
+  schema: ".interface/schema/frontend.schema.yaml"
+  schema_version: "1.0"
+  generated_by: "my-interface-interpreter"
+  generated_at: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Planning mode may write settings and a draft contract version here; development and review write nothing here"
+  frozen: "A contract version whose lifecycle is frozen is never edited by any mode — a change is a new version, and only the human creates or freezes one"
+  resolution: "project.md states nothing about the frontend, so every technical choice here is the default preferences/develop.yaml supplies under content.frontend; an explicit value in project.md would take precedence on regeneration"
+  regeneration: "A regeneration by my-interface-interpreter re-reads project.md and the preferences; it never touches a frozen contract version"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "enabled"
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "code_layout"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  enabled: "Whether the frontend is in play"
+  code_path: "The folder holding the frontend's actual code — the one place this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The frontend in one line"
+  needs_test: "Whether every task is proven by a written test"
+  verify_cwd: "Where and inside what every verify command runs"
+  responsibility: "What the frontend is answerable for"
+  tech: "What the frontend is built with — resolved, followed, never re-decided"
+  code_layout: "Every path inside code_path and what it holds"
+  contracts: "What the frontend publishes, and the contract it consumes"
+  boundaries: "What the frontend owns, does not own, and offers"
+  out_of_scope: "What the frontend does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Enabled -->
+  enabled: true
+
+  # <!-------------------------------------------- Code_Path -->
+  code_path: "frontend/"
+
+  # <!-------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root, beside .interface/ — never a path inside the interface."
+
+  # <!-------------------------------------------- Summary -->
+  summary: "A Next.js and React application in TypeScript that renders the user interface for every model the backend contract serves."
+
+  # <!-------------------------------------------- Needs_Test -->
+  needs_test: false
+
+  # <!-------------------------------------------- Verify_Cwd -->
+  verify_cwd: "frontend/ — every verify command runs from this folder through npm, against the node_modules it holds, as `npm run <script>` or `npx <command>`."
+
+  # <!-------------------------------------------- Responsibility -->
+  responsibility: "The frontend is answerable for the user interface of the Trading Assistant — every page and interaction through which a user reads and manages the models, reached only through the backend contract."
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+    language:
+      name: "TypeScript"
+      version: "latest"
+      library:
+        name: "React"
+        version: "latest"
+        component_style: "Function components"
+      framework:
+        name: "Next.js"
+        version: "latest"
+        router: "App Router"
+      package_manager:
+        name: "npm"
+        version: "latest"
+      naming:
+        variables: "camelCase"
+        functions: "camelCase"
+        classes: "PascalCase"
+        components: "PascalCase"
+        constants: "UPPER_SNAKE_CASE"
+        files: "kebab-case"
+        folders: "kebab-case"
+      test_runner: "none — needs_test is false and no test runner is preferred"
+    database:
+      engine: "none"
+      note: "The frontend holds no database and owns no schema; every read and write of data goes through the backend contract in config/backend.yaml."
+    environment:
+      name: "npm"
+      location: "node_modules/ under code_path — created by npm install, never committed"
+      note: "Every install and every command happens through npm inside code_path; the Next.js build output is never committed either."
+    run: "npm run dev — from code_path, the Next.js development server"
+
+  # <!-------------------------------------------- Code_Layout -->
+  code_layout:
+    "package.json": "Project metadata, scripts, and the dependencies npm installs"
+    "package-lock.json": "The lock file npm writes — committed, never edited by hand"
+    "node_modules/": "Installed dependencies — never committed"
+    ".next/": "Next.js build output — never committed"
+    ".gitignore": "Keeps node_modules/, .next/, and local environment files out of the repository"
+    "next.config.ts": "Next.js configuration"
+    "tsconfig.json": "TypeScript configuration"
+    "app/": "The Next.js App Router — the entry layout and one route folder per model page"
+    "app/layout.tsx": "Entry point — the root layout every page renders inside"
+    "app/page.tsx": "The landing page"
+    "components/": "Shared React function components used by more than one page"
+    "lib/": "Client-side code that is not a page or a component"
+    "lib/api.ts": "The one module that calls the backend and targets only routes the backend contract lists"
+    "lib/config.ts": "Client configuration read from the environment — the backend base URL"
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+    produces: "none — the frontend publishes no contract; no other item reads from it"
+    consumes: ".interface/config/backend.yaml — content.contracts — v1, the only route by which the frontend reaches data"
+    rule: "The frontend is built only against a frozen version of the backend contract — every call it makes is a route that version lists, with the body and response that version states."
+    change_rule: "The frontend never asks the backend to change a frozen version; a route it needs that the contract lacks is raised as an open question in config/state.yaml, and a new backend version is the human's decision. Should the frontend ever publish a contract of its own, a version entry is added here by the human."
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns:
+      - "Everything under frontend/"
+      - "Every page, component, and client-side state of the user interface"
+    does_not_own:
+      - "Application data, its storage, or any business logic — these are the backend's"
+      - "The backend contract — the frontend reads it and never writes it"
+      - "Any code under backend/"
+    interface: "The rendered user interface, reached in a browser through the Next.js server — it publishes no contract."
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "Storing data or holding a database — every value comes from and returns to the backend contract."
+    - "Business logic on models — validation beyond what a form needs, and every rule the backend applies."
+    - "User authentication, sessions, or login — switched off by the resolved configuration."
+    - "A written test suite — testing is switched off by the resolved configuration."
+    - "Application logging — switched off by the resolved configuration."
+    - "Calling any route the backend contract does not list, or any external service."
+    - "Any page for a phase the project has not defined — no project phase targets the frontend yet."

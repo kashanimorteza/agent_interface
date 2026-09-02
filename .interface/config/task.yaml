@@ -1,0 +1,85 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/task.yaml"
+  path_note: "The task frame and the plans — lives in the config layer of the Agent Project Interface, created by my-interface-interpreter against schema/task.schema.yaml; the frame is fixed here, the plans are filled by my-interface-tasker"
+  schema: ".interface/schema/task.schema.yaml"
+  schema_version: "1.4"
+  generated_by: "my-interface-interpreter"
+  generated_at: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Who may write what here is decided in config/state.yaml under content.state_authority and in .interface/root.yaml under content.modes — this file gives the shape and its invariants, not the permission"
+  frame: "task_schema and task_states are the frame — fixed by the human; no mode writes them"
+  planning: "Writes an item's phase_titles, phase_titles_lifecycle, and phase_titles_derived_from while that lifecycle is empty or derived, and the phases of that item's plan"
+  development: "Writes the status, blocker, and log fields of a task, and nothing else"
+  review: "Writes the status, blocker, and log fields of a task, to mark it blocked and record what was found"
+  regeneration: "A regeneration by my-interface-interpreter carries existing plans through untouched; it never resets a plan or a task"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_schema"
+  - "task_states"
+  - "plans"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_schema: "The fields every task carries — the definition of a task, not a task itself"
+  task_states: "The vocabulary a task's status may hold, and the protocols around it"
+  plans: "The plans — one per indexed item, holding the project phases whose target is that item"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Task_Schema -->
+  task_schema:
+    rule: "Every task carries exactly these fields — no more, no fewer."
+    fields:
+      id: "Identifier unique within the item — each item numbers its own tasks (T1, T2, ...)."
+      title: "The task in one sentence."
+      goal: "What becomes possible after this task that was not possible before."
+      depends_on: "Ids of tasks in the same item — depending on another item is forbidden."
+      needs_contract: "The contract version required — used instead of depending on another item's task; omitted when the task needs none."
+      acceptance: "Human-readable acceptance criterion — what must actually work."
+      verify: "A runnable command that proves acceptance, run from the item's verify_cwd — without it a task is never done."
+      touches: "Paths this task touches, written relative to the item's code_path."
+      status: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
+      blocker: "Id of the blocker in config/state.yaml — present only when status is blocked, absent otherwise."
+      log: "Append-only list of dated entries carried with the task — absent until the task first moves."
+    status_lives_here: "Status is written on the task itself, so definition and state can never drift apart."
+    history_lives_here_too: "There is no history file — how a task reached its state is in its own log, and a past entry is never rewritten."
+
+  # <!-------------------------------------------- Task_States -->
+  task_states:
+    path: "The status field on each task."
+    states:
+      todo: "Defined and not yet started."
+      claimed: "An agent has taken it and work is in progress."
+      blocked: "Cannot proceed — the blocker field names the entry in config/state.yaml that stops it."
+      done: "Its verify command has passed."
+      cancelled: "Will not be done — the reason is in its log."
+      superseded: "Replaced by another task — the log names which."
+    derived_ready: "ready is not a stored status — a task is ready when it is todo and every id in its depends_on is done, computed when needed and written nowhere."
+    done_gate: "Without a passing verify run no task becomes done, even if the code is written."
+    claim_protocol: "A task is set to claimed and this file written before work starts, so two agents never take the same task."
+    status_only_in_development: "In development mode status, blocker, and log are the only fields an agent may change — the rest is the plan."
+
+  # <!-------------------------------------------- Plans -->
+  plans:
+
+    backend:
+      phase_titles_lifecycle: "empty"
+      phase_titles_derived_from: "not derived yet"
+      phase_titles: {}
+      phases: {}
+
+    frontend:
+      phase_titles_lifecycle: "empty"
+      phase_titles_derived_from: "not derived yet"
+      phase_titles: {}
+      phases: {}

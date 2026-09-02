@@ -1,0 +1,309 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "The State contract — the project-wide runtime state and the live State Authority that governs it; lives in the config layer of the Agent Project Interface, created by my-interface-interpreter under transition S0 against schema/state.schema.yaml"
+  schema: ".interface/schema/state.schema.yaml"
+  schema_version: "2.1"
+  generated_by: "my-interface-interpreter"
+  generated_at: "2026-09-02"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Every write to this file is one transition listed in content.state_authority.transitions, performed by the Skill that transition names — nothing else writes here"
+  authority: "content.state_authority is the live State Authority — seeded verbatim from the default in schema/state.schema.yaml under transition S0, and the human's alone after that seed; a regeneration carries it and content.active through untouched"
+  precedence: "Where any other file appears to say something different about who writes a state field, content.state_authority governs"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "state_authority"
+  - "active"
+  - "blockers"
+  - "open_questions"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  state_authority: "Who may write each field of this file, on which transition, and which Skill may perform each — read before anything below is written"
+  active: "The one mode and the one item currently in play"
+  blockers: "What is actually missing — raised and released under transition S7"
+  open_questions: "What the human still has to decide — raised under transition S8, never answered by an agent"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- State_Authority -->
+  state_authority:
+    rule: "This section is the single source of truth for the runtime state, and it is part of the State contract itself. It names every field of state.yaml, who may write each one, which transitions exist, and which Skill may perform each. Where any other file — root.yaml, a schema, a config policy, a SKILL.md — appears to say something different, this section governs; the other file is wrong and is corrected, not worked around"
+    principle: "An agent records a decision the human has already made, and never makes one. Invoking a Skill is the human's instruction — the Skill writes that instruction into the state, and nothing beyond it"
+    scope: "This file — content.active, content.blockers, content.open_questions, and content.state_authority itself. The other config files keep their ownership in their own policy sections; nothing here widens it"
+    seeded_from: "The default in .interface/schema/state.schema.yaml, written verbatim when state.yaml is created — transition S0. While no state.yaml exists there is no live authority, so that default is what authorizes its own creation; once the file exists, this live copy governs and the schema default is not consulted at runtime"
+    extension_rule: "Extensible by the human alone. A new entry under fields gives a new state field its own authority; adding a skill to a writable_by or performed_by list authorizes that skill without redesigning the format; a new transition is a new entry under transitions. An agent that needs an extension raises it as an open question, never writes it"
+
+    tiers:
+      agent_writable: "Written by a named Skill, and only as part of a transition listed under transitions below"
+      human_only: "Never written by an agent — in any mode, on any invocation, however convenient. The human edits it directly"
+      derived: "Not stored at all — computed from what is stored, and never written anywhere"
+
+    fields:
+
+      state_authority:
+        tier: "human_only"
+        holds: "This section — the live State Authority"
+        writable_by:
+          - "my-interface-interpreter — only under transition S0, seeding the default from schema/state.schema.yaml because state.yaml does not yet exist"
+        constraint: "After the seed it is the human's alone. A regeneration carries it through untouched, no Skill edits, extends, or narrows it, and a change it needs is an open question in this file — never a quiet rewrite"
+        human_may_set: true
+
+      active.mode:
+        tier: "agent_writable"
+        holds: "One of the modes defined in .interface/root.yaml under content.modes, or 'not set' when no Skill has been invoked yet"
+        writable_by:
+          - "my-interface-tasker"
+          - "my-interface-developer"
+          - "my-interface-reviewer"
+          - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+        constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-reset does not write this field: it deletes the file that holds it, under transition S5"
+        human_may_set: true
+
+      active.item:
+        tier: "agent_writable"
+        holds: "The name of one item as definition.yaml indexes it under content.architecture.parts, or 'none'"
+        writable_by:
+          - "my-interface-tasker"
+          - "my-interface-developer"
+          - "my-interface-reviewer"
+          - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+        constraint: "Only an item the configuration indexes and whose enabled is true. The item comes from the invocation. When the invocation names none and more than one enabled item exists, the Skill writes nothing and asks the human — an item is never guessed, and never carried over from a previous run. Under S0 the interpreter writes only 'none'"
+        human_may_set: true
+
+      active.mode_reason:
+        tier: "agent_writable"
+        holds: "Why this mode and this item are the active ones — the invocation that set them, and after a run what that run concluded"
+        writable_by:
+          - "my-interface-tasker"
+          - "my-interface-developer"
+          - "my-interface-reviewer"
+          - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+        constraint: "Written together with mode and item, and rewritten at the end of a run under transition S4. It states what happened; it never argues for a mode the Skill was not invoked into"
+        human_may_set: true
+
+      active.set_by:
+        tier: "agent_writable"
+        holds: "Who wrote the active values — either 'the human' for a direct edit, or the Skill name followed by 'on the human's invocation'"
+        writable_by:
+          - "my-interface-tasker"
+          - "my-interface-developer"
+          - "my-interface-reviewer"
+          - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+        constraint: "A Skill writes its own name and the invocation it acted on. It never writes 'the human' for a value the human did not type directly — the provenance of every state change stays readable. Under S0 the interpreter writes its own name, not the human's"
+        human_may_set: true
+
+      active.set_at:
+        tier: "agent_writable"
+        holds: "The date the active values were last written"
+        writable_by:
+          - "my-interface-tasker"
+          - "my-interface-developer"
+          - "my-interface-reviewer"
+          - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+        constraint: "Written with every change to active, and never backdated"
+        human_may_set: true
+
+      blockers:
+        tier: "agent_writable"
+        holds: "What is actually missing, what each thing stops, and whose decision would release it"
+        writable_by:
+          - "my-interface-tasker"
+          - "my-interface-developer"
+          - "my-interface-reviewer"
+          - "my-interface-interpreter — during a generation run, which is outside the modes"
+        constraint: "Any mode, and a generation run, may raise a blocker, update what it stops, and remove it once the thing that was missing exists. A blocker whose decision_belongs_to is the human is removed only after the human has decided — recording that decision is transition S8"
+        human_may_set: true
+
+      open_questions.questions:
+        tier: "agent_writable"
+        holds: "The questions themselves — raised by an agent, addressed to the human"
+        writable_by:
+          - "my-interface-tasker"
+          - "my-interface-developer"
+          - "my-interface-reviewer"
+          - "my-interface-interpreter — during a generation run, which is outside the modes"
+        constraint: "An agent raises a question and states why it matters. Raising is not answering"
+        human_may_set: true
+
+      open_questions.questions.answered_so_far:
+        tier: "agent_writable"
+        holds: "What of a question the human has already settled, and when"
+        writable_by:
+          - "my-interface-tasker"
+          - "my-interface-developer"
+          - "my-interface-reviewer"
+          - "my-interface-interpreter"
+        constraint: "Only the human's stated decision is recorded here, in the human's own terms and dated. An agent that writes anything here it was not told is inventing — see transition S8"
+        human_may_set: true
+
+      the_answer_to_an_open_question:
+        tier: "human_only"
+        holds: "The decision itself — what the value actually is"
+        writable_by: []
+        constraint: "No agent answers a question, closes one by supplying its answer, or writes a plausible value into a contract in place of one. A question is closed only after the human has answered it, and the answer that closes it is the human's"
+
+      ready:
+        tier: "derived"
+        holds: "Whether a task may be started"
+        writable_by: []
+        constraint: "Never stored. A task is ready when its status is todo and every id in its depends_on is done — computed at the moment it is needed, and written nowhere"
+
+    human_only_decisions:
+      note: "These sit outside state.yaml but belong to the same ownership model — they are named here so that one section answers the whole question of who decides what"
+      items:
+        - "The answer to any open question in state.yaml"
+        - "Freezing or versioning a contract — see the change_rule in the item files"
+        - "Confirming an item's phase_titles — see content.plans.<item>.phase_titles_lifecycle in task.yaml"
+        - "The content of config/definition.yaml and config/rules.yaml, outside a my-interface-interpreter run"
+        - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
+        - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
+        - "The State Authority itself, after its seed — this section, and its default in schema/state.schema.yaml"
+        - "Asking for tasks to be created, and asking for the generated project state to be reset"
+
+    transitions:
+
+      - id: "S0"
+        name: "generate the state file"
+        from: "no state.yaml at all"
+        to: "active.mode: 'not set', active.item: 'none', and the live State Authority seeded"
+        performed_by: "my-interface-interpreter"
+        authorized_by: "The human's invocation of my-interface-interpreter, on a project that has no state.yaml yet — governed by the default authority in schema/state.schema.yaml, which authorizes its own seeding while no live state exists"
+        requires:
+          - "config/state.yaml does not exist. Where it does, a regeneration carries content.active and content.state_authority through untouched — a regeneration never resets the runtime state and never rewrites the live authority"
+          - "content.state_authority is seeded verbatim from the default in schema/state.schema.yaml — a state.yaml without it is not created"
+        writes: "active.mode, active.item, active.mode_reason, active.set_by, active.set_at, content.state_authority — seeded from the schema default — and the blockers and questions the generation raised"
+        refused_when: "state.yaml already exists. Rewriting an active a Skill or the human set, or a live authority, is outside this Skill's authority"
+
+      - id: "S1"
+        name: "enter planning"
+        from: "any value of active.mode, 'not set' included"
+        to: "active.mode: planning, active.item: the item named by the invocation"
+        performed_by: "my-interface-tasker"
+        authorized_by: "The human's invocation of my-interface-tasker, which names the scope — for example /my-interface-tasker backend"
+        requires:
+          - "The named item is indexed under content.architecture.parts in definition.yaml and holds a key under content.plans in task.yaml"
+          - "That item's enabled is true"
+          - "When the invocation names no item and more than one enabled item exists, the transition does not happen: the Skill asks the human and writes nothing"
+        writes: "active.mode, active.item, active.mode_reason, active.set_by, active.set_at"
+        refused_when: "The invocation names an item the configuration does not index, or names a mode other than planning. The Skill stops and tells the human; it does not adjust the state to fit"
+
+      - id: "S2"
+        name: "enter development"
+        from: "any value of active.mode, 'not set' included"
+        to: "active.mode: development, active.item: the item named by the invocation"
+        performed_by: "my-interface-developer"
+        authorized_by: "The human's invocation of my-interface-developer, which names the item"
+        requires:
+          - "The named item is indexed and enabled"
+          - "That item's plan holds at least one task — a mode that has nothing to build is not entered"
+          - "When the invocation names no item and more than one enabled item exists, the Skill asks the human and writes nothing"
+        writes: "active.mode, active.item, active.mode_reason, active.set_by, active.set_at"
+        refused_when: "The item has no plan, or the invocation names a mode other than development"
+
+      - id: "S3"
+        name: "enter review"
+        from: "any value of active.mode, 'not set' included"
+        to: "active.mode: review, active.item: the item named by the invocation, or the item already active when the invocation names none"
+        performed_by: "my-interface-reviewer"
+        authorized_by: "The human's invocation of my-interface-reviewer"
+        requires:
+          - "The item is indexed and enabled"
+          - "When no item is named and none is active, the single enabled item is the scope; where more than one is enabled, the Skill asks the human and writes nothing"
+        writes: "active.mode, active.item, active.mode_reason, active.set_by, active.set_at"
+        refused_when: "The invocation names a mode other than review"
+
+      - id: "S4"
+        name: "record the outcome of a run"
+        from: "the mode the run was performed in"
+        to: "the same mode and the same item — only active.mode_reason and active.set_at change"
+        performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer — each for its own run"
+        authorized_by: "Finishing the run the human invoked"
+        requires:
+          - "The run has finished, and what is recorded is what it actually did or was stopped by"
+        writes: "active.mode_reason, active.set_at"
+        refused_when: "The Skill did not perform the run"
+
+      - id: "S5"
+        name: "reset the generated project state"
+        from: "any"
+        to: "no mapped generated config files and no validated project code_path directories; state.yaml and its active values, blockers, questions, and live State Authority are deleted and reseeded from the schema default at the next S0"
+        performed_by: "my-interface-reset"
+        authorized_by: "The human invoking my-interface-reset by name; that invocation itself authorizes deletion of the exact currently mapped generated config files and validated code_path directories, with no second confirmation"
+        requires:
+          - "Before any deletion, the exact existing config-file targets are resolved fresh from the current Interface map and every code-directory target is resolved from a code_path in those current generated config files"
+          - "Every config target is a mapped generated file, and every code-directory target is a non-empty relative path that resolves to a strict descendant of the repository root outside .interface/, .claude/, and .git/"
+          - "No protected, human-managed, symlinked, unresolved, unsafe, or unmapped path is included"
+        writes: "the mapped generated config files and validated project code_path directories, by deleting them; state.yaml is deleted with the rest of config/"
+        refused_when: "The complete deletion set cannot be resolved and validated before deletion, or it includes a protected, human-managed, symlinked, unresolved, unsafe, or unmapped path"
+
+      - id: "S6"
+        name: "human override"
+        from: "any"
+        to: "any"
+        performed_by: "the human, editing state.yaml directly"
+        authorized_by: "The human, who needs no transition"
+        requires: []
+        writes: "any field of state.yaml — this section included"
+        refused_when: "Never. An agent does not contest, revert, or correct a value the human wrote — where the human's value disagrees with an invocation, the Skill stops and asks"
+
+      - id: "S7"
+        name: "raise or release a blocker"
+        from: "any mode, and a generation run outside the modes"
+        to: "the same mode"
+        performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer, my-interface-interpreter"
+        authorized_by: "The work itself — a blocker is what stopped it, and a generation run raises what the configuration cannot supply"
+        requires:
+          - "The blocker states what is missing, never a guess at its answer"
+          - "A blocker is removed only once the thing that was missing exists in the configuration"
+        writes: "content.blockers, and the blocker field of the task it stops"
+        refused_when: "Removing a blocker whose decision_belongs_to is the human, before the human has decided"
+
+      - id: "S8"
+        name: "raise a question, or record the human's answer"
+        from: "any mode, and a generation run outside the modes"
+        to: "the same mode"
+        performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer, my-interface-interpreter"
+        authorized_by: "A gap found while working, or an answer the human has stated"
+        requires:
+          - "Raising: the question is stated so it can be answered, and why_it_matters names what depends on it"
+          - "Recording: the answer written into answered_so_far is the human's, dated, and in the human's own terms"
+        writes: "content.open_questions.questions, and answered_so_far on an existing question"
+        refused_when: "The answer came from the agent, from the code, or from what seems reasonable — that is an invention, and the question stays open"
+
+    validation:
+      note: "These must hold at all times. Any Skill may check them; my-interface-reviewer checks them as part of a review, and a failure is a blocker, not a repair"
+      checks:
+        - "active.mode holds a mode named under content.modes in .interface/root.yaml, or 'not set'"
+        - "active.item holds an item indexed under content.architecture.parts in definition.yaml, or 'none'"
+        - "active.set_by names either the human or a Skill listed as writable_by for the field it wrote"
+        - "Every state change an agent made corresponds to exactly one transition above"
+        - "A Skill's mode matches the mode it owns under content.modes in root.yaml — a Skill running in another Skill's mode is a fault, not a state to repair"
+        - "phase_titles that carry lifecycle: confirmed are unchanged since the human confirmed them"
+        - "No open question carries an answer that no human gave"
+        - "content.state_authority was seeded verbatim from the schema default and has changed only by the human's hand since — a difference an agent made is a fault, not a state to repair"
+
+  # <!-------------------------------------------- Active -->
+  active:
+    mode: "not set"
+    mode_reason: "Transition S0 — the human invoked /my-interface-interpreter on a project with no state.yaml. The generation created definition, rules, task, backend, and frontend configuration from project.md; no Skill has been invoked into a mode yet."
+    item: "none"
+    set_by: "my-interface-interpreter on the human's invocation"
+    set_at: "2026-09-02"
+
+  # <!-------------------------------------------- Blockers -->
+  blockers: []
+
+  # <!-------------------------------------------- Open_Questions -->
+  open_questions:
+    note: "These are addressed to the human. An agent raises a question and records the human's answer; it never supplies one."
+    questions: []
