@@ -14,50 +14,6 @@ Defines what the project is and the main parts that make up the system.
 
 <br><br>
 
-## Development
-
-Defines the technologies, tools, and development settings used to build the project.
-
-### General
-
-- HTTPS: false
-- Error Handling: false
-- Logging: false
-- Testing: false
-- Authentication: false
-
-### Backend
-
-- Code Path: backend/
-
-#### Technology
-
-- Language: Python
-- API: FastAPI
-- ORM: SQLAlchemy
-- Database: SQLite
-- Database Migration: Standard Python migration framework
-
-#### API
-
-- URL `key` Parameter: true
-- API Documentation: true
-- API Documentation Type: Docs
-- ReDoc: false
-
-### Frontend
-
-- Code Path: frontend/
-
-#### Technology
-
-- Language: TypeScript
-- Library: React
-- Framework: Next.js
-- Package Manager: npm
-
-<br><br>
-
 ## Models
 
 Defines the core entities of the project and the data fields that belong to each entity.
