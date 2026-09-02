@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-database
-  version: "2.0"
+  version: "2.1"
   purpose: "The shape of database.yaml — every parameter an agent reads to understand the independent database item"
 
 policy:
@@ -10,6 +10,14 @@ policy:
   ownership: "The database item alone owns its engine choice, physical storage, schema, constraints, indexes, migration history, and database contract."
   schema_changes: "Every schema change is expressed by an ordered reversible migration. Backend code never creates, alters, or drops database objects directly."
   contract_boundary: "Consumers use only a frozen database contract and runtime connection information; they never infer schema from migrations or database files."
+  table_template_resolution:
+    rule: "Use preferences.table_template as a suggested starting point for every table. Explicit project definitions always win, and the interpreter may adapt, replace, or omit template fields when the table semantics call for a better design."
+    resolved_by: "my-interface-interpreter writes the complete resolved field set into each contract table; downstream Skills never reapply or reinterpret the template."
+  relationship_resolution:
+    rule: "When the project declares a relationship without specifying its physical field, represent it with a foreign-key field named <singular_referenced_table>_id in snake_case. An explicit project field or reference always wins."
+    referenced_key: "Reference the related table primary key unless the project explicitly names another referenced key."
+    type_rule: "The foreign-key field type must match the referenced key type exactly and is never hard-coded independently."
+    resolved_by: "my-interface-interpreter writes the foreign-key field, referenced table, and referenced column explicitly into the database contract."
 
 preferences:
   defaults:
@@ -50,6 +58,26 @@ preferences:
       commands:
         upgrade: "uv run alembic upgrade head"
         downgrade: "uv run alembic downgrade -1"
+  table_template:
+    purpose: "A soft default for ordinary table fields when the project leaves their shape unstated; it is guidance, not a mandatory table contract."
+    fields:
+      id:
+        type: "integer"
+        primary_key: true
+        auto_increment: true
+        nullable: false
+      name:
+        type: "string"
+        nullable: false
+        unique: true
+        role: "The default human-readable logical key."
+      description:
+        type: "string"
+        nullable: true
+      status:
+        type: "boolean"
+        nullable: false
+        default: true
   capabilities:
     testing:
       default_enabled: false
@@ -222,7 +250,7 @@ sections:
             purpose: "The credential-free connection shape and runtime configuration source."
           tables:
             required: true
-            purpose: "The tables, columns, types, nullability, keys, references, constraints, and indexes exposed by this version."
+            purpose: "The fully resolved tables, columns, types, nullability, keys, references, constraints, and indexes exposed by this version. Every relationship names its foreign-key field, referenced table, and referenced column explicitly."
           migrations:
             required: true
             purpose: "The migration range that realizes this contract version."
