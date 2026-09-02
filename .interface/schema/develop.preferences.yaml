@@ -1,0 +1,160 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/schema/develop.preferences.yaml"
+  path_note: "Human-owned programming preferences and conditional defaults for backend and frontend projects. It supplies an answer only when the project itself leaves that choice unstated."
+  version: "0.2"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  changed_by: "The Developer, directly."
+  rule: "An explicit value in project.md always overrides this file. A matching preference supplies a default only when project.md is silent; absence of both remains unresolved and must not be guessed."
+  generated_config: "The Interpreter resolves applicable preferences into concrete project configuration. Config, Tasker, and Developer consume the resolved result and do not reinterpret these profiles."
+  scope: "Technical programming choices only; product requirements, domain behavior, models, routes, and project-specific decisions do not belong here."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "backend"
+  - "frontend"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  backend: "Default backend language and the conditional preferences for its language, API framework, database, tooling, conventions, and optional capabilities."
+  frontend: "Default frontend language and the conditional preferences for its language, library, framework, package manager, tooling, and conventions."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!------------------------------------------------------------------------------- Backend -->
+  backend:
+    defaults:
+      code_path: "backend/"
+      needs_test: false
+      language: "Python"
+      database: "SQLite"
+
+    languages:
+      Python:
+        version: "latest"
+        environment:
+          name: "uv"
+          version: "latest"
+        naming:
+          variables: "snake_case"
+          functions: "snake_case"
+          classes: "PascalCase"
+          constants: "UPPER_SNAKE_CASE"
+          files: "snake_case"
+          folders: "snake_case"
+        defaults:
+          api_framework: "FastAPI"
+          orm: "SQLAlchemy"
+          migration: "Alembic"
+
+    api_frameworks:
+      FastAPI:
+        version: "latest"
+        run: "uv run fastapi dev app/main.py"
+        application:
+          entrypoint: "app/main.py"
+          documentation:
+            default_enabled: true
+            type: "Docs"
+            docs_path: "/docs"
+            openapi_path: "/openapi.json"
+            redoc_enabled: false
+        api_key:
+          default_enabled: true
+          when_enabled:
+            source: "query"
+            parameter_name: "key"
+            accepted_value_source: "environment"
+            environment_variable: "API_KEY"
+            enforcement: "application middleware"
+            public_paths:
+              - "/docs"
+              - "/docs/oauth2-redirect"
+              - "/openapi.json"
+            protected_scope: "Every executable API endpoint"
+            invalid_response:
+              status_code: 401
+              detail: "API key is missing or invalid"
+            documentation_execution: "Expose the key as an OpenAPI apiKey security scheme so Swagger Authorize adds it to Try it out requests."
+
+    orms:
+      SQLAlchemy:
+        version: "latest"
+
+    migrations:
+      Alembic:
+        version: "latest"
+
+    databases:
+      SQLite:
+        location: "app.db"
+        connection:
+          check_same_thread: false
+          foreign_keys: true
+        migration: "Alembic"
+
+    capabilities:
+      testing:
+        default_enabled: false
+      error_handling:
+        default_enabled: false
+      logging:
+        default_enabled: false
+      authentication:
+        default_enabled: false
+      https:
+        default_enabled: false
+      api_documentation:
+        default_enabled: true
+      api_key:
+        default_enabled: true
+
+  # <!------------------------------------------------------------------------------ Frontend -->
+  frontend:
+    defaults:
+      code_path: "frontend/"
+      needs_test: false
+      language: "TypeScript"
+      library: "React"
+      framework: "Next.js"
+      package_manager: "npm"
+
+    languages:
+      TypeScript:
+        version: "latest"
+        naming:
+          variables: "camelCase"
+          functions: "camelCase"
+          classes: "PascalCase"
+          components: "PascalCase"
+          constants: "UPPER_SNAKE_CASE"
+          files: "kebab-case"
+          folders: "kebab-case"
+
+    libraries:
+      React:
+        version: "latest"
+        component_style: "Function components"
+
+    frameworks:
+      Next.js:
+        version: "latest"
+        router: "App Router"
+
+    package_managers:
+      npm:
+        version: "latest"
+
+    capabilities:
+      testing:
+        default_enabled: false
+      logging:
+        default_enabled: false

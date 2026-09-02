@@ -1,10 +1,7 @@
 schema:
   id: agent-interface-backend
-  version: "1.2"
+  version: "1.3"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
-  defaults:
-    rule: "A field carrying `default` is always written into backend.yaml — the project's stated value when the project states one, the schema's default when it does not."
-    note: "A default is an answer, not a guess — an unstated field that has one is never written as 'to be defined' and never becomes an open question. A field with no default keeps that behaviour unchanged."
 
 structure:
   - enabled
@@ -47,8 +44,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Needs_Test -->
   needs_test:
     required: true
-    default: false
-    purpose: "Whether every task that produces code is proven by a written test in tests/ — true means a task's verify is that test run; set by the human, and disabled unless the project states otherwise."
+    purpose: "Whether every task that produces code is proven by a written test in tests/ — true means a task's verify is that test run."
 
   # <!--------------------------------------------------------------------------------- Verify_Cwd -->
   verify_cwd:
@@ -63,7 +59,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Tech -->
   tech:
     required: true
-    purpose: "What the backend is built with — the choices an agent follows and never re-decides; every choice carries a default, so a choice the project leaves unstated is answered by the schema rather than guessed."
+    purpose: "What the backend is built with — the resolved choices an agent follows and never re-decides."
     fields:
       language:
         required: true
@@ -71,27 +67,23 @@ sections:
         fields:
           name:
             required: true
-            default: "Python"
             purpose: "The language itself."
           version:
             required: true
-            default: "latest"
-            purpose: "The language version — the pinned version when the project names one, otherwise the latest stable release available when development starts."
+            purpose: "The language version."
           environment:
             required: true
             purpose: "The isolated environment every command and every install happens inside — created and driven by one named tool, and never committed."
             fields:
               name:
                 required: true
-                default: "uv"
                 purpose: "The tool that creates the virtual environment and installs into it — the only route a dependency enters the project by."
               version:
                 required: true
-                default: "latest"
                 purpose: "The version of that tool."
           packages:
             required: true
-            purpose: "The frameworks, libraries, and tools the backend is built on — one structured entry per role, never a single combined line; a role the project leaves unstated takes its default."
+            purpose: "The frameworks, libraries, and tools the backend is built on — one structured entry per role, never a single combined line."
             fields:
               api:
                 required: true
@@ -99,11 +91,9 @@ sections:
                 fields:
                   name:
                     required: true
-                    default: "FastAPI"
                     purpose: "The API framework."
                   version:
                     required: true
-                    default: "latest"
                     purpose: "Its version."
               orm:
                 required: true
@@ -111,11 +101,9 @@ sections:
                 fields:
                   name:
                     required: true
-                    default: "SQLAlchemy"
                     purpose: "The ORM."
                   version:
                     required: true
-                    default: "latest"
                     purpose: "Its version."
               migration:
                 required: true
@@ -123,11 +111,9 @@ sections:
                 fields:
                   name:
                     required: true
-                    default: "Alembic"
                     purpose: "The migration tool."
                   version:
                     required: true
-                    default: "latest"
                     purpose: "Its version."
               "<package>":
                 required: false
@@ -149,41 +135,35 @@ sections:
   # <!--------------------------------------------------------------------------------- Standards -->
   standards:
     required: true
-    purpose: "How the backend's code is written — conventions the project settles once so an agent follows them instead of deciding them file by file; each carries a default, and the project's value wins wherever it states one."
+    purpose: "How the backend's code is written — resolved conventions an agent follows instead of deciding them file by file."
     fields:
       naming:
         required: true
-        purpose: "The case style each kind of name takes — the defaults are the conventions of the default language and hold until the project states otherwise."
+        purpose: "The resolved case style for each kind of name."
         fields:
           variables:
             required: true
-            default: "snake_case"
             purpose: "How a variable is named."
           functions:
             required: true
-            default: "snake_case"
             purpose: "How a function or method is named."
           classes:
             required: true
-            default: "PascalCase"
             purpose: "How a class is named."
           constants:
             required: true
-            default: "UPPER_SNAKE_CASE"
             purpose: "How a constant is named."
           files:
             required: true
-            default: "snake_case"
             purpose: "How a file inside code_path is named."
           folders:
             required: true
-            default: "snake_case"
             purpose: "How a folder inside code_path is named."
 
   # <!--------------------------------------------------------------------------------- Capabilities -->
   capabilities:
     required: true
-    purpose: "The optional backend capabilities, each switched on or off here — every one carries a default of false, so a capability the project does not ask for stays disabled, produces no code, no task, and no dependency, and never becomes an open question; testing has its own switch, needs_test above."
+    purpose: "The resolved state of each optional backend capability; testing has its own switch in needs_test."
     fields:
       error_handling:
         required: true
@@ -191,7 +171,6 @@ sections:
         fields:
           enabled:
             required: true
-            default: false
             purpose: "Whether the backend implements centralized error handling — false means only the framework's built-in behavior."
       logging:
         required: true
@@ -199,7 +178,6 @@ sections:
         fields:
           enabled:
             required: true
-            default: false
             purpose: "Whether the backend writes application logs — false means no logging is set up or required."
       api_documentation:
         required: true
@@ -207,7 +185,6 @@ sections:
         fields:
           enabled:
             required: true
-            default: false
             purpose: "Whether the backend serves API documentation — false means none is generated or exposed."
           type:
             required: false
@@ -218,7 +195,6 @@ sections:
         fields:
           enabled:
             required: true
-            default: false
             purpose: "Whether the API authenticates its callers — false means every route is open."
       https:
         required: true
@@ -226,7 +202,6 @@ sections:
         fields:
           enabled:
             required: true
-            default: false
             purpose: "Whether the backend serves HTTPS — false means plain HTTP."
       api_key:
         required: true
@@ -234,7 +209,6 @@ sections:
         fields:
           enabled:
             required: true
-            default: false
             purpose: "Whether requests carry an API key — false means no key is issued or checked."
 
   # <!--------------------------------------------------------------------------------- Code_Layout -->

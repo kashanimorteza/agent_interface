@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/config/definition.yaml"
-  path_note: "Generated Understanding of what the product is — lives in the config layer of the Agent Project Interface, produced by my-interface-interpreter from .interface/project.md against schema/definition.schema.yaml"
+  path_note: "The structured project definition — lives in the config layer of the Agent Project Interface, produced by my-interface-interpreter from .interface/project.md against schema/definition.schema.yaml"
   schema: ".interface/schema/definition.schema.yaml"
   schema_version: "1.1"
   generated_by: "my-interface-interpreter"
@@ -11,9 +11,10 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "Written only by my-interface-interpreter during a generation run. Outside that run its content is the human's alone — see human_only_decisions in config/state.yaml under content.state_authority"
-  source: "Every project fact here comes from .interface/project.md; nothing is inferred beyond what that file states"
-  on_change_needed: "A change to the product's identity, goals, architecture, or phases is made in project.md and regenerated, or raised as an open question in config/state.yaml — never edited here by an agent"
+  rule: "Written only by my-interface-interpreter during a generation run; no mode edits it — planning, development, and review read it and never write it"
+  changed_by: "The human, by changing .interface/project.md and regenerating, or by editing this file directly"
+  source: "Every fact here comes from .interface/project.md as it stood at generated_at; nothing is inferred from code"
+  on_gap: "A requirement the project leaves undecided is raised as an open question in config/state.yaml, never settled here"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -26,10 +27,10 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  identity: "Who the product is — id, name, and its one-sentence promise"
+  identity: "Who the product is — id, name, and the one promise everything traces back to"
   goals: "What a user can do when the product is finished — the list every task traces back to"
-  architecture: "The parts of the product, what each owns, and the single connection between them"
-  phases: "The ordered project phase index copied from project.md — the only source planning reads phases from"
+  architecture: "The parts of the product, what each owns, and the single connection point between them"
+  phases: "The ordered project phases copied from project.md — the only phase index planning may use"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -43,45 +44,53 @@ content:
 
   # <!-------------------------------------------- Goals -->
   goals:
-    - "Define and manage the trading platforms used to execute trades, initially Binance and MetaTrader 5, with room for more."
-    - "Define and manage brokers, each tied to a trading platform and acting as the parent of its trading accounts."
-    - "Define and manage trading accounts, each belonging to one broker and used to perform trading operations."
-    - "Define and manage tradable assets such as EURUSD or XAUUSD."
-    - "Define and manage strategies — the trading settings such as stop loss and take profit that an action uses."
-    - "Define and manage trailing groups and the trailing rules within them that adjust stop loss and take profit during a trade."
-    - "Define and manage partial groups and the partial rules within them that close part or all of a position at given profit levels."
-    - "Define and manage action groups that gather trading actions by an operating or risk profile."
-    - "Define and manage actions, each combining an asset, an account, and a strategy inside an action group."
-    - "Track executions — activated actions with their current stage and state."
-    - "Store positions created from executed orders, with entry price, take profit, stop loss, and the settings applied through their groups."
+    - "Define the trading platforms used to execute trades — Binance and MetaTrader 5 first, with further platforms added later."
+    - "Define brokers, each bound to the trading platform it uses, as the parent of its trading accounts."
+    - "Define trading accounts, each with its username and password, under the broker they belong to."
+    - "Define tradable assets such as EURUSD or XAUUSD."
+    - "Define strategies that hold the trading settings an action uses, such as stop loss and take profit, with a risk parameter."
+    - "Define trailing groups, and inside each the trailing rules that decide when and how stop loss and take profit move during a trade."
+    - "Define partial groups, and inside each the partial rules that close a portion of a position when a profit threshold is reached."
+    - "Group trading actions by an operating or risk profile, such as Standard or High Risk."
+    - "Define trading actions that combine an asset, an account, and a strategy inside an action group."
+    - "Track the actions that have been activated and executed, with the profit, stage, and state of each execution."
+    - "Store the complete information of a position created from an executed order — entry price, take profit, stop loss, and the settings applied through its related groups."
+    - "Reach every model above through an HTTP API whose requests carry a URL key parameter, with API documentation served as Docs."
+    - "Interact with all of the above through a web user interface."
 
   # <!-------------------------------------------- Architecture -->
   architecture:
-    shape: "Two parts — a backend that manages application data and functionality, and a frontend that provides the user interface — joined only by the backend's published API contract."
-    reason: "The project states the two parts and their responsibilities directly; keeping the API contract as the single bridge lets each part be built and verified on its own."
+    shape: "Two parts — a backend that owns the data and its API, and a frontend that renders the user interface — joined by the backend's published API contract."
+    reason: "The project states the two parts by name and gives each its own technology and code path; one contract between them lets each be planned, built, and reviewed on its own."
+
     parts:
+
       backend:
-        responsibility: "Manages application data and functionality."
+        responsibility: "Manages application data and functionality — it stores every model the project defines and serves the API for them."
         owns:
-          - "The data models the project defines and the database schema that holds them."
-          - "The API surface that exposes those models."
-          - "Everything under its code_path — see config/backend.yaml"
+          - "The code under backend/"
+          - "The database and the whole of its schema"
+          - "Every model the project defines and the persistence of it"
+          - "The API surface and its documentation"
         does_not_own:
-          - "The user interface and any client code."
+          - "The user interface and any code under frontend/"
         produces:
-          - "The backend API contract — config/backend.yaml under content.contracts"
+          - ".interface/config/backend.yaml — content.contracts — the API contract the frontend builds against"
+
       frontend:
         responsibility: "Provides the user interface for interacting with the application."
         owns:
-          - "The user interface and everything under its code_path — see config/frontend.yaml"
+          - "The code under frontend/"
+          - "Every page, component, and client-side state of the user interface"
         does_not_own:
-          - "Application data, its storage, and the API that serves it."
+          - "Application data, its storage, or any business logic — these are the backend's, reached only through its contract"
         consumes:
-          - "The backend API contract — config/backend.yaml under content.contracts"
+          - ".interface/config/backend.yaml — content.contracts — read for every call the interface makes"
+
     connection:
       path: ".interface/config/backend.yaml — content.contracts"
-      rule: "The contract is the only connection point — no part reaches into another by any other route."
-      versioning: "A frozen contract never changes; a change means a new version, and freezing or versioning is the human's decision."
+      rule: "The contract is the only connection point — the frontend reaches the backend through the routes the contract publishes and by no other route; neither part reads or writes the other's code or data."
+      versioning: "A frozen contract never changes; a change means a new version, and freezing or versioning is the human's decision — see change_rule in backend.yaml."
 
   # <!-------------------------------------------- Phases -->
   phases:
