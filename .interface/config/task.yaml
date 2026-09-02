@@ -73,11 +73,837 @@ content:
   plans:
 
     backend:
-      phase_titles_lifecycle: "empty"
-      phase_titles_derived_from: "not derived yet"
-      phase_titles: {}
-      phases: {}
+      phase_titles_lifecycle: "derived"
+      phase_titles_derived_from: ".interface/config/definition.yaml — content.phases"
+      phase_titles:
+        P1: "Backend API"
+      phases:
+        P1:
+          id: "P1"
+          title: "Backend API"
+          does: "Create and run the API for all defined project models — every one of the 13 models in contract v1 is stored in SQLite and served over the keyed FastAPI surface, with Docs, and the server runs."
+          groups:
+            - id: "P1-G1"
+              title: "Environment"
+              does: "Create the uv project under backend/ and install the three packages the configuration names. When done, every later verify command can run as uv run from backend/, and nothing that must stay local can be committed."
+              task_count: 5
+              tasks:
+              - id: "T1"
+                title: "Create the uv project in backend/ (pyproject.toml and the virtual environment)"
+                goal: "A Python project exists under code_path, with a virtual environment uv owns, so every later command has somewhere to run."
+                depends_on: []
+                acceptance: "backend/pyproject.toml exists with the project name trading-assistant-backend; uv sync creates .venv/; uv init's sample main.py and README.md are removed so app/ is the only code."
+                verify: |-
+                  test -f pyproject.toml && test ! -f main.py && uv sync && uv run python -c "import sys; assert '.venv' in sys.prefix, sys.prefix; print('ok')"
+                touches: ["pyproject.toml", ".python-version", "uv.lock", ".venv/"]
+                status: "todo"
 
+              - id: "T2"
+                title: "Add FastAPI with its standard extra through uv"
+                goal: "The API framework, its ASGI server, and an HTTP client are installed in the virtual environment."
+                depends_on: ["T1"]
+                acceptance: "uv add \"fastapi[standard]\" records the dependency in pyproject.toml and uv.lock; fastapi, uvicorn, and httpx import inside the environment."
+                verify: |-
+                  grep -q 'fastapi\[standard\]' pyproject.toml && uv run python -c "import fastapi, uvicorn, httpx; print(fastapi.__version__)"
+                touches: ["pyproject.toml", "uv.lock"]
+                status: "todo"
+
+              - id: "T3"
+                title: "Add SQLAlchemy through uv"
+                goal: "The ORM every database read and write goes through is installed."
+                depends_on: ["T1"]
+                acceptance: "uv add sqlalchemy records the dependency; sqlalchemy imports at version 2 or later."
+                verify: |-
+                  grep -q 'sqlalchemy' pyproject.toml && uv run python -c "import sqlalchemy; assert int(sqlalchemy.__version__.split('.')[0]) >= 2, sqlalchemy.__version__; print(sqlalchemy.__version__)"
+                touches: ["pyproject.toml", "uv.lock"]
+                status: "todo"
+
+              - id: "T4"
+                title: "Add Alembic through uv"
+                goal: "The migration tool — the only way the schema changes — is installed."
+                depends_on: ["T1"]
+                acceptance: "uv add alembic records the dependency; the alembic command runs inside the environment."
+                verify: |-
+                  grep -q 'alembic' pyproject.toml && uv run alembic --version
+                touches: ["pyproject.toml", "uv.lock"]
+                status: "todo"
+
+              - id: "T5"
+                title: "Create backend/.gitignore"
+                goal: "The virtual environment, the database file, local environment files, and bytecode never enter the repository."
+                depends_on: ["T1"]
+                acceptance: ".gitignore lists .venv/, app.db, .env, and __pycache__/, one per line."
+                verify: |-
+                  grep -qx '.venv/' .gitignore && grep -qx 'app.db' .gitignore && grep -qx '.env' .gitignore && grep -qx '__pycache__/' .gitignore && echo ok
+                touches: [".gitignore"]
+                status: "todo"
+
+
+            - id: "P1-G2"
+              title: "Application core"
+              does: "Create the package, configuration, database access, the session dependency, and the application entry point. When done, the app starts, serves Docs, and enforces foreign keys."
+              task_count: 5
+              tasks:
+              - id: "T6"
+                title: "Create the app package marker app/__init__.py"
+                goal: "The application package exists and can be imported."
+                depends_on: ["T1"]
+                acceptance: "app/__init__.py exists (empty) and import app succeeds."
+                verify: |-
+                  test -f app/__init__.py && uv run python -c "import app; print('ok')"
+                touches: ["app/__init__.py"]
+                status: "todo"
+
+              - id: "T7"
+                title: "Create app/config.py reading the database path from the environment"
+                goal: "Every other module has one place to get the database URL, and it is not written into source."
+                depends_on: ["T6"]
+                acceptance: "app/config.py defines DATABASE_PATH from the DATABASE_PATH environment variable with default app.db, and DATABASE_URL as sqlite:/// plus that path. Nothing else is configured."
+                verify: |-
+                  uv run python -c "from app import config; assert config.DATABASE_PATH == 'app.db'; assert config.DATABASE_URL == 'sqlite:///app.db'; print('ok')" && DATABASE_PATH=x.db uv run python -c "from app import config; assert config.DATABASE_URL == 'sqlite:///x.db'; print('ok')"
+                touches: ["app/config.py"]
+                status: "todo"
+
+              - id: "T8"
+                title: "Create app/database.py with the engine, session factory, declarative base, and foreign-key enforcement"
+                goal: "Models can declare tables against one Base, and every connection enforces foreign keys."
+                depends_on: ["T7", "T3"]
+                acceptance: "app/database.py builds engine from config.DATABASE_URL with check_same_thread False, registers a connect event that executes PRAGMA foreign_keys=ON, defines SessionLocal (sessionmaker bound to the engine) and Base (a DeclarativeBase subclass)."
+                verify: |-
+                  uv run python -c "from app.database import engine, SessionLocal, Base; c = engine.connect(); assert c.exec_driver_sql('PRAGMA foreign_keys').scalar() == 1; c.close(); print('ok')"
+                touches: ["app/database.py"]
+                status: "todo"
+
+              - id: "T9"
+                title: "Add the get_db session dependency to app/dependencies.py"
+                goal: "A route can receive a database session that is closed after the request."
+                depends_on: ["T8"]
+                acceptance: "app/dependencies.py defines get_db, a generator that yields a SessionLocal session and closes it in finally."
+                verify: |-
+                  uv run python -c "from app.dependencies import get_db; g = get_db(); s = next(g); assert s is not None; next(g, None); print('ok')"
+                touches: ["app/dependencies.py"]
+                status: "todo"
+
+              - id: "T10"
+                title: "Create app/main.py with the FastAPI application, Docs on and ReDoc off"
+                goal: "The application object exists and serves its documentation page, so the server can start before any route is mounted."
+                depends_on: ["T6", "T2"]
+                acceptance: "app/main.py defines app = FastAPI(title='Trading Assistant', docs_url='/docs', redoc_url=None). Nothing else is mounted yet."
+                verify: |-
+                  uv run python -c "from fastapi.testclient import TestClient; from app.main import app; c = TestClient(app); assert c.get('/docs').status_code == 200; assert c.get('/redoc').status_code == 404; print('ok')"
+                touches: ["app/main.py"]
+                status: "todo"
+
+
+            - id: "P1-G3"
+              title: "Models"
+              does: "Declare one SQLAlchemy model per project model, with the exact columns the contract names, foreign keys to the referenced tables, and an index on every foreign-key column. When done, Base.metadata holds all 13 tables."
+              task_count: 15
+              tasks:
+              - id: "T11"
+                title: "Create the models package marker app/models/__init__.py"
+                goal: "Model modules can be placed under app/models."
+                depends_on: ["T8"]
+                acceptance: "app/models/__init__.py exists and is empty for now."
+                verify: |-
+                  test -f app/models/__init__.py && uv run python -c "import app.models; print('ok')"
+                touches: ["app/models/__init__.py"]
+                status: "todo"
+
+              - id: "T12"
+                title: "Add the TradingPlatform model in app/models/trading_platform.py"
+                goal: "The trading_platforms table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11"]
+                acceptance: "app/models/trading_platform.py defines class TradingPlatform(Base) with __tablename__ 'trading_platforms' and columns: id Integer primary key autoincrement; name String not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.trading_platform import TradingPlatform as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'id', 'status', 'description'}, cols; assert M.__tablename__ == 'trading_platforms'; assert M.__table__.columns['id'].primary_key; print('ok')"
+                touches: ["app/models/trading_platform.py"]
+                status: "todo"
+
+              - id: "T13"
+                title: "Add the Broker model in app/models/broker.py"
+                goal: "The brokers table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11", "T12"]
+                acceptance: "app/models/broker.py defines class Broker(Base) with __tablename__ 'brokers' and columns: id Integer primary key autoincrement; name String not null; trading_platform_id Integer ForeignKey('trading_platforms.id') index=True not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.broker import Broker as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'trading_platform_id', 'id', 'description', 'status'}, cols; assert M.__tablename__ == 'brokers'; assert M.__table__.columns['id'].primary_key; assert M.__table__.columns['trading_platform_id'].index is True; assert list(M.__table__.columns['trading_platform_id'].foreign_keys)[0].target_fullname == 'trading_platforms.id'; print('ok')"
+                touches: ["app/models/broker.py"]
+                status: "todo"
+
+              - id: "T14"
+                title: "Add the Account model in app/models/account.py"
+                goal: "The accounts table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11", "T13"]
+                acceptance: "app/models/account.py defines class Account(Base) with __tablename__ 'accounts' and columns: id Integer primary key autoincrement; name String not null; username String not null; password String not null; broker_id Integer ForeignKey('brokers.id') index=True not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.account import Account as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'broker_id', 'password', 'id', 'description', 'status', 'username'}, cols; assert M.__tablename__ == 'accounts'; assert M.__table__.columns['id'].primary_key; assert M.__table__.columns['broker_id'].index is True; assert list(M.__table__.columns['broker_id'].foreign_keys)[0].target_fullname == 'brokers.id'; print('ok')"
+                touches: ["app/models/account.py"]
+                status: "todo"
+
+              - id: "T15"
+                title: "Add the Asset model in app/models/asset.py"
+                goal: "The assets table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11"]
+                acceptance: "app/models/asset.py defines class Asset(Base) with __tablename__ 'assets' and columns: id Integer primary key autoincrement; name String not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.asset import Asset as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'id', 'status', 'description'}, cols; assert M.__tablename__ == 'assets'; assert M.__table__.columns['id'].primary_key; print('ok')"
+                touches: ["app/models/asset.py"]
+                status: "todo"
+
+              - id: "T16"
+                title: "Add the Strategy model in app/models/strategy.py"
+                goal: "The strategies table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11"]
+                acceptance: "app/models/strategy.py defines class Strategy(Base) with __tablename__ 'strategies' and columns: id Integer primary key autoincrement; name String not null; risk_parameter Float not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.strategy import Strategy as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'id', 'description', 'status', 'risk_parameter'}, cols; assert M.__tablename__ == 'strategies'; assert M.__table__.columns['id'].primary_key; print('ok')"
+                touches: ["app/models/strategy.py"]
+                status: "todo"
+
+              - id: "T17"
+                title: "Add the TrailingGroup model in app/models/trailing_group.py"
+                goal: "The trailing_groups table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11"]
+                acceptance: "app/models/trailing_group.py defines class TrailingGroup(Base) with __tablename__ 'trailing_groups' and columns: id Integer primary key autoincrement; name String not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.trailing_group import TrailingGroup as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'id', 'status', 'description'}, cols; assert M.__tablename__ == 'trailing_groups'; assert M.__table__.columns['id'].primary_key; print('ok')"
+                touches: ["app/models/trailing_group.py"]
+                status: "todo"
+
+              - id: "T18"
+                title: "Add the TrailingRule model in app/models/trailing_rule.py"
+                goal: "The trailing_rules table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11", "T17"]
+                acceptance: "app/models/trailing_rule.py defines class TrailingRule(Base) with __tablename__ 'trailing_rules' and columns: id Integer primary key autoincrement; name String not null; trailing_group_id Integer ForeignKey('trailing_groups.id') index=True not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.trailing_rule import TrailingRule as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'id', 'description', 'status', 'trailing_group_id'}, cols; assert M.__tablename__ == 'trailing_rules'; assert M.__table__.columns['id'].primary_key; assert M.__table__.columns['trailing_group_id'].index is True; assert list(M.__table__.columns['trailing_group_id'].foreign_keys)[0].target_fullname == 'trailing_groups.id'; print('ok')"
+                touches: ["app/models/trailing_rule.py"]
+                status: "todo"
+
+              - id: "T19"
+                title: "Add the PartialGroup model in app/models/partial_group.py"
+                goal: "The partial_groups table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11"]
+                acceptance: "app/models/partial_group.py defines class PartialGroup(Base) with __tablename__ 'partial_groups' and columns: id Integer primary key autoincrement; name String not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.partial_group import PartialGroup as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'id', 'status', 'description'}, cols; assert M.__tablename__ == 'partial_groups'; assert M.__table__.columns['id'].primary_key; print('ok')"
+                touches: ["app/models/partial_group.py"]
+                status: "todo"
+
+              - id: "T20"
+                title: "Add the PartialRule model in app/models/partial_rule.py"
+                goal: "The partial_rules table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11", "T19"]
+                acceptance: "app/models/partial_rule.py defines class PartialRule(Base) with __tablename__ 'partial_rules' and columns: id Integer primary key autoincrement; name String not null; partial_group_id Integer ForeignKey('partial_groups.id') index=True not null; profit_threshold Float not null; close_portion Float not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.partial_rule import PartialRule as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'partial_group_id', 'id', 'description', 'profit_threshold', 'status', 'close_portion'}, cols; assert M.__tablename__ == 'partial_rules'; assert M.__table__.columns['id'].primary_key; assert M.__table__.columns['partial_group_id'].index is True; assert list(M.__table__.columns['partial_group_id'].foreign_keys)[0].target_fullname == 'partial_groups.id'; print('ok')"
+                touches: ["app/models/partial_rule.py"]
+                status: "todo"
+
+              - id: "T21"
+                title: "Add the ActionGroup model in app/models/action_group.py"
+                goal: "The action_groups table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11"]
+                acceptance: "app/models/action_group.py defines class ActionGroup(Base) with __tablename__ 'action_groups' and columns: id Integer primary key autoincrement; name String not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.action_group import ActionGroup as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'id', 'status', 'description'}, cols; assert M.__tablename__ == 'action_groups'; assert M.__table__.columns['id'].primary_key; print('ok')"
+                touches: ["app/models/action_group.py"]
+                status: "todo"
+
+              - id: "T22"
+                title: "Add the Action model in app/models/action.py"
+                goal: "The actions table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11", "T15", "T14", "T16", "T21"]
+                acceptance: "app/models/action.py defines class Action(Base) with __tablename__ 'actions' and columns: id Integer primary key autoincrement; name String not null; asset_id Integer ForeignKey('assets.id') index=True not null; account_id Integer ForeignKey('accounts.id') index=True not null; strategy_id Integer ForeignKey('strategies.id') index=True not null; group_id Integer ForeignKey('action_groups.id') index=True not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.action import Action as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'strategy_id', 'group_id', 'id', 'asset_id', 'description', 'account_id', 'status'}, cols; assert M.__tablename__ == 'actions'; assert M.__table__.columns['id'].primary_key; assert M.__table__.columns['asset_id'].index is True; assert list(M.__table__.columns['asset_id'].foreign_keys)[0].target_fullname == 'assets.id'; assert M.__table__.columns['account_id'].index is True; assert list(M.__table__.columns['account_id'].foreign_keys)[0].target_fullname == 'accounts.id'; assert M.__table__.columns['strategy_id'].index is True; assert list(M.__table__.columns['strategy_id'].foreign_keys)[0].target_fullname == 'strategies.id'; assert M.__table__.columns['group_id'].index is True; assert list(M.__table__.columns['group_id'].foreign_keys)[0].target_fullname == 'action_groups.id'; print('ok')"
+                touches: ["app/models/action.py"]
+                status: "todo"
+
+              - id: "T23"
+                title: "Add the Execute model in app/models/execute.py"
+                goal: "The executes table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11", "T22"]
+                acceptance: "app/models/execute.py defines class Execute(Base) with __tablename__ 'executes' and columns: id Integer primary key autoincrement; name String not null; action_id Integer ForeignKey('actions.id') index=True not null; profit Float nullable; state String not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.execute import Execute as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'state', 'id', 'profit', 'description', 'action_id', 'status'}, cols; assert M.__tablename__ == 'executes'; assert M.__table__.columns['id'].primary_key; assert M.__table__.columns['action_id'].index is True; assert list(M.__table__.columns['action_id'].foreign_keys)[0].target_fullname == 'actions.id'; print('ok')"
+                touches: ["app/models/execute.py"]
+                status: "todo"
+
+              - id: "T24"
+                title: "Add the Position model in app/models/position.py"
+                goal: "The positions table is declared, so a migration can create it and a service can read and write it."
+                depends_on: ["T11"]
+                acceptance: "app/models/position.py defines class Position(Base) with __tablename__ 'positions' and columns: id Integer primary key autoincrement; name String not null; entry_price Float not null; take_profit Float not null; stop_loss Float not null; status String not null; description String nullable. Every column the contract names is present and no other."
+                verify: |-
+                  uv run python -c "from app.models.position import Position as M; cols = {c.name for c in M.__table__.columns}; assert cols == {'name', 'stop_loss', 'id', 'description', 'entry_price', 'take_profit', 'status'}, cols; assert M.__tablename__ == 'positions'; assert M.__table__.columns['id'].primary_key; print('ok')"
+                touches: ["app/models/position.py"]
+                status: "todo"
+
+              - id: "T25"
+                title: "Import every model in app/models/__init__.py so Base.metadata knows all 13 tables"
+                goal: "One import of app.models registers the whole schema, which Alembic autogenerate and the services rely on."
+                depends_on: ["T12", "T13", "T14", "T15", "T16", "T17", "T18", "T19", "T20", "T21", "T22", "T23", "T24"]
+                acceptance: "app/models/__init__.py imports the 13 model classes and lists them in __all__; after import app.models, Base.metadata.tables has exactly the 13 table names the models declare."
+                verify: |-
+                  uv run python -c "import app.models; from app.database import Base; t = sorted(Base.metadata.tables); assert len(t) == 13, t; assert set(t) == {'accounts', 'action_groups', 'actions', 'assets', 'brokers', 'executes', 'partial_groups', 'partial_rules', 'positions', 'strategies', 'trading_platforms', 'trailing_groups', 'trailing_rules'}, t; print('ok')"
+                touches: ["app/models/__init__.py"]
+                status: "todo"
+
+
+            - id: "P1-G4"
+              title: "Migrations"
+              does: "Set up Alembic against the app's metadata and carry the schema to its first version. When done, app.db exists with all 13 tables, and the revision downgrades and upgrades cleanly."
+              task_count: 5
+              tasks:
+              - id: "T26"
+                title: "Initialize Alembic in backend/ (alembic.ini and migrations/)"
+                goal: "The migration environment exists at the layout backend.yaml names."
+                depends_on: ["T4"]
+                acceptance: "uv run alembic init migrations creates alembic.ini and migrations/ with env.py, script.py.mako, and versions/."
+                verify: |-
+                  test -f alembic.ini && test -f migrations/env.py && test -d migrations/versions && echo ok
+                touches: ["alembic.ini", "migrations/env.py", "migrations/script.py.mako", "migrations/versions/", "migrations/README"]
+                status: "todo"
+
+              - id: "T27"
+                title: "Wire migrations/env.py to the app's database URL and metadata with batch mode"
+                goal: "Alembic reads the URL from config, sees every model, and can alter SQLite tables safely."
+                depends_on: ["T26", "T25"]
+                acceptance: "migrations/env.py imports app.models and app.config, sets sqlalchemy.url from config.DATABASE_URL, sets target_metadata = Base.metadata, and passes render_as_batch=True to context.configure in both offline and online runs."
+                verify: |-
+                  grep -q 'render_as_batch=True' migrations/env.py && grep -q 'target_metadata = Base.metadata' migrations/env.py && uv run alembic current
+                touches: ["migrations/env.py"]
+                status: "todo"
+
+              - id: "T28"
+                title: "Generate the initial migration creating all 13 tables"
+                goal: "The schema has a versioned, reversible first revision."
+                depends_on: ["T27"]
+                acceptance: "uv run alembic revision --autogenerate -m initial writes one file in migrations/versions/ whose upgrade creates 13 tables and whose downgrade drops them."
+                verify: |-
+                  test "$(ls migrations/versions/*.py | wc -l)" -eq 1 && test "$(grep -c 'op.create_table' migrations/versions/*.py)" -eq 13 && test "$(grep -c 'op.drop_table' migrations/versions/*.py)" -eq 13 && echo ok
+                touches: ["migrations/versions/"]
+                status: "todo"
+
+              - id: "T29"
+                title: "Apply the migration to create app.db"
+                goal: "The SQLite database exists with every table, so services and routes have somewhere to read and write."
+                depends_on: ["T28"]
+                acceptance: "uv run alembic upgrade head creates app.db at the root of code_path with the 13 tables plus alembic_version."
+                verify: |-
+                  uv run alembic upgrade head && uv run python -c "import sqlite3; c = sqlite3.connect('app.db'); t = sorted(r[0] for r in c.execute(\"select name from sqlite_master where type='table'\")); assert 'alembic_version' in t and len(t) == 14, t; print('ok')"
+                touches: ["app.db"]
+                status: "todo"
+
+              - id: "T30"
+                title: "Prove the initial migration downgrades and re-upgrades cleanly"
+                goal: "The schema change is reversible, as the database rules require."
+                depends_on: ["T29"]
+                acceptance: "alembic downgrade base leaves only alembic_version; alembic upgrade head restores all 13 tables."
+                verify: |-
+                  uv run alembic downgrade base && uv run python -c "import sqlite3; t = [r[0] for r in sqlite3.connect('app.db').execute(\"select name from sqlite_master where type='table'\")]; assert t == ['alembic_version'], t" && uv run alembic upgrade head && uv run alembic current | grep -q head && echo ok
+                touches: ["app.db"]
+                status: "todo"
+
+
+            - id: "P1-G5"
+              title: "Schemas"
+              does: "Define one Pydantic module per project model carrying exactly the contract's fields — the create/replace body without id, and the read shape with it. When done, every route body and response has a validated type."
+              task_count: 14
+              tasks:
+              - id: "T31"
+                title: "Create the schemas package marker app/schemas/__init__.py"
+                goal: "Pydantic schema modules can be placed under app/schemas."
+                depends_on: ["T2"]
+                acceptance: "app/schemas/__init__.py exists and is empty."
+                verify: |-
+                  test -f app/schemas/__init__.py && uv run python -c "import app.schemas; print('ok')"
+                touches: ["app/schemas/__init__.py"]
+                status: "todo"
+
+              - id: "T32"
+                title: "Add the TradingPlatform Pydantic schemas in app/schemas/trading_platform.py"
+                goal: "The create/replace body and the response shape of /trading-platforms are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/trading_platform.py defines TradingPlatformBase(BaseModel) with name: str, status: str, description: str | None = None; TradingPlatformCreate(TradingPlatformBase) with no extra field; TradingPlatformRead(TradingPlatformBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.trading_platform import TradingPlatformCreate as C, TradingPlatformRead as R; assert set(C.model_fields) == {'name', 'status', 'description'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'status', 'id', 'description'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/trading_platform.py"]
+                status: "todo"
+
+              - id: "T33"
+                title: "Add the Broker Pydantic schemas in app/schemas/broker.py"
+                goal: "The create/replace body and the response shape of /brokers are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/broker.py defines BrokerBase(BaseModel) with name: str, trading_platform_id: int, status: str, description: str | None = None; BrokerCreate(BrokerBase) with no extra field; BrokerRead(BrokerBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.broker import BrokerCreate as C, BrokerRead as R; assert set(C.model_fields) == {'name', 'status', 'description', 'trading_platform_id'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'description', 'id', 'trading_platform_id', 'status'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/broker.py"]
+                status: "todo"
+
+              - id: "T34"
+                title: "Add the Account Pydantic schemas in app/schemas/account.py"
+                goal: "The create/replace body and the response shape of /accounts are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/account.py defines AccountBase(BaseModel) with name: str, username: str, password: str, broker_id: int, status: str, description: str | None = None; AccountCreate(AccountBase) with no extra field; AccountRead(AccountBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.account import AccountCreate as C, AccountRead as R; assert set(C.model_fields) == {'name', 'broker_id', 'password', 'description', 'status', 'username'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'broker_id', 'description', 'password', 'id', 'status', 'username'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/account.py"]
+                status: "todo"
+
+              - id: "T35"
+                title: "Add the Asset Pydantic schemas in app/schemas/asset.py"
+                goal: "The create/replace body and the response shape of /assets are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/asset.py defines AssetBase(BaseModel) with name: str, status: str, description: str | None = None; AssetCreate(AssetBase) with no extra field; AssetRead(AssetBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.asset import AssetCreate as C, AssetRead as R; assert set(C.model_fields) == {'name', 'status', 'description'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'status', 'id', 'description'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/asset.py"]
+                status: "todo"
+
+              - id: "T36"
+                title: "Add the Strategy Pydantic schemas in app/schemas/strategy.py"
+                goal: "The create/replace body and the response shape of /strategies are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/strategy.py defines StrategyBase(BaseModel) with name: str, risk_parameter: float, status: str, description: str | None = None; StrategyCreate(StrategyBase) with no extra field; StrategyRead(StrategyBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.strategy import StrategyCreate as C, StrategyRead as R; assert set(C.model_fields) == {'name', 'status', 'description', 'risk_parameter'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'description', 'id', 'status', 'risk_parameter'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/strategy.py"]
+                status: "todo"
+
+              - id: "T37"
+                title: "Add the TrailingGroup Pydantic schemas in app/schemas/trailing_group.py"
+                goal: "The create/replace body and the response shape of /trailing-groups are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/trailing_group.py defines TrailingGroupBase(BaseModel) with name: str, status: str, description: str | None = None; TrailingGroupCreate(TrailingGroupBase) with no extra field; TrailingGroupRead(TrailingGroupBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.trailing_group import TrailingGroupCreate as C, TrailingGroupRead as R; assert set(C.model_fields) == {'name', 'status', 'description'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'status', 'id', 'description'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/trailing_group.py"]
+                status: "todo"
+
+              - id: "T38"
+                title: "Add the TrailingRule Pydantic schemas in app/schemas/trailing_rule.py"
+                goal: "The create/replace body and the response shape of /trailing-rules are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/trailing_rule.py defines TrailingRuleBase(BaseModel) with name: str, trailing_group_id: int, status: str, description: str | None = None; TrailingRuleCreate(TrailingRuleBase) with no extra field; TrailingRuleRead(TrailingRuleBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.trailing_rule import TrailingRuleCreate as C, TrailingRuleRead as R; assert set(C.model_fields) == {'name', 'status', 'trailing_group_id', 'description'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'description', 'id', 'status', 'trailing_group_id'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/trailing_rule.py"]
+                status: "todo"
+
+              - id: "T39"
+                title: "Add the PartialGroup Pydantic schemas in app/schemas/partial_group.py"
+                goal: "The create/replace body and the response shape of /partial-groups are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/partial_group.py defines PartialGroupBase(BaseModel) with name: str, status: str, description: str | None = None; PartialGroupCreate(PartialGroupBase) with no extra field; PartialGroupRead(PartialGroupBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.partial_group import PartialGroupCreate as C, PartialGroupRead as R; assert set(C.model_fields) == {'name', 'status', 'description'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'status', 'id', 'description'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/partial_group.py"]
+                status: "todo"
+
+              - id: "T40"
+                title: "Add the PartialRule Pydantic schemas in app/schemas/partial_rule.py"
+                goal: "The create/replace body and the response shape of /partial-rules are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/partial_rule.py defines PartialRuleBase(BaseModel) with name: str, partial_group_id: int, profit_threshold: float, close_portion: float, status: str, description: str | None = None; PartialRuleCreate(PartialRuleBase) with no extra field; PartialRuleRead(PartialRuleBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.partial_rule import PartialRuleCreate as C, PartialRuleRead as R; assert set(C.model_fields) == {'name', 'partial_group_id', 'description', 'profit_threshold', 'status', 'close_portion'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'description', 'partial_group_id', 'id', 'profit_threshold', 'status', 'close_portion'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/partial_rule.py"]
+                status: "todo"
+
+              - id: "T41"
+                title: "Add the ActionGroup Pydantic schemas in app/schemas/action_group.py"
+                goal: "The create/replace body and the response shape of /action-groups are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/action_group.py defines ActionGroupBase(BaseModel) with name: str, status: str, description: str | None = None; ActionGroupCreate(ActionGroupBase) with no extra field; ActionGroupRead(ActionGroupBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.action_group import ActionGroupCreate as C, ActionGroupRead as R; assert set(C.model_fields) == {'name', 'status', 'description'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'status', 'id', 'description'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/action_group.py"]
+                status: "todo"
+
+              - id: "T42"
+                title: "Add the Action Pydantic schemas in app/schemas/action.py"
+                goal: "The create/replace body and the response shape of /actions are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/action.py defines ActionBase(BaseModel) with name: str, asset_id: int, account_id: int, strategy_id: int, group_id: int, status: str, description: str | None = None; ActionCreate(ActionBase) with no extra field; ActionRead(ActionBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.action import ActionCreate as C, ActionRead as R; assert set(C.model_fields) == {'name', 'strategy_id', 'group_id', 'asset_id', 'description', 'account_id', 'status'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'description', 'strategy_id', 'id', 'group_id', 'account_id', 'asset_id', 'status'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/action.py"]
+                status: "todo"
+
+              - id: "T43"
+                title: "Add the Execute Pydantic schemas in app/schemas/execute.py"
+                goal: "The create/replace body and the response shape of /executes are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/execute.py defines ExecuteBase(BaseModel) with name: str, action_id: int, profit: float | None = None, state: str, status: str, description: str | None = None; ExecuteCreate(ExecuteBase) with no extra field; ExecuteRead(ExecuteBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.execute import ExecuteCreate as C, ExecuteRead as R; assert set(C.model_fields) == {'name', 'state', 'profit', 'description', 'action_id', 'status'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'state', 'description', 'id', 'action_id', 'status', 'profit'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/execute.py"]
+                status: "todo"
+
+              - id: "T44"
+                title: "Add the Position Pydantic schemas in app/schemas/position.py"
+                goal: "The create/replace body and the response shape of /positions are typed, so a route validates input and serialises output."
+                depends_on: ["T31"]
+                acceptance: "app/schemas/position.py defines PositionBase(BaseModel) with name: str, entry_price: float, take_profit: float, stop_loss: float, status: str, description: str | None = None; PositionCreate(PositionBase) with no extra field; PositionRead(PositionBase) adding id: int and model_config from_attributes=True."
+                verify: |-
+                  uv run python -c "from app.schemas.position import PositionCreate as C, PositionRead as R; assert set(C.model_fields) == {'name', 'stop_loss', 'description', 'entry_price', 'take_profit', 'status'}, set(C.model_fields); assert set(R.model_fields) == {'name', 'stop_loss', 'description', 'entry_price', 'take_profit', 'id', 'status'}; assert R.model_config.get('from_attributes') is True; print('ok')"
+                touches: ["app/schemas/position.py"]
+                status: "todo"
+
+
+            - id: "P1-G6"
+              title: "Services"
+              does: "Implement one service module per project model holding the five operations the contract's routes need. When done, every model can be listed, created, read, replaced, and deleted against app.db without any route."
+              task_count: 14
+              tasks:
+              - id: "T45"
+                title: "Create the services package marker app/services/__init__.py"
+                goal: "Service modules can be placed under app/services."
+                depends_on: ["T6"]
+                acceptance: "app/services/__init__.py exists and is empty."
+                verify: |-
+                  test -f app/services/__init__.py && uv run python -c "import app.services; print('ok')"
+                touches: ["app/services/__init__.py"]
+                status: "todo"
+
+              - id: "T46"
+                title: "Add the trading_platform service in app/services/trading_platform.py"
+                goal: "The list, create, read, replace, and delete logic for trading_platforms exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T12", "T32"]
+                acceptance: "app/services/trading_platform.py defines list_trading_platform(db) -> list[TradingPlatform], create_trading_platform(db, data: TradingPlatformCreate) -> TradingPlatform, get_trading_platform(db, id) -> TradingPlatform | None, replace_trading_platform(db, id, data: TradingPlatformCreate) -> TradingPlatform | None, and delete_trading_platform(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; db = SessionLocal(); ids={}; n = len(svc_trading_platform.list_trading_platform(db)); row = svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})); assert row.id and svc_trading_platform.get_trading_platform(db, row.id).id == row.id; assert len(svc_trading_platform.list_trading_platform(db)) == n + 1; upd = svc_trading_platform.replace_trading_platform(db, row.id, sch_trading_platform.TradingPlatformCreate(**{**{'name': 'x', 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_trading_platform.delete_trading_platform(db, row.id) is True; assert svc_trading_platform.get_trading_platform(db, row.id) is None; assert svc_trading_platform.delete_trading_platform(db, row.id) is False; db.close(); print('ok')"
+                touches: ["app/services/trading_platform.py"]
+                status: "todo"
+
+              - id: "T47"
+                title: "Add the broker service in app/services/broker.py"
+                goal: "The list, create, read, replace, and delete logic for brokers exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T13", "T33", "T46"]
+                acceptance: "app/services/broker.py defines list_broker(db) -> list[Broker], create_broker(db, data: BrokerCreate) -> Broker, get_broker(db, id) -> Broker | None, replace_broker(db, id, data: BrokerCreate) -> Broker | None, and delete_broker(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; from app.services import broker as svc_broker; from app.schemas import broker as sch_broker; db = SessionLocal(); ids={}; ids['trading_platform']=svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; n = len(svc_broker.list_broker(db)); row = svc_broker.create_broker(db, sch_broker.BrokerCreate(**{'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None})); assert row.id and svc_broker.get_broker(db, row.id).id == row.id; assert len(svc_broker.list_broker(db)) == n + 1; upd = svc_broker.replace_broker(db, row.id, sch_broker.BrokerCreate(**{**{'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_broker.delete_broker(db, row.id) is True; assert svc_broker.get_broker(db, row.id) is None; assert svc_broker.delete_broker(db, row.id) is False; svc_trading_platform.delete_trading_platform(db, ids['trading_platform']); db.close(); print('ok')"
+                touches: ["app/services/broker.py"]
+                status: "todo"
+
+              - id: "T48"
+                title: "Add the account service in app/services/account.py"
+                goal: "The list, create, read, replace, and delete logic for accounts exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T14", "T34", "T46", "T47"]
+                acceptance: "app/services/account.py defines list_account(db) -> list[Account], create_account(db, data: AccountCreate) -> Account, get_account(db, id) -> Account | None, replace_account(db, id, data: AccountCreate) -> Account | None, and delete_account(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; from app.services import broker as svc_broker; from app.schemas import broker as sch_broker; from app.services import account as svc_account; from app.schemas import account as sch_account; db = SessionLocal(); ids={}; ids['trading_platform']=svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['broker']=svc_broker.create_broker(db, sch_broker.BrokerCreate(**{'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None})).id; n = len(svc_account.list_account(db)); row = svc_account.create_account(db, sch_account.AccountCreate(**{'name': 'x', 'username': 'x', 'password': 'x', 'broker_id': ids['broker'], 'status': 'x', 'description': None})); assert row.id and svc_account.get_account(db, row.id).id == row.id; assert len(svc_account.list_account(db)) == n + 1; upd = svc_account.replace_account(db, row.id, sch_account.AccountCreate(**{**{'name': 'x', 'username': 'x', 'password': 'x', 'broker_id': ids['broker'], 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_account.delete_account(db, row.id) is True; assert svc_account.get_account(db, row.id) is None; assert svc_account.delete_account(db, row.id) is False; svc_broker.delete_broker(db, ids['broker']); svc_trading_platform.delete_trading_platform(db, ids['trading_platform']); db.close(); print('ok')"
+                touches: ["app/services/account.py"]
+                status: "todo"
+
+              - id: "T49"
+                title: "Add the asset service in app/services/asset.py"
+                goal: "The list, create, read, replace, and delete logic for assets exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T15", "T35"]
+                acceptance: "app/services/asset.py defines list_asset(db) -> list[Asset], create_asset(db, data: AssetCreate) -> Asset, get_asset(db, id) -> Asset | None, replace_asset(db, id, data: AssetCreate) -> Asset | None, and delete_asset(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import asset as svc_asset; from app.schemas import asset as sch_asset; db = SessionLocal(); ids={}; n = len(svc_asset.list_asset(db)); row = svc_asset.create_asset(db, sch_asset.AssetCreate(**{'name': 'x', 'status': 'x', 'description': None})); assert row.id and svc_asset.get_asset(db, row.id).id == row.id; assert len(svc_asset.list_asset(db)) == n + 1; upd = svc_asset.replace_asset(db, row.id, sch_asset.AssetCreate(**{**{'name': 'x', 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_asset.delete_asset(db, row.id) is True; assert svc_asset.get_asset(db, row.id) is None; assert svc_asset.delete_asset(db, row.id) is False; db.close(); print('ok')"
+                touches: ["app/services/asset.py"]
+                status: "todo"
+
+              - id: "T50"
+                title: "Add the strategy service in app/services/strategy.py"
+                goal: "The list, create, read, replace, and delete logic for strategies exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T16", "T36"]
+                acceptance: "app/services/strategy.py defines list_strategy(db) -> list[Strategy], create_strategy(db, data: StrategyCreate) -> Strategy, get_strategy(db, id) -> Strategy | None, replace_strategy(db, id, data: StrategyCreate) -> Strategy | None, and delete_strategy(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import strategy as svc_strategy; from app.schemas import strategy as sch_strategy; db = SessionLocal(); ids={}; n = len(svc_strategy.list_strategy(db)); row = svc_strategy.create_strategy(db, sch_strategy.StrategyCreate(**{'name': 'x', 'risk_parameter': 1.0, 'status': 'x', 'description': None})); assert row.id and svc_strategy.get_strategy(db, row.id).id == row.id; assert len(svc_strategy.list_strategy(db)) == n + 1; upd = svc_strategy.replace_strategy(db, row.id, sch_strategy.StrategyCreate(**{**{'name': 'x', 'risk_parameter': 1.0, 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_strategy.delete_strategy(db, row.id) is True; assert svc_strategy.get_strategy(db, row.id) is None; assert svc_strategy.delete_strategy(db, row.id) is False; db.close(); print('ok')"
+                touches: ["app/services/strategy.py"]
+                status: "todo"
+
+              - id: "T51"
+                title: "Add the trailing_group service in app/services/trailing_group.py"
+                goal: "The list, create, read, replace, and delete logic for trailing_groups exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T17", "T37"]
+                acceptance: "app/services/trailing_group.py defines list_trailing_group(db) -> list[TrailingGroup], create_trailing_group(db, data: TrailingGroupCreate) -> TrailingGroup, get_trailing_group(db, id) -> TrailingGroup | None, replace_trailing_group(db, id, data: TrailingGroupCreate) -> TrailingGroup | None, and delete_trailing_group(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import trailing_group as svc_trailing_group; from app.schemas import trailing_group as sch_trailing_group; db = SessionLocal(); ids={}; n = len(svc_trailing_group.list_trailing_group(db)); row = svc_trailing_group.create_trailing_group(db, sch_trailing_group.TrailingGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})); assert row.id and svc_trailing_group.get_trailing_group(db, row.id).id == row.id; assert len(svc_trailing_group.list_trailing_group(db)) == n + 1; upd = svc_trailing_group.replace_trailing_group(db, row.id, sch_trailing_group.TrailingGroupCreate(**{**{'name': 'x', 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_trailing_group.delete_trailing_group(db, row.id) is True; assert svc_trailing_group.get_trailing_group(db, row.id) is None; assert svc_trailing_group.delete_trailing_group(db, row.id) is False; db.close(); print('ok')"
+                touches: ["app/services/trailing_group.py"]
+                status: "todo"
+
+              - id: "T52"
+                title: "Add the trailing_rule service in app/services/trailing_rule.py"
+                goal: "The list, create, read, replace, and delete logic for trailing_rules exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T18", "T38", "T51"]
+                acceptance: "app/services/trailing_rule.py defines list_trailing_rule(db) -> list[TrailingRule], create_trailing_rule(db, data: TrailingRuleCreate) -> TrailingRule, get_trailing_rule(db, id) -> TrailingRule | None, replace_trailing_rule(db, id, data: TrailingRuleCreate) -> TrailingRule | None, and delete_trailing_rule(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import trailing_group as svc_trailing_group; from app.schemas import trailing_group as sch_trailing_group; from app.services import trailing_rule as svc_trailing_rule; from app.schemas import trailing_rule as sch_trailing_rule; db = SessionLocal(); ids={}; ids['trailing_group']=svc_trailing_group.create_trailing_group(db, sch_trailing_group.TrailingGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; n = len(svc_trailing_rule.list_trailing_rule(db)); row = svc_trailing_rule.create_trailing_rule(db, sch_trailing_rule.TrailingRuleCreate(**{'name': 'x', 'trailing_group_id': ids['trailing_group'], 'status': 'x', 'description': None})); assert row.id and svc_trailing_rule.get_trailing_rule(db, row.id).id == row.id; assert len(svc_trailing_rule.list_trailing_rule(db)) == n + 1; upd = svc_trailing_rule.replace_trailing_rule(db, row.id, sch_trailing_rule.TrailingRuleCreate(**{**{'name': 'x', 'trailing_group_id': ids['trailing_group'], 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_trailing_rule.delete_trailing_rule(db, row.id) is True; assert svc_trailing_rule.get_trailing_rule(db, row.id) is None; assert svc_trailing_rule.delete_trailing_rule(db, row.id) is False; svc_trailing_group.delete_trailing_group(db, ids['trailing_group']); db.close(); print('ok')"
+                touches: ["app/services/trailing_rule.py"]
+                status: "todo"
+
+              - id: "T53"
+                title: "Add the partial_group service in app/services/partial_group.py"
+                goal: "The list, create, read, replace, and delete logic for partial_groups exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T19", "T39"]
+                acceptance: "app/services/partial_group.py defines list_partial_group(db) -> list[PartialGroup], create_partial_group(db, data: PartialGroupCreate) -> PartialGroup, get_partial_group(db, id) -> PartialGroup | None, replace_partial_group(db, id, data: PartialGroupCreate) -> PartialGroup | None, and delete_partial_group(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import partial_group as svc_partial_group; from app.schemas import partial_group as sch_partial_group; db = SessionLocal(); ids={}; n = len(svc_partial_group.list_partial_group(db)); row = svc_partial_group.create_partial_group(db, sch_partial_group.PartialGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})); assert row.id and svc_partial_group.get_partial_group(db, row.id).id == row.id; assert len(svc_partial_group.list_partial_group(db)) == n + 1; upd = svc_partial_group.replace_partial_group(db, row.id, sch_partial_group.PartialGroupCreate(**{**{'name': 'x', 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_partial_group.delete_partial_group(db, row.id) is True; assert svc_partial_group.get_partial_group(db, row.id) is None; assert svc_partial_group.delete_partial_group(db, row.id) is False; db.close(); print('ok')"
+                touches: ["app/services/partial_group.py"]
+                status: "todo"
+
+              - id: "T54"
+                title: "Add the partial_rule service in app/services/partial_rule.py"
+                goal: "The list, create, read, replace, and delete logic for partial_rules exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T20", "T40", "T53"]
+                acceptance: "app/services/partial_rule.py defines list_partial_rule(db) -> list[PartialRule], create_partial_rule(db, data: PartialRuleCreate) -> PartialRule, get_partial_rule(db, id) -> PartialRule | None, replace_partial_rule(db, id, data: PartialRuleCreate) -> PartialRule | None, and delete_partial_rule(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import partial_group as svc_partial_group; from app.schemas import partial_group as sch_partial_group; from app.services import partial_rule as svc_partial_rule; from app.schemas import partial_rule as sch_partial_rule; db = SessionLocal(); ids={}; ids['partial_group']=svc_partial_group.create_partial_group(db, sch_partial_group.PartialGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; n = len(svc_partial_rule.list_partial_rule(db)); row = svc_partial_rule.create_partial_rule(db, sch_partial_rule.PartialRuleCreate(**{'name': 'x', 'partial_group_id': ids['partial_group'], 'profit_threshold': 1.0, 'close_portion': 1.0, 'status': 'x', 'description': None})); assert row.id and svc_partial_rule.get_partial_rule(db, row.id).id == row.id; assert len(svc_partial_rule.list_partial_rule(db)) == n + 1; upd = svc_partial_rule.replace_partial_rule(db, row.id, sch_partial_rule.PartialRuleCreate(**{**{'name': 'x', 'partial_group_id': ids['partial_group'], 'profit_threshold': 1.0, 'close_portion': 1.0, 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_partial_rule.delete_partial_rule(db, row.id) is True; assert svc_partial_rule.get_partial_rule(db, row.id) is None; assert svc_partial_rule.delete_partial_rule(db, row.id) is False; svc_partial_group.delete_partial_group(db, ids['partial_group']); db.close(); print('ok')"
+                touches: ["app/services/partial_rule.py"]
+                status: "todo"
+
+              - id: "T55"
+                title: "Add the action_group service in app/services/action_group.py"
+                goal: "The list, create, read, replace, and delete logic for action_groups exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T21", "T41"]
+                acceptance: "app/services/action_group.py defines list_action_group(db) -> list[ActionGroup], create_action_group(db, data: ActionGroupCreate) -> ActionGroup, get_action_group(db, id) -> ActionGroup | None, replace_action_group(db, id, data: ActionGroupCreate) -> ActionGroup | None, and delete_action_group(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import action_group as svc_action_group; from app.schemas import action_group as sch_action_group; db = SessionLocal(); ids={}; n = len(svc_action_group.list_action_group(db)); row = svc_action_group.create_action_group(db, sch_action_group.ActionGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})); assert row.id and svc_action_group.get_action_group(db, row.id).id == row.id; assert len(svc_action_group.list_action_group(db)) == n + 1; upd = svc_action_group.replace_action_group(db, row.id, sch_action_group.ActionGroupCreate(**{**{'name': 'x', 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_action_group.delete_action_group(db, row.id) is True; assert svc_action_group.get_action_group(db, row.id) is None; assert svc_action_group.delete_action_group(db, row.id) is False; db.close(); print('ok')"
+                touches: ["app/services/action_group.py"]
+                status: "todo"
+
+              - id: "T56"
+                title: "Add the action service in app/services/action.py"
+                goal: "The list, create, read, replace, and delete logic for actions exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T22", "T42", "T49", "T46", "T47", "T48", "T50", "T55"]
+                acceptance: "app/services/action.py defines list_action(db) -> list[Action], create_action(db, data: ActionCreate) -> Action, get_action(db, id) -> Action | None, replace_action(db, id, data: ActionCreate) -> Action | None, and delete_action(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import asset as svc_asset; from app.schemas import asset as sch_asset; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; from app.services import broker as svc_broker; from app.schemas import broker as sch_broker; from app.services import account as svc_account; from app.schemas import account as sch_account; from app.services import strategy as svc_strategy; from app.schemas import strategy as sch_strategy; from app.services import action_group as svc_action_group; from app.schemas import action_group as sch_action_group; from app.services import action as svc_action; from app.schemas import action as sch_action; db = SessionLocal(); ids={}; ids['asset']=svc_asset.create_asset(db, sch_asset.AssetCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['trading_platform']=svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['broker']=svc_broker.create_broker(db, sch_broker.BrokerCreate(**{'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None})).id; ids['account']=svc_account.create_account(db, sch_account.AccountCreate(**{'name': 'x', 'username': 'x', 'password': 'x', 'broker_id': ids['broker'], 'status': 'x', 'description': None})).id; ids['strategy']=svc_strategy.create_strategy(db, sch_strategy.StrategyCreate(**{'name': 'x', 'risk_parameter': 1.0, 'status': 'x', 'description': None})).id; ids['action_group']=svc_action_group.create_action_group(db, sch_action_group.ActionGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; n = len(svc_action.list_action(db)); row = svc_action.create_action(db, sch_action.ActionCreate(**{'name': 'x', 'asset_id': ids['asset'], 'account_id': ids['account'], 'strategy_id': ids['strategy'], 'group_id': ids['action_group'], 'status': 'x', 'description': None})); assert row.id and svc_action.get_action(db, row.id).id == row.id; assert len(svc_action.list_action(db)) == n + 1; upd = svc_action.replace_action(db, row.id, sch_action.ActionCreate(**{**{'name': 'x', 'asset_id': ids['asset'], 'account_id': ids['account'], 'strategy_id': ids['strategy'], 'group_id': ids['action_group'], 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_action.delete_action(db, row.id) is True; assert svc_action.get_action(db, row.id) is None; assert svc_action.delete_action(db, row.id) is False; svc_action_group.delete_action_group(db, ids['action_group']); svc_strategy.delete_strategy(db, ids['strategy']); svc_account.delete_account(db, ids['account']); svc_broker.delete_broker(db, ids['broker']); svc_trading_platform.delete_trading_platform(db, ids['trading_platform']); svc_asset.delete_asset(db, ids['asset']); db.close(); print('ok')"
+                touches: ["app/services/action.py"]
+                status: "todo"
+
+              - id: "T57"
+                title: "Add the execute service in app/services/execute.py"
+                goal: "The list, create, read, replace, and delete logic for executes exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T23", "T43", "T49", "T46", "T47", "T48", "T50", "T55", "T56"]
+                acceptance: "app/services/execute.py defines list_execute(db) -> list[Execute], create_execute(db, data: ExecuteCreate) -> Execute, get_execute(db, id) -> Execute | None, replace_execute(db, id, data: ExecuteCreate) -> Execute | None, and delete_execute(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import asset as svc_asset; from app.schemas import asset as sch_asset; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; from app.services import broker as svc_broker; from app.schemas import broker as sch_broker; from app.services import account as svc_account; from app.schemas import account as sch_account; from app.services import strategy as svc_strategy; from app.schemas import strategy as sch_strategy; from app.services import action_group as svc_action_group; from app.schemas import action_group as sch_action_group; from app.services import action as svc_action; from app.schemas import action as sch_action; from app.services import execute as svc_execute; from app.schemas import execute as sch_execute; db = SessionLocal(); ids={}; ids['asset']=svc_asset.create_asset(db, sch_asset.AssetCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['trading_platform']=svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['broker']=svc_broker.create_broker(db, sch_broker.BrokerCreate(**{'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None})).id; ids['account']=svc_account.create_account(db, sch_account.AccountCreate(**{'name': 'x', 'username': 'x', 'password': 'x', 'broker_id': ids['broker'], 'status': 'x', 'description': None})).id; ids['strategy']=svc_strategy.create_strategy(db, sch_strategy.StrategyCreate(**{'name': 'x', 'risk_parameter': 1.0, 'status': 'x', 'description': None})).id; ids['action_group']=svc_action_group.create_action_group(db, sch_action_group.ActionGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['action']=svc_action.create_action(db, sch_action.ActionCreate(**{'name': 'x', 'asset_id': ids['asset'], 'account_id': ids['account'], 'strategy_id': ids['strategy'], 'group_id': ids['action_group'], 'status': 'x', 'description': None})).id; n = len(svc_execute.list_execute(db)); row = svc_execute.create_execute(db, sch_execute.ExecuteCreate(**{'name': 'x', 'action_id': ids['action'], 'profit': 1.0, 'state': 'x', 'status': 'x', 'description': None})); assert row.id and svc_execute.get_execute(db, row.id).id == row.id; assert len(svc_execute.list_execute(db)) == n + 1; upd = svc_execute.replace_execute(db, row.id, sch_execute.ExecuteCreate(**{**{'name': 'x', 'action_id': ids['action'], 'profit': 1.0, 'state': 'x', 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_execute.delete_execute(db, row.id) is True; assert svc_execute.get_execute(db, row.id) is None; assert svc_execute.delete_execute(db, row.id) is False; svc_action.delete_action(db, ids['action']); svc_action_group.delete_action_group(db, ids['action_group']); svc_strategy.delete_strategy(db, ids['strategy']); svc_account.delete_account(db, ids['account']); svc_broker.delete_broker(db, ids['broker']); svc_trading_platform.delete_trading_platform(db, ids['trading_platform']); svc_asset.delete_asset(db, ids['asset']); db.close(); print('ok')"
+                touches: ["app/services/execute.py"]
+                status: "todo"
+
+              - id: "T58"
+                title: "Add the position service in app/services/position.py"
+                goal: "The list, create, read, replace, and delete logic for positions exists in one place, outside any route."
+                depends_on: ["T45", "T29", "T24", "T44"]
+                acceptance: "app/services/position.py defines list_position(db) -> list[Position], create_position(db, data: PositionCreate) -> Position, get_position(db, id) -> Position | None, replace_position(db, id, data: PositionCreate) -> Position | None, and delete_position(db, id) -> bool (False when no row). Each commits its own change and refreshes what it returns; none raises for a missing id."
+                verify: |-
+                  uv run python -c "from app.database import SessionLocal; from app.services import position as svc_position; from app.schemas import position as sch_position; db = SessionLocal(); ids={}; n = len(svc_position.list_position(db)); row = svc_position.create_position(db, sch_position.PositionCreate(**{'name': 'x', 'entry_price': 1.0, 'take_profit': 1.0, 'stop_loss': 1.0, 'status': 'x', 'description': None})); assert row.id and svc_position.get_position(db, row.id).id == row.id; assert len(svc_position.list_position(db)) == n + 1; upd = svc_position.replace_position(db, row.id, sch_position.PositionCreate(**{**{'name': 'x', 'entry_price': 1.0, 'take_profit': 1.0, 'stop_loss': 1.0, 'status': 'x', 'description': None}, 'name': 'y'})); assert upd.name == 'y'; assert svc_position.delete_position(db, row.id) is True; assert svc_position.get_position(db, row.id) is None; assert svc_position.delete_position(db, row.id) is False; db.close(); print('ok')"
+                touches: ["app/services/position.py"]
+                status: "todo"
+
+
+            - id: "P1-G7"
+              title: "Routes"
+              does: "Create one router per project model serving its five contract routes, then aggregate and mount them. When done, the app serves all 65 contract operations."
+              task_count: 16
+              tasks:
+              - id: "T59"
+                title: "Create the routes package marker app/routes/__init__.py"
+                goal: "Router modules can be placed under app/routes."
+                depends_on: ["T6"]
+                acceptance: "app/routes/__init__.py exists and is empty for now."
+                verify: |-
+                  test -f app/routes/__init__.py && uv run python -c "import app.routes; print('ok')"
+                touches: ["app/routes/__init__.py"]
+                status: "todo"
+
+              - id: "T60"
+                title: "Create the trading_platform router in app/routes/trading_platform.py with the five /trading-platforms routes"
+                goal: "The contract's /trading-platforms surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T46"]
+                acceptance: "app/routes/trading_platform.py defines router = APIRouter(prefix='/trading-platforms', tags=['trading_platforms']) with GET '' -> list[TradingPlatformRead] 200; POST '' body TradingPlatformCreate -> TradingPlatformRead 201; GET '/{id}' -> TradingPlatformRead 200 or 404; PUT '/{id}' body TradingPlatformCreate -> TradingPlatformRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'TradingPlatform not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.trading_platform import router; db = SessionLocal(); ids={}; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'status': 'x', 'description': None}; r = c.post('/trading-platforms', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/trading-platforms').status_code == 200; assert c.get(f'/trading-platforms/{i}').json()['id'] == i; assert c.put(f'/trading-platforms/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/trading-platforms/{i}').status_code == 204; assert c.get(f'/trading-platforms/{i}').status_code == 404; assert c.put(f'/trading-platforms/{i}', json=body).status_code == 404; assert c.delete(f'/trading-platforms/{i}').status_code == 404; assert c.post('/trading-platforms', json={}).status_code == 422; db.close(); print('ok')"
+                touches: ["app/routes/trading_platform.py"]
+                status: "todo"
+
+              - id: "T61"
+                title: "Create the broker router in app/routes/broker.py with the five /brokers routes"
+                goal: "The contract's /brokers surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T47"]
+                acceptance: "app/routes/broker.py defines router = APIRouter(prefix='/brokers', tags=['brokers']) with GET '' -> list[BrokerRead] 200; POST '' body BrokerCreate -> BrokerRead 201; GET '/{id}' -> BrokerRead 200 or 404; PUT '/{id}' body BrokerCreate -> BrokerRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'Broker not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.broker import router; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; db = SessionLocal(); ids={}; ids['trading_platform']=svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None}; r = c.post('/brokers', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/brokers').status_code == 200; assert c.get(f'/brokers/{i}').json()['id'] == i; assert c.put(f'/brokers/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/brokers/{i}').status_code == 204; assert c.get(f'/brokers/{i}').status_code == 404; assert c.put(f'/brokers/{i}', json=body).status_code == 404; assert c.delete(f'/brokers/{i}').status_code == 404; assert c.post('/brokers', json={}).status_code == 422; svc_trading_platform.delete_trading_platform(db, ids['trading_platform']); db.close(); print('ok')"
+                touches: ["app/routes/broker.py"]
+                status: "todo"
+
+              - id: "T62"
+                title: "Create the account router in app/routes/account.py with the five /accounts routes"
+                goal: "The contract's /accounts surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T48"]
+                acceptance: "app/routes/account.py defines router = APIRouter(prefix='/accounts', tags=['accounts']) with GET '' -> list[AccountRead] 200; POST '' body AccountCreate -> AccountRead 201; GET '/{id}' -> AccountRead 200 or 404; PUT '/{id}' body AccountCreate -> AccountRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'Account not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.account import router; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; from app.services import broker as svc_broker; from app.schemas import broker as sch_broker; db = SessionLocal(); ids={}; ids['trading_platform']=svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['broker']=svc_broker.create_broker(db, sch_broker.BrokerCreate(**{'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None})).id; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'username': 'x', 'password': 'x', 'broker_id': ids['broker'], 'status': 'x', 'description': None}; r = c.post('/accounts', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/accounts').status_code == 200; assert c.get(f'/accounts/{i}').json()['id'] == i; assert c.put(f'/accounts/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/accounts/{i}').status_code == 204; assert c.get(f'/accounts/{i}').status_code == 404; assert c.put(f'/accounts/{i}', json=body).status_code == 404; assert c.delete(f'/accounts/{i}').status_code == 404; assert c.post('/accounts', json={}).status_code == 422; svc_broker.delete_broker(db, ids['broker']); svc_trading_platform.delete_trading_platform(db, ids['trading_platform']); db.close(); print('ok')"
+                touches: ["app/routes/account.py"]
+                status: "todo"
+
+              - id: "T63"
+                title: "Create the asset router in app/routes/asset.py with the five /assets routes"
+                goal: "The contract's /assets surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T49"]
+                acceptance: "app/routes/asset.py defines router = APIRouter(prefix='/assets', tags=['assets']) with GET '' -> list[AssetRead] 200; POST '' body AssetCreate -> AssetRead 201; GET '/{id}' -> AssetRead 200 or 404; PUT '/{id}' body AssetCreate -> AssetRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'Asset not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.asset import router; db = SessionLocal(); ids={}; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'status': 'x', 'description': None}; r = c.post('/assets', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/assets').status_code == 200; assert c.get(f'/assets/{i}').json()['id'] == i; assert c.put(f'/assets/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/assets/{i}').status_code == 204; assert c.get(f'/assets/{i}').status_code == 404; assert c.put(f'/assets/{i}', json=body).status_code == 404; assert c.delete(f'/assets/{i}').status_code == 404; assert c.post('/assets', json={}).status_code == 422; db.close(); print('ok')"
+                touches: ["app/routes/asset.py"]
+                status: "todo"
+
+              - id: "T64"
+                title: "Create the strategy router in app/routes/strategy.py with the five /strategies routes"
+                goal: "The contract's /strategies surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T50"]
+                acceptance: "app/routes/strategy.py defines router = APIRouter(prefix='/strategies', tags=['strategies']) with GET '' -> list[StrategyRead] 200; POST '' body StrategyCreate -> StrategyRead 201; GET '/{id}' -> StrategyRead 200 or 404; PUT '/{id}' body StrategyCreate -> StrategyRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'Strategy not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.strategy import router; db = SessionLocal(); ids={}; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'risk_parameter': 1.0, 'status': 'x', 'description': None}; r = c.post('/strategies', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/strategies').status_code == 200; assert c.get(f'/strategies/{i}').json()['id'] == i; assert c.put(f'/strategies/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/strategies/{i}').status_code == 204; assert c.get(f'/strategies/{i}').status_code == 404; assert c.put(f'/strategies/{i}', json=body).status_code == 404; assert c.delete(f'/strategies/{i}').status_code == 404; assert c.post('/strategies', json={}).status_code == 422; db.close(); print('ok')"
+                touches: ["app/routes/strategy.py"]
+                status: "todo"
+
+              - id: "T65"
+                title: "Create the trailing_group router in app/routes/trailing_group.py with the five /trailing-groups routes"
+                goal: "The contract's /trailing-groups surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T51"]
+                acceptance: "app/routes/trailing_group.py defines router = APIRouter(prefix='/trailing-groups', tags=['trailing_groups']) with GET '' -> list[TrailingGroupRead] 200; POST '' body TrailingGroupCreate -> TrailingGroupRead 201; GET '/{id}' -> TrailingGroupRead 200 or 404; PUT '/{id}' body TrailingGroupCreate -> TrailingGroupRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'TrailingGroup not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.trailing_group import router; db = SessionLocal(); ids={}; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'status': 'x', 'description': None}; r = c.post('/trailing-groups', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/trailing-groups').status_code == 200; assert c.get(f'/trailing-groups/{i}').json()['id'] == i; assert c.put(f'/trailing-groups/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/trailing-groups/{i}').status_code == 204; assert c.get(f'/trailing-groups/{i}').status_code == 404; assert c.put(f'/trailing-groups/{i}', json=body).status_code == 404; assert c.delete(f'/trailing-groups/{i}').status_code == 404; assert c.post('/trailing-groups', json={}).status_code == 422; db.close(); print('ok')"
+                touches: ["app/routes/trailing_group.py"]
+                status: "todo"
+
+              - id: "T66"
+                title: "Create the trailing_rule router in app/routes/trailing_rule.py with the five /trailing-rules routes"
+                goal: "The contract's /trailing-rules surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T52"]
+                acceptance: "app/routes/trailing_rule.py defines router = APIRouter(prefix='/trailing-rules', tags=['trailing_rules']) with GET '' -> list[TrailingRuleRead] 200; POST '' body TrailingRuleCreate -> TrailingRuleRead 201; GET '/{id}' -> TrailingRuleRead 200 or 404; PUT '/{id}' body TrailingRuleCreate -> TrailingRuleRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'TrailingRule not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.trailing_rule import router; from app.services import trailing_group as svc_trailing_group; from app.schemas import trailing_group as sch_trailing_group; db = SessionLocal(); ids={}; ids['trailing_group']=svc_trailing_group.create_trailing_group(db, sch_trailing_group.TrailingGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'trailing_group_id': ids['trailing_group'], 'status': 'x', 'description': None}; r = c.post('/trailing-rules', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/trailing-rules').status_code == 200; assert c.get(f'/trailing-rules/{i}').json()['id'] == i; assert c.put(f'/trailing-rules/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/trailing-rules/{i}').status_code == 204; assert c.get(f'/trailing-rules/{i}').status_code == 404; assert c.put(f'/trailing-rules/{i}', json=body).status_code == 404; assert c.delete(f'/trailing-rules/{i}').status_code == 404; assert c.post('/trailing-rules', json={}).status_code == 422; svc_trailing_group.delete_trailing_group(db, ids['trailing_group']); db.close(); print('ok')"
+                touches: ["app/routes/trailing_rule.py"]
+                status: "todo"
+
+              - id: "T67"
+                title: "Create the partial_group router in app/routes/partial_group.py with the five /partial-groups routes"
+                goal: "The contract's /partial-groups surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T53"]
+                acceptance: "app/routes/partial_group.py defines router = APIRouter(prefix='/partial-groups', tags=['partial_groups']) with GET '' -> list[PartialGroupRead] 200; POST '' body PartialGroupCreate -> PartialGroupRead 201; GET '/{id}' -> PartialGroupRead 200 or 404; PUT '/{id}' body PartialGroupCreate -> PartialGroupRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'PartialGroup not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.partial_group import router; db = SessionLocal(); ids={}; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'status': 'x', 'description': None}; r = c.post('/partial-groups', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/partial-groups').status_code == 200; assert c.get(f'/partial-groups/{i}').json()['id'] == i; assert c.put(f'/partial-groups/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/partial-groups/{i}').status_code == 204; assert c.get(f'/partial-groups/{i}').status_code == 404; assert c.put(f'/partial-groups/{i}', json=body).status_code == 404; assert c.delete(f'/partial-groups/{i}').status_code == 404; assert c.post('/partial-groups', json={}).status_code == 422; db.close(); print('ok')"
+                touches: ["app/routes/partial_group.py"]
+                status: "todo"
+
+              - id: "T68"
+                title: "Create the partial_rule router in app/routes/partial_rule.py with the five /partial-rules routes"
+                goal: "The contract's /partial-rules surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T54"]
+                acceptance: "app/routes/partial_rule.py defines router = APIRouter(prefix='/partial-rules', tags=['partial_rules']) with GET '' -> list[PartialRuleRead] 200; POST '' body PartialRuleCreate -> PartialRuleRead 201; GET '/{id}' -> PartialRuleRead 200 or 404; PUT '/{id}' body PartialRuleCreate -> PartialRuleRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'PartialRule not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.partial_rule import router; from app.services import partial_group as svc_partial_group; from app.schemas import partial_group as sch_partial_group; db = SessionLocal(); ids={}; ids['partial_group']=svc_partial_group.create_partial_group(db, sch_partial_group.PartialGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'partial_group_id': ids['partial_group'], 'profit_threshold': 1.0, 'close_portion': 1.0, 'status': 'x', 'description': None}; r = c.post('/partial-rules', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/partial-rules').status_code == 200; assert c.get(f'/partial-rules/{i}').json()['id'] == i; assert c.put(f'/partial-rules/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/partial-rules/{i}').status_code == 204; assert c.get(f'/partial-rules/{i}').status_code == 404; assert c.put(f'/partial-rules/{i}', json=body).status_code == 404; assert c.delete(f'/partial-rules/{i}').status_code == 404; assert c.post('/partial-rules', json={}).status_code == 422; svc_partial_group.delete_partial_group(db, ids['partial_group']); db.close(); print('ok')"
+                touches: ["app/routes/partial_rule.py"]
+                status: "todo"
+
+              - id: "T69"
+                title: "Create the action_group router in app/routes/action_group.py with the five /action-groups routes"
+                goal: "The contract's /action-groups surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T55"]
+                acceptance: "app/routes/action_group.py defines router = APIRouter(prefix='/action-groups', tags=['action_groups']) with GET '' -> list[ActionGroupRead] 200; POST '' body ActionGroupCreate -> ActionGroupRead 201; GET '/{id}' -> ActionGroupRead 200 or 404; PUT '/{id}' body ActionGroupCreate -> ActionGroupRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'ActionGroup not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.action_group import router; db = SessionLocal(); ids={}; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'status': 'x', 'description': None}; r = c.post('/action-groups', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/action-groups').status_code == 200; assert c.get(f'/action-groups/{i}').json()['id'] == i; assert c.put(f'/action-groups/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/action-groups/{i}').status_code == 204; assert c.get(f'/action-groups/{i}').status_code == 404; assert c.put(f'/action-groups/{i}', json=body).status_code == 404; assert c.delete(f'/action-groups/{i}').status_code == 404; assert c.post('/action-groups', json={}).status_code == 422; db.close(); print('ok')"
+                touches: ["app/routes/action_group.py"]
+                status: "todo"
+
+              - id: "T70"
+                title: "Create the action router in app/routes/action.py with the five /actions routes"
+                goal: "The contract's /actions surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T56"]
+                acceptance: "app/routes/action.py defines router = APIRouter(prefix='/actions', tags=['actions']) with GET '' -> list[ActionRead] 200; POST '' body ActionCreate -> ActionRead 201; GET '/{id}' -> ActionRead 200 or 404; PUT '/{id}' body ActionCreate -> ActionRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'Action not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.action import router; from app.services import asset as svc_asset; from app.schemas import asset as sch_asset; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; from app.services import broker as svc_broker; from app.schemas import broker as sch_broker; from app.services import account as svc_account; from app.schemas import account as sch_account; from app.services import strategy as svc_strategy; from app.schemas import strategy as sch_strategy; from app.services import action_group as svc_action_group; from app.schemas import action_group as sch_action_group; db = SessionLocal(); ids={}; ids['asset']=svc_asset.create_asset(db, sch_asset.AssetCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['trading_platform']=svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['broker']=svc_broker.create_broker(db, sch_broker.BrokerCreate(**{'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None})).id; ids['account']=svc_account.create_account(db, sch_account.AccountCreate(**{'name': 'x', 'username': 'x', 'password': 'x', 'broker_id': ids['broker'], 'status': 'x', 'description': None})).id; ids['strategy']=svc_strategy.create_strategy(db, sch_strategy.StrategyCreate(**{'name': 'x', 'risk_parameter': 1.0, 'status': 'x', 'description': None})).id; ids['action_group']=svc_action_group.create_action_group(db, sch_action_group.ActionGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'asset_id': ids['asset'], 'account_id': ids['account'], 'strategy_id': ids['strategy'], 'group_id': ids['action_group'], 'status': 'x', 'description': None}; r = c.post('/actions', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/actions').status_code == 200; assert c.get(f'/actions/{i}').json()['id'] == i; assert c.put(f'/actions/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/actions/{i}').status_code == 204; assert c.get(f'/actions/{i}').status_code == 404; assert c.put(f'/actions/{i}', json=body).status_code == 404; assert c.delete(f'/actions/{i}').status_code == 404; assert c.post('/actions', json={}).status_code == 422; svc_action_group.delete_action_group(db, ids['action_group']); svc_strategy.delete_strategy(db, ids['strategy']); svc_account.delete_account(db, ids['account']); svc_broker.delete_broker(db, ids['broker']); svc_trading_platform.delete_trading_platform(db, ids['trading_platform']); svc_asset.delete_asset(db, ids['asset']); db.close(); print('ok')"
+                touches: ["app/routes/action.py"]
+                status: "todo"
+
+              - id: "T71"
+                title: "Create the execute router in app/routes/execute.py with the five /executes routes"
+                goal: "The contract's /executes surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T57"]
+                acceptance: "app/routes/execute.py defines router = APIRouter(prefix='/executes', tags=['executes']) with GET '' -> list[ExecuteRead] 200; POST '' body ExecuteCreate -> ExecuteRead 201; GET '/{id}' -> ExecuteRead 200 or 404; PUT '/{id}' body ExecuteCreate -> ExecuteRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'Execute not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.execute import router; from app.services import asset as svc_asset; from app.schemas import asset as sch_asset; from app.services import trading_platform as svc_trading_platform; from app.schemas import trading_platform as sch_trading_platform; from app.services import broker as svc_broker; from app.schemas import broker as sch_broker; from app.services import account as svc_account; from app.schemas import account as sch_account; from app.services import strategy as svc_strategy; from app.schemas import strategy as sch_strategy; from app.services import action_group as svc_action_group; from app.schemas import action_group as sch_action_group; from app.services import action as svc_action; from app.schemas import action as sch_action; db = SessionLocal(); ids={}; ids['asset']=svc_asset.create_asset(db, sch_asset.AssetCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['trading_platform']=svc_trading_platform.create_trading_platform(db, sch_trading_platform.TradingPlatformCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['broker']=svc_broker.create_broker(db, sch_broker.BrokerCreate(**{'name': 'x', 'trading_platform_id': ids['trading_platform'], 'status': 'x', 'description': None})).id; ids['account']=svc_account.create_account(db, sch_account.AccountCreate(**{'name': 'x', 'username': 'x', 'password': 'x', 'broker_id': ids['broker'], 'status': 'x', 'description': None})).id; ids['strategy']=svc_strategy.create_strategy(db, sch_strategy.StrategyCreate(**{'name': 'x', 'risk_parameter': 1.0, 'status': 'x', 'description': None})).id; ids['action_group']=svc_action_group.create_action_group(db, sch_action_group.ActionGroupCreate(**{'name': 'x', 'status': 'x', 'description': None})).id; ids['action']=svc_action.create_action(db, sch_action.ActionCreate(**{'name': 'x', 'asset_id': ids['asset'], 'account_id': ids['account'], 'strategy_id': ids['strategy'], 'group_id': ids['action_group'], 'status': 'x', 'description': None})).id; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'action_id': ids['action'], 'profit': 1.0, 'state': 'x', 'status': 'x', 'description': None}; r = c.post('/executes', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/executes').status_code == 200; assert c.get(f'/executes/{i}').json()['id'] == i; assert c.put(f'/executes/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/executes/{i}').status_code == 204; assert c.get(f'/executes/{i}').status_code == 404; assert c.put(f'/executes/{i}', json=body).status_code == 404; assert c.delete(f'/executes/{i}').status_code == 404; assert c.post('/executes', json={}).status_code == 422; svc_action.delete_action(db, ids['action']); svc_action_group.delete_action_group(db, ids['action_group']); svc_strategy.delete_strategy(db, ids['strategy']); svc_account.delete_account(db, ids['account']); svc_broker.delete_broker(db, ids['broker']); svc_trading_platform.delete_trading_platform(db, ids['trading_platform']); svc_asset.delete_asset(db, ids['asset']); db.close(); print('ok')"
+                touches: ["app/routes/execute.py"]
+                status: "todo"
+
+              - id: "T72"
+                title: "Create the position router in app/routes/position.py with the five /positions routes"
+                goal: "The contract's /positions surface is served: list, create, read, replace, delete."
+                depends_on: ["T59", "T58"]
+                acceptance: "app/routes/position.py defines router = APIRouter(prefix='/positions', tags=['positions']) with GET '' -> list[PositionRead] 200; POST '' body PositionCreate -> PositionRead 201; GET '/{id}' -> PositionRead 200 or 404; PUT '/{id}' body PositionCreate -> PositionRead 200 or 404; DELETE '/{id}' -> 204 no body or 404. Each route only validates, calls the service through a get_db session, and raises HTTPException 404 with detail 'Position not found' when the service returns None or False."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from fastapi.testclient import TestClient; from app.database import SessionLocal; from app.routes.position import router; db = SessionLocal(); ids={}; a = FastAPI(); a.include_router(router); c = TestClient(a); body = {'name': 'x', 'entry_price': 1.0, 'take_profit': 1.0, 'stop_loss': 1.0, 'status': 'x', 'description': None}; r = c.post('/positions', json=body); assert r.status_code == 201, r.text; i = r.json()['id']; assert c.get('/positions').status_code == 200; assert c.get(f'/positions/{i}').json()['id'] == i; assert c.put(f'/positions/{i}', json={**body, 'name': 'y'}).json()['name'] == 'y'; assert c.delete(f'/positions/{i}').status_code == 204; assert c.get(f'/positions/{i}').status_code == 404; assert c.put(f'/positions/{i}', json=body).status_code == 404; assert c.delete(f'/positions/{i}').status_code == 404; assert c.post('/positions', json={}).status_code == 422; db.close(); print('ok')"
+                touches: ["app/routes/position.py"]
+                status: "todo"
+
+              - id: "T73"
+                title: "Aggregate the 13 routers into one router in app/routes/__init__.py"
+                goal: "main.py can mount the whole surface, and gate it, with one include."
+                depends_on: ["T60", "T61", "T62", "T63", "T64", "T65", "T66", "T67", "T68", "T69", "T70", "T71", "T72"]
+                acceptance: "app/routes/__init__.py defines router = APIRouter() and includes the router of each of the 13 modules."
+                verify: |-
+                  uv run python -c "from fastapi import FastAPI; from app.routes import router; a = FastAPI(); a.include_router(router); n = sum(len(ops) for ops in a.openapi()['paths'].values()); assert n == 65, n; print('ok')"
+                touches: ["app/routes/__init__.py"]
+                status: "todo"
+
+              - id: "T74"
+                title: "Mount the aggregate router in app/main.py"
+                goal: "Every contract route is served by the app, open to every caller."
+                depends_on: ["T73", "T10"]
+                acceptance: "app/main.py calls app.include_router(router) with no dependency; the OpenAPI document lists 65 operations over 26 paths, and no operation declares a query parameter."
+                verify: |-
+                  uv run python -c "from app.main import app; spec = app.openapi(); paths = spec['paths']; n = sum(len(ops) for ops in paths.values()); assert len(paths) == 26 and n == 65, (len(paths), n); extra = [(p, m) for p, ops in paths.items() for m, op in ops.items() if any(x.get('in') == 'query' for x in op.get('parameters', []))]; assert not extra, extra; print('ok')"
+                touches: ["app/main.py"]
+                status: "todo"
+
+
+            - id: "P1-G8"
+              title: "Run"
+              does: "Prove the phase goal against the mounted application and a live server: a chain of referenced models works end to end, the documentation matches the contract, and the server answers over the network. When done, the API for all defined project models is created and running."
+              task_count: 3
+              tasks:
+              - id: "T75"
+                title: "Prove a create-read-replace-delete chain through the mounted app across referenced models"
+                goal: "The contract works end to end over HTTP, including references between models."
+                depends_on: ["T74"]
+                acceptance: "Create a trading platform, a broker under it, an account under the broker, an asset, a strategy, an action group, and an action referencing them all; read the action back; replace its name; delete everything in reverse order; each delete answers 204 and a read after it answers 404."
+                verify: |-
+                  uv run python -c "from fastapi.testclient import TestClient; from app.main import app; c = TestClient(app); K = ''
+                  def mk(p, b):
+                      r = c.post(p + K, json=b); assert r.status_code == 201, (p, r.text); return r.json()['id']
+                  tp = mk('/trading-platforms', {'name': 'mt5', 'status': 'active', 'description': None}); br = mk('/brokers', {'name': 'b', 'trading_platform_id': tp, 'status': 'active', 'description': None}); ac = mk('/accounts', {'name': 'a', 'username': 'u', 'password': 'p', 'broker_id': br, 'status': 'active', 'description': None}); asst = mk('/assets', {'name': 'EURUSD', 'status': 'active', 'description': None}); st = mk('/strategies', {'name': 's', 'risk_parameter': 1.0, 'status': 'active', 'description': None}); ag = mk('/action-groups', {'name': 'g', 'status': 'active', 'description': None}); act = mk('/actions', {'name': 'act', 'asset_id': asst, 'account_id': ac, 'strategy_id': st, 'group_id': ag, 'status': 'active', 'description': None}); assert c.get(f'/actions/{act}' + K).json()['asset_id'] == asst; assert c.put(f'/actions/{act}' + K, json={'name': 'act2', 'asset_id': asst, 'account_id': ac, 'strategy_id': st, 'group_id': ag, 'status': 'active', 'description': None}).json()['name'] == 'act2'
+                  for p, i in [('/actions', act), ('/action-groups', ag), ('/strategies', st), ('/assets', asst), ('/accounts', ac), ('/brokers', br), ('/trading-platforms', tp)]: assert c.delete(f'{p}/{i}' + K).status_code == 204, p; assert c.get(f'{p}/{i}' + K).status_code == 404, p
+                  print('ok')"
+                touches: ["app/main.py"]
+                status: "todo"
+
+              - id: "T76"
+                title: "Prove the documentation surface matches the contract"
+                goal: "Docs is served, ReDoc is not, and the OpenAPI document describes exactly the contract's 26 paths."
+                depends_on: ["T74"]
+                acceptance: "GET /docs answers 200, GET /redoc answers 404, GET /openapi.json answers 200 and lists exactly the 26 contract paths."
+                verify: |-
+                  uv run python -c "from fastapi.testclient import TestClient; from app.main import app; c = TestClient(app); assert c.get('/docs').status_code == 200; assert c.get('/redoc').status_code == 404; r = c.get('/openapi.json'); assert r.status_code == 200; paths = set(r.json()['paths']); want = {'/accounts', '/accounts/{id}', '/action-groups', '/action-groups/{id}', '/actions', '/actions/{id}', '/assets', '/assets/{id}', '/brokers', '/brokers/{id}', '/executes', '/executes/{id}', '/partial-groups', '/partial-groups/{id}', '/partial-rules', '/partial-rules/{id}', '/positions', '/positions/{id}', '/strategies', '/strategies/{id}', '/trading-platforms', '/trading-platforms/{id}', '/trailing-groups', '/trailing-groups/{id}', '/trailing-rules', '/trailing-rules/{id}'}; assert paths == want, paths ^ want; print('ok')"
+                touches: ["app/main.py"]
+                status: "todo"
+
+              - id: "T77"
+                title: "Start the real server and answer a request over the network"
+                goal: "The phase goal — the API runs — is proven against a live uvicorn process, not only the test client."
+                depends_on: ["T75", "T76"]
+                acceptance: "uvicorn serves app.main:app on 127.0.0.1:8765; GET /docs answers 200 and GET /assets answers 200 with a JSON list; the server is stopped afterwards."
+                verify: |-
+                  uv run python -c "import threading, time, uvicorn, httpx; from app.main import app; s = uvicorn.Server(uvicorn.Config(app, host='127.0.0.1', port=8765, log_level='error')); t = threading.Thread(target=s.run, daemon=True); t.start(); time.sleep(2); b = 'http://127.0.0.1:8765'; a = httpx.get(b + '/docs').status_code; k = httpx.get(b + '/assets'); s.should_exit = True; t.join(5); assert a == 200 and k.status_code == 200 and isinstance(k.json(), list), (a, k.status_code); print('ok')"
+                touches: ["app/main.py"]
+                status: "todo"
     frontend:
       phase_titles_lifecycle: "empty"
       phase_titles_derived_from: "not derived yet"

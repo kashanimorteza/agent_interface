@@ -294,10 +294,10 @@ content:
 
   # <!-------------------------------------------- Active -->
   active:
-    mode: "not set"
-    mode_reason: "Transition S0 — the human invoked /my-interface-interpreter on a project with no state.yaml. The generation created definition, rules, task, backend, and frontend configuration from project.md; no Skill has been invoked into a mode yet."
-    item: "none"
-    set_by: "my-interface-interpreter on the human's invocation"
+    mode: "planning"
+    mode_reason: "Transition S4 after S1 — the human invoked /my-interface-tasker phase 1; phase 1 resolved to P1 'Backend API' in definition.yaml under content.phases, target backend. The run derived backend's phase_titles (lifecycle: derived) and wrote the P1 plan into task.yaml: 8 groups, 77 tasks, all todo, validated against the task standard; every verify runs from backend/ as uv run and its Python payload compiles. No blocker or open question was raised. The backend contract v1 stayed draft and unchanged."
+    item: "backend"
+    set_by: "my-interface-tasker on the human's invocation"
     set_at: "2026-09-02"
 
   # <!-------------------------------------------- Blockers -->
