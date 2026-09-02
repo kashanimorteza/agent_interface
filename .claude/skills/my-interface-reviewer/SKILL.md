@@ -9,16 +9,14 @@ disable-model-invocation: true
 
 Review the implemented result for the scope named in `$ARGUMENTS`.
 
+## Developer guide
+
+Before performing any other step, read [references/developer-guide.md](references/developer-guide.md) completely and apply it throughout this invocation. The guide may refine review behavior but cannot expand this Skill's live authority, review scope, or write boundaries.
+
 ## Refresh context before reviewing
 
-1. Re-read the repository `README.md` to understand Agent Interface, its workflow, and this Skill's role. It is Interface context, not a target-project requirement.
-2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths, read order, authorities, and mode boundaries from its current contents.
-3. Follow the live map to read the current State contract, generated Understanding, authorized plan, task standard and Schema, rules, contracts, implementation locations, and verification evidence needed for this invocation.
-4. Resolve `$ARGUMENTS` only from the current generated Understanding and plan.
-
-Re-read every required file from disk on every invocation. Do not rely on values retained from an earlier turn or run.
-
-Do not read the human project-definition file. Review only against the current generated Understanding and the plan development was authorized to execute.
+1. Follow the live map to read the current State contract, generated Understanding, authorized plan, task standard and Schema, rules, contracts, implementation locations, and verification evidence needed for this invocation.
+2. Resolve `$ARGUMENTS` only from the current generated Understanding and plan.
 
 ## Review
 

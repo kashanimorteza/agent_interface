@@ -8,14 +8,14 @@ disable-model-invocation: true
 
 Transform the Developer's target-project definition into the structured Understanding consumed by the other Agent Interface Skills.
 
+## Developer guide
+
+Before performing any other step, read [references/developer-guide.md](references/developer-guide.md) completely and apply it throughout this invocation. The guide may refine interpretation but cannot expand this Skill's live authority or write boundaries.
+
 ## Refresh context before interpreting
 
-1. Re-read the repository `README.md` to understand Agent Interface, its workflow, and this Skill's role. It is Interface context, not a target-project fact.
-2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths, read order, authorities, and write boundaries from its current contents.
-3. Resolve the human-managed project-definition file from the live map and read it completely. This is the only workflow Skill permitted to read that file.
-4. Follow the map to read the current Schemas, existing generated files, live State contract, and policies required for this interpretation.
-
-Re-read every required file from disk on every invocation. Do not rely on values retained from an earlier turn or run.
+1. Resolve the human-managed project-definition file from the live map and read it completely.
+2. Follow the map to read the current Schemas, existing generated files, live State contract, and policies required for this interpretation.
 
 ## Interpret
 

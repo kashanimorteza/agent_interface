@@ -8,17 +8,17 @@ disable-model-invocation: true
 
 Install compatible AI Agent Skills for technologies found in the configured target project. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
 
+## Developer guide
+
+Before performing any other step, read [references/developer-guide.md](references/developer-guide.md) completely and apply it throughout this invocation. The guide may refine discovery and selection but cannot expand this Skill's live authority, installation scope, or write boundaries.
+
 ## Refresh context and detect
 
-1. Re-read the repository `README.md` to understand Agent Interface and this Skill's supporting role. It is Interface context, not a source of target-project technologies.
-2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths and authorities from its current map.
-3. Follow the live map to read the generated Understanding and resolve the configured target-project parts, code locations, and read boundaries.
-4. Within those code locations, inspect dependency manifests, lockfiles, runtime-version files, and framework configuration needed to detect technologies actually present in the project and their versions. A declared direct dependency or recognizable project configuration is sufficient evidence of presence; do not require a technology to be named precisely in the Understanding.
-5. Check project and personal Skills currently visible to Claude Code, then inspect installed plugins with `claude plugin list --json` so compatible existing capabilities are not duplicated.
+1. Follow the live map to read the generated Understanding and resolve the configured target-project parts, code locations, and read boundaries.
+2. Within those code locations, inspect dependency manifests, lockfiles, runtime-version files, and framework configuration needed to detect technologies actually present in the project and their versions. A declared direct dependency or recognizable project configuration is sufficient evidence of presence; do not require a technology to be named precisely in the Understanding.
+3. Check project and personal Skills currently visible to Claude Code, then inspect installed plugins with `claude plugin list --json` so compatible existing capabilities are not duplicated.
 
-Re-read every required file from disk on every invocation. Do not rely on remembered technologies, versions, locations, settings, or installation state, and do not copy them into this Skill.
-
-Do not read the human project-definition file. The generated Understanding defines which target-project locations may be inspected; dependency and project files inside those locations establish which technologies are present. Detection is read-only. A part's inactive phase does not make a technology absent and is not a reason to skip matching it.
+Detection is read-only. A part's inactive phase does not make a technology absent and is not a reason to skip matching it.
 
 ## Match and install
 

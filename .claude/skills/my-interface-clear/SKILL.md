@@ -8,16 +8,14 @@ disable-model-invocation: true
 
 Remove only the generated files authorized by the live Interface.
 
+## Developer guide
+
+Before performing any other step, read [references/developer-guide.md](references/developer-guide.md) completely and apply it throughout this invocation. The guide may refine execution but cannot expand this Skill's live authority, deletion set, or safety boundaries.
+
 ## Refresh context and resolve scope
 
-1. Re-read the repository `README.md` to understand Agent Interface and this Skill's role.
-2. Re-read `.interface/root.yaml` as the Interface entry point and resolve all other paths from its current map.
-3. Follow that map to read every live policy, authority, and state file needed to determine what the current reset may remove.
-4. Derive and enumerate the exact existing deletion set from those files.
-
-Read these sources from disk on every invocation. Do not reuse a path, file list, policy, or parameter from an earlier run or from this Skill.
-
-Do not read the human project-definition file. It is not needed to resolve a generated-file reset.
+1. Follow the live Interface map to read every policy, authority, and state file needed to determine what the current reset may remove.
+2. Derive and enumerate the exact existing deletion set from those files.
 
 The explicit invocation of this Skill authorizes deletion of the exact currently mapped generated files. Resolve and report that list, then proceed without requesting a second confirmation.
 

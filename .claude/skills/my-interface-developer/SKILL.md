@@ -8,17 +8,16 @@ disable-model-invocation: true
 
 Use the current Task plan as the only execution queue. Task eligibility, not working mode, decides whether development work runs.
 
+## Developer guide
+
+Before performing any other step, read [references/developer-guide.md](references/developer-guide.md) completely and apply it throughout this invocation. The guide may refine execution but cannot expand this Skill's live authority, task scope, or write boundaries.
+
 ## Refresh context
 
-1. Re-read the repository `README.md` to understand Agent Interface, its workflow, and this Skill's role. It is Interface context, not a target-project requirement.
-2. Re-read `.interface/root.yaml` only as the current map for locating Interface files and target configuration. Do not use its mode definitions in this Skill.
-3. Resolve the current Task file from that map and read it completely, together with its governing Schema, before selecting work.
-4. Determine unfinished eligible tasks only from the Task file's current plan, task definitions, states, dependencies, and non-mode protocols.
-5. For a selected task, read only the mapped Understanding, rules, contract, and target-item configuration required to execute and verify it.
-
-Re-read every required file from disk on every invocation. Do not rely on values retained from an earlier turn or run, and do not copy project paths, task states, fields, or configuration parameters into this Skill.
-
-Do not read the human project-definition file. The generated Understanding and Task plan are the project sources for development.
+1. Use the live root only as the current map for locating Interface files and target configuration. Do not use its mode definitions in this Skill.
+2. Resolve the current Task file from that map and read it completely, together with its governing Schema, before selecting work.
+3. Determine unfinished eligible tasks only from the Task file's current plan, task definitions, states, dependencies, and non-mode protocols.
+4. For a selected task, read only the mapped Understanding, rules, contract, and target-item configuration required to execute and verify it.
 
 ## Ignore working mode
 
