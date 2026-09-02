@@ -3,7 +3,7 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "1.7"
+  version: "1.8"
   updated: "2026-09-02"
 
 
@@ -106,7 +106,7 @@ content:
       purpose: "Decide what will be built and in what order — no product code is written"
       owned_by: "my-interface-tasker"
       may_write:
-        - ".interface/config/backend.yaml, config/frontend.yaml, and config/database.yaml — settings and draft contracts, never a frozen contract"
+        - ".interface/config/backend.yaml and config/frontend.yaml — item settings and relationships; config/database.yaml — settings and a draft database contract, never a frozen one"
         - ".interface/config/task.yaml — an item's phase_titles, phase_titles_lifecycle and phase_titles_derived_from while that lifecycle is empty or derived, and the phases of that item's plan"
         - ".interface/config/state.yaml — active, per transitions S1 and S4 in its own content.state_authority, and blockers and open questions"
       may_not_write:

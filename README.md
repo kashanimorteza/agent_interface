@@ -43,8 +43,8 @@ The `.interface/` directory contains four main parts:
 The project currently has three independent items:
 
 - **Database** — owns the database engine, storage, schema, migrations, and database contract.
-- **Backend** — consumes the database contract and publishes the HTTP API contract.
-- **Frontend** — consumes the backend API contract and publishes the user interface.
+- **Backend** — consumes the database contract and publishes an implemented HTTP API with a framework-generated machine-readable description.
+- **Frontend** — consumes the backend's implemented HTTP API and publishes the user interface.
 
 Their directed relationship is:
 
