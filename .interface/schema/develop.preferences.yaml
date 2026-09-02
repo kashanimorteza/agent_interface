@@ -2,7 +2,7 @@
 meta:
   path: ".interface/schema/develop.preferences.yaml"
   path_note: "Human-owned programming preferences and conditional defaults for backend and frontend projects. It supplies an answer only when the project itself leaves that choice unstated."
-  version: "0.2"
+  version: "0.3"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -67,24 +67,6 @@ content:
             docs_path: "/docs"
             openapi_path: "/openapi.json"
             redoc_enabled: false
-        api_key:
-          default_enabled: true
-          when_enabled:
-            source: "query"
-            parameter_name: "key"
-            accepted_value_source: "environment"
-            environment_variable: "API_KEY"
-            enforcement: "application middleware"
-            public_paths:
-              - "/docs"
-              - "/docs/oauth2-redirect"
-              - "/openapi.json"
-            protected_scope: "Every executable API endpoint"
-            invalid_response:
-              status_code: 401
-              detail: "API key is missing or invalid"
-            documentation_execution: "Expose the key as an OpenAPI apiKey security scheme so Swagger Authorize adds it to Try it out requests."
-
     orms:
       SQLAlchemy:
         version: "latest"
@@ -114,9 +96,6 @@ content:
         default_enabled: false
       api_documentation:
         default_enabled: true
-      api_key:
-        default_enabled: true
-
   # <!------------------------------------------------------------------------------ Frontend -->
   frontend:
     defaults:

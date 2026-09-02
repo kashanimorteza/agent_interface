@@ -104,8 +104,8 @@ content:
     "app/page.tsx": "The landing page"
     "components/": "Shared React components used by more than one page"
     "lib/": "Client-side code that is not a page or a component"
-    "lib/api.ts": "The one module that calls the backend — every request carries the key parameter and targets a route the backend contract lists"
-    "lib/config.ts": "Client configuration read from the environment — the backend base URL and the key"
+    "lib/api.ts": "The one module that calls the backend and targets only routes the backend contract lists"
+    "lib/config.ts": "Client configuration read from the environment — including the backend base URL"
 
   # <!-------------------------------------------- Contracts -->
   contracts:

@@ -55,7 +55,7 @@ content:
     - "Define trading actions that combine an asset, an account, and a strategy inside an action group."
     - "Track the actions that have been activated and executed, with the profit, stage, and state of each execution."
     - "Store the complete information of a position created from an executed order — entry price, take profit, stop loss, and the settings applied through its related groups."
-    - "Reach every model above through an HTTP API whose requests carry a URL key parameter, with API documentation served as Docs."
+    - "Reach every model above through an HTTP API, with API documentation served as Docs."
     - "Interact with all of the above through a web user interface."
 
   # <!-------------------------------------------- Architecture -->

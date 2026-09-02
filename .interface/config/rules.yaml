@@ -53,7 +53,7 @@ content:
     - "Add a backend dependency only through uv, so that pyproject.toml and its lock file remain the single record of what is installed."
     - "Run every frontend command through npm inside frontend/, and add a frontend dependency only through npm, so package.json and its lock file remain the single record."
     - "Never commit the backend virtual environment, node_modules, the Next.js build output, or the SQLite database file."
-    - "Never commit the accepted API key or any account credential; read them from the environment or a local, uncommitted configuration file."
+    - "Never commit an account credential; read it from the environment or a local, uncommitted configuration file."
     - "Use the latest stable release of every technology whose version the configuration leaves as latest, and do not pin a version the human has not asked for."
 
   # <!-------------------------------------------- Code -->
@@ -77,12 +77,10 @@ content:
 
   # <!-------------------------------------------- Security -->
   security:
-    - "Require the key URL parameter on every route of the API, and answer a request whose key is missing or does not match with 401 before any other work is done."
-    - "Never write the accepted API key into source, a committed file, a response, or an error message."
     - "Never include an account password in a list or read response beyond what the contract states, and never place a stored credential in an error message."
     - "Let an error message name only what the caller sent and what was expected of it; never reveal a stack trace, a file path, a query, or the database file location."
     - "Serve plain HTTP only, because the project switches HTTPS off; do not add TLS configuration or redirect to HTTPS."
-    - "Add no user authentication, session, or login, because the project switches authentication off; the key parameter is the only gate."
+    - "Add no user authentication, session, or login, because the project switches authentication off."
 
   # <!-------------------------------------------- Test -->
   test:

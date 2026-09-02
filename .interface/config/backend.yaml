@@ -3,7 +3,7 @@ meta:
   path: ".interface/config/backend.yaml"
   path_note: "The backend item — its resolved settings and the API contract it publishes; produced by my-interface-interpreter from project.md and develop.preferences.yaml, then validated against backend.schema.yaml."
   schema: ".interface/schema/backend.schema.yaml"
-  schema_version: "1.3"
+  schema_version: "1.4"
   generated_by: "my-interface-interpreter"
   generated_at: "2026-09-02"
 
@@ -65,7 +65,7 @@ content:
   code_path_note: "Relative to the repository root, beside .interface/ — never a path inside the interface."
 
   # <!-------------------------------------------- Summary -->
-  summary: "A FastAPI service over a SQLite database that stores every model the project defines and serves a keyed HTTP API for them."
+  summary: "A FastAPI service over a SQLite database that stores every model the project defines and serves an HTTP API for them."
 
   # <!-------------------------------------------- Needs_Test -->
   needs_test: false
@@ -126,10 +126,6 @@ content:
       enabled: false
     https:
       enabled: false
-    api_key:
-      enabled: true
-      note: "Every request carries a key URL parameter; the accepted value is read from the environment, never committed"
-
   # <!-------------------------------------------- Code_Layout -->
   code_layout:
     "pyproject.toml": "Project metadata and the dependencies uv installs"
@@ -140,10 +136,10 @@ content:
     "app.db": "The SQLite database file — never committed"
     "app/": "The application package"
     "app/__init__.py": "Marks the package"
-    "app/main.py": "Entry point — creates the FastAPI app, enables Docs, disables ReDoc, and mounts every router behind the key dependency"
-    "app/config.py": "Configuration read from the environment — the database file path and the accepted API key"
+    "app/main.py": "Entry point — creates the FastAPI app, enables Docs, disables ReDoc, and mounts every router"
+    "app/config.py": "Configuration read from the environment — including the database file path"
     "app/database.py": "Engine, session factory, and the declarative base; enables SQLite foreign-key enforcement on every connection"
-    "app/dependencies.py": "The key dependency — reads the key URL parameter and answers 401 when it is missing or does not match"
+    "app/dependencies.py": "Reusable request dependencies, including the database session dependency"
     "app/models/": "One SQLAlchemy model per project model, one file each"
     "app/schemas/": "One Pydantic schema module per project model — the create/replace body and the response shape"
     "app/services/": "One service module per project model — the list, create, read, replace, and delete logic"
@@ -169,7 +165,6 @@ content:
       conventions:
         transport: "HTTP, JSON request and response bodies, UTF-8; plain HTTP, no TLS."
         base_path: "No prefix — routes are served at the paths listed."
-        key: "Every route requires the key URL query parameter (?key=...); a request whose key is missing or does not match the configured value is answered 401 before anything else."
         identifiers: "id is an integer assigned by the backend on create; the caller never sends it and never chooses it."
         references: "A field ending in _id holds the id of an existing row of the referenced model; the referenced model is named on the field."
         unknown_id: "A route that names an id no row carries answers 404."
@@ -180,9 +175,8 @@ content:
       error_shape:
         rule: "Every failure takes the framework's built-in shape, because centralized error handling is switched off — a consumer branches on the status code, never on the text."
         fields:
-          detail: "A string for 401 and 404; for 422 the framework's list of validation errors, each naming the location, message, and type."
+          detail: "A string for 404; for 422 the framework's list of validation errors, each naming the location, message, and type."
         codes:
-          401: "The key URL parameter is missing or does not match."
           404: "The id in the path names no row of that model."
           422: "The request body or a path parameter failed validation."
 
@@ -329,377 +323,377 @@ content:
             path: "/trading-platforms"
             summary: "List all trading platforms"
             response: "200 — a JSON list of trading_platform"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/trading-platforms"
             summary: "Create one trading platform"
             body: "trading_platform without id — name, status, description"
             response: "201 — the created trading_platform, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/trading-platforms/{id}"
             summary: "Read one trading platform by id"
             response: "200 — the trading_platform"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/trading-platforms/{id}"
             summary: "Replace one trading platform by id"
             body: "trading_platform without id — name, status, description"
             response: "200 — the updated trading_platform"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/trading-platforms/{id}"
             summary: "Delete one trading platform by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- brokers
           - method: "GET"
             path: "/brokers"
             summary: "List all brokers"
             response: "200 — a JSON list of broker"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/brokers"
             summary: "Create one broker"
             body: "broker without id — name, trading_platform_id, status, description"
             response: "201 — the created broker, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/brokers/{id}"
             summary: "Read one broker by id"
             response: "200 — the broker"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/brokers/{id}"
             summary: "Replace one broker by id"
             body: "broker without id — name, trading_platform_id, status, description"
             response: "200 — the updated broker"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/brokers/{id}"
             summary: "Delete one broker by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- accounts
           - method: "GET"
             path: "/accounts"
             summary: "List all accounts"
             response: "200 — a JSON list of account"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/accounts"
             summary: "Create one account"
             body: "account without id — name, username, password, broker_id, status, description"
             response: "201 — the created account, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/accounts/{id}"
             summary: "Read one account by id"
             response: "200 — the account"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/accounts/{id}"
             summary: "Replace one account by id"
             body: "account without id — name, username, password, broker_id, status, description"
             response: "200 — the updated account"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/accounts/{id}"
             summary: "Delete one account by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- assets
           - method: "GET"
             path: "/assets"
             summary: "List all assets"
             response: "200 — a JSON list of asset"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/assets"
             summary: "Create one asset"
             body: "asset without id — name, status, description"
             response: "201 — the created asset, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/assets/{id}"
             summary: "Read one asset by id"
             response: "200 — the asset"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/assets/{id}"
             summary: "Replace one asset by id"
             body: "asset without id — name, status, description"
             response: "200 — the updated asset"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/assets/{id}"
             summary: "Delete one asset by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- strategies
           - method: "GET"
             path: "/strategies"
             summary: "List all strategies"
             response: "200 — a JSON list of strategy"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/strategies"
             summary: "Create one strategy"
             body: "strategy without id — name, risk_parameter, status, description"
             response: "201 — the created strategy, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/strategies/{id}"
             summary: "Read one strategy by id"
             response: "200 — the strategy"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/strategies/{id}"
             summary: "Replace one strategy by id"
             body: "strategy without id — name, risk_parameter, status, description"
             response: "200 — the updated strategy"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/strategies/{id}"
             summary: "Delete one strategy by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- trailing groups
           - method: "GET"
             path: "/trailing-groups"
             summary: "List all trailing groups"
             response: "200 — a JSON list of trailing_group"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/trailing-groups"
             summary: "Create one trailing group"
             body: "trailing_group without id — name, status, description"
             response: "201 — the created trailing_group, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/trailing-groups/{id}"
             summary: "Read one trailing group by id"
             response: "200 — the trailing_group"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/trailing-groups/{id}"
             summary: "Replace one trailing group by id"
             body: "trailing_group without id — name, status, description"
             response: "200 — the updated trailing_group"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/trailing-groups/{id}"
             summary: "Delete one trailing group by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- trailing rules
           - method: "GET"
             path: "/trailing-rules"
             summary: "List all trailing rules"
             response: "200 — a JSON list of trailing_rule"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/trailing-rules"
             summary: "Create one trailing rule"
             body: "trailing_rule without id — name, trailing_group_id, status, description"
             response: "201 — the created trailing_rule, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/trailing-rules/{id}"
             summary: "Read one trailing rule by id"
             response: "200 — the trailing_rule"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/trailing-rules/{id}"
             summary: "Replace one trailing rule by id"
             body: "trailing_rule without id — name, trailing_group_id, status, description"
             response: "200 — the updated trailing_rule"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/trailing-rules/{id}"
             summary: "Delete one trailing rule by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- partial groups
           - method: "GET"
             path: "/partial-groups"
             summary: "List all partial groups"
             response: "200 — a JSON list of partial_group"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/partial-groups"
             summary: "Create one partial group"
             body: "partial_group without id — name, status, description"
             response: "201 — the created partial_group, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/partial-groups/{id}"
             summary: "Read one partial group by id"
             response: "200 — the partial_group"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/partial-groups/{id}"
             summary: "Replace one partial group by id"
             body: "partial_group without id — name, status, description"
             response: "200 — the updated partial_group"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/partial-groups/{id}"
             summary: "Delete one partial group by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- partial rules
           - method: "GET"
             path: "/partial-rules"
             summary: "List all partial rules"
             response: "200 — a JSON list of partial_rule"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/partial-rules"
             summary: "Create one partial rule"
             body: "partial_rule without id — name, partial_group_id, profit_threshold, close_portion, status, description"
             response: "201 — the created partial_rule, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/partial-rules/{id}"
             summary: "Read one partial rule by id"
             response: "200 — the partial_rule"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/partial-rules/{id}"
             summary: "Replace one partial rule by id"
             body: "partial_rule without id — name, partial_group_id, profit_threshold, close_portion, status, description"
             response: "200 — the updated partial_rule"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/partial-rules/{id}"
             summary: "Delete one partial rule by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- action groups
           - method: "GET"
             path: "/action-groups"
             summary: "List all action groups"
             response: "200 — a JSON list of action_group"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/action-groups"
             summary: "Create one action group"
             body: "action_group without id — name, status, description"
             response: "201 — the created action_group, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/action-groups/{id}"
             summary: "Read one action group by id"
             response: "200 — the action_group"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/action-groups/{id}"
             summary: "Replace one action group by id"
             body: "action_group without id — name, status, description"
             response: "200 — the updated action_group"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/action-groups/{id}"
             summary: "Delete one action group by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- actions
           - method: "GET"
             path: "/actions"
             summary: "List all actions"
             response: "200 — a JSON list of action"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/actions"
             summary: "Create one action"
             body: "action without id — name, asset_id, account_id, strategy_id, group_id, status, description"
             response: "201 — the created action, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/actions/{id}"
             summary: "Read one action by id"
             response: "200 — the action"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/actions/{id}"
             summary: "Replace one action by id"
             body: "action without id — name, asset_id, account_id, strategy_id, group_id, status, description"
             response: "200 — the updated action"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/actions/{id}"
             summary: "Delete one action by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- executes
           - method: "GET"
             path: "/executes"
             summary: "List all executes"
             response: "200 — a JSON list of execute"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/executes"
             summary: "Create one execute"
             body: "execute without id — name, action_id, profit, state, status, description"
             response: "201 — the created execute, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/executes/{id}"
             summary: "Read one execute by id"
             response: "200 — the execute"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/executes/{id}"
             summary: "Replace one execute by id"
             body: "execute without id — name, action_id, profit, state, status, description"
             response: "200 — the updated execute"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/executes/{id}"
             summary: "Delete one execute by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
           # -- positions
           - method: "GET"
             path: "/positions"
             summary: "List all positions"
             response: "200 — a JSON list of position"
-            errors: [401]
+            errors: []
           - method: "POST"
             path: "/positions"
             summary: "Create one position"
             body: "position without id — name, entry_price, take_profit, stop_loss, status, description"
             response: "201 — the created position, with its id"
-            errors: [401, 422]
+            errors: [422]
           - method: "GET"
             path: "/positions/{id}"
             summary: "Read one position by id"
             response: "200 — the position"
-            errors: [401, 404]
+            errors: [404]
           - method: "PUT"
             path: "/positions/{id}"
             summary: "Replace one position by id"
             body: "position without id — name, entry_price, take_profit, stop_loss, status, description"
             response: "200 — the updated position"
-            errors: [401, 404, 422]
+            errors: [404, 422]
           - method: "DELETE"
             path: "/positions/{id}"
             summary: "Delete one position by id"
             response: "204 — no body"
-            errors: [401, 404]
+            errors: [404]
 
   # <!-------------------------------------------- Boundaries -->
   boundaries:
@@ -716,7 +710,7 @@ content:
   out_of_scope:
     - "HTTPS — switched off by the project."
     - "Centralized error handling and application logging — both switched off by the project."
-    - "User authentication, sessions, or login — switched off by the project; the key parameter is the only gate."
+    - "User authentication, sessions, or login — switched off by the project."
     - "A written test suite — testing is switched off by the project."
     - "ReDoc — switched off by the project; only Docs is served."
     - "Placing trades or talking to Binance, MetaTrader 5, or any platform library — the project describes the platforms as integrations to be defined, and no phase asks the backend to execute a trade."

@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-backend
-  version: "1.3"
+  version: "1.4"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
 
 structure:
@@ -203,14 +203,6 @@ sections:
           enabled:
             required: true
             purpose: "Whether the backend serves HTTPS — false means plain HTTP."
-      api_key:
-        required: true
-        purpose: "API key support on the API surface."
-        fields:
-          enabled:
-            required: true
-            purpose: "Whether requests carry an API key — false means no key is issued or checked."
-
   # <!--------------------------------------------------------------------------------- Code_Layout -->
   code_layout:
     required: true
