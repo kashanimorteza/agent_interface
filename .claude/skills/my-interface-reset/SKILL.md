@@ -28,16 +28,20 @@ Require at least one generated Task across the plans. Preserve every Plan, Group
 
 Set `content.active.mode` to `planning` and `content.active.phase` to `none`. Record the reset provenance and current date in the remaining active fields. Do not invoke the Tasker or enter a particular phase on its behalf. The existing implementation remains available for later Developer runs to inspect, change where required, and verify again.
 
+Replace State `content.blockers` and `content.open_questions.questions` with empty lists. Reset clears these workflow findings; it does not answer them. A later planning, development, review, or interpretation run raises again anything that is still unresolved.
+
 ## Reset to planning
 
 Require at least one generated Task across the plans. For every phase Plan, replace `groups` with an empty mapping. Preserve each Plan's phase id, title, order, target, and goal-derived `does` value so every entry remains the valid empty shell initially generated for `my-interface-tasker`.
 
 Set `content.active.mode` to `not set` and `content.active.phase` to `none`. Record the reset provenance and current date in the remaining active fields. This is the workflow state before any Plan has been generated.
 
+Replace State `content.blockers` and `content.open_questions.questions` with empty lists. Reset clears these workflow findings; it does not answer them. A later planning, development, review, or interpretation run raises again anything that is still unresolved.
+
 ## Reset State
 
-Preserve State blockers and open questions; Reset never answers, releases, or discards them. Neither reset changes product code, generated Definition, item configuration, contracts, or the phase shells in Task.
+Both reset stages clear all current State blockers and open questions after validating the complete mutation. Neither reset changes product code, generated Definition, item configuration, contracts, or the phase shells in Task.
 
 ## Completion
 
-Validate Task and State against their current Schemas, then report the reset stage, the number of affected Tasks and Plans, what was preserved, and the next explicit Skill invocation now available. Do not run that Skill automatically.
+Validate Task and State against their current Schemas, then report the reset stage, the number of affected Tasks and Plans, the number of cleared blockers and open questions, what was preserved, and the next explicit Skill invocation now available. Do not run that Skill automatically.

@@ -3,7 +3,7 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "2.0"
+  version: "2.1"
   updated: "2026-09-03"
 
 
@@ -175,7 +175,7 @@ content:
       name: "my-interface-reset"
       path: ".claude/skills/my-interface-reset/"
       responsibility: "Resets the whole generated Task workflow to the stage before development or before planning without deleting project code or generated Understanding"
-      state: "Runs outside the modes under transition S9. Development reset returns every Task to todo and State to planning; planning reset removes every generated Task and returns State to not set"
+      state: "Runs outside the modes under transition S9. Development reset returns every Task to todo and State to planning; planning reset removes every generated Task and returns State to not set; both clear all current State blockers and open questions"
 
     skill_installer:
       name: "my-interface-skill-installer"

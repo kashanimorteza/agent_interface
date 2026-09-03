@@ -68,7 +68,7 @@ content:
     done_gate: "Without a passing verify run no task becomes done, even if the code is written"
     claim_protocol: "A task is set to claimed and the file written before work starts, so two agents never take the same task"
     status_only_in_development: "In development mode status, blocker, and log are the only fields an agent may change — the rest is the plan. my-interface-reset under S9 is the only outside-mode reset exception"
-    reset_protocol: "A reset is project-wide and explicitly invoked. A development reset sets every generated task's status to todo, removes every blocker field, keeps every prior log entry, and appends one dated reset entry to each task; it is refused while any task is claimed. A planning reset replaces groups with an empty mapping in every phase plan, removing every generated group and task while preserving each plan shell's id, title, order, target, and does"
+    reset_protocol: "A reset is project-wide and explicitly invoked. A development reset sets every generated task's status to todo, removes every blocker field, keeps every prior log entry, and appends one dated reset entry to each task; it is refused while any task is claimed. A planning reset replaces groups with an empty mapping in every phase plan, removing every generated group and task while preserving each plan shell's id, title, order, target, and does. Either reset stage clears every current State blocker and open question without answering it; later work raises again anything still unresolved"
 
   # <!-------------------------------------------- Plans -->
   plans:

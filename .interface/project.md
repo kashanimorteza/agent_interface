@@ -7,6 +7,12 @@ Defines what the project is and the main parts that make up the system.
 
 <br><br>
 
+## Goals
+
+- Enable users to enter and manage all defined project data through a working backend and frontend.
+
+<br><br>
+
 ## Models
 
 Defines the project's models.
@@ -24,6 +30,11 @@ Defines the project's models.
 - `api_key` — Type: `string`; Nullable: `false`; Purpose: The API key assigned to the user.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the user is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the user.
+
+**Rules:**
+
+- `password` is a credential and must use `hash` storage at rest.
+- `api_key` is a credential and must use `hash` storage at rest.
 
 **Initial Data:**
 
@@ -63,23 +74,14 @@ Defines the project's models.
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `name` — Type: `string`; Nullable: `false`; Purpose: The platform's display name.
-- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the trading platform configuration.
 - `code` — Type: `string`; Nullable: `false`; Purpose: Identifies the implementation class the application must use for this trading platform, such as `binance` or `metatrader_5`.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the platform is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the platform.
 
-**Relationships:**
-
-- Belongs to one User through `user_id`.
-
-**Rules:**
-
-- The combination of `user_id` and `name` must be unique.
-
 **Initial Data:**
 
-- `name`: `MetaTrader 5`; `user_id`: `1`; `code`: `metatrader_5`.
-- `name`: `Binance`; `user_id`: `1`; `code`: `binance`.
+- `name`: `MetaTrader 5`; `code`: `metatrader_5`.
+- `name`: `Binance`; `code`: `binance`.
 
 ### Broker
 
@@ -102,7 +104,6 @@ Defines the project's models.
 **Rules:**
 
 - The combination of `user_id` and `name` must be unique.
-- `user_id` must match the `user_id` of the Trading Platform referenced by `trading_platform_id`.
 
 **Initial Data:**
 
@@ -131,9 +132,13 @@ Defines the project's models.
 - Belongs to one Broker through `broker_id`.
 - Uses one Currency as its base currency through `base_currency_id`.
 
+**Rules:**
+
+- `password` is a credential and must use `encrypted` storage at rest.
+
 **Initial Data:**
 
-- `name`: `Acc-1`; `broker_id`: `1`; `base_currency_id`: `1`.
+- `name`: `Acc-1`; `broker_id`: `1`; `base_currency_id`: `1`; `username`: `test`; `password`: Generate securely; `leverage`: `100`; `account_type`: `CFD`.
 
 ### Asset
 
@@ -268,7 +273,7 @@ Defines the project's models.
 
 **Initial Data:**
 
-- `name`: `Default`; `action_group_id`: `1`; `asset_id`: `1`; `account_id`: `1`; `partial_group_id`: `1`; `trailing_group_id`: `1`.
+- `name`: `Default`; `action_group_id`: `1`; `asset_id`: `1`; `account_id`: `1`; `partial_group_id`: `1`; `trailing_group_id`: `1`; `risk_by_reward`: `1`; `take_profit`: `1`; `stop_loss`: `1`.
 
 ### Position
 
@@ -327,3 +332,11 @@ Defines the project's implementation phases. Phases are executed step by step in
 **Target:** Backend
 
 **Goal:** Create and run the API for all defined project models.
+
+### Phase 3
+
+**Title:** Frontend
+
+**Target:** Frontend
+
+**Goal:** Create the frontend interface for entering and managing all defined project data through the backend API.

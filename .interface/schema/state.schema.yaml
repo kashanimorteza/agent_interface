@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "3.3"
+  version: "3.4"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
   authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
@@ -117,7 +117,8 @@ sections:
             - "my-interface-developer"
             - "my-interface-reviewer"
             - "my-interface-interpreter — during a generation run, which is outside the modes"
-          constraint: "Any mode, and a generation run, may raise a blocker, update what it stops, and remove it once the thing that was missing exists. A blocker whose decision_belongs_to is the human is removed only after the human has decided — recording that decision is transition S8"
+            - "my-interface-reset — only under transition S9, clearing every blocker"
+          constraint: "Any mode, and a generation run, may raise a blocker, update what it stops, and remove it once the thing that was missing exists. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8. Reset may clear every blocker without answering it only as part of S9"
           human_may_set: true
 
         open_questions.questions:
@@ -128,7 +129,8 @@ sections:
             - "my-interface-developer"
             - "my-interface-reviewer"
             - "my-interface-interpreter — during a generation run, which is outside the modes"
-          constraint: "An agent raises a question and states why it matters. Raising is not answering"
+            - "my-interface-reset — only under transition S9, clearing every open question"
+          constraint: "An agent raises a question and states why it matters. Raising is not answering. Reset may clear every question without answering it only as part of S9"
           human_may_set: true
 
         open_questions.questions.answered_so_far:
@@ -280,7 +282,7 @@ sections:
         - id: "S9"
           name: "reset development or planning project-wide"
           from: "any mode or 'not set'"
-          to: "For development reset, every generated Task is todo and active is planning / none. For planning reset, every phase Plan has empty groups and active is 'not set' / none"
+          to: "For development reset, every generated Task is todo and active is planning / none. For planning reset, every phase Plan has empty groups and active is 'not set' / none. For both stages, State blockers and open questions are empty"
           performed_by: "my-interface-reset"
           authorized_by: "The human's invocation of my-interface-reset naming exactly one reset stage: development or planning"
           requires:
@@ -289,7 +291,8 @@ sections:
             - "No generated Task is claimed; active work is never reset underneath its owner"
             - "For development reset, every generated Task status becomes todo, every Task blocker field is removed, every prior Task log remains append-only, and one dated reset entry is appended to each Task"
             - "For planning reset, groups becomes an empty mapping in every phase Plan, removing every generated Group and Task while preserving the Plan shells"
-          writes: "content.active.mode, content.active.phase, content.active.mode_reason, content.active.set_by, content.active.set_at; and the project-wide Task reset defined by task.yaml content.task_states.reset_protocol"
+            - "For either reset stage, content.blockers and content.open_questions.questions become empty lists; clearing is not an answer, and later work raises again anything still unresolved"
+          writes: "content.active.mode, content.active.phase, content.active.mode_reason, content.active.set_by, content.active.set_at, content.blockers, content.open_questions.questions; and the project-wide Task reset defined by task.yaml content.task_states.reset_protocol"
           refused_when: "The invocation is missing, names a phase, has more than one argument, or is not development or planning; task.yaml or a Plan shell is missing; no generated Task exists; a Task is claimed; or the complete mutation cannot be validated before writing"
 
       validation:
