@@ -29,6 +29,32 @@ Defines the project's models.
 
 - `name`: `Admin`; `username`: `admin`; `password`: Generate securely; `api_key`: Generate securely.
 
+### Currency
+
+**Purpose:** Defines a currency that can be used by the trading system and identifies its standard code, display symbol, associated country or region, and monetary decimal precision.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The currency's full name.
+- `code` — Type: `string`; Size: `3`; Nullable: `false`; Unique: `true`; Purpose: The currency's standard three-letter code, such as `USD` or `EUR`.
+- `symbol` — Type: `string`; Nullable: `true`; Purpose: The currency's display symbol, such as `$`, `€`, or `£`.
+- `country` — Type: `string`; Nullable: `true`; Purpose: Identifies the country or region associated with the currency.
+- `decimal_digits` — Type: `integer`; Nullable: `false`; Default: `2`; Purpose: Defines the number of decimal digits normally used for monetary values in the currency.
+- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the currency is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the currency.
+
+**Initial Data:**
+
+- `name`: `US Dollar`; `code`: `USD`; `symbol`: `$`; `country`: `United States`; `decimal_digits`: `2`.
+- `name`: `Euro`; `code`: `EUR`; `symbol`: `€`; `country`: `Eurozone`; `decimal_digits`: `2`.
+- `name`: `British Pound`; `code`: `GBP`; `symbol`: `£`; `country`: `United Kingdom`; `decimal_digits`: `2`.
+- `name`: `Japanese Yen`; `code`: `JPY`; `symbol`: `¥`; `country`: `Japan`; `decimal_digits`: `0`.
+- `name`: `Swiss Franc`; `code`: `CHF`; `symbol`: `CHF`; `country`: `Switzerland`; `decimal_digits`: `2`.
+- `name`: `Canadian Dollar`; `code`: `CAD`; `symbol`: `C$`; `country`: `Canada`; `decimal_digits`: `2`.
+- `name`: `Australian Dollar`; `code`: `AUD`; `symbol`: `A$`; `country`: `Australia`; `decimal_digits`: `2`.
+- `name`: `New Zealand Dollar`; `code`: `NZD`; `symbol`: `NZ$`; `country`: `New Zealand`; `decimal_digits`: `2`.
+
 ### Trading Platform
 
 **Purpose:** Defines a supported trading API standard, such as MetaTrader 5 or Binance, while keeping the system independent of any specific exchange or broker. Every trading platform implementation exposes the same application-facing trading functions through a dedicated class, while handling communication with its destination API according to that platform's own mechanism. Additional platform implementations can be added without changing the system's common trading interface.
@@ -52,8 +78,8 @@ Defines the project's models.
 
 **Initial Data:**
 
-- `name`: `Binance`; `user_id`: `1`; `code`: `binance`.
 - `name`: `MetaTrader 5`; `user_id`: `1`; `code`: `metatrader_5`.
+- `name`: `Binance`; `user_id`: `1`; `code`: `binance`.
 
 ### Broker
 
@@ -80,7 +106,7 @@ Defines the project's models.
 
 **Initial Data:**
 
-- `name`: `Default`; `user_id`: `1`; `trading_platform_id`: `1`.
+- `name`: `FxPro`; `user_id`: `1`; `trading_platform_id`: `1`.
 
 ### Account
 
@@ -91,7 +117,7 @@ Defines the project's models.
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The account's display name.
 - `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker that owns the account.
-- `base_asset_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the default base asset used by the account.
+- `base_currency_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the base currency used by the account.
 - `username` — Type: `string`; Nullable: `false`; Purpose: The username identifier used to access the trading account.
 - `password` — Type: `string`; Nullable: `false`; Purpose: The credential used to access the trading account.
 - `leverage` — Type: `integer`; Nullable: `false`; Purpose: Defines the account's leverage multiplier.
@@ -103,11 +129,11 @@ Defines the project's models.
 **Relationships:**
 
 - Belongs to one Broker through `broker_id`.
-- Uses one Asset as its default base asset through `base_asset_id`.
+- Uses one Currency as its base currency through `base_currency_id`.
 
 **Initial Data:**
 
-- `name`: `Default`; `broker_id`: `1`; `base_asset_id`: `1`.
+- `name`: `Acc-1`; `broker_id`: `1`; `base_currency_id`: `1`.
 
 ### Asset
 
@@ -117,35 +143,19 @@ Defines the project's models.
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The asset's display name.
-- `symbol` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: Identifies the tradable asset, such as `EURUSD` or `XAUUSD`.
-- `asset_type` — Type: `string`; Nullable: `false`; Purpose: Identifies the asset category, such as `commodity` or `currency`.
+- `symbol` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: Identifies the tradable asset, such as `EUR/USD`, `XAU/USD`, or `USOil`.
+- `category` — Type: `string`; Nullable: `false`; Purpose: Identifies the asset category, such as `Currency`, `Commodity`, or `Cryptocurrency`.
+- `point_size` — Type: `float`; Nullable: `false`; Default: `0.0`; Purpose: Stores the size of one point for the asset.
+- `digits` — Type: `integer`; Nullable: `false`; Default: `0`; Purpose: Stores the number of decimal digits used for the asset's price.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the asset is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the asset.
 
 **Initial Data:**
 
-- `name`: `Default`; `symbol`: `Default`.
-
-### Asset Detail
-
-**Purpose:** Stores the parameters required to trade a specific asset through a specific broker. The same asset can have different parameter values for different brokers, and the system uses the matching Asset Detail when calculating and executing a trade for the selected Broker and Asset pair.
-
-**Fields:**
-
-- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
-- `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker for which the asset parameters are defined.
-- `asset_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the asset whose broker-specific parameters are defined.
-- `parameter` — Type: `string`; Nullable: `false`; Purpose: Identifies one broker-specific parameter for the asset.
-- `value` — Type: `string`; Nullable: `false`; Purpose: Stores the value of the parameter.
-
-**Relationships:**
-
-- Belongs to one Broker through `broker_id`.
-- Belongs to one Asset through `asset_id`.
-
-**Rules:**
-
-- The combination of `broker_id`, `asset_id`, and `parameter` must be unique.
+- `name`: `EURUSD`; `symbol`: `EUR/USD`; `category`: `Currency`; `point_size`: `0.0001`; `digits`: `5`.
+- `name`: `EURGBP`; `symbol`: `EUR/GBP`; `category`: `Currency`; `point_size`: `0.001`; `digits`: `5`.
+- `name`: `XAUUSD`; `symbol`: `XAU/USD`; `category`: `Commodity`; `point_size`: `0.01`; `digits`: `2`.
+- `name`: `USOil`; `symbol`: `USOil`; `category`: `Commodity`; `point_size`: `0.01`; `digits`: `3`.
 
 ### Trailing Group
 
