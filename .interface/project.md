@@ -7,21 +7,9 @@ Defines what the project is and the main parts that make up the system.
 
 <br><br>
 
-## Goals
-
-- Manage trading platforms, brokers, and trading accounts.
-- Manage assets and broker-specific asset settings.
-- Define trading strategies, action groups, and trading actions.
-- Configure trailing and partial-close rule groups.
-- Execute trading actions and track positions.
-
-<br><br>
-
 ## Models
 
-Defines the project's domain models, their purposes, fields, keys, uniqueness constraints, relationships, and rules.
-
-`Fields` lists the model's complete set of non-relationship fields. Every field is declared explicitly with its type and whether it is required; size, precision, default, or generation behavior is stated when applicable. Physical foreign-key fields are derived separately from `Relationships`.
+Defines the project's models.
 
 ### Trading Platform
 
@@ -29,19 +17,11 @@ Defines the project's domain models, their purposes, fields, keys, uniqueness co
 
 **Fields:**
 
-- `id` — Type: `integer`; Required: `true`; Auto Increment: `true`.
-- `name` — Type: `string`; Required: `true`; Purpose: The platform's display name.
-- `description` — Type: `string`; Required: `false`; Purpose: Describes the platform.
-- `status` — Type: `boolean`; Required: `true`; Default: `true`; Purpose: Indicates whether the platform is active.
-- `code` — Type: `string`; Required: `true`; Purpose: Identifies the platform for integrations, such as `binance` or `metatrader_5`.
-
-**Primary Key:** `id`
-
-**Unique:** `name`
-
-**Relationships:** None.
-
-**Rules:** None.
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The platform's display name.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the platform.
+- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the platform is active.
+- `code` — Type: `string`; Nullable: `false`; Purpose: Identifies the platform for integrations, such as `binance` or `metatrader_5`.
 
 ### Broker
 
