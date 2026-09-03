@@ -1,15 +1,14 @@
 schema:
   id: agent-interface-task
-  version: "2.1"
-  purpose: "The shape of task.yaml — the frame that defines a task, the active plans that hold tasks, and immutable history for plans reset to planning"
-  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans use the phase → group → task structure. Every plan key is a project phase from definition.yaml; the phase's target resolves the item configuration and code boundary used by its tasks. plan_history preserves complete plans replaced by an authorized reset to planning."
+  version: "2.2"
+  purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
+  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans use the phase → group → task structure. Every plan key is a project phase from definition.yaml; the phase's target resolves the item configuration and code boundary used by its tasks."
   authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and invariants, not the permission"
 
 structure:
   - task_schema
   - task_states
   - plans
-  - plan_history
 
 sections:
 
@@ -63,7 +62,7 @@ sections:
         purpose: "That status is written on the task itself, so definition and state can never drift apart."
       history_lives_here_too:
         required: true
-        purpose: "That task-state history remains in each task's append-only log, while a plan replaced by reset to planning moves intact into immutable plan_history."
+        purpose: "That there is no history file — while a Task exists, how it reached its state remains in its append-only log. Reset to planning explicitly removes generated Tasks."
 
   # <!--------------------------------------------------------------------------------- Task_States -->
   task_states:
@@ -96,7 +95,7 @@ sections:
         purpose: "That in development mode status, blocker, and log are the only fields an agent may change, with my-interface-reset under S9 as the only outside-mode reset exception."
       reset_protocol:
         required: true
-        purpose: "How an explicitly invoked reset returns one phase to development by reopening its completed tasks, or to planning by archiving its complete active plan and emptying only that plan's groups."
+        purpose: "How an explicitly invoked project-wide reset returns every generated Task to its initial status before development, or removes every generated Task to restore the stage before planning."
 
   # <!--------------------------------------------------------------------------------- Plans -->
   plans:
@@ -145,29 +144,3 @@ sections:
                   tasks:
                     required: true
                     purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one atomic act, naming the one thing it creates or changes — create one file, add one method, implement one function, install one package, add one model, create one endpoint, add one migration, add one specific validation — never a broad or multi-purpose implementation goal. Anything larger is split into several tasks before it is written; many precise tasks are preferred over a few broad ones, however much the count grows, and one sitting finishes each."
-
-  # <!--------------------------------------------------------------------------------- Plan_History -->
-  plan_history:
-    required: true
-    purpose: "Immutable snapshots of plans replaced by an authorized reset to planning, grouped by project phase; empty until the first such reset."
-    fields:
-      "<phase>":
-        required: false
-        purpose: "The ordered history entries for one phase, keyed by the same phase id used under plans."
-        fields:
-          "<entry>":
-            required: true
-            purpose: "One immutable plan snapshot created immediately before its active plan is emptied for replanning, keyed R1, R2, and so on within the phase."
-            fields:
-              reset_at:
-                required: true
-                purpose: "The date the reset occurred."
-              reset_by:
-                required: true
-                purpose: "The my-interface-reset invocation that the human authorized."
-              destination:
-                required: true
-                purpose: "Always planning for an archived plan snapshot."
-              plan:
-                required: true
-                purpose: "The complete prior active phase plan, including all groups, tasks, statuses, blockers, and append-only logs."

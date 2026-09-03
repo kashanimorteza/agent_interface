@@ -100,7 +100,7 @@ content:
 
     rule: "Exactly one mode is active at a time — it is named in config/state.yaml under active.mode"
     set_by: "The human decides the mode; the Skill the human invokes records that decision. Which Skill may record which mode, and under what conditions, is fixed in the State contract — config/state.yaml under content.state_authority — and no mode is ever chosen by an agent"
-    entered_by: "A mode is entered by invoking the Skill that owns it — planning by my-interface-tasker, development by my-interface-developer, review by my-interface-reviewer"
+    entered_by: "A working phase mode is entered by invoking the Skill that owns it — planning by my-interface-tasker, development by my-interface-developer, review by my-interface-reviewer. Under S9, my-interface-reset may return the global workflow to planning with no active phase; it does not perform or invoke a planning run"
 
     planning:
       purpose: "Decide what will be built and in what order — no product code is written"
@@ -174,8 +174,8 @@ content:
     reset:
       name: "my-interface-reset"
       path: ".claude/skills/my-interface-reset/"
-      responsibility: "Resets one named project phase to planning or development readiness without deleting project code or generated Understanding"
-      state: "Runs outside the modes under transition S9. The invocation names exactly one phase and either planning or development; Reset returns active State to not set and changes only that phase's Task workflow state"
+      responsibility: "Resets the whole generated Task workflow to the stage before development or before planning without deleting project code or generated Understanding"
+      state: "Runs outside the modes under transition S9. Development reset returns every Task to todo and State to planning; planning reset removes every generated Task and returns State to not set"
 
     skill_installer:
       name: "my-interface-skill-installer"

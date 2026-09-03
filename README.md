@@ -98,11 +98,11 @@ Removes the generated Config and the exact validated project code directories re
 
 `.claude/skills/my-interface-reset/SKILL.md`
 
-Resets one project phase to `planning` or `development` readiness while preserving project code, generated Understanding, and immutable plan history.
+Resets the whole generated workflow to the stage before development or before planning while preserving project code and generated Understanding.
 
-`/my-interface-reset <phase-id> development`
+`/my-interface-reset development`
 
-`/my-interface-reset <phase-id> planning`
+`/my-interface-reset planning`
 
 
 <br > <br>

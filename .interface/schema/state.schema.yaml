@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "3.2"
+  version: "3.3"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
   authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
@@ -51,8 +51,8 @@ sections:
             - "my-interface-developer"
             - "my-interface-reviewer"
             - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-            - "my-interface-reset — only under transition S9, and only to 'not set'"
-          constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-reset may only return this field to 'not set' under S9; my-interface-clear does not write it because S5 deletes the file that holds it"
+            - "my-interface-reset — only under transition S9, to planning for a development reset or 'not set' for a planning reset"
+          constraint: "A Skill writes only the mode it owns, except that my-interface-reset records the workflow stage explicitly selected by the human under S9: planning after development is reset, or 'not set' after planning is reset. Reset never invokes or performs the work of the Tasker. my-interface-clear does not write this field because S5 deletes the file that holds it"
           human_may_set: true
 
         active.phase:
@@ -164,7 +164,7 @@ sections:
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
           - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
           - "The State Authority itself, after its seed — this section, and its default in schema/state.schema.yaml"
-          - "Asking for tasks to be created, asking for one phase to be reset to planning or development, and asking for the generated project state to be cleared"
+          - "Asking for tasks to be created, asking for development or planning to be reset project-wide, and asking for the generated project state to be cleared"
 
       transitions:
 
@@ -278,18 +278,19 @@ sections:
           refused_when: "The answer came from the agent, from the code, or from what seems reasonable — that is an invention, and the question stays open"
 
         - id: "S9"
-          name: "reset one project phase"
+          name: "reset development or planning project-wide"
           from: "any mode or 'not set'"
-          to: "active.mode: 'not set' and active.phase: 'none'; the one named phase is ready for a fresh planning or development invocation according to the selected destination"
+          to: "For development reset, every generated Task is todo and active is planning / none. For planning reset, every phase Plan has empty groups and active is 'not set' / none"
           performed_by: "my-interface-reset"
-          authorized_by: "The human's invocation of my-interface-reset naming exactly one project phase and exactly one destination: planning or development"
+          authorized_by: "The human's invocation of my-interface-reset naming exactly one reset stage: development or planning"
           requires:
-            - "The named phase exists in definition.yaml and has a matching active plan entry in task.yaml"
-            - "No task in the selected phase is claimed or blocked; live work and unresolved blockers are never discarded by Reset"
-            - "For destination development, the selected phase has a non-empty complete plan; every done task becomes todo, prior logs remain append-only, and cancelled or superseded tasks remain unchanged"
-            - "For destination planning, the selected phase has a non-empty plan; its complete current plan is first copied into a new immutable entry under task.yaml content.plan_history for that phase, then only its active groups are emptied"
-          writes: "content.active.mode, content.active.phase, content.active.mode_reason, content.active.set_by, content.active.set_at; and only the selected phase's reset fields in task.yaml as defined by its current reset_protocol"
-          refused_when: "The invocation does not name exactly one known phase and one supported destination, the plan is missing or already empty, a task is claimed or blocked, development reset is requested for an incomplete phase, history cannot be preserved, or the complete mutation cannot be validated before writing"
+            - "task.yaml exists, every phase in definition.yaml has its matching Plan shell, and at least one generated Task exists"
+            - "The invocation supplies exactly one supported stage and no phase id"
+            - "No generated Task is claimed; active work is never reset underneath its owner"
+            - "For development reset, every generated Task status becomes todo, every Task blocker field is removed, every prior Task log remains append-only, and one dated reset entry is appended to each Task"
+            - "For planning reset, groups becomes an empty mapping in every phase Plan, removing every generated Group and Task while preserving the Plan shells"
+          writes: "content.active.mode, content.active.phase, content.active.mode_reason, content.active.set_by, content.active.set_at; and the project-wide Task reset defined by task.yaml content.task_states.reset_protocol"
+          refused_when: "The invocation is missing, names a phase, has more than one argument, or is not development or planning; task.yaml or a Plan shell is missing; no generated Task exists; a Task is claimed; or the complete mutation cannot be validated before writing"
 
       validation:
         note: "These must hold at all times. Any Skill may check them; my-interface-reviewer checks them as part of a review, and a failure is a blocker, not a repair"
@@ -299,20 +300,19 @@ sections:
           - "When active.phase is not 'none', its target resolves to an indexed architecture part and mapped item configuration; active.target is derived from that target and is never stored"
           - "active.set_by names either the human or a Skill listed as writable_by for the field it wrote"
           - "Every state change an agent made corresponds to exactly one transition above"
-          - "A Skill's mode matches the mode it owns under content.modes in root.yaml — a Skill running in another Skill's mode is a fault, not a state to repair"
+          - "A Skill's mode matches the mode it owns under content.modes in root.yaml, except for the explicit S9 development-reset result of planning / none; a Skill actually running another Skill's work remains a fault"
           - "Each plan key is a phase id from definition.yaml, and its id, title, order, target, and goal-derived meaning match that phase"
-          - "Every plan_history entry is an immutable complete snapshot created by S9 before its active plan was reset to planning"
           - "No open question carries an answer that no human gave"
           - "content.state_authority was seeded verbatim from the schema default and has changed only by the human's hand since — a difference an agent made is a fault, not a state to repair"
 
   # <!--------------------------------------------------------------------------------- Active -->
   active:
     required: true
-    purpose: "The one mode and one project phase currently in play. The human decides them by invoking the owning Skill with a phase id. The phase target and item context are derived rather than stored."
+    purpose: "The current workflow mode and active project phase. A working Skill invocation selects its owned mode and one phase; Reset may instead return the workflow to planning or not set with no active phase under S9."
     fields:
       mode:
         required: true
-        purpose: "The active working mode — one of the modes defined in root.yaml, and exactly one at a time; 'not set' before any Skill has been invoked."
+        purpose: "The current workflow mode — one of the modes defined in root.yaml, or 'not set' before planning and after a planning reset."
       mode_reason:
         required: true
         purpose: "Why this mode is the active one — the invocation that set it, and, after a run, what that run concluded."
