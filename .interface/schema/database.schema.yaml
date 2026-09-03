@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-database
-  version: "2.17"
+  version: "2.18"
   purpose: "The shape of database.yaml — every parameter an agent reads to understand the independent database item"
 
 policy:
@@ -10,9 +10,6 @@ policy:
   ownership: "The database item alone owns its engine choice, physical storage, schema, constraints, indexes, migration history, and database contract."
   schema_changes: "Every schema change is expressed by an ordered reversible migration. Backend code never creates, alters, or drops database objects directly."
   contract_boundary: "Consumers use only a frozen database contract and runtime connection information; they never infer schema from migrations or database files."
-  table_template_resolution:
-    rule: "Use preferences.table_template as a suggested starting point for every table. Explicit project definitions always win, and the interpreter may adapt, replace, or omit template fields when the table semantics call for a better design."
-    resolved_by: "my-interface-interpreter writes the complete resolved field set into each contract table; downstream Skills never reapply or reinterpret the template."
   model_table_resolution:
     rule: "Treat every domain model as persistent and map it to one database table unless the project explicitly marks that model as non-persistent or supplies a different mapping."
     naming: "Derive the default table name from the model name in plural_snake_case. An explicit project table name always wins."
@@ -78,27 +75,6 @@ preferences:
       commands:
         upgrade: "uv run alembic upgrade head"
         downgrade: "uv run alembic downgrade -1"
-  table_template:
-    purpose: "A soft default for ordinary table fields when the project leaves their shape unstated; it is guidance, not a mandatory table contract."
-    fields:
-      id:
-        type: "integer"
-        primary_key: true
-        auto_increment: true
-        nullable: false
-      name:
-        type: "string"
-        nullable: false
-        role: "The default human-readable label; uniqueness is defined only by an explicit model rule."
-      description:
-        type: "string"
-        nullable: true
-      status:
-        type: "boolean"
-        nullable: false
-        default: true
-        true_means: "active"
-        false_means: "inactive"
   relationship_defaults:
     nullable: false
     index: true
@@ -295,7 +271,7 @@ sections:
                     purpose: "The domain-model key from definition.yaml that this table implements."
                   columns:
                     required: true
-                    purpose: "Every physical column in the table, including resolved template fields and relationship foreign keys."
+                    purpose: "Every physical column in the table, including project-declared fields and relationship foreign keys."
                     fields:
                       "<column>":
                         required: true

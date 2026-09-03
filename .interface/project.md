@@ -19,11 +19,29 @@ Defines what the project is and the main parts that make up the system.
 
 ## Models
 
-Defines the project's domain models, their purposes, relationships, and rules.
+Defines the project's domain models, their purposes, fields, keys, uniqueness constraints, relationships, and rules.
+
+`Fields` lists the model's complete set of non-relationship fields. Every field is declared explicitly with its type and whether it is required; size, precision, default, or generation behavior is stated when applicable. Physical foreign-key fields are derived separately from `Relationships`.
 
 ### Trading Platform
 
-Purpose: Defines the trading integration used to execute trades. Initial platforms include Binance and MetaTrader 5, and additional platforms may be added later. Each platform can provide its own development interface for performing trading operations through its related library.
+**Purpose:** Defines the trading integration used to execute trades. Initial platforms include Binance and MetaTrader 5, and additional platforms may be added later. Each platform can provide its own development interface for performing trading operations through its related library.
+
+**Fields:**
+
+- `id` — Type: `integer`; Required: `true`; Auto Increment: `true`.
+- `name` — Type: `string`; Required: `true`; Purpose: The platform's display name.
+- `description` — Type: `string`; Required: `false`; Purpose: Describes the platform.
+- `status` — Type: `boolean`; Required: `true`; Default: `true`; Purpose: Indicates whether the platform is active.
+- `code` — Type: `string`; Required: `true`; Purpose: Identifies the platform for integrations, such as `binance` or `metatrader_5`.
+
+**Primary Key:** `id`
+
+**Unique:** `name`
+
+**Relationships:** None.
+
+**Rules:** None.
 
 ### Broker
 

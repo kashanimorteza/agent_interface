@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-definition
-  version: "2.6"
+  version: "2.7"
   purpose: "The shape of definition.yaml — every parameter an agent reads to understand what the product is"
   phase_model: "Project phases are the primary units of planning, development, review, and progress. A phase's target selects the item configuration, Policy, contracts, and code_path used for that phase. Any number of phases may target the same item."
 
@@ -33,7 +33,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Models -->
   models:
     required: true
-    purpose: "The project's domain entities, preserved independently of any target item's technical representation. Database columns, foreign keys, indexes, and storage details do not live here."
+    purpose: "The project's domain entities and their explicitly declared fields, keys, uniqueness constraints, relationships, and rules. Physical table names, foreign-key columns, indexes, and storage details remain owned by the target item."
     fields:
       "<model>":
         required: true
@@ -42,6 +42,38 @@ sections:
           purpose:
             required: true
             purpose: "What the model represents, copied faithfully from the model's Purpose in project.md."
+          fields:
+            required: true
+            purpose: "The complete set of non-relationship fields explicitly declared for this model, empty when the project declares none."
+            fields:
+              "<field>":
+                required: false
+                purpose: "One declared model field, keyed by its lower_snake_case name."
+                fields:
+                  type:
+                    required: true
+                    purpose: "The field's project-declared data type."
+                  size:
+                    required: false
+                    purpose: "The project-declared size or precision when the type uses one; omitted when unspecified or inapplicable."
+                  required:
+                    required: true
+                    purpose: "Whether the project requires a value for this field."
+                  default:
+                    required: false
+                    purpose: "The explicit project default, omitted when none is declared."
+                  auto_increment:
+                    required: false
+                    purpose: "Whether the project explicitly requires an incrementing generated value."
+                  purpose:
+                    required: false
+                    purpose: "The field's domain meaning when its name and type are not sufficient."
+          primary_key:
+            required: true
+            purpose: "The field or ordered combination of fields explicitly declared as this model's primary key. The key must be stated by the project."
+          unique:
+            required: true
+            purpose: "The explicitly declared single-field and composite uniqueness constraints, empty when the model declares none. Entries refer to model fields or conceptual relationships rather than physical column names."
           relationships:
             required: true
             purpose: "The model's conceptual relationships, empty when none are declared. Physical foreign-key fields are resolved only by the owning target item."
