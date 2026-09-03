@@ -6,12 +6,13 @@ This guide defines the Developer's shared defaults for `my-interface-skill-insta
 
 - At the start of every invocation, read the repository `README.md` completely to understand Agent Interface, its workflow, and this Skill's supporting role. Treat it as Interface context, not as a source of target-project technologies.
 - Then read `.interface/root.yaml` as the Interface entry point and current map. Resolve every other path, read order, policy, authority, and boundary from the files currently named by that map.
+- Resolve the human-managed project-definition file from the live map and read it completely for current project context.
 - Re-read every required source from disk on every invocation. Do not rely on remembered paths, technologies, versions, installation state, configuration, or conclusions from an earlier run.
 
 ## Project Knowledge Boundary
 
-- Do not read the human-managed project-definition file. Only `my-interface-interpreter` may read and interpret it.
-- Use the current generated Understanding to locate authorized target-project areas. Within those areas, dependency and project files may establish installed technologies and versions as this Skill permits; they do not authorize reinterpretation or expansion of project intent.
+- Use `project.md` only to understand the project as a whole. Only `my-interface-interpreter` may interpret it into generated Understanding.
+- Use the current generated Understanding to locate authorized target-project areas and determine eligible configured technologies. Do not install from information found only in `project.md`; a mismatch with generated sources requires interpretation first. Within authorized areas, dependency and project files may establish installed technologies and versions as this Skill permits; they do not authorize reinterpretation or expansion of project intent.
 
 ## Role Discipline
 

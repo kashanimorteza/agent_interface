@@ -11,9 +11,9 @@ Return the repository to a clean Agent Interface state by removing only the curr
 ## Developer guidance
 
 - At the start of every invocation, read the repository `README.md` completely to understand Agent Interface and this Skill's role.
-- Then read `.interface/root.yaml` as the live entry point and map, followed only by the existing mapped files under `.interface/config/` needed to resolve the clear operation.
+- Then read `.interface/root.yaml` as the live entry point and map, resolve and read the human project-definition file completely for current project context, and read only the existing mapped files under `.interface/config/` needed to resolve the clear operation.
 - Re-read those files from disk on every invocation. Do not use remembered paths, state, configuration, or conclusions from an earlier run.
-- Do not read the human project-definition file, other Skill files, or target-project contents. This clear operation needs only the Interface map and generated Config metadata.
+- Do not interpret or edit the human project-definition file, and do not read other Skill files or target-project contents. The project definition provides context but never changes the deletion set, which comes only from the Interface map and generated Config metadata.
 - Perform only the clear role. Do not interpret, plan, develop, review, or invoke another Skill.
 
 ## Resolve and validate

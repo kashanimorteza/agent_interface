@@ -64,6 +64,8 @@ There is no global Preferences or Rules layer. Interface-wide authority remains 
 
 ## Agent Skills
 
+Every Agent Interface Skill reads `project.md` to maintain a current understanding of the project. Only `my-interface-interpreter` may interpret that definition into generated Understanding; every other Skill uses it as context and takes its operational scope, authority, and writable output only from the generated Config and the live files that govern its role.
+
 ### `my-interface-interpreter`
 
 `.claude/skills/my-interface-interpreter/SKILL.md`

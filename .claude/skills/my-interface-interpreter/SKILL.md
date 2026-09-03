@@ -19,7 +19,7 @@ Transform the Developer's target-project definition into the structured Understa
 
 ### Respect the project-knowledge boundary
 
-- This is the only workflow Skill authorized to read the human-managed project-definition file. Resolve that file from the live map and read it completely on every invocation.
+- Resolve the human-managed project-definition file from the live map and read it completely on every invocation. Every Agent Interface Skill may read this file for context, but this is the only workflow Skill authorized to interpret it into generated Understanding.
 - Treat the current human-managed definition as the source of target-project intent and facts. Use Schemas, policies, authorities, and existing generated files only for structure, validation, preservation, reconciliation, and permitted state behavior.
 - Do not let implementation files, prior generated output, or remembered context silently add to or replace the Developer's definition.
 

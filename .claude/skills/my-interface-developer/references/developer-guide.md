@@ -7,12 +7,13 @@ This guide defines the Developer's shared defaults for `my-interface-developer`.
 - At the start of every invocation, read the repository `README.md` completely to understand Agent Interface, its workflow, and this Skill's role. Treat it as Interface context, not as a source of target-project requirements.
 - Inspect the repository root and the top-level structure of `.interface/` to understand how the Interface, generated Config, and mapped target-project locations relate. This structural inspection does not make unrelated repository contents a source of project knowledge.
 - Then read `.interface/root.yaml` as the Interface entry point and current map. Resolve every other path, read order, policy, authority, and boundary from the files currently named by that map.
+- Resolve the human-managed project-definition file from the live map and read it completely for current project context.
 - Re-read every required source from disk on every invocation. Do not rely on remembered paths, values, task state, configuration, or conclusions from an earlier run.
 
 ## Project Knowledge Boundary
 
-- Do not read the human-managed project-definition file. Only `my-interface-interpreter` may read and interpret it.
-- Use the current generated Understanding and authorized Task plan as the project sources for development. Target files may confirm implementation facts only where the task and live authority permit; they do not authorize reinterpretation or expansion of project intent.
+- Use `project.md` only to understand the project as a whole. Only `my-interface-interpreter` may interpret it into generated Understanding.
+- Use the current generated Understanding and authorized Task plan as the operational project sources for development. Do not use `project.md` to expand a Task, bypass a gap, or implement a requirement absent from the authorized generated sources. Target files may confirm implementation facts only where the task and live authority permit; they do not authorize reinterpretation or expansion of project intent.
 
 ## Execution Understanding
 

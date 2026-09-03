@@ -11,9 +11,9 @@ Rewind all generated Tasks either to the point before development or to the poin
 
 ## Developer guidance
 
-- Read `README.md` completely, then resolve the live Interface map, generated Definition, Task file and Schema, and State contract from `.interface/root.yaml`.
+- Read `README.md` completely, then resolve the live Interface map and human project-definition file from `.interface/root.yaml`. Read the project definition completely for current project context, followed by the generated Definition, Task file and Schema, and State contract.
 - Re-read every required file on each invocation. Do not rely on remembered state or paths.
-- Do not read or edit the human project definition, item configuration, or target-project code.
+- Do not interpret or edit the human project definition, item configuration, or target-project code. The project definition provides context but does not alter Reset's mutation scope.
 - Perform only this reset role. Do not interpret, plan, develop, review, clear, or invoke another Skill.
 
 ## Resolve the invocation
