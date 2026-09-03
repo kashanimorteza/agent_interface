@@ -33,7 +33,7 @@ Relationships: Belongs to one Trading Platform.
 
 ### Account
 
-Purpose: Defines a trading account, including the username and password credentials used to perform trading operations.
+Purpose: Defines a trading account, including its username identifier and password credential used to perform trading operations.
 
 Relationships: Belongs to one Broker.
 

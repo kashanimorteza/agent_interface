@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-backend
-  version: "4.3"
+  version: "4.4"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
 
 policy:
@@ -9,6 +9,10 @@ policy:
     resolved_by: "my-interface-interpreter only; downstream Skills consume the resolved backend configuration and never reinterpret preferences."
   database_boundary: "The backend never owns the database engine, storage, schema, or migrations. It consumes the frozen database contract and owns only its runtime connection, ORM mappings, and database client packages."
   package_resolution: "Resolve runtime packages from the selected language, API framework, ORM, and database contract through an explicitly supported compatibility entry; an unknown combination is an open question, never a package guessed from model knowledge."
+  model_api_resolution:
+    rule: "When the project requests an API for its domain models without naming allowed operations, apply preferences.model_api.default_operations to every model currently indexed in definition.yaml."
+    overrides: "An explicit project rule for a model replaces the default operations for that model. Models are resolved dynamically from definition.yaml and are never copied into this Policy or its Preferences."
+    boundary: "Resolve only model-level operation intent here. Endpoint paths, HTTP method mappings, payloads, response shapes, and implementation layout remain implementation output."
   version_resolution:
     explicit: "Preserve every concrete version stated by the project exactly."
     latest: "When a supported preference supplies latest, my-interface-interpreter resolves it to the latest stable version compatible with the complete selected backend stack and writes only that concrete version into backend.yaml. The token latest never appears in generated Config."
@@ -54,6 +58,13 @@ preferences:
           driver: "Python sqlite3 standard library"
           packages: []
           url_scheme: "sqlite"
+  model_api:
+    default_operations:
+      - "create"
+      - "list"
+      - "get"
+      - "update"
+      - "delete"
   capabilities:
     testing:
       default_enabled: false
@@ -76,6 +87,7 @@ structure:
   - verify_cwd
   - responsibility
   - tech
+  - model_api
   - standards
   - capabilities
   - contracts
@@ -184,6 +196,21 @@ sections:
                     required: true
                     purpose: "Its version."
 
+  # <!--------------------------------------------------------------------------------- Model_API -->
+  model_api:
+    required: true
+    purpose: "The resolved model-level API intent. It applies dynamically to domain models from definition.yaml without storing endpoint paths or copying model definitions into backend.yaml."
+    fields:
+      source:
+        required: true
+        purpose: "The mapped definition.yaml models section that supplies the current domain-model set."
+      default_operations:
+        required: true
+        purpose: "The operations applied when the project requests a model API and gives no model-specific operation rule."
+      overrides:
+        required: true
+        purpose: "Explicit project operation rules keyed by model, empty when the project states none."
+
   # <!--------------------------------------------------------------------------------- Standards -->
   standards:
     required: true
@@ -269,7 +296,7 @@ sections:
         purpose: "The frozen database contract the backend consumes and the mapped path that publishes it."
       rule:
         required: true
-        purpose: "The implementation boundary: tasks and the consumed database contract guide development, while endpoint paths, operations, payloads, response shapes, error shapes, entrypoints, commands, and file layout are produced during implementation rather than prescribed here."
+        purpose: "The implementation boundary: tasks, resolved model-level API intent, and the consumed database contract guide development, while endpoint paths, HTTP method mappings, payloads, response shapes, error shapes, entrypoints, commands, and file layout are produced during implementation rather than prescribed here."
 
   # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:

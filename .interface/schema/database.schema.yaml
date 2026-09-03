@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-database
-  version: "2.6"
+  version: "2.17"
   purpose: "The shape of database.yaml — every parameter an agent reads to understand the independent database item"
 
 policy:
@@ -17,14 +17,22 @@ policy:
     rule: "Treat every domain model as persistent and map it to one database table unless the project explicitly marks that model as non-persistent or supplies a different mapping."
     naming: "Derive the default table name from the model name in plural_snake_case. An explicit project table name always wins."
     resolved_by: "my-interface-interpreter writes every resolved table name and its source model explicitly into the database contract."
+  model_rule_resolution:
+    rule: "Preserve every model rule from definition.yaml and represent it in the owning table's database contract. No model rule is silently dropped."
+    deterministic: "When a model rule has one unambiguous database representation, my-interface-interpreter resolves it to the corresponding constraint. For example, a rule allowing one record per combination of related models resolves to a composite unique constraint over those foreign-key fields."
+    ambiguous: "When a model rule permits more than one materially different database representation, record an open question instead of choosing one."
+    traceability: "Every constraint produced from a model rule records that source rule in the database contract."
   version_resolution:
     explicit: "Preserve every concrete version stated by the project exactly."
     latest: "When a supported preference supplies latest, my-interface-interpreter resolves it to the latest stable version compatible with the complete selected database tool stack and writes only that concrete version into database.yaml. The token latest never appears in generated Config."
     unresolved: "If a current stable version cannot be verified or the selected versions are incompatible, record an open question instead of guessing or preserving latest."
   relationship_resolution:
     rule: "When the project declares a relationship without specifying its physical field, represent it with a foreign-key field named <referenced_model_name_in_snake_case>_id. This name is derived from the referenced domain model and does not depend on whether the physical table name is singular or plural. An explicit project field or reference always wins."
+    role_naming: "When the project gives a relationship a semantic role, name its foreign-key field <role_in_snake_case>_<referenced_model_name_in_snake_case>_id, such as source_node_id or destination_node_id."
+    repeated_target: "When one model has multiple relationships to the same target model and their roles are not explicit, record an open question instead of generating duplicate or guessed foreign-key names."
     referenced_key: "Reference the related table primary key unless the project explicitly names another referenced key."
     type_rule: "The foreign-key field type must match the referenced key type exactly and is never hard-coded independently."
+    physical_defaults: "When the project leaves relationship nullability, indexing, or referential actions unstated, resolve them from preferences.relationship_defaults. Explicit project values always win."
     resolved_by: "my-interface-interpreter writes the foreign-key field, referenced table, and referenced column explicitly into the database contract."
   credential_storage_resolution:
     rule: "Resolve every credential field to one mode from preferences.credential_storage. An explicit project mode for a credential field always wins; otherwise use the default mode."
@@ -81,8 +89,7 @@ preferences:
       name:
         type: "string"
         nullable: false
-        unique: true
-        role: "The default human-readable logical key."
+        role: "The default human-readable label; uniqueness is defined only by an explicit model rule."
       description:
         type: "string"
         nullable: true
@@ -90,6 +97,13 @@ preferences:
         type: "boolean"
         nullable: false
         default: true
+        true_means: "active"
+        false_means: "inactive"
+  relationship_defaults:
+    nullable: false
+    index: true
+    on_delete: "RESTRICT"
+    on_update: "RESTRICT"
   credential_storage:
     default: "plaintext"
     modes:
@@ -262,9 +276,6 @@ sections:
           lifecycle_note:
             required: true
             purpose: "What the lifecycle permits and what a change costs."
-          consumed_by:
-            required: true
-            purpose: "The backend item or items consuming this contract."
           engine:
             required: true
             purpose: "The resolved engine assumptions that affect consumers."
@@ -273,11 +284,92 @@ sections:
             purpose: "The credential-free connection shape and runtime configuration source."
           tables:
             required: true
-            purpose: "The fully resolved tables, columns, types, nullability, keys, references, constraints, indexes, and credential storage modes exposed by this version. Every relationship names its foreign-key field, referenced table, and referenced column explicitly, and every credential field names its resolved at-rest mode."
-          migrations:
-            required: true
-            purpose: "The migration range that realizes this contract version."
-
+            purpose: "The fully resolved tables, columns, types, nullability, keys, references, constraints, indexes, and credential storage modes exposed by this version. Every relationship names its foreign-key field, referenced table, and referenced column explicitly; every constraint derived from a model rule records its source rule; and every credential field names its resolved at-rest mode."
+            fields:
+              "<table>":
+                required: true
+                purpose: "One physical table, keyed by its resolved plural_snake_case table name unless the project explicitly supplies another name."
+                fields:
+                  source_model:
+                    required: true
+                    purpose: "The domain-model key from definition.yaml that this table implements."
+                  columns:
+                    required: true
+                    purpose: "Every physical column in the table, including resolved template fields and relationship foreign keys."
+                    fields:
+                      "<column>":
+                        required: true
+                        purpose: "One physical column, keyed by its resolved column name."
+                        fields:
+                          type:
+                            required: true
+                            purpose: "The complete resolved database type."
+                          nullable:
+                            required: true
+                            purpose: "Whether the column accepts null."
+                          primary_key:
+                            required: true
+                            purpose: "Whether the column belongs to the table primary key."
+                          auto_increment:
+                            required: true
+                            purpose: "Whether the database generates this numeric key by incrementing it."
+                          default:
+                            required: true
+                            purpose: "The database default value, or null when the column has no database default."
+                          credential_storage:
+                            required: false
+                            purpose: "The resolved plaintext, hash, or encrypted at-rest mode; present only for a credential field."
+                          references:
+                            required: false
+                            purpose: "The exact foreign-key target; present only for a relationship column."
+                            fields:
+                              table:
+                                required: true
+                                purpose: "The resolved physical table being referenced."
+                              column:
+                                required: true
+                                purpose: "The resolved key column being referenced."
+                              on_delete:
+                                required: true
+                                purpose: "The resolved action when the referenced row is deleted."
+                              on_update:
+                                required: true
+                                purpose: "The resolved action when the referenced key is updated."
+                  constraints:
+                    required: true
+                    purpose: "Named table constraints, empty when the table has none beyond column-level primary keys and references."
+                    fields:
+                      "<constraint>":
+                        required: false
+                        purpose: "One named constraint."
+                        validation: "A unique constraint requires columns. A check constraint requires expression. Other constraint kinds must provide the fields required by their resolved database representation."
+                        fields:
+                          type:
+                            required: true
+                            purpose: "The constraint kind, such as unique or check."
+                          columns:
+                            required: false
+                            purpose: "The ordered column names governed by a column-based constraint; required for unique constraints."
+                          expression:
+                            required: false
+                            purpose: "The resolved database expression; required for check constraints."
+                          source_rule:
+                            required: false
+                            purpose: "The exact model rule that produced this constraint; present only when a model rule is its source."
+                  indexes:
+                    required: true
+                    purpose: "Named indexes for the table, empty when none are required."
+                    fields:
+                      "<index>":
+                        required: false
+                        purpose: "One named index."
+                        fields:
+                          columns:
+                            required: true
+                            purpose: "The ordered column names covered by the index."
+                          unique:
+                            required: true
+                            purpose: "Whether this index also enforces uniqueness."
   # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:
     required: true
