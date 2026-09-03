@@ -25,6 +25,10 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the user is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the user.
 
+**Initial Data:**
+
+- `name`: `Admin`; `username`: `admin`; `password`: Generate securely; `api_key`: Generate securely.
+
 ### Trading Platform
 
 **Purpose:** Defines a supported trading API standard, such as MetaTrader 5 or Binance, while keeping the system independent of any specific exchange or broker. Every trading platform implementation exposes the same application-facing trading functions through a dedicated class, while handling communication with its destination API according to that platform's own mechanism. Additional platform implementations can be added without changing the system's common trading interface.
@@ -37,6 +41,11 @@ Defines the project's models.
 - `code` — Type: `string`; Nullable: `false`; Purpose: Identifies the implementation class the application must use for this trading platform, such as `binance` or `metatrader_5`.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the platform is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the platform.
+
+**Initial Data:**
+
+- `name`: `Binance`; `user_id`: `1`; `code`: `binance`.
+- `name`: `MetaTrader 5`; `user_id`: `1`; `code`: `metatrader_5`.
 
 **Relationships:**
 
@@ -58,6 +67,10 @@ Defines the project's models.
 - `trading_platform_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the trading platform used by the broker.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the broker is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the broker.
+
+**Initial Data:**
+
+- `name`: `Default`; `user_id`: `1`; `trading_platform_id`: `1`.
 
 **Relationships:**
 
@@ -87,6 +100,10 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the account.
 
+**Initial Data:**
+
+- `name`: `Default`; `broker_id`: `1`; `base_asset_id`: `1`.
+
 **Relationships:**
 
 - Belongs to one Broker through `broker_id`.
@@ -105,6 +122,10 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the asset is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the asset.
 
+**Initial Data:**
+
+- `name`: `Default`; `symbol`: `Default`.
+
 ### Asset Detail
 
 **Purpose:** Stores the parameters required to trade a specific asset through a specific broker. The same asset can have different parameter values for different brokers, and the system uses the matching Asset Detail when calculating and executing a trade for the selected Broker and Asset pair.
@@ -114,9 +135,8 @@ Defines the project's models.
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker for which the asset parameters are defined.
 - `asset_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the asset whose broker-specific parameters are defined.
-- `parameter_1` — Type: `string`; Nullable: `true`.
-- `parameter_2` — Type: `string`; Nullable: `true`.
-- `parameter_3` — Type: `string`; Nullable: `true`.
+- `parameter` — Type: `string`; Nullable: `false`; Purpose: Identifies one broker-specific parameter for the asset.
+- `value` — Type: `string`; Nullable: `false`; Purpose: Stores the value of the parameter.
 
 **Relationships:**
 
@@ -125,7 +145,7 @@ Defines the project's models.
 
 **Rules:**
 
-- Only one Asset Detail may exist for each Broker and Asset pair.
+- The combination of `broker_id`, `asset_id`, and `parameter` must be unique.
 
 ### Trailing Group
 
@@ -137,6 +157,10 @@ Defines the project's models.
 - `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The trailing group's display name.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the trailing group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the trailing group.
+
+**Initial Data:**
+
+- `name`: `Default`.
 
 ### Trailing Rule
 
@@ -168,6 +192,10 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the partial group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the partial group.
 
+**Initial Data:**
+
+- `name`: `Default`.
+
 ### Partial Rule
 
 **Purpose:** Defines an individual Partial Close rule that tells the system under which condition part of an open position must be closed and how much of its volume must be closed.
@@ -197,6 +225,10 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the action group.
 
+**Initial Data:**
+
+- `name`: `Default`.
+
 ### Action
 
 **Purpose:** Defines how a position must be opened. An action selects the asset and account and provides the risk, Take Profit, Stop Loss, Partial Group, and Trailing Group settings that determine the position's parameters and execution behavior.
@@ -215,6 +247,10 @@ Defines the project's models.
 - `stop_loss` — Type: `decimal`; Nullable: `false`; Purpose: Defines the Stop Loss value used by the action.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the action.
+
+**Initial Data:**
+
+- `name`: `Default`; `action_group_id`: `1`; `asset_id`: `1`; `account_id`: `1`; `partial_group_id`: `1`; `trailing_group_id`: `1`.
 
 **Relationships:**
 

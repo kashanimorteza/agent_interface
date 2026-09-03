@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-definition
-  version: "2.9"
+  version: "2.10"
   purpose: "The shape of definition.yaml — every parameter an agent reads to understand what the product is"
   phase_model: "Project phases are the primary units of planning, development, review, and progress. A phase's target selects the item configuration, Policy, contracts, and code_path used for that phase. Any number of phases may target the same item."
 
@@ -44,7 +44,7 @@ sections:
             purpose: "What the model represents, copied faithfully from the model's Purpose in project.md."
           fields:
             required: true
-            purpose: "The complete set of non-relationship fields explicitly declared for this model, empty when the project declares none."
+            purpose: "The complete set of fields explicitly declared for this model, including any relationship fields named by the project; empty when the project declares none."
             fields:
               "<field>":
                 required: false
@@ -74,9 +74,16 @@ sections:
                   purpose:
                     required: false
                     purpose: "The field's domain meaning when its name and type are not sufficient."
+          initial_data:
+            required: false
+            purpose: "The ordered initial records explicitly declared for this model, omitted when none are declared. Record keys must name declared model fields; omitted values remain subject to the field's nullability, default, and generation behavior."
+            fields:
+              "<record>":
+                required: false
+                purpose: "One initial model record. Each entry is either an explicit field value or an explicit generation instruction preserved from project.md; values are never invented."
           relationships:
             required: false
-            purpose: "The model's conceptual relationships. Omitted when none are declared. Physical foreign-key fields are resolved only by the owning target item."
+            purpose: "The model's conceptual relationships and any explicitly declared linking fields. Omitted when none are declared. Physical foreign-key constraints are resolved only by the owning target item."
             fields:
               "<relationship>":
                 required: false
@@ -88,6 +95,9 @@ sections:
                   target:
                     required: true
                     purpose: "The related model key, normalized by the same rule as model keys."
+                  field:
+                    required: false
+                    purpose: "The declared model field that carries this relationship, such as an explicitly stated foreign-key field; omitted when the project leaves physical field resolution to the owning target item."
                   role:
                     required: false
                     purpose: "The relationship's semantic role when the model has more than one relationship to the same target, such as source or destination; absent for an unqualified relationship."

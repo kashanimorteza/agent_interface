@@ -17,13 +17,16 @@ Before performing any other step, read [references/developer-guide.md](reference
 
 1. Resolve the one requested phase id in `$ARGUMENTS` from the current generated Understanding. Refuse an omitted, additional, or unknown phase rather than choosing one.
 2. Resolve the phase's target item from that phase, then follow the live map to read the current State contract, Task file and governing Schema, target-item Policy, mapped item configuration, and contracts required for this invocation.
-3. Enter and record this Skill's working mode only as the live State contract permits, for the requested phase and no other.
-4. Determine unfinished eligible tasks only from `content.plans.<phase-id>`, using the current task definitions, states, dependencies, contracts, and protocols.
-5. For each selected task, read the mapped contract, target-item configuration, declared paths, and surrounding implementation context required to execute and verify it.
+3. From the resolved target-item configuration, collect every non-empty `skill` named by a selected technology entry. Resolve and read each available named Skill before implementation. If a configured Skill is unavailable, record a blocker or gap as the live authorities permit instead of silently ignoring it, guessing a replacement, or implementing without its required guidance. A technology with no configured Skill needs no Skill lookup.
+4. Enter and record this Skill's working mode only as the live State contract permits, for the requested phase and no other.
+5. Determine unfinished eligible tasks only from `content.plans.<phase-id>`, using the current task definitions, states, dependencies, contracts, and protocols.
+6. For each selected task, read the mapped contract, target-item configuration, declared paths, surrounding implementation context, and applicable configured technology Skill guidance required to execute and verify it.
 
 ## Execute tasks
 
 Select work according to the current Task file and only within the requested phase. A task is executable only when the live Task rules say its work remains, all earlier project phases are complete, its dependencies and required contracts are satisfied, and the task provides enough current information to act without guessing.
+
+Apply configured technology Skills as implementation guidance wherever relevant. They never authorize work beyond the selected Task or its resolved write scope.
 
 Resolve the authorized code root and verification working directory from the requested phase target's current configuration, then resolve the task's declared paths relative to that code root. Inspect the relevant existing implementation before editing, but do not treat it as permission to widen the task or invent a requirement. Never infer, remember, or invent a destination folder.
 

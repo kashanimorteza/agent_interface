@@ -17,10 +17,13 @@ Before performing any other step, read [references/developer-guide.md](reference
 
 1. Resolve the one requested phase id in `$ARGUMENTS` from the current generated Understanding. Refuse an omitted, additional, or unknown phase rather than choosing one.
 2. Resolve that phase's target item from the phase itself, then follow the live map to read the current State contract, task standard and Schema, target-item Policy, mapped item configuration and contracts, and every other file required for this invocation.
+3. From the resolved target-item configuration, collect every non-empty `skill` named by a selected technology entry. Resolve and read each available named Skill before planning. If a configured Skill is unavailable, record a gap instead of silently ignoring it, guessing a replacement, or planning without its required guidance. A technology with no configured Skill needs no Skill lookup.
 
 ## Plan
 
 Enter planning mode only as the current authorities permit. Plan exactly the requested authorized phase under `content.plans.<phase-id>`, using its target item only as technical context and a write boundary.
+
+Apply configured technology Skills as technical planning guidance wherever relevant to task decomposition, acceptance criteria, and verification. They never create project requirements or expand the authorized phase.
 
 Derive every project fact, grouping, task field, status, lifecycle, transition, dependency, contract, path, verification rule, and write permission from the current file that owns it. Do not copy these parameters into this Skill or substitute remembered values.
 

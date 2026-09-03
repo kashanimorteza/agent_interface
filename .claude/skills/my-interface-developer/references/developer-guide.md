@@ -23,9 +23,15 @@ This guide defines the Developer's shared defaults for `my-interface-developer`.
 - Use the live State contract and file policies to determine scope, transitions, writable content, and how outcomes, blockers, and questions are recorded.
 - Use target-project code as evidence of the current implementation only within the selected task's scope. A mismatch that requires changing the plan remains a planning issue rather than permission to reshape the task.
 
+## Technology Skill Guidance
+
+- Read and apply every Agent Skill explicitly named by a selected technology in the requested phase target's resolved configuration.
+- A configured technology Skill may refine implementation conventions and verification, but it cannot expand a Task, introduce project requirements, or override the plan, generated Understanding, item Policy, contracts, or live authority.
+- Do not infer a Skill from a technology name. When no Skill is configured, continue without one; when a configured Skill is unavailable, record the issue through the live blocker or gap mechanism rather than substituting another Skill.
+
 ## Role Discipline
 
-- Perform only this Skill's development responsibility. Do not silently plan, review, reinterpret, or invoke another Skill's role.
+- Perform only this Skill's development responsibility. Do not silently plan, review, reinterpret, or invoke another workflow Skill's role. Using a configured technology Skill as implementation guidance does not transfer Developer's role or authority.
 - Treat the Developer's invocation as authority only for the operation and exact scope defined by the Skill, current Task plan, and live Interface.
 - Apply this guide as execution guidance, never as permission to widen a task, write boundary, or authority.
 - If this guide conflicts with a live policy, authority, contract, or safety boundary, stop and report the conflict instead of guessing.

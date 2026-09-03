@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-backend
-  version: "4.4"
+  version: "4.5"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
 
 policy:
@@ -9,6 +9,10 @@ policy:
     resolved_by: "my-interface-interpreter only; downstream Skills consume the resolved backend configuration and never reinterpret preferences."
   database_boundary: "The backend never owns the database engine, storage, schema, or migrations. It consumes the frozen database contract and owns only its runtime connection, ORM mappings, and database client packages."
   package_resolution: "Resolve runtime packages from the selected language, API framework, ORM, and database contract through an explicitly supported compatibility entry; an unknown combination is an open question, never a package guessed from model knowledge."
+  technology_skill_resolution:
+    rule: "A supported technology preference may name one Agent Skill as technical guidance. When that technology is selected, my-interface-interpreter writes the Skill name into the matching resolved technology entry in backend.yaml."
+    optional: "A technology with no configured Skill remains valid and produces no skill field. Never guess a Skill from the technology name."
+    boundary: "A configured technology Skill guides planning and implementation only. It cannot change project requirements, phase scope, item Policy, contracts, write boundaries, workflow roles, or State authority."
   model_api_resolution:
     rule: "When the project requests an API for its domain models without naming allowed operations, apply preferences.model_api.default_operations to every model currently indexed in definition.yaml."
     overrides: "An explicit project rule for a model replaces the default operations for that model. Models are resolved dynamically from definition.yaml and are never copied into this Policy or its Preferences."
@@ -48,6 +52,7 @@ preferences:
   api_frameworks:
     FastAPI:
       version: "latest"
+      skill: "fastapi"
   orms:
     SQLAlchemy:
       version: "latest"
@@ -141,6 +146,9 @@ sections:
           version:
             required: true
             purpose: "The language version."
+          skill:
+            required: false
+            purpose: "The Agent Skill selected by this language's supported preference profile, omitted when none is configured."
           environment:
             required: true
             purpose: "The isolated environment every command and every install happens inside — created and driven by one named tool, and never committed."
@@ -165,6 +173,9 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
+                  skill:
+                    required: false
+                    purpose: "The Agent Skill selected by this API framework's supported preference profile, omitted when none is configured."
               orm:
                 required: true
                 purpose: "The layer every read and write of the database goes through."
@@ -175,6 +186,9 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
+                  skill:
+                    required: false
+                    purpose: "The Agent Skill selected by this ORM's supported preference profile, omitted when none is configured."
               database_driver:
                 required: false
                 purpose: "The runtime adapter required by the resolved database contract and ORM combination; absent when the selected language provides it."
@@ -185,6 +199,9 @@ sections:
                   version:
                     required: false
                     purpose: "The adapter version when a package is installed."
+                  skill:
+                    required: false
+                    purpose: "The Agent Skill selected by this driver's supported preference profile, omitted when none is configured."
               "<package>":
                 required: false
                 purpose: "One entry per further package the project names — same two fields, set by the human, never inferred by an agent from the code."
@@ -195,6 +212,9 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
+                  skill:
+                    required: false
+                    purpose: "The Agent Skill explicitly associated with this package, omitted when none is declared."
 
   # <!--------------------------------------------------------------------------------- Model_API -->
   model_api:

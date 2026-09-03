@@ -22,9 +22,15 @@ This guide defines the Developer's shared defaults for `my-interface-tasker`. Th
 - Use the requested phase target's current Policy, resolved configuration, and contracts as implementation constraints and verification context. They refine how the authorized phase is planned; they do not create additional project requirements.
 - Treat existing plans and generated configuration as stateful material to reconcile and preserve according to their live ownership, not as disposable output to regenerate blindly.
 
+## Technology Skill Guidance
+
+- Read and apply every Agent Skill explicitly named by a selected technology in the requested phase target's resolved configuration.
+- A configured technology Skill may refine technical decomposition, implementation conventions, acceptance criteria, and verification, but it cannot introduce project scope or override the generated Understanding, item Policy, contracts, or live authority.
+- Do not infer a Skill from a technology name. When no Skill is configured, continue without one; when a configured Skill is unavailable, use the live gap mechanism rather than substituting another Skill.
+
 ## Role Discipline
 
-- Perform only this Skill's planning responsibility. Do not silently implement, review, reinterpret, or invoke another Skill's role.
+- Perform only this Skill's planning responsibility. Do not silently implement, review, reinterpret, or invoke another workflow Skill's role. Using a configured technology Skill as planning guidance does not transfer Tasker's role or authority.
 - Treat the Developer's invocation as authority only for the operation and exact scope defined by the Skill and live Interface.
 - Apply this guide as planning guidance, never as permission to widen the requested scope, write boundary, or authority.
 - If this guide conflicts with a live policy, authority, Schema, contract, or safety boundary, stop and report the conflict instead of guessing.
