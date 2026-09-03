@@ -1,0 +1,1184 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/database.yaml"
+  path_note: "Generated Config — everything an agent reads to understand the database item: its resolved engine, storage, migration tooling, standards, seed data, and the fully resolved database contract it publishes to the backend. Derived by my-interface-interpreter from .interface/project.md through config/definition.yaml and the Policy and Preferences in .interface/schema/database.schema.yaml"
+  schema: ".interface/schema/database.schema.yaml"
+  generated_by: "my-interface-interpreter"
+  generated_at: "2026-09-03"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "my-interface-interpreter writes the whole file during a generation run. Planning mode, for a phase whose target is database, may write planning-owned settings and a draft contract, never a frozen one. Development and review modes do not write this file"
+  changed_by: "The human directly; my-interface-interpreter on regeneration; my-interface-tasker in planning mode within the limits above"
+  contract_rule: "A contract version whose lifecycle is frozen is never edited by any agent — see content.contracts.change_rule"
+  schema_changes: "Every schema change is an ordered reversible migration owned by this item. Backend code never creates, alters, or drops database objects"
+  resolution: "project.md phases the database first and declares every model field with its type, size where given, nullability, default, key, and uniqueness, so the tables below copy those declarations exactly. It states no engine, tool, storage, or naming choice, so every value under tech and standards comes from the Preferences in .interface/schema/database.schema.yaml, with every 'latest' resolved to the concrete stable version verified on 2026-09-03 against PyPI and endoflife.date and checked to resolve together on Python 3.14. Every relationship uses the exact field the project binds to it (explicit_field); nullability, indexing, and referential actions come from relationship_defaults because the project leaves them unstated. Every deterministic model rule became a named constraint with its source rule; the one rule with more than one database representation is an open question. The two fields the project calls a credential resolved to plaintext, the credential_storage default. The project declares initial data, so seed_data is enabled and every record is carried as declared; two records omit required fields and are open questions, never filled in"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "standards"
+  - "capabilities"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  code_path: "The folder holding database-owned migrations, tooling, and local storage — the one place this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The database item in one line"
+  needs_test: "Whether every task that changes database behavior is proven by a written test"
+  verify_cwd: "Where and inside what every verify command runs"
+  responsibility: "What the database item is answerable for"
+  tech: "The resolved engine, storage, connection behavior, and migration tooling with concrete versions"
+  standards: "The resolved naming and migration conventions"
+  capabilities: "The resolved state of each optional capability, including the seed records the project declares"
+  contracts: "The database contract published to the backend — every table fully resolved"
+  boundaries: "What the database item owns, does not own, and offers"
+  out_of_scope: "What the database item does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Code_Path -->
+  code_path: "database/"
+
+  # <!-------------------------------------------- Code_Path_Note -->
+  code_path_note: "Relative to the repository root, beside .interface/ — never a path inside the Interface. It holds migrations, schema metadata, seed tooling, and the local SQLite file; no backend application file lives here"
+
+  # <!-------------------------------------------- Summary -->
+  summary: "A SQLite database evolved by Alembic migrations, holding the thirteen Trading Assistant domain models as tables, seeded with the records the project declares, and publishing its schema as a contract to the backend"
+
+  # <!-------------------------------------------- Needs_Test -->
+  needs_test: false
+
+  # <!-------------------------------------------- Verify_Cwd -->
+  verify_cwd: "database/ — every verify command runs from the item's code_path, inside the uv-managed virtual environment at database/.venv, invoked through uv run"
+
+  # <!-------------------------------------------- Responsibility -->
+  responsibility: "Owns persistent storage, schema evolution through ordered reversible migrations, the seeding of the declared initial records, and the database contract consumed by the backend for every domain model"
+
+  # <!-------------------------------------------- Tech -->
+  tech:
+    engine:
+      name: "SQLite"
+      version: "runtime-provided — the SQLite library bundled with Python 3.14.7"
+    storage:
+      kind: "file"
+      location: "database/app.db — a single file at the root of code_path, relative to the repository root, never committed"
+    connection:
+      url_scheme: "sqlite"
+      foreign_keys: true
+      foreign_keys_note: "Foreign key enforcement is off by default in SQLite; every connection turns it on with PRAGMA foreign_keys=ON"
+      check_same_thread: false
+      credentials: "None — a file path is the whole connection; nothing secret is committed"
+    migration:
+      tool:
+        name: "Alembic"
+        version: "1.19.1"
+      environment:
+        name: "uv"
+        version: "0.12.9"
+        python: "3.14.7"
+        note: "database/.venv, created and driven by uv and never committed; every command and every install happens through uv run inside code_path. This environment serves database tooling only and is separate from the backend's"
+      packages:
+        migration:
+          name: "Alembic"
+          version: "1.19.1"
+        schema_toolkit:
+          name: "SQLAlchemy"
+          version: "2.0.52"
+          role: "Declares the table metadata Alembic migrates against and carries the seed inserts — schema definition and seeding only, no application ORM behavior"
+      commands:
+        upgrade: "uv run alembic upgrade head"
+        downgrade: "uv run alembic downgrade -1"
+        verify: "uv run alembic upgrade head && uv run alembic current — passes when the reported revision is the head of the migration history"
+
+  # <!-------------------------------------------- Standards -->
+  standards:
+    naming:
+      tables: "plural_snake_case — the model name pluralized, so Trading Platform becomes trading_platforms and Currency becomes currencies"
+      columns: "snake_case — exactly the field names the project declares"
+      foreign_keys: "The field the project binds to the relationship; where the project names none, <referenced_model_in_snake_case>_id"
+      constraints: "snake_case — uq_<table>_<columns> for a unique constraint"
+      indexes: "ix_<table>_<column>"
+    migrations:
+      ordering: "A single linear history under alembic/versions/ — every revision names its down_revision, and there is one head"
+      reversibility: "Every migration carries a working downgrade that reverses its upgrade"
+      history: "A migration that has been applied is never edited or deleted; a correction is a new migration"
+      autogenerate: "Alembic autogenerate against the SQLAlchemy metadata is the starting point; the generated revision is reviewed before it is kept"
+      seed_data: "Seed inserts run after the schema they need exists, in dependency order, and are idempotent — a rerun never creates a duplicate logical record and never violates a uniqueness rule"
+
+  # <!-------------------------------------------- Capabilities -->
+  capabilities:
+    seed_data:
+      enabled: true
+      note: "Enabled because the project declares initial data. Records are grouped by table in dependency order and carry exactly the values project.md states, in the project's order; {instruction: ...} marks a generation instruction, not a stored value. Two records omit required columns that have no default — accounts.Acc-1 lacks username, password, leverage, and account_type, and actions.Default lacks risk_by_reward, take_profit, and stop_loss. They are open questions Q3 and Q4 in config/state.yaml and cannot be seeded until answered; because actions references accounts, both tables seed only once both are answered. The trading platform records are declared with MetaTrader 5 first, so the broker's trading_platform_id 1 refers to MetaTrader 5"
+      records:
+        users:
+          - name: "Admin"
+            username: "admin"
+            password: { instruction: "Generate securely" }
+            api_key: { instruction: "Generate securely" }
+        currencies:
+          - name: "US Dollar"
+            code: "USD"
+            symbol: "$"
+            country: "United States"
+            decimal_digits: 2
+          - name: "Euro"
+            code: "EUR"
+            symbol: "€"
+            country: "Eurozone"
+            decimal_digits: 2
+          - name: "British Pound"
+            code: "GBP"
+            symbol: "£"
+            country: "United Kingdom"
+            decimal_digits: 2
+          - name: "Japanese Yen"
+            code: "JPY"
+            symbol: "¥"
+            country: "Japan"
+            decimal_digits: 0
+          - name: "Swiss Franc"
+            code: "CHF"
+            symbol: "CHF"
+            country: "Switzerland"
+            decimal_digits: 2
+          - name: "Canadian Dollar"
+            code: "CAD"
+            symbol: "C$"
+            country: "Canada"
+            decimal_digits: 2
+          - name: "Australian Dollar"
+            code: "AUD"
+            symbol: "A$"
+            country: "Australia"
+            decimal_digits: 2
+          - name: "New Zealand Dollar"
+            code: "NZD"
+            symbol: "NZ$"
+            country: "New Zealand"
+            decimal_digits: 2
+        trading_platforms:
+          - name: "MetaTrader 5"
+            user_id: 1
+            code: "metatrader_5"
+          - name: "Binance"
+            user_id: 1
+            code: "binance"
+        brokers:
+          - name: "FxPro"
+            user_id: 1
+            trading_platform_id: 1
+        accounts:
+          - name: "Acc-1"
+            broker_id: 1
+            base_currency_id: 1
+        assets:
+          - name: "EURUSD"
+            symbol: "EUR/USD"
+            category: "Currency"
+            point_size: 0.0001
+            digits: 5
+          - name: "EURGBP"
+            symbol: "EUR/GBP"
+            category: "Currency"
+            point_size: 0.001
+            digits: 5
+          - name: "XAUUSD"
+            symbol: "XAU/USD"
+            category: "Commodity"
+            point_size: 0.01
+            digits: 2
+          - name: "USOil"
+            symbol: "USOil"
+            category: "Commodity"
+            point_size: 0.01
+            digits: 3
+        trailing_groups:
+          - name: "Default"
+        partial_groups:
+          - name: "Default"
+        action_groups:
+          - name: "Default"
+        actions:
+          - name: "Default"
+            action_group_id: 1
+            asset_id: 1
+            account_id: 1
+            partial_group_id: 1
+            trailing_group_id: 1
+    backups:
+      enabled: false
+
+  # <!-------------------------------------------- Contracts -->
+  contracts:
+    produces: "database contract v1"
+    rule: "The implemented schema and the published contract must match exactly — a table, column, key, constraint, or index that exists in one and not the other is a fault"
+    change_rule: "A frozen contract is never edited. A change means a new version entry, migrations that move the schema between versions, and a human decision to freeze the new version. Freezing is the human's alone — see content.state_authority in config/state.yaml"
+
+    v1:
+      lifecycle: "draft"
+      lifecycle_note: "Draft — resolved column by column from the fields project.md declares, plus the relationship, rule, and credential resolution rules. Open questions Q2 and Q5 in config/state.yaml touch this contract; planning for P1 may complete the draft, and only the human freezes it. The backend consumes a frozen contract, so P2 development waits on that freeze"
+      engine:
+        name: "SQLite"
+        implications: "Dynamic typing — declared types are affinities, not enforced storage classes. numeric is stored with NUMERIC affinity and carries no declared precision because the project declares none; float is stored as REAL; datetime is stored as ISO 8601 text; boolean is stored as integer 0 or 1; string(3) declares a length SQLite does not enforce. Foreign keys are enforced only with PRAGMA foreign_keys=ON. A single writer at a time"
+      connection:
+        shape: "sqlite URL to the database file — sqlite:///<path to database/app.db>"
+        runtime_source: "The consumer reads the URL from one environment variable, DATABASE_URL, and falls back to the file at database/app.db relative to the repository root when it is unset — draft; planning may rename the variable before the human freezes"
+        requirements:
+          - "PRAGMA foreign_keys=ON on every connection"
+          - "check_same_thread=False for the SQLite driver"
+          - "No credentials — the file path is the whole connection"
+
+      resolution_notes:
+        columns: "Every column is a field project.md declares, in the project's order, with its declared type, size, nullability, and default. No column was added or removed"
+        types: "integer, string, boolean, and float are used as declared; string carries its declared size as string(3) where the project gives one. decimal becomes numeric with no precision, and datetime becomes datetime, because the project declares no size for either"
+        uniqueness: "A field declared unique by itself is a unique index named ix_<table>_<column>. A multi-field rule is a named unique constraint carrying its source rule"
+        relationships: "Every relationship uses the exact field the project binds to it — explicit_field — including base_currency_id on accounts, whose role base names it. Each is an integer foreign key, not null, indexed, RESTRICT on delete and update, referencing the target table's id, per relationship_defaults"
+        unresolved_rule: "The broker rule that user_id must match the user_id of the referenced trading platform has more than one materially different database representation — a composite foreign key with a supporting unique constraint, a trigger, or application-level enforcement — so it is not represented here and is open question Q2. It is preserved in definition.yaml and is never silently dropped"
+        credentials: "users.password and accounts.password are the fields the project calls a credential; both resolved to plaintext, the credential_storage default, because the project states no mode — open question Q5 asks the human to confirm and to say whether users.api_key is a credential. api_key is stored as an ordinary string until then"
+
+      tables:
+
+        users:
+          source_model: "user"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            username:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            password:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              credential_storage: "plaintext"
+            api_key:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_users_name:
+              columns: ["name"]
+              unique: true
+
+        currencies:
+          source_model: "currency"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            code:
+              type: "string(3)"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            symbol:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+            country:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+            decimal_digits:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: 2
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_currencies_code:
+              columns: ["code"]
+              unique: true
+
+        trading_platforms:
+          source_model: "trading_platform"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            user_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "users"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            code:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints:
+            uq_trading_platforms_user_id_name:
+              type: "unique"
+              columns: ["user_id", "name"]
+              source_rule: "The combination of user_id and name must be unique."
+          indexes:
+            ix_trading_platforms_user_id:
+              columns: ["user_id"]
+              unique: false
+
+        brokers:
+          source_model: "broker"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            user_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "users"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            trading_platform_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "trading_platforms"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints:
+            uq_brokers_user_id_name:
+              type: "unique"
+              columns: ["user_id", "name"]
+              source_rule: "The combination of user_id and name must be unique."
+          indexes:
+            ix_brokers_user_id:
+              columns: ["user_id"]
+              unique: false
+            ix_brokers_trading_platform_id:
+              columns: ["trading_platform_id"]
+              unique: false
+
+        accounts:
+          source_model: "account"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            broker_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "brokers"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            base_currency_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "currencies"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            username:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            password:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              credential_storage: "plaintext"
+            leverage:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            balance:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: 0
+            account_type:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_accounts_name:
+              columns: ["name"]
+              unique: true
+            ix_accounts_broker_id:
+              columns: ["broker_id"]
+              unique: false
+            ix_accounts_base_currency_id:
+              columns: ["base_currency_id"]
+              unique: false
+
+        assets:
+          source_model: "asset"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            symbol:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            category:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            point_size:
+              type: "float"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: 0.0
+            digits:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: 0
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_assets_name:
+              columns: ["name"]
+              unique: true
+            ix_assets_symbol:
+              columns: ["symbol"]
+              unique: true
+
+        trailing_groups:
+          source_model: "trailing_group"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_trailing_groups_name:
+              columns: ["name"]
+              unique: true
+
+        trailing_rules:
+          source_model: "trailing_rule"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            trailing_group_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "trailing_groups"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            trigger_percentage:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            take_profit_adjustment:
+              type: "numeric"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+            stop_loss_adjustment:
+              type: "numeric"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_trailing_rules_name:
+              columns: ["name"]
+              unique: true
+            ix_trailing_rules_trailing_group_id:
+              columns: ["trailing_group_id"]
+              unique: false
+
+        partial_groups:
+          source_model: "partial_group"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_partial_groups_name:
+              columns: ["name"]
+              unique: true
+
+        partial_rules:
+          source_model: "partial_rule"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            partial_group_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "partial_groups"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            profit_percentage:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            close_percentage:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_partial_rules_name:
+              columns: ["name"]
+              unique: true
+            ix_partial_rules_partial_group_id:
+              columns: ["partial_group_id"]
+              unique: false
+
+        action_groups:
+          source_model: "action_group"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_action_groups_name:
+              columns: ["name"]
+              unique: true
+
+        actions:
+          source_model: "action"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            action_group_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "action_groups"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            asset_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "assets"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            account_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "accounts"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            partial_group_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "partial_groups"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            trailing_group_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "trailing_groups"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            risk_by_reward:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            take_profit:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            stop_loss:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_actions_name:
+              columns: ["name"]
+              unique: true
+            ix_actions_action_group_id:
+              columns: ["action_group_id"]
+              unique: false
+            ix_actions_asset_id:
+              columns: ["asset_id"]
+              unique: false
+            ix_actions_account_id:
+              columns: ["account_id"]
+              unique: false
+            ix_actions_partial_group_id:
+              columns: ["partial_group_id"]
+              unique: false
+            ix_actions_trailing_group_id:
+              columns: ["trailing_group_id"]
+              unique: false
+
+        positions:
+          source_model: "position"
+          columns:
+            id:
+              type: "integer"
+              nullable: false
+              primary_key: true
+              auto_increment: true
+              default: null
+            name:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            trading_platform_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "trading_platforms"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            broker_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "brokers"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            account_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "accounts"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            trailing_group_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "trailing_groups"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            partial_group_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "partial_groups"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            action_group_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "action_groups"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            action_id:
+              type: "integer"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+              references:
+                table: "actions"
+                column: "id"
+                on_delete: "RESTRICT"
+                on_update: "RESTRICT"
+            date:
+              type: "datetime"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            volume:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            profit:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: 0
+            is_executed:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: false
+            order_type:
+              type: "string"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            base_tp:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            base_sl:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            real_tp:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            real_sl:
+              type: "numeric"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: null
+            status:
+              type: "boolean"
+              nullable: false
+              primary_key: false
+              auto_increment: false
+              default: true
+            description:
+              type: "string"
+              nullable: true
+              primary_key: false
+              auto_increment: false
+              default: null
+          constraints: {}
+          indexes:
+            ix_positions_name:
+              columns: ["name"]
+              unique: true
+            ix_positions_trading_platform_id:
+              columns: ["trading_platform_id"]
+              unique: false
+            ix_positions_broker_id:
+              columns: ["broker_id"]
+              unique: false
+            ix_positions_account_id:
+              columns: ["account_id"]
+              unique: false
+            ix_positions_trailing_group_id:
+              columns: ["trailing_group_id"]
+              unique: false
+            ix_positions_partial_group_id:
+              columns: ["partial_group_id"]
+              unique: false
+            ix_positions_action_group_id:
+              columns: ["action_group_id"]
+              unique: false
+            ix_positions_action_id:
+              columns: ["action_id"]
+              unique: false
+
+  # <!-------------------------------------------- Boundaries -->
+  boundaries:
+    owns:
+      - "The SQLite engine choice and the app.db file"
+      - "Every table, column, key, constraint, and index"
+      - "The Alembic migration history and its tooling environment"
+      - "The seeding of the initial records the project declares, in dependency order and idempotently"
+      - "The database contract, in every version, including the at-rest storage mode of every credential field"
+    does_not_own:
+      - "Backend ORM mappings, sessions, or query behavior"
+      - "API behavior and endpoints"
+      - "Deployment secrets, encryption keys, and the runtime generation of the credential values the seed instructions call for"
+    interface: "The frozen database contract under content.contracts, and the credential-free connection requirements it states — nothing else is offered to the backend"
+
+  # <!-------------------------------------------- Out_Of_Scope -->
+  out_of_scope:
+    - "Backup and restore automation — capability disabled"
+    - "Database tests — needs_test is false"
+    - "Enforcing the broker rule that user_id must match the referenced trading platform's user_id — open question Q2 decides where it lives"
+    - "Any application logic, validation beyond schema constraints, or API surface"
+    - "Connecting to Binance, MetaTrader 5, or any trading platform"
