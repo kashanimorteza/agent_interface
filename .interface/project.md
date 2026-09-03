@@ -42,11 +42,6 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the platform is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the platform.
 
-**Initial Data:**
-
-- `name`: `Binance`; `user_id`: `1`; `code`: `binance`.
-- `name`: `MetaTrader 5`; `user_id`: `1`; `code`: `metatrader_5`.
-
 **Relationships:**
 
 - Belongs to one User through `user_id`.
@@ -54,6 +49,11 @@ Defines the project's models.
 **Rules:**
 
 - The combination of `user_id` and `name` must be unique.
+
+**Initial Data:**
+
+- `name`: `Binance`; `user_id`: `1`; `code`: `binance`.
+- `name`: `MetaTrader 5`; `user_id`: `1`; `code`: `metatrader_5`.
 
 ### Broker
 
@@ -68,10 +68,6 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the broker is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the broker.
 
-**Initial Data:**
-
-- `name`: `Default`; `user_id`: `1`; `trading_platform_id`: `1`.
-
 **Relationships:**
 
 - Belongs to one User through `user_id`.
@@ -81,6 +77,10 @@ Defines the project's models.
 
 - The combination of `user_id` and `name` must be unique.
 - `user_id` must match the `user_id` of the Trading Platform referenced by `trading_platform_id`.
+
+**Initial Data:**
+
+- `name`: `Default`; `user_id`: `1`; `trading_platform_id`: `1`.
 
 ### Account
 
@@ -100,14 +100,14 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the account.
 
-**Initial Data:**
-
-- `name`: `Default`; `broker_id`: `1`; `base_asset_id`: `1`.
-
 **Relationships:**
 
 - Belongs to one Broker through `broker_id`.
 - Uses one Asset as its default base asset through `base_asset_id`.
+
+**Initial Data:**
+
+- `name`: `Default`; `broker_id`: `1`; `base_asset_id`: `1`.
 
 ### Asset
 
@@ -248,10 +248,6 @@ Defines the project's models.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the action.
 
-**Initial Data:**
-
-- `name`: `Default`; `action_group_id`: `1`; `asset_id`: `1`; `account_id`: `1`; `partial_group_id`: `1`; `trailing_group_id`: `1`.
-
 **Relationships:**
 
 - Belongs to one Action Group through `action_group_id`.
@@ -259,6 +255,10 @@ Defines the project's models.
 - Uses one Account through `account_id`.
 - Uses one Partial Group through `partial_group_id`.
 - Uses one Trailing Group through `trailing_group_id`.
+
+**Initial Data:**
+
+- `name`: `Default`; `action_group_id`: `1`; `asset_id`: `1`; `account_id`: `1`; `partial_group_id`: `1`; `trailing_group_id`: `1`.
 
 ### Position
 
