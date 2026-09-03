@@ -1,36 +1,45 @@
 ---
 name: my-interface-reset
-description: Reset Agent Interface by deleting the currently mapped generated Config files and the exact project code_path directories resolved from them when the Developer explicitly invokes this Skill; no second confirmation is required.
+description: Reset one generated project phase to planning or development readiness without deleting project code or generated Understanding. Use only when the Developer explicitly names the phase and destination stage.
+argument-hint: "[phase-id] [planning|development]"
 disable-model-invocation: true
 ---
 
-# Reset generated project state
+# Reset one project phase
 
-Return the repository to a clean Agent Interface state by removing only the current generated Config and its configured project code directories.
+Rewind the workflow state of exactly one project phase so its plan can be generated again or its existing tasks can be developed again. Preserve project code, generated Understanding, contracts, and every other phase.
 
 ## Developer guidance
 
-- At the start of every invocation, read the repository `README.md` completely to understand Agent Interface and this Skill's role.
-- Then read `.interface/root.yaml` as the live entry point and map, followed only by the existing mapped files under `.interface/config/` needed to resolve the reset.
-- Re-read those files from disk on every invocation. Do not use remembered paths, state, configuration, or conclusions from an earlier run.
-- Do not read the human project-definition file, other Skill files, or target-project contents. This reset needs only the Interface map and generated Config metadata.
-- Perform only the reset role. Do not interpret, plan, develop, review, or invoke another Skill.
+- Read `README.md` completely, then resolve the live Interface map, generated Definition, Task file and Schema, and State contract from `.interface/root.yaml`.
+- Re-read every required file on each invocation. Do not rely on remembered state or paths.
+- Do not read or edit the human project definition, item configuration, target-project code, or another phase's active plan.
+- Perform only this reset role. Do not interpret, plan, develop, review, clear, or invoke another Skill.
 
-## Resolve and validate
+## Resolve the invocation
 
-1. Resolve the repository root and every exact generated Config file currently mapped by the live Interface.
-2. Before deleting any Config file, read the mapped item Config files and collect each exact `code_path`. Resolve each path relative to the repository root as its current Config specifies, then deduplicate the targets.
-3. Require every code-directory target to be a non-empty relative path without `..`, to resolve as a strict descendant of the repository root, and to remain outside `.interface/`, `.claude/`, and `.git/`. Refuse symlinks, files where a directory is expected, unresolved paths, and any protected or unmapped target.
-4. Validate the complete deletion set before deleting anything. Missing mapped Config files or absent validated code directories require no deletion and are not errors; an unsafe or ambiguous target stops the entire reset.
+Require exactly one phase id followed by exactly one destination stage: `planning` or `development`. The phase must exist in `definition.yaml` and have a matching entry in `task.yaml`. Refuse missing, additional, ambiguous, or unknown arguments instead of guessing.
 
-The explicit invocation of this Skill authorizes the validated deletion set. Proceed without requesting another confirmation.
+Read the live reset transition before changing anything. Validate the entire selected mutation first and stop without partial writes if the current State or Task contract does not authorize it. A phase containing a `claimed` or `blocked` task is not reset; report that live work or blocker first.
 
-## Reset
+## Reset to development
 
-Delete each existing validated `code_path` directory recursively by its explicit resolved path, then delete each existing mapped generated Config file by its explicit path. Preserve the Config directory itself.
+Require a non-empty active plan whose phase is complete under the live Task rules. Preserve the plan's identity, groups, task definitions, dependencies, acceptance criteria, verification commands, and prior logs. For every task whose status is `done`, set the status to `todo`, keep `cancelled` and `superseded` unchanged, ensure no blocker field is present, and append one dated log entry recording the human-invoked reset to development.
 
-Do not use wildcards, unresolved variables, inferred folder names, or broad recursive targets. Never delete `README.md`, `.interface/root.yaml`, the human project definition, `.interface/schema/`, `.claude/`, `.git/`, or anything outside the validated deletion set.
+Do not alter product code. The existing implementation remains available for the next `my-interface-developer` run to inspect, change where required, and verify again.
+
+## Reset to planning
+
+Require a non-empty active plan. Copy the complete current phase plan, including every task and log, into the next immutable history entry for that phase under `content.plan_history`. History keys are `R1`, `R2`, and so on within each phase; choose one greater than the greatest existing numeric suffix, starting with `R1`. Then replace only the active plan's `groups` with an empty mapping. Preserve its phase id, title, order, target, and goal-derived `does` value so the active entry remains a valid generated phase shell for `my-interface-tasker`.
+
+Do not alter product code. Do not rewrite or remove an earlier history entry.
+
+## Reset State
+
+After the Task mutation succeeds, set `content.active.mode` to `not set`, `content.active.phase` to `none`, and record the selected phase, destination stage, invocation provenance, and current date in the remaining active fields exactly as the live reset transition requires. Do not enter planning or development on behalf of another Skill.
+
+Preserve blockers and open questions; Reset never answers, releases, or discards them. Preserve all generated item configuration and every phase other than the one explicitly selected.
 
 ## Completion
 
-Verify that every existing target selected for deletion is absent. Return one brief result listing the Config files and project directories removed. Do not invoke another Skill automatically.
+Validate Task and State against their current Schemas, then report the phase reset, its destination stage, what was preserved, and the next explicit Skill invocation now available. Do not run that Skill automatically.

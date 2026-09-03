@@ -25,7 +25,7 @@ Transform the Developer's target-project definition into the structured Understa
 
 ### Maintain role discipline
 
-- Perform only this Skill's interpretation responsibility. Do not silently plan, develop, review, reset, or invoke another Skill's role.
+- Perform only this Skill's interpretation responsibility. Do not silently plan, develop, review, clear, reset, or invoke another Skill's role.
 - Treat the Developer's invocation as authority only for the operation and exact scope defined by this Skill and the live Interface.
 - Apply this guidance only within the Skill's live authority and write boundaries.
 - If this guidance conflicts with a live policy, authority, Schema, or safety boundary, stop and report the conflict instead of guessing.

@@ -66,7 +66,8 @@ content:
           - "my-interface-developer"
           - "my-interface-reviewer"
           - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-        constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-reset does not write this field: it deletes the file that holds it, under transition S5"
+          - "my-interface-reset — only under transition S9, and only to 'not set'"
+        constraint: "A Skill writes only the mode it owns — the tasker writes planning and nothing else, the developer development, the reviewer review. The write is authorized by the human's invocation of that Skill and by nothing else, so no agent may enter a mode it was not invoked into, and no agent may set a mode for another Skill to find. my-interface-reset may only return this field to 'not set' under S9; my-interface-clear does not write it because S5 deletes the file that holds it"
         human_may_set: true
 
       active.phase:
@@ -77,7 +78,8 @@ content:
           - "my-interface-developer"
           - "my-interface-reviewer"
           - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-        constraint: "The phase comes from the invocation and must exist under definition.yaml content.phases. The invocation must name exactly one phase; a phase is never guessed, inferred from a target item, or carried over from a previous run. Under S0 the interpreter writes only 'none'."
+          - "my-interface-reset — only under transition S9, and only to 'none'"
+        constraint: "The phase comes from the invocation and must exist under definition.yaml content.phases. The invocation must name exactly one phase; a phase is never guessed, inferred from a target item, or carried over from a previous run. Under S0 the interpreter and under S9 the reset Skill write only 'none'."
         human_may_set: true
 
       active.target:
@@ -94,7 +96,8 @@ content:
           - "my-interface-developer"
           - "my-interface-reviewer"
           - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-        constraint: "Written together with mode and phase, and rewritten at the end of a run under transition S4. It states what happened; it never argues for a mode the Skill was not invoked into"
+          - "my-interface-reset — only under transition S9"
+        constraint: "Written together with mode and phase, rewritten at the end of a run under transition S4, or written by Reset under S9 to record the selected phase and destination. It states what happened; it never argues for a mode the Skill was not invoked into"
         human_may_set: true
 
       active.set_by:
@@ -105,6 +108,7 @@ content:
           - "my-interface-developer"
           - "my-interface-reviewer"
           - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+          - "my-interface-reset — only under transition S9"
         constraint: "A Skill writes its own name and the invocation it acted on. It never writes 'the human' for a value the human did not type directly — the provenance of every state change stays readable. Under S0 the interpreter writes its own name, not the human's"
         human_may_set: true
 
@@ -116,6 +120,7 @@ content:
           - "my-interface-developer"
           - "my-interface-reviewer"
           - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
+          - "my-interface-reset — only under transition S9"
         constraint: "Written with every change to active, and never backdated"
         human_may_set: true
 
@@ -174,7 +179,7 @@ content:
         - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
         - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
         - "The State Authority itself, after its seed — this section, and its default in schema/state.schema.yaml"
-        - "Asking for tasks to be created, and asking for the generated project state to be reset"
+        - "Asking for tasks to be created, asking for one phase to be reset to planning or development, and asking for the generated project state to be cleared"
 
     transitions:
 
@@ -241,11 +246,11 @@ content:
         refused_when: "The Skill did not perform the run"
 
       - id: "S5"
-        name: "reset the generated project state"
+        name: "clear the generated project state"
         from: "any"
         to: "no mapped generated config files and no validated project code_path directories; state.yaml and its active values, blockers, questions, and live State Authority are deleted and reseeded from the schema default at the next S0"
-        performed_by: "my-interface-reset"
-        authorized_by: "The human invoking my-interface-reset by name; that invocation itself authorizes deletion of the exact currently mapped generated config files and validated code_path directories, with no second confirmation"
+        performed_by: "my-interface-clear"
+        authorized_by: "The human invoking my-interface-clear by name; that invocation itself authorizes deletion of the exact currently mapped generated config files and validated code_path directories, with no second confirmation"
         requires:
           - "Before any deletion, the exact existing config-file targets are resolved fresh from the current Interface map and every code-directory target is resolved from a code_path in those current generated config files"
           - "Every config target is a mapped generated file, and every code-directory target is a non-empty relative path that resolves to a strict descendant of the repository root outside .interface/, .claude/, and .git/"
@@ -287,6 +292,20 @@ content:
         writes: "content.open_questions.questions, and answered_so_far on an existing question"
         refused_when: "The answer came from the agent, from the code, or from what seems reasonable — that is an invention, and the question stays open"
 
+      - id: "S9"
+        name: "reset one project phase"
+        from: "any mode or 'not set'"
+        to: "active.mode: 'not set' and active.phase: 'none'; the one named phase is ready for a fresh planning or development invocation according to the selected destination"
+        performed_by: "my-interface-reset"
+        authorized_by: "The human's invocation of my-interface-reset naming exactly one project phase and exactly one destination: planning or development"
+        requires:
+          - "The named phase exists in definition.yaml and has a matching active plan entry in task.yaml"
+          - "No task in the selected phase is claimed or blocked; live work and unresolved blockers are never discarded by Reset"
+          - "For destination development, the selected phase has a non-empty complete plan; every done task becomes todo, prior logs remain append-only, and cancelled or superseded tasks remain unchanged"
+          - "For destination planning, the selected phase has a non-empty plan; its complete current plan is first copied into a new immutable entry under task.yaml content.plan_history for that phase, then only its active groups are emptied"
+        writes: "content.active.mode, content.active.phase, content.active.mode_reason, content.active.set_by, content.active.set_at; and only the selected phase's reset fields in task.yaml as defined by its current reset_protocol"
+        refused_when: "The invocation does not name exactly one known phase and one supported destination, the plan is missing or already empty, a task is claimed or blocked, development reset is requested for an incomplete phase, history cannot be preserved, or the complete mutation cannot be validated before writing"
+
     validation:
       note: "These must hold at all times. Any Skill may check them; my-interface-reviewer checks them as part of a review, and a failure is a blocker, not a repair"
       checks:
@@ -297,15 +316,16 @@ content:
         - "Every state change an agent made corresponds to exactly one transition above"
         - "A Skill's mode matches the mode it owns under content.modes in root.yaml — a Skill running in another Skill's mode is a fault, not a state to repair"
         - "Each plan key is a phase id from definition.yaml, and its id, title, order, target, and goal-derived meaning match that phase"
+        - "Every plan_history entry is an immutable complete snapshot created by S9 before its active plan was reset to planning"
         - "No open question carries an answer that no human gave"
         - "content.state_authority was seeded verbatim from the schema default and has changed only by the human's hand since — a difference an agent made is a fault, not a state to repair"
 
   # <!-------------------------------------------- Active -->
   active:
-    mode: "planning"
+    mode: "development"
     phase: "P1"
-    mode_reason: "Entered planning under transition S1 on the human's invocation /my-interface-tasker 1 — the argument names phase number 1, which resolves mechanically to the indexed phase id P1 (Database, target database). Run finished and recorded under S4 on 2026-09-03: the P1 plan is written in task.yaml under content.plans.P1 — four groups and twenty-seven todo tasks realizing the thirteen tables of database contract v1 through a uv tooling environment, an Alembic environment, per-table metadata declarations, and one reviewed reversible initial migration. database.yaml was read as context and not changed; contract v1 stays draft. Open question Q6 was raised about developing P1 against the draft. No blocker"
-    set_by: "my-interface-tasker on the human's invocation"
+    mode_reason: "Re-entered development under transition S2 on a second invocation, /my-interface-developer 1 — resolves to P1 (Database) as before. Re-read task.yaml fresh: all twenty-seven P1 tasks already carry status done with passing verify runs from the prior run, and P1 is complete by the derived phase_complete rule — no todo, claimed, or blocked task remains in the P1 plan. No eligible task existed to select, so no file under database/ was touched and no task field changed on this invocation; only this record was written under S4. No blocker. Open question Q6 stays unanswered"
+    set_by: "my-interface-developer on the human's invocation"
     set_at: "2026-09-03"
 
   # <!-------------------------------------------- Blockers -->

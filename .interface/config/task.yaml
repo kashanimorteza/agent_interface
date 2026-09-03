@@ -10,11 +10,11 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: true
-  rule: "task_schema and task_states are the frame — seeded here by my-interface-interpreter and fixed by the human after that. Planning mode writes the plan of the one project phase named by the invocation. Development and review modes write only the status, blocker, and log fields of a task"
-  changed_by: "my-interface-tasker in planning mode; my-interface-developer and my-interface-reviewer for task status, blocker, and log; the human for the frame"
+  rule: "task_schema and task_states are the frame — seeded here by my-interface-interpreter and fixed by the human after that. Planning mode writes the plan of the one project phase named by the invocation. Development and review modes write only the status, blocker, and log fields of a task. my-interface-reset may reset exactly one named phase under transition S9: to development by reopening completed tasks, or to planning by archiving its complete plan and emptying its active groups"
+  changed_by: "my-interface-tasker in planning mode; my-interface-developer and my-interface-reviewer for task status, blocker, and log; my-interface-reset under transition S9; the human for the frame"
   authority: "Who may write which field, and when, is decided in config/state.yaml under content.state_authority and in .interface/root.yaml under content.modes — this file gives shape and invariants, not permission"
   phase_identity: "Each plan's id, title, order, and target are copied from config/definition.yaml under content.phases and are never changed by planning, development, or review; a phase changes in project.md first and reaches here through the interpreter"
-  regeneration: "A regeneration by my-interface-interpreter preserves every existing plan and task; it never empties a plan that planning has filled"
+  regeneration: "A regeneration by my-interface-interpreter preserves every existing active plan, task, and plan-history entry; it never empties a plan that planning has filled"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -22,6 +22,7 @@ read_order:
   - "task_schema"
   - "task_states"
   - "plans"
+  - "plan_history"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -29,6 +30,7 @@ content_map:
   task_schema: "The fields every task carries — the definition of a task, not a task itself"
   task_states: "The vocabulary a task's status may hold, and the protocols around it"
   plans: "One plan per project phase, keyed by phase id — groups inside a phase, tasks inside a group"
+  plan_history: "Immutable snapshots of phase plans replaced by an authorized reset to planning"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -50,7 +52,7 @@ content:
       blocker: "Id of the blocker in config/state.yaml — present only when status is blocked, absent otherwise"
       log: "Append-only list of dated entries carried with the task — absent until the task first moves"
     status_lives_here: "Status is written on the task itself, so definition and state can never drift apart"
-    history_lives_here_too: "There is no history file — how a task reached its state is in its own log, and a past entry is never rewritten"
+    history_lives_here_too: "Task-state history remains in each task's append-only log. When reset to planning replaces an active plan, its complete tasks and logs move intact into immutable plan_history"
 
   # <!-------------------------------------------- Task_States -->
   task_states:
@@ -67,7 +69,8 @@ content:
     phase_complete: "Phase completion is derived, never stored — a phase is complete when its plan is non-empty, every task not cancelled or superseded is done, and no task remains todo, claimed, or blocked"
     done_gate: "Without a passing verify run no task becomes done, even if the code is written"
     claim_protocol: "A task is set to claimed and the file written before work starts, so two agents never take the same task"
-    status_only_in_development: "In development mode status, blocker, and log are the only fields an agent may change — the rest is the plan"
+    status_only_in_development: "In development mode status, blocker, and log are the only fields an agent may change — the rest is the plan. The only outside-mode exception is my-interface-reset acting under transition S9"
+    reset_protocol: "An explicit my-interface-reset invocation names one phase and one destination. Development reset changes each done task to todo and appends its reset log while preserving the plan. Planning reset archives the complete plan under that phase in plan_history using the next immutable R1, R2, ... key and empties only its active groups. Neither form changes project code"
 
   # <!-------------------------------------------- Plans -->
   plans:
@@ -95,7 +98,9 @@ content:
               verify: "grep -qx '.venv/' .gitignore && grep -qx 'app.db' .gitignore"
               touches:
                 - ".gitignore"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claim record failed to persist before work (helper invocation error); work done and verify passed — .gitignore lists .venv/ and app.db"
 
             - id: "P1-T2"
               title: "Pin the tooling Python to 3.14.7 with a .python-version file"
@@ -105,7 +110,9 @@ content:
               verify: "test \"$(cat .python-version)\" = '3.14.7' && uv run --no-project python --version | grep -q '3.14.7'"
               touches:
                 - ".python-version"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claim record failed to persist before work (helper invocation error); work done and verify passed — uv downloaded and runs Python 3.14.7 from .python-version"
 
             - id: "P1-T3"
               title: "Create pyproject.toml declaring the database tooling project with its two pinned dependencies"
@@ -116,7 +123,9 @@ content:
               touches:
                 - "pyproject.toml"
                 - "uv.lock"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claim record failed to persist before work (helper invocation error); work done and verify passed — pyproject.toml declared, uv.lock pins alembic 1.19.1 and sqlalchemy 2.0.52"
 
             - id: "P1-T4"
               title: "Create the virtual environment and install the locked packages with uv sync"
@@ -126,7 +135,9 @@ content:
               verify: "uv sync && uv run python -c \"import alembic, sqlalchemy; assert alembic.__version__ == '1.19.1', alembic.__version__; assert sqlalchemy.__version__ == '2.0.52', sqlalchemy.__version__\""
               touches:
                 - ".venv/"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claim record failed to persist before work (helper invocation error); work done and verify passed — .venv created by uv sync with Alembic 1.19.1 and SQLAlchemy 2.0.52"
 
         P1-G2:
           id: "P1-G2"
@@ -146,7 +157,10 @@ content:
                 - "alembic/env.py"
                 - "alembic/script.py.mako"
                 - "alembic/versions/"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — alembic init created alembic.ini and alembic/ with env.py, script.py.mako, versions/"
 
             - id: "P1-T6"
               title: "Set sqlalchemy.url in alembic.ini to the SQLite file app.db at the root of code_path"
@@ -156,7 +170,10 @@ content:
               verify: "grep -q '^sqlalchemy.url = sqlite:///app.db$' alembic.ini && grep -q '^prepend_sys_path = \\.$' alembic.ini"
               touches:
                 - "alembic.ini"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — alembic.ini targets sqlite:///app.db; prepend_sys_path = . confirmed"
 
             - id: "P1-T7"
               title: "Create schema/__init__.py exposing one shared MetaData with the contract's naming convention"
@@ -166,7 +183,10 @@ content:
               verify: "uv run python -c \"from schema import metadata; nc = metadata.naming_convention; assert nc['ix'] == 'ix_%(table_name)s_%(column_0_name)s', nc; assert nc['uq'] == 'uq_%(table_name)s_%(column_0_N_name)s', nc; assert 'fk' in nc and 'pk' in nc, nc\""
               touches:
                 - "schema/__init__.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — schema/__init__.py exposes metadata with ix, uq, fk, pk naming convention"
 
             - id: "P1-T8"
               title: "Create schema/tables.py as the module that will hold every contract table, importing the shared metadata"
@@ -176,7 +196,10 @@ content:
               verify: "uv run python -c \"import schema.tables; from schema import metadata; assert len(metadata.tables) == 0, list(metadata.tables)\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — schema/tables.py imports sqlalchemy and metadata and declares no table"
 
             - id: "P1-T9"
               title: "Bind alembic/env.py to the shared metadata as target_metadata"
@@ -186,7 +209,10 @@ content:
               verify: "grep -q 'target_metadata = metadata' alembic/env.py && grep -q 'import schema.tables' alembic/env.py && uv run alembic current"
               touches:
                 - "alembic/env.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — env.py binds target_metadata to schema.metadata; alembic current runs cleanly"
 
             - id: "P1-T10"
               title: "Turn on SQLite foreign-key enforcement and batch rendering in alembic/env.py"
@@ -196,7 +222,10 @@ content:
               verify: "grep -q 'PRAGMA foreign_keys=ON' alembic/env.py && grep -q 'render_as_batch=True' alembic/env.py && uv run alembic current"
               touches:
                 - "alembic/env.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — env.py enables PRAGMA foreign_keys=ON on connect and render_as_batch=True; alembic current runs cleanly"
 
         P1-G3:
           id: "P1-G3"
@@ -214,7 +243,10 @@ content:
               verify: "uv run python -c \"from schema.tables import trading_platforms as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status'], [c.name for c in t.columns]; assert t.c.id.primary_key and t.c.id.autoincrement; assert not t.c.name.nullable and t.c.description.nullable and not t.c.status.nullable; assert t.c.status.server_default is not None\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — trading_platforms declared with the four template columns"
 
             - id: "P1-T12"
               title: "Add the brokers Table to schema/tables.py"
@@ -225,7 +257,10 @@ content:
               verify: "uv run python -c \"from schema.tables import brokers as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status', 'trading_platform_id'], [c.name for c in t.columns]; fk = list(t.c.trading_platform_id.foreign_keys)[0]; assert fk.target_fullname == 'trading_platforms.id' and fk.ondelete == 'RESTRICT' and fk.onupdate == 'RESTRICT'; assert not t.c.trading_platform_id.nullable; assert {i.name for i in t.indexes} == {'ix_brokers_trading_platform_id'}, {i.name for i in t.indexes}\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — brokers declared with FK trading_platform_id -> trading_platforms.id RESTRICT, index ix_brokers_trading_platform_id"
 
             - id: "P1-T13"
               title: "Add the accounts Table to schema/tables.py"
@@ -236,7 +271,10 @@ content:
               verify: "uv run python -c \"from schema.tables import accounts as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status', 'username', 'password', 'broker_id'], [c.name for c in t.columns]; assert not t.c.username.nullable and not t.c.password.nullable; fk = list(t.c.broker_id.foreign_keys)[0]; assert fk.target_fullname == 'brokers.id' and fk.ondelete == 'RESTRICT' and fk.onupdate == 'RESTRICT'; assert {i.name for i in t.indexes} == {'ix_accounts_broker_id'}\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — accounts declared with username, plaintext password, FK broker_id -> brokers.id RESTRICT, index ix_accounts_broker_id"
 
             - id: "P1-T14"
               title: "Add the assets Table to schema/tables.py"
@@ -247,7 +285,10 @@ content:
               verify: "uv run python -c \"from schema.tables import assets as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status'], [c.name for c in t.columns]; assert t.c.id.primary_key and not t.c.name.nullable and t.c.description.nullable and not t.c.status.nullable\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — assets declared with the four template columns"
 
             - id: "P1-T15"
               title: "Add the asset_details Table with its composite unique constraint to schema/tables.py"
@@ -258,7 +299,10 @@ content:
               verify: "uv run python -c \"from sqlalchemy import UniqueConstraint; from schema.tables import asset_details as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status', 'broker_id', 'asset_id'], [c.name for c in t.columns]; assert {fk.target_fullname for fk in t.foreign_keys} == {'brokers.id', 'assets.id'}; assert {i.name for i in t.indexes} == {'ix_asset_details_broker_id', 'ix_asset_details_asset_id'}; uq = [c for c in t.constraints if isinstance(c, UniqueConstraint)]; assert len(uq) == 1 and uq[0].name == 'uq_asset_details_broker_id_asset_id' and [c.name for c in uq[0].columns] == ['broker_id', 'asset_id'], uq\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — asset_details declared with FKs to brokers and assets, two indexes, and uq_asset_details_broker_id_asset_id from the model rule"
 
             - id: "P1-T16"
               title: "Add the strategies Table to schema/tables.py"
@@ -269,7 +313,10 @@ content:
               verify: "uv run python -c \"from sqlalchemy import Numeric; from schema.tables import strategies as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status', 'stop_loss', 'take_profit'], [c.name for c in t.columns]; assert all(isinstance(t.c[n].type, Numeric) and t.c[n].type.precision == 18 and t.c[n].type.scale == 8 and not t.c[n].nullable for n in ('stop_loss', 'take_profit'))\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — strategies declared with stop_loss and take_profit numeric(18, 8) not null"
 
             - id: "P1-T17"
               title: "Add the trailing_groups Table to schema/tables.py"
@@ -280,7 +327,10 @@ content:
               verify: "uv run python -c \"from schema.tables import trailing_groups as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status'], [c.name for c in t.columns]; assert t.c.id.primary_key and not t.c.name.nullable and t.c.description.nullable and not t.c.status.nullable\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — trailing_groups declared with the four template columns"
 
             - id: "P1-T18"
               title: "Add the trailing_rules Table to schema/tables.py"
@@ -291,7 +341,10 @@ content:
               verify: "uv run python -c \"from schema.tables import trailing_rules as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status', 'trailing_group_id'], [c.name for c in t.columns]; fk = list(t.c.trailing_group_id.foreign_keys)[0]; assert fk.target_fullname == 'trailing_groups.id' and fk.ondelete == 'RESTRICT' and fk.onupdate == 'RESTRICT'; assert {i.name for i in t.indexes} == {'ix_trailing_rules_trailing_group_id'}\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — trailing_rules declared with FK trailing_group_id -> trailing_groups.id RESTRICT, index ix_trailing_rules_trailing_group_id"
 
             - id: "P1-T19"
               title: "Add the partial_groups Table to schema/tables.py"
@@ -302,7 +355,10 @@ content:
               verify: "uv run python -c \"from schema.tables import partial_groups as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status'], [c.name for c in t.columns]; assert t.c.id.primary_key and not t.c.name.nullable and t.c.description.nullable and not t.c.status.nullable\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — partial_groups declared with the four template columns"
 
             - id: "P1-T20"
               title: "Add the partial_rules Table to schema/tables.py"
@@ -313,7 +369,10 @@ content:
               verify: "uv run python -c \"from sqlalchemy import Numeric; from schema.tables import partial_rules as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status', 'partial_group_id', 'profit_threshold', 'close_portion'], [c.name for c in t.columns]; fk = list(t.c.partial_group_id.foreign_keys)[0]; assert fk.target_fullname == 'partial_groups.id' and fk.ondelete == 'RESTRICT'; assert {i.name for i in t.indexes} == {'ix_partial_rules_partial_group_id'}; assert all(isinstance(t.c[n].type, Numeric) and t.c[n].type.precision == 18 and t.c[n].type.scale == 8 and not t.c[n].nullable for n in ('profit_threshold', 'close_portion'))\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — partial_rules declared with FK partial_group_id, index, and profit_threshold and close_portion numeric(18, 8) not null"
 
             - id: "P1-T21"
               title: "Add the action_groups Table to schema/tables.py"
@@ -324,7 +383,10 @@ content:
               verify: "uv run python -c \"from schema.tables import action_groups as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status'], [c.name for c in t.columns]; assert t.c.id.primary_key and not t.c.name.nullable and t.c.description.nullable and not t.c.status.nullable\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — action_groups declared with the four template columns"
 
             - id: "P1-T22"
               title: "Add the actions Table with its four foreign keys to schema/tables.py"
@@ -335,7 +397,10 @@ content:
               verify: "uv run python -c \"from schema.tables import actions as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status', 'action_group_id', 'asset_id', 'account_id', 'strategy_id'], [c.name for c in t.columns]; assert {fk.target_fullname for fk in t.foreign_keys} == {'action_groups.id', 'assets.id', 'accounts.id', 'strategies.id'}; assert all(fk.ondelete == 'RESTRICT' and fk.onupdate == 'RESTRICT' for fk in t.foreign_keys); assert {i.name for i in t.indexes} == {'ix_actions_action_group_id', 'ix_actions_asset_id', 'ix_actions_account_id', 'ix_actions_strategy_id'}, {i.name for i in t.indexes}\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — actions declared with four RESTRICT FKs to action_groups, assets, accounts, strategies and their indexes"
 
             - id: "P1-T23"
               title: "Add the positions Table to schema/tables.py"
@@ -346,7 +411,10 @@ content:
               verify: "uv run python -c \"from sqlalchemy import Numeric; from schema.tables import positions as t; assert [c.name for c in t.columns] == ['id', 'name', 'description', 'status', 'action_id', 'profit', 'stage', 'state', 'entry_price', 'take_profit', 'stop_loss'], [c.name for c in t.columns]; fk = list(t.c.action_id.foreign_keys)[0]; assert fk.target_fullname == 'actions.id' and fk.ondelete == 'RESTRICT'; assert {i.name for i in t.indexes} == {'ix_positions_action_id'}; assert not t.c.profit.nullable and t.c.profit.server_default is not None; assert not t.c.stage.nullable and not t.c.state.nullable and not t.c.entry_price.nullable; assert t.c.take_profit.nullable and t.c.stop_loss.nullable; assert all(isinstance(t.c[n].type, Numeric) and t.c[n].type.precision == 18 and t.c[n].type.scale == 8 for n in ('profit', 'entry_price', 'take_profit', 'stop_loss'))\""
               touches:
                 - "schema/tables.py"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — positions declared with FK action_id, profit default 0, stage, state, entry_price, nullable take_profit and stop_loss"
 
         P1-G4:
           id: "P1-G4"
@@ -364,7 +432,10 @@ content:
               verify: "test \"$(ls alembic/versions/*.py | wc -l | tr -d ' ')\" = '1' && test \"$(grep -c 'op.create_table(' alembic/versions/*.py)\" = '13' && test \"$(grep -c 'op.drop_table(' alembic/versions/*.py)\" = '13'"
               touches:
                 - "alembic/versions/"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed and revision 36be9d3a0aa7 reviewed — 13 create_table, 14 indexes, uq_asset_details_broker_id_asset_id, RESTRICT FKs; downgrade drops all in reverse order"
 
             - id: "P1-T25"
               title: "Apply the initial revision to app.db with alembic upgrade head"
@@ -376,7 +447,10 @@ content:
                 uv run alembic upgrade head && uv run alembic current | grep -q '(head)' && uv run python -c "import sqlite3; c = sqlite3.connect('app.db'); n = {r[0] for r in c.execute(\"select name from sqlite_master where type = 'table' and name != 'alembic_version'\")}; expected = {'trading_platforms', 'brokers', 'accounts', 'assets', 'asset_details', 'strategies', 'trailing_groups', 'trailing_rules', 'partial_groups', 'partial_rules', 'action_groups', 'actions', 'positions'}; assert n == expected, n ^ expected"
               touches:
                 - "app.db"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — alembic upgrade head applied 36be9d3a0aa7; app.db holds exactly the thirteen contract tables at head"
 
             - id: "P1-T26"
               title: "Prove the initial revision reverses by downgrading to base and upgrading back to head"
@@ -388,7 +462,10 @@ content:
                 uv run alembic downgrade base && uv run python -c "import sqlite3; c = sqlite3.connect('app.db'); n = {r[0] for r in c.execute(\"select name from sqlite_master where type = 'table' and name != 'alembic_version'\")}; assert n == set(), n" && uv run alembic upgrade head && uv run alembic current | grep -q '(head)'
               touches:
                 - "app.db"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — downgrade base left no contract table; upgrade head restored all thirteen"
 
             - id: "P1-T27"
               title: "Prove the migrated database matches the contract metadata with alembic check"
@@ -405,7 +482,10 @@ content:
                 sys.exit('foreign key not enforced')"
               touches:
                 - "app.db"
-              status: "todo"
+              status: "done"
+              log:
+                - "2026-09-03 — claimed by my-interface-developer"
+                - "2026-09-03 — verify passed — alembic check reports no new upgrade operations; foreign-key enforcement rejects an orphan broker"
 
     P2:
       id: "P2"
@@ -414,3 +494,6 @@ content:
       target: "backend"
       does: "Creates and runs the API for all defined project models — the implemented HTTP API with its generated OpenAPI description, built against the frozen database contract"
       groups: {}
+
+  # <!-------------------------------------------- Plan_History -->
+  plan_history: {}

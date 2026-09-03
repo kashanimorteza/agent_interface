@@ -88,11 +88,21 @@ Executes eligible planned Tasks for one requested project phase, implements chan
 
 Reviews one requested project phase against the generated Understanding, authorized Tasks, target-item Policy and contracts, and verification evidence, then reports findings without modifying the implementation.
 
+### `my-interface-clear`
+
+`.claude/skills/my-interface-clear/SKILL.md`
+
+Removes the generated Config and the exact validated project code directories resolved from it, returning the repository to a clean state ready for a new interpretation.
+
 ### `my-interface-reset`
 
 `.claude/skills/my-interface-reset/SKILL.md`
 
-Removes the generated Config and the exact validated project code directories resolved from it, returning the repository to a clean state ready for a new interpretation.
+Resets one project phase to `planning` or `development` readiness while preserving project code, generated Understanding, and immutable plan history.
+
+`/my-interface-reset <phase-id> development`
+
+`/my-interface-reset <phase-id> planning`
 
 
 <br > <br>
