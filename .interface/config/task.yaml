@@ -1,0 +1,347 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/task.yaml"
+  path_note: "Project tasks and plans. task_schema and task_states are the fixed frame, seeded verbatim from .interface/schema/task.schema.yaml the first time this file is created. content.plans holds one entry per planned project phase"
+  standard: "Agent Interface Task"
+  schema: ".interface/schema/task.schema.yaml"
+  version: "2.3"
+  updated: "2026-09-04"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: "my-interface-tasker writes the plan for the one project phase it is invoked on; my-interface-developer writes only a task's status, blocker, and log fields while that phase is active in development; my-interface-reviewer writes only a task's status, blocker, and log fields, to mark it blocked; my-interface-reset rewrites task status project-wide only under transition S9"
+  rule: "task_schema and task_states are the invariant frame — the same for every project. Only content.plans varies by project, and only by the requested phase's authorized scope"
+  who_decides: "Who may write which field of this file, on which transition, is decided in .interface/config/state.yaml under content.state_authority, and in .interface/root.yaml under content.modes — this file gives the shape and invariants, not the permission"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_schema"
+  - "task_states"
+  - "plans"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_schema: "The fields every task carries"
+  task_states: "The vocabulary a task's status may hold, and the protocols around it"
+  plans: "The implementation plans, one entry per planned project phase"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- Task_Schema -->
+  task_schema:
+    rule: "Every task carries exactly these fields — no more, no fewer."
+    fields:
+      id:
+        purpose: "Identifier unique within the project phase — its phase prefix keeps it unique across the project."
+      title:
+        purpose: "The task in one sentence."
+      goal:
+        purpose: "What becomes possible after this task that was not possible before."
+      depends_on:
+        purpose: "Ids of tasks in the same project phase. Cross-phase order comes from definition.yaml, and cross-item dependency uses a contract rather than another phase's task id."
+      needs_contract:
+        purpose: "The contract version required — used instead of depending on another item's task; omitted when the task needs none."
+      acceptance:
+        purpose: "Human-readable acceptance criterion — what must actually work."
+      verify:
+        purpose: "A runnable command that proves acceptance — without it a task is never done."
+      touches:
+        purpose: "Paths this task touches, written relative to the code_path of the item named by its phase target."
+      status:
+        purpose: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
+      blocker:
+        purpose: "Id of the blocker in state.yaml — present only when status is blocked, absent otherwise."
+      log:
+        purpose: "Append-only list of dated entries carried with the task — absent until the task first moves."
+    status_lives_here: "Status is written on the task itself, so definition and state can never drift apart."
+    history_lives_here_too: "There is no history file — while a task exists, how it reached its state remains in its append-only log. Reset to planning explicitly removes generated tasks."
+
+  # <!-------------------------------------------- Task_States -->
+  task_states:
+    path: "The status field on each task."
+    states:
+      todo: "Not yet started."
+      claimed: "An agent has taken this task and is working it; written before work starts so two agents never take the same task."
+      blocked: "Cannot proceed; the blocker id names what is missing in state.yaml content.blockers."
+      done: "Acceptance is met and verify has passed — the only way a task reaches done."
+      cancelled: "No longer needed; never reached done, and does not gate downstream readiness."
+      superseded: "Replaced by a later task; kept for history, and does not gate downstream readiness."
+    derived_ready: "ready is not a stored status — a task is ready when it is todo and all of its depends_on are done."
+    phase_ready: "Phase readiness is derived, never stored — a phase may enter development when it has a non-empty plan and every earlier project phase is complete."
+    phase_complete: "Phase completion is derived, never stored — a phase is complete when its plan is non-empty, every task not cancelled or superseded is done, and no task remains todo, claimed, or blocked."
+    done_gate: "Without a passing verify run no task becomes done, even if the code is written."
+    claim_protocol: "A task is set to claimed and the file written before work starts, so two agents never take the same task."
+    status_only_in_development: "In development mode, status, blocker, and log are the only fields an agent may change on a task, with my-interface-reset under S9 as the only outside-mode exception."
+    reset_protocol: "An explicitly invoked project-wide reset either returns every generated task to todo (development reset) or removes every generated task, restoring the stage before planning (planning reset); either stage clears all current State blockers and open questions."
+
+  # <!-------------------------------------------- Plans -->
+  plans:
+
+    P1:
+      id: "P1"
+      title: "Database"
+      order: 1
+      target: "database"
+      does: "Creates the SQLite schema and the ordered, reversible Alembic migrations that build it for all 13 defined project models — columns, foreign keys, constraints, and indexes matching .interface/config/database.yaml content.contracts.v1 exactly — and loads the project's declared seed data."
+
+      groups:
+
+        P1-G1:
+          id: "P1-G1"
+          title: "Environment & migration tooling"
+          does: "Gives database/ an isolated uv environment with Alembic and SQLAlchemy installed, and an Alembic project scaffold configured for the resolved SQLite connection, so migration revisions can be authored and run."
+          task_count: 3
+          tasks:
+
+            - id: "P1-G1-T1"
+              title: "Initialize the uv-managed Python environment for the database item"
+              goal: "database/ has an isolated uv virtual environment with Alembic 1.18.5 and SQLAlchemy 2.0.52 installed, so migration commands can run."
+              depends_on: []
+              acceptance: "pyproject.toml under database/ pins alembic==1.18.5 and sqlalchemy==2.0.52, and `uv sync` installs them into an isolated virtual environment."
+              verify: "cd database && uv run python -c \"import alembic, sqlalchemy; print(alembic.__version__, sqlalchemy.__version__)\""
+              touches: ["pyproject.toml", "uv.lock"]
+              status: "todo"
+
+            - id: "P1-G1-T2"
+              title: "Initialize the Alembic migration project"
+              goal: "database/ has an Alembic project scaffold (alembic.ini, migrations/env.py, migrations/script.py.mako) so migration revisions can be created and run."
+              depends_on: ["P1-G1-T1"]
+              acceptance: "`uv run alembic init migrations` scaffold exists under database/, and `uv run alembic current` runs without error, reporting no revision applied yet."
+              verify: "cd database && uv run alembic current"
+              touches: ["alembic.ini", "migrations/env.py", "migrations/script.py.mako"]
+              status: "todo"
+
+            - id: "P1-G1-T3"
+              title: "Configure the Alembic environment for the resolved SQLite connection"
+              goal: "migrations/env.py and alembic.ini target sqlite:///app.db with foreign_keys enabled and check_same_thread false, exactly as resolved in database.yaml content.tech.connection, so upgrade/downgrade commands operate on the project's own database file."
+              depends_on: ["P1-G1-T2"]
+              acceptance: "alembic.ini's sqlalchemy.url (or the engine built in migrations/env.py) resolves to sqlite:///app.db with PRAGMA foreign_keys=ON issued on connect, and `uv run alembic upgrade head` runs cleanly with zero migrations to apply."
+              verify: "cd database && uv run alembic upgrade head"
+              touches: ["alembic.ini", "migrations/env.py"]
+              status: "todo"
+
+        P1-G2:
+          id: "P1-G2"
+          title: "Schema migrations"
+          does: "Adds one reversible Alembic migration per table — users, currencies, trading_platforms, brokers, accounts, assets, trailing_groups, trailing_rules, partial_groups, partial_rules, action_groups, actions, positions — in dependency order, so the complete schema in database.yaml content.contracts.v1.tables exists and every migration reverses cleanly."
+          task_count: 13
+          tasks:
+
+            - id: "P1-G2-T1"
+              title: "Add the users table migration"
+              goal: "The users table exists exactly as specified in database.yaml content.contracts.v1.tables.users."
+              depends_on: ["P1-G1-T3"]
+              acceptance: "A new Alembic revision creates users with columns id (INTEGER, primary key, autoincrement), name (VARCHAR, not null), username (VARCHAR, not null), password (VARCHAR, not null), api_key (VARCHAR, not null), status (BOOLEAN, not null, default true), description (VARCHAR, nullable), and a unique index ix_users_name on name. `uv run alembic upgrade head` applies it and `uv run alembic downgrade -1` reverses it cleanly, dropping the table."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA table_info(users);\" | grep -q api_key && sqlite3 app.db \"PRAGMA index_list(users);\" | grep -q ix_users_name"
+              touches: ["migrations/versions/*_create_users.py"]
+              status: "todo"
+
+            - id: "P1-G2-T2"
+              title: "Add the currencies table migration"
+              goal: "The currencies table exists exactly as specified in database.yaml content.contracts.v1.tables.currencies."
+              depends_on: ["P1-G2-T1"]
+              acceptance: "A new Alembic revision creates currencies with columns id (INTEGER PK autoincrement), name (VARCHAR, not null), code (VARCHAR(3), not null), symbol (VARCHAR, nullable), country (VARCHAR, nullable), decimal_digits (INTEGER, not null, default 2), status (BOOLEAN, not null, default true), description (VARCHAR, nullable), and a unique index ix_currencies_code on code. Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA table_info(currencies);\" | grep -q decimal_digits && sqlite3 app.db \"PRAGMA index_list(currencies);\" | grep -q ix_currencies_code"
+              touches: ["migrations/versions/*_create_currencies.py"]
+              status: "todo"
+
+            - id: "P1-G2-T3"
+              title: "Add the trading_platforms table migration"
+              goal: "The trading_platforms table exists exactly as specified in database.yaml content.contracts.v1.tables.trading_platforms."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "A new Alembic revision creates trading_platforms with columns id (INTEGER PK autoincrement), name (VARCHAR, not null), code (VARCHAR, not null), status (BOOLEAN, not null, default true), description (VARCHAR, nullable). No indexes beyond the primary key. Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA table_info(trading_platforms);\" | grep -q code"
+              touches: ["migrations/versions/*_create_trading_platforms.py"]
+              status: "todo"
+
+            - id: "P1-G2-T4"
+              title: "Add the brokers table migration"
+              goal: "The brokers table exists exactly as specified in database.yaml content.contracts.v1.tables.brokers, referencing users and trading_platforms."
+              depends_on: ["P1-G2-T1", "P1-G2-T3"]
+              acceptance: "A new Alembic revision creates brokers with columns id (INTEGER PK autoincrement), name (VARCHAR, not null), user_id (INTEGER, not null, FK to users.id, ON DELETE/UPDATE RESTRICT), trading_platform_id (INTEGER, not null, FK to trading_platforms.id, ON DELETE/UPDATE RESTRICT), status (BOOLEAN, not null, default true), description (VARCHAR, nullable); a named unique constraint uq_brokers_user_id_name over (user_id, name); and non-unique indexes ix_brokers_user_id and ix_brokers_trading_platform_id. Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA foreign_key_list(brokers);\" | grep -q users && sqlite3 app.db \"PRAGMA index_list(brokers);\" | grep -q uq_brokers_user_id_name"
+              touches: ["migrations/versions/*_create_brokers.py"]
+              status: "todo"
+
+            - id: "P1-G2-T5"
+              title: "Add the accounts table migration"
+              goal: "The accounts table exists exactly as specified in database.yaml content.contracts.v1.tables.accounts, referencing brokers and currencies."
+              depends_on: ["P1-G2-T4", "P1-G2-T2"]
+              acceptance: "A new Alembic revision creates accounts with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_accounts_name), broker_id (INTEGER, not null, FK to brokers.id, RESTRICT/RESTRICT), base_currency_id (INTEGER, not null, FK to currencies.id, RESTRICT/RESTRICT), username (VARCHAR, not null), password (VARCHAR, not null — encrypted at rest, never plaintext), leverage (INTEGER, not null), balance (NUMERIC, not null, default 0), account_type (VARCHAR, not null), status (BOOLEAN, not null, default true), description (VARCHAR, nullable); plus non-unique indexes ix_accounts_broker_id and ix_accounts_base_currency_id. Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA table_info(accounts);\" | grep -q leverage && sqlite3 app.db \"PRAGMA foreign_key_list(accounts);\" | grep -q brokers"
+              touches: ["migrations/versions/*_create_accounts.py"]
+              status: "todo"
+
+            - id: "P1-G2-T6"
+              title: "Add the assets table migration"
+              goal: "The assets table exists exactly as specified in database.yaml content.contracts.v1.tables.assets."
+              depends_on: ["P1-G1-T3"]
+              acceptance: "A new Alembic revision creates assets with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_assets_name), symbol (VARCHAR, not null, unique via ix_assets_symbol), category (VARCHAR, not null), point_size (FLOAT, not null, default 0.0), digits (INTEGER, not null, default 0), status (BOOLEAN, not null, default true), description (VARCHAR, nullable). Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA index_list(assets);\" | grep -q ix_assets_symbol"
+              touches: ["migrations/versions/*_create_assets.py"]
+              status: "todo"
+
+            - id: "P1-G2-T7"
+              title: "Add the trailing_groups table migration"
+              goal: "The trailing_groups table exists exactly as specified in database.yaml content.contracts.v1.tables.trailing_groups."
+              depends_on: ["P1-G2-T6"]
+              acceptance: "A new Alembic revision creates trailing_groups with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_trailing_groups_name), status (BOOLEAN, not null, default true), description (VARCHAR, nullable). Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA index_list(trailing_groups);\" | grep -q ix_trailing_groups_name"
+              touches: ["migrations/versions/*_create_trailing_groups.py"]
+              status: "todo"
+
+            - id: "P1-G2-T8"
+              title: "Add the trailing_rules table migration"
+              goal: "The trailing_rules table exists exactly as specified in database.yaml content.contracts.v1.tables.trailing_rules, referencing trailing_groups."
+              depends_on: ["P1-G2-T7"]
+              acceptance: "A new Alembic revision creates trailing_rules with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_trailing_rules_name), trailing_group_id (INTEGER, not null, FK to trailing_groups.id, RESTRICT/RESTRICT), trigger_percentage (NUMERIC, not null), take_profit_adjustment (NUMERIC, nullable), stop_loss_adjustment (NUMERIC, nullable), status (BOOLEAN, not null, default true), description (VARCHAR, nullable); plus non-unique index ix_trailing_rules_trailing_group_id. Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA foreign_key_list(trailing_rules);\" | grep -q trailing_groups"
+              touches: ["migrations/versions/*_create_trailing_rules.py"]
+              status: "todo"
+
+            - id: "P1-G2-T9"
+              title: "Add the partial_groups table migration"
+              goal: "The partial_groups table exists exactly as specified in database.yaml content.contracts.v1.tables.partial_groups."
+              depends_on: ["P1-G2-T8"]
+              acceptance: "A new Alembic revision creates partial_groups with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_partial_groups_name), status (BOOLEAN, not null, default true), description (VARCHAR, nullable). Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA index_list(partial_groups);\" | grep -q ix_partial_groups_name"
+              touches: ["migrations/versions/*_create_partial_groups.py"]
+              status: "todo"
+
+            - id: "P1-G2-T10"
+              title: "Add the partial_rules table migration"
+              goal: "The partial_rules table exists exactly as specified in database.yaml content.contracts.v1.tables.partial_rules, referencing partial_groups."
+              depends_on: ["P1-G2-T9"]
+              acceptance: "A new Alembic revision creates partial_rules with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_partial_rules_name), partial_group_id (INTEGER, not null, FK to partial_groups.id, RESTRICT/RESTRICT), profit_percentage (NUMERIC, not null), close_percentage (NUMERIC, not null), status (BOOLEAN, not null, default true), description (VARCHAR, nullable); plus non-unique index ix_partial_rules_partial_group_id. Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA foreign_key_list(partial_rules);\" | grep -q partial_groups"
+              touches: ["migrations/versions/*_create_partial_rules.py"]
+              status: "todo"
+
+            - id: "P1-G2-T11"
+              title: "Add the action_groups table migration"
+              goal: "The action_groups table exists exactly as specified in database.yaml content.contracts.v1.tables.action_groups."
+              depends_on: ["P1-G2-T10"]
+              acceptance: "A new Alembic revision creates action_groups with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_action_groups_name), status (BOOLEAN, not null, default true), description (VARCHAR, nullable). Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA index_list(action_groups);\" | grep -q ix_action_groups_name"
+              touches: ["migrations/versions/*_create_action_groups.py"]
+              status: "todo"
+
+            - id: "P1-G2-T12"
+              title: "Add the actions table migration"
+              goal: "The actions table exists exactly as specified in database.yaml content.contracts.v1.tables.actions, referencing action_groups, assets, accounts, partial_groups, and trailing_groups."
+              depends_on: ["P1-G2-T11", "P1-G2-T6", "P1-G2-T5", "P1-G2-T9", "P1-G2-T7"]
+              acceptance: "A new Alembic revision creates actions with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_actions_name), action_group_id, asset_id, account_id, partial_group_id, trailing_group_id (each INTEGER, not null, FK to its resolved table.id, RESTRICT/RESTRICT, with a matching non-unique index), risk_by_reward (NUMERIC, not null), take_profit (NUMERIC, not null), stop_loss (NUMERIC, not null), status (BOOLEAN, not null, default true), description (VARCHAR, nullable). Upgrade and `downgrade -1` both run cleanly."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA foreign_key_list(actions);\" | wc -l | grep -q 5"
+              touches: ["migrations/versions/*_create_actions.py"]
+              status: "todo"
+
+            - id: "P1-G2-T13"
+              title: "Add the positions table migration"
+              goal: "The positions table exists exactly as specified in database.yaml content.contracts.v1.tables.positions, referencing trading_platforms, brokers, accounts, trailing_groups, partial_groups, action_groups, and actions."
+              depends_on: ["P1-G2-T3", "P1-G2-T4", "P1-G2-T5", "P1-G2-T7", "P1-G2-T9", "P1-G2-T11", "P1-G2-T12"]
+              acceptance: "A new Alembic revision creates positions with columns id (INTEGER PK autoincrement), name (VARCHAR, not null, unique via ix_positions_name), trading_platform_id, broker_id, account_id, trailing_group_id, partial_group_id, action_group_id, action_id (each INTEGER, not null, FK to its resolved table.id, RESTRICT/RESTRICT, with a matching non-unique index), date (DATETIME, not null), volume (NUMERIC, not null), profit (NUMERIC, not null, default 0), is_executed (BOOLEAN, not null, default false), order_type (VARCHAR, not null), base_tp, base_sl, real_tp, real_sl (each NUMERIC, not null), status (BOOLEAN, not null, default true), description (VARCHAR, nullable). Upgrade and `downgrade -1` both run cleanly, and this is the last migration — the schema now matches database.yaml content.contracts.v1.tables in full."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"PRAGMA foreign_key_list(positions);\" | wc -l | grep -q 7"
+              touches: ["migrations/versions/*_create_positions.py"]
+              status: "todo"
+
+        P1-G3:
+          id: "P1-G3"
+          title: "Seed data"
+          does: "Loads every initial record declared by the project (definition.yaml content.models.*.initial_data, resolved to physical tables in database.yaml content.capabilities.seed_data.records) via one reversible Alembic data migration per table, in an order that always satisfies foreign-key references."
+          task_count: 10
+          tasks:
+
+            - id: "P1-G3-T1"
+              title: "Seed the initial users record"
+              goal: "The Admin user row exists so it can be referenced by seeded brokers."
+              depends_on: ["P1-G2-T1"]
+              acceptance: "A new Alembic data migration inserts one users row: name 'Admin', username 'admin', password and api_key each a freshly generated secure random value stored per the resolved hash credential mode (never a literal placeholder string), status default true. `downgrade -1` removes exactly this row."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT username FROM users WHERE username='admin';\" | grep -q admin"
+              touches: ["migrations/versions/*_seed_users.py"]
+              status: "todo"
+
+            - id: "P1-G3-T2"
+              title: "Seed the initial currencies records"
+              goal: "The 8 declared currency rows (USD, EUR, GBP, JPY, CHF, CAD, AUD, NZD) exist so they can be referenced by seeded accounts."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "A new Alembic data migration inserts the 8 currency rows exactly as declared in database.yaml content.capabilities.seed_data.records.currencies, in order. `downgrade -1` removes exactly these rows."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT count(*) FROM currencies;\" | grep -q 8"
+              touches: ["migrations/versions/*_seed_currencies.py"]
+              status: "todo"
+
+            - id: "P1-G3-T3"
+              title: "Seed the initial trading_platforms records"
+              goal: "The MetaTrader 5 and Binance rows exist so they can be referenced by seeded brokers."
+              depends_on: ["P1-G2-T3"]
+              acceptance: "A new Alembic data migration inserts the 2 trading_platforms rows exactly as declared in database.yaml content.capabilities.seed_data.records.trading_platforms, in order. `downgrade -1` removes exactly these rows."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT count(*) FROM trading_platforms;\" | grep -q 2"
+              touches: ["migrations/versions/*_seed_trading_platforms.py"]
+              status: "todo"
+
+            - id: "P1-G3-T4"
+              title: "Seed the initial brokers record"
+              goal: "The FxPro broker row exists, referencing the seeded Admin user and MetaTrader 5 platform, so it can be referenced by the seeded account."
+              depends_on: ["P1-G2-T4", "P1-G3-T1", "P1-G3-T3"]
+              acceptance: "A new Alembic data migration inserts one brokers row: name 'FxPro', user_id referencing the seeded Admin user's row id, trading_platform_id referencing the seeded MetaTrader 5 row id. `downgrade -1` removes exactly this row."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT name FROM brokers WHERE name='FxPro';\" | grep -q FxPro"
+              touches: ["migrations/versions/*_seed_brokers.py"]
+              status: "todo"
+
+            - id: "P1-G3-T5"
+              title: "Seed the initial accounts record"
+              goal: "The Acc-1 account row exists, referencing the seeded FxPro broker and USD currency, so it can be referenced by the seeded action."
+              depends_on: ["P1-G2-T5", "P1-G3-T4", "P1-G3-T2"]
+              acceptance: "A new Alembic data migration inserts one accounts row: name 'Acc-1', broker_id referencing the seeded FxPro row id, base_currency_id referencing the seeded USD row id, username 'test', password a freshly generated secure random value stored per the resolved encrypted credential mode (never a literal placeholder string), leverage 100, account_type 'CFD'. `downgrade -1` removes exactly this row."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT name FROM accounts WHERE name='Acc-1';\" | grep -q Acc-1"
+              touches: ["migrations/versions/*_seed_accounts.py"]
+              status: "todo"
+
+            - id: "P1-G3-T6"
+              title: "Seed the initial assets records"
+              goal: "The 4 declared asset rows (EURUSD, EURGBP, XAUUSD, USOil) exist so they can be referenced by the seeded action."
+              depends_on: ["P1-G2-T6"]
+              acceptance: "A new Alembic data migration inserts the 4 assets rows exactly as declared in database.yaml content.capabilities.seed_data.records.assets, in order. `downgrade -1` removes exactly these rows."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT count(*) FROM assets;\" | grep -q 4"
+              touches: ["migrations/versions/*_seed_assets.py"]
+              status: "todo"
+
+            - id: "P1-G3-T7"
+              title: "Seed the initial trailing_groups record"
+              goal: "The Default trailing group row exists so it can be referenced by the seeded action."
+              depends_on: ["P1-G2-T7"]
+              acceptance: "A new Alembic data migration inserts one trailing_groups row: name 'Default'. `downgrade -1` removes exactly this row."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT name FROM trailing_groups WHERE name='Default';\" | grep -q Default"
+              touches: ["migrations/versions/*_seed_trailing_groups.py"]
+              status: "todo"
+
+            - id: "P1-G3-T8"
+              title: "Seed the initial partial_groups record"
+              goal: "The Default partial group row exists so it can be referenced by the seeded action."
+              depends_on: ["P1-G2-T9"]
+              acceptance: "A new Alembic data migration inserts one partial_groups row: name 'Default'. `downgrade -1` removes exactly this row."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT name FROM partial_groups WHERE name='Default';\" | grep -q Default"
+              touches: ["migrations/versions/*_seed_partial_groups.py"]
+              status: "todo"
+
+            - id: "P1-G3-T9"
+              title: "Seed the initial action_groups record"
+              goal: "The Default action group row exists so it can be referenced by the seeded action."
+              depends_on: ["P1-G2-T11"]
+              acceptance: "A new Alembic data migration inserts one action_groups row: name 'Default'. `downgrade -1` removes exactly this row."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT name FROM action_groups WHERE name='Default';\" | grep -q Default"
+              touches: ["migrations/versions/*_seed_action_groups.py"]
+              status: "todo"
+
+            - id: "P1-G3-T10"
+              title: "Seed the initial actions record"
+              goal: "The Default action row exists, referencing every seeded group, asset, and account row it needs, completing the project's declared seed data."
+              depends_on: ["P1-G2-T12", "P1-G3-T9", "P1-G3-T6", "P1-G3-T5", "P1-G3-T8", "P1-G3-T7"]
+              acceptance: "A new Alembic data migration inserts one actions row: name 'Default', action_group_id/asset_id/account_id/partial_group_id/trailing_group_id each referencing their respective seeded 'Default' or first row id, risk_by_reward 1, take_profit 1, stop_loss 1. `downgrade -1` removes exactly this row. This is the last seed migration — every table listed in database.yaml content.capabilities.seed_data.records now holds its declared rows."
+              verify: "cd database && uv run alembic upgrade head && sqlite3 app.db \"SELECT name FROM actions WHERE name='Default';\" | grep -q Default"
+              touches: ["migrations/versions/*_seed_actions.py"]
+              status: "todo"
