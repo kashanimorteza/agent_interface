@@ -7,41 +7,18 @@ disable-model-invocation: true
 
 # Reset the project workflow
 
-Rewind all generated Tasks either to the point before development or to the point before planning. Preserve project code, generated Understanding, item configuration, and contracts.
+Reset the generated workflow for the one stage named in `$ARGUMENTS`: `development` or `planning`.
 
-## Developer guidance
+## Load the live reset contract
 
-- Read `README.md` completely, then resolve the live Interface map and human project-definition file from `.interface/root.yaml`. Read the project definition completely for current project context, followed by the generated Definition, Task file and Schema, and State contract.
-- Re-read every required file on each invocation. Do not rely on remembered state or paths.
-- Do not interpret or edit the human project definition, item configuration, or target-project code. The project definition provides context but does not alter Reset's mutation scope.
-- Perform only this reset role. Do not interpret, plan, develop, review, clear, or invoke another Skill.
+Read `README.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map to locate the current workflow data, governing Schemas, State authority, reset transition, and reset protocol.
 
-## Resolve the invocation
+Re-read required sources on every invocation. Do not rely on remembered file shapes, fields, states, transitions, preservation rules, or destinations. Require exactly one supported stage and let the current reset contract decide whether the operation is allowed and what it changes.
 
-Require exactly one argument: `development` or `planning`. Do not accept a phase id. Refuse missing, additional, ambiguous, or unknown arguments instead of guessing.
+## Reset
 
-Read the live reset transition before changing anything. Validate the complete project-wide mutation first and stop without partial writes if the current State or Task contract does not authorize it. Refuse while any Task is `claimed`; Reset never races active development.
+Validate the complete requested mutation before writing, then apply the current reset protocol atomically. Preserve or clear content exactly as the live authorities specify; do not duplicate those structural rules in this Skill.
 
-## Reset to development
+Perform only the reset role. Do not interpret, plan, develop, review, clear project data, change product code, modify the human project definition, or invoke the next workflow Skill.
 
-Require at least one generated Task across the plans. Preserve every Plan, Group, Task definition, dependency, acceptance criterion, verification command, and prior log. Set every Task status—including `done`, `blocked`, `cancelled`, and `superseded`—to the initial status `todo`, remove every Task `blocker` field, and append one dated log entry recording the human-invoked development reset.
-
-Set `content.active.mode` to `planning` and `content.active.phase` to `none`. Record the reset provenance and current date in the remaining active fields. Do not invoke the Tasker or enter a particular phase on its behalf. The existing implementation remains available for later Developer runs to inspect, change where required, and verify again.
-
-Replace State `content.blockers` and `content.open_questions.questions` with empty lists. Reset clears these workflow findings; it does not answer them. A later planning, development, review, or interpretation run raises again anything that is still unresolved.
-
-## Reset to planning
-
-Require at least one generated Task across the plans. For every phase Plan, replace `groups` with an empty mapping. Preserve each Plan's phase id, title, order, target, and goal-derived `does` value so every entry remains the valid empty shell initially generated for `my-interface-tasker`.
-
-Set `content.active.mode` to `not set` and `content.active.phase` to `none`. Record the reset provenance and current date in the remaining active fields. This is the workflow state before any Plan has been generated.
-
-Replace State `content.blockers` and `content.open_questions.questions` with empty lists. Reset clears these workflow findings; it does not answer them. A later planning, development, review, or interpretation run raises again anything that is still unresolved.
-
-## Reset State
-
-Both reset stages clear all current State blockers and open questions after validating the complete mutation. Neither reset changes product code, generated Definition, item configuration, contracts, or the phase shells in Task.
-
-## Completion
-
-Validate Task and State against their current Schemas, then report the reset stage, the number of affected Tasks and Plans, the number of cleared blockers and open questions, what was preserved, and the next explicit Skill invocation now available. Do not run that Skill automatically.
+Validate the resulting workflow files against their current Schemas. Report the selected stage, affected records, cleared workflow findings, preserved content, and the next available explicit action.

@@ -1,41 +1,32 @@
 ---
 name: my-interface-developer
-description: Execute unfinished eligible tasks for the one project phase named by the Developer, resolving its target item and code boundary from the generated Understanding. Implements only; never plans, reviews, or interprets the human project definition.
+description: Execute eligible planned work for the one project phase named by the Developer. Implements and verifies only; never plans, reviews, or interprets the human project definition.
 argument-hint: "[phase-id]"
 disable-model-invocation: true
 ---
 
-# Execute unfinished tasks
+# Develop one project phase
 
-Use the requested phase's current Task plan as the only execution queue. The invocation and live State contract authorize that phase; its target item supplies configuration and the code boundary but does not widen the scope.
+Execute the unfinished eligible work for the project phase named in `$ARGUMENTS`.
 
-## Developer guide
+## Load the live Interface
 
-Before performing any other step, read [references/developer-guide.md](references/developer-guide.md) completely and apply it throughout this invocation. The guide may refine execution but cannot expand this Skill's live authority, task scope, or write boundaries.
+Read `README.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, current work plan, State authority, applicable configuration, contracts, code boundaries, and verification context.
 
-## Refresh context
+Re-read required sources on every invocation. Resolve the requested phase, executable work, destinations, permissions, coordination protocol, and completion rules only through current mapped files. Load any additional technology Skill explicitly selected by the live configuration, following the current policy for unavailable guidance.
 
-1. Resolve the one requested phase id in `$ARGUMENTS` from the current generated Understanding. Refuse an omitted, additional, or unknown phase rather than choosing one.
-2. Resolve the phase's target item from that phase, then follow the live map to read the current State contract, Task file and governing Schema, target-item Policy, mapped item configuration, and contracts required for this invocation.
-3. From the resolved target-item configuration, collect every non-empty `skill` named by a selected technology entry. Resolve and read each available named Skill before implementation. If a configured Skill is unavailable, record a blocker or gap as the live authorities permit instead of silently ignoring it, guessing a replacement, or implementing without its required guidance. A technology with no configured Skill needs no Skill lookup.
-4. Enter and record this Skill's working mode only as the live State contract permits, for the requested phase and no other.
-5. Determine unfinished eligible tasks only from `content.plans.<phase-id>`, using the current task definitions, states, dependencies, contracts, and protocols.
-6. For each selected task, read the mapped contract, target-item configuration, declared paths, surrounding implementation context, and applicable configured technology Skill guidance required to execute and verify it.
+Do not rely on remembered paths, fields, task states, transitions, defaults, permissions, or decision rules. Use the human project definition for context only; the generated Understanding and authorized plan are the operational sources for implementation.
 
-## Execute tasks
+## Develop
 
-Select work according to the current Task file and only within the requested phase. A task is executable only when the live Task rules say its work remains, all earlier project phases are complete, its dependencies and required contracts are satisfied, and the task provides enough current information to act without guessing.
+Enter the required workflow state, select work, claim it, implement it, verify it, and record its actual outcome exactly as the live authorities and protocols require.
 
-Apply configured technology Skills as implementation guidance wherever relevant. They never authorize work beyond the selected Task or its resolved write scope.
+Inspect existing code within the authorized scope before editing. Apply configured technology Skills as implementation guidance without widening the selected work. Derive all paths, allowed writes, required checks, and responses to ambiguity or failure from the current owning files.
 
-Resolve the authorized code root and verification working directory from the requested phase target's current configuration, then resolve the task's declared paths relative to that code root. Inspect the relevant existing implementation before editing, but do not treat it as permission to widen the task or invent a requirement. Never infer, remember, or invent a destination folder.
+Continue through eligible work in the requested phase while the live rules allow it. Never mark work complete without the verification required by its current contract.
 
-Before changing code, follow the current claim protocol and persist the claim as required so concurrent work cannot select the same task. Implement only the selected task, only within its resolved write scope, and run its current verification in the configured context.
+## Boundaries
 
-Record the actual result through the current Task and State mechanisms. A failed or missing verification is not completion. Re-read the Task file and relevant State after recording the result, then continue only while another unfinished eligible task exists in the same requested phase.
+Develop only. Do not create or reshape plans, reinterpret project intent, review as another role, modify generated Understanding, or write outside the live code and record boundaries.
 
-## No work and boundaries
-
-If the live State contract refuses the requested phase, or no unfinished eligible task exists within it, do not change product code or select work from another phase, including another phase with the same target. Record an outcome only as the current authorities permit, report the exact reason, and stop.
-
-Do not plan, reinterpret the project definition, review, reshape tasks, or modify generated Understanding merely to make execution possible. If a task becomes blocked by missing information, an unresolved destination, an unsatisfied requirement, or a verification failure, do not guess or silently abandon a claim; use the current Task and State mechanisms to record only what the live authorities allow, then report the exact reason.
+Report completed, skipped, and blocked work with observable verification and only the questions or blockers required by the current policies.

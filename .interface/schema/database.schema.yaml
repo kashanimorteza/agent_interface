@@ -1,11 +1,11 @@
 schema:
   id: agent-interface-database
-  version: "3.0"
+  version: "3.1"
   purpose: "The shape of database.yaml — every parameter an agent reads to understand the independent database item"
 
 policy:
   preference_resolution:
-    rule: "An explicit project value always wins. When a supported database technical choice is unstated, resolve it from database preferences. Ambiguous or conflicting information is an open question and is never resolved from a preference."
+    rule: "An explicit project value always wins. When a database technical choice is unstated, resolve it from supported database preferences or choose the best compatible implementation option under root.yaml policy.decision_policy. Raise an open question only for a critical conflict or decision as defined there."
     resolved_by: "my-interface-interpreter only; downstream Skills consume the resolved database configuration and never reinterpret preferences."
   ownership: "The database item alone owns its engine choice, physical storage, schema, constraints, indexes, migration history, and database contract."
   schema_changes: "Every schema change is expressed by an ordered reversible migration. Backend code never creates, alters, or drops database objects directly."
@@ -17,12 +17,12 @@ policy:
   model_rule_resolution:
     rule: "Preserve every model rule from model.yaml and represent it in the owning table's database contract. No model rule is silently dropped."
     deterministic: "When a model rule has one unambiguous database representation, my-interface-interpreter resolves it to the corresponding constraint. For example, a rule allowing one record per combination of related models resolves to a composite unique constraint over those foreign-key fields."
-    ambiguous: "When a model rule permits more than one materially different database representation, record an open question instead of choosing one."
+    ambiguous: "When a model rule permits multiple database representations, choose the representation that best preserves the declared domain meaning and record its traceability. Raise an open question only when the alternatives would materially change domain semantics, security, data integrity, or a frozen contract."
     traceability: "Every constraint produced from a model rule records that source rule in the database contract."
   version_resolution:
     explicit: "Preserve every concrete version stated by the project exactly."
     latest: "When a supported preference supplies latest, my-interface-interpreter resolves it to the latest stable version compatible with the complete selected database tool stack and writes only that concrete version into database.yaml. The token latest never appears in generated Config."
-    unresolved: "If a current stable version cannot be verified or the selected versions are incompatible, record an open question instead of guessing or preserving latest."
+    unresolved: "If the current stable version cannot be verified, select the best supported concrete compatible version available from current evidence and record the choice. Raise an open question only when compatibility or data safety cannot be established without a critical human decision."
   relationship_resolution:
     rule: "When the project declares a relationship without specifying its physical field, represent it with a foreign-key field named <referenced_model_name_in_snake_case>_id. This name is derived from the referenced domain model and does not depend on whether the physical table name is singular or plural. An explicit project field or reference always wins."
     explicit_field: "When model.yaml binds a relationship to a declared model field, use that exact field as the foreign-key column and never generate a duplicate relationship column."
@@ -38,7 +38,7 @@ policy:
     boundary: "The database contract owns the resolved at-rest representation. The consuming backend owns the corresponding runtime transformation and never infers or changes the mode. Encryption keys and other secrets never live in the database contract or database files."
   initial_data_resolution:
     rule: "When any model in model.yaml declares initial_data, enable the seed-data capability and map each ordered model record to its resolved table. Initial data is project content and is never supplied by database preferences."
-    validation: "Every supplied key must name a declared model field. Before generation, each record must satisfy required relationship references and every non-nullable field that has no database default or explicit generation behavior; otherwise record an open question instead of inventing a value."
+    validation: "Every supplied key must name a declared model field. Before generation, each record must satisfy required relationship references and every non-nullable field through an explicit value, database default, or safe generated behavior. The Agent may select safe technical generation behavior, but never invents project seed facts; raise an open question only when a required project value is critical and no safe generated behavior exists."
     references: "Resolve initial records in dependency order. A literal relationship id is preserved exactly and must reference an initial or pre-existing target row; it is never renumbered or replaced by an inferred reference."
     idempotency: "Generated seed behavior must be repeatable without creating duplicate logical records and must preserve every uniqueness rule."
 

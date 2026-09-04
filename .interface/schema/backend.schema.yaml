@@ -1,14 +1,14 @@
 schema:
   id: agent-interface-backend
-  version: "5.0"
+  version: "5.1"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
 
 policy:
   preference_resolution:
-    rule: "An explicit project value always wins. When a supported backend technical choice is unstated, resolve it from backend preferences. Ambiguous or conflicting information is an open question and is never resolved from a preference."
+    rule: "An explicit project value always wins. When a backend technical choice is unstated, resolve it from supported backend preferences or choose the best compatible implementation option under root.yaml policy.decision_policy. Raise an open question only for a critical conflict or decision as defined there."
     resolved_by: "my-interface-interpreter only; downstream Skills consume the resolved backend configuration and never reinterpret preferences."
   database_boundary: "The backend never owns the database engine, storage, schema, or migrations. It consumes the frozen database contract and owns only its runtime connection, ORM mappings, and database client packages."
-  package_resolution: "Resolve runtime packages from the selected language, API framework, ORM, and database contract through an explicitly supported compatibility entry; an unknown combination is an open question, never a package guessed from model knowledge."
+  package_resolution: "Resolve runtime packages from the selected language, API framework, ORM, and database contract through an explicitly supported compatibility entry when available. For an unlisted combination, choose a well-supported compatible package from current evidence and record the consequential choice; ask only when no safe compatible stack can be established."
   technology_skill_resolution:
     rule: "A supported technology preference may name one Agent Skill as technical guidance. When that technology is selected, my-interface-interpreter writes the Skill name into the matching resolved technology entry in backend.yaml."
     optional: "A technology with no configured Skill remains valid and produces no skill field. Never guess a Skill from the technology name."
@@ -20,7 +20,7 @@ policy:
   version_resolution:
     explicit: "Preserve every concrete version stated by the project exactly."
     latest: "When a supported preference supplies latest, my-interface-interpreter resolves it to the latest stable version compatible with the complete selected backend stack and writes only that concrete version into backend.yaml. The token latest never appears in generated Config."
-    unresolved: "If a current stable version cannot be verified or the selected versions are incompatible, record an open question instead of guessing or preserving latest."
+    unresolved: "If the current stable version cannot be verified, select the best supported concrete compatible version available from current evidence and record the choice. Raise an open question only when compatibility or safety cannot be established without a critical human decision."
   sensitive_data:
     credential_source: "A field is a credential when the consumed database contract assigns it a credential storage mode. The backend never guesses credential fields from their names."
     request: "A credential field is write-only input. It may be accepted when required to create or update the owning model."

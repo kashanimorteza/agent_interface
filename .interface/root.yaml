@@ -3,7 +3,7 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "2.3"
+  version: "2.4"
   updated: "2026-09-04"
 
 
@@ -15,6 +15,12 @@ policy:
   by_mode: "What may be written where is decided per mode — see content.modes"
   state_authority: "Who may write each field of config/state.yaml, and on which transition, is decided in one place only — the State contract: config/state.yaml under content.state_authority, seeded from the default in schema/state.schema.yaml. This file references the State contract and does not own it"
   on_change_needed: "A change to the structure, the skills, or the modes is raised with the human, never applied by an agent"
+  decision_policy:
+    explicit_values: "Every explicit project value, generated contract, Policy, authority, permission, and write boundary is binding and is never silently overridden."
+    default_action: "When an implementation or technical detail is not specified by an owning file, the Agent uses the available context, supported Preferences, current evidence, and professional judgment to choose a reasonable compatible option and continue without asking the human."
+    critical_only: "A question or blocker is raised only when the missing or conflicting decision is critical: a reasonable choice could materially change project goals or scope, domain meaning, core architecture, security, data integrity, permissions, a contract, or an irreversible or destructive outcome; or no safe authorized path can continue."
+    boundary: "Agent discretion fills execution details inside authorized scope. It never invents project goals, product requirements, permissions, phases, contracts, or write authority, and it never widens the requested work."
+    traceability: "Record a consequential Agent-selected assumption or technical decision in the nearest owning generated configuration, Task, log, or final report when that format supports it; ordinary incidental choices need no question."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-task
-  version: "2.3"
+  version: "2.4"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
   frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans use the phase → group → task structure. Every plan key is a project phase from definition.yaml; the phase's target resolves the item configuration and code boundary used by its tasks."
   authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and invariants, not the permission"
@@ -53,7 +53,7 @@ sections:
             purpose: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
           blocker:
             required: true
-            purpose: "Id of the blocker in state.yaml — present only when status is blocked, absent otherwise."
+            purpose: "Id of a critical condition in state.yaml that genuinely prevents safe authorized continuation — present only when status is blocked, absent otherwise."
           log:
             required: true
             purpose: "Append-only list of dated entries carried with the task — absent until the task first moves."

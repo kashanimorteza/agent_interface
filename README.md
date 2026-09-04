@@ -55,7 +55,7 @@ Project phases are the primary units of work. Each phase in `project.md` selects
 Each item keeps two kinds of guidance beside its own Schema:
 
 - **Policy** is mandatory and cannot be overridden by a project preference.
-- **Preferences** supply supported technical choices only when `project.md` leaves the corresponding choice unstated. Explicit project values win; ambiguity or conflict becomes an open question.
+- **Preferences** supply supported technical choices when `project.md` leaves a corresponding choice unstated. Explicit project values win. Outside those values, Agents use professional judgment for ordinary technical decisions and continue; only critical decisions become open questions or blockers.
 
 There is no global Preferences or Rules layer. Interface-wide authority remains in `root.yaml`, the State contract, and the workflow Skills; item-specific rules live in the Policy of the item that owns them.
 
@@ -68,7 +68,7 @@ There is no global Preferences or Rules layer. Interface-wide authority remains 
 
 `.claude/skills/my-interface-interpreter/SKILL.md`
 
-Transforms the human-managed definition in `project.md` into the generated project Understanding. It preserves the ordered phases, resolves each referenced target item's Schema, mandatory Policy, and supported Preferences, validates the result, and records unresolved or conflicting information without inventing decisions.
+Transforms the human-managed definition in `project.md` into the generated project Understanding. It preserves the ordered phases, resolves each referenced target item's Schema, mandatory Policy, and supported Preferences, validates the result, and autonomously resolves ordinary technical gaps without inventing project intent.
 
 ### `my-interface-tasker`
 

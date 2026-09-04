@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "3.6"
+  version: "3.7"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
   authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
@@ -23,7 +23,7 @@ sections:
     extension_note: "Extensible without redesigning the format: each field entry carries its own tier and writable_by, so a new state field gets its own authority, and a new skill is authorized by adding it to the lists that concern it. The extension itself is the human's edit."
     default:
       rule: "This section is the single source of truth for the runtime state, and it is part of the State contract itself. It names every field of state.yaml, who may write each one, which transitions exist, and which Skill may perform each. Where any other file — root.yaml, a schema, a config policy, a SKILL.md — appears to say something different, this section governs; the other file is wrong and is corrected, not worked around"
-      principle: "An agent records a decision the human has already made, and never makes one. Invoking a Skill is the human's instruction — the Skill writes that instruction into the state, and nothing beyond it"
+      principle: "State records human-owned decisions and genuinely blocking conditions. An Agent makes ordinary implementation and technical decisions under root.yaml policy.decision_policy without turning them into questions; it never supplies the answer to a question that correctly remains with the human. Invoking a Skill is the human's instruction — the Skill writes that instruction into State only as the transitions below permit"
       scope: "This file — content.active, content.blockers, content.open_questions, and content.state_authority itself. The other config files keep their ownership in their own policy sections; nothing here widens it"
       seeded_from: "The default in .interface/schema/state.schema.yaml, written verbatim when state.yaml is created — transition S0. While no state.yaml exists there is no live authority, so that default is what authorizes its own creation; once the file exists, this live copy governs and the schema default is not consulted at runtime"
       extension_rule: "Extensible by the human alone. A new entry under fields gives a new state field its own authority; adding a skill to a writable_by or performed_by list authorizes that skill without redesigning the format; a new transition is a new entry under transitions. An agent that needs an extension raises it as an open question, never writes it"
@@ -111,26 +111,26 @@ sections:
 
         blockers:
           tier: "agent_writable"
-          holds: "What is actually missing, what each thing stops, and whose decision would release it"
+          holds: "Only critical conditions that genuinely prevent safe authorized continuation, what each condition stops, and whose action or decision would release it"
           writable_by:
             - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
             - "my-interface-interpreter — during a generation run, which is outside the modes"
             - "my-interface-reset — only under transition S9, clearing every blocker"
-          constraint: "Any mode, and a generation run, may raise a blocker, update what it stops, and remove it once the thing that was missing exists. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8. Reset may clear every blocker without answering it only as part of S9"
+          constraint: "Any mode, and a generation run, may raise a blocker only when root.yaml policy.decision_policy classifies the condition as critical and work cannot safely or validly continue. Ordinary unspecified technical details are resolved by Agent judgment and never become blockers. A blocker may be updated and removed once the condition is resolved in its owning configuration, contract, code, evidence, or human decision. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8. Reset may clear every blocker without answering it only as part of S9"
           human_may_set: true
 
         open_questions.questions:
           tier: "agent_writable"
-          holds: "The questions themselves — raised by an agent, addressed to the human"
+          holds: "Critical project questions that cannot be safely resolved through Agent discretion — raised by an agent and addressed to the human"
           writable_by:
             - "my-interface-tasker"
             - "my-interface-developer"
             - "my-interface-reviewer"
             - "my-interface-interpreter — during a generation run, which is outside the modes"
             - "my-interface-reset — only under transition S9, clearing every open question"
-          constraint: "An agent raises a question and states why it matters. Raising is not answering. Reset may clear every question without answering it only as part of S9"
+          constraint: "An Agent raises a question only under the critical threshold in root.yaml policy.decision_policy and states why it matters. Ordinary ambiguity is resolved through professional judgment and continuation. Raising is not answering. Reset may clear every question without answering it only as part of S9"
           human_may_set: true
 
         open_questions.questions.answered_so_far:
@@ -260,10 +260,11 @@ sections:
           from: "any mode, and a generation run outside the modes"
           to: "the same mode"
           performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer, my-interface-interpreter"
-          authorized_by: "The work itself — a blocker is what stopped it, and a generation run raises what the configuration cannot supply"
+          authorized_by: "The work itself — only a critical condition that prevents safe authorized continuation may become a blocker"
           requires:
-            - "The blocker states what is missing, never a guess at its answer"
-            - "A blocker is removed only once the thing that was missing exists in the configuration"
+            - "The condition meets the critical threshold in root.yaml policy.decision_policy; ordinary missing implementation detail does not"
+            - "The blocker states what is missing, never a guess at a human-owned answer"
+            - "A blocker is removed only once the critical condition is resolved in its owning configuration, contract, code, evidence, or human decision"
           writes: "content.blockers, and the blocker field of the task it stops"
           refused_when: "Removing a blocker whose decision_belongs_to is the human, before the human has decided"
 
@@ -272,12 +273,12 @@ sections:
           from: "any mode, and a generation run outside the modes"
           to: "the same mode"
           performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer, my-interface-interpreter"
-          authorized_by: "A gap found while working, or an answer the human has stated"
+          authorized_by: "A critical human-owned decision found while working, or an answer the human has stated"
           requires:
-            - "Raising: the question is stated so it can be answered, and why_it_matters names what depends on it"
+            - "Raising: the decision meets the critical threshold in root.yaml policy.decision_policy, the question is stated so it can be answered, and why_it_matters names what materially depends on it"
             - "Recording: the answer written into answered_so_far is the human's, dated, and in the human's own terms"
           writes: "content.open_questions.questions, and answered_so_far on an existing question"
-          refused_when: "The answer came from the agent, from the code, or from what seems reasonable — that is an invention, and the question stays open"
+          refused_when: "Raising a non-critical implementation question that Agent discretion can resolve; or recording an answer that came from the Agent, from the code, or from what merely seems reasonable after the question was correctly classified as human-owned"
 
         - id: "S9"
           name: "reset development or planning project-wide"
@@ -332,7 +333,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Blockers -->
   blockers:
     required: true
-    purpose: "What is actually missing — one entry per blocker, each addressed by id from the tasks it stops. Raised and released under transition S7 in content.state_authority of the same file."
+    purpose: "Critical conditions that genuinely prevent safe authorized continuation — one entry per blocker, each addressed by id from the tasks it stops. Ordinary unspecified implementation details never appear here. Raised and released under transition S7 in content.state_authority of the same file."
     fields:
       "<blocker>":
         required: true
@@ -346,7 +347,7 @@ sections:
             purpose: "What cannot move because of this — the work this blocker stops."
           what_is_missing:
             required: true
-            purpose: "The thing that does not exist — stated concretely, never as a guess at its answer."
+            purpose: "The unresolved critical condition — stated concretely, never as a guess at a human-owned answer."
           consequence:
             required: true
             purpose: "What stays unreachable while this is missing."
@@ -360,7 +361,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Open_Questions -->
   open_questions:
     required: true
-    purpose: "What the human still has to decide. An agent raises a question and records the human's answer, and never supplies one — transition S8 in content.state_authority of the same file."
+    purpose: "Only critical decisions the human still has to make because Agent discretion cannot safely resolve them. An Agent raises a question and records the human's answer, and never supplies one — transition S8 in content.state_authority of the same file."
     fields:
       note:
         required: true
