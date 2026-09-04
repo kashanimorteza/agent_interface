@@ -369,10 +369,10 @@ content:
 
   # <!-------------------------------------------- active -->
   active:
-    mode: "not set"
-    mode_reason: "No workflow operation has been requested yet. The generation operation created this file under transition S0 while interpreting project.md; it entered no mode and selected no phase."
-    phase: "none"
-    set_by: "generation operation — acting on the human's request to interpret project.md"
+    mode: "planning"
+    mode_reason: "Transition S1 entered planning for phase P1 (Data Foundation, target database) on the human's request. Transition S4: the run finished and wrote the P1 plan into task.yaml — 7 groups and 43 tasks, all todo, validated against the task frame and the storage schema in database.yaml; no blocker or open question was raised. P1 is ready for development once the human requests it."
+    phase: "P1"
+    set_by: "planning operation — acting on the human's planning request naming phase P1"
     set_at: "2026-09-05"
 
   # <!-------------------------------------------- blockers -->

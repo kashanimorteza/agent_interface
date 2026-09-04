@@ -76,7 +76,486 @@ content:
       order: 1
       target: "database"
       does: "Makes all defined project data persistently available to the system."
-      groups: {}
+      groups:
+
+        # <!-------------------- P1-G1 -->
+        environment:
+          id: "P1-G1"
+          title: "Package and environment"
+          does: "Creates the database item's Python package, pins its toolchain and dependencies, and reads runtime configuration from the environment. When done, uv can build an isolated environment in database/ with SQLAlchemy, Alembic, and the encryption library installed, and the package resolves its database URL and encryption key from environment variables."
+          task_count: 6
+          tasks:
+            - id: "P1-G1-T1"
+              title: "Create pyproject.toml declaring the ta_database package and its pinned dependencies."
+              goal: "The database item exists as an installable Python package that the backend can later add as a local path dependency."
+              depends_on: []
+              acceptance: "pyproject.toml declares project name ta_database, requires-python ==3.14.*, dependencies SQLAlchemy==2.0.52, Alembic==1.19.2, and cryptography==50.0.1, and a setuptools or hatchling build backend that packages the ta_database directory. The cryptography package is an agent-selected addition: the resolved encrypted at-rest mode needs reversible encryption, which the standard library does not provide."
+              verify: >-
+                uv run python -c "import tomllib; d=tomllib.load(open('pyproject.toml','rb')); p=d['project']; deps=[x.lower().replace(' ','') for x in p['dependencies']]; assert p['name']=='ta_database'; assert p['requires-python']=='==3.14.*'; assert 'sqlalchemy==2.0.52' in deps and 'alembic==1.19.2' in deps and 'cryptography==50.0.1' in deps; print('ok')"
+              touches: ["pyproject.toml"]
+              status: "todo"
+
+            - id: "P1-G1-T2"
+              title: "Create .python-version pinning the interpreter to 3.14.7."
+              goal: "Every uv command in database/ uses the resolved Python version without manual selection."
+              depends_on: ["P1-G1-T1"]
+              acceptance: ".python-version contains 3.14.7 and uv resolves that interpreter for the project."
+              verify: >-
+                uv run python -c "import sys; assert sys.version_info[:3]==(3,14,7), sys.version; print(sys.version)"
+              touches: [".python-version"]
+              status: "todo"
+
+            - id: "P1-G1-T3"
+              title: "Generate uv.lock and sync the isolated environment."
+              goal: "The database environment is reproducible from the committed lockfile with the exact resolved package versions."
+              depends_on: ["P1-G1-T1", "P1-G1-T2"]
+              acceptance: "uv.lock exists and is committed; uv sync --frozen succeeds; the installed SQLAlchemy and Alembic report the resolved versions and cryptography imports."
+              verify: >-
+                uv lock && uv sync --frozen && uv run python -c "import sqlalchemy, alembic, cryptography; assert sqlalchemy.__version__=='2.0.52' and alembic.__version__=='1.19.2'; print('ok')"
+              touches: ["uv.lock"]
+              status: "todo"
+
+            - id: "P1-G1-T4"
+              title: "Create the ta_database package root with __init__.py and a version constant."
+              goal: "The package imports inside the environment and later tasks have a root to add modules under."
+              depends_on: ["P1-G1-T3"]
+              acceptance: "ta_database/__init__.py exists, defines __version__ = \"0.1.0\", and import ta_database succeeds."
+              verify: >-
+                uv run python -c "import ta_database; assert ta_database.__version__=='0.1.0'; print('ok')"
+              touches: ["ta_database/__init__.py"]
+              status: "todo"
+
+            - id: "P1-G1-T5"
+              title: "Create .gitignore excluding the virtual environment, database files, and .env."
+              goal: "The environment, the SQLite file, verification databases, and local secrets never enter the repository."
+              depends_on: []
+              acceptance: ".gitignore lists .venv/, *.db, and .env each on its own line."
+              verify: >-
+                grep -qx '.venv/' .gitignore && grep -qx '*.db' .gitignore && grep -qx '.env' .gitignore && echo ok
+              touches: [".gitignore"]
+              status: "todo"
+
+            - id: "P1-G1-T6"
+              title: "Create ta_database/settings.py reading the database URL and encryption key from the environment."
+              goal: "The package resolves its runtime connection and secret from outside the repository, so no secret or environment-specific value is committed."
+              depends_on: ["P1-G1-T4"]
+              acceptance: "get_settings() returns an object with database_url (from TA_DATABASE_URL, defaulting to a sqlite:/// URL whose absolute path is app.db beside the package inside database/) and encryption_key (from TA_DATABASE_ENCRYPTION_KEY, None when unset). An optional .env file in database/ is read when present without overriding real environment variables."
+              verify: >-
+                uv run python -c "from ta_database.settings import get_settings; s=get_settings(); assert s.database_url.startswith('sqlite:////') and s.database_url.endswith('/app.db'), s.database_url; print(s.database_url)" && TA_DATABASE_URL=sqlite:///x.db TA_DATABASE_ENCRYPTION_KEY=k uv run python -c "from ta_database.settings import get_settings; s=get_settings(); assert s.database_url=='sqlite:///x.db' and s.encryption_key=='k'; print('ok')"
+              touches: ["ta_database/settings.py"]
+              status: "todo"
+
+        # <!-------------------- P1-G2 -->
+        orm_foundation:
+          id: "P1-G2"
+          title: "Engine and declarative base"
+          does: "Builds the SQLAlchemy engine with the resolved SQLite connection settings and the declarative base every table mapping extends. When done, a session can be opened against the configured database with foreign-key enforcement on."
+          task_count: 2
+          tasks:
+            - id: "P1-G2-T1"
+              title: "Create ta_database/engine.py providing get_engine() and get_session_factory()."
+              goal: "The package can open connections to the configured SQLite file with the resolved connection behavior, and every later module obtains sessions from one place."
+              depends_on: ["P1-G1-T6"]
+              acceptance: "get_engine() builds a cached SQLAlchemy engine from settings.database_url with connect_args check_same_thread False and a connect event that executes PRAGMA foreign_keys=ON on every connection; get_session_factory() returns a sessionmaker bound to that engine. Nothing outside the package needs the engine."
+              verify: >-
+                TA_DATABASE_URL=sqlite:///verify.db uv run python -c "from sqlalchemy import text; from ta_database.engine import get_engine, get_session_factory; e=get_engine(); c=e.connect(); assert c.execute(text('PRAGMA foreign_keys')).scalar()==1; c.close(); s=get_session_factory()(); s.close(); print('ok')" && rm -f verify.db
+              touches: ["ta_database/engine.py"]
+              status: "todo"
+
+            - id: "P1-G2-T2"
+              title: "Create ta_database/models/base.py with the declarative Base and metadata naming convention."
+              goal: "Every table mapping shares one metadata object whose constraint names follow the resolved naming standard."
+              depends_on: ["P1-G1-T4"]
+              acceptance: "Base is a DeclarativeBase whose metadata naming_convention yields pk_<table>, fk_<table>_<column>_<referred_table>, uq_<table>_<column>, and ix_<table>_<column> names; ta_database/models/__init__.py exists so the package imports."
+              verify: >-
+                uv run python -c "from ta_database.models.base import Base; nc=Base.metadata.naming_convention; assert {'pk','fk','uq','ix'}<=set(nc), nc; print('ok')"
+              touches: ["ta_database/models/base.py", "ta_database/models/__init__.py"]
+              status: "todo"
+
+        # <!-------------------- P1-G3 -->
+        table_mappings:
+          id: "P1-G3"
+          title: "Table mappings"
+          does: "Maps each of the thirteen shared models to its resolved physical table exactly as storage_schema in the database configuration specifies — columns, types, nullability, defaults, credential markers, foreign keys with RESTRICT actions, named unique constraints, and named indexes — and registers them by model key. When done, the metadata describes the complete storage schema and a model key resolves to its mapped class."
+          task_count: 14
+          tasks:
+            - id: "P1-G3-T1"
+              title: "Add the User mapping for table users in ta_database/models/user.py."
+              goal: "The users table is described in metadata with its hashed credential columns marked."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class User maps __tablename__ users with exactly the columns, types, nullability, and defaults under storage_schema.tables.users; password and api_key columns carry info credential_storage hash; unique constraint uq_users_name is declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.user import User as M; t=M.__table__; assert t.name=='users'; assert {c.name for c in t.columns}=={'id','name','username','password','api_key','status','description'}; assert t.c.password.info['credential_storage']=='hash' and t.c.api_key.info['credential_storage']=='hash'; assert 'uq_users_name' in {c.name for c in t.constraints}; assert t.c.description.nullable and not t.c.name.nullable; print('ok')"
+              touches: ["ta_database/models/user.py"]
+              status: "todo"
+
+            - id: "P1-G3-T2"
+              title: "Add the Currency mapping for table currencies in ta_database/models/currency.py."
+              goal: "The currencies table is described in metadata with its three-character code and unique constraint."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class Currency maps __tablename__ currencies with exactly the columns under storage_schema.tables.currencies; code is String(3); decimal_digits defaults to 2; unique constraint uq_currencies_code is declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.currency import Currency as M; t=M.__table__; assert t.name=='currencies'; assert {c.name for c in t.columns}=={'id','name','code','symbol','country','decimal_digits','status','description'}; assert t.c.code.type.length==3; assert 'uq_currencies_code' in {c.name for c in t.constraints}; assert t.c.symbol.nullable and t.c.country.nullable; print('ok')"
+              touches: ["ta_database/models/currency.py"]
+              status: "todo"
+
+            - id: "P1-G3-T3"
+              title: "Add the TradingPlatform mapping for table trading_platforms in ta_database/models/trading_platform.py."
+              goal: "The trading_platforms table is described in metadata."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class TradingPlatform maps __tablename__ trading_platforms with exactly the columns under storage_schema.tables.trading_platforms and no constraints beyond the primary key."
+              verify: >-
+                uv run python -c "from ta_database.models.trading_platform import TradingPlatform as M; t=M.__table__; assert t.name=='trading_platforms'; assert {c.name for c in t.columns}=={'id','name','code','status','description'}; assert not [c for c in t.constraints if str(c.name).startswith('uq_')]; print('ok')"
+              touches: ["ta_database/models/trading_platform.py"]
+              status: "todo"
+
+            - id: "P1-G3-T4"
+              title: "Add the Broker mapping for table brokers in ta_database/models/broker.py."
+              goal: "The brokers table is described in metadata with its foreign keys, composite unique rule, and indexes."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class Broker maps __tablename__ brokers with exactly the columns under storage_schema.tables.brokers; user_id references users.id and trading_platform_id references trading_platforms.id, both ondelete and onupdate RESTRICT; unique constraint uq_brokers_user_id_name over (user_id, name) and indexes ix_brokers_user_id and ix_brokers_trading_platform_id are declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.broker import Broker as M; t=M.__table__; assert t.name=='brokers'; assert {c.name for c in t.columns}=={'id','name','user_id','trading_platform_id','status','description'}; fk={list(c.foreign_keys)[0].target_fullname for c in t.columns if c.foreign_keys}; assert fk=={'users.id','trading_platforms.id'}, fk; assert all(list(c.foreign_keys)[0].ondelete=='RESTRICT' and list(c.foreign_keys)[0].onupdate=='RESTRICT' for c in t.columns if c.foreign_keys); assert 'uq_brokers_user_id_name' in {c.name for c in t.constraints}; assert {i.name for i in t.indexes}=={'ix_brokers_user_id','ix_brokers_trading_platform_id'}; print('ok')"
+              touches: ["ta_database/models/broker.py"]
+              status: "todo"
+
+            - id: "P1-G3-T5"
+              title: "Add the Account mapping for table accounts in ta_database/models/account.py."
+              goal: "The accounts table is described in metadata with its encrypted credential column, foreign keys, and indexes."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class Account maps __tablename__ accounts with exactly the columns under storage_schema.tables.accounts; password carries info credential_storage encrypted; broker_id references brokers.id and base_currency_id references currencies.id with RESTRICT actions; balance is Numeric defaulting to 0; unique constraint uq_accounts_name and indexes ix_accounts_broker_id and ix_accounts_base_currency_id are declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.account import Account as M; t=M.__table__; assert t.name=='accounts'; assert {c.name for c in t.columns}=={'id','name','broker_id','base_currency_id','username','password','leverage','balance','account_type','status','description'}; assert t.c.password.info['credential_storage']=='encrypted'; fk={list(c.foreign_keys)[0].target_fullname for c in t.columns if c.foreign_keys}; assert fk=={'brokers.id','currencies.id'}, fk; assert 'uq_accounts_name' in {c.name for c in t.constraints}; assert {i.name for i in t.indexes}=={'ix_accounts_broker_id','ix_accounts_base_currency_id'}; print('ok')"
+              touches: ["ta_database/models/account.py"]
+              status: "todo"
+
+            - id: "P1-G3-T6"
+              title: "Add the Asset mapping for table assets in ta_database/models/asset.py."
+              goal: "The assets table is described in metadata with its two unique constraints."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class Asset maps __tablename__ assets with exactly the columns under storage_schema.tables.assets; point_size is Float defaulting to 0.0 and digits Integer defaulting to 0; unique constraints uq_assets_name and uq_assets_symbol are declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.asset import Asset as M; t=M.__table__; assert t.name=='assets'; assert {c.name for c in t.columns}=={'id','name','symbol','category','point_size','digits','status','description'}; assert {'uq_assets_name','uq_assets_symbol'}<={c.name for c in t.constraints}; print('ok')"
+              touches: ["ta_database/models/asset.py"]
+              status: "todo"
+
+            - id: "P1-G3-T7"
+              title: "Add the TrailingGroup mapping for table trailing_groups in ta_database/models/trailing_group.py."
+              goal: "The trailing_groups table is described in metadata."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class TrailingGroup maps __tablename__ trailing_groups with exactly the columns under storage_schema.tables.trailing_groups and unique constraint uq_trailing_groups_name declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.trailing_group import TrailingGroup as M; t=M.__table__; assert t.name=='trailing_groups'; assert {c.name for c in t.columns}=={'id','name','status','description'}; assert 'uq_trailing_groups_name' in {c.name for c in t.constraints}; print('ok')"
+              touches: ["ta_database/models/trailing_group.py"]
+              status: "todo"
+
+            - id: "P1-G3-T8"
+              title: "Add the TrailingRule mapping for table trailing_rules in ta_database/models/trailing_rule.py."
+              goal: "The trailing_rules table is described in metadata with its foreign key to trailing_groups."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class TrailingRule maps __tablename__ trailing_rules with exactly the columns under storage_schema.tables.trailing_rules; trailing_group_id references trailing_groups.id with RESTRICT actions; take_profit_adjustment and stop_loss_adjustment are nullable Numeric; unique constraint uq_trailing_rules_name and index ix_trailing_rules_trailing_group_id are declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.trailing_rule import TrailingRule as M; t=M.__table__; assert t.name=='trailing_rules'; assert {c.name for c in t.columns}=={'id','name','trailing_group_id','trigger_percentage','take_profit_adjustment','stop_loss_adjustment','status','description'}; assert list(t.c.trailing_group_id.foreign_keys)[0].target_fullname=='trailing_groups.id'; assert t.c.take_profit_adjustment.nullable and t.c.stop_loss_adjustment.nullable and not t.c.trigger_percentage.nullable; assert 'uq_trailing_rules_name' in {c.name for c in t.constraints}; assert {i.name for i in t.indexes}=={'ix_trailing_rules_trailing_group_id'}; print('ok')"
+              touches: ["ta_database/models/trailing_rule.py"]
+              status: "todo"
+
+            - id: "P1-G3-T9"
+              title: "Add the PartialGroup mapping for table partial_groups in ta_database/models/partial_group.py."
+              goal: "The partial_groups table is described in metadata."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class PartialGroup maps __tablename__ partial_groups with exactly the columns under storage_schema.tables.partial_groups and unique constraint uq_partial_groups_name declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.partial_group import PartialGroup as M; t=M.__table__; assert t.name=='partial_groups'; assert {c.name for c in t.columns}=={'id','name','status','description'}; assert 'uq_partial_groups_name' in {c.name for c in t.constraints}; print('ok')"
+              touches: ["ta_database/models/partial_group.py"]
+              status: "todo"
+
+            - id: "P1-G3-T10"
+              title: "Add the PartialRule mapping for table partial_rules in ta_database/models/partial_rule.py."
+              goal: "The partial_rules table is described in metadata with its foreign key to partial_groups."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class PartialRule maps __tablename__ partial_rules with exactly the columns under storage_schema.tables.partial_rules; partial_group_id references partial_groups.id with RESTRICT actions; unique constraint uq_partial_rules_name and index ix_partial_rules_partial_group_id are declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.partial_rule import PartialRule as M; t=M.__table__; assert t.name=='partial_rules'; assert {c.name for c in t.columns}=={'id','name','partial_group_id','profit_percentage','close_percentage','status','description'}; assert list(t.c.partial_group_id.foreign_keys)[0].target_fullname=='partial_groups.id'; assert 'uq_partial_rules_name' in {c.name for c in t.constraints}; assert {i.name for i in t.indexes}=={'ix_partial_rules_partial_group_id'}; print('ok')"
+              touches: ["ta_database/models/partial_rule.py"]
+              status: "todo"
+
+            - id: "P1-G3-T11"
+              title: "Add the ActionGroup mapping for table action_groups in ta_database/models/action_group.py."
+              goal: "The action_groups table is described in metadata."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class ActionGroup maps __tablename__ action_groups with exactly the columns under storage_schema.tables.action_groups and unique constraint uq_action_groups_name declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.action_group import ActionGroup as M; t=M.__table__; assert t.name=='action_groups'; assert {c.name for c in t.columns}=={'id','name','status','description'}; assert 'uq_action_groups_name' in {c.name for c in t.constraints}; print('ok')"
+              touches: ["ta_database/models/action_group.py"]
+              status: "todo"
+
+            - id: "P1-G3-T12"
+              title: "Add the Action mapping for table actions in ta_database/models/action.py."
+              goal: "The actions table is described in metadata with its five foreign keys and their indexes."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class Action maps __tablename__ actions with exactly the columns under storage_schema.tables.actions; action_group_id, asset_id, account_id, partial_group_id, and trailing_group_id reference action_groups.id, assets.id, accounts.id, partial_groups.id, and trailing_groups.id with RESTRICT actions; unique constraint uq_actions_name and the five ix_actions_<column> indexes are declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.action import Action as M; t=M.__table__; assert t.name=='actions'; assert {c.name for c in t.columns}=={'id','name','action_group_id','asset_id','account_id','partial_group_id','trailing_group_id','risk_by_reward','take_profit','stop_loss','status','description'}; fk={list(c.foreign_keys)[0].target_fullname for c in t.columns if c.foreign_keys}; assert fk=={'action_groups.id','assets.id','accounts.id','partial_groups.id','trailing_groups.id'}, fk; assert 'uq_actions_name' in {c.name for c in t.constraints}; assert {i.name for i in t.indexes}=={'ix_actions_action_group_id','ix_actions_asset_id','ix_actions_account_id','ix_actions_partial_group_id','ix_actions_trailing_group_id'}; print('ok')"
+              touches: ["ta_database/models/action.py"]
+              status: "todo"
+
+            - id: "P1-G3-T13"
+              title: "Add the Position mapping for table positions in ta_database/models/position.py."
+              goal: "The positions table is described in metadata with its seven foreign keys, datetime, and numeric columns."
+              depends_on: ["P1-G2-T2"]
+              acceptance: "Class Position maps __tablename__ positions with exactly the columns under storage_schema.tables.positions; the seven relationship columns reference trading_platforms, brokers, accounts, trailing_groups, partial_groups, action_groups, and actions by id with RESTRICT actions; date is DateTime, profit defaults to 0, is_executed defaults to false; unique constraint uq_positions_name and the seven ix_positions_<column> indexes are declared by name."
+              verify: >-
+                uv run python -c "from ta_database.models.position import Position as M; t=M.__table__; assert t.name=='positions'; assert {c.name for c in t.columns}=={'id','name','trading_platform_id','broker_id','account_id','trailing_group_id','partial_group_id','action_group_id','action_id','date','volume','profit','is_executed','order_type','base_tp','base_sl','real_tp','real_sl','status','description'}; fk={list(c.foreign_keys)[0].target_fullname for c in t.columns if c.foreign_keys}; assert fk=={'trading_platforms.id','brokers.id','accounts.id','trailing_groups.id','partial_groups.id','action_groups.id','actions.id'}, fk; assert 'uq_positions_name' in {c.name for c in t.constraints}; assert len(t.indexes)==7 and all(i.name.startswith('ix_positions_') for i in t.indexes); print('ok')"
+              touches: ["ta_database/models/position.py"]
+              status: "todo"
+
+            - id: "P1-G3-T14"
+              title: "Add MODEL_REGISTRY to ta_database/models/__init__.py mapping every model key to its mapped class."
+              goal: "A caller's model key, exactly as indexed in the shared model configuration, resolves to one mapped class, and importing the models package registers all thirteen tables on Base.metadata."
+              depends_on: ["P1-G3-T1", "P1-G3-T2", "P1-G3-T3", "P1-G3-T4", "P1-G3-T5", "P1-G3-T6", "P1-G3-T7", "P1-G3-T8", "P1-G3-T9", "P1-G3-T10", "P1-G3-T11", "P1-G3-T12", "P1-G3-T13"]
+              acceptance: "MODEL_REGISTRY is a dict whose keys are exactly user, currency, trading_platform, broker, account, asset, trailing_group, trailing_rule, partial_group, partial_rule, action_group, action, position, each mapped to its class; Base.metadata.tables holds exactly the thirteen resolved table names after import."
+              verify: >-
+                uv run python -c "from ta_database.models import MODEL_REGISTRY, Base; assert set(MODEL_REGISTRY)=={'user','currency','trading_platform','broker','account','asset','trailing_group','trailing_rule','partial_group','partial_rule','action_group','action','position'}; assert set(Base.metadata.tables)=={'users','currencies','trading_platforms','brokers','accounts','assets','trailing_groups','trailing_rules','partial_groups','partial_rules','action_groups','actions','positions'}; assert MODEL_REGISTRY['trading_platform'].__tablename__=='trading_platforms'; print('ok')"
+              touches: ["ta_database/models/__init__.py"]
+              status: "todo"
+
+        # <!-------------------- P1-G4 -->
+        credentials:
+          id: "P1-G4"
+          title: "Credential transformations"
+          does: "Implements the at-rest transformations the storage schema assigns to credential columns — one-way hashing, reversible encryption keyed from runtime configuration, and secure value generation — and the single function that applies them to a write. When done, a credential value never reaches a table untransformed and the encryption key never lives in the repository."
+          task_count: 4
+          tasks:
+            - id: "P1-G4-T1"
+              title: "Create ta_database/credentials/hashing.py with hash_credential() and verify_credential()."
+              goal: "A credential resolved to hash mode is stored as an unrecoverable salted hash that can still be verified."
+              depends_on: ["P1-G1-T4"]
+              acceptance: "hash_credential(value) returns a self-describing string of the form scrypt$<salt>$<digest> using hashlib.scrypt with a fresh random salt per call; verify_credential(value, stored) returns True only for the original value using a constant-time comparison; ta_database/credentials/__init__.py exists."
+              verify: >-
+                uv run python -c "from ta_database.credentials.hashing import hash_credential, verify_credential; h=hash_credential('s3cret'); assert h.startswith('scrypt$') and h!=hash_credential('s3cret'); assert verify_credential('s3cret', h) and not verify_credential('other', h); print('ok')"
+              touches: ["ta_database/credentials/__init__.py", "ta_database/credentials/hashing.py"]
+              status: "todo"
+
+            - id: "P1-G4-T2"
+              title: "Create ta_database/credentials/encryption.py with encrypt_credential() and decrypt_credential() keyed from settings."
+              goal: "A credential resolved to encrypted mode is stored reversibly, with the key supplied only by runtime configuration."
+              depends_on: ["P1-G1-T6", "P1-G1-T3"]
+              acceptance: "encrypt_credential(value) returns a Fernet token string using the key from settings.encryption_key and decrypt_credential(token) returns the original value; when the key is unset both raise MissingEncryptionKey (defined in the same module) instead of falling back to a built-in key."
+              verify: >-
+                TA_DATABASE_ENCRYPTION_KEY=$(uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())") uv run python -c "from ta_database.credentials.encryption import encrypt_credential, decrypt_credential; t=encrypt_credential('pw'); assert t!='pw' and decrypt_credential(t)=='pw'; print('ok')" && env -u TA_DATABASE_ENCRYPTION_KEY uv run python -c "from ta_database.credentials.encryption import encrypt_credential, MissingEncryptionKey; import sys; exec('try:\n    encrypt_credential(\"pw\")\nexcept MissingEncryptionKey:\n    print(\"ok\")\nelse:\n    sys.exit(1)')"
+              touches: ["ta_database/credentials/encryption.py"]
+              status: "todo"
+
+            - id: "P1-G4-T3"
+              title: "Create ta_database/credentials/generation.py with generate_secret()."
+              goal: "Seed records marked Generate securely receive a cryptographically random value instead of an invented one."
+              depends_on: ["P1-G1-T4"]
+              acceptance: "generate_secret(length=32) returns a URL-safe string from secrets.token_urlsafe with at least the requested number of characters, different on every call."
+              verify: >-
+                uv run python -c "from ta_database.credentials.generation import generate_secret; a=generate_secret(); b=generate_secret(); assert a!=b and len(a)>=32; print('ok')"
+              touches: ["ta_database/credentials/generation.py"]
+              status: "todo"
+
+            - id: "P1-G4-T4"
+              title: "Create ta_database/credentials/transform.py with apply_write_transforms() driven by column credential_storage info."
+              goal: "One function transforms every credential field in a write according to the mode recorded on its column, so no caller and no operation decides the mode itself."
+              depends_on: ["P1-G4-T1", "P1-G4-T2", "P1-G3-T14"]
+              acceptance: "apply_write_transforms(model_class, data) returns a new dict in which each key whose column carries info credential_storage hash is replaced by hash_credential and each with encrypted by encrypt_credential, leaving every other key untouched; credential_columns(model_class) returns the set of credential column names."
+              verify: >-
+                TA_DATABASE_ENCRYPTION_KEY=$(uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())") uv run python -c "from ta_database.credentials.transform import apply_write_transforms, credential_columns; from ta_database.models import MODEL_REGISTRY as R; assert credential_columns(R['user'])=={'password','api_key'} and credential_columns(R['account'])=={'password'} and credential_columns(R['asset'])==set(); u=apply_write_transforms(R['user'], {'name':'n','password':'p','api_key':'k'}); assert u['name']=='n' and u['password'].startswith('scrypt$') and u['api_key'].startswith('scrypt$'); a=apply_write_transforms(R['account'], {'password':'p'}); assert a['password']!='p' and not a['password'].startswith('scrypt$'); print('ok')"
+              touches: ["ta_database/credentials/transform.py"]
+              status: "todo"
+
+        # <!-------------------- P1-G5 -->
+        migrations:
+          id: "P1-G5"
+          title: "Migrations"
+          does: "Sets up Alembic against the package metadata and writes the initial reversible revision that creates the complete storage schema. When done, an empty database file is brought to the full schema by upgrade head, returned to nothing by downgrade base, and alembic check reports no drift."
+          task_count: 3
+          tasks:
+            - id: "P1-G5-T1"
+              title: "Create alembic.ini and the migrations/ script directory."
+              goal: "Alembic commands run from database/ and find their script directory."
+              depends_on: ["P1-G1-T3"]
+              acceptance: "alembic.ini sets script_location = migrations and file_template = %%(rev)s_%%(slug)s; migrations/ holds env.py, script.py.mako, and an empty versions/ directory (with a .gitkeep); uv run alembic history exits 0."
+              verify: >-
+                test -f alembic.ini && test -f migrations/env.py && test -f migrations/script.py.mako && test -d migrations/versions && uv run alembic history && echo ok
+              touches: ["alembic.ini", "migrations/env.py", "migrations/script.py.mako", "migrations/versions/.gitkeep"]
+              status: "todo"
+
+            - id: "P1-G5-T2"
+              title: "Wire migrations/env.py to the package metadata and runtime settings."
+              goal: "Autogenerate compares against the real table mappings and every migration runs against the URL from runtime configuration, never a URL written in alembic.ini."
+              depends_on: ["P1-G5-T1", "P1-G3-T14", "P1-G2-T1"]
+              acceptance: "env.py imports ta_database.models so all tables register, sets target_metadata = Base.metadata, overrides sqlalchemy.url with settings.database_url at runtime, and configures the context with render_as_batch=True for SQLite; alembic.ini carries no sqlalchemy.url value."
+              verify: >-
+                grep -q 'target_metadata = Base.metadata' migrations/env.py && grep -q 'render_as_batch=True' migrations/env.py && ! grep -Eq '^sqlalchemy.url *= *.+' alembic.ini && TA_DATABASE_URL=sqlite:///verify.db uv run alembic current && rm -f verify.db && echo ok
+              touches: ["migrations/env.py", "alembic.ini"]
+              status: "todo"
+
+            - id: "P1-G5-T3"
+              title: "Add revision 0001_initial_schema creating all thirteen tables with their constraints and indexes."
+              goal: "The complete storage schema can be created from nothing and dropped again through the migration history alone."
+              depends_on: ["P1-G5-T2"]
+              acceptance: "migrations/versions/0001_initial_schema.py has revision id 0001 and down_revision None; upgrade() creates every table in storage_schema in dependency order with its columns, primary keys, foreign keys with RESTRICT actions, named unique constraints, and named indexes; downgrade() drops them in reverse order; after upgrade head, alembic check reports no changes; downgrade base then upgrade head succeeds on the same file."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db && uv run alembic upgrade head && uv run alembic check && uv run python -c "from sqlalchemy import inspect; from ta_database.engine import get_engine; i=inspect(get_engine()); assert {'users','currencies','trading_platforms','brokers','accounts','assets','trailing_groups','trailing_rules','partial_groups','partial_rules','action_groups','actions','positions'}<=set(i.get_table_names()); assert {x['name'] for x in i.get_indexes('actions')}=={'ix_actions_action_group_id','ix_actions_asset_id','ix_actions_account_id','ix_actions_partial_group_id','ix_actions_trailing_group_id'}; assert {x['name'] for x in i.get_unique_constraints('brokers')}=={'uq_brokers_user_id_name'}; print('ok')" && uv run alembic downgrade base && uv run alembic upgrade 0001 && rm -f verify.db
+              touches: ["migrations/versions/0001_initial_schema.py"]
+              status: "todo"
+
+        # <!-------------------- P1-G6 -->
+        data_access_interface:
+          id: "P1-G6"
+          title: "Generic data-access interface"
+          does: "Implements the one generic interface every consumer uses — model selection by key, create, read, list, update, delete, status, and parameterized SQL execution — with credential transformation on write, credential redaction on read, and no exposure of the engine, connection, or mappings. When done, the backend can perform every published operation on every model by importing the package."
+          task_count: 11
+          tasks:
+            - id: "P1-G6-T1"
+              title: "Create ta_database/interface/errors.py with the interface's exception hierarchy."
+              goal: "Consumers handle persistence failures through named interface errors instead of engine or ORM exceptions."
+              depends_on: ["P1-G1-T4"]
+              acceptance: "DataAccessError is the base; UnknownModel, RecordNotFound, InvalidField, InvalidAction, UnsupportedOperation, and IntegrityViolation subclass it; ta_database/interface/__init__.py exists."
+              verify: >-
+                uv run python -c "from ta_database.interface import errors as e; assert all(issubclass(getattr(e,n), e.DataAccessError) for n in ['UnknownModel','RecordNotFound','InvalidField','InvalidAction','UnsupportedOperation','IntegrityViolation']); print('ok')"
+              touches: ["ta_database/interface/__init__.py", "ta_database/interface/errors.py"]
+              status: "todo"
+
+            - id: "P1-G6-T2"
+              title: "Create ta_database/interface/serialization.py with to_record() that redacts credential columns."
+              goal: "Every record the interface returns is a plain dict that never contains a credential column."
+              depends_on: ["P1-G3-T14", "P1-G6-T1"]
+              acceptance: "to_record(instance) returns a dict of column name to value for every mapped column of the instance's table except columns carrying credential_storage info."
+              verify: >-
+                uv run python -c "from ta_database.interface.serialization import to_record; from ta_database.models import MODEL_REGISTRY as R; u=R['user'](name='n',username='u',password='p',api_key='k',status=True); r=to_record(u); assert set(r)=={'id','name','username','status','description'}, r; print('ok')"
+              touches: ["ta_database/interface/serialization.py"]
+              status: "todo"
+
+            - id: "P1-G6-T3"
+              title: "Create ta_database/interface/data_access.py with the DataAccess class, model resolution, and session scoping."
+              goal: "There is one object through which every operation is performed, and it resolves a model key to its mapping without exposing the engine or a connection."
+              depends_on: ["P1-G2-T1", "P1-G3-T14", "P1-G6-T1"]
+              acceptance: "DataAccess(session_factory) stores the factory privately; _resolve(model_key) returns the class from MODEL_REGISTRY or raises UnknownModel; _session() is a context manager that commits on success and rolls back on error; no public attribute or method returns an engine, connection, session, or mapped class."
+              verify: >-
+                TA_DATABASE_URL=sqlite:///verify.db uv run python -c "from ta_database.interface.data_access import DataAccess; from ta_database.interface.errors import UnknownModel; from ta_database.engine import get_session_factory; da=DataAccess(get_session_factory()); assert da._resolve('broker').__tablename__=='brokers'; pub=[n for n in dir(da) if not n.startswith('_')]; assert not any(k in n.lower() for n in pub for k in ('engine','connection','session')), pub; import sys; exec('try:\n    da._resolve(\"nope\")\nexcept UnknownModel:\n    print(\"ok\")\nelse:\n    sys.exit(1)')" && rm -f verify.db
+              touches: ["ta_database/interface/data_access.py"]
+              status: "todo"
+
+            - id: "P1-G6-T4"
+              title: "Implement DataAccess.create(model, data)."
+              goal: "A consumer can insert one record for any model by key and receive it back redacted."
+              depends_on: ["P1-G6-T3", "P1-G6-T2", "P1-G4-T4", "P1-G5-T3"]
+              acceptance: "create validates that every key in data names a mapped column (else InvalidField), applies apply_write_transforms, inserts the row, and returns to_record of the persisted instance including its generated id; a uniqueness or foreign-key failure raises IntegrityViolation."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db TA_DATABASE_ENCRYPTION_KEY=$(uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())") && uv run alembic upgrade 0001 && uv run python -c "from ta_database.interface.data_access import DataAccess; from ta_database.interface.errors import InvalidField, IntegrityViolation; from ta_database.engine import get_session_factory; import sys; da=DataAccess(get_session_factory()); r=da.create('user', {'name':'v1','username':'v1','password':'p','api_key':'k'}); assert r['id']==1 and 'password' not in r and r['status'] is True; exec('try:\n    da.create(\"user\", {\"name\":\"v1\",\"username\":\"x\",\"password\":\"p\",\"api_key\":\"k\"})\nexcept IntegrityViolation:\n    pass\nelse:\n    sys.exit(1)'); exec('try:\n    da.create(\"user\", {\"bogus\":1})\nexcept InvalidField:\n    print(\"ok\")\nelse:\n    sys.exit(1)')" && rm -f verify.db
+              touches: ["ta_database/interface/data_access.py"]
+              status: "todo"
+
+            - id: "P1-G6-T5"
+              title: "Implement DataAccess.read(model, record_id)."
+              goal: "A consumer can fetch one record of any model by primary key."
+              depends_on: ["P1-G6-T4"]
+              acceptance: "read returns to_record of the row with that primary key, or None when no such row exists."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db && uv run alembic upgrade 0001 && uv run python -c "from ta_database.interface.data_access import DataAccess; from ta_database.engine import get_session_factory; da=DataAccess(get_session_factory()); c=da.create('currency', {'name':'Test','code':'TST'}); r=da.read('currency', c['id']); assert r==c and r['decimal_digits']==2; assert da.read('currency', 999) is None; print('ok')" && rm -f verify.db
+              touches: ["ta_database/interface/data_access.py"]
+              status: "todo"
+
+            - id: "P1-G6-T6"
+              title: "Implement DataAccess.list(model, filters=None, order_by=None, limit=None, offset=None)."
+              goal: "A consumer can retrieve records of any model with equality filters, ordering, and paging."
+              depends_on: ["P1-G6-T4"]
+              acceptance: "list returns a list of to_record dicts; filters is a dict of column name to value applied as equality; order_by is a column name optionally prefixed with - for descending; limit and offset page the result; an unknown column in filters or order_by raises InvalidField."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db && uv run alembic upgrade 0001 && uv run python -c "from ta_database.interface.data_access import DataAccess; from ta_database.interface.errors import InvalidField; from ta_database.engine import get_session_factory; import sys; da=DataAccess(get_session_factory()); [da.create('asset', {'name':n,'symbol':n,'category':c}) for n,c in [('A','x'),('B','y'),('C','x')]]; assert [r['name'] for r in da.list('asset', filters={'category':'x'}, order_by='-name')]==['C','A']; assert len(da.list('asset', limit=2, offset=1))==2; exec('try:\n    da.list(\"asset\", filters={\"nope\":1})\nexcept InvalidField:\n    print(\"ok\")\nelse:\n    sys.exit(1)')" && rm -f verify.db
+              touches: ["ta_database/interface/data_access.py"]
+              status: "todo"
+
+            - id: "P1-G6-T7"
+              title: "Implement DataAccess.update(model, record_id, data)."
+              goal: "A consumer can change fields of one existing record of any model, with credentials transformed on the way in."
+              depends_on: ["P1-G6-T4"]
+              acceptance: "update validates keys like create, applies apply_write_transforms, updates the row with that primary key, and returns to_record of the result; a missing row raises RecordNotFound; a constraint failure raises IntegrityViolation."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db && uv run alembic upgrade 0001 && uv run python -c "from ta_database.interface.data_access import DataAccess; from ta_database.interface.errors import RecordNotFound; from ta_database.engine import get_session_factory; from ta_database.credentials.hashing import verify_credential; from sqlalchemy import text; import sys; da=DataAccess(get_session_factory()); u=da.create('user', {'name':'v','username':'v','password':'p','api_key':'k'}); r=da.update('user', u['id'], {'username':'w','password':'q'}); assert r['username']=='w' and 'password' not in r; stored=da.execute_sql('select password from users where id=:i', {'i':u['id']})[0]['password'] if hasattr(da,'execute_sql') else None; assert stored is None or verify_credential('q', stored); exec('try:\n    da.update(\"user\", 999, {\"username\":\"z\"})\nexcept RecordNotFound:\n    print(\"ok\")\nelse:\n    sys.exit(1)')" && rm -f verify.db
+              touches: ["ta_database/interface/data_access.py"]
+              status: "todo"
+
+            - id: "P1-G6-T8"
+              title: "Implement DataAccess.delete(model, record_id)."
+              goal: "A consumer can remove one record of any model, and referential integrity is enforced rather than bypassed."
+              depends_on: ["P1-G6-T4"]
+              acceptance: "delete removes the row with that primary key and returns None; a missing row raises RecordNotFound; deleting a row still referenced through a RESTRICT foreign key raises IntegrityViolation and leaves the row in place."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db && uv run alembic upgrade 0001 && uv run python -c "from ta_database.interface.data_access import DataAccess; from ta_database.interface.errors import RecordNotFound, IntegrityViolation; from ta_database.engine import get_session_factory; import sys; da=DataAccess(get_session_factory()); u=da.create('user', {'name':'v','username':'v','password':'p','api_key':'k'}); p=da.create('trading_platform', {'name':'P','code':'p'}); b=da.create('broker', {'name':'B','user_id':u['id'],'trading_platform_id':p['id']}); exec('try:\n    da.delete(\"user\", u[\"id\"])\nexcept IntegrityViolation:\n    pass\nelse:\n    sys.exit(1)'); assert da.read('user', u['id']) is not None; da.delete('broker', b['id']); assert da.read('broker', b['id']) is None; exec('try:\n    da.delete(\"broker\", b[\"id\"])\nexcept RecordNotFound:\n    print(\"ok\")\nelse:\n    sys.exit(1)')" && rm -f verify.db
+              touches: ["ta_database/interface/data_access.py"]
+              status: "todo"
+
+            - id: "P1-G6-T9"
+              title: "Implement DataAccess.status(model, record_id, action)."
+              goal: "A consumer can enable or disable one record of any model that declares a status field, and nothing else."
+              depends_on: ["P1-G6-T4"]
+              acceptance: "status accepts exactly enable or disable (else InvalidAction), raises UnsupportedOperation when the model's table has no status column, sets status to True for enable and False for disable, raises RecordNotFound for a missing row, and returns to_record of the result; it never accepts other field changes."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db && uv run alembic upgrade 0001 && uv run python -c "from ta_database.interface.data_access import DataAccess; from ta_database.interface.errors import InvalidAction; from ta_database.engine import get_session_factory; import sys; da=DataAccess(get_session_factory()); g=da.create('action_group', {'name':'G'}); assert da.status('action_group', g['id'], 'disable')['status'] is False; assert da.status('action_group', g['id'], 'enable')['status'] is True; exec('try:\n    da.status(\"action_group\", g[\"id\"], \"toggle\")\nexcept InvalidAction:\n    print(\"ok\")\nelse:\n    sys.exit(1)')" && rm -f verify.db
+              touches: ["ta_database/interface/data_access.py"]
+              status: "todo"
+
+            - id: "P1-G6-T10"
+              title: "Implement DataAccess.execute_sql(command, params=None)."
+              goal: "A consumer can run a controlled SQL command that the standard operations cannot express, with values bound as parameters and no access to the connection."
+              depends_on: ["P1-G6-T4"]
+              acceptance: "execute_sql wraps command in sqlalchemy.text, binds params by name, and returns a list of row dicts for a statement that yields rows or the affected rowcount otherwise; it rejects a non-string command with InvalidField and never returns a connection, cursor, or result proxy."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db && uv run alembic upgrade 0001 && uv run python -c "from ta_database.interface.data_access import DataAccess; from ta_database.engine import get_session_factory; da=DataAccess(get_session_factory()); da.create('currency', {'name':'Test','code':'TST'}); rows=da.execute_sql('select code from currencies where name = :n', {'n':'Test'}); assert rows==[{'code':'TST'}], rows; n=da.execute_sql('update currencies set status = :s where code = :c', {'s':False,'c':'TST'}); assert n==1; print('ok')" && rm -f verify.db
+              touches: ["ta_database/interface/data_access.py"]
+              status: "todo"
+
+            - id: "P1-G6-T11"
+              title: "Export the public interface from ta_database/__init__.py with an open_data_access() factory."
+              goal: "The backend imports one package root and receives a ready DataAccess built from runtime settings, plus the interface errors."
+              depends_on: ["P1-G6-T5", "P1-G6-T6", "P1-G6-T7", "P1-G6-T8", "P1-G6-T9", "P1-G6-T10"]
+              acceptance: "from ta_database import open_data_access, DataAccess, errors works; open_data_access() returns a DataAccess bound to get_session_factory(); __all__ lists exactly those names plus __version__; the package root exports no engine, session, or model class."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db && uv run alembic upgrade 0001 && uv run python -c "import ta_database as p; from ta_database import open_data_access, DataAccess, errors; da=open_data_access(); assert isinstance(da, DataAccess); assert set(p.__all__)=={'open_data_access','DataAccess','errors','__version__'}, p.__all__; assert da.list('user')==[]; print('ok')" && rm -f verify.db
+              touches: ["ta_database/__init__.py"]
+              status: "todo"
+
+        # <!-------------------- P1-G7 -->
+        seed_data:
+          id: "P1-G7"
+          title: "Seed data"
+          does: "Materializes the project's initial records as code and applies them through an idempotent data migration in dependency order, generating secure values where the project says so. When done, upgrade head on an empty file yields the full schema with every declared initial record present exactly once, and the phase goal is met."
+          task_count: 3
+          tasks:
+            - id: "P1-G7-T1"
+              title: "Create ta_database/seed/records.py holding the initial records and their natural keys per table."
+              goal: "The project's initial data lives in the repository as ordered, table-mapped records with no invented values."
+              depends_on: ["P1-G3-T14"]
+              acceptance: "SEED is an ordered list of entries (model_key, natural_key tuple, records) for users, currencies, trading_platforms, brokers, accounts, assets, trailing_groups, partial_groups, action_groups, actions in that order, with records copied exactly from capabilities.seed_data.records of the database configuration; a GENERATE sentinel marks every value the project says to generate securely; natural keys are name for users, code for currencies, name for trading_platforms, (user_id, name) for brokers, name for accounts, symbol for assets, and name for the three groups and for actions; ta_database/seed/__init__.py exists."
+              verify: >-
+                uv run python -c "from ta_database.seed.records import SEED, GENERATE; keys=[e[0] for e in SEED]; assert keys==['user','currency','trading_platform','broker','account','asset','trailing_group','partial_group','action_group','action'], keys; d=dict((e[0], e[2]) for e in SEED); assert len(d['currency'])==8 and d['currency'][3]['code']=='JPY' and d['currency'][3]['decimal_digits']==0; assert d['user'][0]['password'] is GENERATE and d['account'][0]['password'] is GENERATE; assert d['broker'][0]=={'name':'FxPro','user_id':1,'trading_platform_id':1}; assert d['action'][0]['risk_by_reward']==1; nk=dict((e[0], e[1]) for e in SEED); assert nk['broker']==('user_id','name') and nk['asset']==('symbol',); print('ok')"
+              touches: ["ta_database/seed/__init__.py", "ta_database/seed/records.py"]
+              status: "todo"
+
+            - id: "P1-G7-T2"
+              title: "Create ta_database/seed/apply.py with apply_seed(session) and remove_seed(session)."
+              goal: "Seeding is repeatable — a record that already exists by its natural key is left alone, literal relationship ids are written exactly, generated values are produced securely, and the seed can be reversed."
+              depends_on: ["P1-G7-T1", "P1-G4-T4", "P1-G4-T3"]
+              acceptance: "apply_seed(session) walks SEED in order; for each record it looks up the row by natural key, and when absent replaces every GENERATE value with generate_secret(), applies apply_write_transforms, and inserts with every literal value including relationship ids unchanged; it returns a dict of model key to number inserted, plus a generated mapping of (model key, natural key values, field) to the plain generated value so the operator can record it once — the plain value is never persisted. remove_seed(session) deletes the seeded rows by natural key in reverse order and returns counts. Running apply_seed twice inserts nothing the second time."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db TA_DATABASE_ENCRYPTION_KEY=$(uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())") && uv run alembic upgrade 0001 && uv run python -c "from ta_database.seed.apply import apply_seed, remove_seed; from ta_database.engine import get_session_factory; from sqlalchemy import text; S=get_session_factory(); s=S(); r1=apply_seed(s); s.commit(); assert r1['inserted']['currency']==8 and r1['inserted']['user']==1 and r1['inserted']['action']==1; assert any(k[0]=='user' and k[2]=='password' for k in r1['generated']); r2=apply_seed(s); s.commit(); assert sum(r2['inserted'].values())==0, r2; assert s.execute(text('select count(*) from currencies')).scalar()==8; assert s.execute(text('select user_id, trading_platform_id from brokers')).one()==(1,1); assert s.execute(text('select password from users')).scalar().startswith('scrypt$'); r3=remove_seed(s); s.commit(); assert s.execute(text('select count(*) from users')).scalar()==0 and s.execute(text('select count(*) from actions')).scalar()==0; print('ok')" && rm -f verify.db
+              touches: ["ta_database/seed/apply.py"]
+              status: "todo"
+
+            - id: "P1-G7-T3"
+              title: "Add revision 0002_seed_initial_data applying and reversing the seed."
+              goal: "A fresh checkout reaches the complete schema and the complete initial data through upgrade head alone, and can step back to the bare schema."
+              depends_on: ["P1-G7-T2", "P1-G5-T3"]
+              acceptance: "migrations/versions/0002_seed_initial_data.py has revision id 0002 and down_revision 0001; upgrade() opens a Session on op.get_bind(), calls apply_seed, commits, and writes each generated plain value once to stderr with its model, natural key, and field; downgrade() calls remove_seed; upgrade head on an empty file leaves 1 user, 8 currencies, 2 trading platforms, 1 broker, 1 account, 4 assets, 1 trailing group, 1 partial group, 1 action group, and 1 action; downgrade 0001 removes them all; upgrade head again succeeds."
+              verify: >-
+                rm -f verify.db && export TA_DATABASE_URL=sqlite:///verify.db TA_DATABASE_ENCRYPTION_KEY=$(uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())") && uv run alembic upgrade head && uv run python -c "from ta_database import open_data_access; da=open_data_access(); c=lambda m: len(da.list(m)); assert (c('user'),c('currency'),c('trading_platform'),c('broker'),c('account'),c('asset'),c('trailing_group'),c('partial_group'),c('action_group'),c('action'))==(1,8,2,1,1,4,1,1,1,1); assert da.list('account')[0]['name']=='Acc-1' and 'password' not in da.list('account')[0]; print('seeded')" && uv run alembic downgrade 0001 && uv run python -c "from ta_database import open_data_access; da=open_data_access(); assert da.list('user')==[] and da.list('currency')==[]; print('reversed')" && uv run alembic upgrade head && uv run alembic check && rm -f verify.db && echo ok
+              touches: ["migrations/versions/0002_seed_initial_data.py"]
+              status: "todo"
 
     P2:
       id: "P2"
