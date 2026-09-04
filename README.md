@@ -38,7 +38,7 @@ The `.interface/` directory contains four main parts:
 - **`root.yaml`** — The entry point. Maps the folders and files of the Interface, the Agent Skills, and the working modes.
 - **`project.md`** — The project definition and the Developer's requirements, in natural language.
 - **`schema/`** — Defines generated-file shapes. Each item Schema also owns that item's Policy and Preferences.
-- **`config/`** — Represents and maintains the project's Understanding according to the Schema.
+- **`config/`** — Represents and maintains the project's Understanding according to the Schema. `definition.yaml` describes the project, while `model.yaml` provides the shared logical model definition consumed by Database, Backend, and Frontend.
 
 The Interface currently supports three target item types:
 

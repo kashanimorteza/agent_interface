@@ -1,13 +1,12 @@
 schema:
   id: agent-interface-definition
-  version: "2.10"
-  purpose: "The shape of definition.yaml — every parameter an agent reads to understand what the product is"
+  version: "3.0"
+  purpose: "The shape of definition.yaml — the project's identity, goals, conceptual architecture, and ordered phases"
   phase_model: "Project phases are the primary units of planning, development, review, and progress. A phase's target selects the item configuration, Policy, contracts, and code_path used for that phase. Any number of phases may target the same item."
 
 structure:
   - identity
   - goals
-  - models
   - architecture
   - phases
 
@@ -29,81 +28,6 @@ sections:
   goals:
     required: true
     purpose: "What a user can do when the product is finished — one capability per line, copied faithfully from project.md. Project phases translate these product capabilities into ordered implementation goals."
-
-  # <!--------------------------------------------------------------------------------- Models -->
-  models:
-    required: true
-    purpose: "The project's domain entities and their explicitly declared fields, relationships, and domain rules. Field-level keys and uniqueness are declared on their fields. Physical table names, foreign-key columns, indexes, and storage details remain owned by the target item."
-    fields:
-      "<model>":
-        required: true
-        purpose: "One domain model from project.md. Its key is the model heading normalized to lower_snake_case, and entries remain in project order."
-        fields:
-          purpose:
-            required: true
-            purpose: "What the model represents, copied faithfully from the model's Purpose in project.md."
-          fields:
-            required: true
-            purpose: "The complete set of fields explicitly declared for this model, including any relationship fields named by the project; empty when the project declares none."
-            fields:
-              "<field>":
-                required: false
-                purpose: "One declared model field, keyed by its lower_snake_case name."
-                fields:
-                  type:
-                    required: true
-                    purpose: "The field's project-declared data type."
-                  size:
-                    required: false
-                    purpose: "The project-declared size or precision when the type uses one; omitted when unspecified or inapplicable."
-                  nullable:
-                    required: true
-                    purpose: "Whether the field may contain a null value. This describes stored model data, not whether an API caller must provide the field."
-                  default:
-                    required: false
-                    purpose: "The explicit project default, omitted when none is declared."
-                  auto_increment:
-                    required: false
-                    purpose: "Whether the project explicitly requires an incrementing generated value."
-                  primary_key:
-                    required: false
-                    purpose: "Whether this field is the model's primary key; omitted when false."
-                  unique:
-                    required: false
-                    purpose: "Whether this field must be unique by itself; omitted when false. Multi-field uniqueness is expressed as a model rule."
-                  purpose:
-                    required: false
-                    purpose: "The field's domain meaning when its name and type are not sufficient."
-          relationships:
-            required: false
-            purpose: "The model's conceptual relationships and any explicitly declared linking fields. Omitted when none are declared. Physical foreign-key constraints are resolved only by the owning target item."
-            fields:
-              "<relationship>":
-                required: false
-                purpose: "One relationship declared by the project."
-                fields:
-                  type:
-                    required: true
-                    purpose: "The relationship kind stated by the project, such as belongs_to."
-                  target:
-                    required: true
-                    purpose: "The related model key, normalized by the same rule as model keys."
-                  field:
-                    required: false
-                    purpose: "The declared model field that carries this relationship, such as an explicitly stated foreign-key field; omitted when the project leaves physical field resolution to the owning target item."
-                  role:
-                    required: false
-                    purpose: "The relationship's semantic role when the model has more than one relationship to the same target, such as source or destination; absent for an unqualified relationship."
-          rules:
-            required: false
-            purpose: "Model-specific domain rules that cannot be expressed by one field or relationship, such as uniqueness across multiple fields or relationships. Omitted when the model has no such rule."
-          initial_data:
-            required: false
-            purpose: "The ordered initial records explicitly declared for this model, omitted when none are declared. Record keys must name declared model fields; omitted values remain subject to the field's nullability, default, and generation behavior."
-            fields:
-              "<record>":
-                required: false
-                purpose: "One initial model record. Each entry is either an explicit field value or an explicit generation instruction preserved from project.md; values are never invented."
 
   # <!--------------------------------------------------------------------------------- Architecture -->
   architecture:

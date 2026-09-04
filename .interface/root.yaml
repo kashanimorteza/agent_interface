@@ -3,7 +3,7 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "2.2"
+  version: "2.3"
   updated: "2026-09-04"
 
 
@@ -56,6 +56,9 @@ content:
         - path: "definition.schema.yaml"
           responsibility: "Defines the structure and format of definition.yaml"
 
+        - path: "model.schema.yaml"
+          responsibility: "Defines the shared structure and format of model.yaml"
+
         - path: "task.schema.yaml"
           responsibility: "Defines the structure and format of task.yaml"
 
@@ -77,7 +80,10 @@ content:
 
       files:
         - path: "definition.yaml"
-          responsibility: "Project definition in structured format"
+          responsibility: "Project identity, goals, conceptual architecture, and phases in structured format"
+
+        - path: "model.yaml"
+          responsibility: "Shared logical models, fields, relationships, rules, and initial data consumed by Database, Backend, and Frontend"
 
         - path: "task.yaml"
           responsibility: "Project tasks and plans"
@@ -113,7 +119,7 @@ content:
         - "Any file under the requested phase target's code_path"
         - "A frozen contract"
         - "The requested phase's id, title, order, target, or goal in config/definition.yaml"
-        - "root.yaml, .interface/config/definition.yaml, and schema/"
+        - "root.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, and schema/"
 
     development:
       purpose: "Implement the tasks that planning defined"
@@ -126,7 +132,7 @@ content:
         - "A code_path not selected by the active phase target"
         - "A frozen contract"
         - "task_schema, task_states, phase plan identity and structure, and every field of a task other than status, blocker, and log"
-        - "root.yaml, .interface/config/definition.yaml, the item files, and schema/"
+        - "root.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, the item files, and schema/"
       plan_change: "Changing a task requires the reason written into that task's log and human approval"
 
     review:

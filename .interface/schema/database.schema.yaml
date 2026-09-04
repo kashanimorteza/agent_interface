@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-database
-  version: "2.19"
+  version: "3.0"
   purpose: "The shape of database.yaml — every parameter an agent reads to understand the independent database item"
 
 policy:
@@ -15,7 +15,7 @@ policy:
     naming: "Derive the default table name from the model name in plural_snake_case. An explicit project table name always wins."
     resolved_by: "my-interface-interpreter writes every resolved table name and its source model explicitly into the database contract."
   model_rule_resolution:
-    rule: "Preserve every model rule from definition.yaml and represent it in the owning table's database contract. No model rule is silently dropped."
+    rule: "Preserve every model rule from model.yaml and represent it in the owning table's database contract. No model rule is silently dropped."
     deterministic: "When a model rule has one unambiguous database representation, my-interface-interpreter resolves it to the corresponding constraint. For example, a rule allowing one record per combination of related models resolves to a composite unique constraint over those foreign-key fields."
     ambiguous: "When a model rule permits more than one materially different database representation, record an open question instead of choosing one."
     traceability: "Every constraint produced from a model rule records that source rule in the database contract."
@@ -25,7 +25,7 @@ policy:
     unresolved: "If a current stable version cannot be verified or the selected versions are incompatible, record an open question instead of guessing or preserving latest."
   relationship_resolution:
     rule: "When the project declares a relationship without specifying its physical field, represent it with a foreign-key field named <referenced_model_name_in_snake_case>_id. This name is derived from the referenced domain model and does not depend on whether the physical table name is singular or plural. An explicit project field or reference always wins."
-    explicit_field: "When definition.yaml binds a relationship to a declared model field, use that exact field as the foreign-key column and never generate a duplicate relationship column."
+    explicit_field: "When model.yaml binds a relationship to a declared model field, use that exact field as the foreign-key column and never generate a duplicate relationship column."
     role_naming: "When the project gives a relationship a semantic role, name its foreign-key field <role_in_snake_case>_<referenced_model_name_in_snake_case>_id, such as source_node_id or destination_node_id."
     repeated_target: "When one model has multiple relationships to the same target model and their roles are not explicit, record an open question instead of generating duplicate or guessed foreign-key names."
     referenced_key: "Reference the related table primary key unless the project explicitly names another referenced key."
@@ -37,7 +37,7 @@ policy:
     semantics: "plaintext stores the original value unchanged, hash stores a one-way representation intended only for verification, and encrypted stores a reversible encrypted representation for credentials the application must recover."
     boundary: "The database contract owns the resolved at-rest representation. The consuming backend owns the corresponding runtime transformation and never infers or changes the mode. Encryption keys and other secrets never live in the database contract or database files."
   initial_data_resolution:
-    rule: "When any model in definition.yaml declares initial_data, enable the seed-data capability and map each ordered model record to its resolved table. Initial data is project content and is never supplied by database preferences."
+    rule: "When any model in model.yaml declares initial_data, enable the seed-data capability and map each ordered model record to its resolved table. Initial data is project content and is never supplied by database preferences."
     validation: "Every supplied key must name a declared model field. Before generation, each record must satisfy required relationship references and every non-nullable field that has no database default or explicit generation behavior; otherwise record an open question instead of inventing a value."
     references: "Resolve initial records in dependency order. A literal relationship id is preserved exactly and must reference an initial or pre-existing target row; it is never renumbered or replaced by an inferred reference."
     idempotency: "Generated seed behavior must be repeatable without creating duplicate logical records and must preserve every uniqueness rule."
@@ -228,7 +228,7 @@ sections:
             purpose: "The resolved seed-data switch."
           records:
             required: false
-            purpose: "The ordered initial records resolved from definition.yaml and grouped by their physical table. Present only when seed data is enabled because the project declares initial data."
+            purpose: "The ordered initial records resolved from model.yaml and grouped by their physical table. Present only when seed data is enabled because the project declares initial data."
             fields:
               "<table>":
                 required: false
@@ -281,7 +281,7 @@ sections:
                 fields:
                   source_model:
                     required: true
-                    purpose: "The domain-model key from definition.yaml that this table implements."
+                    purpose: "The domain-model key from model.yaml that this table implements."
                   columns:
                     required: true
                     purpose: "Every physical column in the table, including project-declared fields and relationship foreign keys."

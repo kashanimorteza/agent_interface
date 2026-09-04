@@ -1,0 +1,84 @@
+schema:
+  id: agent-interface-model
+  version: "1.0"
+  purpose: "The shape of model.yaml — the shared logical model definition consumed by every project item that needs domain data"
+
+structure:
+  - models
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Models -->
+  models:
+    required: true
+    purpose: "The project's domain entities and their explicitly declared fields, relationships, domain rules, and initial data. Physical database tables, API behavior, and user-interface representation belong to their target-specific configurations."
+    fields:
+      "<model>":
+        required: true
+        purpose: "One domain model from project.md. Its key is the model heading normalized to lower_snake_case, and entries remain in project order."
+        fields:
+          purpose:
+            required: true
+            purpose: "What the model represents in the project."
+          fields:
+            required: true
+            purpose: "The complete set of fields explicitly declared for this model, including any relationship fields named by the project; empty when the project declares none."
+            fields:
+              "<field>":
+                required: false
+                purpose: "One declared model field, keyed by its lower_snake_case name."
+                fields:
+                  type:
+                    required: true
+                    purpose: "The field's project-declared logical data type."
+                  size:
+                    required: false
+                    purpose: "The project-declared size or precision when the type uses one; omitted when unspecified or inapplicable."
+                  nullable:
+                    required: true
+                    purpose: "Whether the field may contain a null value. This describes model data, not whether an API caller must provide the field."
+                  default:
+                    required: false
+                    purpose: "The explicit project default, omitted when none is declared."
+                  auto_increment:
+                    required: false
+                    purpose: "Whether the project explicitly requires an incrementing generated value."
+                  primary_key:
+                    required: false
+                    purpose: "Whether this field is the model's primary key; omitted when false."
+                  unique:
+                    required: false
+                    purpose: "Whether this field must be unique by itself; omitted when false. Multi-field uniqueness is expressed as a model rule."
+                  purpose:
+                    required: false
+                    purpose: "The field's domain meaning when its name and type are not sufficient."
+          relationships:
+            required: false
+            purpose: "The model's conceptual relationships and any explicitly declared linking fields. Omitted when none are declared. Physical foreign-key constraints are resolved only by the database item."
+            fields:
+              "<relationship>":
+                required: false
+                purpose: "One relationship declared by the project."
+                fields:
+                  type:
+                    required: true
+                    purpose: "The relationship kind stated by the project, such as belongs_to."
+                  target:
+                    required: true
+                    purpose: "The related model key, normalized by the same rule as model keys."
+                  field:
+                    required: false
+                    purpose: "The declared model field that carries this relationship; omitted when the project leaves physical field resolution to the database item."
+                  role:
+                    required: false
+                    purpose: "The relationship's semantic role when the model has more than one relationship to the same target; absent for an unqualified relationship."
+          rules:
+            required: false
+            purpose: "Model-specific domain rules that cannot be expressed by one field or relationship. Omitted when the model has no such rule."
+          initial_data:
+            required: false
+            purpose: "The ordered initial records explicitly declared for this model, omitted when none are declared. Record keys must name declared model fields; omitted values remain subject to field nullability, defaults, and generation behavior."
+            fields:
+              "<record>":
+                required: false
+                purpose: "One initial model record. Each entry is either an explicit field value or an explicit generation instruction; values are never invented."

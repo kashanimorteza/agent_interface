@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-backend
-  version: "4.5"
+  version: "5.0"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
 
 policy:
@@ -14,8 +14,8 @@ policy:
     optional: "A technology with no configured Skill remains valid and produces no skill field. Never guess a Skill from the technology name."
     boundary: "A configured technology Skill guides planning and implementation only. It cannot change project requirements, phase scope, item Policy, contracts, write boundaries, workflow roles, or State authority."
   model_api_resolution:
-    rule: "When the project requests an API for its domain models without naming allowed operations, apply preferences.model_api.default_operations to every model currently indexed in definition.yaml."
-    overrides: "An explicit project rule for a model replaces the default operations for that model. Models are resolved dynamically from definition.yaml and are never copied into this Policy or its Preferences."
+    rule: "When the project requests an API for its domain models without naming allowed operations, apply preferences.model_api.default_operations to every model currently indexed in model.yaml."
+    overrides: "An explicit project rule for a model replaces the default operations for that model. Models are resolved dynamically from model.yaml and are never copied into this Policy or its Preferences."
     boundary: "Resolve only model-level operation intent here. Endpoint paths, HTTP method mappings, payloads, response shapes, and implementation layout remain implementation output."
   version_resolution:
     explicit: "Preserve every concrete version stated by the project exactly."
@@ -219,11 +219,11 @@ sections:
   # <!--------------------------------------------------------------------------------- Model_API -->
   model_api:
     required: true
-    purpose: "The resolved model-level API intent. It applies dynamically to domain models from definition.yaml without storing endpoint paths or copying model definitions into backend.yaml."
+    purpose: "The resolved model-level API intent. It applies dynamically to domain models from model.yaml without storing endpoint paths or copying model definitions into backend.yaml."
     fields:
       source:
         required: true
-        purpose: "The mapped definition.yaml models section that supplies the current domain-model set."
+        purpose: "The mapped model.yaml models section that supplies the current domain-model set."
       default_operations:
         required: true
         purpose: "The operations applied when the project requests a model API and gives no model-specific operation rule."
