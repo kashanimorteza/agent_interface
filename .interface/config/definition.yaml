@@ -14,7 +14,8 @@ policy:
   changed_by: "The human directly, or my-interface-interpreter on regeneration from .interface/project.md"
   source_rule: "Every fact here traces to .interface/project.md. Where project.md is silent, the gap is recorded in config/state.yaml as an open question and nothing is invented here"
   field_rule: "Every field the project declares appears under its model's fields, including the foreign-key fields the project names; a relationship names that field under relationships.<name>.field. Physical foreign-key constraints, indexes, and table names are resolved only by the owning target item"
-  initial_data_rule: "Initial records are copied as declared, in the project's order. A literal value stays literal, and a generation instruction is kept as {instruction: <the project's words>} so it is never mistaken for a stored value. A record that omits a required field without a default is recorded as declared and raised as an open question — no value is invented"
+  rule_rule: "A model Rule that one field cannot carry — a credential's storage mode, a uniqueness across several fields — is kept under the model's rules in the project's words; the owning target item resolves it into its contract"
+  initial_data_rule: "Initial records are copied as declared, in the project's order. A literal value stays literal, and a generation instruction is kept as {instruction: <the project's words>} so it is never mistaken for a stored value. No value is invented"
   phase_model: "Phases are the primary units of planning, development, review, and progress. A phase's target selects the item configuration, Policy, contracts, and code_path used for that phase; only target item types referenced by at least one phase appear under architecture"
   on_change_needed: "A change to what the product is belongs in .interface/project.md first; this file follows it on the next generation run"
 
@@ -31,10 +32,10 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   identity: "Who the product is — its name and the description the human stated"
-  goals: "What a user can do when the product is finished — copied faithfully from project.md, empty because project.md declares no Goals section"
-  models: "The domain entities and their explicitly declared fields, relationships, domain rules, and initial data"
-  architecture: "The target items referenced by project phases, what each owns, and the directed contract connections between them"
-  phases: "The authoritative ordered project workflow copied from project.md"
+  goals: "What a user can do when the product is finished — copied faithfully from project.md"
+  models: "The thirteen domain entities and their explicitly declared fields, relationships, domain rules, and initial data, in project order"
+  architecture: "The three target items referenced by project phases, what each owns, and the directed contract connections between them"
+  phases: "The authoritative ordered project workflow copied from project.md — three phases, one per target item"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -46,7 +47,8 @@ content:
     description: "A platform for defining and managing trading information, strategies, actions, and related data."
 
   # <!-------------------------------------------- Goals -->
-  goals: []
+  goals:
+    - "Enable users to enter and manage all defined project data through a working backend and frontend."
 
   # <!-------------------------------------------- Models -->
   models:
@@ -85,6 +87,9 @@ content:
           type: "string"
           nullable: true
           purpose: "Describes the user."
+      rules:
+        - "`password` is a credential and must use `hash` storage at rest."
+        - "`api_key` is a credential and must use `hash` storage at rest."
       initial_data:
         - name: "Admin"
           username: "admin"
@@ -185,10 +190,6 @@ content:
           type: "string"
           nullable: false
           purpose: "The platform's display name."
-        user_id:
-          type: "integer"
-          nullable: false
-          purpose: "Identifies the user who owns the trading platform configuration."
         code:
           type: "string"
           nullable: false
@@ -202,19 +203,10 @@ content:
           type: "string"
           nullable: true
           purpose: "Describes the platform."
-      relationships:
-        user:
-          type: "belongs_to"
-          target: "user"
-          field: "user_id"
-      rules:
-        - "The combination of user_id and name must be unique."
       initial_data:
         - name: "MetaTrader 5"
-          user_id: 1
           code: "metatrader_5"
         - name: "Binance"
-          user_id: 1
           code: "binance"
 
     broker:
@@ -256,8 +248,7 @@ content:
           target: "trading_platform"
           field: "trading_platform_id"
       rules:
-        - "The combination of user_id and name must be unique."
-        - "user_id must match the user_id of the Trading Platform referenced by trading_platform_id."
+        - "The combination of `user_id` and `name` must be unique."
       initial_data:
         - name: "FxPro"
           user_id: 1
@@ -319,15 +310,20 @@ content:
           type: "belongs_to"
           target: "broker"
           field: "broker_id"
-        currency:
+        base_currency:
           type: "uses"
           target: "currency"
           field: "base_currency_id"
-          role: "base"
+      rules:
+        - "`password` is a credential and must use `encrypted` storage at rest."
       initial_data:
         - name: "Acc-1"
           broker_id: 1
           base_currency_id: 1
+          username: "test"
+          password: { instruction: "Generate securely" }
+          leverage: 100
+          account_type: "CFD"
 
     asset:
       purpose: "Defines an asset that can be selected for trading. It provides the system with the complete set of available tradable assets and identifies the category of each asset so the system knows exactly what is being traded."
@@ -633,6 +629,9 @@ content:
           account_id: 1
           partial_group_id: 1
           trailing_group_id: 1
+          risk_by_reward: 1
+          take_profit: 1
+          stop_loss: 1
 
     position:
       purpose: "Stores the complete information for every position created by the system. It allows the system to identify and track positions that have been opened as well as positions that are still pending execution."
@@ -754,50 +753,67 @@ content:
 
   # <!-------------------------------------------- Architecture -->
   architecture:
-    shape: "Two target items joined by one frozen contract — a database item that owns storage, schema, and seed data for every model, and a backend item that consumes the database contract and publishes an implemented HTTP API with a framework-generated machine-readable description. The frontend item type is available in the Interface but no phase targets it, so it does not enter this Understanding"
-
+    shape: "Three parts in a line — a database publishes a frozen schema contract to a backend, and the backend publishes an implemented HTTP API with its generated description to a frontend"
     parts:
 
       database:
-        responsibility: "Owns persistent storage, the schema for every domain model, its migration history, the declared initial data, and the database contract the backend consumes"
+        responsibility: "Owns persistent storage for every domain model, evolves the schema through ordered reversible migrations, seeds the declared initial records, and publishes the database contract the backend builds against"
         owns:
-          - "The database engine choice and its physical storage"
-          - "Tables, columns, keys, constraints, and indexes for all thirteen domain models"
-          - "Ordered, reversible migrations and their history"
-          - "The seeding of the initial records the project declares"
-          - "The database contract, in every version"
+          - "The database engine choice, physical storage, schema, constraints, and indexes"
+          - "The migration history and seed data for every model"
+          - "The database contract — .interface/config/database.yaml under content.contracts"
         does_not_own:
-          - "Backend ORM behavior, services, or API endpoints"
-          - "Deployment secrets, encryption keys, and the generation of credential values at runtime"
+          - "Backend ORM mappings, API behavior, or runtime connection code"
+          - "Frontend code"
+          - "Deployment secrets and encryption keys"
         produces:
-          - "database contract v1 — .interface/config/database.yaml under content.contracts.v1"
+          - "database contract — .interface/config/database.yaml, content.contracts, consumed by the backend"
 
       backend:
-        responsibility: "Runs the application behavior and publishes the implemented HTTP API for every domain model while consuming the database contract"
+        responsibility: "Runs the application behavior and publishes an implemented HTTP API for every domain model, consuming the frozen database contract"
         owns:
-          - "Application code, runtime database connection, and ORM mappings"
-          - "Validation, services, and the implemented API for all thirteen domain models"
-          - "The runtime HTTP interface and its framework-generated machine-readable description"
+          - "Application code, validation, and services under its code_path"
+          - "The runtime database connection and ORM mappings matching the frozen database contract"
+          - "The implemented HTTP API and its framework-generated machine-readable description"
         does_not_own:
           - "The database engine, storage, schema, migrations, or seed data"
           - "Any user interface"
-        produces:
-          - "The implemented HTTP API and its framework-generated machine-readable description — served by the running backend, described in .interface/config/backend.yaml under content.contracts.produces"
         consumes:
-          - "database contract v1 — .interface/config/database.yaml under content.contracts.v1"
+          - "database contract — .interface/config/database.yaml, content.contracts, frozen form only"
+        produces:
+          - "The implemented HTTP API with its framework-generated machine-readable description, read from the running backend by the frontend"
+
+      frontend:
+        responsibility: "Provides the user interface for entering and managing all defined project data by consuming the backend's implemented HTTP API"
+        owns:
+          - "Pages, components, browser-side behavior, and styles under its code_path"
+          - "The client integration with the implemented backend HTTP API"
+        does_not_own:
+          - "Backend behavior or backend implementation code"
+          - "Every part of the database item"
+        consumes:
+          - "The backend's implemented HTTP API and its framework-generated machine-readable description, read from the running backend"
 
     connections:
 
       database_to_backend:
         from: "database"
         to: "backend"
-        contract: "database contract v1 — lifecycle draft until the human freezes it"
-        path: ".interface/config/database.yaml — content.contracts.v1"
-        rule: "The contract is the only connection point; the backend never reads migrations or database files to infer schema, and the database item never reaches into backend code"
-        versioning: "A frozen contract never changes; a change means a new version and migrations between versions, decided by the human"
+        contract: "database contract — the fully resolved tables, columns, types, keys, references, constraints, indexes, and credential storage modes, plus the credential-free connection shape"
+        path: ".interface/config/database.yaml — content.contracts"
+        rule: "The contract is the only connection point; neither item reaches into the other's implementation. The backend never infers schema from migrations or database files, and the database item never contains backend application code"
+        versioning: "A frozen database contract is versioned, never edited; a change means a new version and migrations between versions. The backend builds only against a frozen version"
+
+      backend_to_frontend:
+        from: "backend"
+        to: "frontend"
+        contract: "The implemented HTTP API and its framework-generated machine-readable description"
+        path: "Served by the running backend at the location its framework generates — read at runtime, not stored in Interface Config"
+        rule: "The contract is the only connection point; neither item reaches into the other's implementation. The frontend never connects to the database item or imports backend code, and it depends on no endpoint definitions stored in Interface Config"
 
   # <!-------------------------------------------- Phases -->
   phases:
+
     - id: "P1"
       title: "Database"
       order: 1
@@ -809,3 +825,9 @@ content:
       order: 2
       target: "backend"
       goal: "Create and run the API for all defined project models."
+
+    - id: "P3"
+      title: "Frontend"
+      order: 3
+      target: "frontend"
+      goal: "Create the frontend interface for entering and managing all defined project data through the backend API."
