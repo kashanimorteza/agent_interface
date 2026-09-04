@@ -1,10 +1,7 @@
 schema:
   id: agent-interface-database
-  version: "5.0"
-  purpose: "The shape of database.yaml — every parameter an agent reads to understand the independent database item"
-  principles: ".interface/principles/database.md"
-  preferences: ".interface/preferences/database.yaml"
-  layering: "This file defines shape only. The mandatory rules of the database item live in its principles document; the supported technical choices used when project.md is silent live in its preferences file. Neither is restated here."
+  version: "6.0"
+  purpose: "The shape of the generated database configuration."
 
 structure:
   - code_path
@@ -25,17 +22,17 @@ sections:
   # <!--------------------------------------------------------------------------------- Code_Path -->
   code_path:
     required: true
-    purpose: "The folder holding database-owned migrations, tooling, and local storage — the one place this item may write."
+    purpose: "The project-relative folder for database-owned implementation artifacts."
 
   # <!--------------------------------------------------------------------------------- Code_Path_Note -->
   code_path_note:
     required: true
-    purpose: "Explains what code_path is relative to, so it is never read as a path inside the Interface."
+    purpose: "Explains what code_path is relative to."
 
   # <!--------------------------------------------------------------------------------- Summary -->
   summary:
     required: true
-    purpose: "The database item in one line — read before any of its settings."
+    purpose: "A one-line summary of the database item."
 
   # <!--------------------------------------------------------------------------------- Needs_Test -->
   needs_test:
@@ -45,12 +42,12 @@ sections:
   # <!--------------------------------------------------------------------------------- Verify_Cwd -->
   verify_cwd:
     required: true
-    purpose: "The directory and isolated environment in which every database verification command runs."
+    purpose: "The directory and isolated environment used for database verification commands."
 
   # <!--------------------------------------------------------------------------------- Responsibility -->
   responsibility:
     required: true
-    purpose: "What the database item is answerable for — persistent storage, schema evolution, and its published contract."
+    purpose: "The resolved responsibilities of the database item."
 
   # <!--------------------------------------------------------------------------------- Tech -->
   tech:
@@ -82,7 +79,7 @@ sections:
         purpose: "Engine-specific connection behavior published to consumers without credentials."
       migration:
         required: true
-        purpose: "The one migration tool, its isolated environment, packages, and commands."
+        purpose: "The resolved migration tool, isolated environment, packages, and commands."
         fields:
           tool:
             required: true
@@ -92,7 +89,7 @@ sections:
             purpose: "The isolated environment used only for database tooling."
           packages:
             required: true
-            purpose: "The exact packages installed for migration and schema tooling."
+            purpose: "The resolved packages used for migration and schema tooling."
           commands:
             required: true
             purpose: "The canonical upgrade, downgrade, and verification commands."
@@ -107,12 +104,12 @@ sections:
         purpose: "The database object naming conventions."
       migrations:
         required: true
-        purpose: "Ordering, reversibility, and history rules for schema changes."
+        purpose: "The resolved conventions for migration ordering, reversibility, and history."
 
   # <!--------------------------------------------------------------------------------- Capabilities -->
   capabilities:
     required: true
-    purpose: "The resolved state of optional database capabilities; testing has its own switch in needs_test."
+    purpose: "The resolved state of optional database capabilities."
     fields:
       seed_data:
         required: true
@@ -123,7 +120,7 @@ sections:
             purpose: "The resolved seed-data switch."
           records:
             required: false
-            purpose: "The ordered initial records resolved from model.yaml and grouped by their physical table. Present only when seed data is enabled because the project declares initial data."
+            purpose: "The ordered initial records resolved from the shared model configuration and grouped by their physical table."
             fields:
               "<table>":
                 required: false
@@ -139,17 +136,11 @@ sections:
   # <!--------------------------------------------------------------------------------- Contracts -->
   contracts:
     required: true
-    purpose: "The database contract published to backend consumers."
+    purpose: "The resolved database contracts published to consumers."
     fields:
       produces:
         required: true
-        purpose: "The database contract version this item publishes."
-      rule:
-        required: true
-        purpose: "The implemented schema and the published contract must match exactly."
-      change_rule:
-        required: true
-        purpose: "A frozen database contract is versioned, never edited; a change means a new version and migrations between versions."
+        purpose: "The database contract version published by this item."
       "<version>":
         required: true
         purpose: "One database contract version — engine-independent meaning plus the exact schema surface consumers may use."
@@ -159,7 +150,7 @@ sections:
             purpose: "Where the contract stands — draft, frozen, or deprecated."
           lifecycle_note:
             required: true
-            purpose: "What the lifecycle permits and what a change costs."
+            purpose: "An explanation of the resolved lifecycle state."
           engine:
             required: true
             purpose: "The resolved engine assumptions that affect consumers."
@@ -168,15 +159,15 @@ sections:
             purpose: "The credential-free connection shape and runtime configuration source."
           tables:
             required: true
-            purpose: "The fully resolved tables, columns, types, nullability, keys, references, constraints, indexes, and credential storage modes exposed by this version. Every relationship names its foreign-key field, referenced table, and referenced column explicitly; every constraint derived from a model rule records its source rule; and every credential field names its resolved at-rest mode."
+            purpose: "The fully resolved tables exposed by this contract version."
             fields:
               "<table>":
                 required: true
-                purpose: "One physical table, keyed by its resolved plural_snake_case table name unless the project explicitly supplies another name."
+                purpose: "One physical table, keyed by its resolved table name."
                 fields:
                   source_model:
                     required: true
-                    purpose: "The domain-model key from model.yaml that this table implements."
+                    purpose: "The shared domain-model key that this table implements."
                   columns:
                     required: true
                     purpose: "Every physical column in the table, including project-declared fields and relationship foreign keys."
@@ -202,7 +193,7 @@ sections:
                             purpose: "The database default value, or null when the column has no database default."
                           credential_storage:
                             required: false
-                            purpose: "The resolved plaintext, hash, or encrypted at-rest mode; present only for a credential field."
+                            purpose: "The resolved at-rest mode; present only for a credential field."
                           references:
                             required: false
                             purpose: "The exact foreign-key target; present only for a relationship column."
@@ -257,19 +248,19 @@ sections:
   # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:
     required: true
-    purpose: "The limits of the database item."
+    purpose: "The resolved ownership limits of the database item."
     fields:
       owns:
         required: true
-        purpose: "The engine choice, storage, schema, constraints, indexes, migrations, and database contract."
+        purpose: "The responsibilities owned by the database item."
       does_not_own:
         required: true
-        purpose: "Backend ORM behavior, API behavior, frontend code, and deployment secrets."
+        purpose: "Responsibilities explicitly outside the database item."
       interface:
         required: true
-        purpose: "The frozen database contract and credential-free connection requirements offered to the backend."
+        purpose: "The interface the database item publishes to its consumers."
 
   # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
   out_of_scope:
     required: true
-    purpose: "What the database item does not do — named so it is never inferred into a task."
+    purpose: "The resolved work explicitly outside the database item."

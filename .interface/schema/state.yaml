@@ -157,7 +157,7 @@ sections:
         note: "These sit outside state.yaml but belong to the same ownership model — they are named here so that one section answers the whole question of who decides what"
         items:
           - "The answer to any open question in state.yaml"
-          - "Freezing or versioning a contract — see the change_rule in the item files"
+          - "Freezing or versioning a contract — governed by the owning item's Principles"
           - "Defining a project phase, its order, target, and intended outcome — these come from project.md through the interpreter"
           - "The generated technical composition, runtime, and deployment in config/development.yaml, outside a generation operation"
           - "The content of config/definition.yaml, outside a generation operation"

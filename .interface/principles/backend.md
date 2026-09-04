@@ -14,6 +14,8 @@ The backend never owns the database engine, its storage, its schema, or its migr
 
 This keeps two responsibilities apart. The database item decides what persistent data exists and how it is shaped; the backend decides how application behaviour uses it. When the backend needs the schema to change, that is a request to the database item, never a change the backend makes itself.
 
+All backend access to persistent data goes through a dedicated data-access layer using the *Repository* pattern rather than being scattered through application logic. Reading and writing are separate responsibilities within that layer, and each model has dedicated access logic so one model's behaviour can change without changing another's.
+
 <br>
 
 ## 2. Every domain model gets an API, resolved from the shared model set

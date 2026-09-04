@@ -1,19 +1,9 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/preferences/database.yaml"
-  path_note: "The Preferences layer of the database item — the supported technical choices used only when project.md leaves a database choice unstated. Sits beside principles/database.md (the mandatory rules) and schema/database.yaml (the shape of config/database.yaml)"
+  purpose: "The supported database technical choices and defaults used when the human project definition leaves a corresponding choice unstated."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "1.2"
   updated: "2026-09-04"
-
-
-# <!--------------------------------------------------------------------------------- Policy -->
-policy:
-  agent_may_edit: false
-  rule: "This file is human-owned. No mode edits it; an agent reads it during generation and never writes a resolved value back into it"
-  changed_by: "The human, directly. A preference an agent believes is missing or wrong is raised as an open question in config/state.yaml"
-  precedence: "An explicit project value always wins over every value here. A preference never overrides a principle in principles/database.md — it only fills a choice the principles leave open"
-  consumption: "The generation operation resolves each unstated choice from this file and writes the concrete result into config/database.yaml. Downstream operations read that resolved configuration and never reinterpret this file. The token latest is resolved to a concrete version and never appears in generated config"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -28,7 +18,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "The item-level defaults — code path, test switch, responsibility, and which engine and migration tool are selected when the project names none"
+  defaults: "The item-level defaults — code path, test switch, and which engine and migration tool are selected when the project names none"
   engines: "One entry per supported engine — version, physical storage, connection behavior, and object naming conventions"
   migration_tools: "One entry per supported migration tool — language, isolated environment, packages, and canonical commands"
   relationship_defaults: "Nullability, indexing, and referential actions applied to a relationship the project leaves unspecified"
@@ -42,7 +32,6 @@ content:
   defaults:
     code_path: "database/"
     needs_test: false
-    responsibility: "Owns persistent storage, schema evolution, and the database contract consumed by the backend."
     engine: "SQLite"
     migration_tool: "Alembic"
   engines:
@@ -100,8 +89,6 @@ content:
         recoverable: true
         key_source: "Runtime configuration outside the database and its contract."
   capabilities:
-    testing:
-      default_enabled: false
     seed_data:
       default_enabled: false
     backups:

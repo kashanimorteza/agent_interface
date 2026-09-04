@@ -2,7 +2,7 @@
 
 This document is the personality of the database item: the fixed convictions that shape every decision about persistent data, whatever engine, tool, or project is in play. It is written for the Agent that generates, plans against, or implements the database item, and for the Developer who wants to know why the database behaves the way it does.
 
-It deliberately names no engine, no migration tool, no version, and no default. Those are technical choices and live in the preferences file (`.interface/preferences/database.yaml`); they may change from project to project without touching a single line here. The exact shape of the generated `config/database.yaml` lives in the schema (`.interface/schema/database.yaml`). The three layers are read together, but each answers a different question: this document answers *why and under what rules*, the preferences answer *with what*, and the schema answers *in what form*.
+It deliberately names no engine, no migration tool, no version, and no default. Those are technical choices and live in the database Preferences; they may change from project to project without touching a single line here. The exact shape of the generated database configuration lives in the database Schema. The three layers are read together, but each answers a different question: this document answers *why and under what rules*, the Preferences answer *with what*, and the Schema answers *in what form*.
 
 Every statement here is mandatory. A preference can never override a principle, and a project may only add stricter rules, never looser ones.
 
@@ -44,7 +44,7 @@ The other side of ownership is restraint: the database item does not own the bac
 
 Consumers of the database — the backend above all — never reach into tables on their own. They use exactly two things: the frozen database contract, which says what exists and what it means, and credential-free runtime connection information, which says how to reach it. They never infer the schema from migrations or from the physical database files.
 
-Inside a consumer, all access to persistent data goes through a dedicated data-access layer (the *Repository* pattern) rather than being scattered through application logic. Within that layer, reading and writing are separate responsibilities (a light form of *command–query separation*), and each model has its own dedicated access logic, so the behaviour of one model can change without touching another. The database item demands this discipline of its consumers; the consumer implements it.
+The database item defines the contract and connection boundary but does not dictate a consumer's internal architecture. ORM behaviour, data-access patterns, and application-side separation of reads and writes belong to the Principles of the consuming item.
 
 <br>
 
@@ -70,7 +70,7 @@ A relationship between models is represented by a foreign-key field whose name i
 
 The foreign key references the related table's primary key unless the project names another key, and its type is always exactly the referenced key's type, never chosen independently. Nullability, indexing, and referential actions come from the project when stated and from the preferences when not.
 
-When one model relates to the same target more than once and the roles are not explicit, the Agent records an open question rather than guessing names. Whatever the resolution, the generation operation writes the foreign-key field, the referenced table, and the referenced column explicitly into the contract.
+When one model relates to the same target more than once, the relationship roles must be explicit; no role or field name is guessed. The resolved contract always writes the foreign-key field, the referenced table, and the referenced column explicitly.
 
 <br>
 
@@ -78,20 +78,18 @@ When one model relates to the same target more than once and the roles are not e
 
 Connection credentials belong to runtime configuration outside the repository's committed files. The database contract publishes the shape of a connection, never its secrets.
 
-Fields that are themselves credentials — passwords, API keys — are each resolved to exactly one at-rest mode: plaintext, which stores the original value unchanged; a one-way hash, for values that only need verification and are never recovered; or reversible encryption, for values the application must recover. An explicit project mode for a field always wins; otherwise the default mode comes from the preferences. The database contract owns that resolved mode for each field; the consuming backend owns the matching runtime transformation and never infers or changes the mode. Encryption keys and other secrets are never written into the contract or into database files.
+Fields that are themselves credentials are each resolved to exactly one supported at-rest mode. An explicit project mode for a field always wins; otherwise the default mode comes from the Preferences. The database contract owns that resolved mode for each field; the consuming backend owns the matching runtime transformation and never infers or changes the mode. Encryption keys and other secrets are never written into the contract or into database files.
 
 <br>
 
 ## 10. Initial data is project content
 
-When the project declares initial data for a model, seeding becomes part of the database item and each record is mapped to its resolved table. Initial data is never supplied by preferences: the Agent may choose safe technical generation behaviour for a required value the project left open, but it never invents project facts.
+When the project declares initial data for a model, seeding becomes part of the database item and each record is mapped to its resolved table. Initial data is never supplied by Preferences, and missing project facts are never invented.
 
-Every key in a seed record must name a declared field of its model. Before generation, each record must satisfy its required relationship references and every non-nullable field — through an explicit value, a database default, or safe generated behaviour; an open question is raised only when a required project value is critical and no safe generated behaviour exists. Records are resolved in dependency order; a literal relationship id is preserved exactly and must reference an initial or pre-existing target row — it is never renumbered or replaced by an inferred reference. Seeding must be repeatable without creating duplicate logical records or breaking any uniqueness rule.
+Every key in a seed record must name a declared field of its model. Before generation, each record must satisfy its required relationship references and every non-nullable field through an explicit value, a database default, or safe generated behaviour permitted by the field contract. Records are resolved in dependency order; a literal relationship id is preserved exactly and must reference an initial or pre-existing target row — it is never renumbered or replaced by an inferred reference. Seeding must be repeatable without creating duplicate logical records or breaking any uniqueness rule.
 
 <br>
 
-## 11. When the project is silent, decide deliberately
+## 11. Generated versions are concrete
 
-An explicit project value always wins. When the project says nothing about a technical choice, the generation operation resolves it from the preferences, or chooses a compatible option and records the choice. Downstream operations consume the resolved configuration and never reinterpret preferences on their own.
-
-A concrete version the project states is preserved exactly. A version left to the preferences is resolved to the latest stable release compatible with the whole selected tool stack, and only that concrete value is written; the word *latest* never appears in a generated configuration. If the current stable version cannot be verified, the best supported compatible version available from current evidence is selected and the choice is recorded. An open question is raised only when the alternatives would materially change domain meaning, security, data integrity, or a frozen contract — ordinary technical decisions are made and recorded, not escalated.
+A concrete version stated by the project is preserved exactly. A version supplied as *latest* by the Preferences is resolved to a stable release compatible with the complete selected database tool stack, and only the concrete result is written. The word *latest* never appears in generated database configuration.
