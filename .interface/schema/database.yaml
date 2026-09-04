@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-database
-  version: "7.0"
+  version: "8.0"
   purpose: "The shape of the generated database configuration."
 
 structure:
@@ -11,7 +11,7 @@ structure:
   - verify_cwd
   - responsibility
   - tech
-  - data_access
+  - storage_schema
   - standards
   - capabilities
   - contracts
@@ -74,13 +74,13 @@ sections:
             purpose: "The storage kind, such as file or server."
           location:
             required: true
-            purpose: "The project-relative local path or deployment-owned location description; secrets are never committed."
+            purpose: "The resolved project-relative path or deployment-owned location description."
       connection:
         required: true
-        purpose: "Engine-specific runtime connection behavior owned by the database layer and never exposed directly to consumers."
+        purpose: "The resolved engine-specific runtime connection settings."
       orm:
         required: true
-        purpose: "The ORM owned by the database layer."
+        purpose: "The resolved ORM implementation."
         fields:
           name:
             required: true
@@ -91,6 +91,19 @@ sections:
           language:
             required: true
             purpose: "The language in which the ORM and database interface are implemented."
+          package:
+            required: true
+            purpose: "The resolved package that supplies the ORM."
+          capabilities:
+            required: true
+            purpose: "The resolved ORM capabilities used by the database item."
+            fields:
+              model_mapping:
+                required: true
+                purpose: "Whether the ORM supplies logical-model to physical-storage mapping."
+              parameterized_sql:
+                required: true
+                purpose: "Whether the ORM supplies parameterized SQL execution."
       migration:
         required: true
         purpose: "The resolved migration tool, isolated environment, packages, and commands."
@@ -108,33 +121,99 @@ sections:
             required: true
             purpose: "The canonical upgrade, downgrade, and verification commands."
 
-  # <!--------------------------------------------------------------------------------- Data_Access -->
-  data_access:
+  # <!--------------------------------------------------------------------------------- Storage_Schema -->
+  storage_schema:
     required: true
-    purpose: "The generic interface through which every consumer accesses persistent data."
+    purpose: "The resolved internal physical storage schema implemented by the database item."
     fields:
-      style:
+      tables:
         required: true
-        purpose: "The resolved interface style used across all persistent models."
-      model_selector:
-        required: true
-        purpose: "How a caller identifies the model governed by an operation."
-      operations:
-        required: true
-        purpose: "The supported model-data operations exposed by the interface."
-      sql_commands:
-        required: true
-        purpose: "The controlled SQL-command capability exposed through the same interface."
+        purpose: "The fully resolved physical tables implemented by the database item."
         fields:
-          enabled:
+          "<table>":
             required: true
-            purpose: "Whether SQL-command execution is available."
-          parameterized:
-            required: true
-            purpose: "Whether SQL values must be supplied separately from the command text."
-          scope:
-            required: true
-            purpose: "The boundary within which SQL commands execute without exposing the engine connection."
+            purpose: "One physical table, keyed by its resolved table name."
+            fields:
+              source_model:
+                required: true
+                purpose: "The shared logical-model key implemented by this table."
+              columns:
+                required: true
+                purpose: "Every resolved physical column in the table."
+                fields:
+                  "<column>":
+                    required: true
+                    purpose: "One physical column, keyed by its resolved column name."
+                    fields:
+                      type:
+                        required: true
+                        purpose: "The complete resolved database type."
+                      nullable:
+                        required: true
+                        purpose: "Whether the column accepts null."
+                      primary_key:
+                        required: true
+                        purpose: "Whether the column belongs to the table primary key."
+                      auto_increment:
+                        required: true
+                        purpose: "Whether the database generates this numeric key by incrementing it."
+                      default:
+                        required: true
+                        purpose: "The database default value, or null when the column has no database default."
+                      credential_storage:
+                        required: false
+                        purpose: "The resolved at-rest mode; present only for a credential field."
+                      references:
+                        required: false
+                        purpose: "The resolved foreign-key target; present only for a relationship column."
+                        fields:
+                          table:
+                            required: true
+                            purpose: "The resolved physical table being referenced."
+                          column:
+                            required: true
+                            purpose: "The resolved key column being referenced."
+                          on_delete:
+                            required: true
+                            purpose: "The resolved action when the referenced row is deleted."
+                          on_update:
+                            required: true
+                            purpose: "The resolved action when the referenced key is updated."
+              constraints:
+                required: true
+                purpose: "Named table constraints, empty when the table has none beyond column-level primary keys and references."
+                fields:
+                  "<constraint>":
+                    required: false
+                    purpose: "One named constraint."
+                    validation: "A unique constraint requires columns. A check constraint requires expression. Other constraint kinds must provide the fields required by their resolved database representation."
+                    fields:
+                      type:
+                        required: true
+                        purpose: "The constraint kind, such as unique or check."
+                      columns:
+                        required: false
+                        purpose: "The ordered column names governed by a column-based constraint; required for unique constraints."
+                      expression:
+                        required: false
+                        purpose: "The resolved database expression; required for check constraints."
+                      source_rule:
+                        required: false
+                        purpose: "The exact model rule that produced this constraint; present only when a model rule is its source."
+              indexes:
+                required: true
+                purpose: "Named indexes for the table, empty when none are required."
+                fields:
+                  "<index>":
+                    required: false
+                    purpose: "One named index."
+                    fields:
+                      columns:
+                        required: true
+                        purpose: "The ordered column names covered by the index."
+                      unique:
+                        required: true
+                        purpose: "Whether this index also enforces uniqueness."
 
   # <!--------------------------------------------------------------------------------- Standards -->
   standards:
@@ -185,7 +264,7 @@ sections:
         purpose: "The database contract version published by this item."
       "<version>":
         required: true
-        purpose: "One database contract version — the data-access surface plus the exact persistent schema it governs."
+        purpose: "One version of the generic data-access contract published to consumers."
         fields:
           lifecycle:
             required: true
@@ -195,95 +274,66 @@ sections:
             purpose: "An explanation of the resolved lifecycle state."
           data_access:
             required: true
-            purpose: "The versioned generic interface and operations published to consumers without exposing the engine connection."
-          tables:
-            required: true
-            purpose: "The fully resolved tables exposed by this contract version."
+            purpose: "The versioned generic interface published to consumers."
             fields:
-              "<table>":
+              style:
                 required: true
-                purpose: "One physical table, keyed by its resolved table name."
+                purpose: "The resolved interface style used across all persistent models."
+              model_selector:
+                required: true
+                purpose: "How a caller identifies the model governed by an operation."
+              operations:
+                required: true
+                purpose: "The standard model-data operations published by this contract."
                 fields:
-                  source_model:
+                  create:
                     required: true
-                    purpose: "The shared domain-model key that this table implements."
-                  columns:
+                    purpose: "The resolved create operation."
+                  read:
                     required: true
-                    purpose: "Every physical column in the table, including project-declared fields and relationship foreign keys."
+                    purpose: "The resolved read operation."
+                  list:
+                    required: true
+                    purpose: "The resolved list operation."
+                  update:
+                    required: true
+                    purpose: "The resolved update operation."
+                  delete:
+                    required: true
+                    purpose: "The resolved delete operation."
+                  status:
+                    required: true
+                    purpose: "The resolved status operation."
                     fields:
-                      "<column>":
+                      actions:
                         required: true
-                        purpose: "One physical column, keyed by its resolved column name."
+                        purpose: "The accepted status actions; exactly enable and disable."
+                      required_field:
+                        required: true
+                        purpose: "The model field required for this operation."
+                      value_mapping:
+                        required: true
+                        purpose: "The resolved field value written for each accepted action."
                         fields:
-                          type:
+                          enable:
                             required: true
-                            purpose: "The complete resolved database type."
-                          nullable:
+                            purpose: "The resolved enabled value."
+                          disable:
                             required: true
-                            purpose: "Whether the column accepts null."
-                          primary_key:
-                            required: true
-                            purpose: "Whether the column belongs to the table primary key."
-                          auto_increment:
-                            required: true
-                            purpose: "Whether the database generates this numeric key by incrementing it."
-                          default:
-                            required: true
-                            purpose: "The database default value, or null when the column has no database default."
-                          credential_storage:
-                            required: false
-                            purpose: "The resolved at-rest mode; present only for a credential field."
-                          references:
-                            required: false
-                            purpose: "The exact foreign-key target; present only for a relationship column."
-                            fields:
-                              table:
-                                required: true
-                                purpose: "The resolved physical table being referenced."
-                              column:
-                                required: true
-                                purpose: "The resolved key column being referenced."
-                              on_delete:
-                                required: true
-                                purpose: "The resolved action when the referenced row is deleted."
-                              on_update:
-                                required: true
-                                purpose: "The resolved action when the referenced key is updated."
-                  constraints:
+                            purpose: "The resolved disabled value."
+              sql_commands:
+                required: true
+                purpose: "The controlled SQL-command capability published through the same interface."
+                fields:
+                  enabled:
                     required: true
-                    purpose: "Named table constraints, empty when the table has none beyond column-level primary keys and references."
-                    fields:
-                      "<constraint>":
-                        required: false
-                        purpose: "One named constraint."
-                        validation: "A unique constraint requires columns. A check constraint requires expression. Other constraint kinds must provide the fields required by their resolved database representation."
-                        fields:
-                          type:
-                            required: true
-                            purpose: "The constraint kind, such as unique or check."
-                          columns:
-                            required: false
-                            purpose: "The ordered column names governed by a column-based constraint; required for unique constraints."
-                          expression:
-                            required: false
-                            purpose: "The resolved database expression; required for check constraints."
-                          source_rule:
-                            required: false
-                            purpose: "The exact model rule that produced this constraint; present only when a model rule is its source."
-                  indexes:
+                    purpose: "Whether SQL-command execution is available."
+                  parameterized:
                     required: true
-                    purpose: "Named indexes for the table, empty when none are required."
-                    fields:
-                      "<index>":
-                        required: false
-                        purpose: "One named index."
-                        fields:
-                          columns:
-                            required: true
-                            purpose: "The ordered column names covered by the index."
-                          unique:
-                            required: true
-                            purpose: "Whether this index also enforces uniqueness."
+                    purpose: "Whether SQL values are supplied separately from command text."
+                  scope:
+                    required: true
+                    purpose: "The resolved execution scope."
   # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:
     required: true

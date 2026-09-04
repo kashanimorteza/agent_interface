@@ -44,7 +44,9 @@ The other side of ownership is restraint: the database item does not own applica
 
 Consumers never receive the engine connection and never reach into tables, ORM mappings, migrations, or physical database files. They use only the frozen data-access contract and the interface implemented by the database layer.
 
-The interface is generic rather than one access implementation per model. A caller identifies the model, selects a supported operation, and supplies the data or criteria required by that operation. The same interface performs create, read, list, update, and delete operations for every persistent model indexed by the project.
+The interface is generic rather than one access implementation per model. A caller identifies the model, selects a supported operation, and supplies the data or criteria required by that operation. The same interface performs create, read, list, update, delete, and status operations for every persistent model indexed by the project.
+
+The status operation accepts exactly one action: `enable` or `disable`. It is available only when the selected model declares a `status` field and changes that field to the corresponding enabled or disabled value defined by its field contract. A model without a `status` field rejects the operation; the interface never invents the field or silently turns status into a general update.
 
 The interface also supports controlled SQL-command execution for cases that cannot be expressed through the standard model operations. SQL execution stays inside the database boundary, uses explicit parameters rather than value interpolation, and never exposes the underlying connection to the caller.
 
