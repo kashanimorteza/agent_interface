@@ -1,24 +1,30 @@
 ---
 name: my-interface-reset
-description: Reset the generated workflow to its pre-development or pre-planning stage without deleting project code or generated Understanding. Use only when the Developer explicitly chooses development or planning.
-argument-hint: "[development|planning]"
+description: Preview and, after explicit confirmation, reset planning output or developed code using two fixed reset stages.
+argument-hint: "[planning|development]"
 disable-model-invocation: true
 ---
 
 # Reset the project workflow
 
-Reset the generated workflow for the one stage named in `$ARGUMENTS`: `development` or `planning`.
+Run the bundled `scripts/reset.py` from the project root with exactly one stage: `planning` or `development`.
 
-## Bootstrap
+Do not read the Interface map, project definition, Schema, Principles, Preferences, or unrelated configuration. The operation uses only these fixed targets:
 
-Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Follow its current map to discover the workflow data, governing Schemas, State authority, reset transition, and reset protocol required for this run.
+- `.interface/config/task.yaml`
+- `.interface/config/state.yaml`
+- Root `backend/`, `frontend/`, and `database/` directories for a development reset
 
-Re-read required sources on every invocation. Do not rely on remembered file shapes, fields, states, transitions, preservation rules, or destinations. Require exactly one supported stage and let the current reset rules decide whether the operation is allowed and what it changes.
+## Planning reset
 
-## Reset
+Preserve the Task frame and every phase Plan, but replace every Plan's `groups` value with an empty mapping. Set `content.active` in State to `null`. Do not change blockers, open questions, or any other file.
 
-Validate the complete requested mutation before writing, then apply the current reset protocol atomically. Preserve or clear content exactly as the live authorities specify; do not duplicate those structural rules in this Skill.
+## Development reset
 
-Perform only the reset role. Do not interpret, plan, develop, review, clear project data, change product code, modify the human project definition, or invoke the next workflow operation.
+First set State active mode to `planning` with no active phase. Then set every existing Task status to `todo`, remove its blocker field when present, and preserve its other fields and log. Delete the root `backend/`, `frontend/`, and `database/` directories when present. Do not change blockers, open questions, Plans, Groups, or any other file.
 
-Validate the resulting workflow files against their current Schemas. Report the selected stage, affected records, cleared workflow findings, preserved content, and the next available explicit action.
+## Confirmation
+
+First run `scripts/reset.py <stage>` without `--apply`. It prints the exact changes and makes no mutation. Show the preview to the user and ask for confirmation.
+
+The initial invocation is not approval. Run `scripts/reset.py <stage> --apply` only after the user explicitly accepts that preview. Report the script result briefly and do not invoke another workflow operation.

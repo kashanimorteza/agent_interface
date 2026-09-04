@@ -81,7 +81,7 @@ Clears generated Interface configuration and mapped generated-code directories t
 
 ### `my-interface-reset`
 
-Resets the generated workflow to its pre-development or pre-planning stage while preserving project code and generated Understanding.
+Resets either planning output or developed code through a fixed two-stage script. A planning reset clears every Plan's Groups and Tasks and clears active State; a development reset returns Tasks to `todo`, returns active State to planning, and removes the root backend, frontend, and database directories.
 
 ### `my-interface-skill-installer`
 

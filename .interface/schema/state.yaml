@@ -87,8 +87,8 @@ sections:
             - "development operation"
             - "review operation"
             - "generation operation — only under transition S0, when state.yaml does not yet exist"
-            - "reset operation — only under transition S9, to planning for a development reset or 'not set' for a planning reset"
-          constraint: "An operation writes only the mode it owns, except that reset records the workflow stage explicitly selected by the human under S9: planning after development is reset, or 'not set' after planning is reset. Reset never performs planning"
+            - "reset operation — only under transition S9 for a development reset, and only to planning"
+          constraint: "An operation writes only the mode it owns, except that a development reset records planning under S9. A planning reset sets the complete active section to null. Reset never performs planning"
           human_may_set: true
 
         active.phase:
@@ -99,8 +99,8 @@ sections:
             - "development operation"
             - "review operation"
             - "generation operation — only under transition S0, when state.yaml does not yet exist"
-            - "reset operation — only under transition S9, and only to 'none'"
-          constraint: "The phase comes from the human request and must exist under definition.yaml content.phases. The request must name exactly one phase; a phase is never guessed, inferred from a target item, or carried over from a previous run. Under S0 generation and under S9 reset write only 'none'."
+            - "reset operation — only under transition S9 for a development reset, and only to 'none'"
+          constraint: "The phase comes from the human request and must exist under definition.yaml content.phases. The request must name exactly one phase; a phase is never guessed, inferred from a target item, or carried over from a previous run. Under S0 generation and an S9 development reset, the phase is 'none'. A planning reset sets the complete active section to null."
           human_may_set: true
 
         active.target:
@@ -153,8 +153,7 @@ sections:
             - "development operation"
             - "review operation"
             - "generation operation — during a generation run, which is outside the modes"
-            - "reset operation — only under transition S9, clearing every blocker"
-          constraint: "Any mode, and a generation run, may raise a blocker only when the active agent integration classifies the condition as critical and work cannot safely or validly continue. Ordinary unspecified technical details are resolved by agent judgment and never become blockers. A blocker may be updated and removed once the condition is resolved in its owning configuration, interface, code, evidence, or human decision. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8. Reset may clear every blocker without answering it only as part of S9"
+          constraint: "Any mode, and a generation run, may raise a blocker only when the active agent integration classifies the condition as critical and work cannot safely or validly continue. Ordinary unspecified technical details are resolved by agent judgment and never become blockers. A blocker may be updated and removed once the condition is resolved in its owning configuration, interface, code, evidence, or human decision. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8"
           human_may_set: true
 
         open_questions.questions:
@@ -165,8 +164,7 @@ sections:
             - "development operation"
             - "review operation"
             - "generation operation — during a generation run, which is outside the modes"
-            - "reset operation — only under transition S9, clearing every open question"
-          constraint: "An agent raises a question only when the active agent integration classifies the decision as critical, and states why it matters. Ordinary ambiguity is resolved through professional judgment and continuation. Raising is not answering. Reset may clear every question without answering it only as part of S9"
+          constraint: "An agent raises a question only when the active agent integration classifies the decision as critical, and states why it matters. Ordinary ambiguity is resolved through professional judgment and continuation. Raising is not answering"
           human_may_set: true
 
         open_questions.questions.answered_so_far:
@@ -221,7 +219,7 @@ sections:
 
         - id: "S1"
           name: "enter planning"
-          from: "any value of active.mode, 'not set' included"
+          from: "active may be null or hold any mode, 'not set' included"
           to: "active.mode: planning, active.phase: the phase id named by the invocation"
           performed_by: "planning operation"
           authorized_by: "The human's planning request, which names exactly one project phase"
@@ -234,7 +232,7 @@ sections:
 
         - id: "S2"
           name: "enter development"
-          from: "any value of active.mode, 'not set' included"
+          from: "active may be null or hold any mode, 'not set' included"
           to: "active.mode: development, active.phase: the phase id named by the invocation"
           performed_by: "development operation"
           authorized_by: "The human's development request, which names exactly one project phase"
@@ -248,7 +246,7 @@ sections:
 
         - id: "S3"
           name: "enter review"
-          from: "any value of active.mode, 'not set' included"
+          from: "active may be null or hold any mode, 'not set' included"
           to: "active.mode: review, active.phase: the phase id named by the invocation"
           performed_by: "review operation"
           authorized_by: "The human's review request, which names exactly one project phase"
@@ -305,20 +303,18 @@ sections:
           refused_when: "Raising a non-critical implementation question that Agent discretion can resolve; or recording an answer that came from the Agent, from the code, or from what merely seems reasonable after the question was correctly classified as human-owned"
 
         - id: "S9"
-          name: "reset development or planning project-wide"
-          from: "any mode or 'not set'"
-          to: "For development reset, every generated Task is todo and active is planning / none. For planning reset, every phase Plan has empty groups and active is 'not set' / none. For both stages, State blockers and open questions are empty"
+          name: "reset planning output or developed code"
+          from: "active may be null or hold any mode, 'not set' included"
+          to: "For a planning reset, every phase Plan has empty groups and active is null. For a development reset, every generated Task is todo, active is planning / none, and the root backend, frontend, and database directories are absent"
           performed_by: "reset operation"
           authorized_by: "The human's reset request naming exactly one reset stage: development or planning"
           requires:
-            - "task.yaml exists, every phase in definition.yaml has its matching Plan shell, and at least one generated Task exists"
+            - "The fixed config/task.yaml and config/state.yaml files exist and contain the Task plans and State active section"
             - "The invocation supplies exactly one supported stage and no phase id"
-            - "No generated Task is claimed; active work is never reset underneath its owner"
-            - "For development reset, every generated Task status becomes todo, every Task blocker field is removed, every prior Task log remains append-only, and one dated reset entry is appended to each Task"
+            - "For development reset, State is changed first, every existing Task status becomes todo, every Task blocker field is removed, every other Task field and prior Task log is preserved, and the fixed root code directories are deleted when present"
             - "For planning reset, groups becomes an empty mapping in every phase Plan, removing every generated Group and Task while preserving the Plan shells"
-            - "For either reset stage, content.blockers and content.open_questions.questions become empty lists; clearing is not an answer, and later work raises again anything still unresolved"
-          writes: "content.active.mode, content.active.phase, content.active.mode_reason, content.active.set_by, content.active.set_at, content.blockers, content.open_questions.questions; and the project-wide Task reset defined by task.yaml content.task_states.reset_protocol"
-          refused_when: "The invocation is missing, names a phase, has more than one argument, or is not development or planning; task.yaml or a Plan shell is missing; no generated Task exists; a Task is claimed; or the complete mutation cannot be validated before writing"
+          writes: "content.active and the Task reset defined by task.yaml content.task_states.reset_protocol; a development reset also deletes the fixed root backend, frontend, and database directories"
+          refused_when: "The invocation is missing, has more than one stage, or is not development or planning; either fixed configuration file is missing; or the required Task or State section has an invalid shape"
 
         - id: "S10"
           name: "materialize or reconcile the Task frame"
@@ -338,12 +334,12 @@ sections:
       validation:
         note: "These must hold at all times. Any operation may check them; the review operation checks them as part of a review, and a failure is a blocker, not a repair"
         checks:
-          - "active.mode holds a mode named under content.state_authority.modes, or 'not set'"
-          - "active.phase holds a phase id indexed under content.phases in definition.yaml, or 'none'"
-          - "When active.phase is not 'none', its target in definition.yaml resolves to a selected component in development.yaml and a mapped item configuration; active.target is derived from that phase and is never stored"
-          - "active.set_by names either the human or an operation listed as writable_by for the field it wrote"
+          - "active is null after a planning reset; otherwise active.mode holds a mode named under content.state_authority.modes, or 'not set'"
+          - "When active is not null, active.phase holds a phase id indexed under content.phases in definition.yaml, or 'none'"
+          - "When active is not null and active.phase is not 'none', its target in definition.yaml resolves to a selected component in development.yaml and a mapped item configuration; active.target is derived from that phase and is never stored"
+          - "When active is not null, active.set_by names either the human or an operation listed as writable_by for the field it wrote"
           - "Every state change an agent made corresponds to exactly one transition above"
-          - "An operation's mode matches the mode it owns under content.state_authority.modes, except for the explicit S9 development-reset result of planning / none; an operation performing another operation's work remains a fault"
+          - "An operation's mode matches the mode it owns under content.state_authority.modes, except for the explicit S9 development-reset result of planning / none and planning-reset result of null; an operation performing another operation's work remains a fault"
           - "Each plan key is a phase id from definition.yaml; its id, title, order, target, and goal-derived meaning match that phase"
           - "Every phase in definition.yaml has exactly one Plan shell in task.yaml, and task.yaml has no Plan whose phase is absent from definition.yaml"
           - "No open question carries an answer that no human gave"
@@ -352,11 +348,12 @@ sections:
   # <!--------------------------------------------------------------------------------- Active -->
   active:
     required: true
-    purpose: "The current workflow mode and active project phase. A human-requested workflow operation selects its owned mode and one phase; reset may instead return the workflow to planning or not set with no active phase under S9."
+    nullable: true
+    purpose: "The current workflow mode and active project phase. A human-requested workflow operation selects its owned mode and one phase. A planning reset sets this complete section to null; a development reset sets it to planning with no active phase."
     fields:
       mode:
         required: true
-        purpose: "The current workflow mode — one of the modes defined in content.state_authority.modes, or 'not set' before planning and after a planning reset."
+        purpose: "The current workflow mode — one of the modes defined in content.state_authority.modes, or 'not set' before the first workflow operation."
       mode_reason:
         required: true
         purpose: "Why this mode is the active one — the invocation that set it, and, after a run, what that run concluded."

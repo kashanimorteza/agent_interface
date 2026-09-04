@@ -10,7 +10,7 @@
 - Re-read the current map on every operation. A renamed or relocated mapped file must require only a map update, never a Skill update.
 - Read only the sources required for the active operation and its current authority. Structural discovery does not grant write access.
 
-The self-contained clear operation is the sole exception to this bootstrap. It does not interpret, generate, or reconcile Interface content, and therefore does not read the map. It may assume only the fixed deletion targets defined by its own Skill and bundled script. This exception grants no other capability permission to hardcode an Interface path.
+The self-contained clear and reset operations are the only exceptions to this bootstrap. They do not interpret, generate, or reconcile Interface content and therefore do not read the map. Each may assume only the fixed targets and behavior defined by its own Skill and bundled script. These exceptions grant no other capability permission to hardcode an Interface path.
 
 ## Separation
 
