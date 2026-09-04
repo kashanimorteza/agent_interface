@@ -1,8 +1,8 @@
 schema:
   id: agent-interface-task
-  version: "2.4"
+  version: "3.1"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
-  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans use the phase → group → task structure. Every plan key is a project phase from definition.yaml; the phase's target resolves the item configuration and code boundary used by its tasks."
+  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans use the phase → group → task structure. Every plan key and target come from a project phase in definition.yaml; the target resolves the item configuration and code boundary used by its tasks, while development.yaml describes the selected components, their connections, runtime, and deployment."
   authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and invariants, not the permission"
 
 structure:
@@ -47,7 +47,7 @@ sections:
             purpose: "A runnable command that proves acceptance — without it a task is never done."
           touches:
             required: true
-            purpose: "Paths this task touches, written relative to the code_path of the item named by its phase target."
+            purpose: "Paths this task touches, written relative to the code_path of the item named by the phase target in definition.yaml."
           status:
             required: true
             purpose: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
@@ -100,7 +100,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Plans -->
   plans:
     required: true
-    purpose: "The implementation plans — one entry per project phase, keyed by phase id. Phase order and identity come from definition.yaml. The phase target selects its item Policy, configuration, contracts, verification context, and code_path."
+    purpose: "The implementation plans — one entry per project phase, keyed by phase id. Phase identity, order, target, and intended outcome come from definition.yaml."
     fields:
       "<phase>":
         required: true
@@ -117,7 +117,7 @@ sections:
             purpose: "The one-based project phase order copied from definition.yaml."
           target:
             required: true
-            purpose: "The phase target copied from definition.yaml. It resolves the item-specific configuration and write boundary; it is not the plan key."
+            purpose: "The technical target copied from the phase in definition.yaml. It resolves the item-specific configuration and write boundary; it is not the plan key."
           does:
             required: true
             purpose: "What this project phase accomplishes, derived only from that phase's goal in definition.yaml."

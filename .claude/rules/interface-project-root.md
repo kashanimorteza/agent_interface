@@ -4,7 +4,7 @@ The authoritative project root for this repository is the `.interface/` director
 
 ## Rule
 
-- At the start of project work, read the repository `README.md` completely for context about Agent Interface, its workflow, and the current capability's role. The README explains the Interface; it is not a source of target-project facts.
+- At the start of project work, read `.interface/readme.md` completely for context about Agent Interface, its workflow, and the current capability's role. The readme explains the Interface; it is not a source of target-project facts.
 - Inspect the repository root and the top-level structure of `.interface/` only far enough to understand how the Interface, its generated configuration, and any mapped target-project locations relate. This structural inspection does not authorize reading the contents of a protected or role-specific source.
 - Then treat `.interface/` as the primary project root and source of truth. Start Interface inspection at `.interface/root.yaml`, use its current map to resolve all other paths, and read only the mapped Config and authority files required for the current task.
 - This rule applies automatically. Skills and other capabilities must not redefine or re-resolve the target project directory individually; they inherit `.interface/` as the project root from this rule.

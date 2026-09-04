@@ -11,7 +11,7 @@ Create an implementation-ready plan for the project phase named in `$ARGUMENTS`.
 
 ## Load the live Interface
 
-Read `README.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, planning structure, State authority, applicable configuration, contracts, and Policies.
+Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, planning structure, State authority, applicable configuration, contracts, and Policies.
 
 Re-read required sources on every invocation. Resolve the requested phase and its technical context only through the current mapped files. Load any additional technology Skill explicitly selected by the live configuration, following the current policy for unavailable guidance.
 

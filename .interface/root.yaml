@@ -3,7 +3,7 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "2.4"
+  version: "3.2"
   updated: "2026-09-04"
 
 
@@ -47,6 +47,10 @@ content:
       path: ".interface/root.yaml"
       responsibility: "Entry point and map of the Agent Project Interface"
 
+    readme:
+      path: ".interface/readme.md"
+      responsibility: "Human-readable introduction, structure, workflow, and Quick Start for the Agent Project Interface"
+
     project:
       path: ".interface/project.md"
       responsibility: "Human-readable project definition provided by the Developer"
@@ -64,6 +68,9 @@ content:
 
         - path: "model.schema.yaml"
           responsibility: "Defines the shared structure and format of model.yaml"
+
+        - path: "development.schema.yaml"
+          responsibility: "Defines development.yaml — technical composition, cross-item connections, runtime, and deployment"
 
         - path: "task.schema.yaml"
           responsibility: "Defines the structure and format of task.yaml"
@@ -86,10 +93,13 @@ content:
 
       files:
         - path: "definition.yaml"
-          responsibility: "Project identity, goals, conceptual architecture, and phases in structured format"
+          responsibility: "Project identity, intended outcomes, and ordered project phases in structured format"
 
         - path: "model.yaml"
-          responsibility: "Shared logical models, fields, relationships, rules, and initial data consumed by Database, Backend, and Frontend"
+          responsibility: "Shared logical models, fields, relationships, rules, and initial data consumed by mapped technical items"
+
+        - path: "development.yaml"
+          responsibility: "Technical composition, cross-item connections, runtime, and deployment choices"
 
         - path: "task.yaml"
           responsibility: "Project tasks and plans"
@@ -118,27 +128,27 @@ content:
       purpose: "Decide what will be built and in what order — no product code is written"
       owned_by: "my-interface-tasker"
       may_write:
-        - "The mapped item configuration selected by the requested phase's target — planning-owned settings and relationships; a draft database contract when the target is database, never a frozen contract"
+        - "The mapped item configuration selected by the requested phase's target in definition.yaml — planning-owned settings, relationships, and draft contracts only, never a frozen contract"
         - ".interface/config/task.yaml — the plan for the one project phase named by the invocation"
         - ".interface/config/state.yaml — active, per transitions S1 and S4 in its own content.state_authority, and blockers and open questions"
       may_not_write:
-        - "Any file under the requested phase target's code_path"
+        - "Any file under the code_path of the requested phase's target"
         - "A frozen contract"
         - "The requested phase's id, title, order, target, or goal in config/definition.yaml"
-        - "root.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, and schema/"
+        - "root.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, and schema/"
 
     development:
       purpose: "Implement the tasks that planning defined"
       owned_by: "my-interface-developer"
       may_write:
-        - "Files under the active phase target's code_path, limited to the touches of the claimed task"
+        - "Files under the code_path of the active phase's target, limited to the touches of the claimed task"
         - ".interface/config/task.yaml — the status, blocker, and log fields of a task only"
         - ".interface/config/state.yaml — active, per transitions S2 and S4 in its own content.state_authority, and blockers and open questions"
       may_not_write:
-        - "A code_path not selected by the active phase target"
+        - "A code_path not selected by the active phase's target in definition.yaml"
         - "A frozen contract"
         - "task_schema, task_states, phase plan identity and structure, and every field of a task other than status, blocker, and log"
-        - "root.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, the item files, and schema/"
+        - "root.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, the item files, and schema/"
       plan_change: "Changing a task requires the reason written into that task's log and human approval"
 
     review:
@@ -156,19 +166,19 @@ content:
     interpreter:
       name: "my-interface-interpreter"
       path: ".claude/skills/my-interface-interpreter/"
-      responsibility: "Understands project.md as an ordered set of project phases, resolves each referenced phase target's local policy and preferences, and generates project configuration according to the Schemas"
+      responsibility: "Understands project.md, generates project Definition and Models, resolves technical composition in Development, and generates item configuration according to the current Schemas"
       state: "Runs outside the modes — transitions S0, S7, and S8. S0 creates state.yaml with content.state_authority seeded verbatim from the default in schema/state.schema.yaml; a regeneration carries the existing active values and the live State Authority through untouched"
 
     tasker:
       name: "my-interface-tasker"
       path: ".claude/skills/my-interface-tasker/"
-      responsibility: "Generates the implementation plan and Tasks for the one project phase named by the Developer, resolving its target item from the Understanding"
+      responsibility: "Generates the implementation plan and Tasks for the one project phase named by the Developer, resolving its technical target from definition.yaml"
       state: "Owns planning mode — transitions S1, S4, S7, S8"
 
     developer:
       name: "my-interface-developer"
       path: ".claude/skills/my-interface-developer/"
-      responsibility: "Executes planned Tasks for the one project phase named by the Developer, writing only within that phase target's code boundary"
+      responsibility: "Executes planned Tasks for the one project phase named by the Developer, writing only within the code boundary selected by its target"
       state: "Owns development mode — transitions S2, S4, S7, S8"
 
     reviewer:

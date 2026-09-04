@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "3.7"
+  version: "4.1"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
   authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
@@ -69,9 +69,9 @@ sections:
 
         active.target:
           tier: "derived"
-          holds: "The target item of active.phase, resolved from the entry in definition.yaml content.phases whose id equals active.phase"
+          holds: "The target of active.phase, resolved from the entry in definition.yaml content.phases whose id equals active.phase"
           writable_by: []
-          constraint: "Never stored. The active target, item Policy, item configuration, contracts, verification context, and code_path are resolved fresh from active.phase whenever needed."
+          constraint: "Never stored. The active target is resolved fresh from active.phase in definition.yaml; its selected component in development.yaml and its item Policy, configuration, contracts, verification context, and code_path are then resolved through the current Interface map."
 
         active.mode_reason:
           tier: "agent_writable"
@@ -161,7 +161,8 @@ sections:
         items:
           - "The answer to any open question in state.yaml"
           - "Freezing or versioning a contract — see the change_rule in the item files"
-          - "Defining a project phase, its order, goal, or target — these come from project.md through the interpreter"
+          - "Defining a project phase, its order, target, and intended outcome — these come from project.md through the interpreter"
+          - "The generated technical composition, runtime, and deployment in config/development.yaml, outside a my-interface-interpreter run"
           - "The content of config/definition.yaml, outside a my-interface-interpreter run"
           - "The content of config/model.yaml, outside a my-interface-interpreter run"
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
@@ -191,7 +192,7 @@ sections:
           authorized_by: "The human's invocation of my-interface-tasker, which names exactly one project phase — for example /my-interface-tasker P2"
           requires:
             - "The named phase is indexed under content.phases in definition.yaml"
-            - "The phase target resolves to an indexed architecture part and a mapped generated item configuration"
+            - "The named phase's target in definition.yaml resolves to a selected component in development.yaml and a mapped generated item configuration"
             - "The invocation names exactly one phase id"
           writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
           refused_when: "The invocation omits the phase, names more than one phase, names a phase the Understanding does not index, or names a mode other than planning. The Skill stops and tells the human; it does not adjust the state to fit"
@@ -206,7 +207,7 @@ sections:
             - "The named phase is indexed under definition.yaml content.phases and has a matching plan under task.yaml content.plans"
             - "The phase plan holds at least one task — a phase with nothing to build is not entered"
             - "Every earlier project phase is complete: each has a non-empty plan, every task not cancelled or superseded is done, and none remains todo, claimed, or blocked"
-            - "The phase target resolves to an indexed architecture part and a mapped generated item configuration"
+            - "The named phase's target in definition.yaml resolves to a selected component in development.yaml and a mapped generated item configuration"
           writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
           refused_when: "The invocation omits the phase, names more than one phase, the phase has no non-empty plan, an earlier phase is incomplete, its target cannot be resolved, or the invocation names a mode other than development"
 
@@ -218,7 +219,7 @@ sections:
           authorized_by: "The human's invocation of my-interface-reviewer, which names exactly one project phase"
           requires:
             - "The named phase is indexed under definition.yaml content.phases and has a matching non-empty plan under task.yaml content.plans"
-            - "The phase target resolves to an indexed architecture part and a mapped generated item configuration"
+            - "The named phase's target in definition.yaml resolves to a selected component in development.yaml and a mapped generated item configuration"
           writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
           refused_when: "The invocation omits the phase, names more than one phase, names an unplanned phase, its target cannot be resolved, or names a mode other than review"
 
@@ -301,11 +302,11 @@ sections:
         checks:
           - "active.mode holds a mode named under content.modes in .interface/root.yaml, or 'not set'"
           - "active.phase holds a phase id indexed under content.phases in definition.yaml, or 'none'"
-          - "When active.phase is not 'none', its target resolves to an indexed architecture part and mapped item configuration; active.target is derived from that target and is never stored"
+          - "When active.phase is not 'none', its target in definition.yaml resolves to a selected component in development.yaml and a mapped item configuration; active.target is derived from that phase and is never stored"
           - "active.set_by names either the human or a Skill listed as writable_by for the field it wrote"
           - "Every state change an agent made corresponds to exactly one transition above"
           - "A Skill's mode matches the mode it owns under content.modes in root.yaml, except for the explicit S9 development-reset result of planning / none; a Skill actually running another Skill's work remains a fault"
-          - "Each plan key is a phase id from definition.yaml, and its id, title, order, target, and goal-derived meaning match that phase"
+          - "Each plan key is a phase id from definition.yaml; its id, title, order, target, and goal-derived meaning match that phase"
           - "No open question carries an answer that no human gave"
           - "content.state_authority was seeded verbatim from the schema default and has changed only by the human's hand since — a difference an agent made is a fault, not a state to repair"
 

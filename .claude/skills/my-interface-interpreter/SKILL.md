@@ -10,7 +10,7 @@ Convert the human project definition into the structured project Understanding c
 
 ## Load the live Interface
 
-Read `README.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, output Schemas, Policies, Preferences, existing generated configuration, State authority, and any other source required for this run.
+Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, output Schemas, Policies, Preferences, existing generated configuration, State authority, and any other source required for this run.
 
 Re-read required sources on every invocation. Do not rely on remembered paths, fields, defaults, file shapes, authorities, or conclusions. Do not scan unrelated project files for project intent.
 

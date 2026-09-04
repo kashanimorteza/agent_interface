@@ -12,7 +12,7 @@ Run this command from the repository root:
 python3 .claude/skills/my-interface-clear/scripts/clear.py
 ```
 
-Do not read `README.md`, `.interface/root.yaml`, `project.md`, Config files, Schemas, other Skills, or project code before running it. Do not infer or add deletion targets.
+Do not read `.interface/readme.md`, `.interface/root.yaml`, `project.md`, Config files, Schemas, other Skills, or project code before running it. Do not infer or add deletion targets.
 
 The explicit invocation authorizes only these fixed operations, without another confirmation:
 

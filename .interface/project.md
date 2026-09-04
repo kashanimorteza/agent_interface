@@ -9,7 +9,7 @@ Defines what the project is and the main parts that make up the system.
 
 ## Goals
 
-- Enable users to enter and manage all defined project data through a working backend and frontend.
+- Enable users to enter and manage all defined project data.
 
 <br><br>
 
@@ -320,23 +320,24 @@ Defines the project's implementation phases. Phases are executed step by step in
 
 ### Phase 1
 
-**Title:** Database
+**Title:** Data Foundation
 
 **Target:** Database
 
-**Goal:** Create the database schema and migrations for all defined project models.
+**Goal:** Make all defined project data persistently available to the system.
 
 ### Phase 2
 
-**Title:** Backend API  
+**Title:** Data Operations
+
 **Target:** Backend
 
-**Goal:** Create and run the API for all defined project models.
+**Goal:** Make all defined project data available for consistent creation, retrieval, update, and deletion operations.
 
 ### Phase 3
 
-**Title:** Frontend
+**Title:** Data Management Interface
 
 **Target:** Frontend
 
-**Goal:** Create the frontend interface for entering and managing all defined project data through the backend API.
+**Goal:** Enable users to enter and manage all defined project data through a user-facing experience.

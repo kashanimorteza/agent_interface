@@ -1,0 +1,128 @@
+schema:
+  id: agent-interface-development
+  version: "1.1"
+  purpose: "The shape of development.yaml — the project's technical composition, cross-item integration, runtime, and deployment"
+  separation: "Project identity, intended outcomes, and each phase's target belong to definition.yaml; domain models belong to model.yaml; each technical item owns its internal configuration; development.yaml owns how the selected items are connected, run, and deployed."
+
+policy:
+  project_independence: "This Schema describes a general technical-development layer and contains no project-specific components, providers, platforms, or topology. Every generated value is resolved for the current project."
+  component_resolution: "Select components dynamically from item types currently mapped by root.yaml. Every target named by a project phase must resolve to a selected component; additional components are selected only when the project Understanding requires them. The existence of an item Schema does not by itself add that component to the project."
+  item_authority: "Each component's mapped generated configuration remains the source of truth for its internal technology, responsibility, boundaries, contracts, paths, and implementation details. Development summarizes and connects those values without redefining them."
+  connection_resolution: "Derive every connection from the contracts produced and consumed by selected components. A connection cannot create a contract that neither endpoint owns."
+  environment_resolution: "Resolve unspecified runtime and deployment choices under root.yaml policy.decision_policy. Preserve explicit project constraints and record consequential Agent-selected choices in development.yaml."
+  consistency: "Component summaries and connections must agree with their owning item configurations. When they differ, the owning item configuration governs and development.yaml is reconciled rather than treated as a competing authority."
+
+structure:
+  - summary
+  - components
+  - connections
+  - runtime
+  - deployment
+
+sections:
+
+  # <!--------------------------------------------------------------------------------- Summary -->
+  summary:
+    required: true
+    purpose: "The complete technical shape of the project in one sentence — which kinds of components participate, how they connect, and how the result runs."
+
+  # <!--------------------------------------------------------------------------------- Components -->
+  components:
+    required: true
+    purpose: "The technical items selected for this project — one entry per mapped component actually required by the project Understanding."
+    fields:
+      "<component>":
+        required: true
+        purpose: "One selected technical component, keyed by the item type through which root.yaml resolves its Schema and generated configuration."
+        fields:
+          configuration:
+            required: true
+            purpose: "The generated item-configuration file resolved through the current Interface map."
+          responsibility:
+            required: true
+            purpose: "A one-sentence summary of the responsibility owned by this component's generated configuration."
+          owns:
+            required: true
+            purpose: "A summary of the component's authoritative owned boundary."
+          does_not_own:
+            required: true
+            purpose: "A summary of the component's authoritative excluded boundary."
+          produces:
+            required: false
+            purpose: "A summary of the contracts or runtime interfaces published by this component."
+          consumes:
+            required: false
+            purpose: "A summary of the contracts or runtime interfaces consumed by this component."
+
+  # <!--------------------------------------------------------------------------------- Connections -->
+  connections:
+    required: true
+    purpose: "The directed integration graph between selected components — one entry per producer-to-consumer connection."
+    fields:
+      "<connection>":
+        required: true
+        purpose: "One directed connection, named for its producer and consumer."
+        fields:
+          from:
+            required: true
+            purpose: "The selected component publishing the contract or runtime interface."
+          to:
+            required: true
+            purpose: "The selected component consuming the contract or runtime interface."
+          contract:
+            required: true
+            purpose: "The contract or implemented runtime interface used by the consumer, as owned by the endpoint configurations."
+          path:
+            required: false
+            purpose: "Where the consumer reads the interface when that location is known at configuration time; omitted when implementation produces it later."
+          rule:
+            required: true
+            purpose: "The integration boundary both endpoint configurations require."
+          versioning:
+            required: false
+            purpose: "The producing contract's versioning rule when the connection uses a versioned contract."
+
+  # <!--------------------------------------------------------------------------------- Runtime -->
+  runtime:
+    required: true
+    purpose: "How the project's selected components run together."
+    fields:
+      strategy:
+        required: true
+        purpose: "The execution strategy, such as native processes, containers, managed services, or a mixed topology."
+      operating_system:
+        required: false
+        purpose: "The required operating system or platform constraint when one exists."
+      orchestration:
+        required: false
+        purpose: "The mechanism coordinating component processes or containers when coordination is required."
+      startup:
+        required: true
+        purpose: "The component startup order and the mechanism that brings the complete project online."
+      configuration:
+        required: true
+        purpose: "How runtime configuration, environment-specific values, and secrets are supplied without placing secret values in Interface Config."
+
+  # <!--------------------------------------------------------------------------------- Deployment -->
+  deployment:
+    required: true
+    purpose: "Where and how the complete project is delivered."
+    fields:
+      platform:
+        required: true
+        purpose: "The deployment class, such as a local machine, server, container platform, cloud platform, or another supported destination."
+      provider:
+        required: false
+        purpose: "The selected platform or cloud provider when the project requires one."
+      service:
+        required: false
+        purpose: "The selected provider service or hosting product when applicable."
+      region:
+        required: false
+        purpose: "The deployment region or location constraint when applicable."
+      artifacts:
+        required: true
+        purpose: "The deployable artifacts and configuration needed to deliver the selected components."
+      release:
+        required: true
+        purpose: "The mechanism that publishes, starts, updates, and verifies a release."

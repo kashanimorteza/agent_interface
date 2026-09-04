@@ -33,24 +33,17 @@ Agent Interface provides the communication layer between these two worlds.
 
 The core of Agent Interface is located in the `.interface/` directory.
 
-The `.interface/` directory contains four main parts:
+The `.interface/` directory contains five main parts:
 
+- **`readme.md`** — Introduces the Interface, its structure, workflow, and Quick Start.
 - **`root.yaml`** — The entry point. Maps the folders and files of the Interface, the Agent Skills, and the working modes.
 - **`project.md`** — The project definition and the Developer's requirements, in natural language.
 - **`schema/`** — Defines generated-file shapes. Each item Schema also owns that item's Policy and Preferences.
-- **`config/`** — Represents and maintains the project's Understanding according to the Schema. `definition.yaml` describes the project, while `model.yaml` provides the shared logical model definition consumed by Database, Backend, and Frontend.
+- **`config/`** — Represents and maintains the project's Understanding according to the Schema. `definition.yaml` describes the project, `model.yaml` defines its shared domain models, and `development.yaml` defines its technical composition and delivery.
 
-The Interface currently supports three target item types:
+Technical composition is intentionally separate from the human project description. `development.yaml` selects the technical components the project needs from the item types currently mapped by `root.yaml`, connects their contracts, and defines how they run and deploy.
 
-- **Database** — owns the database engine, storage, schema, migrations, and database contract.
-- **Backend** — consumes the database contract and publishes an implemented HTTP API with a framework-generated machine-readable description.
-- **Frontend** — consumes the backend's implemented HTTP API and publishes the user interface.
-
-When all three are used, their directed relationship is:
-
-`Database → Backend → Frontend`
-
-Project phases are the primary units of work. Each phase in `project.md` selects one target item, and any number of phases may target the same item. A target supplies the phase's technical configuration, Policy, contracts, and code boundary; it does not replace the phase as the planning or development scope. Only target item types referenced by at least one phase enter the generated Understanding.
+Project phases are the primary units of work. `project.md` defines each phase's identity, order, target, and intended outcome. The target selects the technical item whose configuration supplies the relevant Policy, contracts, verification context, and code boundary; Development configuration independently describes how the project's selected technical items connect, run, and deploy.
 
 Each item keeps two kinds of guidance beside its own Schema:
 
@@ -68,19 +61,19 @@ There is no global Preferences or Rules layer. Interface-wide authority remains 
 
 `.claude/skills/my-interface-interpreter/SKILL.md`
 
-Transforms the human-managed definition in `project.md` into the generated project Understanding. It preserves the ordered phases, resolves each referenced target item's Schema, mandatory Policy, and supported Preferences, validates the result, and autonomously resolves ordinary technical gaps without inventing project intent.
+Transforms the human-managed definition in `project.md` into the generated project Understanding. It preserves project intent, ordered phases, and their targets, resolves technical composition through the current Schemas, validates the result, and autonomously resolves ordinary technical gaps without inventing project intent.
 
 ### `my-interface-tasker`
 
 `.claude/skills/my-interface-tasker/SKILL.md`
 
-Transforms one requested project phase from the generated Understanding into an implementation-ready plan, resolving the phase's target item for Policy, configuration, contracts, and code boundaries.
+Transforms one requested project phase from the generated Understanding into an implementation-ready plan, resolving its technical target from Definition configuration.
 
 ### `my-interface-developer`
 
 `.claude/skills/my-interface-developer/SKILL.md`
 
-Executes eligible planned Tasks for one requested project phase, implements changes only within that phase target's authorized code boundary, verifies the result, and records each Task's actual outcome.
+Executes eligible planned Tasks for one requested project phase, implements changes only within the code boundary selected by its target, verifies the result, and records each Task's actual outcome.
 
 ### `my-interface-reviewer`
 
@@ -92,7 +85,7 @@ Reviews one requested project phase against the generated Understanding, authori
 
 `.claude/skills/my-interface-clear/SKILL.md`
 
-Runs its bundled script to delete everything inside `.interface/config/` and remove the root `backend/`, `frontend/`, and `database/` directories when present.
+Runs its bundled script to clear the generated project configuration and the fixed generated-code targets owned by that Skill.
 
 ### `my-interface-reset`
 
@@ -126,4 +119,4 @@ Resets the whole generated workflow to the stage before development or before pl
 
 `/my-interface-developer <phase-id>`
 
-`<phase-id>` is a phase already defined in `project.md`, such as `P1`, `P2`, or `P3`. Each Skill resolves the phase's target item from the generated Understanding.
+`<phase-id>` is a phase already defined in `project.md`, such as `P1`, `P2`, or `P3`. Its technical target is defined with the phase in `project.md` and preserved in the generated Definition configuration.

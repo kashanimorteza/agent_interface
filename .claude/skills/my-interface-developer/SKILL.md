@@ -11,7 +11,7 @@ Execute the unfinished eligible work for the project phase named in `$ARGUMENTS`
 
 ## Load the live Interface
 
-Read `README.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, current work plan, State authority, applicable configuration, contracts, code boundaries, and verification context.
+Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, current work plan, State authority, applicable configuration, contracts, code boundaries, and verification context.
 
 Re-read required sources on every invocation. Resolve the requested phase, executable work, destinations, permissions, coordination protocol, and completion rules only through current mapped files. Load any additional technology Skill explicitly selected by the live configuration, following the current policy for unavailable guidance.
 

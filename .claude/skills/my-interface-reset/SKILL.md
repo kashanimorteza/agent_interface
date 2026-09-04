@@ -11,7 +11,7 @@ Reset the generated workflow for the one stage named in `$ARGUMENTS`: `developme
 
 ## Load the live reset contract
 
-Read `README.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map to locate the current workflow data, governing Schemas, State authority, reset transition, and reset protocol.
+Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map to locate the current workflow data, governing Schemas, State authority, reset transition, and reset protocol.
 
 Re-read required sources on every invocation. Do not rely on remembered file shapes, fields, states, transitions, preservation rules, or destinations. Require exactly one supported stage and let the current reset contract decide whether the operation is allowed and what it changes.
 

@@ -10,7 +10,7 @@ Install compatible AI Agent Skills for technologies found in the configured targ
 
 ## Load the live Interface and detect
 
-Read `README.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, configured target-project locations, current authorities, and read and write boundaries.
+Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, configured target-project locations, current authorities, and read and write boundaries.
 
 Re-read required sources on every invocation. Do not rely on remembered paths, file shapes, technologies, versions, permissions, or installation state. Use the human project definition for context only; detect eligible technologies from the current generated configuration and from dependency manifests, lockfiles, runtime-version files, and framework configuration inside authorized target-project locations.
 
