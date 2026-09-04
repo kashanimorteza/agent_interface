@@ -1,9 +1,20 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
+  path: ".interface/preferences/database.yaml"
+  path_note: "The Preferences layer of the database item — the supported technical choices used only when the human project definition leaves a database choice unstated. Its related Principles, Schema, and generated configuration are resolved through map.yaml"
   purpose: "The supported database technical choices and defaults used when the human project definition leaves a corresponding choice unstated."
   standard: "Agent Project Interface"
-  version: "2.0"
-  updated: "2026-09-04"
+  version: "3.0"
+  updated: "2026-09-05"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. No operation edits it; generation reads it and never writes a resolved value back into it"
+  changed_by: "The human, directly. A preference an agent believes is missing or wrong is raised through the mapped State mechanism"
+  precedence: "An explicit project value always wins over every value here. A preference never overrides a database Principle; it only fills a technical choice the Principles leave open"
+  consumption: "Generation resolves each unstated database choice from this file and writes the concrete result into the mapped generated database configuration. Downstream operations consume that resolved configuration and never reinterpret this file. The token latest is resolved to a concrete version and never appears in generated configuration"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

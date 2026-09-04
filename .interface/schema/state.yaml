@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "7.0"
+  version: "9.0"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, its working modes, the State Authority that governs it, and the transition rules, in one file"
   principles: ".interface/principles/state.md"
   layering: "This file defines shape only. The mandatory rules of this layer live in its principles document and are not restated here."
@@ -90,7 +90,7 @@ sections:
             - "review operation"
             - "generation operation — only under transition S0, when state.yaml does not yet exist"
             - "reset operation — only under transition S9, to planning for a development reset or 'not set' for a planning reset"
-          constraint: "An operation writes only the mode it owns, except that reset records the workflow stage explicitly selected by the human under S9: planning after development is reset, or 'not set' after planning is reset. Reset never performs planning. Clear does not write this field because S5 deletes the file that holds it"
+          constraint: "An operation writes only the mode it owns, except that reset records the workflow stage explicitly selected by the human under S9: planning after development is reset, or 'not set' after planning is reset. Reset never performs planning"
           human_may_set: true
 
         active.phase:
@@ -206,7 +206,7 @@ sections:
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
           - ".interface/map.yaml — the file and folder map of the Interface"
           - "The State Authority itself, after its seed — this section, and its default in schema/state.yaml"
-          - "Asking for tasks to be created, asking for development or planning to be reset project-wide, and asking for the generated project state to be cleared"
+          - "Asking for tasks to be created, and asking for development or planning to be reset project-wide"
 
       transitions:
 
@@ -272,18 +272,6 @@ sections:
           writes: "active.mode_reason, active.set_at"
           refused_when: "The operation did not perform the run"
 
-        - id: "S5"
-          name: "clear the generated project state"
-          from: "any"
-          to: "an empty .interface/config/ directory and no root backend/, frontend/, or database/ directory"
-          performed_by: "clear operation"
-          authorized_by: "The human's explicit clear request"
-          requires:
-            - "The operation resolves generated configuration and generated code directories through the current Interface map"
-            - "The deletion set is exactly every entry inside the mapped generated-configuration directory plus every mapped item code_path when present"
-          writes: "The resolved generated configuration entries and mapped generated-code directories, by deleting them; the generated-configuration directory itself is preserved"
-          refused_when: "A target cannot be resolved safely through the current Interface map, escapes the repository root, is the repository root, or the generated-configuration directory is a symlink or non-directory"
-
         - id: "S6"
           name: "human override"
           from: "any"
@@ -335,6 +323,21 @@ sections:
           writes: "content.active.mode, content.active.phase, content.active.mode_reason, content.active.set_by, content.active.set_at, content.blockers, content.open_questions.questions; and the project-wide Task reset defined by task.yaml content.task_states.reset_protocol"
           refused_when: "The invocation is missing, names a phase, has more than one argument, or is not development or planning; task.yaml or a Plan shell is missing; no generated Task exists; a Task is claimed; or the complete mutation cannot be validated before writing"
 
+        - id: "S10"
+          name: "materialize or reconcile the Task frame"
+          from: "Any runtime state, including immediately after S0; task.yaml may or may not exist"
+          to: "The same runtime State, with the current Task frame and exactly one Plan shell for every project phase"
+          performed_by: "generation operation"
+          authorized_by: "The human's request for generation or regeneration"
+          requires:
+            - "The complete candidate Definition and Task reconciliation is resolved and validated in memory before any generated file is written"
+            - "task_schema and task_states are materialized from the current mapped Task Schema"
+            - "Every project phase receives one Plan shell whose id, title, order, target, and does agree with the candidate Definition and whose groups mapping is empty when the shell is new"
+            - "An existing non-empty Plan is preserved byte for byte when its source phase is unchanged"
+            - "A changed phase may be reconciled automatically only while its existing groups mapping is empty"
+          writes: "The mapped generated task.yaml — task_schema, task_states, a missing Plan shell, or the identity fields of an existing empty Plan shell only. This transition writes no State field"
+          refused_when: "Generation would create a Group or Task; alter or delete any existing Group or Task; remove a phase whose Plan contains Tasks; change the identity, order, target, or intended outcome of a phase whose Plan contains Tasks; change active, state_authority, or any other State field; or the complete candidate cannot satisfy Task and State validation before writing"
+
       validation:
         note: "These must hold at all times. Any operation may check them; the review operation checks them as part of a review, and a failure is a blocker, not a repair"
         checks:
@@ -345,6 +348,7 @@ sections:
           - "Every state change an agent made corresponds to exactly one transition above"
           - "An operation's mode matches the mode it owns under content.state_authority.modes, except for the explicit S9 development-reset result of planning / none; an operation performing another operation's work remains a fault"
           - "Each plan key is a phase id from definition.yaml; its id, title, order, target, and goal-derived meaning match that phase"
+          - "Every phase in definition.yaml has exactly one Plan shell in task.yaml, and task.yaml has no Plan whose phase is absent from definition.yaml"
           - "No open question carries an answer that no human gave"
           - "content.state_authority was seeded verbatim from the schema default and has changed only by the human's hand since — a difference an agent made is a fault, not a state to repair"
 

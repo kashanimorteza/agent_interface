@@ -23,3 +23,13 @@ Every plan key and target come from a project phase in `definition.yaml`. The ta
 ## 3. The schema gives shape, not permission
 
 Who may write each part of `task.yaml`, and when, is decided in the State contract under `content.state_authority`, including its working modes and transitions. The Task Schema gives the shape and the invariants, never the permission.
+
+<br>
+
+## 4. Generation creates the frame, never the plan
+
+The generation operation materializes the current `task_schema` and `task_states` frame and creates one Plan shell for every project phase indexed by `definition.yaml`. Each shell copies the phase's id, title, order, and target, derives `does` only from that phase's goal, and begins with an empty `groups` mapping.
+
+Generation never decomposes a phase, creates a Group, or creates a Task. Those are planning decisions and belong only to the planning operation for the phase the human requested.
+
+On regeneration, an existing non-empty Plan for an unchanged phase is preserved. A newly added phase receives an empty Plan shell, and a changed phase whose Plan remains empty may be reconciled to its current Definition. Removing a phase, or changing the identity, order, target, or intended outcome of a phase whose Plan already contains Tasks, is a critical conflict: generation reports it and never silently rewrites or deletes the affected planning content.

@@ -10,9 +10,12 @@
 - Re-read the current map on every operation. A renamed or relocated mapped file must require only a map update, never a Skill update.
 - Read only the sources required for the active operation and its current authority. Structural discovery does not grant write access.
 
+The self-contained clear operation is the sole exception to this bootstrap. It does not interpret, generate, or reconcile Interface content, and therefore does not read the map. It may assume only the fixed deletion targets defined by its own Skill and bundled script. This exception grants no other capability permission to hardcode an Interface path.
+
 ## Separation
 
-- The Interface is agent-independent. Never place Claude configuration, Skill names, Skill paths, invocation syntax, technology-to-Skill mappings, or Claude-specific operating rules inside it.
+- The Interface is agent-independent. Its human documentation may name an available Skill and show its human-facing invocation syntax, but doing so grants no authority and defines no Skill behavior.
+- Never place a physical Skill path, copied Skill instructions, Claude configuration, technology-to-Skill mapping, or Claude-specific operating rule inside the Interface. Files other than human documentation do not describe a particular Skill's workflow.
 - Claude-specific behavior belongs under the Claude configuration layer. Skills contain only their specialized workflow; shared behavior belongs in Rules.
 - Do not copy current Interface structure, values, fields, defaults, Policies, or project facts into a Skill. Consume them from their live owners discovered through the Interface map.
 - Change a Skill only when that Skill's own workflow changes. A change to Interface structure, Schemas, Config, project content, or mapped paths is not a reason to edit a Skill.

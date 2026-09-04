@@ -12,7 +12,7 @@ Every statement here is mandatory. A preference can never override a principle, 
 
 The design of the database — its tables, fields, relationships, constraints, and rules — is described in terms that do not belong to any particular database server. The engine is an implementation detail chosen late, in the preferences, and it must be possible to replace it without redesigning the data.
 
-This is what is usually called being *database-agnostic*. The practical test is simple: if the engine changed tomorrow, the contract consumers rely on should describe the same tables with the same meaning, and only the engine-specific section of the configuration should differ.
+This is what is usually called being *database-agnostic*. The practical test is simple: if the engine changed tomorrow, consumers should retain the same data-access behavior and domain meaning, while only the internal storage and engine-specific configuration may need to differ.
 
 <br>
 
@@ -54,17 +54,17 @@ The interface also supports controlled SQL-command execution for cases that cann
 
 ## 6. A published contract is frozen, versioned, and never edited
 
-The contract the database publishes is the promise other items build on. Once frozen it is never modified. A change means a new contract version and migrations that move the database from one version to the next; the old version stays intact for as long as anything depends on it.
+The contract the database publishes is the generic data-access promise other items build on. Once frozen it is never modified. A change means a new contract version; when satisfying that version also changes physical storage, ordered migrations move the database to the required schema. The old contract version stays intact for as long as anything depends on it.
 
-The implemented schema and the published contract must match exactly. If they ever differ, the contract is wrong and the discrepancy is reported, never silently absorbed.
+The internal storage schema and its implementation must satisfy every behavior and guarantee of the published contract. The contract remains independent of tables, columns, ORM mappings, engine settings, and connection details; it describes what consumers may do, not how persistence is physically implemented. A discrepancy between implemented behavior and the published contract is reported, never silently absorbed.
 
 <br>
 
 ## 7. Models become tables, and model rules become constraints — traceably
 
-Every domain model is persistent and maps to one table unless the project explicitly marks the model as non-persistent or supplies a different mapping. The default table name is derived from the model name by one consistent convention; an explicit project table name always wins. The generation operation writes every resolved table name, and the source model it implements, explicitly into the contract — a reader never has to derive a name.
+Every domain model is persistent and maps to one table unless the project explicitly marks the model as non-persistent or supplies a different mapping. The default table name is derived from the model name by one consistent convention; an explicit project table name always wins. The generation operation writes every resolved table name, and the source model it implements, explicitly into the internal storage schema — an implementer never has to derive a name.
 
-Every rule declared on a model is preserved in the database and represented in its table's contract. A rule with one clear representation is resolved deterministically — a rule allowing one record per combination of related models becomes a composite unique constraint over those foreign keys. A rule with several possible representations is resolved by whichever preserves the domain meaning best. In both cases the resulting constraint records the source rule, so a reader can always trace a constraint back to the requirement that produced it. No model rule is ever silently dropped.
+Every rule declared on a model is preserved in the database and represented in the internal storage schema. A rule with one clear representation is resolved deterministically — a rule allowing one record per combination of related models becomes a composite unique constraint over those foreign keys. A rule with several possible representations is resolved by whichever preserves the domain meaning best. In both cases the resulting constraint records the source rule, so an implementer can always trace a constraint back to the requirement that produced it. No model rule is ever silently dropped.
 
 <br>
 
@@ -74,15 +74,15 @@ A relationship between models is represented by a foreign-key field whose name i
 
 The foreign key references the related table's primary key unless the project names another key, and its type is always exactly the referenced key's type, never chosen independently. Nullability, indexing, and referential actions come from the project when stated and from the preferences when not.
 
-When one model relates to the same target more than once, the relationship roles must be explicit; no role or field name is guessed. The resolved contract always writes the foreign-key field, the referenced table, and the referenced column explicitly.
+When one model relates to the same target more than once, the relationship roles must be explicit; no role or field name is guessed. The resolved internal storage schema always writes the foreign-key field, the referenced table, and the referenced column explicitly.
 
 <br>
 
-## 9. Secrets never live in the database layer
+## 9. Connection secrets stay outside, and credential storage stays internal
 
-Connection credentials belong to runtime configuration outside the repository's committed files. The database contract publishes the shape of a connection, never its secrets.
+Connection credentials belong to runtime configuration outside the repository's committed files. Runtime connection settings are internal to the database item; neither a connection shape nor its secret values are published through the data-access contract.
 
-Fields that are themselves credentials are each resolved to exactly one supported at-rest mode. An explicit project mode for a field always wins; otherwise the default mode comes from the Preferences. The database contract owns that resolved mode, and the database layer applies the matching persistence transformation without exposing its storage representation to consumers. Encryption keys and other secrets are never written into the contract or into database files.
+Fields that are themselves credentials are each resolved to exactly one supported at-rest mode. An explicit project mode for a field always wins; otherwise the default mode comes from the Preferences. The resolved mode is recorded on the corresponding physical column in the internal storage schema, and the database layer applies the matching persistence transformation without exposing its storage representation to consumers. Encryption keys and other secrets are never written into the contract or into database files.
 
 <br>
 
@@ -90,7 +90,7 @@ Fields that are themselves credentials are each resolved to exactly one supporte
 
 When the project declares initial data for a model, seeding becomes part of the database item and each record is mapped to its resolved table. Initial data is never supplied by Preferences, and missing project facts are never invented.
 
-Every key in a seed record must name a declared field of its model. Before generation, each record must satisfy its required relationship references and every non-nullable field through an explicit value, a database default, or safe generated behaviour permitted by the field contract. Records are resolved in dependency order; a literal relationship id is preserved exactly and must reference an initial or pre-existing target row — it is never renumbered or replaced by an inferred reference. Seeding must be repeatable without creating duplicate logical records or breaking any uniqueness rule.
+Every key in a seed record must name a declared field of its model. Before generation, each record must satisfy its required relationship references and every non-nullable field through an explicit value, a database default, or safe generated behaviour permitted by the resolved field definition. Records are resolved in dependency order; a literal relationship id is preserved exactly and must reference an initial or pre-existing target row — it is never renumbered or replaced by an inferred reference. Seeding must be repeatable without creating duplicate logical records or breaking any uniqueness rule.
 
 <br>
 
