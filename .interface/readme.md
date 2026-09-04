@@ -94,16 +94,16 @@ Discovers and installs compatible Claude Skills for technologies detected in the
 
 ### 1. Define the Project
 
-The Developer describes the project, its models, and its ordered phases in the human project definition mapped by `map.yaml`.
+Define the project, its models, and its ordered phases in `project.md`.
 
 ### 2. Interpret the Project
 
-The human definition is transformed into the generated project Understanding according to the current Schemas.
+`/my-interface-interpreter`
 
 ### 3. Generate Tasks
 
-One implementation-ready plan is generated for a requested project phase.
+`/my-interface-tasker <phase-id>`
 
 ### 4. Develop the Tasks
 
-Eligible Tasks for the requested phase are implemented and verified within the target item's authorized boundary.
+`/my-interface-developer <phase-id>`
