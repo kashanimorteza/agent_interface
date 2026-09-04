@@ -1,0 +1,139 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/backend.yaml"
+  path_note: "Generated configuration of the backend item — every resolved parameter an agent reads to understand the backend. Its shape is schema/backend.yaml, its rules are principles/backend.md, and its unstated choices were resolved from preferences/backend.yaml"
+  standard: "Agent Project Interface"
+  schema_version: "8.0"
+  generated: "2026-09-05"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Written by the generation operation. The planning operation may write planning-owned settings and relationships only, and only while the active phase targets this item. Development and review never write it. Downstream operations consume the resolved values here and never reinterpret the preferences"
+  changed_by: "The generation operation, the planning operation within its authority, or the human directly"
+  resolution: "project.md states no backend technology. Every choice under tech, model_api, standards, and capabilities was resolved from preferences/backend.yaml; each latest token was resolved to the concrete stable version verified against the package index on 2026-09-05"
+  agent_selected: "Python 3.14.7 was resolved as the latest stable release compatible with the resolved framework and the database item's tooling (all require Python 3.10 or newer). The HTTP server, entrypoint, commands, and file layout are implementation output"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "model_api"
+  - "standards"
+  - "capabilities"
+  - "interfaces"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  code_path: "The folder holding the backend's actual code — the one place this item may write"
+  code_path_note: "What code_path is relative to"
+  summary: "The backend in one line"
+  needs_test: "Whether every code-producing task is proven by a written test"
+  verify_cwd: "The directory and environment every verify command runs inside"
+  responsibility: "What the backend is answerable for"
+  tech: "The resolved language, environment tool, and packages"
+  model_api: "The resolved model-level API intent applied to the shared model set"
+  standards: "The resolved naming conventions"
+  capabilities: "The resolved state of each optional backend capability"
+  interfaces: "The database interface the backend uses and the HTTP interface it provides"
+  boundaries: "What the backend owns, does not own, and offers outside"
+  out_of_scope: "What the backend does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- code_path -->
+  code_path: "backend/"
+
+  # <!-------------------------------------------- code_path_note -->
+  code_path_note: "Relative to the project root — the directory containing .interface/. It is never a path inside the Interface."
+
+  # <!-------------------------------------------- summary -->
+  summary: "A Python FastAPI service that publishes an HTTP API for every domain model by calling the database item's generic data-access interface."
+
+  # <!-------------------------------------------- needs_test -->
+  needs_test: false
+
+  # <!-------------------------------------------- verify_cwd -->
+  verify_cwd: "backend/ — every verify command runs from this directory inside the uv-managed virtual environment, invoked through uv run."
+
+  # <!-------------------------------------------- responsibility -->
+  responsibility: "Runs application behavior and publishes the HTTP API while consuming the database interface."
+
+  # <!-------------------------------------------- tech -->
+  tech:
+    language:
+      name: "Python"
+      version: "3.14.7"
+      environment:
+        name: "uv"
+        version: "0.12.9"
+      packages:
+        api:
+          name: "FastAPI"
+          version: "0.141.1"
+
+  # <!-------------------------------------------- model_api -->
+  model_api:
+    source: ".interface/config/model.yaml — content.models"
+    default_operations:
+      - "create"
+      - "list"
+      - "get"
+      - "update"
+      - "delete"
+    overrides: {}
+
+  # <!-------------------------------------------- standards -->
+  standards:
+    naming:
+      variables: "snake_case"
+      functions: "snake_case"
+      classes: "PascalCase"
+      constants: "UPPER_SNAKE_CASE"
+      files: "snake_case"
+      folders: "snake_case"
+
+  # <!-------------------------------------------- capabilities -->
+  capabilities:
+    error_handling:
+      enabled: false
+    logging:
+      enabled: false
+    api_documentation:
+      enabled: true
+      type: "OpenAPI — the framework-generated OpenAPI document and its interactive documentation UI"
+    authentication:
+      enabled: false
+    https:
+      enabled: false
+
+  # <!-------------------------------------------- interfaces -->
+  interfaces:
+    provides: "The implemented HTTP API for every domain model, plus the framework-generated OpenAPI description of that API."
+    uses: "The generic data-access interface published by the database item — content.interface of config/database.yaml — imported from the database package as a local path dependency."
+    rule: "Tasks, the resolved model-level API intent above, and the database interface guide development. Endpoint paths, HTTP method mappings, payloads, response shapes, error shapes, entrypoints, commands, and file layout are produced during implementation, not prescribed here. Credential fields identified in model.yaml are write-only: accepted on create and update, never returned in a response, response schema, error payload, log, or trace."
+
+  # <!-------------------------------------------- boundaries -->
+  boundaries:
+    owns: "Backend application code, business behavior, and the implemented HTTP interface with its generated OpenAPI description."
+    does_not_own: "Frontend code, and the database engine, storage, connection, ORM, model mappings, schema, migrations, and seed data — all owned by the database item."
+    interface: "The implemented HTTP API and its framework-generated machine-readable description."
+
+  # <!-------------------------------------------- out_of_scope -->
+  out_of_scope:
+    - "Connecting to the database engine directly or holding ORM, migration, or driver packages."
+    - "Authenticating API callers, serving HTTPS, centralized error handling, or application logging — each is disabled above."
+    - "Live trading, order execution, broker or platform connectivity, and any position management logic beyond data operations on the defined models."
+    - "Rendering any user interface."

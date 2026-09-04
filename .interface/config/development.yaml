@@ -1,0 +1,104 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/development.yaml"
+  path_note: "Generated configuration of the development layer — the technical composition, cross-item connections, runtime, and deployment of the project. Its shape is schema/development.yaml and its rules are principles/development.md"
+  standard: "Agent Project Interface"
+  schema_version: "2.0"
+  generated: "2026-09-05"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "Written only by the generation operation. Outside a generation run this file is human-owned; planning, development, and review read it and never write it"
+  changed_by: "The human, directly, or by requesting regeneration"
+  precedence: "Component summaries and connections here must agree with each component's own generated configuration. When they differ, the owning item configuration governs and this file is reconciled"
+  agent_selected: "The project definition states no runtime or deployment constraint. The runtime strategy, startup order, configuration mechanism, and deployment platform recorded below are agent-selected under the shared decision policy and are recorded here so they are never re-decided downstream"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "summary"
+  - "components"
+  - "connections"
+  - "runtime"
+  - "deployment"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  summary: "The complete technical shape of the project in one sentence"
+  components: "The technical items selected for this project — one entry per mapped component the Understanding requires"
+  connections: "The directed producer-to-consumer integration graph between the selected components"
+  runtime: "How the selected components run together"
+  deployment: "Where and how the complete project is delivered"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- summary -->
+  summary: "Three components run as native local processes on one machine: a file-based database item publishes a generic data-access interface that a Python HTTP API backend consumes, and a TypeScript web frontend consumes that backend's HTTP API as its only door to data."
+
+  # <!-------------------------------------------- components -->
+  components:
+
+    database:
+      configuration: ".interface/config/database.yaml"
+      responsibility: "Owns the complete persistence layer — engine, storage, connection, ORM, model-to-table mappings, schema, migrations, seed data — and publishes one generic data-access interface."
+      owns: "The SQLite engine and its file, the SQLAlchemy ORM and mappings, the internal storage schema, Alembic migration history, initial data seeding, and the generic data-access interface."
+      does_not_own: "Application behavior, the HTTP API, the frontend, and deployment secrets."
+      produces: "Generic data-access interface — create, read, list, update, delete, status, and parameterized SQL execution for every persistent model."
+      consumes: "Nothing from another component; runtime connection settings and credential encryption keys come from environment configuration outside the repository."
+
+    backend:
+      configuration: ".interface/config/backend.yaml"
+      responsibility: "Runs application behavior and publishes the HTTP API while consuming the database interface."
+      owns: "Backend application code, business behavior, the implemented HTTP API, and its framework-generated OpenAPI description."
+      does_not_own: "Frontend code, and the database engine, storage, connection, ORM, mappings, schema, and migrations."
+      produces: "Implemented HTTP API plus its machine-readable OpenAPI description."
+      consumes: "The generic data-access interface published by the database component."
+
+    frontend:
+      configuration: ".interface/config/frontend.yaml"
+      responsibility: "Provides the user interface and consumes the backend's implemented HTTP API."
+      owns: "Pages, components, browser-side behavior, and the client integration with the backend HTTP API."
+      does_not_own: "Backend behavior and every part of the database item."
+      produces: "The user-facing web application served to the browser."
+      consumes: "The backend's implemented HTTP API and its OpenAPI description."
+
+  # <!-------------------------------------------- connections -->
+  connections:
+
+    database_to_backend:
+      from: "database"
+      to: "backend"
+      interface: "The generic data-access interface defined under content.interface of config/database.yaml."
+      path: "database/ — the database package is installed into the backend environment as a local path dependency and imported by the backend."
+      rule: "The backend calls only the published generic interface. It never receives the engine connection and never reaches tables, ORM mappings, migrations, or the database file. A needed persistence change is a request to the database item, never a change the backend makes."
+
+    backend_to_frontend:
+      from: "backend"
+      to: "frontend"
+      interface: "The backend's implemented HTTP API and its framework-generated OpenAPI description."
+      rule: "The frontend reaches application data only through the HTTP API as described by the generated OpenAPI document. It never connects to the database item, never imports backend code, and depends on no endpoint definition stored in Interface Config. Credential fields are write-only across this boundary."
+
+  # <!-------------------------------------------- runtime -->
+  runtime:
+    strategy: "Native local processes. The database is an embedded file engine opened in-process through the database package; the backend runs as one HTTP server process; the frontend runs as one development server process. Agent-selected."
+    operating_system: "No project constraint. Any platform supported by the resolved toolchain — Python 3.14 with uv, and Node.js 24 LTS for the frontend package manager."
+    orchestration: "None. Processes are started by hand or by a project script in the order below. Agent-selected; no orchestrator is required for a single-machine setup."
+    startup:
+      - "database: create the uv environment in database/, apply migrations to head, and apply seed data."
+      - "backend: create the uv environment in backend/, then start the HTTP API server so it serves its OpenAPI description."
+      - "frontend: install npm dependencies in frontend/, then start the development server pointed at the backend API base URL."
+    configuration: "Each component reads environment variables, supplied through an untracked .env file per component or the process environment. The database file location, the backend API base URL used by the frontend, and every secret — including the encryption key for encrypted credential fields — are supplied this way. No secret value is written into any Interface Config file."
+
+  # <!-------------------------------------------- deployment -->
+  deployment:
+    platform: "Local machine — a developer workstation running all components. Agent-selected because the project states no deployment destination."
+    artifacts:
+      - "database/: migration history, ORM mappings, seed data, and the uv lockfile that reproduce the database from nothing."
+      - "backend/: application source and its uv lockfile."
+      - "frontend/: application source and its npm lockfile."
+    release: "Check out the repository and run the startup sequence. A release is verified when migrations report head, the backend serves its OpenAPI description, and the frontend renders against that API."

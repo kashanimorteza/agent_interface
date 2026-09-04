@@ -1,0 +1,95 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/task.yaml"
+  path_note: "Generated configuration of the task layer — the human-fixed frame that defines a task, and one plan per project phase. Its shape is schema/task.yaml and its rules are principles/task.md"
+  standard: "Agent Project Interface"
+  schema_version: "4.0"
+  generated: "2026-09-05"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Who may write each part of this file, and when, is decided by the State Authority under content.state_authority of config/state.yaml. The frame (task_schema and task_states) is the human's. Generation materializes the frame and one empty Plan shell per phase under transition S10 and never creates a Group or Task. The planning operation fills the plan of the one phase it was invoked for. In development and review only the status, blocker, and log fields of a task move. Reset acts under transition S9"
+  changed_by: "The planning operation (plans), the development and review operations (task status, blocker, log), the reset operation (project-wide reset), and the generation operation (frame and empty shells only)"
+  preservation: "On regeneration an existing non-empty plan for an unchanged phase is preserved byte for byte. Removing or changing a phase whose plan holds tasks is a critical conflict, reported and never applied silently"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_schema"
+  - "task_states"
+  - "plans"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_schema: "The fields every task carries — the definition of a task, not a task itself"
+  task_states: "The vocabulary a task's status may hold, and the protocols around it"
+  plans: "The implementation plans — one entry per project phase, keyed by phase id from definition.yaml"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- task_schema -->
+  task_schema:
+    rule: "Every task carries exactly these fields — no more, no fewer."
+    fields:
+      id: "Identifier unique within the project phase, in the form <phase>-G<group>-T<n> — its phase prefix keeps it unique across the project."
+      title: "The task in one sentence."
+      goal: "What becomes possible after this task that was not possible before."
+      depends_on: "Ids of tasks in the same project phase. Cross-phase order comes from definition.yaml; cross-item coordination comes from the component connections in development.yaml."
+      acceptance: "Human-readable acceptance criterion — what must actually work."
+      verify: "A runnable command that proves acceptance — without it a task is never done."
+      touches: "Paths this task touches, written relative to the code_path of the item named by the phase target in definition.yaml."
+      status: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
+      blocker: "Id of a critical condition in state.yaml that genuinely prevents safe authorized continuation — present only when status is blocked, absent otherwise."
+      log: "Append-only list of dated entries carried with the task — absent until the task first moves."
+    status_lives_here: "Status is written on the task itself, so definition and state can never drift apart."
+    history_lives_here_too: "There is no history file. While a task exists, how it reached its state remains in its append-only log. A reset to planning explicitly removes generated tasks."
+
+  # <!-------------------------------------------- task_states -->
+  task_states:
+    path: "The status field on each task."
+    states:
+      todo: "Defined and not yet started."
+      claimed: "An agent has taken the task and written the claim before starting work."
+      blocked: "Work cannot safely continue; the task's blocker field names the condition in state.yaml."
+      done: "Acceptance is proven by a passing verify run."
+      cancelled: "The task will not be done and no other task replaces it."
+      superseded: "Another task replaced this one; its log names the replacement."
+    derived_ready: "Ready is not a stored status. A task is ready when it is todo and every id in its depends_on is done — computed when needed, written nowhere."
+    phase_ready: "Phase readiness is derived, never stored. A phase may enter development when it has a non-empty plan and every earlier project phase is complete."
+    phase_complete: "Phase completion is derived, never stored. A phase is complete when its plan is non-empty, every task not cancelled or superseded is done, and no task remains todo, claimed, or blocked."
+    done_gate: "Without a passing verify run no task becomes done, even if the code is written."
+    claim_protocol: "A task is set to claimed and this file written before work starts, so two agents never take the same task."
+    status_only_in_development: "In development mode status, blocker, and log are the only fields an agent may change. The reset operation, under transition S9 of the State Authority, is the only outside-mode exception."
+    reset_protocol: "An explicitly invoked project-wide reset names one stage. A development reset returns every generated task to todo, removes every task blocker field, keeps every prior log entry, and appends one dated reset entry to each task. A planning reset sets groups to an empty mapping in every phase plan, removing every generated group and task while preserving the plan shells. Either stage empties the blockers and open questions in state.yaml; clearing is not an answer, and later work raises again anything still unresolved."
+
+  # <!-------------------------------------------- plans -->
+  plans:
+
+    P1:
+      id: "P1"
+      title: "Data Foundation"
+      order: 1
+      target: "database"
+      does: "Makes all defined project data persistently available to the system."
+      groups: {}
+
+    P2:
+      id: "P2"
+      title: "Data Operations"
+      order: 2
+      target: "backend"
+      does: "Makes all defined project data available for consistent creation, retrieval, update, and deletion operations."
+      groups: {}
+
+    P3:
+      id: "P3"
+      title: "Data Management Interface"
+      order: 3
+      target: "frontend"
+      does: "Enables users to enter and manage all defined project data through a user-facing experience."
+      groups: {}
