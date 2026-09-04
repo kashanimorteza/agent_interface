@@ -1,16 +1,22 @@
 ---
 name: my-interface-clear
-description: Clear generated Agent Interface configuration and mapped generated-code directories through the bundled script when explicitly invoked.
+description: Preview and, only after explicit user confirmation, clear the fixed generated Agent Interface configuration and project directories.
 disable-model-invocation: true
 ---
 
 # Clear the project
 
-Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Run the bundled `scripts/clear.py`; it discovers its targets through the current Interface map.
+Run the bundled `scripts/clear.py` from the project root. Do not read the Interface map, project definition, configuration, Schema, Principles, or Preferences.
 
-The explicit invocation authorizes only these operations, without another confirmation:
+The targets are fixed constants:
 
-- Delete every entry inside the mapped generated-configuration directory while preserving that directory.
-- Delete mapped item code directories when present.
+- Delete every entry inside `.interface/config/` while preserving the `config/` directory.
+- Delete the root `backend/` directory when present.
+- Delete the root `frontend/` directory when present.
+- Delete the root `database/` directory when present.
 
-Report the script result briefly. Do not invoke another workflow operation.
+First run `scripts/clear.py` without arguments. It only prints the exact targets and changes nothing. Show that list to the user and ask whether those targets should be deleted.
+
+The initial invocation is not approval. Run `scripts/clear.py --apply` only after the user explicitly accepts the displayed deletion list. If the list is empty or the user declines, stop without changing anything.
+
+Perform no discovery and no other workflow operation. After an approved deletion, report the script output in one short sentence.
