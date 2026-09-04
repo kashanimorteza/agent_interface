@@ -1,0 +1,370 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/database.yaml"
+  path_note: "Generated database item configuration — produced only by my-interface-interpreter, resolved from project.md, definition.yaml, and schema/database.schema.yaml"
+  standard: "Agent Interface Database"
+  schema: ".interface/schema/database.schema.yaml"
+  version: "2.19"
+  updated: "2026-09-04"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: "Only my-interface-interpreter during a generation run, and my-interface-tasker for a draft contract while planning phase P1 — never a frozen contract"
+  rule: "The database item alone owns its engine choice, physical storage, schema, constraints, indexes, migration history, and database contract — see schema/database.schema.yaml policy"
+  freeze_rule: "Freezing or versioning the contract is a human decision alone — never performed by an agent"
+  code_boundary: "Only files under content.code_path may be written by development, and only within the touches of a claimed task for phase P1"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "code_path"
+  - "code_path_note"
+  - "summary"
+  - "needs_test"
+  - "verify_cwd"
+  - "responsibility"
+  - "tech"
+  - "standards"
+  - "capabilities"
+  - "contracts"
+  - "boundaries"
+  - "out_of_scope"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  code_path: "The one folder the database item may write"
+  summary: "The database item in one line"
+  needs_test: "Whether database behavior must be proven by a written test"
+  verify_cwd: "Where and how database verification commands run"
+  responsibility: "What the database item is answerable for"
+  tech: "The resolved engine, storage, connection, and migration tooling"
+  standards: "Naming and migration conventions"
+  capabilities: "Seed data and backup switches"
+  contracts: "The database contract published to the backend"
+  boundaries: "The limits of the database item"
+  out_of_scope: "What the database item explicitly does not do"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  code_path: "database/"
+  code_path_note: "Relative to the repository root, not the Interface — the only place the database item may write."
+  summary: "The Trading Assistant's database — a SQLite schema and Alembic migrations for every defined domain model, publishing the database contract consumed by the backend."
+  needs_test: false
+  verify_cwd: "database/, inside its uv-managed migration environment"
+  responsibility: "Owns persistent storage, schema evolution, and the database contract consumed by the backend."
+
+  tech:
+    engine:
+      name: "SQLite"
+      version: "runtime-provided"
+    storage:
+      kind: "file"
+      location: "database/app.db"
+    connection:
+      url_scheme: "sqlite"
+      foreign_keys: true
+      check_same_thread: false
+    migration:
+      tool:
+        name: "Alembic"
+        version: "1.18.5"
+      environment:
+        name: "uv"
+        version: "0.12.1"
+      packages:
+        migration:
+          name: "Alembic"
+          version: "1.18.5"
+        schema_toolkit:
+          name: "SQLAlchemy"
+          version: "2.0.52"
+      commands:
+        upgrade: "uv run alembic upgrade head"
+        downgrade: "uv run alembic downgrade -1"
+
+  standards:
+    naming:
+      tables: "plural_snake_case"
+      columns: "snake_case"
+      constraints: "snake_case"
+      indexes: "ix_<table>_<column>"
+    migrations: "Every schema change is expressed by an ordered, reversible Alembic migration. Backend code never creates, alters, or drops database objects directly."
+
+  capabilities:
+    seed_data:
+      enabled: true
+      records:
+        users:
+          - { name: "Admin", username: "admin", password: "Generate securely", api_key: "Generate securely" }
+        currencies:
+          - { name: "US Dollar", code: "USD", symbol: "$", country: "United States", decimal_digits: 2 }
+          - { name: "Euro", code: "EUR", symbol: "€", country: "Eurozone", decimal_digits: 2 }
+          - { name: "British Pound", code: "GBP", symbol: "£", country: "United Kingdom", decimal_digits: 2 }
+          - { name: "Japanese Yen", code: "JPY", symbol: "¥", country: "Japan", decimal_digits: 0 }
+          - { name: "Swiss Franc", code: "CHF", symbol: "CHF", country: "Switzerland", decimal_digits: 2 }
+          - { name: "Canadian Dollar", code: "CAD", symbol: "C$", country: "Canada", decimal_digits: 2 }
+          - { name: "Australian Dollar", code: "AUD", symbol: "A$", country: "Australia", decimal_digits: 2 }
+          - { name: "New Zealand Dollar", code: "NZD", symbol: "NZ$", country: "New Zealand", decimal_digits: 2 }
+        trading_platforms:
+          - { name: "MetaTrader 5", code: "metatrader_5" }
+          - { name: "Binance", code: "binance" }
+        brokers:
+          - { name: "FxPro", user_id: 1, trading_platform_id: 1 }
+        accounts:
+          - { name: "Acc-1", broker_id: 1, base_currency_id: 1, username: "test", password: "Generate securely", leverage: 100, account_type: "CFD" }
+        assets:
+          - { name: "EURUSD", symbol: "EUR/USD", category: "Currency", point_size: 0.0001, digits: 5 }
+          - { name: "EURGBP", symbol: "EUR/GBP", category: "Currency", point_size: 0.001, digits: 5 }
+          - { name: "XAUUSD", symbol: "XAU/USD", category: "Commodity", point_size: 0.01, digits: 2 }
+          - { name: "USOil", symbol: "USOil", category: "Commodity", point_size: 0.01, digits: 3 }
+        trailing_groups:
+          - { name: "Default" }
+        partial_groups:
+          - { name: "Default" }
+        action_groups:
+          - { name: "Default" }
+        actions:
+          - { name: "Default", action_group_id: 1, asset_id: 1, account_id: 1, partial_group_id: 1, trailing_group_id: 1, risk_by_reward: 1, take_profit: 1, stop_loss: 1 }
+    backups:
+      enabled: false
+
+  contracts:
+    produces: "v1"
+    rule: "The implemented schema and the published contract must match exactly."
+    change_rule: "A frozen database contract is versioned, never edited; a change means a new version and migrations between versions."
+    v1:
+      lifecycle: "draft"
+      lifecycle_note: "Draft until the human freezes it. While draft, planning for phase P1 may still adjust it; once frozen, a change is a new contract version, never an edit."
+      engine:
+        name: "SQLite"
+        version: "runtime-provided"
+      connection:
+        url_scheme: "sqlite"
+        foreign_keys: true
+        check_same_thread: false
+        note: "Credential-free. The runtime file location is supplied by deployment configuration, never committed."
+      tables:
+
+        users:
+          source_model: "user"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            username: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            password: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null, credential_storage: "hash" }
+            api_key: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null, credential_storage: "hash" }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_users_name: { columns: ["name"], unique: true }
+
+        currencies:
+          source_model: "currency"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            code: { type: "VARCHAR(3)", nullable: false, primary_key: false, auto_increment: false, default: null }
+            symbol: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+            country: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+            decimal_digits: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: 2 }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_currencies_code: { columns: ["code"], unique: true }
+
+        trading_platforms:
+          source_model: "trading_platform"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            code: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes: {}
+
+        brokers:
+          source_model: "broker"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            user_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "users", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            trading_platform_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "trading_platforms", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints:
+            uq_brokers_user_id_name: { type: "unique", columns: ["user_id", "name"], source_rule: "The combination of user_id and name must be unique." }
+          indexes:
+            ix_brokers_user_id: { columns: ["user_id"], unique: false }
+            ix_brokers_trading_platform_id: { columns: ["trading_platform_id"], unique: false }
+
+        accounts:
+          source_model: "account"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            broker_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "brokers", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            base_currency_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "currencies", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            username: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            password: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null, credential_storage: "encrypted" }
+            leverage: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null }
+            balance: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: 0 }
+            account_type: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_accounts_name: { columns: ["name"], unique: true }
+            ix_accounts_broker_id: { columns: ["broker_id"], unique: false }
+            ix_accounts_base_currency_id: { columns: ["base_currency_id"], unique: false }
+
+        assets:
+          source_model: "asset"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            symbol: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            category: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            point_size: { type: "FLOAT", nullable: false, primary_key: false, auto_increment: false, default: 0.0 }
+            digits: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: 0 }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_assets_name: { columns: ["name"], unique: true }
+            ix_assets_symbol: { columns: ["symbol"], unique: true }
+
+        trailing_groups:
+          source_model: "trailing_group"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_trailing_groups_name: { columns: ["name"], unique: true }
+
+        trailing_rules:
+          source_model: "trailing_rule"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            trailing_group_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "trailing_groups", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            trigger_percentage: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            take_profit_adjustment: { type: "NUMERIC", nullable: true, primary_key: false, auto_increment: false, default: null }
+            stop_loss_adjustment: { type: "NUMERIC", nullable: true, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_trailing_rules_name: { columns: ["name"], unique: true }
+            ix_trailing_rules_trailing_group_id: { columns: ["trailing_group_id"], unique: false }
+
+        partial_groups:
+          source_model: "partial_group"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_partial_groups_name: { columns: ["name"], unique: true }
+
+        partial_rules:
+          source_model: "partial_rule"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            partial_group_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "partial_groups", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            profit_percentage: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            close_percentage: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_partial_rules_name: { columns: ["name"], unique: true }
+            ix_partial_rules_partial_group_id: { columns: ["partial_group_id"], unique: false }
+
+        action_groups:
+          source_model: "action_group"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_action_groups_name: { columns: ["name"], unique: true }
+
+        actions:
+          source_model: "action"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            action_group_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "action_groups", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            asset_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "assets", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            account_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "accounts", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            partial_group_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "partial_groups", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            trailing_group_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "trailing_groups", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            risk_by_reward: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            take_profit: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            stop_loss: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_actions_name: { columns: ["name"], unique: true }
+            ix_actions_action_group_id: { columns: ["action_group_id"], unique: false }
+            ix_actions_asset_id: { columns: ["asset_id"], unique: false }
+            ix_actions_account_id: { columns: ["account_id"], unique: false }
+            ix_actions_partial_group_id: { columns: ["partial_group_id"], unique: false }
+            ix_actions_trailing_group_id: { columns: ["trailing_group_id"], unique: false }
+
+        positions:
+          source_model: "position"
+          columns:
+            id: { type: "INTEGER", nullable: false, primary_key: true, auto_increment: true, default: null }
+            name: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            trading_platform_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "trading_platforms", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            broker_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "brokers", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            account_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "accounts", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            trailing_group_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "trailing_groups", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            partial_group_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "partial_groups", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            action_group_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "action_groups", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            action_id: { type: "INTEGER", nullable: false, primary_key: false, auto_increment: false, default: null, references: { table: "actions", column: "id", on_delete: "RESTRICT", on_update: "RESTRICT" } }
+            date: { type: "DATETIME", nullable: false, primary_key: false, auto_increment: false, default: null }
+            volume: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            profit: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: 0 }
+            is_executed: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: false }
+            order_type: { type: "VARCHAR", nullable: false, primary_key: false, auto_increment: false, default: null }
+            base_tp: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            base_sl: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            real_tp: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            real_sl: { type: "NUMERIC", nullable: false, primary_key: false, auto_increment: false, default: null }
+            status: { type: "BOOLEAN", nullable: false, primary_key: false, auto_increment: false, default: true }
+            description: { type: "VARCHAR", nullable: true, primary_key: false, auto_increment: false, default: null }
+          constraints: {}
+          indexes:
+            ix_positions_name: { columns: ["name"], unique: true }
+            ix_positions_trading_platform_id: { columns: ["trading_platform_id"], unique: false }
+            ix_positions_broker_id: { columns: ["broker_id"], unique: false }
+            ix_positions_account_id: { columns: ["account_id"], unique: false }
+            ix_positions_trailing_group_id: { columns: ["trailing_group_id"], unique: false }
+            ix_positions_partial_group_id: { columns: ["partial_group_id"], unique: false }
+            ix_positions_action_group_id: { columns: ["action_group_id"], unique: false }
+            ix_positions_action_id: { columns: ["action_id"], unique: false }
+
+  boundaries:
+    owns: "The engine choice, physical storage, schema, constraints, indexes, migrations, and the database contract."
+    does_not_own: "Backend ORM behavior, API behavior, frontend code, and deployment secrets."
+    interface: "The frozen database contract and credential-free connection requirements offered to the backend."
+
+  out_of_scope: "Backend application code and ORM mappings, API behavior, and frontend code."
