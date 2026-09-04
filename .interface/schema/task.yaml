@@ -35,10 +35,7 @@ sections:
             purpose: "What becomes possible after this task that was not possible before."
           depends_on:
             required: true
-            purpose: "Ids of tasks in the same project phase. Cross-phase order comes from definition.yaml, and cross-item dependency uses a contract rather than another phase's task id."
-          needs_contract:
-            required: true
-            purpose: "The contract version required — used instead of depending on another item's task; omitted when the task needs none."
+            purpose: "Ids of tasks in the same project phase. Cross-phase order comes from definition.yaml, while cross-item coordination comes from the component connections in development.yaml."
           acceptance:
             required: true
             purpose: "Human-readable acceptance criterion — what must actually work."

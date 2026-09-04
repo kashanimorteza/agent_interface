@@ -1,0 +1,107 @@
+meta:
+  path: .interface/config/backend.yaml
+  path_note: Generated backend item configuration resolved from project intent, Backend Principles, Preferences, and Schema.
+policy:
+  agent_may_edit: true
+  rule: Generation creates and reconciles this file from its mapped human source, Principles, Preferences, and Schema. Planning
+    may refine it only for the active phase whose target selects this item and only as the live State Authority permits.
+  changed_by: Authorized generation or planning operations within their current write boundaries, or the human directly.
+read_order:
+- code_path
+- code_path_note
+- summary
+- needs_test
+- verify_cwd
+- responsibility
+- tech
+- model_api
+- standards
+- capabilities
+- interfaces
+- boundaries
+- out_of_scope
+content_map:
+  code_path: Resolved code path.
+  code_path_note: Resolved code path note.
+  summary: Resolved summary.
+  needs_test: Resolved needs test.
+  verify_cwd: Resolved verify cwd.
+  responsibility: Resolved responsibility.
+  tech: Resolved tech.
+  model_api: Resolved model api.
+  standards: Resolved standards.
+  capabilities: Resolved capabilities.
+  interfaces: Resolved interfaces.
+  boundaries: Resolved boundaries.
+  out_of_scope: Resolved out of scope.
+content:
+  code_path: backend/
+  code_path_note: Project-relative path from the repository root.
+  summary: A FastAPI backend that exposes model data operations through an HTTP API.
+  needs_test: false
+  verify_cwd: backend/ using the uv-managed Python environment
+  responsibility: Runs application behavior and publishes the HTTP API while consuming the database interface.
+  tech:
+    language:
+      name: Python
+      version: 3.14.7
+      environment:
+        name: uv
+        version: 0.12.5
+      packages:
+        api:
+          name: FastAPI
+          version: 0.141.1
+  model_api:
+    source: .interface/config/model.yaml#content.models
+    default_operations:
+    - create
+    - list
+    - get
+    - update
+    - delete
+    overrides: {}
+  standards:
+    naming:
+      variables: snake_case
+      functions: snake_case
+      classes: PascalCase
+      constants: UPPER_SNAKE_CASE
+      files: snake_case
+      folders: snake_case
+  capabilities:
+    error_handling:
+      enabled: false
+    logging:
+      enabled: false
+    api_documentation:
+      enabled: true
+      type: OpenAPI/Swagger
+    authentication:
+      enabled: false
+    https:
+      enabled: false
+  interfaces:
+    provides: Implemented HTTP API with framework-generated OpenAPI description.
+    uses: Generic model-oriented data-access interface from the database item.
+    rule: Implementation derives routes and payloads from tasks, model API intent, shared models, and the database interface;
+      endpoint details and code layout are implementation output.
+  boundaries:
+    owns:
+    - backend application code
+    - application behavior
+    - implemented HTTP API
+    does_not_own:
+    - frontend code
+    - database engine
+    - storage
+    - connection
+    - ORM
+    - model mappings
+    - schema
+    - migrations
+    interface: Implemented HTTP API and generated OpenAPI description.
+  out_of_scope:
+  - frontend implementation
+  - database internals
+  - deployment infrastructure

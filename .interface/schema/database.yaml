@@ -14,7 +14,7 @@ structure:
   - storage_schema
   - standards
   - capabilities
-  - contracts
+  - interface
   - boundaries
   - out_of_scope
 
@@ -254,86 +254,69 @@ sections:
             required: true
             purpose: "The resolved backup switch."
 
-  # <!--------------------------------------------------------------------------------- Contracts -->
-  contracts:
+  # <!--------------------------------------------------------------------------------- Interface -->
+  interface:
     required: true
-    purpose: "The resolved database contracts published to consumers."
+    purpose: "The resolved generic data-access interface published to consumers."
     fields:
-      produces:
+      style:
         required: true
-        purpose: "The database contract version published by this item."
-      "<version>":
+        purpose: "The resolved interface style used across all persistent models."
+      model_selector:
         required: true
-        purpose: "One version of the generic data-access contract published to consumers."
+        purpose: "How a caller identifies the model governed by an operation."
+      operations:
+        required: true
+        purpose: "The standard model-data operations published by this interface."
         fields:
-          lifecycle:
+          create:
             required: true
-            purpose: "Where the contract stands — draft, frozen, or deprecated."
-          lifecycle_note:
+            purpose: "The resolved create operation."
+          read:
             required: true
-            purpose: "An explanation of the resolved lifecycle state."
-          data_access:
+            purpose: "The resolved read operation."
+          list:
             required: true
-            purpose: "The versioned generic interface published to consumers."
+            purpose: "The resolved list operation."
+          update:
+            required: true
+            purpose: "The resolved update operation."
+          delete:
+            required: true
+            purpose: "The resolved delete operation."
+          status:
+            required: true
+            purpose: "The resolved status operation."
             fields:
-              style:
+              actions:
                 required: true
-                purpose: "The resolved interface style used across all persistent models."
-              model_selector:
+                purpose: "The accepted status actions; exactly enable and disable."
+              required_field:
                 required: true
-                purpose: "How a caller identifies the model governed by an operation."
-              operations:
+                purpose: "The model field required for this operation."
+              value_mapping:
                 required: true
-                purpose: "The standard model-data operations published by this contract."
+                purpose: "The resolved field value written for each accepted action."
                 fields:
-                  create:
+                  enable:
                     required: true
-                    purpose: "The resolved create operation."
-                  read:
+                    purpose: "The resolved enabled value."
+                  disable:
                     required: true
-                    purpose: "The resolved read operation."
-                  list:
-                    required: true
-                    purpose: "The resolved list operation."
-                  update:
-                    required: true
-                    purpose: "The resolved update operation."
-                  delete:
-                    required: true
-                    purpose: "The resolved delete operation."
-                  status:
-                    required: true
-                    purpose: "The resolved status operation."
-                    fields:
-                      actions:
-                        required: true
-                        purpose: "The accepted status actions; exactly enable and disable."
-                      required_field:
-                        required: true
-                        purpose: "The model field required for this operation."
-                      value_mapping:
-                        required: true
-                        purpose: "The resolved field value written for each accepted action."
-                        fields:
-                          enable:
-                            required: true
-                            purpose: "The resolved enabled value."
-                          disable:
-                            required: true
-                            purpose: "The resolved disabled value."
-              sql_commands:
-                required: true
-                purpose: "The controlled SQL-command capability published through the same interface."
-                fields:
-                  enabled:
-                    required: true
-                    purpose: "Whether SQL-command execution is available."
-                  parameterized:
-                    required: true
-                    purpose: "Whether SQL values are supplied separately from command text."
-                  scope:
-                    required: true
-                    purpose: "The resolved execution scope."
+                    purpose: "The resolved disabled value."
+      sql_commands:
+        required: true
+        purpose: "The controlled SQL-command capability published through the same interface."
+        fields:
+          enabled:
+            required: true
+            purpose: "Whether SQL-command execution is available."
+          parameterized:
+            required: true
+            purpose: "Whether SQL values are supplied separately from command text."
+          scope:
+            required: true
+            purpose: "The resolved execution scope."
   # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:
     required: true

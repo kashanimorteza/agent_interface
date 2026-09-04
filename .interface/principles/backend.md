@@ -10,9 +10,9 @@ Every statement here is mandatory. A preference can never override a principle, 
 
 ## 1. The backend runs behaviour and publishes the API — it does not own persistence
 
-The backend never owns the database engine, storage, connection, ORM, model mappings, schema, or migrations. It consumes the frozen data-access contract and calls the generic interface published by the database item.
+The backend never owns the database engine, storage, connection, ORM, model mappings, schema, or migrations. It calls the generic data-access interface published by the database item.
 
-This keeps two responsibilities apart. The database item decides how persistent data is represented and accessed; the backend decides how application behaviour uses the database interface. When the backend needs the persistence contract to change, that is a request to the database item, never a change the backend makes itself.
+This keeps two responsibilities apart. The database item decides how persistent data is represented and accessed; the backend decides how application behaviour uses the database interface. When the backend needs the persistence interface to change, that is a request to the database item, never a change the backend makes itself.
 
 <br>
 
@@ -26,7 +26,7 @@ Models are resolved dynamically from `model.yaml` at generation time; they are n
 
 ## 3. Credentials are write-only and never leave the backend
 
-A field is a credential when, and only when, the consumed database contract assigns it a credential storage mode. The backend never guesses credential fields from their names.
+A field is a credential when, and only when, the shared model configuration explicitly identifies it as one. The backend never guesses credential fields from their names and never re-decides the database-owned at-rest mode.
 
 A credential field is write-only input: it may be accepted when required to create or update the owning model, and that is the only direction it travels. It is never exposed in an API response, in a generated response schema, or in an error payload. Its value is always redacted from application logs, diagnostics, traces, and exception details.
 

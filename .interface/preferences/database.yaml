@@ -108,7 +108,7 @@ content:
         stored_as: "string"
         transformation: "reversible_encryption"
         recoverable: true
-        key_source: "Runtime configuration outside the database and its contract."
+        key_source: "Runtime configuration outside the database and generated Interface files."
   capabilities:
     seed_data:
       default_enabled: false

@@ -5,7 +5,7 @@
 ## Discovery
 
 - Read the map file before any other Interface source.
-- Resolve every other path, file role, read order, generated output, Schema, Policy, authority, mode, contract, and code boundary through the map file and the owning files it identifies.
+- Resolve every other path, file role, read order, generated output, Schema, Policy, authority, mode, interface, and code boundary through the map file and the owning files it identifies.
 - Never hardcode, guess, or preserve another Interface path or current file layout in a Rule, Skill, agent, script, or remembered workflow.
 - Re-read the current map on every operation. A renamed or relocated mapped file must require only a map update, never a Skill update.
 - Read only the sources required for the active operation and its current authority. Structural discovery does not grant write access.

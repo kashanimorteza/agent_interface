@@ -12,7 +12,7 @@ policy:
   agent_may_edit: false
   rule: "This file introduces the interface — no mode edits it. Every other file carries its own write rules, in its own policy section"
   changed_by: "The human, directly. A change this file needs is raised as an open question in config/state.yaml, never applied by an agent"
-  state_authority: "Who may write each field of config/state.yaml, and on which transition, is decided in one place only — the State contract: config/state.yaml under content.state_authority, seeded from the default in schema/state.yaml. This file references the State contract and does not own it"
+  state_authority: "Who may write each field of config/state.yaml, and on which transition, is decided in one place only: config/state.yaml under content.state_authority, seeded from the default in schema/state.yaml. This file references the State Authority and does not own it"
   on_change_needed: "A change to the Interface structure is raised with the human, never applied by an agent"
 
 
@@ -59,7 +59,7 @@ content:
 
         state:
           path: "state.md"
-          responsibility: "The principles of the State contract — working modes, runtime state, the live file as authority, and verbatim seeding of the default"
+          responsibility: "The principles of State — working modes, runtime state, the live file as authority, and verbatim seeding of the default"
 
         task:
           path: "task.md"
@@ -75,7 +75,7 @@ content:
 
         database:
           path: "database.md"
-          responsibility: "The principles of the database item — layer and engine independence, generic data access, ORM ownership, schema as code, migrations, contracts, and access rules"
+          responsibility: "The principles of the database item — layer and engine independence, generic data access, ORM ownership, schema as code, migrations, interfaces, and access rules"
 
     preferences:
       path: ".interface/preferences/"
@@ -121,7 +121,7 @@ content:
 
         state:
           path: "state.yaml"
-          responsibility: "Defines the shape of state.yaml — the State contract — and the default modes and State Authority seeded into every newly created state.yaml; its principles live in principles/state.md"
+          responsibility: "Defines the shape of state.yaml and the default modes and State Authority seeded into every newly created state.yaml; its principles live in principles/state.md"
 
         backend:
           path: "backend.yaml"
@@ -170,4 +170,4 @@ content:
 
         database:
           path: "database.yaml"
-          responsibility: "Database project configuration and the generic data-access contract consumed by the backend"
+          responsibility: "Database project configuration and the generic data-access interface used by the backend"

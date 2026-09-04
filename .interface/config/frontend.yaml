@@ -1,0 +1,97 @@
+meta:
+  path: .interface/config/frontend.yaml
+  path_note: Generated frontend item configuration resolved from project intent, Frontend Principles, Preferences, and Schema.
+policy:
+  agent_may_edit: true
+  rule: Generation creates and reconciles this file from its mapped human source, Principles, Preferences, and Schema. Planning
+    may refine it only for the active phase whose target selects this item and only as the live State Authority permits.
+  changed_by: Authorized generation or planning operations within their current write boundaries, or the human directly.
+read_order:
+- code_path
+- code_path_note
+- summary
+- needs_test
+- verify_cwd
+- responsibility
+- tech
+- standards
+- capabilities
+- code_layout
+- interfaces
+- boundaries
+- out_of_scope
+content_map:
+  code_path: Resolved code path.
+  code_path_note: Resolved code path note.
+  summary: Resolved summary.
+  needs_test: Resolved needs test.
+  verify_cwd: Resolved verify cwd.
+  responsibility: Resolved responsibility.
+  tech: Resolved tech.
+  standards: Resolved standards.
+  capabilities: Resolved capabilities.
+  code_layout: Resolved code layout.
+  interfaces: Resolved interfaces.
+  boundaries: Resolved boundaries.
+  out_of_scope: Resolved out of scope.
+content:
+  code_path: frontend/
+  code_path_note: Project-relative path from the repository root.
+  summary: A Next.js user interface for entering and managing all defined project data.
+  needs_test: false
+  verify_cwd: frontend/ using npm
+  responsibility: Provides the user interface and consumes the backend's implemented HTTP API.
+  tech:
+    language:
+      name: TypeScript
+      version: 7.0.2
+    library:
+      name: React
+      version: 19.2.8
+    framework:
+      name: Next.js
+      version: 16.3.4
+    package_manager:
+      name: npm
+      version: 12.0.2
+    run: npm run dev
+  standards:
+    naming:
+      variables: camelCase
+      functions: camelCase
+      classes: PascalCase
+      components: PascalCase
+      constants: UPPER_SNAKE_CASE
+      files: kebab-case
+      folders: kebab-case
+    component_style: Function components
+  capabilities:
+    logging:
+      enabled: false
+  code_layout:
+    app/: Next.js App Router pages, layouts, and route-level UI.
+    components/: Reusable user-interface components.
+    lib/: Browser-side API client and shared frontend utilities.
+    styles/: Shared visual styles.
+    public/: Static browser assets.
+    package.json: Frontend commands and dependency manifest.
+    next.config.ts: Next.js framework configuration.
+    tsconfig.json: TypeScript compiler configuration.
+  interfaces:
+    provides: none
+    uses: Implemented backend HTTP API and generated OpenAPI description.
+    rule: Frontend data access goes only through the implemented backend API and never directly to the database.
+  boundaries:
+    owns:
+    - frontend pages
+    - components
+    - browser-side behavior
+    - backend client integration
+    does_not_own:
+    - backend behavior
+    - database implementation
+    interface: Rendered user experience.
+  out_of_scope:
+  - backend implementation
+  - database access
+  - deployment infrastructure

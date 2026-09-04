@@ -17,7 +17,7 @@ structure:
   - standards
   - capabilities
   - code_layout
-  - contracts
+  - interfaces
   - boundaries
   - out_of_scope
 
@@ -132,15 +132,15 @@ sections:
     required: true
     purpose: "Every path inside code_path and what it holds — the key is the path, the value is its responsibility in one line; a folder ends with a slash, a file carries its extension. Entry point, framework configuration, pages, components, client integration, styles, and tests each have their own place. Backend and database files never appear here."
 
-  # <!--------------------------------------------------------------------------------- Contracts -->
-  contracts:
+  # <!--------------------------------------------------------------------------------- Interfaces -->
+  interfaces:
     required: true
     purpose: "The frontend's item relationships — the implemented backend HTTP interface it consumes and anything it explicitly publishes."
     fields:
-      produces:
+      provides:
         required: true
         purpose: "The interface the frontend explicitly publishes to another item, or none."
-      consumes:
+      uses:
         required: true
         purpose: "The implemented backend HTTP API and framework-generated machine-readable description the frontend consumes."
       rule:
@@ -160,7 +160,7 @@ sections:
         purpose: "What is explicitly not the frontend's, including backend behavior and every part of the database item."
       interface:
         required: true
-        purpose: "The only thing the frontend offers the outside — its contract."
+        purpose: "The only interface the frontend offers outside its own boundary."
 
   # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
   out_of_scope:

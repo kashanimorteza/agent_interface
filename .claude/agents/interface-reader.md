@@ -19,7 +19,7 @@ Report exactly this, and nothing else:
 Rules for your report:
 
 - Quote the file and section a fact came from. A claim with no source is not a finding.
-- State a rule only from its current authority: the Interface map for structure, the State contract for workflow state, or the selected item's owning Policy for item-specific behavior. If a needed rule is absent, report that as an observation rather than inventing one.
+- State a rule only from its current authority: the Interface map for structure, the State Authority for workflow state, or the selected item's owning Policy for item-specific behavior. If a needed rule is absent, report that as an observation rather than inventing one.
 - Never guess at anything the generated Understanding leaves undefined. "to be defined" is the answer, and the open question that covers it is the thing to name.
 - If a file is missing or empty, say which one and stop reporting on it. Do not reconstruct it from memory or from the schema.
 

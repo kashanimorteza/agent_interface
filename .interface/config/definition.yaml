@@ -1,0 +1,40 @@
+meta:
+  path: .interface/config/definition.yaml
+  path_note: Generated structured project definition derived from the human-managed project.md.
+policy:
+  agent_may_edit: true
+  rule: Only generation may create or reconcile this file from project.md; outside generation it is human-owned.
+  changed_by: Generation under the live Interface authority, or the human directly.
+read_order:
+- identity
+- goals
+- phases
+content_map:
+  identity: The project's name and description.
+  goals: The current intended project outcomes, independent of implementation phases.
+  phases: The ordered units of project work, including each phase's technical target.
+content:
+  identity:
+    name: Trading Assistant
+    description: A platform for defining and managing trading information, strategies, actions, and related data.
+  goals:
+  - Enable users to enter and manage all defined project data
+  phases:
+    P1:
+      id: P1
+      title: Data Foundation
+      order: 1
+      target: Database
+      goal: Make all defined project data persistently available to the system
+    P2:
+      id: P2
+      title: Data Operations
+      order: 2
+      target: Backend
+      goal: Make all defined project data available for consistent creation, retrieval, update, and deletion operations
+    P3:
+      id: P3
+      title: Data Management Interface
+      order: 3
+      target: Frontend
+      goal: Enable users to enter and manage all defined project data through a user-facing experience

@@ -1,0 +1,91 @@
+meta:
+  path: .interface/config/development.yaml
+  path_note: Generated technical composition, connections, runtime, and deployment configuration.
+policy:
+  agent_may_edit: true
+  rule: Generation resolves this file. Outside generation, only the human may change technical composition, runtime, or deployment.
+  changed_by: Generation under the live Interface authority, or the human directly.
+read_order:
+- summary
+- components
+- connections
+- runtime
+- deployment
+content_map:
+  summary: The project's complete technical shape.
+  components: The selected mapped technical items.
+  connections: The directed interfaces between selected components.
+  runtime: How the components run together.
+  deployment: Where and how the complete project is delivered.
+content:
+  summary: A database, backend, and frontend connected as separate components and run together for project data management.
+  components:
+    database:
+      configuration: .interface/config/database.yaml
+      responsibility: Own persistent storage, schema evolution, and the generic data-access interface.
+      owns:
+      - database implementation
+      - physical schema
+      - migrations
+      - database interface
+      does_not_own:
+      - backend behavior
+      - HTTP API
+      - frontend experience
+      produces:
+      - generic database data-access interface
+    backend:
+      configuration: .interface/config/backend.yaml
+      responsibility: Run application behavior and provide the HTTP API.
+      owns:
+      - backend code
+      - application behavior
+      - implemented HTTP API
+      does_not_own:
+      - database internals
+      - frontend code
+      produces:
+      - HTTP API
+      - OpenAPI description
+      consumes:
+      - generic database data-access interface
+    frontend:
+      configuration: .interface/config/frontend.yaml
+      responsibility: Provide the user-facing data-management experience.
+      owns:
+      - frontend code
+      - pages
+      - components
+      - browser-side behavior
+      does_not_own:
+      - backend behavior
+      - database internals
+      consumes:
+      - backend HTTP API
+      - OpenAPI description
+  connections:
+    database_to_backend:
+      from: database
+      to: backend
+      interface: generic database data-access interface
+      rule: The backend accesses persistent data only through the database-owned interface.
+    backend_to_frontend:
+      from: backend
+      to: frontend
+      interface: implemented HTTP API and generated OpenAPI description
+      rule: The frontend accesses project data only through the backend HTTP API.
+  runtime:
+    strategy: native processes
+    startup:
+    - database preparation and migrations
+    - backend API
+    - frontend application
+    configuration: Environment variables and deployment-owned runtime configuration; secret values are never stored in Interface
+      Config.
+  deployment:
+    platform: local machine
+    artifacts:
+    - database migrations and implementation
+    - backend application
+    - frontend application
+    release: Start and verify each component in runtime startup order using its resolved commands.

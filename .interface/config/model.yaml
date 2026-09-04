@@ -1,0 +1,723 @@
+meta:
+  path: .interface/config/model.yaml
+  path_note: Generated shared logical model configuration derived from the Models section of project.md.
+policy:
+  agent_may_edit: true
+  rule: Only generation may create or reconcile this file from project.md; technical items consume it without redefining the
+    models.
+  changed_by: Generation under the live Interface authority, or the human directly.
+read_order:
+- models
+content_map:
+  models: Project domain models, declared fields, relationships, rules, and initial data.
+content:
+  models:
+    user:
+      purpose: Defines an independent user of the system and enables multi-user operation. Each user can have a separate set
+        of settings, allowing new users to be added with configurations that remain distinct from those of existing users.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The user's display name
+        username:
+          type: string
+          nullable: false
+          purpose: The username used to identify the user
+        password:
+          type: string
+          nullable: false
+          purpose: The password credential used by the user
+        api_key:
+          type: string
+          nullable: false
+          purpose: The API key assigned to the user
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the user is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the user
+      rules:
+      - '`password` is a credential and must use `hash` storage at rest'
+      - '`api_key` is a credential and must use `hash` storage at rest'
+      initial_data:
+      - name: Admin
+        username: admin
+        password:
+          generate: secure
+        api_key:
+          generate: secure
+    currency:
+      purpose: Defines a currency that can be used by the trading system and identifies its standard code, display symbol,
+        associated country or region, and monetary decimal precision.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          purpose: The currency's full name
+        code:
+          type: string
+          size: 3
+          nullable: false
+          unique: true
+          purpose: The currency's standard three-letter code, such as `USD` or `EUR
+        symbol:
+          type: string
+          nullable: true
+          purpose: The currency's display symbol, such as `$`, `€`, or `£
+        country:
+          type: string
+          nullable: true
+          purpose: Identifies the country or region associated with the currency
+        decimal_digits:
+          type: integer
+          nullable: false
+          default: 2
+          purpose: Defines the number of decimal digits normally used for monetary values in the currency
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the currency is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the currency
+      initial_data:
+      - name: US Dollar
+        code: USD
+        symbol: $
+        country: United States
+        decimal_digits: 2
+      - name: Euro
+        code: EUR
+        symbol: €
+        country: Eurozone
+        decimal_digits: 2
+      - name: British Pound
+        code: GBP
+        symbol: £
+        country: United Kingdom
+        decimal_digits: 2
+      - name: Japanese Yen
+        code: JPY
+        symbol: ¥
+        country: Japan
+        decimal_digits: 0
+      - name: Swiss Franc
+        code: CHF
+        symbol: CHF
+        country: Switzerland
+        decimal_digits: 2
+      - name: Canadian Dollar
+        code: CAD
+        symbol: C$
+        country: Canada
+        decimal_digits: 2
+      - name: Australian Dollar
+        code: AUD
+        symbol: A$
+        country: Australia
+        decimal_digits: 2
+      - name: New Zealand Dollar
+        code: NZD
+        symbol: NZ$
+        country: New Zealand
+        decimal_digits: 2
+    trading_platform:
+      purpose: Defines a supported trading API standard, such as MetaTrader 5 or Binance, while keeping the system independent
+        of any specific exchange or broker. Every trading platform implementation exposes the same application-facing trading
+        functions through a dedicated class, while handling communication with its destination API according to that platform's
+        own mechanism. Additional platform implementations can be added without changing the system's common trading interface.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          purpose: The platform's display name
+        code:
+          type: string
+          nullable: false
+          purpose: Identifies the implementation class the application must use for this trading platform, such as `binance`
+            or `metatrader_5
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the platform is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the platform
+      initial_data:
+      - name: MetaTrader 5
+        code: metatrader_5
+      - name: Binance
+        code: binance
+    broker:
+      purpose: Defines a broker that the system can work with through its selected trading platform. Multiple brokers can
+        be added so the system is not limited to a specific broker and can operate with any configured broker.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          purpose: The broker's display name
+        user_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the user who owns the broker configuration
+        trading_platform_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the trading platform used by the broker
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the broker is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the broker
+      relationships:
+        user:
+          type: belongs_to
+          target: user
+          field: user_id
+        trading_platform:
+          type: belongs_to
+          target: trading_platform
+          field: trading_platform_id
+      rules:
+      - The combination of `user_id` and `name` must be unique
+      initial_data:
+      - name: FxPro
+        user_id: 1
+        trading_platform_id: 1
+    account:
+      purpose: Defines a funded trading account through which the system executes trades and launches positions. Each account
+        identifies its broker, account model, and login credentials so the system knows where the trade must be sent, how
+        it must connect, and which account must be used for the operation.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The account's display name
+        broker_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the broker that owns the account
+        base_currency_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the base currency used by the account
+        username:
+          type: string
+          nullable: false
+          purpose: The username identifier used to access the trading account
+        password:
+          type: string
+          nullable: false
+          purpose: The credential used to access the trading account
+        leverage:
+          type: integer
+          nullable: false
+          purpose: Defines the account's leverage multiplier
+        balance:
+          type: decimal
+          nullable: false
+          default: 0
+          purpose: Stores the account's current balance
+        account_type:
+          type: string
+          nullable: false
+          purpose: Identifies the account model, such as `cfd` or `spread_betting
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the account is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the account
+      relationships:
+        broker:
+          type: belongs_to
+          target: broker
+          field: broker_id
+        base_currency:
+          type: uses
+          target: currency
+          field: base_currency_id
+          role: base
+      rules:
+      - '`password` is a credential and must use `encrypted` storage at rest'
+      initial_data:
+      - name: Acc-1
+        broker_id: 1
+        base_currency_id: 1
+        username: test
+        password:
+          generate: secure
+        leverage: 100
+        account_type: CFD
+    asset:
+      purpose: Defines an asset that can be selected for trading. It provides the system with the complete set of available
+        tradable assets and identifies the category of each asset so the system knows exactly what is being traded.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The asset's display name
+        symbol:
+          type: string
+          nullable: false
+          unique: true
+          purpose: Identifies the tradable asset, such as `EUR/USD`, `XAU/USD`, or `USOil
+        category:
+          type: string
+          nullable: false
+          purpose: Identifies the asset category, such as `Currency`, `Commodity`, or `Cryptocurrency
+        point_size:
+          type: float
+          nullable: false
+          default: 0.0
+          purpose: Stores the size of one point for the asset
+        digits:
+          type: integer
+          nullable: false
+          default: 0
+          purpose: Stores the number of decimal digits used for the asset's price
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the asset is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the asset
+      initial_data:
+      - name: EURUSD
+        symbol: EUR/USD
+        category: Currency
+        point_size: 0.0001
+        digits: 5
+      - name: EURGBP
+        symbol: EUR/GBP
+        category: Currency
+        point_size: 0.001
+        digits: 5
+      - name: XAUUSD
+        symbol: XAU/USD
+        category: Commodity
+        point_size: 0.01
+        digits: 2
+      - name: USOil
+        symbol: USOil
+        category: Commodity
+        point_size: 0.01
+        digits: 3
+    trailing_group:
+      purpose: Defines an independent group for organizing the rules that manage Stop Loss and Take Profit during a trade.
+        The group identifies the rule set, while each rule separately defines its activation condition and the changes to
+        apply.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The trailing group's display name
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the trailing group is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the trailing group
+      initial_data:
+      - name: Default
+    trailing_rule:
+      purpose: Defines an individual rule within a Trailing Group that tells the system when and how to manage Take Profit
+        and Stop Loss. Each rule provides the activation condition and the parameters used to apply the required adjustments.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The trailing rule's display name
+        trailing_group_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the trailing group that contains the rule
+        trigger_percentage:
+          type: decimal
+          nullable: false
+          purpose: Defines the profit percentage of the take-profit target that activates the rule
+        take_profit_adjustment:
+          type: decimal
+          nullable: true
+          purpose: Defines the take-profit adjustment applied when the rule is activated
+        stop_loss_adjustment:
+          type: decimal
+          nullable: true
+          purpose: Defines the stop-loss adjustment applied when the rule is activated
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the trailing rule is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the trailing rule
+      relationships:
+        trailing_group:
+          type: belongs_to
+          target: trailing_group
+          field: trailing_group_id
+    partial_group:
+      purpose: Defines an independent group of rules for managing portions of an open trade. Its rules determine how much
+        of the trade volume must be closed when profit or loss reaches specified thresholds.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The partial group's display name
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the partial group is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the partial group
+      initial_data:
+      - name: Default
+    partial_rule:
+      purpose: Defines an individual Partial Close rule that tells the system under which condition part of an open position
+        must be closed and how much of its volume must be closed.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The partial rule's display name
+        partial_group_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the partial group that contains the rule
+        profit_percentage:
+          type: decimal
+          nullable: false
+          purpose: Defines the profit percentage that activates the rule
+        close_percentage:
+          type: decimal
+          nullable: false
+          purpose: Defines the percentage of the position closed when the rule is activated
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the partial rule is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the partial rule
+      relationships:
+        partial_group:
+          type: belongs_to
+          target: partial_group
+          field: partial_group_id
+    action_group:
+      purpose: Defines an independent grouping for trading actions based on their risk profile, such as high risk, normal
+        risk, or low risk. Actions are assigned to these groups so trades can be organized and selected by their intended
+        risk level.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The action group's display name
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the action group is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the action group
+      initial_data:
+      - name: Default
+    action:
+      purpose: Defines how a position must be opened. An action selects the asset and account and provides the risk, Take
+        Profit, Stop Loss, Partial Group, and Trailing Group settings that determine the position's parameters and execution
+        behavior.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The action's display name
+        action_group_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the action group that contains the action
+        asset_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the asset traded by the action
+        account_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the account used to execute the action
+        partial_group_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the Partial Group used by the action
+        trailing_group_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the Trailing Group used by the action
+        risk_by_reward:
+          type: decimal
+          nullable: false
+          purpose: Defines the numeric risk-to-reward value used by the action
+        take_profit:
+          type: decimal
+          nullable: false
+          purpose: Defines the Take Profit value used by the action
+        stop_loss:
+          type: decimal
+          nullable: false
+          purpose: Defines the Stop Loss value used by the action
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the action is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the action
+      relationships:
+        action_group:
+          type: belongs_to
+          target: action_group
+          field: action_group_id
+        asset:
+          type: uses
+          target: asset
+          field: asset_id
+        account:
+          type: uses
+          target: account
+          field: account_id
+        partial_group:
+          type: uses
+          target: partial_group
+          field: partial_group_id
+        trailing_group:
+          type: uses
+          target: trailing_group
+          field: trailing_group_id
+      initial_data:
+      - name: Default
+        action_group_id: 1
+        asset_id: 1
+        account_id: 1
+        partial_group_id: 1
+        trailing_group_id: 1
+        risk_by_reward: 1
+        take_profit: 1
+        stop_loss: 1
+    position:
+      purpose: Stores the complete information for every position created by the system. It allows the system to identify
+        and track positions that have been opened as well as positions that are still pending execution.
+      fields:
+        id:
+          type: integer
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: string
+          nullable: false
+          unique: true
+          purpose: The position's display name
+        trading_platform_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the trading platform used to execute the position
+        broker_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the broker through which the position is executed
+        account_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the trading account used for the position
+        trailing_group_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the Trailing Group applied to the position
+        partial_group_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the Partial Group applied to the position
+        action_group_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the Action Group associated with the position
+        action_id:
+          type: integer
+          nullable: false
+          purpose: Identifies the action from which the position is created
+        date:
+          type: datetime
+          nullable: false
+          purpose: Stores the position's date and time
+        volume:
+          type: decimal
+          nullable: false
+          purpose: Stores the position's trading volume
+        profit:
+          type: decimal
+          nullable: false
+          default: 0
+          purpose: Stores the position's current profit or loss
+        is_executed:
+          type: boolean
+          nullable: false
+          default: false
+          purpose: Indicates whether the position has been executed
+        order_type:
+          type: string
+          nullable: false
+          purpose: Stores the position's order type
+        base_tp:
+          type: decimal
+          nullable: false
+          purpose: Stores the position's initial Take Profit value
+        base_sl:
+          type: decimal
+          nullable: false
+          purpose: Stores the position's initial Stop Loss value
+        real_tp:
+          type: decimal
+          nullable: false
+          purpose: Stores the position's current Take Profit value
+        real_sl:
+          type: decimal
+          nullable: false
+          purpose: Stores the position's current Stop Loss value
+        status:
+          type: boolean
+          nullable: false
+          default: true
+          purpose: Indicates whether the position is active
+        description:
+          type: string
+          nullable: true
+          purpose: Describes the position
+      relationships:
+        trading_platform:
+          type: uses
+          target: trading_platform
+          field: trading_platform_id
+        broker:
+          type: uses
+          target: broker
+          field: broker_id
+        account:
+          type: uses
+          target: account
+          field: account_id
+        trailing_group:
+          type: uses
+          target: trailing_group
+          field: trailing_group_id
+        partial_group:
+          type: uses
+          target: partial_group
+          field: partial_group_id
+        action_group:
+          type: uses
+          target: action_group
+          field: action_group_id
+        action:
+          type: belongs_to
+          target: action
+          field: action_id

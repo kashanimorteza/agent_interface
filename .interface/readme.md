@@ -43,16 +43,16 @@ The `.interface/` directory contains seven main parts:
 - **`schema/`** — Defines generated-file shapes only.
 - **`config/`** — Represents and maintains the project's Understanding according to the Schema. `definition.yaml` describes the project, `model.yaml` defines its shared domain models, and `development.yaml` defines its technical composition and delivery.
 
-Technical composition is intentionally separate from the human project description. `development.yaml` selects the technical components the project needs from the item types currently mapped by `map.yaml`, connects their contracts, and defines how they run and deploy.
+Technical composition is intentionally separate from the human project description. `development.yaml` selects the technical components the project needs from the item types currently mapped by `map.yaml`, connects their interfaces, and defines how they run and deploy.
 
-Project phases are the primary units of work. `project.md` defines each phase's identity, order, target, and intended outcome. The target selects the technical item whose configuration supplies the relevant Policy, contracts, verification context, and code boundary; Development configuration independently describes how the project's selected technical items connect, run, and deploy.
+Project phases are the primary units of work. `project.md` defines each phase's identity, order, target, and intended outcome. The target selects the technical item whose configuration supplies the relevant Policy, interfaces, verification context, and code boundary; Development configuration independently describes how the project's selected technical items connect, run, and deploy.
 
 Each item keeps up to two kinds of guidance beside its own Schema, each in its own layer:
 
 - **Principles** (`principles/<item>.md`) are mandatory and cannot be overridden by a project preference. They name no tool or version, so they travel unchanged between projects.
 - **Preferences** (`preferences/<item>.yaml`) supply supported technical choices when `project.md` leaves a corresponding choice unstated. Explicit project values win. Outside those values, Agents use professional judgment for ordinary technical decisions and continue; only critical decisions become open questions or blockers.
 
-There is no global Preferences layer. Interface-wide authority remains in `map.yaml` and the State contract; item-specific rules live in the Principles of the item that owns them. The three item layers are read together and answer different questions: Principles say *why and under what rules*, Preferences say *with what*, and the Schema says *in what form*. Agent-specific integrations and workflows remain outside `.interface/`.
+There is no global Preferences layer. Interface-wide authority remains in `map.yaml` and the State Authority; item-specific rules live in the Principles of the item that owns them. The three item layers are read together and answer different questions: Principles say *why and under what rules*, Preferences say *with what*, and the Schema says *in what form*. Agent-specific integrations and workflows remain outside `.interface/`.
 
 
 <br > <br>

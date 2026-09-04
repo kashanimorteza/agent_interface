@@ -11,7 +11,7 @@ Create an implementation-ready plan for the project phase named in `$ARGUMENTS`.
 
 ## Bootstrap
 
-Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, plan, authority, configuration, contract, Policy, and boundary required for this run.
+Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, plan, authority, configuration, interface, Policy, and boundary required for this run.
 
 Re-read required sources on every invocation. Resolve the requested phase and its technical context only through the current mapped files. Apply technology guidance supplied by the project Rules when relevant and available.
 
@@ -19,11 +19,11 @@ Do not rely on remembered paths, fields, task shapes, states, transitions, defau
 
 ## Plan
 
-Enter, plan, reconcile, validate, and record the requested scope exactly as the current authorities permit. Let the live planning Schema and Policies determine output shape, decomposition, dependencies, acceptance, verification, paths, lifecycle, preservation behavior, and how missing information is handled.
+Enter, plan, reconcile, validate, and record the requested scope exactly as the current authorities permit. Let the live planning Schema and Policies determine output shape, decomposition, dependencies, acceptance, verification, paths, preservation behavior, and how missing information is handled.
 
 Preserve existing progress, history, protected content, and everything outside current write authority. Apply technology guidance only inside the authorized scope.
 
-Produce the smallest complete implementation-ready plan that satisfies the current project configuration. Do not invent or expand project requirements, contracts, permissions, or scope.
+Produce the smallest complete implementation-ready plan that satisfies the current project configuration. Do not invent or expand project requirements, interfaces, permissions, or scope.
 
 ## Boundaries
 

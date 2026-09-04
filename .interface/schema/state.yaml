@@ -1,7 +1,7 @@
 schema:
   id: agent-interface-state
   version: "9.0"
-  purpose: "The State contract — the shape of state.yaml: the project-wide state, its working modes, the State Authority that governs it, and the transition rules, in one file"
+  purpose: "The shape of state.yaml: the project-wide state, its working modes, the State Authority that governs it, and the transition rules, in one file"
   principles: ".interface/principles/state.md"
   layering: "This file defines shape only. The mandatory rules of this layer live in its principles document and are not restated here."
 
@@ -19,7 +19,7 @@ sections:
     purpose: "The live State Authority — the working modes, who may write each field of this file, on which transition, and which authorized operation may perform each. Read before anything below is written. Seeded verbatim from the default at creation; after the seed it is the human's alone, and a regeneration carries it through untouched."
     extension_note: "Extensible without redesigning the format: each field entry carries its own tier and writable_by, so a new state field gets its own authority, and a new operation is authorized by adding it to the lists that concern it. The extension itself is the human's edit."
     default:
-      rule: "This section is the single source of truth for the runtime state, and it is part of the State contract itself. It defines the working modes, names every field of state.yaml, states who may write each one, defines which transitions exist, and identifies which operation may perform each. Where any other Interface file appears to say something different, this section governs; the other file is wrong and is corrected, not worked around"
+      rule: "This section is the single source of truth for the runtime state. It defines the working modes, names every field of state.yaml, states who may write each one, defines which transitions exist, and identifies which operation may perform each. Where any other Interface file appears to say something different, this section governs; the other file is wrong and is corrected, not worked around"
       principle: "State records human-owned decisions and genuinely blocking conditions. An agent resolves ordinary implementation and technical decisions under its integration's decision policy without turning them into questions; it never supplies the answer to a question that correctly remains with the human. A human-requested operation writes State only as the transitions below permit"
       scope: "This file — the modes and authority in content.state_authority, plus content.active, content.blockers, and content.open_questions. The other config files keep their ownership in their own policy sections; nothing here widens it"
       seeded_from: "The default in .interface/schema/state.yaml, written verbatim when state.yaml is created — transition S0. While no state.yaml exists there is no live authority, so that default is what authorizes its own creation; once the file exists, this live copy governs and the schema default is not consulted at runtime"
@@ -34,12 +34,11 @@ sections:
           purpose: "Decide what will be built and in what order — no product code is written"
           owned_by: "planning operation"
           may_write:
-            - "The mapped item configuration selected by the requested phase's target in definition.yaml — planning-owned settings, relationships, and draft contracts only, never a frozen contract"
+            - "The mapped item configuration selected by the requested phase's target in definition.yaml — planning-owned settings and relationships only"
             - ".interface/config/task.yaml — the plan for the one project phase named by the invocation"
             - ".interface/config/state.yaml — active, per transitions S1 and S4 in this State Authority, and blockers and open questions"
           may_not_write:
             - "Any file under the code_path of the requested phase's target"
-            - "A frozen contract"
             - "The requested phase's id, title, order, target, or goal in config/definition.yaml"
             - "map.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, and schema/"
 
@@ -52,7 +51,6 @@ sections:
             - ".interface/config/state.yaml — active, per transitions S2 and S4 in this State Authority, and blockers and open questions"
           may_not_write:
             - "A code_path not selected by the active phase's target in definition.yaml"
-            - "A frozen contract"
             - "task_schema, task_states, phase plan identity and structure, and every field of a task other than status, blocker, and log"
             - "map.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, the item files, and schema/"
           plan_change: "Changing a task requires the reason written into that task's log and human approval"
@@ -109,7 +107,7 @@ sections:
           tier: "derived"
           holds: "The target of active.phase, resolved from the entry in definition.yaml content.phases whose id equals active.phase"
           writable_by: []
-          constraint: "Never stored. The active target is resolved fresh from active.phase in definition.yaml; its selected component in development.yaml and its item Policy, configuration, contracts, verification context, and code_path are then resolved through the current Interface map."
+          constraint: "Never stored. The active target is resolved fresh from active.phase in definition.yaml; its selected component in development.yaml and its item Policy, configuration, interfaces, verification context, and code_path are then resolved through the current Interface map."
 
         active.mode_reason:
           tier: "agent_writable"
@@ -156,7 +154,7 @@ sections:
             - "review operation"
             - "generation operation — during a generation run, which is outside the modes"
             - "reset operation — only under transition S9, clearing every blocker"
-          constraint: "Any mode, and a generation run, may raise a blocker only when the active agent integration classifies the condition as critical and work cannot safely or validly continue. Ordinary unspecified technical details are resolved by agent judgment and never become blockers. A blocker may be updated and removed once the condition is resolved in its owning configuration, contract, code, evidence, or human decision. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8. Reset may clear every blocker without answering it only as part of S9"
+          constraint: "Any mode, and a generation run, may raise a blocker only when the active agent integration classifies the condition as critical and work cannot safely or validly continue. Ordinary unspecified technical details are resolved by agent judgment and never become blockers. A blocker may be updated and removed once the condition is resolved in its owning configuration, interface, code, evidence, or human decision. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8. Reset may clear every blocker without answering it only as part of S9"
           human_may_set: true
 
         open_questions.questions:
@@ -186,7 +184,7 @@ sections:
           tier: "human_only"
           holds: "The decision itself — what the value actually is"
           writable_by: []
-          constraint: "No agent answers a question, closes one by supplying its answer, or writes a plausible value into a contract in place of one. A question is closed only after the human has answered it, and the answer that closes it is the human's"
+          constraint: "No agent answers a question, closes one by supplying its answer, or writes a plausible project decision in place of one. A question is closed only after the human has answered it, and the answer that closes it is the human's"
 
         ready:
           tier: "derived"
@@ -198,7 +196,6 @@ sections:
         note: "These sit outside state.yaml but belong to the same ownership model — they are named here so that one section answers the whole question of who decides what"
         items:
           - "The answer to any open question in state.yaml"
-          - "Freezing or versioning a contract — governed by the owning item's Principles"
           - "Defining a project phase, its order, target, and intended outcome — these come from project.md through the interpreter"
           - "The generated technical composition, runtime, and deployment in config/development.yaml, outside a generation operation"
           - "The content of config/definition.yaml, outside a generation operation"
@@ -291,7 +288,7 @@ sections:
           requires:
             - "The condition meets the critical threshold supplied by the active agent integration; ordinary missing implementation detail does not"
             - "The blocker states what is missing, never a guess at a human-owned answer"
-            - "A blocker is removed only once the critical condition is resolved in its owning configuration, contract, code, evidence, or human decision"
+            - "A blocker is removed only once the critical condition is resolved in its owning configuration, interface, code, evidence, or human decision"
           writes: "content.blockers, and the blocker field of the task it stops"
           refused_when: "Removing a blocker whose decision_belongs_to is the human, before the human has decided"
 
@@ -425,7 +422,7 @@ sections:
                 purpose: "The decision the human must make, stated so it can be answered."
               why_it_matters:
                 required: true
-                purpose: "What in the project depends on the answer — the goal, rule, or contract that cannot be satisfied without it."
+                purpose: "What in the project depends on the answer — the goal, rule, interface, or decision that cannot be satisfied without it."
               answered_so_far:
                 required: false
                 purpose: "What of this question the human has already settled, and when — recorded in the human's own terms, present only on a question that was partly answered."

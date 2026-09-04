@@ -49,7 +49,7 @@ sections:
             purpose: "The phase's one-based position in project.md."
           target:
             required: true
-            purpose: "The technical item named by the human for this phase. It resolves the applicable item configuration, Policy, contracts, verification context, and code boundary."
+            purpose: "The technical item named by the human for this phase. It resolves the applicable item configuration, Policy, interfaces, verification context, and code boundary."
           goal:
             required: true
             purpose: "What the project states this phase must accomplish, copied faithfully."

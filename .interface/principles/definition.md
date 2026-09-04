@@ -19,3 +19,11 @@ Each phase's target is part of the human project definition and is preserved her
 ## 2. Phases are the units of work
 
 Project phases are the primary units of planning, development, review, and progress. Definition owns each phase's identity, order, target, and intended outcome; every other layer refers to a phase by what definition says about it.
+
+<br>
+
+## 3. Project versioning and lifecycle are not modeled
+
+The current Interface does not define a project version, release lifecycle, or lifecycle for communication between items. Interpretation must not invent any of them or require them before configuration can be generated.
+
+Concrete versions of selected languages, frameworks, packages, tools, and the metadata version of an Interface Schema are technical metadata, not project versioning, and are unaffected by this rule.

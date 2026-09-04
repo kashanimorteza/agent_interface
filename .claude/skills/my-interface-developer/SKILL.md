@@ -11,7 +11,7 @@ Execute the unfinished eligible work for the project phase named in `$ARGUMENTS`
 
 ## Bootstrap
 
-Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, plan, authority, configuration, contract, code boundary, and verification context required for this run.
+Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, plan, authority, configuration, interface, code boundary, and verification context required for this run.
 
 Re-read required sources on every invocation. Resolve the requested phase, executable work, destinations, permissions, coordination protocol, and completion rules only through current mapped files. Apply technology guidance supplied by the project Rules when relevant and available.
 
@@ -23,7 +23,7 @@ Enter the required workflow state, select work, claim it, implement it, verify i
 
 Inspect existing code within the authorized scope before editing. Apply technology guidance without widening the selected work. Derive all paths, allowed writes, required checks, and responses to ambiguity or failure from the current owning files.
 
-Continue through eligible work in the requested phase while the live rules allow it. Never mark work complete without the verification required by its current contract.
+Continue through eligible work in the requested phase while the live rules allow it. Never mark work complete without the verification required by its current task and active configuration.
 
 ## Boundaries
 

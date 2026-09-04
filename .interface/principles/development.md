@@ -12,7 +12,7 @@ Every statement here is mandatory.
 
 Project identity, intended outcomes, and each phase's target belong to `definition.yaml`. Domain models belong to `model.yaml`. Each technical item owns its own internal configuration. Development owns only how the selected items are connected, run, and deployed.
 
-Each component's mapped generated configuration remains the source of truth for its internal technology, responsibility, boundaries, contracts, paths, and implementation details. Development summarizes and connects those values without redefining them.
+Each component's mapped generated configuration remains the source of truth for its internal technology, responsibility, boundaries, interfaces, paths, and implementation details. Development summarizes and connects those values without redefining them.
 
 <br>
 
@@ -28,9 +28,9 @@ Components are selected dynamically from the item types currently mapped by `map
 
 <br>
 
-## 4. A connection only carries a contract one of its endpoints owns
+## 4. A connection names the interface between its endpoints
 
-Every connection is derived from the contracts produced and consumed by the selected components. A connection cannot create a contract that neither endpoint owns.
+Every connection is derived from the interfaces provided and used by the selected components. A connection cannot invent an interface that neither endpoint configuration defines.
 
 <br>
 

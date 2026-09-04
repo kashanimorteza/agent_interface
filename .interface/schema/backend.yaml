@@ -17,7 +17,7 @@ structure:
   - model_api
   - standards
   - capabilities
-  - contracts
+  - interfaces
   - boundaries
   - out_of_scope
 
@@ -84,7 +84,7 @@ sections:
             fields:
               api:
                 required: true
-                purpose: "The framework serving the HTTP surface the contract is published over."
+                purpose: "The framework serving the backend HTTP surface."
                 fields:
                   name:
                     required: true
@@ -190,20 +190,20 @@ sections:
             required: true
             purpose: "Whether the backend serves HTTPS — false means plain HTTP."
 
-  # <!--------------------------------------------------------------------------------- Contracts -->
-  contracts:
+  # <!--------------------------------------------------------------------------------- Interfaces -->
+  interfaces:
     required: true
-    purpose: "The backend's item relationships — the database data-access contract it consumes and the runtime HTTP interface it produces. API surface details are implementation output and do not live in this configuration."
+    purpose: "The backend's item relationships — the database interface it uses and the runtime HTTP interface it provides. API surface details are implementation output and do not live in this configuration."
     fields:
-      produces:
+      provides:
         required: true
         purpose: "The runtime interface the implemented backend publishes, including its framework-generated machine-readable description."
-      consumes:
+      uses:
         required: true
-        purpose: "The frozen database data-access contract consumed by the backend."
+        purpose: "The generic data-access interface provided by the database item."
       rule:
         required: true
-        purpose: "The implementation boundary: tasks, resolved model-level API intent, and the consumed data-access contract guide development, while endpoint paths, HTTP method mappings, payloads, response shapes, error shapes, entrypoints, commands, and file layout are produced during implementation rather than prescribed here."
+        purpose: "The implementation boundary: tasks, resolved model-level API intent, and the database interface guide development, while endpoint paths, HTTP method mappings, payloads, response shapes, error shapes, entrypoints, commands, and file layout are produced during implementation rather than prescribed here."
 
   # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:

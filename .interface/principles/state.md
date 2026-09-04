@@ -1,6 +1,6 @@
 # State Principles
 
-This document is the personality of the State contract — `config/state.yaml`, the one file that defines the working modes, records where the project stands, and controls who is allowed to move it. It is written for every Agent operation that touches State and for the Developer who wants to know why State is guarded the way it is.
+This document is the personality of State — `config/state.yaml`, the one file that defines the working modes, records where the project stands, and controls who is allowed to move it. It is written for every Agent operation that touches State and for the Developer who wants to know why State is guarded the way it is.
 
 The shape of `state.yaml`, and the default modes and State Authority seeded into every newly created copy of it, live in the Schema. There is no Preferences file for State: State has no technical choices, only workflow authority.
 
