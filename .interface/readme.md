@@ -57,6 +57,39 @@ There is no global Preferences layer. Interface-wide authority remains in `map.y
 
 <br > <br>
 
+## Agent Skills
+
+### `my-interface-interpreter`
+
+Transforms the human project definition into the generated project Understanding required by downstream operations.
+
+### `my-interface-tasker`
+
+Creates or reconciles an implementation-ready plan for one requested project phase without implementing it.
+
+### `my-interface-developer`
+
+Implements and verifies eligible planned Tasks for one requested project phase within its authorized boundaries.
+
+### `my-interface-reviewer`
+
+Reviews the implemented result for one requested project phase and reports evidence-based findings without repairing it.
+
+### `my-interface-clear`
+
+Clears generated Interface configuration and mapped generated-code directories through its bundled script.
+
+### `my-interface-reset`
+
+Resets the generated workflow to its pre-development or pre-planning stage while preserving project code and generated Understanding.
+
+### `my-interface-skill-installer`
+
+Discovers and installs compatible Claude Skills for technologies detected in the configured target project.
+
+
+<br > <br>
+
 ## Workflow
 
 ### 1. Define the Project
