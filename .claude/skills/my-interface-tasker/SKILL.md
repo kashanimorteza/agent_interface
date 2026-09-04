@@ -9,11 +9,11 @@ disable-model-invocation: true
 
 Create an implementation-ready plan for the project phase named in `$ARGUMENTS`.
 
-## Load the live Interface
+## Bootstrap
 
-Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, planning structure, State authority, applicable configuration, contracts, and Policies.
+Read `.interface/root.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, plan, authority, configuration, contract, Policy, and boundary required for this run.
 
-Re-read required sources on every invocation. Resolve the requested phase and its technical context only through the current mapped files. Load any additional technology Skill explicitly selected by the live configuration, following the current policy for unavailable guidance.
+Re-read required sources on every invocation. Resolve the requested phase and its technical context only through the current mapped files. Apply technology guidance supplied by the project Rules when relevant and available.
 
 Do not rely on remembered paths, fields, task shapes, states, transitions, defaults, permissions, or decision rules. Information in the human project definition provides context but does not override or expand the generated operational sources.
 
@@ -21,7 +21,7 @@ Do not rely on remembered paths, fields, task shapes, states, transitions, defau
 
 Enter, plan, reconcile, validate, and record the requested scope exactly as the current authorities permit. Let the live planning Schema and Policies determine output shape, decomposition, dependencies, acceptance, verification, paths, lifecycle, preservation behavior, and how missing information is handled.
 
-Preserve existing progress, history, protected content, and everything outside current write authority. Apply configured technology Skills only as technical guidance inside the authorized scope.
+Preserve existing progress, history, protected content, and everything outside current write authority. Apply technology guidance only inside the authorized scope.
 
 Produce the smallest complete implementation-ready plan that satisfies the current project configuration. Do not invent or expand project requirements, contracts, permissions, or scope.
 

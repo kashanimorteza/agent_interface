@@ -6,17 +6,17 @@ disable-model-invocation: true
 
 # Interpret the project
 
-Convert the human project definition into the structured project Understanding consumed by the other Interface Skills.
+Convert the human project definition into the structured project Understanding consumed by downstream operations.
 
-## Load the live Interface
+## Bootstrap
 
-Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, output Schemas, Policies, Preferences, existing generated configuration, State authority, and any other source required for this run.
+Read `.interface/root.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, output, Schema, Policy, Preference, authority, and preservation rule required for this run.
 
 Re-read required sources on every invocation. Do not rely on remembered paths, fields, defaults, file shapes, authorities, or conclusions. Do not scan unrelated project files for project intent.
 
 ## Interpret
 
-Treat the human-managed definition as the source of project intent and facts. Treat the currently mapped Interface files as the source of output structure, defaults, decision policy, validation, ownership, preservation rules, and write authority.
+Treat the human-managed definition as the source of project intent and facts. Treat the currently mapped Interface files as the source of output structure, defaults, validation, ownership, preservation rules, and write authority. Apply the shared Claude decision policy from the project Rules.
 
 Generate or reconcile only the configuration that the live Interface requires and authorizes. Derive every output file, section, field, relationship, default, and state change from its current owner; do not encode their present shape in this Skill.
 

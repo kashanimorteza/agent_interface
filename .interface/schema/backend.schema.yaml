@@ -1,25 +1,20 @@
 schema:
   id: agent-interface-backend
-  version: "5.1"
+  version: "6.0"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
 
 policy:
   preference_resolution:
-    rule: "An explicit project value always wins. When a backend technical choice is unstated, resolve it from supported backend preferences or choose the best compatible implementation option under root.yaml policy.decision_policy. Raise an open question only for a critical conflict or decision as defined there."
-    resolved_by: "my-interface-interpreter only; downstream Skills consume the resolved backend configuration and never reinterpret preferences."
+    rule: "An explicit project value always wins. When a backend technical choice is unstated, the generation operation resolves it from supported backend preferences or selects a compatible implementation option. Downstream operations consume the resolved backend configuration and never reinterpret preferences."
   database_boundary: "The backend never owns the database engine, storage, schema, or migrations. It consumes the frozen database contract and owns only its runtime connection, ORM mappings, and database client packages."
   package_resolution: "Resolve runtime packages from the selected language, API framework, ORM, and database contract through an explicitly supported compatibility entry when available. For an unlisted combination, choose a well-supported compatible package from current evidence and record the consequential choice; ask only when no safe compatible stack can be established."
-  technology_skill_resolution:
-    rule: "A supported technology preference may name one Agent Skill as technical guidance. When that technology is selected, my-interface-interpreter writes the Skill name into the matching resolved technology entry in backend.yaml."
-    optional: "A technology with no configured Skill remains valid and produces no skill field. Never guess a Skill from the technology name."
-    boundary: "A configured technology Skill guides planning and implementation only. It cannot change project requirements, phase scope, item Policy, contracts, write boundaries, workflow roles, or State authority."
   model_api_resolution:
     rule: "When the project requests an API for its domain models without naming allowed operations, apply preferences.model_api.default_operations to every model currently indexed in model.yaml."
     overrides: "An explicit project rule for a model replaces the default operations for that model. Models are resolved dynamically from model.yaml and are never copied into this Policy or its Preferences."
     boundary: "Resolve only model-level operation intent here. Endpoint paths, HTTP method mappings, payloads, response shapes, and implementation layout remain implementation output."
   version_resolution:
     explicit: "Preserve every concrete version stated by the project exactly."
-    latest: "When a supported preference supplies latest, my-interface-interpreter resolves it to the latest stable version compatible with the complete selected backend stack and writes only that concrete version into backend.yaml. The token latest never appears in generated Config."
+    latest: "When a supported preference supplies latest, the generation operation resolves it to the latest stable version compatible with the complete selected backend stack and writes only that concrete version into backend.yaml. The token latest never appears in generated Config."
     unresolved: "If the current stable version cannot be verified, select the best supported concrete compatible version available from current evidence and record the choice. Raise an open question only when compatibility or safety cannot be established without a critical human decision."
   sensitive_data:
     credential_source: "A field is a credential when the consumed database contract assigns it a credential storage mode. The backend never guesses credential fields from their names."
@@ -52,7 +47,6 @@ preferences:
   api_frameworks:
     FastAPI:
       version: "latest"
-      skill: "fastapi"
   orms:
     SQLAlchemy:
       version: "latest"
@@ -146,9 +140,6 @@ sections:
           version:
             required: true
             purpose: "The language version."
-          skill:
-            required: false
-            purpose: "The Agent Skill selected by this language's supported preference profile, omitted when none is configured."
           environment:
             required: true
             purpose: "The isolated environment every command and every install happens inside — created and driven by one named tool, and never committed."
@@ -173,9 +164,6 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
-                  skill:
-                    required: false
-                    purpose: "The Agent Skill selected by this API framework's supported preference profile, omitted when none is configured."
               orm:
                 required: true
                 purpose: "The layer every read and write of the database goes through."
@@ -186,9 +174,6 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
-                  skill:
-                    required: false
-                    purpose: "The Agent Skill selected by this ORM's supported preference profile, omitted when none is configured."
               database_driver:
                 required: false
                 purpose: "The runtime adapter required by the resolved database contract and ORM combination; absent when the selected language provides it."
@@ -199,9 +184,6 @@ sections:
                   version:
                     required: false
                     purpose: "The adapter version when a package is installed."
-                  skill:
-                    required: false
-                    purpose: "The Agent Skill selected by this driver's supported preference profile, omitted when none is configured."
               "<package>":
                 required: false
                 purpose: "One entry per further package the project names — same two fields, set by the human, never inferred by an agent from the code."
@@ -212,9 +194,6 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
-                  skill:
-                    required: false
-                    purpose: "The Agent Skill explicitly associated with this package, omitted when none is declared."
 
   # <!--------------------------------------------------------------------------------- Model_API -->
   model_api:

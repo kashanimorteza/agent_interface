@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-task
-  version: "3.1"
+  version: "3.2"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
   frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans use the phase → group → task structure. Every plan key and target come from a project phase in definition.yaml; the target resolves the item configuration and code boundary used by its tasks, while development.yaml describes the selected components, their connections, runtime, and deployment."
   authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and invariants, not the permission"
@@ -92,7 +92,7 @@ sections:
         purpose: "That a task is set to claimed and the file written before work starts, so two agents never take the same task."
       status_only_in_development:
         required: true
-        purpose: "That in development mode status, blocker, and log are the only fields an agent may change, with my-interface-reset under S9 as the only outside-mode reset exception."
+        purpose: "That in development mode status, blocker, and log are the only fields an agent may change, with the reset operation under its State transition as the only outside-mode reset exception."
       reset_protocol:
         required: true
         purpose: "How an explicitly invoked project-wide reset returns every generated Task to its initial status before development, or removes every generated Task to restore the stage before planning, and clears all current State blockers and open questions for either reset stage."

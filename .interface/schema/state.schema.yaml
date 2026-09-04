@@ -1,9 +1,9 @@
 schema:
   id: agent-interface-state
-  version: "4.1"
+  version: "5.0"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
-  authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
+  authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which authorized operation may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
   defaults:
     rule: "A section carrying `default` is always written into state.yaml when the file is created — the default is the seed, written verbatim under transition S0. No newly generated state.yaml exists without it; there is no exception."
     note: "While no state.yaml exists there is no live authority, so the default state_authority below is what authorizes its own seeding — transition S0 is defined inside it."
@@ -19,17 +19,17 @@ sections:
   # <!--------------------------------------------------------------------------------- State_Authority -->
   state_authority:
     required: true
-    purpose: "The live State Authority — who may write each field of this file, on which transition, and which Skill may perform each. Read before anything below is written. Seeded verbatim from the default at creation; after the seed it is the human's alone, and a regeneration carries it through untouched."
-    extension_note: "Extensible without redesigning the format: each field entry carries its own tier and writable_by, so a new state field gets its own authority, and a new skill is authorized by adding it to the lists that concern it. The extension itself is the human's edit."
+    purpose: "The live State Authority — who may write each field of this file, on which transition, and which authorized operation may perform each. Read before anything below is written. Seeded verbatim from the default at creation; after the seed it is the human's alone, and a regeneration carries it through untouched."
+    extension_note: "Extensible without redesigning the format: each field entry carries its own tier and writable_by, so a new state field gets its own authority, and a new operation is authorized by adding it to the lists that concern it. The extension itself is the human's edit."
     default:
-      rule: "This section is the single source of truth for the runtime state, and it is part of the State contract itself. It names every field of state.yaml, who may write each one, which transitions exist, and which Skill may perform each. Where any other file — root.yaml, a schema, a config policy, a SKILL.md — appears to say something different, this section governs; the other file is wrong and is corrected, not worked around"
-      principle: "State records human-owned decisions and genuinely blocking conditions. An Agent makes ordinary implementation and technical decisions under root.yaml policy.decision_policy without turning them into questions; it never supplies the answer to a question that correctly remains with the human. Invoking a Skill is the human's instruction — the Skill writes that instruction into State only as the transitions below permit"
+      rule: "This section is the single source of truth for the runtime state, and it is part of the State contract itself. It names every field of state.yaml, who may write each one, which transitions exist, and which operation may perform each. Where any other Interface file appears to say something different, this section governs; the other file is wrong and is corrected, not worked around"
+      principle: "State records human-owned decisions and genuinely blocking conditions. An agent resolves ordinary implementation and technical decisions under its integration's decision policy without turning them into questions; it never supplies the answer to a question that correctly remains with the human. A human-requested operation writes State only as the transitions below permit"
       scope: "This file — content.active, content.blockers, content.open_questions, and content.state_authority itself. The other config files keep their ownership in their own policy sections; nothing here widens it"
       seeded_from: "The default in .interface/schema/state.schema.yaml, written verbatim when state.yaml is created — transition S0. While no state.yaml exists there is no live authority, so that default is what authorizes its own creation; once the file exists, this live copy governs and the schema default is not consulted at runtime"
-      extension_rule: "Extensible by the human alone. A new entry under fields gives a new state field its own authority; adding a skill to a writable_by or performed_by list authorizes that skill without redesigning the format; a new transition is a new entry under transitions. An agent that needs an extension raises it as an open question, never writes it"
+      extension_rule: "Extensible by the human alone. A new entry under fields gives a new state field its own authority; adding an operation to a writable_by or performed_by list authorizes that operation without redesigning the format; a new transition is a new entry under transitions. An agent that needs an extension raises it as an open question, never writes it"
 
       tiers:
-        agent_writable: "Written by a named Skill, and only as part of a transition listed under transitions below"
+        agent_writable: "Written by an authorized operation, and only as part of a transition listed under transitions below"
         human_only: "Never written by an agent — in any mode, on any invocation, however convenient. The human edits it directly"
         derived: "Not stored at all — computed from what is stored, and never written anywhere"
 
@@ -39,32 +39,32 @@ sections:
           tier: "human_only"
           holds: "This section — the live State Authority"
           writable_by:
-            - "my-interface-interpreter — only under transition S0, seeding the default from schema/state.schema.yaml because state.yaml does not yet exist"
-          constraint: "After the seed it is the human's alone. A regeneration carries it through untouched, no Skill edits, extends, or narrows it, and a change it needs is an open question in this file — never a quiet rewrite"
+            - "generation operation — only under transition S0, seeding the default from schema/state.schema.yaml because state.yaml does not yet exist"
+          constraint: "After the seed it is the human's alone. A regeneration carries it through untouched; no operation edits, extends, or narrows it, and a change it needs is an open question in this file — never a quiet rewrite"
           human_may_set: true
 
         active.mode:
           tier: "agent_writable"
-          holds: "One of the modes defined in .interface/root.yaml under content.modes, or 'not set' when no Skill has been invoked yet"
+          holds: "One of the modes defined in .interface/root.yaml under content.modes, or 'not set' when no workflow operation has been requested yet"
           writable_by:
-            - "my-interface-tasker"
-            - "my-interface-developer"
-            - "my-interface-reviewer"
-            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-            - "my-interface-reset — only under transition S9, to planning for a development reset or 'not set' for a planning reset"
-          constraint: "A Skill writes only the mode it owns, except that my-interface-reset records the workflow stage explicitly selected by the human under S9: planning after development is reset, or 'not set' after planning is reset. Reset never invokes or performs the work of the Tasker. my-interface-clear does not write this field because S5 deletes the file that holds it"
+            - "planning operation"
+            - "development operation"
+            - "review operation"
+            - "generation operation — only under transition S0, when state.yaml does not yet exist"
+            - "reset operation — only under transition S9, to planning for a development reset or 'not set' for a planning reset"
+          constraint: "An operation writes only the mode it owns, except that reset records the workflow stage explicitly selected by the human under S9: planning after development is reset, or 'not set' after planning is reset. Reset never performs planning. Clear does not write this field because S5 deletes the file that holds it"
           human_may_set: true
 
         active.phase:
           tier: "agent_writable"
           holds: "One project phase id as definition.yaml indexes it under content.phases, or 'none'"
           writable_by:
-            - "my-interface-tasker"
-            - "my-interface-developer"
-            - "my-interface-reviewer"
-            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-            - "my-interface-reset — only under transition S9, and only to 'none'"
-          constraint: "The phase comes from the invocation and must exist under definition.yaml content.phases. The invocation must name exactly one phase; a phase is never guessed, inferred from a target item, or carried over from a previous run. Under S0 the interpreter and under S9 the reset Skill write only 'none'."
+            - "planning operation"
+            - "development operation"
+            - "review operation"
+            - "generation operation — only under transition S0, when state.yaml does not yet exist"
+            - "reset operation — only under transition S9, and only to 'none'"
+          constraint: "The phase comes from the human request and must exist under definition.yaml content.phases. The request must name exactly one phase; a phase is never guessed, inferred from a target item, or carried over from a previous run. Under S0 generation and under S9 reset write only 'none'."
           human_may_set: true
 
         active.target:
@@ -77,35 +77,35 @@ sections:
           tier: "agent_writable"
           holds: "Why this mode and this phase are the active ones — the invocation that set them, and after a run what that run concluded"
           writable_by:
-            - "my-interface-tasker"
-            - "my-interface-developer"
-            - "my-interface-reviewer"
-            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-            - "my-interface-reset — only under transition S9"
-          constraint: "Written together with mode and phase, rewritten at the end of a run under transition S4, or written by Reset under S9 to record the selected phase and destination. It states what happened; it never argues for a mode the Skill was not invoked into"
+            - "planning operation"
+            - "development operation"
+            - "review operation"
+            - "generation operation — only under transition S0, when state.yaml does not yet exist"
+            - "reset operation — only under transition S9"
+          constraint: "Written together with mode and phase, rewritten at the end of a run under transition S4, or written by reset under S9 to record the selected stage and destination. It states what happened; it never argues for a mode the operation did not enter"
           human_may_set: true
 
         active.set_by:
           tier: "agent_writable"
-          holds: "Who wrote the active values — either 'the human' for a direct edit, or the Skill name followed by 'on the human's invocation'"
+          holds: "Who wrote the active values — either 'the human' for a direct edit, or the authorized operation acting on the human's request"
           writable_by:
-            - "my-interface-tasker"
-            - "my-interface-developer"
-            - "my-interface-reviewer"
-            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-            - "my-interface-reset — only under transition S9"
-          constraint: "A Skill writes its own name and the invocation it acted on. It never writes 'the human' for a value the human did not type directly — the provenance of every state change stays readable. Under S0 the interpreter writes its own name, not the human's"
+            - "planning operation"
+            - "development operation"
+            - "review operation"
+            - "generation operation — only under transition S0, when state.yaml does not yet exist"
+            - "reset operation — only under transition S9"
+          constraint: "An operation writes its generic operation name and the human request it acted on. It never writes 'the human' for a value the human did not type directly — the provenance of every state change stays readable. Under S0 generation writes its operation name, not the human's"
           human_may_set: true
 
         active.set_at:
           tier: "agent_writable"
           holds: "The date the active values were last written"
           writable_by:
-            - "my-interface-tasker"
-            - "my-interface-developer"
-            - "my-interface-reviewer"
-            - "my-interface-interpreter — only under transition S0, when state.yaml does not yet exist"
-            - "my-interface-reset — only under transition S9"
+            - "planning operation"
+            - "development operation"
+            - "review operation"
+            - "generation operation — only under transition S0, when state.yaml does not yet exist"
+            - "reset operation — only under transition S9"
           constraint: "Written with every change to active, and never backdated"
           human_may_set: true
 
@@ -113,34 +113,34 @@ sections:
           tier: "agent_writable"
           holds: "Only critical conditions that genuinely prevent safe authorized continuation, what each condition stops, and whose action or decision would release it"
           writable_by:
-            - "my-interface-tasker"
-            - "my-interface-developer"
-            - "my-interface-reviewer"
-            - "my-interface-interpreter — during a generation run, which is outside the modes"
-            - "my-interface-reset — only under transition S9, clearing every blocker"
-          constraint: "Any mode, and a generation run, may raise a blocker only when root.yaml policy.decision_policy classifies the condition as critical and work cannot safely or validly continue. Ordinary unspecified technical details are resolved by Agent judgment and never become blockers. A blocker may be updated and removed once the condition is resolved in its owning configuration, contract, code, evidence, or human decision. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8. Reset may clear every blocker without answering it only as part of S9"
+            - "planning operation"
+            - "development operation"
+            - "review operation"
+            - "generation operation — during a generation run, which is outside the modes"
+            - "reset operation — only under transition S9, clearing every blocker"
+          constraint: "Any mode, and a generation run, may raise a blocker only when the active agent integration classifies the condition as critical and work cannot safely or validly continue. Ordinary unspecified technical details are resolved by agent judgment and never become blockers. A blocker may be updated and removed once the condition is resolved in its owning configuration, contract, code, evidence, or human decision. A blocker whose decision_belongs_to is the human is otherwise removed only after the human has decided — recording that decision is transition S8. Reset may clear every blocker without answering it only as part of S9"
           human_may_set: true
 
         open_questions.questions:
           tier: "agent_writable"
           holds: "Critical project questions that cannot be safely resolved through Agent discretion — raised by an agent and addressed to the human"
           writable_by:
-            - "my-interface-tasker"
-            - "my-interface-developer"
-            - "my-interface-reviewer"
-            - "my-interface-interpreter — during a generation run, which is outside the modes"
-            - "my-interface-reset — only under transition S9, clearing every open question"
-          constraint: "An Agent raises a question only under the critical threshold in root.yaml policy.decision_policy and states why it matters. Ordinary ambiguity is resolved through professional judgment and continuation. Raising is not answering. Reset may clear every question without answering it only as part of S9"
+            - "planning operation"
+            - "development operation"
+            - "review operation"
+            - "generation operation — during a generation run, which is outside the modes"
+            - "reset operation — only under transition S9, clearing every open question"
+          constraint: "An agent raises a question only when the active agent integration classifies the decision as critical, and states why it matters. Ordinary ambiguity is resolved through professional judgment and continuation. Raising is not answering. Reset may clear every question without answering it only as part of S9"
           human_may_set: true
 
         open_questions.questions.answered_so_far:
           tier: "agent_writable"
           holds: "What of a question the human has already settled, and when"
           writable_by:
-            - "my-interface-tasker"
-            - "my-interface-developer"
-            - "my-interface-reviewer"
-            - "my-interface-interpreter"
+            - "planning operation"
+            - "development operation"
+            - "review operation"
+            - "generation operation"
           constraint: "Only the human's stated decision is recorded here, in the human's own terms and dated. An agent that writes anything here it was not told is inventing — see transition S8"
           human_may_set: true
 
@@ -162,11 +162,11 @@ sections:
           - "The answer to any open question in state.yaml"
           - "Freezing or versioning a contract — see the change_rule in the item files"
           - "Defining a project phase, its order, target, and intended outcome — these come from project.md through the interpreter"
-          - "The generated technical composition, runtime, and deployment in config/development.yaml, outside a my-interface-interpreter run"
-          - "The content of config/definition.yaml, outside a my-interface-interpreter run"
-          - "The content of config/model.yaml, outside a my-interface-interpreter run"
+          - "The generated technical composition, runtime, and deployment in config/development.yaml, outside a generation operation"
+          - "The content of config/definition.yaml, outside a generation operation"
+          - "The content of config/model.yaml, outside a generation operation"
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
-          - ".interface/root.yaml — the map of the interface, the modes, and the skill index"
+          - ".interface/root.yaml — the map of the Interface and its modes"
           - "The State Authority itself, after its seed — this section, and its default in schema/state.schema.yaml"
           - "Asking for tasks to be created, asking for development or planning to be reset project-wide, and asking for the generated project state to be cleared"
 
@@ -176,75 +176,75 @@ sections:
           name: "generate the state file"
           from: "no state.yaml at all"
           to: "active.mode: 'not set', active.phase: 'none', and the live State Authority seeded"
-          performed_by: "my-interface-interpreter"
-          authorized_by: "The human's invocation of my-interface-interpreter, on a project that has no state.yaml yet — governed by the default authority in schema/state.schema.yaml, which authorizes its own seeding while no live state exists"
+          performed_by: "generation operation"
+          authorized_by: "The human's request for generation, on a project that has no state.yaml yet — governed by the default authority in schema/state.schema.yaml, which authorizes its own seeding while no live state exists"
           requires:
             - "config/state.yaml does not exist. Where it does, a regeneration carries content.active and content.state_authority through untouched — a regeneration never resets the runtime state and never rewrites the live authority"
             - "content.state_authority is seeded verbatim from the default in schema/state.schema.yaml — a state.yaml without it is not created"
           writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at, content.state_authority — seeded from the schema default — and the blockers and questions the generation raised"
-          refused_when: "state.yaml already exists. Rewriting an active a Skill or the human set, or a live authority, is outside this Skill's authority"
+          refused_when: "state.yaml already exists. Rewriting active values another operation or the human set, or rewriting a live authority, is outside generation authority"
 
         - id: "S1"
           name: "enter planning"
           from: "any value of active.mode, 'not set' included"
           to: "active.mode: planning, active.phase: the phase id named by the invocation"
-          performed_by: "my-interface-tasker"
-          authorized_by: "The human's invocation of my-interface-tasker, which names exactly one project phase — for example /my-interface-tasker P2"
+          performed_by: "planning operation"
+          authorized_by: "The human's planning request, which names exactly one project phase"
           requires:
             - "The named phase is indexed under content.phases in definition.yaml"
             - "The named phase's target in definition.yaml resolves to a selected component in development.yaml and a mapped generated item configuration"
             - "The invocation names exactly one phase id"
           writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
-          refused_when: "The invocation omits the phase, names more than one phase, names a phase the Understanding does not index, or names a mode other than planning. The Skill stops and tells the human; it does not adjust the state to fit"
+          refused_when: "The request omits the phase, names more than one phase, names a phase the Understanding does not index, or requests a mode other than planning. The operation stops and tells the human; it does not adjust the state to fit"
 
         - id: "S2"
           name: "enter development"
           from: "any value of active.mode, 'not set' included"
           to: "active.mode: development, active.phase: the phase id named by the invocation"
-          performed_by: "my-interface-developer"
-          authorized_by: "The human's invocation of my-interface-developer, which names exactly one project phase"
+          performed_by: "development operation"
+          authorized_by: "The human's development request, which names exactly one project phase"
           requires:
             - "The named phase is indexed under definition.yaml content.phases and has a matching plan under task.yaml content.plans"
             - "The phase plan holds at least one task — a phase with nothing to build is not entered"
             - "Every earlier project phase is complete: each has a non-empty plan, every task not cancelled or superseded is done, and none remains todo, claimed, or blocked"
             - "The named phase's target in definition.yaml resolves to a selected component in development.yaml and a mapped generated item configuration"
           writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
-          refused_when: "The invocation omits the phase, names more than one phase, the phase has no non-empty plan, an earlier phase is incomplete, its target cannot be resolved, or the invocation names a mode other than development"
+          refused_when: "The request omits the phase, names more than one phase, the phase has no non-empty plan, an earlier phase is incomplete, its target cannot be resolved, or requests a mode other than development"
 
         - id: "S3"
           name: "enter review"
           from: "any value of active.mode, 'not set' included"
           to: "active.mode: review, active.phase: the phase id named by the invocation"
-          performed_by: "my-interface-reviewer"
-          authorized_by: "The human's invocation of my-interface-reviewer, which names exactly one project phase"
+          performed_by: "review operation"
+          authorized_by: "The human's review request, which names exactly one project phase"
           requires:
             - "The named phase is indexed under definition.yaml content.phases and has a matching non-empty plan under task.yaml content.plans"
             - "The named phase's target in definition.yaml resolves to a selected component in development.yaml and a mapped generated item configuration"
           writes: "active.mode, active.phase, active.mode_reason, active.set_by, active.set_at"
-          refused_when: "The invocation omits the phase, names more than one phase, names an unplanned phase, its target cannot be resolved, or names a mode other than review"
+          refused_when: "The request omits the phase, names more than one phase, names an unplanned phase, its target cannot be resolved, or requests a mode other than review"
 
         - id: "S4"
           name: "record the outcome of a run"
           from: "the mode the run was performed in"
           to: "the same mode and the same phase — only active.mode_reason and active.set_at change"
-          performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer — each for its own run"
+          performed_by: "planning, development, or review operation — each for its own run"
           authorized_by: "Finishing the run the human invoked"
           requires:
             - "The run has finished, and what is recorded is what it actually did or was stopped by"
           writes: "active.mode_reason, active.set_at"
-          refused_when: "The Skill did not perform the run"
+          refused_when: "The operation did not perform the run"
 
         - id: "S5"
           name: "clear the generated project state"
           from: "any"
           to: "an empty .interface/config/ directory and no root backend/, frontend/, or database/ directory"
-          performed_by: "my-interface-clear"
-          authorized_by: "The human invoking my-interface-clear by name; that invocation itself authorizes the bundled script's fixed deletion targets, with no second confirmation"
+          performed_by: "clear operation"
+          authorized_by: "The human's explicit clear request"
           requires:
-            - "The bundled script resolves its repository root from its own fixed path and uses no Config, project-definition, Schema, or code_path content to select targets"
-            - "The deletion set is exactly every entry inside .interface/config/ plus the root backend/, frontend/, and database/ directories when present"
-          writes: "every entry inside .interface/config/, and the root backend/, frontend/, and database/ directories, by deleting them; .interface/config/ itself is preserved"
-          refused_when: "The script is not inside its expected project Skill path, or .interface/config/ is a symlink or is not a directory"
+            - "The operation resolves generated configuration and generated code directories through the current Interface map"
+            - "The deletion set is exactly every entry inside the mapped generated-configuration directory plus every mapped item code_path when present"
+          writes: "The resolved generated configuration entries and mapped generated-code directories, by deleting them; the generated-configuration directory itself is preserved"
+          refused_when: "A target cannot be resolved safely through the current Interface map, escapes the repository root, is the repository root, or the generated-configuration directory is a symlink or non-directory"
 
         - id: "S6"
           name: "human override"
@@ -254,16 +254,16 @@ sections:
           authorized_by: "The human, who needs no transition"
           requires: []
           writes: "any field of state.yaml — this section included"
-          refused_when: "Never. An agent does not contest, revert, or correct a value the human wrote — where the human's value disagrees with an invocation, the Skill stops and asks"
+          refused_when: "Never. An agent does not contest, revert, or correct a value the human wrote — where the human's value disagrees with a request, the operation stops and asks"
 
         - id: "S7"
           name: "raise or release a blocker"
           from: "any mode, and a generation run outside the modes"
           to: "the same mode"
-          performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer, my-interface-interpreter"
+          performed_by: "generation, planning, development, or review operation"
           authorized_by: "The work itself — only a critical condition that prevents safe authorized continuation may become a blocker"
           requires:
-            - "The condition meets the critical threshold in root.yaml policy.decision_policy; ordinary missing implementation detail does not"
+            - "The condition meets the critical threshold supplied by the active agent integration; ordinary missing implementation detail does not"
             - "The blocker states what is missing, never a guess at a human-owned answer"
             - "A blocker is removed only once the critical condition is resolved in its owning configuration, contract, code, evidence, or human decision"
           writes: "content.blockers, and the blocker field of the task it stops"
@@ -273,10 +273,10 @@ sections:
           name: "raise a question, or record the human's answer"
           from: "any mode, and a generation run outside the modes"
           to: "the same mode"
-          performed_by: "my-interface-tasker, my-interface-developer, my-interface-reviewer, my-interface-interpreter"
+          performed_by: "generation, planning, development, or review operation"
           authorized_by: "A critical human-owned decision found while working, or an answer the human has stated"
           requires:
-            - "Raising: the decision meets the critical threshold in root.yaml policy.decision_policy, the question is stated so it can be answered, and why_it_matters names what materially depends on it"
+            - "Raising: the decision meets the critical threshold supplied by the active agent integration, the question is stated so it can be answered, and why_it_matters names what materially depends on it"
             - "Recording: the answer written into answered_so_far is the human's, dated, and in the human's own terms"
           writes: "content.open_questions.questions, and answered_so_far on an existing question"
           refused_when: "Raising a non-critical implementation question that Agent discretion can resolve; or recording an answer that came from the Agent, from the code, or from what merely seems reasonable after the question was correctly classified as human-owned"
@@ -285,8 +285,8 @@ sections:
           name: "reset development or planning project-wide"
           from: "any mode or 'not set'"
           to: "For development reset, every generated Task is todo and active is planning / none. For planning reset, every phase Plan has empty groups and active is 'not set' / none. For both stages, State blockers and open questions are empty"
-          performed_by: "my-interface-reset"
-          authorized_by: "The human's invocation of my-interface-reset naming exactly one reset stage: development or planning"
+          performed_by: "reset operation"
+          authorized_by: "The human's reset request naming exactly one reset stage: development or planning"
           requires:
             - "task.yaml exists, every phase in definition.yaml has its matching Plan shell, and at least one generated Task exists"
             - "The invocation supplies exactly one supported stage and no phase id"
@@ -298,14 +298,14 @@ sections:
           refused_when: "The invocation is missing, names a phase, has more than one argument, or is not development or planning; task.yaml or a Plan shell is missing; no generated Task exists; a Task is claimed; or the complete mutation cannot be validated before writing"
 
       validation:
-        note: "These must hold at all times. Any Skill may check them; my-interface-reviewer checks them as part of a review, and a failure is a blocker, not a repair"
+        note: "These must hold at all times. Any operation may check them; the review operation checks them as part of a review, and a failure is a blocker, not a repair"
         checks:
           - "active.mode holds a mode named under content.modes in .interface/root.yaml, or 'not set'"
           - "active.phase holds a phase id indexed under content.phases in definition.yaml, or 'none'"
           - "When active.phase is not 'none', its target in definition.yaml resolves to a selected component in development.yaml and a mapped item configuration; active.target is derived from that phase and is never stored"
-          - "active.set_by names either the human or a Skill listed as writable_by for the field it wrote"
+          - "active.set_by names either the human or an operation listed as writable_by for the field it wrote"
           - "Every state change an agent made corresponds to exactly one transition above"
-          - "A Skill's mode matches the mode it owns under content.modes in root.yaml, except for the explicit S9 development-reset result of planning / none; a Skill actually running another Skill's work remains a fault"
+          - "An operation's mode matches the mode it owns under content.modes in root.yaml, except for the explicit S9 development-reset result of planning / none; an operation performing another operation's work remains a fault"
           - "Each plan key is a phase id from definition.yaml; its id, title, order, target, and goal-derived meaning match that phase"
           - "No open question carries an answer that no human gave"
           - "content.state_authority was seeded verbatim from the schema default and has changed only by the human's hand since — a difference an agent made is a fault, not a state to repair"
@@ -313,7 +313,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Active -->
   active:
     required: true
-    purpose: "The current workflow mode and active project phase. A working Skill invocation selects its owned mode and one phase; Reset may instead return the workflow to planning or not set with no active phase under S9."
+    purpose: "The current workflow mode and active project phase. A human-requested workflow operation selects its owned mode and one phase; reset may instead return the workflow to planning or not set with no active phase under S9."
     fields:
       mode:
         required: true
@@ -326,7 +326,7 @@ sections:
         purpose: "The project phase currently being worked on, or none when no phase is active. Only a phase id indexed under content.phases in definition.yaml."
       set_by:
         required: true
-        purpose: "Who wrote these values — 'the human' for a direct edit, or the Skill name and the invocation it acted on. The provenance of a state change is always readable."
+        purpose: "Who wrote these values — 'the human' for a direct edit, or the generic operation name and the human request it acted on. The provenance of a state change is always readable."
       set_at:
         required: false
         purpose: "The date the active values were last written — absent only while they have never been written."
@@ -354,7 +354,7 @@ sections:
             purpose: "What stays unreachable while this is missing."
           decision_belongs_to:
             required: true
-            purpose: "Who must resolve it — the human when it is a decision an agent may not make, or a named Skill when the work itself releases it."
+            purpose: "Who must resolve it — the human when it is a decision an agent may not make, or the responsible operation when the work itself releases it."
           raised:
             required: true
             purpose: "The date the blocker was raised."

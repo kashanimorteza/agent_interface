@@ -1,12 +1,11 @@
 schema:
   id: agent-interface-frontend
-  version: "4.2"
+  version: "5.0"
   purpose: "The shape of frontend.yaml — every parameter an agent reads to understand the frontend project"
 
 policy:
   preference_resolution:
-    rule: "An explicit project value always wins. When a frontend technical choice is unstated, resolve it from supported frontend preferences or choose the best compatible implementation option under root.yaml policy.decision_policy. Raise an open question only for a critical conflict or decision as defined there."
-    resolved_by: "my-interface-interpreter only; downstream Skills consume the resolved frontend configuration and never reinterpret preferences."
+    rule: "An explicit project value always wins. When a frontend technical choice is unstated, the generation operation resolves it from supported frontend preferences or selects a compatible implementation option. Downstream operations consume the resolved frontend configuration and never reinterpret preferences."
   backend_boundary: "The frontend reaches application data only through the backend's implemented HTTP API and its generated machine-readable description. It never connects to the database item or imports backend implementation code."
   model_source: "The shared logical domain-model set comes from model.yaml. Frontend configuration and implementation may use it for project understanding but never copy or redefine those models."
   package_resolution: "Prefer packages selected by an explicit project value or a supported frontend preference profile. For an unlisted need inside authorized scope, choose the smallest well-supported compatible package from current evidence and record the consequential choice; ask only when no safe compatible option can be established."

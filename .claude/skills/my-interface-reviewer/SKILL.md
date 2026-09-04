@@ -9,9 +9,9 @@ disable-model-invocation: true
 
 Review the implemented result for the project phase named in `$ARGUMENTS`.
 
-## Load the live Interface
+## Bootstrap
 
-Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, current plan, State authority, applicable configuration, contracts, implementation boundaries, and verification evidence.
+Read `.interface/root.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, plan, authority, configuration, contract, implementation boundary, and verification source required for this run.
 
 Re-read required sources on every invocation. Resolve the requested review scope, expected result, checks, permissions, and recording rules only through current mapped files. Do not rely on remembered paths, fields, states, transitions, requirements, or decision rules.
 

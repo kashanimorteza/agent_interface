@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-development
-  version: "1.1"
+  version: "1.2"
   purpose: "The shape of development.yaml — the project's technical composition, cross-item integration, runtime, and deployment"
   separation: "Project identity, intended outcomes, and each phase's target belong to definition.yaml; domain models belong to model.yaml; each technical item owns its internal configuration; development.yaml owns how the selected items are connected, run, and deployed."
 
@@ -9,7 +9,7 @@ policy:
   component_resolution: "Select components dynamically from item types currently mapped by root.yaml. Every target named by a project phase must resolve to a selected component; additional components are selected only when the project Understanding requires them. The existence of an item Schema does not by itself add that component to the project."
   item_authority: "Each component's mapped generated configuration remains the source of truth for its internal technology, responsibility, boundaries, contracts, paths, and implementation details. Development summarizes and connects those values without redefining them."
   connection_resolution: "Derive every connection from the contracts produced and consumed by selected components. A connection cannot create a contract that neither endpoint owns."
-  environment_resolution: "Resolve unspecified runtime and deployment choices under root.yaml policy.decision_policy. Preserve explicit project constraints and record consequential Agent-selected choices in development.yaml."
+  environment_resolution: "The generation operation resolves unspecified runtime and deployment choices using the active agent integration's decision policy. Preserve explicit project constraints and record consequential agent-selected choices in development.yaml."
   consistency: "Component summaries and connections must agree with their owning item configurations. When they differ, the owning item configuration governs and development.yaml is reconciled rather than treated as a competing authority."
 
 structure:

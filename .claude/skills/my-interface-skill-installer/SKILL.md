@@ -8,9 +8,9 @@ disable-model-invocation: true
 
 Install compatible AI Agent Skills for technologies found in the configured target project. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
 
-## Load the live Interface and detect
+## Bootstrap and detect
 
-Read `.interface/readme.md`, then use `.interface/root.yaml` as the sole entry point for discovering the current Interface. Follow its live map and read order to locate the human project definition, generated Understanding, configured target-project locations, current authorities, and read and write boundaries.
+Read `.interface/root.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover the generated Understanding, configured target-project locations, current authorities, and read and write boundaries required for this run.
 
 Re-read required sources on every invocation. Do not rely on remembered paths, file shapes, technologies, versions, permissions, or installation state. Use the human project definition for context only; detect eligible technologies from the current generated configuration and from dependency manifests, lockfiles, runtime-version files, and framework configuration inside authorized target-project locations.
 
