@@ -1,7 +1,7 @@
 schema:
   id: agent-interface-state
-  version: "6.1"
-  purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
+  version: "7.0"
+  purpose: "The State contract — the shape of state.yaml: the project-wide state, its working modes, the State Authority that governs it, and the transition rules, in one file"
   principles: ".interface/principles/state.md"
   layering: "This file defines shape only. The mandatory rules of this layer live in its principles document and are not restated here."
 
@@ -16,14 +16,55 @@ sections:
   # <!--------------------------------------------------------------------------------- State_Authority -->
   state_authority:
     required: true
-    purpose: "The live State Authority — who may write each field of this file, on which transition, and which authorized operation may perform each. Read before anything below is written. Seeded verbatim from the default at creation; after the seed it is the human's alone, and a regeneration carries it through untouched."
+    purpose: "The live State Authority — the working modes, who may write each field of this file, on which transition, and which authorized operation may perform each. Read before anything below is written. Seeded verbatim from the default at creation; after the seed it is the human's alone, and a regeneration carries it through untouched."
     extension_note: "Extensible without redesigning the format: each field entry carries its own tier and writable_by, so a new state field gets its own authority, and a new operation is authorized by adding it to the lists that concern it. The extension itself is the human's edit."
     default:
-      rule: "This section is the single source of truth for the runtime state, and it is part of the State contract itself. It names every field of state.yaml, who may write each one, which transitions exist, and which operation may perform each. Where any other Interface file appears to say something different, this section governs; the other file is wrong and is corrected, not worked around"
+      rule: "This section is the single source of truth for the runtime state, and it is part of the State contract itself. It defines the working modes, names every field of state.yaml, states who may write each one, defines which transitions exist, and identifies which operation may perform each. Where any other Interface file appears to say something different, this section governs; the other file is wrong and is corrected, not worked around"
       principle: "State records human-owned decisions and genuinely blocking conditions. An agent resolves ordinary implementation and technical decisions under its integration's decision policy without turning them into questions; it never supplies the answer to a question that correctly remains with the human. A human-requested operation writes State only as the transitions below permit"
-      scope: "This file — content.active, content.blockers, content.open_questions, and content.state_authority itself. The other config files keep their ownership in their own policy sections; nothing here widens it"
+      scope: "This file — the modes and authority in content.state_authority, plus content.active, content.blockers, and content.open_questions. The other config files keep their ownership in their own policy sections; nothing here widens it"
       seeded_from: "The default in .interface/schema/state.yaml, written verbatim when state.yaml is created — transition S0. While no state.yaml exists there is no live authority, so that default is what authorizes its own creation; once the file exists, this live copy governs and the schema default is not consulted at runtime"
       extension_rule: "Extensible by the human alone. A new entry under fields gives a new state field its own authority; adding an operation to a writable_by or performed_by list authorizes that operation without redesigning the format; a new transition is a new entry under transitions. An agent that needs an extension raises it as an open question, never writes it"
+
+      modes:
+        rule: "Exactly one mode is active at a time; active.mode records it, or holds 'not set' when no workflow operation has been requested yet"
+        set_by: "The human selects the requested workflow operation; the authorized operation records its mode and phase according to the transitions below. No operation chooses a mode on the human's behalf."
+        entered_by: "A working phase mode is entered by its matching operation: planning, development, or review. The reset operation may return the global workflow to planning with no active phase; it does not perform a planning run."
+
+        planning:
+          purpose: "Decide what will be built and in what order — no product code is written"
+          owned_by: "planning operation"
+          may_write:
+            - "The mapped item configuration selected by the requested phase's target in definition.yaml — planning-owned settings, relationships, and draft contracts only, never a frozen contract"
+            - ".interface/config/task.yaml — the plan for the one project phase named by the invocation"
+            - ".interface/config/state.yaml — active, per transitions S1 and S4 in this State Authority, and blockers and open questions"
+          may_not_write:
+            - "Any file under the code_path of the requested phase's target"
+            - "A frozen contract"
+            - "The requested phase's id, title, order, target, or goal in config/definition.yaml"
+            - "map.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, and schema/"
+
+        development:
+          purpose: "Implement the tasks that planning defined"
+          owned_by: "development operation"
+          may_write:
+            - "Files under the code_path of the active phase's target, limited to the touches of the claimed task"
+            - ".interface/config/task.yaml — the status, blocker, and log fields of a task only"
+            - ".interface/config/state.yaml — active, per transitions S2 and S4 in this State Authority, and blockers and open questions"
+          may_not_write:
+            - "A code_path not selected by the active phase's target in definition.yaml"
+            - "A frozen contract"
+            - "task_schema, task_states, phase plan identity and structure, and every field of a task other than status, blocker, and log"
+            - "map.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, the item files, and schema/"
+          plan_change: "Changing a task requires the reason written into that task's log and human approval"
+
+        review:
+          purpose: "Read the result and report — nothing is repaired in this mode"
+          owned_by: "review operation"
+          may_write:
+            - ".interface/config/state.yaml — active, per transitions S3 and S4 in this State Authority, and blockers and open questions"
+            - ".interface/config/task.yaml — the status, blocker, and log fields of a task, to mark it blocked and record what was found"
+          may_not_write:
+            - "Anything else"
 
       tiers:
         agent_writable: "Written by an authorized operation, and only as part of a transition listed under transitions below"
@@ -42,7 +83,7 @@ sections:
 
         active.mode:
           tier: "agent_writable"
-          holds: "One of the modes defined in .interface/map.yaml under content.modes, or 'not set' when no workflow operation has been requested yet"
+          holds: "One of the modes defined in content.state_authority.modes, or 'not set' when no workflow operation has been requested yet"
           writable_by:
             - "planning operation"
             - "development operation"
@@ -163,7 +204,7 @@ sections:
           - "The content of config/definition.yaml, outside a generation operation"
           - "The content of config/model.yaml, outside a generation operation"
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
-          - ".interface/map.yaml — the map of the Interface and its modes"
+          - ".interface/map.yaml — the file and folder map of the Interface"
           - "The State Authority itself, after its seed — this section, and its default in schema/state.yaml"
           - "Asking for tasks to be created, asking for development or planning to be reset project-wide, and asking for the generated project state to be cleared"
 
@@ -297,12 +338,12 @@ sections:
       validation:
         note: "These must hold at all times. Any operation may check them; the review operation checks them as part of a review, and a failure is a blocker, not a repair"
         checks:
-          - "active.mode holds a mode named under content.modes in .interface/map.yaml, or 'not set'"
+          - "active.mode holds a mode named under content.state_authority.modes, or 'not set'"
           - "active.phase holds a phase id indexed under content.phases in definition.yaml, or 'none'"
           - "When active.phase is not 'none', its target in definition.yaml resolves to a selected component in development.yaml and a mapped item configuration; active.target is derived from that phase and is never stored"
           - "active.set_by names either the human or an operation listed as writable_by for the field it wrote"
           - "Every state change an agent made corresponds to exactly one transition above"
-          - "An operation's mode matches the mode it owns under content.modes in map.yaml, except for the explicit S9 development-reset result of planning / none; an operation performing another operation's work remains a fault"
+          - "An operation's mode matches the mode it owns under content.state_authority.modes, except for the explicit S9 development-reset result of planning / none; an operation performing another operation's work remains a fault"
           - "Each plan key is a phase id from definition.yaml; its id, title, order, target, and goal-derived meaning match that phase"
           - "No open question carries an answer that no human gave"
           - "content.state_authority was seeded verbatim from the schema default and has changed only by the human's hand since — a difference an agent made is a fault, not a state to repair"
@@ -314,7 +355,7 @@ sections:
     fields:
       mode:
         required: true
-        purpose: "The current workflow mode — one of the modes defined in map.yaml, or 'not set' before planning and after a planning reset."
+        purpose: "The current workflow mode — one of the modes defined in content.state_authority.modes, or 'not set' before planning and after a planning reset."
       mode_reason:
         required: true
         purpose: "Why this mode is the active one — the invocation that set it, and, after a run, what that run concluded."

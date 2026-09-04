@@ -32,19 +32,21 @@ Application code never creates, alters, or drops database objects directly. Conv
 
 <br>
 
-## 4. The database item has one owner, and it owns everything physical
+## 4. The database item owns the complete persistence layer
 
-The database item alone decides the engine, the physical storage, the schema, the constraints, the indexes, the migration history, and the contract it publishes. No other item may make or change these decisions.
+The database item alone owns the engine, physical storage, runtime connection, ORM, model-to-storage mappings, schema, constraints, indexes, migration history, and the data-access contract it publishes. No other item may make or change these decisions.
 
-The other side of ownership is restraint: the database item does not own the backend's ORM behaviour, the API, the frontend, or deployment secrets. Its boundaries are written explicitly in its configuration so that an Agent never infers a responsibility that was not given.
+The other side of ownership is restraint: the database item does not own application behaviour, the HTTP API, the frontend, or deployment secrets. Its boundaries are written explicitly in its configuration so that an Agent never infers a responsibility that was not given.
 
 <br>
 
-## 5. Nobody talks to the database directly
+## 5. All data access goes through one generic interface
 
-Consumers of the database — the backend above all — never reach into tables on their own. They use exactly two things: the frozen database contract, which says what exists and what it means, and credential-free runtime connection information, which says how to reach it. They never infer the schema from migrations or from the physical database files.
+Consumers never receive the engine connection and never reach into tables, ORM mappings, migrations, or physical database files. They use only the frozen data-access contract and the interface implemented by the database layer.
 
-The database item defines the contract and connection boundary but does not dictate a consumer's internal architecture. ORM behaviour, data-access patterns, and application-side separation of reads and writes belong to the Principles of the consuming item.
+The interface is generic rather than one access implementation per model. A caller identifies the model, selects a supported operation, and supplies the data or criteria required by that operation. The same interface performs create, read, list, update, and delete operations for every persistent model indexed by the project.
+
+The interface also supports controlled SQL-command execution for cases that cannot be expressed through the standard model operations. SQL execution stays inside the database boundary, uses explicit parameters rather than value interpolation, and never exposes the underlying connection to the caller.
 
 <br>
 
@@ -78,7 +80,7 @@ When one model relates to the same target more than once, the relationship roles
 
 Connection credentials belong to runtime configuration outside the repository's committed files. The database contract publishes the shape of a connection, never its secrets.
 
-Fields that are themselves credentials are each resolved to exactly one supported at-rest mode. An explicit project mode for a field always wins; otherwise the default mode comes from the Preferences. The database contract owns that resolved mode for each field; the consuming backend owns the matching runtime transformation and never infers or changes the mode. Encryption keys and other secrets are never written into the contract or into database files.
+Fields that are themselves credentials are each resolved to exactly one supported at-rest mode. An explicit project mode for a field always wins; otherwise the default mode comes from the Preferences. The database contract owns that resolved mode, and the database layer applies the matching persistence transformation without exposing its storage representation to consumers. Encryption keys and other secrets are never written into the contract or into database files.
 
 <br>
 

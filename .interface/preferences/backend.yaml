@@ -3,7 +3,7 @@ meta:
   path: ".interface/preferences/backend.yaml"
   path_note: "The Preferences layer of the backend item — the supported technical choices used only when project.md leaves a backend choice unstated. Sits beside principles/backend.md (the mandatory rules) and schema/backend.yaml (the shape of config/backend.yaml)"
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "2.0"
   updated: "2026-09-04"
 
 
@@ -21,8 +21,6 @@ read_order:
   - "defaults"
   - "languages"
   - "api_frameworks"
-  - "orms"
-  - "database_integrations"
   - "model_api"
   - "capabilities"
 
@@ -30,10 +28,8 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   defaults: "The item-level defaults — code path, test switch, responsibility, and the language selected when the project names none"
-  languages: "One entry per supported language — version, isolated environment, naming conventions, and the API framework and ORM selected by default for that language"
+  languages: "One entry per supported language — version, isolated environment, naming conventions, and the API framework selected by default for that language"
   api_frameworks: "One entry per supported API framework and its version"
-  orms: "One entry per supported ORM and its version"
-  database_integrations: "The explicitly supported language → ORM → engine compatibility entries — driver, packages, and URL scheme"
   model_api: "The default set of operations applied to every domain model when the project requests an API without naming operations"
   capabilities: "The default on/off state of optional backend capabilities"
 
@@ -44,7 +40,7 @@ content:
   defaults:
     code_path: "backend/"
     needs_test: false
-    responsibility: "Runs application behavior and publishes the HTTP API while consuming the database contract."
+    responsibility: "Runs application behavior and publishes the HTTP API while consuming the database interface."
     language: "Python"
   languages:
     Python:
@@ -61,20 +57,9 @@ content:
         folders: "snake_case"
       defaults:
         api_framework: "FastAPI"
-        orm: "SQLAlchemy"
   api_frameworks:
     FastAPI:
       version: "latest"
-  orms:
-    SQLAlchemy:
-      version: "latest"
-  database_integrations:
-    Python:
-      SQLAlchemy:
-        SQLite:
-          driver: "Python sqlite3 standard library"
-          packages: []
-          url_scheme: "sqlite"
   model_api:
     default_operations:
       - "create"

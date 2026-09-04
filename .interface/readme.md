@@ -36,7 +36,7 @@ The core of Agent Interface is located in the `.interface/` directory.
 The `.interface/` directory contains seven main parts:
 
 - **`readme.md`** — Introduces the Interface, its structure, workflow, and Quick Start.
-- **`map.yaml`** — The entry point. Maps the folders, files, and working modes of the Interface.
+- **`map.yaml`** — The entry point. Maps the folders and files of the Interface.
 - **`project.md`** — The project definition and the Developer's requirements, in natural language.
 - **`principles/`** — One Markdown document per layer and item holding its Principles: the mandatory, tool-independent rules that give it its personality.
 - **`preferences/`** — One YAML file per technical item holding its Preferences: the supported tools, versions, and defaults used when `project.md` is silent. Layers with no technical choices (definition, model, development, task, state) have no preferences file.

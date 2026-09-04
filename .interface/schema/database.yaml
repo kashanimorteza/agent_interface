@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-database
-  version: "6.0"
+  version: "7.0"
   purpose: "The shape of the generated database configuration."
 
 structure:
@@ -11,6 +11,7 @@ structure:
   - verify_cwd
   - responsibility
   - tech
+  - data_access
   - standards
   - capabilities
   - contracts
@@ -52,7 +53,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Tech -->
   tech:
     required: true
-    purpose: "The resolved database engine, storage, migration environment, and packages."
+    purpose: "The resolved database engine, storage, ORM, migration environment, and packages."
     fields:
       engine:
         required: true
@@ -76,7 +77,20 @@ sections:
             purpose: "The project-relative local path or deployment-owned location description; secrets are never committed."
       connection:
         required: true
-        purpose: "Engine-specific connection behavior published to consumers without credentials."
+        purpose: "Engine-specific runtime connection behavior owned by the database layer and never exposed directly to consumers."
+      orm:
+        required: true
+        purpose: "The ORM owned by the database layer."
+        fields:
+          name:
+            required: true
+            purpose: "The ORM name."
+          version:
+            required: true
+            purpose: "The resolved ORM version."
+          language:
+            required: true
+            purpose: "The language in which the ORM and database interface are implemented."
       migration:
         required: true
         purpose: "The resolved migration tool, isolated environment, packages, and commands."
@@ -93,6 +107,34 @@ sections:
           commands:
             required: true
             purpose: "The canonical upgrade, downgrade, and verification commands."
+
+  # <!--------------------------------------------------------------------------------- Data_Access -->
+  data_access:
+    required: true
+    purpose: "The generic interface through which every consumer accesses persistent data."
+    fields:
+      style:
+        required: true
+        purpose: "The resolved interface style used across all persistent models."
+      model_selector:
+        required: true
+        purpose: "How a caller identifies the model governed by an operation."
+      operations:
+        required: true
+        purpose: "The supported model-data operations exposed by the interface."
+      sql_commands:
+        required: true
+        purpose: "The controlled SQL-command capability exposed through the same interface."
+        fields:
+          enabled:
+            required: true
+            purpose: "Whether SQL-command execution is available."
+          parameterized:
+            required: true
+            purpose: "Whether SQL values must be supplied separately from the command text."
+          scope:
+            required: true
+            purpose: "The boundary within which SQL commands execute without exposing the engine connection."
 
   # <!--------------------------------------------------------------------------------- Standards -->
   standards:
@@ -143,7 +185,7 @@ sections:
         purpose: "The database contract version published by this item."
       "<version>":
         required: true
-        purpose: "One database contract version — engine-independent meaning plus the exact schema surface consumers may use."
+        purpose: "One database contract version — the data-access surface plus the exact persistent schema it governs."
         fields:
           lifecycle:
             required: true
@@ -151,12 +193,9 @@ sections:
           lifecycle_note:
             required: true
             purpose: "An explanation of the resolved lifecycle state."
-          engine:
+          data_access:
             required: true
-            purpose: "The resolved engine assumptions that affect consumers."
-          connection:
-            required: true
-            purpose: "The credential-free connection shape and runtime configuration source."
+            purpose: "The versioned generic interface and operations published to consumers without exposing the engine connection."
           tables:
             required: true
             purpose: "The fully resolved tables exposed by this contract version."

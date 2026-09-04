@@ -8,13 +8,11 @@ Every statement here is mandatory. A preference can never override a principle, 
 
 <br>
 
-## 1. The backend runs behaviour and publishes the API — it does not own the database
+## 1. The backend runs behaviour and publishes the API — it does not own persistence
 
-The backend never owns the database engine, its storage, its schema, or its migrations. It consumes the frozen database contract published by the database item and owns only what sits on its own side of that contract: its runtime connection, its ORM mappings, and its database client packages.
+The backend never owns the database engine, storage, connection, ORM, model mappings, schema, or migrations. It consumes the frozen data-access contract and calls the generic interface published by the database item.
 
-This keeps two responsibilities apart. The database item decides what persistent data exists and how it is shaped; the backend decides how application behaviour uses it. When the backend needs the schema to change, that is a request to the database item, never a change the backend makes itself.
-
-All backend access to persistent data goes through a dedicated data-access layer using the *Repository* pattern rather than being scattered through application logic. Reading and writing are separate responsibilities within that layer, and each model has dedicated access logic so one model's behaviour can change without changing another's.
+This keeps two responsibilities apart. The database item decides how persistent data is represented and accessed; the backend decides how application behaviour uses the database interface. When the backend needs the persistence contract to change, that is a request to the database item, never a change the backend makes itself.
 
 <br>
 
@@ -36,7 +34,7 @@ A credential field is write-only input: it may be accepted when required to crea
 
 ## 4. Packages are chosen from supported compatibility, never at random
 
-Runtime packages are resolved from the selected language, API framework, ORM, and database contract through an explicitly supported compatibility entry in the preferences when one exists. For an unlisted combination, the Agent chooses a well-supported compatible package from current evidence and records the consequential choice. It asks only when no safe compatible stack can be established.
+Runtime packages are resolved from the selected language, API framework, and project requirements through an explicitly supported compatibility entry in the preferences when one exists. Database ORM and driver packages belong to the database item and never enter the backend package set. For an unlisted combination, the Agent chooses a well-supported compatible package from current evidence and records the consequential choice. It asks only when no safe compatible stack can be established.
 
 <br>
 

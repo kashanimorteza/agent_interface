@@ -2,7 +2,7 @@
 meta:
   purpose: "The supported database technical choices and defaults used when the human project definition leaves a corresponding choice unstated."
   standard: "Agent Project Interface"
-  version: "1.2"
+  version: "2.0"
   updated: "2026-09-04"
 
 
@@ -10,6 +10,7 @@ meta:
 read_order:
   - "defaults"
   - "engines"
+  - "orms"
   - "migration_tools"
   - "relationship_defaults"
   - "credential_storage"
@@ -18,8 +19,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "The item-level defaults — code path, test switch, and which engine and migration tool are selected when the project names none"
+  defaults: "The item-level defaults — code path, test switch, and which engine, ORM, and migration tool are selected when the project names none"
   engines: "One entry per supported engine — version, physical storage, connection behavior, and object naming conventions"
+  orms: "One entry per supported ORM — language, package, version, and database-layer capabilities"
   migration_tools: "One entry per supported migration tool — language, isolated environment, packages, and canonical commands"
   relationship_defaults: "Nullability, indexing, and referential actions applied to a relationship the project leaves unspecified"
   credential_storage: "The default at-rest mode for credential fields and the meaning of each supported mode"
@@ -33,6 +35,7 @@ content:
     code_path: "database/"
     needs_test: false
     engine: "SQLite"
+    orm: "SQLAlchemy"
     migration_tool: "Alembic"
   engines:
     SQLite:
@@ -49,19 +52,26 @@ content:
         columns: "snake_case"
         constraints: "snake_case"
         indexes: "ix_<table>_<column>"
+  orms:
+    SQLAlchemy:
+      version: "latest"
+      language: "Python"
+      package: "SQLAlchemy"
+      capabilities:
+        model_mapping: true
+        parameterized_sql: true
   migration_tools:
     Alembic:
       version: "latest"
       language: "Python"
+      compatible_orms:
+        - "SQLAlchemy"
       environment:
         name: "uv"
         version: "latest"
       packages:
         migration:
           name: "Alembic"
-          version: "latest"
-        schema_toolkit:
-          name: "SQLAlchemy"
           version: "latest"
       commands:
         upgrade: "uv run alembic upgrade head"

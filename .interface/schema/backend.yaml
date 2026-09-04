@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-backend
-  version: "7.0"
+  version: "8.0"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
   principles: ".interface/principles/backend.md"
   preferences: ".interface/preferences/backend.yaml"
@@ -80,7 +80,7 @@ sections:
                 purpose: "The version of that tool."
           packages:
             required: true
-            purpose: "The frameworks, libraries, and tools the backend is built on — one structured entry per role, never a single combined line."
+            purpose: "The frameworks, libraries, and tools owned by the backend — one structured entry per role, never a single combined line."
             fields:
               api:
                 required: true
@@ -92,26 +92,6 @@ sections:
                   version:
                     required: true
                     purpose: "Its version."
-              orm:
-                required: true
-                purpose: "The layer every read and write of the database goes through."
-                fields:
-                  name:
-                    required: true
-                    purpose: "The ORM."
-                  version:
-                    required: true
-                    purpose: "Its version."
-              database_driver:
-                required: false
-                purpose: "The runtime adapter required by the resolved database contract and ORM combination; absent when the selected language provides it."
-                fields:
-                  name:
-                    required: true
-                    purpose: "The adapter package or built-in driver."
-                  version:
-                    required: false
-                    purpose: "The adapter version when a package is installed."
               "<package>":
                 required: false
                 purpose: "One entry per further package the project names — same two fields, set by the human, never inferred by an agent from the code."
@@ -213,17 +193,17 @@ sections:
   # <!--------------------------------------------------------------------------------- Contracts -->
   contracts:
     required: true
-    purpose: "The backend's item relationships — the database contract it consumes and the runtime HTTP interface it produces. API surface details are implementation output and do not live in this configuration."
+    purpose: "The backend's item relationships — the database data-access contract it consumes and the runtime HTTP interface it produces. API surface details are implementation output and do not live in this configuration."
     fields:
       produces:
         required: true
         purpose: "The runtime interface the implemented backend publishes, including its framework-generated machine-readable description."
       consumes:
         required: true
-        purpose: "The frozen database contract the backend consumes and the mapped path that publishes it."
+        purpose: "The frozen database data-access contract consumed by the backend."
       rule:
         required: true
-        purpose: "The implementation boundary: tasks, resolved model-level API intent, and the consumed database contract guide development, while endpoint paths, HTTP method mappings, payloads, response shapes, error shapes, entrypoints, commands, and file layout are produced during implementation rather than prescribed here."
+        purpose: "The implementation boundary: tasks, resolved model-level API intent, and the consumed data-access contract guide development, while endpoint paths, HTTP method mappings, payloads, response shapes, error shapes, entrypoints, commands, and file layout are produced during implementation rather than prescribed here."
 
   # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:
@@ -232,10 +212,10 @@ sections:
     fields:
       owns:
         required: true
-        purpose: "What belongs to the backend — its application code, runtime database client and ORM mappings, business behavior, and implemented HTTP interface."
+        purpose: "What belongs to the backend — its application code, business behavior, and implemented HTTP interface."
       does_not_own:
         required: true
-        purpose: "What is explicitly not the backend's, including frontend code and the database engine, storage, schema, and migrations."
+        purpose: "What is explicitly not the backend's, including frontend code and the database engine, storage, connection, ORM, mappings, schema, and migrations."
       interface:
         required: true
         purpose: "The only thing the backend offers the outside — its implemented HTTP API and framework-generated machine-readable description."

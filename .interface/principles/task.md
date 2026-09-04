@@ -22,4 +22,4 @@ Every plan key and target come from a project phase in `definition.yaml`. The ta
 
 ## 3. The schema gives shape, not permission
 
-Who may write each part of `task.yaml`, and when, is decided in the State contract — `.interface/config/state.yaml` under `content.state_authority` — and in `.interface/map.yaml` under `content.modes`. The task schema gives the shape and the invariants, never the permission.
+Who may write each part of `task.yaml`, and when, is decided in the State contract under `content.state_authority`, including its working modes and transitions. The Task Schema gives the shape and the invariants, never the permission.
