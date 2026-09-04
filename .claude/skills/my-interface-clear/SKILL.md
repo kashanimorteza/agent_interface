@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Clear the project
 
-Read `.interface/root.yaml`. This is the only Interface path this Skill may assume. Run the bundled `scripts/clear.py`; it discovers its targets through the current root map.
+Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Run the bundled `scripts/clear.py`; it discovers its targets through the current Interface map.
 
 The explicit invocation authorizes only these operations, without another confirmation:
 

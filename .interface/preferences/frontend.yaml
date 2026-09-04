@@ -1,9 +1,9 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/frontend.yaml"
-  path_note: "The Preferences layer of the frontend item — the supported technical choices used only when project.md leaves a frontend choice unstated. Sits beside principles/frontend.md (the mandatory rules) and schema/frontend.schema.yaml (the shape of config/frontend.yaml)"
+  path_note: "The Preferences layer of the frontend item — the supported technical choices used only when project.md leaves a frontend choice unstated. Sits beside principles/frontend.md (the mandatory rules) and schema/frontend.yaml (the shape of config/frontend.yaml)"
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-04"
 
 

@@ -10,7 +10,7 @@ Convert the human project definition into the structured project Understanding c
 
 ## Bootstrap
 
-Read `.interface/root.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, output, Schema, Policy, Preference, authority, and preservation rule required for this run.
+Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover every source, output, Schema, Policy, Preference, authority, and preservation rule required for this run.
 
 Re-read required sources on every invocation. Do not rely on remembered paths, fields, defaults, file shapes, authorities, or conclusions. Do not scan unrelated project files for project intent.
 

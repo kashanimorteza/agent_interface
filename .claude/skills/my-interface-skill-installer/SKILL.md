@@ -10,7 +10,7 @@ Install compatible AI Agent Skills for technologies found in the configured targ
 
 ## Bootstrap and detect
 
-Read `.interface/root.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover the generated Understanding, configured target-project locations, current authorities, and read and write boundaries required for this run.
+Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover the generated Understanding, configured target-project locations, current authorities, and read and write boundaries required for this run.
 
 Re-read required sources on every invocation. Do not rely on remembered paths, file shapes, technologies, versions, permissions, or installation state. Use the human project definition for context only; detect eligible technologies from the current generated configuration and from dependency manifests, lockfiles, runtime-version files, and framework configuration inside authorized target-project locations.
 

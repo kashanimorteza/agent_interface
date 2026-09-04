@@ -2,7 +2,7 @@
 
 This document is the personality of the definition layer — `config/definition.yaml`, the structured form of the project's identity, intended outcomes, and ordered phases. It is written for the interpretation operation that generates it and for the Developer who wants to know what belongs there and what does not.
 
-The shape of `definition.yaml` lives in the schema (`.interface/schema/definition.schema.yaml`). There is no preferences file for definition: it carries project facts, not technical choices.
+The shape of `definition.yaml` lives in the schema (`.interface/schema/definition.yaml`). There is no preferences file for definition: it carries project facts, not technical choices.
 
 Every statement here is mandatory.
 

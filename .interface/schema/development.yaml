@@ -26,7 +26,7 @@ sections:
     fields:
       "<component>":
         required: true
-        purpose: "One selected technical component, keyed by the item type through which root.yaml resolves its Schema and generated configuration."
+        purpose: "One selected technical component, keyed by the item type through which map.yaml resolves its Schema and generated configuration."
         fields:
           configuration:
             required: true

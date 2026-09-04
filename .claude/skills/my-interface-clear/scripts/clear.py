@@ -8,18 +8,18 @@ import yaml
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-INTERFACE_ROOT_PATH = Path(".interface/root.yaml")
+INTERFACE_MAP_PATH = Path(".interface/map.yaml")
 
 
 def find_project_root() -> Path:
     for directory in (SCRIPT_PATH.parent, *SCRIPT_PATH.parents):
-        if (directory / INTERFACE_ROOT_PATH).is_file():
+        if (directory / INTERFACE_MAP_PATH).is_file():
             return directory
-    raise RuntimeError("Cannot locate the Agent Interface root file.")
+    raise RuntimeError("Cannot locate the Agent Interface map file.")
 
 
 PROJECT_ROOT = find_project_root()
-ROOT_FILE = PROJECT_ROOT / INTERFACE_ROOT_PATH
+MAP_FILE = PROJECT_ROOT / INTERFACE_MAP_PATH
 
 
 def load_yaml(path: Path) -> dict:
@@ -43,15 +43,15 @@ def project_path(value: str) -> Path:
 
 
 def discover_targets() -> tuple[Path, tuple[Path, ...]]:
-    root = load_yaml(ROOT_FILE)
+    interface_map = load_yaml(MAP_FILE)
     try:
-        mapped = root["content"]["files_and_folders"]
+        mapped = interface_map["content"]["files_and_folders"]
         config_dir = project_path(mapped["config"]["path"])
         schema = mapped["schema"]
         schema_dir = project_path(schema["path"])
         schema_files = schema["files"]
     except (KeyError, TypeError) as error:
-        raise RuntimeError("The Interface root map does not expose the required generated configuration and Schema entries.") from error
+        raise RuntimeError("The Interface map does not expose the required generated configuration and Schema entries.") from error
 
     # Preferences may live inside an item Schema (legacy) or in the mapped preferences folder.
     sources: list[tuple[Path, list]] = [(schema_dir, schema_files)]
@@ -68,7 +68,7 @@ def discover_targets() -> tuple[Path, tuple[Path, ...]]:
             if not mapped_file.is_file():
                 continue
             document = load_yaml(mapped_file)
-            # A preferences file follows file.schema.yaml (defaults under content);
+            # A preferences file follows the mapped file Schema (defaults under content);
             # a legacy item Schema keeps them under its own preferences block.
             block = document.get("content") if base_dir != schema_dir else document.get("preferences")
             if not isinstance(block, dict):
@@ -85,7 +85,7 @@ def _collect_code_path(code_path: object, code_paths: set[Path], config_dir: Pat
     if not isinstance(code_path, str) or not code_path.strip():
         return
     candidate = project_path(code_path)
-    if candidate == ROOT_FILE.parent or candidate == config_dir:
+    if candidate == MAP_FILE.parent or candidate == config_dir:
         raise RuntimeError(f"Refusing unsafe mapped code path: {code_path}")
     code_paths.add(candidate)
 

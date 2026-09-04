@@ -2,7 +2,7 @@
 
 This document is the personality of the development layer — the part of the Interface that says how the project's selected technical items are connected, run, and deployed. It is written for the Agent that generates `config/development.yaml` and for the Developer who wants to know what that file is allowed to decide.
 
-The exact shape of `config/development.yaml` lives in the schema (`.interface/schema/development.schema.yaml`). There is no preferences file for this layer: development has no technical defaults of its own, because every technology it mentions belongs to an item.
+The exact shape of `config/development.yaml` lives in the schema (`.interface/schema/development.yaml`). There is no preferences file for this layer: development has no technical defaults of its own, because every technology it mentions belongs to an item.
 
 Every statement here is mandatory.
 
@@ -24,7 +24,7 @@ The development schema describes a general technical-development layer and conta
 
 ## 3. Components are selected, not assumed
 
-Components are selected dynamically from the item types currently mapped by `root.yaml`. Every target named by a project phase must resolve to a selected component; additional components are selected only when the project Understanding requires them. The existence of an item schema does not by itself add that component to the project.
+Components are selected dynamically from the item types currently mapped by `map.yaml`. Every target named by a project phase must resolve to a selected component; additional components are selected only when the project Understanding requires them. The existence of an item schema does not by itself add that component to the project.
 
 <br>
 

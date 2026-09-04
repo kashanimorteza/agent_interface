@@ -1,9 +1,9 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/root.yaml"
+  path: ".interface/map.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "4.0"
+  version: "5.0"
   updated: "2026-09-04"
 
 
@@ -13,7 +13,7 @@ policy:
   rule: "This file introduces the interface — no mode edits it. Every other file carries its own write rules, in its own policy section"
   changed_by: "The human, directly. A change this file needs is raised as an open question in config/state.yaml, never applied by an agent"
   by_mode: "What may be written where is decided per mode — see content.modes"
-  state_authority: "Who may write each field of config/state.yaml, and on which transition, is decided in one place only — the State contract: config/state.yaml under content.state_authority, seeded from the default in schema/state.schema.yaml. This file references the State contract and does not own it"
+  state_authority: "Who may write each field of config/state.yaml, and on which transition, is decided in one place only — the State contract: config/state.yaml under content.state_authority, seeded from the default in schema/state.yaml. This file references the State contract and does not own it"
   on_change_needed: "A change to the Interface structure or modes is raised with the human, never applied by an agent"
 
 
@@ -35,8 +35,8 @@ content:
   # <!-------------------------------------------- files_and_folders -->
   files_and_folders:
 
-    root:
-      path: ".interface/root.yaml"
+    map:
+      path: ".interface/map.yaml"
       responsibility: "Entry point and map of the Agent Project Interface"
 
     readme:
@@ -79,44 +79,44 @@ content:
 
       files:
         - path: "backend.yaml"
-          responsibility: "The backend item's preferences — languages, API frameworks, ORMs, database integrations, default model operations, and capability defaults. Follows the outer shape of schema/file.schema.yaml"
+          responsibility: "The backend item's preferences — languages, API frameworks, ORMs, database integrations, default model operations, and capability defaults. Follows the outer shape of schema/file.yaml"
 
         - path: "frontend.yaml"
-          responsibility: "The frontend item's preferences — languages, UI libraries, frameworks, package managers, and capability defaults. Follows the outer shape of schema/file.schema.yaml"
+          responsibility: "The frontend item's preferences — languages, UI libraries, frameworks, package managers, and capability defaults. Follows the outer shape of schema/file.yaml"
 
         - path: "database.yaml"
-          responsibility: "The database item's preferences — engines, migration tooling, relationship defaults, credential storage modes, and capability defaults. Follows the outer shape of schema/file.schema.yaml"
+          responsibility: "The database item's preferences — engines, migration tooling, relationship defaults, credential storage modes, and capability defaults. Follows the outer shape of schema/file.yaml"
 
     schema:
       path: ".interface/schema/"
       responsibility: "Defines generated-file shapes only. Each layer's mandatory rules live in principles/, and each technical item's supported choices live in preferences/"
 
       files:
-        - path: "file.schema.yaml"
+        - path: "file.yaml"
           responsibility: "Defines the outer shape every interface file follows — meta, policy, read_order, content_map, content"
 
-        - path: "definition.schema.yaml"
+        - path: "definition.yaml"
           responsibility: "Defines the shape of definition.yaml — its principles live in principles/definition.md"
 
-        - path: "model.schema.yaml"
+        - path: "model.yaml"
           responsibility: "Defines the shared structure and format of model.yaml"
 
-        - path: "development.schema.yaml"
+        - path: "development.yaml"
           responsibility: "Defines the shape of development.yaml — technical composition, cross-item connections, runtime, and deployment; its principles live in principles/development.md"
 
-        - path: "task.schema.yaml"
+        - path: "task.yaml"
           responsibility: "Defines the shape of task.yaml — its principles live in principles/task.md"
 
-        - path: "state.schema.yaml"
+        - path: "state.yaml"
           responsibility: "Defines the shape of state.yaml — the State contract — and the default State Authority seeded into every newly created state.yaml; its principles live in principles/state.md"
 
-        - path: "backend.schema.yaml"
+        - path: "backend.yaml"
           responsibility: "Defines the shape of backend.yaml only — its principles and preferences live in principles/backend.md and preferences/backend.yaml"
 
-        - path: "frontend.schema.yaml"
+        - path: "frontend.yaml"
           responsibility: "Defines the shape of frontend.yaml only — its principles and preferences live in principles/frontend.md and preferences/frontend.yaml"
 
-        - path: "database.schema.yaml"
+        - path: "database.yaml"
           responsibility: "Defines the shape of database.yaml only — its principles and preferences live in principles/database.md and preferences/database.yaml"
 
     config:
@@ -167,7 +167,7 @@ content:
         - "Any file under the code_path of the requested phase's target"
         - "A frozen contract"
         - "The requested phase's id, title, order, target, or goal in config/definition.yaml"
-        - "root.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, and schema/"
+        - "map.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, and schema/"
 
     development:
       purpose: "Implement the tasks that planning defined"
@@ -180,7 +180,7 @@ content:
         - "A code_path not selected by the active phase's target in definition.yaml"
         - "A frozen contract"
         - "task_schema, task_states, phase plan identity and structure, and every field of a task other than status, blocker, and log"
-        - "root.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, the item files, and schema/"
+        - "map.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, the item files, and schema/"
       plan_change: "Changing a task requires the reason written into that task's log and human approval"
 
     review:

@@ -2,7 +2,7 @@
 
 This document is the personality of the backend item: the fixed rules that govern how the backend is generated, planned, and implemented, whatever language, framework, or project is in play. It is written for the Agent that works on the backend item and for the Developer who wants to know why the backend behaves the way it does.
 
-It deliberately names no language, framework, package, or version. Those are technical choices and live in the preferences file (`.interface/preferences/backend.yaml`); they may change from project to project without touching a line here. The exact shape of the generated `config/backend.yaml` lives in the schema (`.interface/schema/backend.schema.yaml`). The three layers answer different questions: this document answers *why and under what rules*, the preferences answer *with what*, and the schema answers *in what form*.
+It deliberately names no language, framework, package, or version. Those are technical choices and live in the preferences file (`.interface/preferences/backend.yaml`); they may change from project to project without touching a line here. The exact shape of the generated `config/backend.yaml` lives in the schema (`.interface/schema/backend.yaml`). The three layers answer different questions: this document answers *why and under what rules*, the preferences answer *with what*, and the schema answers *in what form*.
 
 Every statement here is mandatory. A preference can never override a principle, and a project may only add stricter rules, never looser ones.
 

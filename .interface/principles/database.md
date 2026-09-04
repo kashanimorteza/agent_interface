@@ -2,7 +2,7 @@
 
 This document is the personality of the database item: the fixed convictions that shape every decision about persistent data, whatever engine, tool, or project is in play. It is written for the Agent that generates, plans against, or implements the database item, and for the Developer who wants to know why the database behaves the way it does.
 
-It deliberately names no engine, no migration tool, no version, and no default. Those are technical choices and live in the preferences file (`.interface/preferences/database.yaml`); they may change from project to project without touching a single line here. The exact shape of the generated `config/database.yaml` lives in the schema (`.interface/schema/database.schema.yaml`). The three layers are read together, but each answers a different question: this document answers *why and under what rules*, the preferences answer *with what*, and the schema answers *in what form*.
+It deliberately names no engine, no migration tool, no version, and no default. Those are technical choices and live in the preferences file (`.interface/preferences/database.yaml`); they may change from project to project without touching a single line here. The exact shape of the generated `config/database.yaml` lives in the schema (`.interface/schema/database.yaml`). The three layers are read together, but each answers a different question: this document answers *why and under what rules*, the preferences answer *with what*, and the schema answers *in what form*.
 
 Every statement here is mandatory. A preference can never override a principle, and a project may only add stricter rules, never looser ones.
 

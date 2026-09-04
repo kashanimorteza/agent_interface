@@ -1,9 +1,9 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/database.yaml"
-  path_note: "The Preferences layer of the database item — the supported technical choices used only when project.md leaves a database choice unstated. Sits beside principles/database.md (the mandatory rules) and schema/database.schema.yaml (the shape of config/database.yaml)"
+  path_note: "The Preferences layer of the database item — the supported technical choices used only when project.md leaves a database choice unstated. Sits beside principles/database.md (the mandatory rules) and schema/database.yaml (the shape of config/database.yaml)"
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-04"
 
 

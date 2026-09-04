@@ -1,9 +1,9 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/backend.yaml"
-  path_note: "The Preferences layer of the backend item — the supported technical choices used only when project.md leaves a backend choice unstated. Sits beside principles/backend.md (the mandatory rules) and schema/backend.schema.yaml (the shape of config/backend.yaml)"
+  path_note: "The Preferences layer of the backend item — the supported technical choices used only when project.md leaves a backend choice unstated. Sits beside principles/backend.md (the mandatory rules) and schema/backend.yaml (the shape of config/backend.yaml)"
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-04"
 
 

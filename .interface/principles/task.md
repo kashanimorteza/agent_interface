@@ -2,7 +2,7 @@
 
 This document is the personality of the task layer — `config/task.yaml`, the file that defines what a task is and holds the plans that contain tasks. It is written for the planning, development, and review operations and for the Developer who wants to know what a plan may and may not be.
 
-The shape of `task.yaml` — the frame that defines a task and the plans that hold the tasks — lives in the schema (`.interface/schema/task.schema.yaml`). There is no preferences file for tasks: the task layer has no technical choices.
+The shape of `task.yaml` — the frame that defines a task and the plans that hold the tasks — lives in the schema (`.interface/schema/task.yaml`). There is no preferences file for tasks: the task layer has no technical choices.
 
 Every statement here is mandatory.
 
@@ -22,4 +22,4 @@ Every plan key and target come from a project phase in `definition.yaml`. The ta
 
 ## 3. The schema gives shape, not permission
 
-Who may write each part of `task.yaml`, and when, is decided in the State contract — `.interface/config/state.yaml` under `content.state_authority` — and in `.interface/root.yaml` under `content.modes`. The task schema gives the shape and the invariants, never the permission.
+Who may write each part of `task.yaml`, and when, is decided in the State contract — `.interface/config/state.yaml` under `content.state_authority` — and in `.interface/map.yaml` under `content.modes`. The task schema gives the shape and the invariants, never the permission.
