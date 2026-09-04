@@ -3,8 +3,8 @@ meta:
   path: ".interface/root.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   standard: "Agent Project Interface"
-  version: "2.1"
-  updated: "2026-09-03"
+  version: "2.2"
+  updated: "2026-09-04"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -168,8 +168,8 @@ content:
     clear:
       name: "my-interface-clear"
       path: ".claude/skills/my-interface-clear/"
-      responsibility: "Removes the generated files under config/ and the exact project code directories resolved from their code_path values, so the interpreter can run again from nothing"
-      state: "Transition S5. Invoking my-interface-clear by name authorizes deletion of the exact currently mapped generated files and validated code_path directories without a second confirmation; it writes no state field — it deletes the file that holds them"
+      responsibility: "Runs a bundled script that empties .interface/config/ and removes only the root backend/, frontend/, and database/ directories"
+      state: "Transition S5. Invoking my-interface-clear by name authorizes its four fixed deletion targets without a second confirmation; it writes no State field because state.yaml is removed with the Config contents"
 
     reset:
       name: "my-interface-reset"

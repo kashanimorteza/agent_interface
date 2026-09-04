@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-state
-  version: "3.4"
+  version: "3.5"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
   scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
   authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which Skill may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
@@ -235,15 +235,14 @@ sections:
         - id: "S5"
           name: "clear the generated project state"
           from: "any"
-          to: "no mapped generated config files and no validated project code_path directories; state.yaml and its active values, blockers, questions, and live State Authority are deleted and reseeded from the schema default at the next S0"
+          to: "an empty .interface/config/ directory and no root backend/, frontend/, or database/ directory"
           performed_by: "my-interface-clear"
-          authorized_by: "The human invoking my-interface-clear by name; that invocation itself authorizes deletion of the exact currently mapped generated config files and validated code_path directories, with no second confirmation"
+          authorized_by: "The human invoking my-interface-clear by name; that invocation itself authorizes the bundled script's fixed deletion targets, with no second confirmation"
           requires:
-            - "Before any deletion, the exact existing config-file targets are resolved fresh from the current Interface map and every code-directory target is resolved from a code_path in those current generated config files"
-            - "Every config target is a mapped generated file, and every code-directory target is a non-empty relative path that resolves to a strict descendant of the repository root outside .interface/, .claude/, and .git/"
-            - "No protected, human-managed, symlinked, unresolved, unsafe, or unmapped path is included"
-          writes: "the mapped generated config files and validated project code_path directories, by deleting them; state.yaml is deleted with the rest of config/"
-          refused_when: "The complete deletion set cannot be resolved and validated before deletion, or it includes a protected, human-managed, symlinked, unresolved, unsafe, or unmapped path"
+            - "The bundled script resolves its repository root from its own fixed path and uses no Config, project-definition, Schema, or code_path content to select targets"
+            - "The deletion set is exactly every entry inside .interface/config/ plus the root backend/, frontend/, and database/ directories when present"
+          writes: "every entry inside .interface/config/, and the root backend/, frontend/, and database/ directories, by deleting them; .interface/config/ itself is preserved"
+          refused_when: "The script is not inside its expected project Skill path, or .interface/config/ is a symlink or is not a directory"
 
         - id: "S6"
           name: "human override"

@@ -92,7 +92,7 @@ Reviews one requested project phase against the generated Understanding, authori
 
 `.claude/skills/my-interface-clear/SKILL.md`
 
-Removes the generated Config and the exact validated project code directories resolved from it, returning the repository to a clean state ready for a new interpretation.
+Runs its bundled script to delete everything inside `.interface/config/` and remove the root `backend/`, `frontend/`, and `database/` directories when present.
 
 ### `my-interface-reset`
 
