@@ -47,37 +47,77 @@ content:
       path: ".interface/project.md"
       responsibility: "Human-readable project definition provided by the Developer"
 
+    principles:
+      path: ".interface/principles/"
+      responsibility: "Holds each project item's mandatory principles — the fixed rules and convictions that govern the item independently of any tool, version, or project. A preference never overrides a principle"
+
+      files:
+        - path: "definition.md"
+          responsibility: "The principles of the definition layer — what belongs to the project definition and why phases are the units of work"
+
+        - path: "development.md"
+          responsibility: "The principles of the development layer — connecting selected items without redefining them, component selection, connections, and item authority"
+
+        - path: "state.md"
+          responsibility: "The principles of the State contract — what State holds, the live file as authority, and verbatim seeding of the default"
+
+        - path: "task.md"
+          responsibility: "The principles of the task layer — the human-fixed frame, plans from project phases, and shape versus permission"
+
+        - path: "backend.md"
+          responsibility: "The principles of the backend item — database boundary, model API resolution, credential handling, package and version resolution"
+
+        - path: "frontend.md"
+          responsibility: "The principles of the frontend item — the HTTP API as the only data door, shared models, package resolution"
+
+        - path: "database.md"
+          responsibility: "The principles of the database item — engine independence, schema as code, migrations, ownership, contracts, and access rules"
+
+    preferences:
+      path: ".interface/preferences/"
+      responsibility: "Holds each project item's supported technical choices — tools, versions, and defaults used only when project.md leaves the choice unstated. Explicit project values always win"
+
+      files:
+        - path: "backend.yaml"
+          responsibility: "The backend item's preferences — languages, API frameworks, ORMs, database integrations, default model operations, and capability defaults. Follows the outer shape of schema/file.schema.yaml"
+
+        - path: "frontend.yaml"
+          responsibility: "The frontend item's preferences — languages, UI libraries, frameworks, package managers, and capability defaults. Follows the outer shape of schema/file.schema.yaml"
+
+        - path: "database.yaml"
+          responsibility: "The database item's preferences — engines, migration tooling, relationship defaults, credential storage modes, and capability defaults. Follows the outer shape of schema/file.schema.yaml"
+
     schema:
       path: ".interface/schema/"
-      responsibility: "Defines generated-file shapes and, for each project item, owns that item's policy and technical preferences"
+      responsibility: "Defines generated-file shapes only. Each layer's mandatory rules live in principles/, and each technical item's supported choices live in preferences/"
 
       files:
         - path: "file.schema.yaml"
           responsibility: "Defines the outer shape every interface file follows — meta, policy, read_order, content_map, content"
 
         - path: "definition.schema.yaml"
-          responsibility: "Defines the structure and format of definition.yaml"
+          responsibility: "Defines the shape of definition.yaml — its principles live in principles/definition.md"
 
         - path: "model.schema.yaml"
           responsibility: "Defines the shared structure and format of model.yaml"
 
         - path: "development.schema.yaml"
-          responsibility: "Defines development.yaml — technical composition, cross-item connections, runtime, and deployment"
+          responsibility: "Defines the shape of development.yaml — technical composition, cross-item connections, runtime, and deployment; its principles live in principles/development.md"
 
         - path: "task.schema.yaml"
-          responsibility: "Defines the structure and format of task.yaml"
+          responsibility: "Defines the shape of task.yaml — its principles live in principles/task.md"
 
         - path: "state.schema.yaml"
-          responsibility: "Defines the structure and format of state.yaml — the State contract — and the default State Authority seeded into every newly created state.yaml"
+          responsibility: "Defines the shape of state.yaml — the State contract — and the default State Authority seeded into every newly created state.yaml; its principles live in principles/state.md"
 
         - path: "backend.schema.yaml"
-          responsibility: "Defines backend.yaml plus Backend policy and preferences"
+          responsibility: "Defines the shape of backend.yaml only — its principles and preferences live in principles/backend.md and preferences/backend.yaml"
 
         - path: "frontend.schema.yaml"
-          responsibility: "Defines frontend.yaml plus Frontend policy and preferences"
+          responsibility: "Defines the shape of frontend.yaml only — its principles and preferences live in principles/frontend.md and preferences/frontend.yaml"
 
         - path: "database.schema.yaml"
-          responsibility: "Defines database.yaml plus Database policy and preferences"
+          responsibility: "Defines the shape of database.yaml only — its principles and preferences live in principles/database.md and preferences/database.yaml"
 
     config:
       path: ".interface/config/"

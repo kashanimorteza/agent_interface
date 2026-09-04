@@ -1,9 +1,9 @@
 schema:
   id: agent-interface-task
-  version: "3.2"
+  version: "4.0"
   purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
-  frame_and_surface: "task_schema and task_states are the frame — fixed by the human. Plans use the phase → group → task structure. Every plan key and target come from a project phase in definition.yaml; the target resolves the item configuration and code boundary used by its tasks, while development.yaml describes the selected components, their connections, runtime, and deployment."
-  authority: "Who may write each of these, and when, is decided in the State contract — .interface/config/state.yaml under content.state_authority — and in .interface/root.yaml under content.modes; this file gives the shape and invariants, not the permission"
+  principles: ".interface/principles/task.md"
+  layering: "This file defines shape only. The mandatory rules of this layer live in its principles document and are not restated here."
 
 structure:
   - task_schema

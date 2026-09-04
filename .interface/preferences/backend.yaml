@@ -1,0 +1,97 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/preferences/backend.yaml"
+  path_note: "The Preferences layer of the backend item — the supported technical choices used only when project.md leaves a backend choice unstated. Sits beside principles/backend.md (the mandatory rules) and schema/backend.schema.yaml (the shape of config/backend.yaml)"
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-04"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. No mode edits it; an agent reads it during generation and never writes a resolved value back into it"
+  changed_by: "The human, directly. A preference an agent believes is missing or wrong is raised as an open question in config/state.yaml"
+  precedence: "An explicit project value always wins over every value here. A preference never overrides a principle in principles/backend.md — it only fills a choice the principles leave open"
+  consumption: "The generation operation resolves each unstated choice from this file and writes the concrete result into config/backend.yaml. Downstream operations read that resolved configuration and never reinterpret this file. The token latest is resolved to a concrete version and never appears in generated config"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "defaults"
+  - "languages"
+  - "api_frameworks"
+  - "orms"
+  - "database_integrations"
+  - "model_api"
+  - "capabilities"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  defaults: "The item-level defaults — code path, test switch, responsibility, and the language selected when the project names none"
+  languages: "One entry per supported language — version, isolated environment, naming conventions, and the API framework and ORM selected by default for that language"
+  api_frameworks: "One entry per supported API framework and its version"
+  orms: "One entry per supported ORM and its version"
+  database_integrations: "The explicitly supported language → ORM → engine compatibility entries — driver, packages, and URL scheme"
+  model_api: "The default set of operations applied to every domain model when the project requests an API without naming operations"
+  capabilities: "The default on/off state of optional backend capabilities"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  defaults:
+    code_path: "backend/"
+    needs_test: false
+    responsibility: "Runs application behavior and publishes the HTTP API while consuming the database contract."
+    language: "Python"
+  languages:
+    Python:
+      version: "latest"
+      environment:
+        name: "uv"
+        version: "latest"
+      naming:
+        variables: "snake_case"
+        functions: "snake_case"
+        classes: "PascalCase"
+        constants: "UPPER_SNAKE_CASE"
+        files: "snake_case"
+        folders: "snake_case"
+      defaults:
+        api_framework: "FastAPI"
+        orm: "SQLAlchemy"
+  api_frameworks:
+    FastAPI:
+      version: "latest"
+  orms:
+    SQLAlchemy:
+      version: "latest"
+  database_integrations:
+    Python:
+      SQLAlchemy:
+        SQLite:
+          driver: "Python sqlite3 standard library"
+          packages: []
+          url_scheme: "sqlite"
+  model_api:
+    default_operations:
+      - "create"
+      - "list"
+      - "get"
+      - "update"
+      - "delete"
+  capabilities:
+    testing:
+      default_enabled: false
+    error_handling:
+      default_enabled: false
+    logging:
+      default_enabled: false
+    authentication:
+      default_enabled: false
+    https:
+      default_enabled: false
+    api_documentation:
+      default_enabled: true

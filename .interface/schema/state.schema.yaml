@@ -1,12 +1,9 @@
 schema:
   id: agent-interface-state
-  version: "5.0"
+  version: "6.0"
   purpose: "The State contract — the shape of state.yaml: the project-wide state, the State Authority that governs it, and the transition rules, in one file"
-  scope_note: "No definition, no rule, and no task status lives here — a task's status travels with the task, in task.yaml"
-  authority: "state.yaml is the source of truth for the State. Its own content.state_authority section is the live authority — every field, its owner, the allowed transitions, and which authorized operation may perform each. This schema defines the shape of that section and the default seeded into every newly created state.yaml; once the file exists, the live copy governs and this default is not consulted at runtime. root.yaml references the State contract and does not own any of it"
-  defaults:
-    rule: "A section carrying `default` is always written into state.yaml when the file is created — the default is the seed, written verbatim under transition S0. No newly generated state.yaml exists without it; there is no exception."
-    note: "While no state.yaml exists there is no live authority, so the default state_authority below is what authorizes its own seeding — transition S0 is defined inside it."
+  principles: ".interface/principles/state.md"
+  layering: "This file defines shape only. The mandatory rules of this layer live in its principles document and are not restated here."
 
 structure:
   - state_authority

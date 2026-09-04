@@ -1,52 +1,10 @@
 schema:
   id: agent-interface-frontend
-  version: "5.0"
+  version: "6.0"
   purpose: "The shape of frontend.yaml — every parameter an agent reads to understand the frontend project"
-
-policy:
-  preference_resolution:
-    rule: "An explicit project value always wins. When a frontend technical choice is unstated, the generation operation resolves it from supported frontend preferences or selects a compatible implementation option. Downstream operations consume the resolved frontend configuration and never reinterpret preferences."
-  backend_boundary: "The frontend reaches application data only through the backend's implemented HTTP API and its generated machine-readable description. It never connects to the database item or imports backend implementation code."
-  model_source: "The shared logical domain-model set comes from model.yaml. Frontend configuration and implementation may use it for project understanding but never copy or redefine those models."
-  package_resolution: "Prefer packages selected by an explicit project value or a supported frontend preference profile. For an unlisted need inside authorized scope, choose the smallest well-supported compatible package from current evidence and record the consequential choice; ask only when no safe compatible option can be established."
-
-preferences:
-  defaults:
-    code_path: "frontend/"
-    needs_test: false
-    responsibility: "Provides the user interface and consumes the backend's implemented HTTP API."
-    language: "TypeScript"
-    library: "React"
-    framework: "Next.js"
-    package_manager: "npm"
-  languages:
-    TypeScript:
-      version: "latest"
-      naming:
-        variables: "camelCase"
-        functions: "camelCase"
-        classes: "PascalCase"
-        components: "PascalCase"
-        constants: "UPPER_SNAKE_CASE"
-        files: "kebab-case"
-        folders: "kebab-case"
-  libraries:
-    React:
-      version: "latest"
-      component_style: "Function components"
-  frameworks:
-    Next.js:
-      version: "latest"
-      router: "App Router"
-      run: "npm run dev"
-  package_managers:
-    npm:
-      version: "latest"
-  capabilities:
-    testing:
-      default_enabled: false
-    logging:
-      default_enabled: false
+  principles: ".interface/principles/frontend.md"
+  preferences: ".interface/preferences/frontend.yaml"
+  layering: "This file defines shape only. The mandatory rules of this item live in its principles document; the supported technical choices used when project.md is silent live in its preferences file. Neither is restated here."
 
 structure:
   - code_path

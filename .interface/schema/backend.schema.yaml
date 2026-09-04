@@ -1,82 +1,10 @@
 schema:
   id: agent-interface-backend
-  version: "6.0"
+  version: "7.0"
   purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
-
-policy:
-  preference_resolution:
-    rule: "An explicit project value always wins. When a backend technical choice is unstated, the generation operation resolves it from supported backend preferences or selects a compatible implementation option. Downstream operations consume the resolved backend configuration and never reinterpret preferences."
-  database_boundary: "The backend never owns the database engine, storage, schema, or migrations. It consumes the frozen database contract and owns only its runtime connection, ORM mappings, and database client packages."
-  package_resolution: "Resolve runtime packages from the selected language, API framework, ORM, and database contract through an explicitly supported compatibility entry when available. For an unlisted combination, choose a well-supported compatible package from current evidence and record the consequential choice; ask only when no safe compatible stack can be established."
-  model_api_resolution:
-    rule: "When the project requests an API for its domain models without naming allowed operations, apply preferences.model_api.default_operations to every model currently indexed in model.yaml."
-    overrides: "An explicit project rule for a model replaces the default operations for that model. Models are resolved dynamically from model.yaml and are never copied into this Policy or its Preferences."
-    boundary: "Resolve only model-level operation intent here. Endpoint paths, HTTP method mappings, payloads, response shapes, and implementation layout remain implementation output."
-  version_resolution:
-    explicit: "Preserve every concrete version stated by the project exactly."
-    latest: "When a supported preference supplies latest, the generation operation resolves it to the latest stable version compatible with the complete selected backend stack and writes only that concrete version into backend.yaml. The token latest never appears in generated Config."
-    unresolved: "If the current stable version cannot be verified, select the best supported concrete compatible version available from current evidence and record the choice. Raise an open question only when compatibility or safety cannot be established without a critical human decision."
-  sensitive_data:
-    credential_source: "A field is a credential when the consumed database contract assigns it a credential storage mode. The backend never guesses credential fields from their names."
-    request: "A credential field is write-only input. It may be accepted when required to create or update the owning model."
-    response: "A credential field is never exposed in an API response, generated response schema, or error payload."
-    logging: "A credential value is always redacted from application logs, diagnostics, traces, and exception details."
-
-preferences:
-  defaults:
-    code_path: "backend/"
-    needs_test: false
-    responsibility: "Runs application behavior and publishes the HTTP API while consuming the database contract."
-    language: "Python"
-  languages:
-    Python:
-      version: "latest"
-      environment:
-        name: "uv"
-        version: "latest"
-      naming:
-        variables: "snake_case"
-        functions: "snake_case"
-        classes: "PascalCase"
-        constants: "UPPER_SNAKE_CASE"
-        files: "snake_case"
-        folders: "snake_case"
-      defaults:
-        api_framework: "FastAPI"
-        orm: "SQLAlchemy"
-  api_frameworks:
-    FastAPI:
-      version: "latest"
-  orms:
-    SQLAlchemy:
-      version: "latest"
-  database_integrations:
-    Python:
-      SQLAlchemy:
-        SQLite:
-          driver: "Python sqlite3 standard library"
-          packages: []
-          url_scheme: "sqlite"
-  model_api:
-    default_operations:
-      - "create"
-      - "list"
-      - "get"
-      - "update"
-      - "delete"
-  capabilities:
-    testing:
-      default_enabled: false
-    error_handling:
-      default_enabled: false
-    logging:
-      default_enabled: false
-    authentication:
-      default_enabled: false
-    https:
-      default_enabled: false
-    api_documentation:
-      default_enabled: true
+  principles: ".interface/principles/backend.md"
+  preferences: ".interface/preferences/backend.yaml"
+  layering: "This file defines shape only. The mandatory rules of this item live in its principles document; the supported technical choices used when project.md is silent live in its preferences file. Neither is restated here."
 
 structure:
   - code_path

@@ -53,22 +53,41 @@ def discover_targets() -> tuple[Path, tuple[Path, ...]]:
     except (KeyError, TypeError) as error:
         raise RuntimeError("The Interface root map does not expose the required generated configuration and Schema entries.") from error
 
+    # Preferences may live inside an item Schema (legacy) or in the mapped preferences folder.
+    sources: list[tuple[Path, list]] = [(schema_dir, schema_files)]
+    preferences = mapped.get("preferences")
+    if isinstance(preferences, dict) and isinstance(preferences.get("path"), str):
+        sources.append((project_path(preferences["path"]), preferences.get("files") or []))
+
     code_paths: set[Path] = set()
-    for entry in schema_files:
-        if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
-            continue
-        schema_file = project_path(str(schema_dir.relative_to(PROJECT_ROOT) / entry["path"]))
-        if not schema_file.is_file():
-            continue
-        document = load_yaml(schema_file)
-        code_path = document.get("preferences", {}).get("defaults", {}).get("code_path")
-        if isinstance(code_path, str) and code_path.strip():
-            candidate = project_path(code_path)
-            if candidate == ROOT_FILE.parent or candidate == config_dir:
-                raise RuntimeError(f"Refusing unsafe mapped code path: {code_path}")
-            code_paths.add(candidate)
+    for base_dir, entries in sources:
+        for entry in entries:
+            if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
+                continue
+            mapped_file = project_path(str(base_dir.relative_to(PROJECT_ROOT) / entry["path"]))
+            if not mapped_file.is_file():
+                continue
+            document = load_yaml(mapped_file)
+            # A preferences file follows file.schema.yaml (defaults under content);
+            # a legacy item Schema keeps them under its own preferences block.
+            block = document.get("content") if base_dir != schema_dir else document.get("preferences")
+            if not isinstance(block, dict):
+                continue
+            defaults = block.get("defaults")
+            if not isinstance(defaults, dict):
+                continue
+            _collect_code_path(defaults.get("code_path"), code_paths, config_dir)
 
     return config_dir, tuple(sorted(code_paths))
+
+
+def _collect_code_path(code_path: object, code_paths: set[Path], config_dir: Path) -> None:
+    if not isinstance(code_path, str) or not code_path.strip():
+        return
+    candidate = project_path(code_path)
+    if candidate == ROOT_FILE.parent or candidate == config_dir:
+        raise RuntimeError(f"Refusing unsafe mapped code path: {code_path}")
+    code_paths.add(candidate)
 
 
 def remove_entry(path: Path) -> None:

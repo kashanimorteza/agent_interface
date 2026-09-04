@@ -1,0 +1,108 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/preferences/database.yaml"
+  path_note: "The Preferences layer of the database item — the supported technical choices used only when project.md leaves a database choice unstated. Sits beside principles/database.md (the mandatory rules) and schema/database.schema.yaml (the shape of config/database.yaml)"
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-04"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. No mode edits it; an agent reads it during generation and never writes a resolved value back into it"
+  changed_by: "The human, directly. A preference an agent believes is missing or wrong is raised as an open question in config/state.yaml"
+  precedence: "An explicit project value always wins over every value here. A preference never overrides a principle in principles/database.md — it only fills a choice the principles leave open"
+  consumption: "The generation operation resolves each unstated choice from this file and writes the concrete result into config/database.yaml. Downstream operations read that resolved configuration and never reinterpret this file. The token latest is resolved to a concrete version and never appears in generated config"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "defaults"
+  - "engines"
+  - "migration_tools"
+  - "relationship_defaults"
+  - "credential_storage"
+  - "capabilities"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  defaults: "The item-level defaults — code path, test switch, responsibility, and which engine and migration tool are selected when the project names none"
+  engines: "One entry per supported engine — version, physical storage, connection behavior, and object naming conventions"
+  migration_tools: "One entry per supported migration tool — language, isolated environment, packages, and canonical commands"
+  relationship_defaults: "Nullability, indexing, and referential actions applied to a relationship the project leaves unspecified"
+  credential_storage: "The default at-rest mode for credential fields and the meaning of each supported mode"
+  capabilities: "The default on/off state of optional database capabilities"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  defaults:
+    code_path: "database/"
+    needs_test: false
+    responsibility: "Owns persistent storage, schema evolution, and the database contract consumed by the backend."
+    engine: "SQLite"
+    migration_tool: "Alembic"
+  engines:
+    SQLite:
+      version: "runtime-provided"
+      storage:
+        kind: "file"
+        path: "app.db"
+      connection:
+        url_scheme: "sqlite"
+        foreign_keys: true
+        check_same_thread: false
+      naming:
+        tables: "plural_snake_case"
+        columns: "snake_case"
+        constraints: "snake_case"
+        indexes: "ix_<table>_<column>"
+  migration_tools:
+    Alembic:
+      version: "latest"
+      language: "Python"
+      environment:
+        name: "uv"
+        version: "latest"
+      packages:
+        migration:
+          name: "Alembic"
+          version: "latest"
+        schema_toolkit:
+          name: "SQLAlchemy"
+          version: "latest"
+      commands:
+        upgrade: "uv run alembic upgrade head"
+        downgrade: "uv run alembic downgrade -1"
+  relationship_defaults:
+    nullable: false
+    index: true
+    on_delete: "RESTRICT"
+    on_update: "RESTRICT"
+  credential_storage:
+    default: "plaintext"
+    modes:
+      plaintext:
+        stored_as: "string"
+        transformation: "none"
+        recoverable: true
+      hash:
+        stored_as: "string"
+        transformation: "one_way_hash"
+        recoverable: false
+        use_case: "Credentials used only for verification."
+      encrypted:
+        stored_as: "string"
+        transformation: "reversible_encryption"
+        recoverable: true
+        key_source: "Runtime configuration outside the database and its contract."
+  capabilities:
+    testing:
+      default_enabled: false
+    seed_data:
+      default_enabled: false
+    backups:
+      default_enabled: false
