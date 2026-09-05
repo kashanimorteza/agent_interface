@@ -329,7 +329,7 @@ Defines the project's implementation phases. Phases are executed step by step in
 
 **Target:** Database
 
-**Goal:** Make all defined project data persistently available to the system.
+**Goal:** Fully implement the database layer, create the database, apply the defined model structure, and insert all data defined in the models' `Initial Data` sections.
 
 ### Phase 2
 
