@@ -60,8 +60,8 @@ content:
   active:
     mode: "development"
     phase: "P1"
-    mode_reason: "The human requested development for phase P1 (Data Foundation, target database). The development operation claimed and completed all 45 Tasks of the P1 Plan inside database/; every Task was marked done only after its verify command passed, and its evidence is in the Task log. Phase P1 is complete: the storage schema, migrations, credential handling, generic operation pipeline, Database Interface, and initial data all verify end to end. No Blocker or Open Question was raised."
-    set_by: "development operation — acting on the human's development request naming phase P1"
+    mode_reason: "The human requested development for phase P1 again (invoked as 1, resolved to Phase 1 = P1). The development operation found all 45 Tasks of the P1 Plan already done with recorded verify evidence and no eligible unfinished Task, so it changed no implementation and no Task; it re-ran the phase's end-to-end verification as evidence that the completed work is still valid. No Blocker or Open Question was raised."
+    set_by: "development operation — acting on the human's repeated development request naming phase P1"
     set_at: "2026-09-06"
 
   # <!-------------------------------------------- blockers -->
