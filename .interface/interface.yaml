@@ -259,10 +259,17 @@ content:
     behaviours:
 
       interpretation:
-        responsibility: "Transform the current human project definition into complete and consistent generated project Understanding"
+        responsibility: "Generate complete and consistent project Understanding for downstream Planning and Development"
         inputs:
           project: "content.structure.foundations.project"
           existing_understanding: "content.structure.generated_configuration"
+        resolution: "For every current Component, resolve the target-project Understanding through that Component's Principles and Preferences and express the result in the form required by its Schema"
+        completeness: "Produce one structurally valid current configuration for every current Component; an empty Layer contributes no information and never removes the Component's required output"
+        refresh: "On every run, rebuild the complete candidate from the current Interface and target project, then reconcile it with existing generated configuration"
+        preservation: "Remove stale interpreter-owned information while preserving information owned by the human, runtime, or another Behaviour according to the current authorities"
+        validation: "Validate every candidate output against its current Schema and validate the complete set for cross-Component consistency before writing any result"
+        idempotency: "When the current Interface, target project, and owned generated information are unchanged, another run makes no changes"
+        downstream_readiness: "The generated Understanding must let Planning create Tasks and Development execute them without reinterpreting the human project definition"
         output: "content.structure.generated_configuration"
 
       planning:
@@ -330,7 +337,7 @@ content:
         name: "my-interface-interpreter"
         path: ".claude/skills/my-interface-interpreter/SKILL.md"
         invocation: "/my-interface-interpreter"
-        responsibility: "Transform the human project definition into generated Project Understanding and reconcile it when the definition changes"
+        responsibility: "Generate or refresh complete Project Understanding for every current Component and reconcile it for downstream Planning and Development"
         behaviour: "content.structure.behaviours.interpretation"
 
       tasker:
