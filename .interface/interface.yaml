@@ -94,7 +94,7 @@ content:
 
           task:
             path: "task.md"
-            responsibility: "The human-fixed Task frame, Plans derived from phases, and the separation of shape from permission"
+            responsibility: "Phase Plans, coherent Groups, atomic self-contained Tasks, verifiable completion, and separation from workflow authority"
 
           backend:
             path: "backend.md"
@@ -224,7 +224,7 @@ content:
           config: "content.structure.generated_configuration.files.state"
 
       task:
-        responsibility: "Plans, Groups, Tasks, progress, and Task history"
+        responsibility: "Phase Plans, coherent Groups, independently understandable atomic Tasks, progress, and Task-local history"
         resources:
           principle: "content.structure.layers.principles.files.task"
           preference: "content.structure.layers.preferences.files.task"
@@ -313,7 +313,7 @@ content:
 
         task:
           path: "task.yaml"
-          responsibility: "Plans and executable Tasks"
+          responsibility: "Plans, contextual Groups, and self-contained executable Tasks"
 
         backend:
           path: "backend.yaml"

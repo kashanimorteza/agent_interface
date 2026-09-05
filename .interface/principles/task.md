@@ -1,35 +1,82 @@
 # Task Principles
 
-This document is the personality of the task layer — `config/task.yaml`, the file that defines what a task is and holds the plans that contain tasks. It is written for the planning, development, and review operations and for the Developer who wants to know what a plan may and may not be.
+Task is the Component that turns project phases into precise, executable work. It organizes that work as Plans, Groups, and Tasks while preserving enough context for either a human or an Agent to understand and execute every Task reliably.
 
-The shape of `task.yaml` — the frame that defines a task and the plans that hold the tasks — lives in the schema (`.interface/schema/task.yaml`). There is no preferences file for tasks: the task layer has no technical choices.
-
-Every statement here is mandatory.
+Every statement here is mandatory. Technical defaults, when any are defined, belong to Task Preferences. The exact shape of the generated Task configuration belongs to the Task Schema.
 
 <br>
 
-## 1. The frame is the human's; the plans are the surface
+## 1. Every phase has its own Plan
 
-`task_schema` and `task_states` are the frame — fixed by the human. Plans are the surface, and they use the phase → group → task structure.
+A Plan represents the implementation of one project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks.
 
-<br>
-
-## 2. Every plan comes from a project phase
-
-Every plan key and target come from a project phase in `definition.yaml`. The target resolves the item configuration and the code boundary used by its tasks, while `development.yaml` describes the selected components, their connections, runtime, and deployment. A plan never invents a phase or a target.
+Planning does not invent a new project phase or silently change the meaning of an existing one. The phase remains the unit selected for planning and development.
 
 <br>
 
-## 3. The schema gives shape, not permission
+## 2. Groups organize related work
 
-Who may write each part of `task.yaml`, and when, is decided by the State Authority under `content.state_authority`, including its working modes and transitions. The Task Schema gives the shape and the invariants, never the permission.
+Every Task belongs to one Group. A Group collects Tasks that contribute to one coherent implementation area and explains what that area is, what it accomplishes, which Component it targets, and where within that Component its work belongs.
+
+Grouping supplies useful shared context, but it never replaces the information carried by an individual Task.
 
 <br>
 
-## 4. Generation creates the frame, never the plan
+## 3. A Task is one atomic action
 
-The generation operation materializes the current `task_schema` and `task_states` frame and creates one Plan shell for every project phase indexed by `definition.yaml`. Each shell copies the phase's id, title, order, and target, derives `does` only from that phase's goal, and begins with an empty `groups` mapping.
+Each Task describes one small, concrete implementation action that can be completed and verified independently. A Task never combines unrelated changes or hides several broad outcomes behind one title.
 
-Generation never decomposes a phase, creates a Group, or creates a Task. Those are planning decisions and belong only to the planning operation for the phase the human requested.
+Large work is divided into as many precise Tasks as necessary. Clarity and executability take precedence over minimizing the number of Tasks.
 
-On regeneration, an existing non-empty Plan for an unchanged phase is preserved. A newly added phase receives an empty Plan shell, and a changed phase whose Plan remains empty may be reconciled to its current Definition. Removing a phase, or changing the identity, order, target, or intended outcome of a phase whose Plan already contains Tasks, is a critical conflict: generation reports it and never silently rewrites or deletes the affected planning content.
+<br>
+
+## 4. Every Task is independently understandable
+
+A Task remains understandable when viewed outside its Plan, Group, or project. It carries enough information to explain:
+
+- what must be done;
+- why the work is necessary;
+- what result it must produce;
+- which Component and specific work area it targets;
+- which language, technologies, and execution context apply;
+- which inputs, dependencies, constraints, and existing resources matter;
+- which files or resources it may touch; and
+- how completion is accepted and verified.
+
+The Task does not need to repeat the identity or general description of the project. It does need all context required to understand and perform its own work without reconstructing that context from unrelated documents.
+
+<br>
+
+## 5. Task context is resolved from authoritative project Understanding
+
+The target, language, technologies, paths, interfaces, constraints, and other implementation context written into a Task are resolved from the applicable generated Component configurations. A Task does not create a competing technical decision.
+
+The Task records the resolved context it needs so its executor does not have to rediscover that context before work can begin.
+
+<br>
+
+## 6. Dependencies are explicit
+
+A Task names every other Task whose completed result it requires. Readiness is derived from those dependencies rather than guessed from file order or proximity inside a Group.
+
+Dependencies express execution order only where a real dependency exists. Unrelated Tasks remain independently executable.
+
+<br>
+
+## 7. Completion must be demonstrable
+
+Every Task has a concrete acceptance criterion and a runnable verification method. Writing code or changing a file is not sufficient evidence of completion; the verification must pass before the Task is considered done.
+
+<br>
+
+## 8. Task progress and workflow authority remain separate
+
+The Task Component owns Plans, Groups, Task content, Task status, blockers, and Task-local history. The State Component owns the workflow authority that decides when and under which conditions those values may change.
+
+An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists. Planning, development, reconciliation, and reset operations may change only the portions authorized by the current State.
+
+<br>
+
+## 9. Existing work is never silently destroyed
+
+Replanning or regeneration reconciles unchanged work and adds newly required work without silently overwriting completed, active, or otherwise meaningful Task content. Removing or invalidating such work requires an explicit authorized operation or a surfaced critical conflict.

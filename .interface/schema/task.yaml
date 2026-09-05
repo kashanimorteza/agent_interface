@@ -1,9 +1,7 @@
 schema:
   id: agent-interface-task
-  version: "4.0"
-  purpose: "The shape of task.yaml — the frame that defines a task, and the plans that hold the tasks"
-  principles: ".interface/principles/task.md"
-  layering: "This file defines shape only. The mandatory rules of this layer live in its principles document and are not restated here."
+  version: "5.0"
+  purpose: "The shape of the generated Task configuration"
 
 structure:
   - task_schema
@@ -15,129 +13,160 @@ sections:
   # <!--------------------------------------------------------------------------------- Task_Schema -->
   task_schema:
     required: true
-    purpose: "The fields every task carries — the definition of a task, not a task itself."
+    purpose: "The resolved field frame used by every Task."
     fields:
       rule:
         required: true
-        purpose: "That every task carries exactly these fields — no more, no fewer."
+        purpose: "The structural rule governing which fields every Task carries."
       fields:
         required: true
-        purpose: "One entry per field of a task, each saying what that field holds."
+        purpose: "The definitions of the fields carried by every Task."
         fields:
           id:
             required: true
-            purpose: "Identifier unique within the project phase — its phase prefix keeps it unique across the project."
+            purpose: "The Task identifier, unique within its Plan and unambiguous across all Plans."
           title:
             required: true
-            purpose: "The task in one sentence."
-          goal:
+            purpose: "A concise statement of the atomic action."
+          description:
             required: true
-            purpose: "What becomes possible after this task that was not possible before."
+            purpose: "A complete explanation of what must be done."
+          reason:
+            required: true
+            purpose: "Why the Task is necessary."
+          target:
+            required: true
+            purpose: "The Component in which the Task performs its work."
+          area:
+            required: true
+            purpose: "The specific module, subsystem, or work area inside the target Component."
+          execution_context:
+            required: true
+            purpose: "The resolved implementation context needed to execute the Task."
+            fields:
+              kind:
+                required: true
+                purpose: "The nature of the work, such as code, configuration, documentation, data, or command execution."
+              language:
+                required: true
+                purpose: "The applicable programming or configuration language, or null when no language applies."
+              technologies:
+                required: true
+                purpose: "The ordered technologies, frameworks, packages, protocols, or tools relevant to the Task; empty when none apply."
+              instructions:
+                required: true
+                purpose: "Implementation guidance sufficient to perform this specific Task."
+              inputs:
+                required: true
+                purpose: "The information, artifacts, interfaces, or completed results consumed by the Task; empty when none apply."
+              expected_output:
+                required: true
+                purpose: "The concrete artifact or observable result the Task must produce."
           depends_on:
             required: true
-            purpose: "Ids of tasks in the same project phase. Cross-phase order comes from definition.yaml, while cross-item coordination comes from the component connections in development.yaml."
+            purpose: "The identifiers of Tasks whose completed outputs are prerequisites; empty when the Task is independent."
+          constraints:
+            required: true
+            purpose: "Task-specific restrictions and invariants that the implementation must preserve; empty when none apply."
           acceptance:
             required: true
-            purpose: "Human-readable acceptance criterion — what must actually work."
+            purpose: "The observable criterion that determines whether the intended result is correct."
           verify:
             required: true
-            purpose: "A runnable command that proves acceptance — without it a task is never done."
+            purpose: "A runnable command or precise executable check that proves acceptance."
           touches:
             required: true
-            purpose: "Paths this task touches, written relative to the code_path of the item named by the phase target in definition.yaml."
+            purpose: "The explicit files, directories, or resources the Task is expected to inspect or modify."
           status:
             required: true
-            purpose: "Where the task stands right now — the one field of a task that moves; its vocabulary is task_states."
+            purpose: "The current Task state, using the resolved Task-state vocabulary."
           blocker:
             required: true
-            purpose: "Id of a critical condition in state.yaml that genuinely prevents safe authorized continuation — present only when status is blocked, absent otherwise."
+            purpose: "The identifier of the critical blocking condition when the Task is blocked; absent otherwise."
           log:
             required: true
-            purpose: "Append-only list of dated entries carried with the task — absent until the task first moves."
+            purpose: "The append-only Task-local progress history; absent until the first recorded transition."
       status_lives_here:
         required: true
-        purpose: "That status is written on the task itself, so definition and state can never drift apart."
+        purpose: "Declares that the current status is stored on each Task."
       history_lives_here_too:
         required: true
-        purpose: "That there is no history file — while a Task exists, how it reached its state remains in its append-only log. Reset to planning explicitly removes generated Tasks."
+        purpose: "Declares that the history of an existing Task is stored in its Task-local log."
 
   # <!--------------------------------------------------------------------------------- Task_States -->
   task_states:
     required: true
-    purpose: "The vocabulary a task's status field may hold, and the protocols around it."
+    purpose: "The resolved Task-status vocabulary and derived readiness and completion conditions."
     fields:
       path:
         required: true
-        purpose: "Where a state is written — the status field on each task."
+        purpose: "Where the current state is stored within a Task."
       states:
         required: true
-        purpose: "One entry per permitted status, each saying what it means — todo, claimed, blocked, done, cancelled, superseded."
+        purpose: "The permitted Task states and the meaning of each state."
       derived_ready:
         required: true
-        purpose: "That ready is not a stored status — a task is ready when it is todo and all of its depends_on are done."
+        purpose: "The condition from which Task readiness is derived."
       phase_ready:
         required: true
-        purpose: "That phase readiness is derived, never stored — a phase may enter development when it has a non-empty plan and every earlier project phase is complete."
+        purpose: "The condition from which phase readiness is derived."
       phase_complete:
         required: true
-        purpose: "That phase completion is derived, never stored — a phase is complete when its plan is non-empty, every task not cancelled or superseded is done, and no task remains todo, claimed, or blocked."
-      done_gate:
-        required: true
-        purpose: "That without a passing verify run no task becomes done, even if the code is written."
-      claim_protocol:
-        required: true
-        purpose: "That a task is set to claimed and the file written before work starts, so two agents never take the same task."
-      status_only_in_development:
-        required: true
-        purpose: "That in development mode status, blocker, and log are the only fields an agent may change, with the reset operation under its State transition as the only outside-mode reset exception."
-      reset_protocol:
-        required: true
-        purpose: "How a development reset returns every existing Task to todo while preserving Plans and Groups, and how a planning reset clears every Plan's Groups and Tasks while preserving the Plan shells."
+        purpose: "The condition from which phase completion is derived."
 
   # <!--------------------------------------------------------------------------------- Plans -->
   plans:
     required: true
-    purpose: "The implementation plans — one entry per project phase, keyed by phase id. Phase identity, order, target, and intended outcome come from definition.yaml."
+    purpose: "The ordered collection of phase implementation Plans."
     fields:
       "<phase>":
         required: true
-        purpose: "One project phase plan — the key is P1, P2, ... exactly as indexed under definition.yaml content.phases."
+        purpose: "One Plan keyed by its phase identifier."
         fields:
           id:
             required: true
-            purpose: "The project phase id, identical to this plan's key and to the id in definition.yaml."
+            purpose: "The phase identifier represented by this Plan."
           title:
             required: true
-            purpose: "The project phase title, copied faithfully from definition.yaml."
+            purpose: "The phase title represented by this Plan."
           order:
             required: true
-            purpose: "The one-based project phase order copied from definition.yaml."
+            purpose: "The phase's one-based position in project order."
           target:
             required: true
-            purpose: "The technical target copied from the phase in definition.yaml. It resolves the item-specific configuration and write boundary; it is not the plan key."
+            purpose: "The Component targeted by the phase."
           does:
             required: true
-            purpose: "What this project phase accomplishes, derived only from that phase's goal in definition.yaml."
+            purpose: "The intended implementation outcome of the phase."
           groups:
             required: true
-            purpose: "The technical decomposition of this project phase. Environment, configuration, database, models, migrations, endpoints, or any other implementation area belongs here rather than becoming another project phase."
+            purpose: "The ordered Groups that decompose the Plan; empty before the phase is planned."
             fields:
               "<group>":
                 required: true
-                purpose: "One area of work inside the project phase — related tasks side by side."
+                purpose: "One coherent area of related work."
                 fields:
                   id:
                     required: true
-                    purpose: "P1-G1, P1-G2, ... — the project phase id plus a group number, unique across the project."
+                    purpose: "The Group identifier, unique across all Plans."
                   title:
                     required: true
-                    purpose: "The area in a few words."
+                    purpose: "A concise name for the work area."
+                  description:
+                    required: true
+                    purpose: "What belongs to the Group and why its Tasks are related."
+                  target:
+                    required: true
+                    purpose: "The Component in which the Group performs its work."
+                  area:
+                    required: true
+                    purpose: "The module, subsystem, or implementation area covered by the Group."
                   does:
                     required: true
-                    purpose: "What this group of tasks is doing, and what is true when all of them are done."
+                    purpose: "The result produced when every applicable Task in the Group is complete."
                   task_count:
                     required: true
-                    purpose: "How many tasks the group holds — stated so the size is visible without counting."
+                    purpose: "The number of Tasks currently contained in the Group."
                   tasks:
                     required: true
-                    purpose: "The tasks of this group, each carrying exactly the fields of task_schema; a task is one atomic act, naming the one thing it creates or changes — create one file, add one method, implement one function, install one package, add one model, create one endpoint, add one migration, add one specific validation — never a broad or multi-purpose implementation goal. Anything larger is split into several tasks before it is written; many precise tasks are preferred over a few broad ones, however much the count grows, and one sitting finishes each."
+                    purpose: "The ordered Tasks in the Group, each conforming to task_schema."
