@@ -82,7 +82,7 @@ content:
 
           model:
             path: "model.md"
-            responsibility: "Component-specific Model philosophy, responsibilities, and boundaries when defined"
+            responsibility: "Domain-entity meaning, shared logical Models, and the boundaries between logical definitions and technical representations"
 
           development:
             path: "development.md"
@@ -120,7 +120,7 @@ content:
 
           model:
             path: "model.yaml"
-            responsibility: "Component-specific Model technical choices and defaults when defined"
+            responsibility: "Common logical field defaults applied when individual Model definitions leave them unspecified"
 
           development:
             path: "development.yaml"
@@ -200,7 +200,7 @@ content:
           config: "content.structure.generated_configuration.files.definition"
 
       model:
-        responsibility: "Shared domain Models, fields, relationships, rules, and initial data"
+        responsibility: "Shared logical domain Models that connect persisted data with API representations, including fields, relationships, rules, and initial data"
         resources:
           principle: "content.structure.layers.principles.files.model"
           preference: "content.structure.layers.preferences.files.model"

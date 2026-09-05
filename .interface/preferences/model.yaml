@@ -1,25 +1,47 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/model.yaml"
-  path_note: "The Preferences layer of the Model Component. It currently defines no Component-specific technical choices or defaults."
+  path_note: "The Preferences layer of the Model Component — common logical field defaults used only when a Model definition leaves them unstated."
+  purpose: "Default logical fields for Models that do not explicitly define or exclude them."
+  standard: "Agent Project Interface"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned and is read only when resolving Model preferences."
-  changed_by: "The human, directly"
-  precedence: "An explicit project value and every applicable Principle take precedence over this file."
-  consumption: "The empty content provides no Model defaults; consumers continue with the other applicable authorities."
+  rule: "This file is human-owned. Generation reads it and never writes resolved Model fields back into it."
+  changed_by: "The human, directly."
+  precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
+  consumption: "Generation applies these common fields only where the Model definition does not explicitly define, replace, or exclude them, then writes the resolved result into the generated Model configuration."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
-read_order: []
+read_order:
+  - "common_fields"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
-content_map: {}
+content_map:
+  common_fields: "Ordered logical field defaults available to every Model when its own definition leaves them unspecified."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
-content: {}
+content:
+
+  common_fields:
+    id:
+      type: "integer"
+      nullable: false
+      auto_increment: true
+      primary_key: true
+    name:
+      type: "string"
+      nullable: false
+      unique: true
+    status:
+      type: "boolean"
+      nullable: false
+      default: true
+    description:
+      type: "string"
+      nullable: true
