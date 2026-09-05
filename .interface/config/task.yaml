@@ -1,0 +1,99 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/config/task.yaml
+  path_note: 'Generated configuration of the Task Component — the resolved Task frame, the Task-state vocabulary, and one Plan per project phase. Shape: schema/task.yaml; rules: principles/task.md; the Task Preferences layer is empty'
+  standard: Agent Project Interface
+  schema_version: '5.0'
+  generated: '2026-09-06'
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: The configuring operation materializes task_schema, task_states, and one Plan shell per phase with empty groups; it never creates a Group or Task. The planning operation fills the groups of the one phase it was invoked for. The development operation changes only the status, blocker, and log of a Task it has claimed. Reset acts as its own fixed script defines
+  changed_by: The planning operation (Plan groups), the development operation (Task status, blocker, log), the reset operation, and the configuring operation (frame and empty shells only)
+  preservation: On re-configuring, an existing Plan whose groups are non-empty is preserved when its source phase is unchanged. Removing or changing a phase whose Plan holds Tasks is a critical conflict, reported and never applied silently
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+- task_schema
+- task_states
+- plans
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_schema: The resolved field frame every Task carries
+  task_states: The Task-status vocabulary and the derived readiness and completion conditions
+  plans: One Plan per project phase, keyed by phase id from definition.yaml
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- task_schema -->
+  task_schema:
+    rule: Every Task carries exactly these fields — no more, no fewer. blocker and log are structurally part of the frame but are absent until they first apply.
+    fields:
+      id: Identifier in the form <phase>-G<group>-T<n>, unique within its Plan and unambiguous across all Plans.
+      title: A concise statement of the one atomic action.
+      description: A complete explanation of what must be done.
+      reason: Why the Task is necessary.
+      target: The Component in which the Task performs its work — the phase target from definition.yaml.
+      area: The specific module, subsystem, or work area inside the target Component, such as one of its resolved layers.
+      execution_context:
+        kind: The nature of the work — code, configuration, documentation, data, or command execution.
+        language: The applicable programming or configuration language, or null when none applies.
+        technologies: The ordered technologies, frameworks, packages, protocols, or tools relevant to the Task, resolved from the target Component's configuration; empty when none apply.
+        instructions: Implementation guidance sufficient to perform this specific Task.
+        inputs: The information, artifacts, interfaces, or completed results the Task consumes; empty when none apply.
+        expected_output: The concrete artifact or observable result the Task must produce.
+      depends_on: The identifiers of Tasks whose completed outputs are prerequisites; empty when the Task is independent.
+      constraints: Task-specific restrictions and invariants the implementation must preserve; empty when none apply.
+      acceptance: The observable criterion that determines whether the intended result is correct.
+      verify: A runnable command or precise executable check, run from the target Component's verify_cwd, that proves acceptance.
+      touches: The explicit files, directories, or resources the Task inspects or modifies, relative to the target Component's code_path.
+      status: The current Task state, using the task_states vocabulary.
+      blocker: The identifier of the critical Blocker in state.yaml when the Task is blocked; absent otherwise.
+      log: The append-only Task-local progress history of dated entries; absent until the first recorded transition.
+    status_lives_here: The current status is stored on each Task, so Plans and State never drift apart.
+    history_lives_here_too: There is no separate history file. While a Task exists, how it reached its state is recorded in its own append-only log.
+
+  # <!-------------------------------------------- task_states -->
+  task_states:
+    path: The status field on each Task.
+    states:
+      todo: Defined and not yet started.
+      claimed: An executor has taken the Task and written the claim before starting work.
+      blocked: Work cannot safely continue; the Task's blocker field names the Blocker in state.yaml.
+      done: Acceptance is proven by a passing verify run.
+      cancelled: The Task will not be done and no other Task replaces it.
+      superseded: Another Task replaced this one; the log names the replacement.
+    derived_ready: A Task is ready when its phase is ready, its status is todo, and every Task in its depends_on is done. Ready is computed when needed and never stored.
+    phase_ready: A phase is ready for development when its Plan has at least one Group with at least one Task and every earlier phase is complete. Readiness is derived, never stored.
+    phase_complete: A phase is complete when its Plan is non-empty, every Task not cancelled or superseded is done, and no Task remains todo, claimed, or blocked. Completion is derived, never stored.
+
+  # <!-------------------------------------------- plans -->
+  plans:
+    P1:
+      id: P1
+      title: Database
+      order: 1
+      target: database
+      does: Implement the database, apply the defined model structure, and insert the defined initial data.
+      groups: {}
+    P2:
+      id: P2
+      title: Backend
+      order: 2
+      target: backend
+      does: Implement the backend layer, including its application logic and API for operating on the defined models.
+      groups: {}
+    P3:
+      id: P3
+      title: Frontend
+      order: 3
+      target: frontend
+      does: Implement the frontend based on the backend API.
+      groups: {}
