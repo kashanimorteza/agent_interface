@@ -58,10 +58,10 @@ content:
 
   # <!-------------------------------------------- active -->
   active:
-    mode: "planning"
+    mode: "development"
     phase: "P1"
-    mode_reason: "The human requested planning for phase P1 (Data Foundation, target database). The planning operation built and validated the P1 Plan and wrote it into task.yaml — 7 Groups and 45 Tasks, all todo; no Blocker or Open Question was raised."
-    set_by: "planning operation — acting on the human's planning request naming phase P1"
+    mode_reason: "The human requested development for phase P1 (Data Foundation, target database). The development operation claimed and completed all 45 Tasks of the P1 Plan inside database/; every Task was marked done only after its verify command passed, and its evidence is in the Task log. Phase P1 is complete: the storage schema, migrations, credential handling, generic operation pipeline, Database Interface, and initial data all verify end to end. No Blocker or Open Question was raised."
+    set_by: "development operation — acting on the human's development request naming phase P1"
     set_at: "2026-09-06"
 
   # <!-------------------------------------------- blockers -->
