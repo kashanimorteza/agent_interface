@@ -26,11 +26,11 @@ sections:
     fields:
       "<component>":
         required: true
-        purpose: "One selected technical component, keyed by the item type through which map.yaml resolves its Schema and generated configuration."
+        purpose: "One selected technical component, keyed by the item type through which interface.yaml resolves its Schema and generated configuration."
         fields:
           configuration:
             required: true
-            purpose: "The generated item-configuration file resolved through the current Interface map."
+            purpose: "The generated item-configuration file resolved through the current Interface root."
           responsibility:
             required: true
             purpose: "A one-sentence summary of the responsibility owned by this component's generated configuration."

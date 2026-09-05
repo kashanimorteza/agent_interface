@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 Create an implementation-ready plan for the project phase named in `$ARGUMENTS`.
 
-## Plan
+## Workflow
 
 Enter the workflow state required for this operation. Create or reconcile the smallest complete implementation-ready plan for the requested scope, validate it, and record the result. Use the current planning sources to determine its decomposition, dependencies, acceptance, verification, and preservation behavior.
 

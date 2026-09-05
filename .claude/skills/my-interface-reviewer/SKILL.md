@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 Review the implemented result for the project phase named in `$ARGUMENTS`.
 
-## Review
+## Workflow
 
 Enter the workflow state required for this operation. Inspect the requested scope, re-run required verification in its configured context, record the result, and ground every finding in an exact location or observable result.
 

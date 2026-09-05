@@ -40,7 +40,7 @@ sections:
           may_not_write:
             - "Any file under the code_path of the requested phase's target"
             - "The requested phase's id, title, order, target, or goal in config/definition.yaml"
-            - "map.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, and schema/"
+            - "interface.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, and schema/"
 
         development:
           purpose: "Implement the tasks that planning defined"
@@ -52,7 +52,7 @@ sections:
           may_not_write:
             - "A code_path not selected by the active phase's target in definition.yaml"
             - "task_schema, task_states, phase plan identity and structure, and every field of a task other than status, blocker, and log"
-            - "map.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, the item files, and schema/"
+            - "interface.yaml, .interface/config/definition.yaml, .interface/config/model.yaml, .interface/config/development.yaml, the item files, and schema/"
           plan_change: "Changing a task requires the reason written into that task's log and human approval"
 
         review:
@@ -107,7 +107,7 @@ sections:
           tier: "derived"
           holds: "The target of active.phase, resolved from the entry in definition.yaml content.phases whose id equals active.phase"
           writable_by: []
-          constraint: "Never stored. The active target is resolved fresh from active.phase in definition.yaml; its selected component in development.yaml and its item Policy, configuration, interfaces, verification context, and code_path are then resolved through the current Interface map."
+          constraint: "Never stored. The active target is resolved fresh from active.phase in definition.yaml; its selected component in development.yaml and its item Policy, configuration, interfaces, verification context, and code_path are then resolved through the current Interface root."
 
         active.mode_reason:
           tier: "agent_writable"
@@ -199,7 +199,7 @@ sections:
           - "The content of config/definition.yaml, outside a generation operation"
           - "The content of config/model.yaml, outside a generation operation"
           - ".interface/project.md and .interface/schema/ — inputs to the pipeline, never written by an agent"
-          - ".interface/map.yaml — the file and folder map of the Interface"
+          - ".interface/interface.yaml — the machine-readable entry point and technical definition of the Interface"
           - "The State Authority itself, after its seed — this section, and its default in schema/state.yaml"
           - "Asking for tasks to be created, and asking for development or planning to be reset project-wide"
 

@@ -1,11 +1,30 @@
 # Agent Interface Skill policy
 
-These are Claude-specific integration rules. They apply to every Agent Interface Skill and must not be duplicated inside the Interface.
+These are shared Claude execution rules for every Agent Interface Skill and must not be copied into individual Skills. The Interface may catalog Skill integration metadata, but that metadata neither defines nor overrides these rules.
 
 ## Protected foundation files
 
-- Agent Interface Skills must never modify the Interface Map, the mapped human README, or the mapped human project definition.
+- Agent Interface Skills must never modify the Interface root, the referenced human README, or the referenced human project definition.
 - These foundation files are human-owned. When an operation determines that one of them should change, it reports the required change to the human and leaves the file untouched.
+
+## Understanding
+
+- Keep **Interface Understanding** and **Project Understanding** distinct.
+- Interface Understanding explains what Agent Project Interface is, how its Structure and Behaviours work, and how the active Skill relates to them. Build it from the current Interface root and the referenced Interface README.
+- Project Understanding explains the particular project being built. Build it from the referenced human project definition and the current referenced generated configuration required by the active Skill.
+- The human project definition is the source of project intent. Generated configuration is its structured operational Understanding; it may be absent or incomplete before generation and may be reconciled by the authorized generation operation.
+- Never treat Interface documentation as project requirements or project content as a definition of the Interface itself.
+
+## Shared Skill workflow
+
+For every Agent Interface Skill except the fixed clear and reset operations:
+
+1. Build current Interface Understanding and locate the active Skill's role in it.
+2. Build the Project Understanding required for that role.
+3. Execute the specialized `Workflow` in the active Skill.
+4. Validate and report the result as required by the current authorities.
+
+The clear and reset operations skip both forms of Understanding and execute only their fixed local Workflows.
 
 ## Operation bindings
 
@@ -18,7 +37,7 @@ These are Claude-specific integration rules. They apply to every Agent Interface
 - `my-interface-skill-installer` is a supporting Claude operation and receives no Interface write authority.
 - Except for the self-contained clear and reset operations, a binding grants only the authority that the live Interface assigns to its generic operation. It never expands permissions, scope, interfaces, or modes.
 - The clear operation receives no authority from the Interface, its map, or its State. Its sole authority is the human's explicit confirmation after the Skill previews its fixed deletion targets, and its scope is exactly the fixed workflow implemented by that Skill and its bundled script.
-- The reset operation receives no authority from the Interface map and performs no discovery. Its sole authority is the human's explicit confirmation after the Skill previews one fixed reset stage, and its scope is exactly the fixed workflow implemented by that Skill and its bundled script.
+- The reset operation receives no authority from the Interface root and performs no discovery. Its sole authority is the human's explicit confirmation after the Skill previews one fixed reset stage, and its scope is exactly the fixed workflow implemented by that Skill and its bundled script.
 
 ## Decision policy
 

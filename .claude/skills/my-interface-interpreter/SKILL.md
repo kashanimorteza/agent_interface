@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Convert the mapped human project definition into the generated project Understanding consumed by downstream operations.
 
-## Interpret
+## Workflow
 
 Transform the mapped project facts into every generated configuration required by the current Interface.
 

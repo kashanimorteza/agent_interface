@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/map.yaml"
+  path: ".interface/interface.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
-  responsibility: "Machine-readable technical README and file map for the Agent Project Interface"
+  responsibility: "Machine-readable technical definition and entry point for the Agent Project Interface"
   standard: "Agent Project Interface"
   version: "7.0"
   updated: "2026-09-05"
@@ -14,19 +14,23 @@ policy:
   rule: "This file introduces and maps the Interface. No operation edits it, and every other file carries its own write policy"
   changed_by: "The human, directly"
   on_change_needed: "Raise an open question through the mapped State configuration; never change this file autonomously"
-  state_authority: "The mapped live State configuration owns workflow authority. Its mapped Schema supplies only the initial seed; this Map locates both and owns neither"
+  state_authority: "The mapped live State configuration owns workflow authority. Its mapped Schema supplies only the initial seed; this Interface root locates both and owns neither"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "interface"
   - "structure"
+  - "agent_skills"
+  - "workflow"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   interface: "The purpose and concept of the Agent Project Interface"
   structure: "The Foundational Files, Layers, Components, Behaviours, and Generated Configuration that form the Interface"
+  agent_skills: "External Agent Skills available to execute Interface Behaviours and supporting operations"
+  workflow: "The ordered human-facing path for using the Interface"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -37,7 +41,7 @@ content:
     description: "An independent interface between Developers and AI Agents for establishing a common protocol, structure, and standard for software development"
     overview: "The Developer describes a project in human language; the Interface turns that definition into structured project Understanding that Agents can interpret, plan against, and develop"
     concept: "Human project definitions are flexible, while Agents work more reliably with explicit and predictable information. Agent Project Interface is the communication layer between those two forms"
-    agent_independence: "The Interface is independent of any specific AI model, Agent, or external execution capability"
+    agent_independence: "The core Interface Structure is independent of any specific AI model, Agent, or external execution capability; available integrations are cataloged separately"
 
   # <!-------------------------------------------- structure -->
   structure:
@@ -45,9 +49,9 @@ content:
     # <!---------------------- foundations -->
     foundations:
 
-      map:
-        path: ".interface/map.yaml"
-        responsibility: "Entry point, technical README, and map of the Agent Project Interface"
+      interface:
+        path: ".interface/interface.yaml"
+        responsibility: "Entry point and machine-readable technical definition of the Agent Project Interface"
 
       project:
         path: ".interface/project.md"
@@ -56,6 +60,12 @@ content:
       readme:
         path: ".interface/readme.md"
         responsibility: "Human-readable introduction to the Interface, its Structure, Agent Skills, and Workflow"
+
+    # <!---------------------- layer_matrix -->
+    layer_matrix:
+      rule: "Every Component has one stable file in each descriptive Layer, whether or not that Layer currently defines Component-specific content"
+      empty_file: "An empty Layer file means that the Component has no content specific to that Layer; consumers ignore it and continue with the other applicable authorities"
+      stability: "Adding content to an existing Layer file never requires changing this Interface root; only adding, removing, or renaming a Component or structural path does"
 
     # <!---------------------- layers -->
     layers:
@@ -69,6 +79,10 @@ content:
           definition:
             path: "definition.md"
             responsibility: "What belongs to project Definition and why phases are the units of work"
+
+          model:
+            path: "model.md"
+            responsibility: "Component-specific Model philosophy, responsibilities, and boundaries when defined"
 
           development:
             path: "development.md"
@@ -100,6 +114,26 @@ content:
         answers: "With what"
 
         files:
+          definition:
+            path: "definition.yaml"
+            responsibility: "Component-specific Definition technical choices and defaults when defined"
+
+          model:
+            path: "model.yaml"
+            responsibility: "Component-specific Model technical choices and defaults when defined"
+
+          development:
+            path: "development.yaml"
+            responsibility: "Component-specific Development technical choices and defaults when defined"
+
+          state:
+            path: "state.yaml"
+            responsibility: "Component-specific State technical choices and defaults when defined"
+
+          task:
+            path: "task.yaml"
+            responsibility: "Component-specific Task technical choices and defaults when defined"
+
           backend:
             path: "backend.yaml"
             responsibility: "Supported backend languages, API frameworks, model operations, packages, versions, and capability defaults"
@@ -161,12 +195,15 @@ content:
         responsibility: "Structured project identity, intended outcomes, and ordered phases"
         resources:
           principle: "content.structure.layers.principles.files.definition"
+          preference: "content.structure.layers.preferences.files.definition"
           schema: "content.structure.layers.schemas.files.definition"
           config: "content.structure.generated_configuration.files.definition"
 
       model:
         responsibility: "Shared domain Models, fields, relationships, rules, and initial data"
         resources:
+          principle: "content.structure.layers.principles.files.model"
+          preference: "content.structure.layers.preferences.files.model"
           schema: "content.structure.layers.schemas.files.model"
           config: "content.structure.generated_configuration.files.model"
 
@@ -174,6 +211,7 @@ content:
         responsibility: "Technical Component selection, connections, runtime, and deployment"
         resources:
           principle: "content.structure.layers.principles.files.development"
+          preference: "content.structure.layers.preferences.files.development"
           schema: "content.structure.layers.schemas.files.development"
           config: "content.structure.generated_configuration.files.development"
 
@@ -181,6 +219,7 @@ content:
         responsibility: "Current Workflow State, working modes, and transition authority"
         resources:
           principle: "content.structure.layers.principles.files.state"
+          preference: "content.structure.layers.preferences.files.state"
           schema: "content.structure.layers.schemas.files.state"
           config: "content.structure.generated_configuration.files.state"
 
@@ -188,6 +227,7 @@ content:
         responsibility: "Plans, Groups, Tasks, progress, and Task history"
         resources:
           principle: "content.structure.layers.principles.files.task"
+          preference: "content.structure.layers.preferences.files.task"
           schema: "content.structure.layers.schemas.files.task"
           config: "content.structure.generated_configuration.files.task"
 
@@ -279,3 +319,84 @@ content:
         database:
           path: "database.yaml"
           responsibility: "Resolved Database configuration and generic data-access interface"
+
+
+  # <!-------------------------------------------- agent_skills -->
+  agent_skills:
+    responsibility: "External capabilities that execute Interface Behaviours or supporting operations without defining the Interface Structure"
+
+    items:
+      interpreter:
+        name: "my-interface-interpreter"
+        path: ".claude/skills/my-interface-interpreter/SKILL.md"
+        invocation: "/my-interface-interpreter"
+        responsibility: "Transform the human project definition into generated Project Understanding and reconcile it when the definition changes"
+        behaviour: "content.structure.behaviours.interpretation"
+
+      tasker:
+        name: "my-interface-tasker"
+        path: ".claude/skills/my-interface-tasker/SKILL.md"
+        invocation: "/my-interface-tasker <phase-id>"
+        responsibility: "Create or reconcile an implementation-ready plan for one requested project phase"
+        behaviour: "content.structure.behaviours.planning"
+
+      developer:
+        name: "my-interface-developer"
+        path: ".claude/skills/my-interface-developer/SKILL.md"
+        invocation: "/my-interface-developer <phase-id>"
+        responsibility: "Implement and verify eligible planned Tasks for one requested project phase"
+        behaviour: "content.structure.behaviours.development"
+
+      reviewer:
+        name: "my-interface-reviewer"
+        path: ".claude/skills/my-interface-reviewer/SKILL.md"
+        invocation: "/my-interface-reviewer <phase-id>"
+        responsibility: "Review an implemented project phase and report evidence-based findings without repairing it"
+
+      clear:
+        name: "my-interface-clear"
+        path: ".claude/skills/my-interface-clear/SKILL.md"
+        invocation: "/my-interface-clear"
+        responsibility: "Preview and clear the fixed generated Interface configuration and project directories after human confirmation"
+
+      reset:
+        name: "my-interface-reset"
+        path: ".claude/skills/my-interface-reset/SKILL.md"
+        invocation: "/my-interface-reset <planning|development>"
+        responsibility: "Preview and reset planning output or developed code through a fixed reset stage after human confirmation"
+
+      skill_installer:
+        name: "my-interface-skill-installer"
+        path: ".claude/skills/my-interface-skill-installer/SKILL.md"
+        invocation: "/my-interface-skill-installer"
+        responsibility: "Discover and install compatible Agent Skills for technologies detected in the configured project"
+
+
+  # <!-------------------------------------------- workflow -->
+  workflow:
+    responsibility: "Ordered steps for defining, interpreting, planning, and developing a project through Agent Project Interface"
+
+    steps:
+      define_project:
+        order: 1
+        title: "Define the Project"
+        actor: "Developer"
+        action: "Define the project, its Models, and its ordered phases"
+        writes: "content.structure.foundations.project"
+
+      interpret_project:
+        order: 2
+        title: "Interpret the Project"
+        skill: "content.agent_skills.items.interpreter"
+
+      generate_tasks:
+        order: 3
+        title: "Generate Tasks"
+        skill: "content.agent_skills.items.tasker"
+        argument: "phase-id"
+
+      develop_tasks:
+        order: 4
+        title: "Develop the Tasks"
+        skill: "content.agent_skills.items.developer"
+        argument: "phase-id"

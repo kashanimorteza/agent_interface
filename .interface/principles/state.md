@@ -18,7 +18,7 @@ State contains the fixed working-mode definitions, the project-wide runtime stat
 
 `state.yaml` is the source of truth for the State. Its own `content.state_authority` section is the live authority: the working modes, every field, its owner, the allowed transitions, and which authorized operation may perform each.
 
-The Schema defines only the shape of that section and the default that is seeded into every newly created `state.yaml`. Once the file exists, the live copy governs and the Schema default is not consulted at runtime. `map.yaml` locates the State files and does not define or own their modes or authority.
+The Schema defines only the shape of that section and the default that is seeded into every newly created `state.yaml`. Once the file exists, the live copy governs and the Schema default is not consulted at runtime. `interface.yaml` locates the State files and does not define or own their modes or authority.
 
 <br>
 

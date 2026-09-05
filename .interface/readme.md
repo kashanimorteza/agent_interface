@@ -37,7 +37,7 @@ Agent Skills and Workflow use this structure, but they are not part of it.
 
 ### Foundational Files
 
-- **`map.yaml`** — The entry point and map of the Interface. It locates the current files and explains their responsibilities.
+- **`interface.yaml`** — The machine-readable entry point and technical definition of the Interface. It locates the current files and explains their responsibilities.
 - **`project.md`** — The human-managed definition of the project being built.
 - **`readme.md`** — The human-readable introduction to Agent Interface, its structure, Agent Skills, and Workflow.
 
@@ -49,7 +49,7 @@ The three layers describe each component from a different point of view:
 - **Preferences** (`preferences/`) — Supported technical choices and defaults used when the project leaves a choice unstated. Preferences explain *with what* a component is commonly realized. An explicit project choice always wins.
 - **Schemas** (`schema/`) — The shape and validation rules of generated files. Schemas explain *in what form* the resolved information is written.
 
-Not every component needs all three layers. A component has only the Principle, Preference, or Schema files that are meaningful for it. There is no global Preferences file.
+Every component has one stable file in each of the three layers. A layer file may be empty when that component has no layer-specific content; consumers ignore the empty file and continue with the other applicable sources. Adding content to an existing layer file does not require changing `interface.yaml`. There is no global Preferences file.
 
 ### Components
 
@@ -66,7 +66,7 @@ Components are the subjects described through the layers:
 | **Frontend** | User interface and access to application data through the backend API |
 | **Database** | Persistence, storage mapping, migrations, and the generic data-access interface |
 
-For example, understanding the Backend component means combining its Principle, its optional technical Preferences, and its Schema. The same reading model applies to every component, using only the layers that component owns.
+For example, understanding the Backend component means combining its Principle, Preferences, and Schema. The same reading model applies to every component, with empty layer files contributing no additional information.
 
 ### Behaviours
 

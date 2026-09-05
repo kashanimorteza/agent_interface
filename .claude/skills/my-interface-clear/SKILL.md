@@ -6,7 +6,9 @@ disable-model-invocation: true
 
 # Clear the project
 
-Run the bundled `scripts/clear.py` from the project root. Do not read the Interface map, project definition, configuration, Schema, Principles, or Preferences.
+## Workflow
+
+Run the bundled `scripts/clear.py` from the project root. Do not read the Interface root, project definition, configuration, Schema, Principles, or Preferences.
 
 The targets are fixed constants:
 

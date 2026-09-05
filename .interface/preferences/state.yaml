@@ -1,0 +1,25 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/preferences/state.yaml"
+  path_note: "The Preferences layer of the State Component. It currently defines no Component-specific technical choices or defaults."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned and is read only when resolving State preferences."
+  changed_by: "The human, directly"
+  precedence: "An explicit project value and every applicable Principle take precedence over this file."
+  consumption: "The empty content provides no State defaults; consumers continue with the other applicable authorities."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: []
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map: {}
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content: {}

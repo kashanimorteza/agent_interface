@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 Execute the unfinished eligible work for the project phase named in `$ARGUMENTS`.
 
-## Develop
+## Workflow
 
 Enter the workflow state required for this operation. Select eligible unfinished work, claim it, implement it, verify it, and record its actual outcome.
 

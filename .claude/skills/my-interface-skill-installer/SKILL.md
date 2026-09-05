@@ -8,7 +8,9 @@ disable-model-invocation: true
 
 Install compatible AI Agent Skills for technologies found in the configured target project. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
 
-## Detect
+## Workflow
+
+### Detect
 
 On every run, detect eligible technologies from the current generated configuration and from dependency manifests, lockfiles, runtime-version files, and framework configuration inside the target-project locations.
 
@@ -16,7 +18,7 @@ Check project and personal Skills currently visible to Claude Code, then inspect
 
 Detection is read-only. A part's inactive phase does not make a technology absent and is not a reason to skip matching it.
 
-## Match and install
+### Match and install
 
 For each detected technology:
 

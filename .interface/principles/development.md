@@ -24,7 +24,7 @@ The development schema describes a general technical-development layer and conta
 
 ## 3. Components are selected, not assumed
 
-Components are selected dynamically from the item types currently mapped by `map.yaml`. Every target named by a project phase must resolve to a selected component; additional components are selected only when the project Understanding requires them. The existence of an item schema does not by itself add that component to the project.
+Components are selected dynamically from the item types currently referenced by `interface.yaml`. Every target named by a project phase must resolve to a selected component; additional components are selected only when the project Understanding requires them. The existence of an item schema does not by itself add that component to the project.
 
 <br>
 
