@@ -25,14 +25,14 @@ When an operation determines that one of these files should change, it reports t
 
 ## Shared Skill workflow
 
-For every Agent Interface Skill except the fixed clear and reset operations:
+For every Agent Interface Skill except the fixed reset operation:
 
 1. Build current Interface Understanding and locate the active Skill's role in it.
 2. Build the Project Understanding required for that role.
 3. Execute the specialized `Workflow` in the active Skill.
 4. Validate and report the result as required by the current authorities.
 
-The clear and reset operations skip both forms of Understanding and execute only their fixed local Workflows.
+The reset operation skips both forms of Understanding and executes only its fixed local Workflow.
 
 ## Operation bindings
 
@@ -40,11 +40,9 @@ The clear and reset operations skip both forms of Understanding and execute only
 - `my-interface-tasker` performs the generic planning operation.
 - `my-interface-developer` performs the generic development operation.
 - `my-interface-reviewer` performs the generic review operation.
-- `my-interface-clear` performs the generic clear operation.
 - `my-interface-reset` performs the generic reset operation.
 - `my-interface-skill-installer` is a supporting Claude operation and receives no Interface write authority.
-- Except for the self-contained clear and reset operations, a binding grants only the authority that the live Interface assigns to its generic operation. It never expands permissions, scope, interfaces, or modes.
-- The clear operation receives no authority from the Interface, its map, or its State. Its sole authority is the human's explicit confirmation after the Skill previews its fixed deletion targets, and its scope is exactly the fixed workflow implemented by that Skill and its bundled script.
+- Except for the self-contained reset operation, a binding grants only the authority that the live Interface assigns to its generic operation. It never expands permissions, scope, interfaces, or modes.
 - The reset operation receives no authority from the Interface root and performs no discovery. Its sole authority is the human's explicit confirmation after the Skill previews one fixed reset stage, and its scope is exactly the fixed workflow implemented by that Skill and its bundled script.
 
 ## Decision policy

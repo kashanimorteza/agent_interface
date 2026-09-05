@@ -110,10 +110,6 @@ Implements and verifies eligible planned Tasks for one requested project phase w
 
 Reviews the implemented result for one requested project phase and reports evidence-based findings without repairing it.
 
-### `my-interface-clear`
-
-Clears generated Interface configuration and the fixed generated project directories through its bundled script.
-
 ### `my-interface-reset`
 
 Run `/my-interface-reset <1|2|3>`: `1 = interpreter`, `2 = task`, `3 = develop`. Every stage removes the root `backend/`, `frontend/`, `database/`, and `developer/` output directories when present, after preview and confirmation. `1` also clears all entries inside `config/`. `2` clears Groups and Tasks while preserving phase Plan shells and returns active State to `not set`. `3` preserves Tasks and their history, returns every Task to `todo`, and returns active State to `planning`. Both `2` and `3` set the active phase to null.

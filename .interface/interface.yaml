@@ -373,12 +373,6 @@ content:
         invocation: "/my-interface-reviewer <phase-id>"
         responsibility: "Review an implemented project phase and report evidence-based findings without repairing it"
 
-      clear:
-        name: "my-interface-clear"
-        path: ".claude/skills/my-interface-clear/SKILL.md"
-        invocation: "/my-interface-clear"
-        responsibility: "Preview and clear the fixed generated Interface configuration and project directories after human confirmation"
-
       reset:
         name: "my-interface-reset"
         path: ".claude/skills/my-interface-reset/SKILL.md"
