@@ -69,11 +69,11 @@ Every Task has a concrete acceptance criterion and a runnable verification metho
 
 <br>
 
-## 8. Task progress and workflow authority remain separate
+## 8. Task progress and Workflow State remain separate
 
-The Task Component owns Plans, Groups, Task content, Task status, blockers, and Task-local history. The State Component owns the workflow authority that decides when and under which conditions those values may change.
+The Task Component owns Plans, Groups, Task content, Task status, a Task's reference to any Blocker, and Task-local history. The State Component records the active Workflow position and owns the shared records for critical Blockers and Open Questions.
 
-An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists. Planning, development, reconciliation, and reset operations may change only the portions authorized by the current State.
+An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists. Each operation may change only the portions owned by its own contract; the current State mode records the operation but does not grant or deny that permission.
 
 <br>
 

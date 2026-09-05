@@ -1,22 +1,16 @@
 schema:
   id: agent-interface-frontend
   version: "6.0"
-  purpose: "The shape of frontend.yaml — every parameter an agent reads to understand the frontend project"
-  principles: ".interface/principles/frontend.md"
-  preferences: ".interface/preferences/frontend.yaml"
-  layering: "This file defines shape only. The mandatory rules of this item live in its principles document; the supported technical choices used when project.md is silent live in its preferences file. Neither is restated here."
+  purpose: "The shape of the generated Frontend configuration"
 
 structure:
   - code_path
   - code_path_note
   - summary
-  - needs_test
   - verify_cwd
   - responsibility
   - tech
   - standards
-  - capabilities
-  - code_layout
   - interfaces
   - boundaries
   - out_of_scope
@@ -26,37 +20,32 @@ sections:
   # <!--------------------------------------------------------------------------------- Code_Path -->
   code_path:
     required: true
-    purpose: "The folder holding the frontend's actual code — the one place this item may write."
+    purpose: "The project-relative folder containing Frontend implementation artifacts."
 
   # <!--------------------------------------------------------------------------------- Code_Path_Note -->
   code_path_note:
     required: true
-    purpose: "Explains what code_path is relative to, so it is never read as a path inside the interface."
+    purpose: "Explains what code_path is relative to."
 
   # <!--------------------------------------------------------------------------------- Summary -->
   summary:
     required: true
-    purpose: "The frontend in one line — read before any of its settings."
-
-  # <!--------------------------------------------------------------------------------- Needs_Test -->
-  needs_test:
-    required: true
-    purpose: "Whether every task that produces code is proven by a written test in tests/ — true means a task's verify is that test run; set by the human."
+    purpose: "A one-line summary of Frontend."
 
   # <!--------------------------------------------------------------------------------- Verify_Cwd -->
   verify_cwd:
     required: true
-    purpose: "The directory every verify command runs from, and the environment it runs inside — for the frontend, always inside its virtual environment."
+    purpose: "The resolved working directory and environment for Frontend verification commands."
 
   # <!--------------------------------------------------------------------------------- Responsibility -->
   responsibility:
     required: true
-    purpose: "What the frontend is answerable for — one sentence, wider than summary and narrower than the product."
+    purpose: "The resolved responsibilities of Frontend."
 
   # <!--------------------------------------------------------------------------------- Tech -->
   tech:
     required: true
-    purpose: "What the frontend is built with — the resolved choices an agent follows and never re-decides."
+    purpose: "The resolved language, library, framework, package manager, and run command used by Frontend."
     fields:
       language:
         required: true
@@ -90,7 +79,7 @@ sections:
             purpose: "The framework version."
       package_manager:
         required: true
-        purpose: "The only tool through which frontend dependencies are installed and commands are run."
+        purpose: "The resolved Frontend package manager."
         fields:
           name:
             required: true
@@ -114,55 +103,37 @@ sections:
         required: true
         purpose: "The resolved component declaration style."
 
-  # <!--------------------------------------------------------------------------------- Capabilities -->
-  capabilities:
-    required: true
-    purpose: "The resolved state of optional frontend capabilities; testing has its own switch in needs_test."
-    fields:
-      logging:
-        required: true
-        purpose: "Whether frontend application logging is configured."
-        fields:
-          enabled:
-            required: true
-            purpose: "The resolved logging switch."
-
-  # <!--------------------------------------------------------------------------------- Code_Layout -->
-  code_layout:
-    required: true
-    purpose: "Every path inside code_path and what it holds — the key is the path, the value is its responsibility in one line; a folder ends with a slash, a file carries its extension. Entry point, framework configuration, pages, components, client integration, styles, and tests each have their own place. Backend and database files never appear here."
-
   # <!--------------------------------------------------------------------------------- Interfaces -->
   interfaces:
     required: true
-    purpose: "The frontend's item relationships — the implemented backend HTTP interface it consumes and anything it explicitly publishes."
+    purpose: "The resolved interfaces Frontend provides and consumes."
     fields:
       provides:
         required: true
-        purpose: "The interface the frontend explicitly publishes to another item, or none."
+        purpose: "The interface Frontend publishes, or none."
       uses:
         required: true
-        purpose: "The implemented backend HTTP API and framework-generated machine-readable description the frontend consumes."
+        purpose: "The interface consumed by Frontend."
       rule:
         required: true
-        purpose: "The frontend follows the backend's implemented interface as described by its generated API description; it does not depend on endpoint definitions stored in Interface Config."
+        purpose: "The resolved rule governing Frontend interface use."
 
   # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:
     required: true
-    purpose: "The limits of the frontend."
+    purpose: "The resolved ownership boundaries of Frontend."
     fields:
       owns:
         required: true
-        purpose: "What belongs to the frontend — its pages, components, browser-side behavior, and client integration with the implemented backend HTTP API."
+        purpose: "The responsibilities owned by Frontend."
       does_not_own:
         required: true
-        purpose: "What is explicitly not the frontend's, including backend behavior and every part of the database item."
+        purpose: "Responsibilities explicitly outside Frontend."
       interface:
         required: true
-        purpose: "The only interface the frontend offers outside its own boundary."
+        purpose: "The interface Frontend exposes outside its boundary."
 
   # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
   out_of_scope:
     required: true
-    purpose: "What the frontend does not do — named so it is never inferred into a task."
+    purpose: "Resolved work explicitly outside Frontend."

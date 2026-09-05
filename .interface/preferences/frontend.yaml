@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/frontend.yaml"
-  path_note: "The Preferences layer of the frontend item — the supported technical choices used only when project.md leaves a frontend choice unstated. Sits beside principles/frontend.md (the mandatory rules) and schema/frontend.yaml (the shape of config/frontend.yaml)"
+  path_note: "The Preferences layer of the Frontend Component — supported technical choices and defaults used when a Frontend choice is unstated."
   standard: "Agent Project Interface"
   version: "1.1"
   updated: "2026-09-04"
@@ -11,9 +11,11 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. No mode edits it; an agent reads it during generation and never writes a resolved value back into it"
-  changed_by: "The human, directly. A preference an agent believes is missing or wrong is raised as an open question in config/state.yaml"
-  precedence: "An explicit project value always wins over every value here. A preference never overrides a principle in principles/frontend.md — it only fills a choice the principles leave open"
-  consumption: "The generation operation resolves each unstated choice from this file and writes the concrete result into config/frontend.yaml. Downstream operations read that resolved configuration and never reinterpret this file. The token latest is resolved to a concrete version and never appears in generated config"
+  changed_by: "The human, directly. A missing critical technical choice is raised through State."
+  precedence: "An explicit project value and every applicable Frontend Principle take precedence over this file."
+  consumption: "Generation resolves each unstated Frontend choice from this file and records the concrete result in generated Frontend configuration. Downstream operations consume that resolved result."
+  selection: "Prefer a supported profile. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Frontend stack; latest never appears in generated configuration."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -23,17 +25,15 @@ read_order:
   - "libraries"
   - "frameworks"
   - "package_managers"
-  - "capabilities"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "The item-level defaults — code path, test switch, responsibility, and the language, library, framework, and package manager selected when the project names none"
+  defaults: "The Component-level defaults — code path, language, library, framework, and package manager used when those choices are unstated"
   languages: "One entry per supported language — version and naming conventions"
   libraries: "One entry per supported UI library — version and component style"
   frameworks: "One entry per supported application framework — version, router, and run command"
   package_managers: "One entry per supported package manager and its version"
-  capabilities: "The default on/off state of optional frontend capabilities"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -41,8 +41,6 @@ content:
 
   defaults:
     code_path: "frontend/"
-    needs_test: false
-    responsibility: "Provides the user interface and consumes the backend's implemented HTTP API."
     language: "TypeScript"
     library: "React"
     framework: "Next.js"
@@ -70,8 +68,3 @@ content:
   package_managers:
     npm:
       version: "latest"
-  capabilities:
-    testing:
-      default_enabled: false
-    logging:
-      default_enabled: false

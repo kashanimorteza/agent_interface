@@ -1,14 +1,13 @@
 schema:
   id: agent-interface-development
-  version: "3.0"
+  version: "4.0"
   purpose: "The shape of a Development configuration: independent application layers, their connections, and the Platform that runs and deploys them"
-  principles: ".interface/principles/development.md"
-  layering: "This file defines shape only. Development philosophy and boundaries belong to its Principles, while supported technical defaults belong to its Preferences."
 
 structure:
   - summary
   - layers
   - connections
+  - cross_cutting
   - platform
 
 sections:
@@ -64,6 +63,25 @@ sections:
           description:
             required: true
             purpose: "A concise explanation of the connection."
+
+  # <!--------------------------------------------------------------------------------- Cross_Cutting -->
+  cross_cutting:
+    required: true
+    purpose: "The resolved capabilities coordinated across application layers."
+    fields:
+      "<capability>":
+        required: false
+        purpose: "One cross-cutting capability."
+        fields:
+          enabled:
+            required: true
+            purpose: "Whether the capability is enabled."
+          applies_to:
+            required: true
+            purpose: "The application layers affected by the capability; empty when disabled."
+          settings:
+            required: false
+            purpose: "Resolved capability-specific settings, omitted when none apply."
 
   # <!--------------------------------------------------------------------------------- Platform -->
   platform:

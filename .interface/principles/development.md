@@ -51,3 +51,11 @@ Internal technologies, packages, source layout, domain data, API implementation,
 ## 6. The architecture remains project-independent
 
 Development defines a reusable layered standard. Project-specific choices populate that standard but never change its separation of ownership, interface-only communication, explicit connections, or Platform responsibility.
+
+<br>
+
+## 7. Cross-cutting capabilities are coordinated by Development
+
+Capabilities that may affect more than one application layer are coordinated by Development rather than owned as an isolated default by Backend, Frontend, or Database. Examples include testing, logging, error handling, and authentication.
+
+Development records whether each capability is enabled, which layers it applies to, and the shared integration expectations that keep those layers compatible. Each affected layer still owns its internal implementation and consumes the capability through an explicit boundary.

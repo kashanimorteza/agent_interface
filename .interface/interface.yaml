@@ -14,7 +14,7 @@ policy:
   rule: "This file introduces and maps the Interface. No operation edits it, and every other file carries its own write policy"
   changed_by: "The human, directly"
   on_change_needed: "Raise an open question through the mapped State configuration; never change this file autonomously"
-  state_authority: "The mapped live State configuration owns workflow authority. Its mapped Schema supplies only the initial seed; this Interface root locates both and owns neither"
+  state_boundary: "The State Component records live Workflow position. Its Principle defines State behaviour and its generated configuration holds current values; this Interface root only locates them"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -86,19 +86,19 @@ content:
 
           development:
             path: "development.md"
-            responsibility: "Layered application architecture, interface-only communication, explicit connections, and Platform composition"
+            responsibility: "Layered application architecture, interface-only communication, explicit connections, Platform composition, and cross-cutting capability coordination"
 
           state:
             path: "state.md"
-            responsibility: "Working modes, runtime State, live authority, and default seeding"
+            responsibility: "Repeatable Workflow modes, live State boundaries, critical Blockers, Open Questions, and provenance"
 
           task:
             path: "task.md"
-            responsibility: "Phase Plans, coherent Groups, atomic self-contained Tasks, verifiable completion, and separation from workflow authority"
+            responsibility: "Phase Plans, coherent Groups, atomic self-contained Tasks, verifiable completion, and separation of Task progress from Workflow State"
 
           backend:
             path: "backend.md"
-            responsibility: "Backend boundaries, database-interface use, model API resolution, credentials, packages, and versions"
+            responsibility: "Layered Backend boundaries, application and Model Logic, Data Access, API communication, documentation, and credential handling"
 
           frontend:
             path: "frontend.md"
@@ -124,7 +124,7 @@ content:
 
           development:
             path: "development.yaml"
-            responsibility: "Component-specific Development technical choices and defaults when defined"
+            responsibility: "Defaults for capabilities coordinated across application layers"
 
           state:
             path: "state.yaml"
@@ -136,11 +136,11 @@ content:
 
           backend:
             path: "backend.yaml"
-            responsibility: "Supported backend languages, API frameworks, model operations, packages, versions, and capability defaults"
+            responsibility: "Supported Backend languages and layer-specific Logic, Data Access, API framework, transport, documentation, and Model-operation defaults"
 
           frontend:
             path: "frontend.yaml"
-            responsibility: "Supported frontend languages, libraries, frameworks, package managers, versions, and capability defaults"
+            responsibility: "Supported Frontend languages, libraries, frameworks, package managers, and versions"
 
           database:
             path: "database.yaml"
@@ -166,11 +166,11 @@ content:
 
           development:
             path: "development.yaml"
-            responsibility: "Shape of the project's application layers, connections, and Platform configuration"
+            responsibility: "Shape of application layers, connections, cross-cutting capabilities, and Platform configuration"
 
           state:
             path: "state.yaml"
-            responsibility: "Shape of the State configuration and its initial working modes and State Authority seed"
+            responsibility: "Shape of Workflow modes, active State, critical Blockers, and Open Questions"
 
           task:
             path: "task.yaml"
@@ -208,7 +208,7 @@ content:
           config: "content.structure.generated_configuration.files.model"
 
       development:
-        responsibility: "Independent application layers, their declared-interface connections, and the Platform that runs and deploys them"
+        responsibility: "Independent application layers, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them"
         resources:
           principle: "content.structure.layers.principles.files.development"
           preference: "content.structure.layers.preferences.files.development"
@@ -216,7 +216,7 @@ content:
           config: "content.structure.generated_configuration.files.development"
 
       state:
-        responsibility: "Current Workflow State, working modes, and transition authority"
+        responsibility: "Current Workflow position, repeatable working modes, critical Blockers, and Open Questions"
         resources:
           principle: "content.structure.layers.principles.files.state"
           preference: "content.structure.layers.preferences.files.state"
@@ -232,7 +232,7 @@ content:
           config: "content.structure.generated_configuration.files.task"
 
       backend:
-        responsibility: "Application behaviour and the HTTP API"
+        responsibility: "Application and Model Logic, Database access through Data Access, and the external API"
         resources:
           principle: "content.structure.layers.principles.files.backend"
           preference: "content.structure.layers.preferences.files.backend"
@@ -305,11 +305,11 @@ content:
 
         development:
           path: "development.yaml"
-          responsibility: "Application layers, declared-interface connections, and the Platform environment, composition, and deployment"
+          responsibility: "Application layers, declared-interface connections, cross-cutting capabilities, and the Platform environment, composition, and deployment"
 
         state:
           path: "state.yaml"
-          responsibility: "Current Workflow modes, State, and live transition authority"
+          responsibility: "Available Workflow modes, current active State, critical Blockers, and Open Questions"
 
         task:
           path: "task.yaml"
@@ -317,7 +317,7 @@ content:
 
         backend:
           path: "backend.yaml"
-          responsibility: "Resolved Backend project configuration"
+          responsibility: "Backend-wide technology and resolved Logic, Data Access, and API layer configuration"
 
         frontend:
           path: "frontend.yaml"

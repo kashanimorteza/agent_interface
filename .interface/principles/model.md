@@ -28,7 +28,7 @@ A technical Component may add implementation detail needed within its own bounda
 
 ## 3. Fields express domain data
 
-Fields describe the information carried by a Model. Their logical type, identity, uniqueness, optionality, default behaviour, and meaning may be expressed when applicable.
+Fields describe the information carried by a Model. Their logical type, identity, uniqueness, optionality, default behaviour, credential nature, and meaning may be expressed when applicable.
 
 Field definitions remain independent of a particular programming language, storage engine, API framework, or user-interface technology. Physical columns, transport formats, widgets, and framework-specific declarations belong to their respective Components.
 

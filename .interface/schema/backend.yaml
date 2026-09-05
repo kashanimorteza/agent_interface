@@ -1,226 +1,274 @@
 schema:
   id: agent-interface-backend
-  version: "8.0"
-  purpose: "The shape of backend.yaml — every parameter an agent reads to understand the backend project"
-  principles: ".interface/principles/backend.md"
-  preferences: ".interface/preferences/backend.yaml"
-  layering: "This file defines shape only. The mandatory rules of this item live in its principles document; the supported technical choices used when project.md is silent live in its preferences file. Neither is restated here."
+  version: "9.0"
+  purpose: "The shape of the generated Backend configuration"
 
 structure:
   - code_path
   - code_path_note
   - summary
-  - needs_test
   - verify_cwd
   - responsibility
   - tech
-  - model_api
   - standards
-  - capabilities
-  - interfaces
+  - layers
   - boundaries
   - out_of_scope
 
 sections:
 
-  # <!--------------------------------------------------------------------------------- Code_Path -->
   code_path:
     required: true
-    purpose: "The folder holding the backend's actual code — the one place this item may write."
+    purpose: "The project-relative folder containing Backend implementation artifacts."
 
-  # <!--------------------------------------------------------------------------------- Code_Path_Note -->
   code_path_note:
     required: true
-    purpose: "Explains what code_path is relative to, so it is never read as a path inside the interface."
+    purpose: "Explains what code_path is relative to."
 
-  # <!--------------------------------------------------------------------------------- Summary -->
   summary:
     required: true
-    purpose: "The backend in one line — read before any of its settings."
+    purpose: "A one-line summary of Backend."
 
-  # <!--------------------------------------------------------------------------------- Needs_Test -->
-  needs_test:
-    required: true
-    purpose: "Whether every task that produces code is proven by a written test in tests/ — true means a task's verify is that test run."
-
-  # <!--------------------------------------------------------------------------------- Verify_Cwd -->
   verify_cwd:
     required: true
-    purpose: "The directory every verify command runs from, and the environment it runs inside — for the backend, always inside its virtual environment."
+    purpose: "The resolved working directory and environment for Backend verification commands."
 
-  # <!--------------------------------------------------------------------------------- Responsibility -->
   responsibility:
     required: true
-    purpose: "What the backend is answerable for — one sentence, wider than summary and narrower than the product."
+    purpose: "The resolved responsibilities of Backend."
 
-  # <!--------------------------------------------------------------------------------- Tech -->
   tech:
     required: true
-    purpose: "What the backend is built with — the resolved choices an agent follows and never re-decides."
+    purpose: "The resolved Backend-wide language, environment, and packages."
     fields:
       language:
         required: true
-        purpose: "The programming language the backend is written in, and the parent of everything language-specific — its environment tool and its packages hang beneath it."
+        purpose: "The resolved Backend programming language."
         fields:
           name:
             required: true
-            purpose: "The language itself."
+            purpose: "The language name."
           version:
             required: true
-            purpose: "The language version."
+            purpose: "The concrete language version."
           environment:
             required: true
-            purpose: "The isolated environment every command and every install happens inside — created and driven by one named tool, and never committed."
+            purpose: "The resolved isolated environment."
             fields:
               name:
                 required: true
-                purpose: "The tool that creates the virtual environment and installs into it — the only route a dependency enters the project by."
+                purpose: "The environment and dependency-management tool."
               version:
                 required: true
-                purpose: "The version of that tool."
-          packages:
-            required: true
-            purpose: "The frameworks, libraries, and tools owned by the backend — one structured entry per role, never a single combined line."
+                purpose: "The concrete tool version."
+      packages:
+        required: true
+        purpose: "Additional resolved Backend packages, empty when none apply."
+        fields:
+          "<package>":
+            required: false
+            purpose: "One package keyed by its role."
             fields:
-              api:
+              name:
                 required: true
-                purpose: "The framework serving the backend HTTP surface."
-                fields:
-                  name:
-                    required: true
-                    purpose: "The API framework."
-                  version:
-                    required: true
-                    purpose: "Its version."
-              "<package>":
-                required: false
-                purpose: "One entry per further package the project names — same two fields, set by the human, never inferred by an agent from the code."
-                fields:
-                  name:
-                    required: true
-                    purpose: "The package."
-                  version:
-                    required: true
-                    purpose: "Its version."
+                purpose: "The package name."
+              version:
+                required: true
+                purpose: "The concrete package version."
 
-  # <!--------------------------------------------------------------------------------- Model_API -->
-  model_api:
-    required: true
-    purpose: "The resolved model-level API intent. It applies dynamically to domain models from model.yaml without storing endpoint paths or copying model definitions into backend.yaml."
-    fields:
-      source:
-        required: true
-        purpose: "The mapped model.yaml models section that supplies the current domain-model set."
-      default_operations:
-        required: true
-        purpose: "The operations applied when the project requests a model API and gives no model-specific operation rule."
-      overrides:
-        required: true
-        purpose: "Explicit project operation rules keyed by model, empty when the project states none."
-
-  # <!--------------------------------------------------------------------------------- Standards -->
   standards:
     required: true
-    purpose: "How the backend's code is written — resolved conventions an agent follows instead of deciding them file by file."
+    purpose: "The resolved Backend implementation conventions."
     fields:
       naming:
         required: true
-        purpose: "The resolved case style for each kind of name."
-        fields:
-          variables:
-            required: true
-            purpose: "How a variable is named."
-          functions:
-            required: true
-            purpose: "How a function or method is named."
-          classes:
-            required: true
-            purpose: "How a class is named."
-          constants:
-            required: true
-            purpose: "How a constant is named."
-          files:
-            required: true
-            purpose: "How a file inside code_path is named."
-          folders:
-            required: true
-            purpose: "How a folder inside code_path is named."
+        purpose: "The resolved case style for Backend identifiers, files, and folders."
 
-  # <!--------------------------------------------------------------------------------- Capabilities -->
-  capabilities:
+  layers:
     required: true
-    purpose: "The resolved state of each optional backend capability; testing has its own switch in needs_test."
+    purpose: "The resolved Logic, Data Access, and API layers of Backend."
     fields:
-      error_handling:
+      logic:
         required: true
-        purpose: "Centralized error handling in the backend's code — a dedicated error layer beyond what the framework does on its own."
+        purpose: "The resolved application-Behaviour and Model-logic layer."
         fields:
-          enabled:
+          responsibility:
             required: true
-            purpose: "Whether the backend implements centralized error handling — false means only the framework's built-in behavior."
-      logging:
-        required: true
-        purpose: "Application logging."
-        fields:
-          enabled:
+            purpose: "The responsibility of the Logic layer."
+          model_logic:
             required: true
-            purpose: "Whether the backend writes application logs — false means no logging is set up or required."
-      api_documentation:
-        required: true
-        purpose: "Generated documentation of the API surface, and the format it takes when it is wanted."
-        fields:
-          enabled:
+            purpose: "The logical units resolved from the shared Model configuration."
+            fields:
+              source:
+                required: true
+                purpose: "The generated Model configuration supplying the logical Model set."
+              standard_operations:
+                required: true
+                purpose: "The common operations available across Model Logic units."
+              models:
+                required: true
+                purpose: "One Logic entry per current Model."
+                fields:
+                  "<model>":
+                    required: true
+                    purpose: "The Logic surface for one shared Model."
+                    fields:
+                      source_model:
+                        required: true
+                        purpose: "The referenced shared Model key."
+                      standard_operations:
+                        required: true
+                        purpose: "The standard Model operations implemented by this Logic unit."
+                      behaviours:
+                        required: true
+                        purpose: "Additional Model-specific Behaviour, empty when none applies."
+          project_behaviours:
             required: true
-            purpose: "Whether the backend serves API documentation — false means none is generated or exposed."
-          type:
-            required: false
-            purpose: "The documentation format or standard used — for example OpenAPI/Swagger, or another format the project names; present only when enabled is true, absent while api_documentation is disabled."
-      authentication:
-        required: true
-        purpose: "User authentication on the API."
-        fields:
-          enabled:
+            purpose: "Backend-targeted project Behaviour implemented by Logic, empty when none applies."
+            fields:
+              "<behaviour>":
+                required: false
+                purpose: "One Backend-targeted Behaviour."
+                fields:
+                  source:
+                    required: true
+                    purpose: "The referenced project Behaviour."
+                  description:
+                    required: true
+                    purpose: "What Logic must accomplish for this Behaviour."
+                  models:
+                    required: true
+                    purpose: "The Model Logic units involved, empty when none applies."
+          supporting_services:
             required: true
-            purpose: "Whether the API authenticates its callers — false means every route is open."
-      https:
-        required: true
-        purpose: "Serving the API over HTTPS."
-        fields:
-          enabled:
-            required: true
-            purpose: "Whether the backend serves HTTPS — false means plain HTTP."
+            purpose: "Supporting services and cross-cutting capabilities consumed by Logic, empty when none applies."
+            fields:
+              "<service>":
+                required: false
+                purpose: "One resolved supporting service."
+                fields:
+                  source:
+                    required: true
+                    purpose: "The generated configuration that enables and configures the service."
+                  interface:
+                    required: true
+                    purpose: "The interface through which Logic consumes the service."
+                  used_by_models:
+                    required: true
+                    purpose: "The Model Logic units that use the service, empty when it is not Model-specific."
 
-  # <!--------------------------------------------------------------------------------- Interfaces -->
-  interfaces:
-    required: true
-    purpose: "The backend's item relationships — the database interface it uses and the runtime HTTP interface it provides. API surface details are implementation output and do not live in this configuration."
-    fields:
-      provides:
+      data_access:
         required: true
-        purpose: "The runtime interface the implemented backend publishes, including its framework-generated machine-readable description."
-      uses:
-        required: true
-        purpose: "The generic data-access interface provided by the database item."
-      rule:
-        required: true
-        purpose: "The implementation boundary: tasks, resolved model-level API intent, and the database interface guide development, while endpoint paths, HTTP method mappings, payloads, response shapes, error shapes, entrypoints, commands, and file layout are produced during implementation rather than prescribed here."
+        purpose: "The resolved boundary between Logic and the Database interface."
+        fields:
+          responsibility:
+            required: true
+            purpose: "The responsibility of the Data Access layer."
+          uses:
+            required: true
+            purpose: "The generic Database interface consumed by Data Access."
+          operations:
+            required: true
+            purpose: "The Database operations available to Logic through Data Access."
 
-  # <!--------------------------------------------------------------------------------- Boundaries -->
+      api:
+        required: true
+        purpose: "The resolved external communication layer of Backend."
+        fields:
+          responsibility:
+            required: true
+            purpose: "The responsibility of the API layer."
+          framework:
+            required: true
+            purpose: "The resolved API framework."
+            fields:
+              name:
+                required: true
+                purpose: "The framework name."
+              version:
+                required: true
+                purpose: "The concrete framework version."
+          transport:
+            required: true
+            purpose: "The resolved API transport settings."
+            fields:
+              protocol:
+                required: true
+                purpose: "The selected protocol, such as HTTP or HTTPS."
+              tls:
+                required: false
+                purpose: "Resolved non-secret TLS settings, present when the protocol requires them."
+          api_documentation:
+            required: true
+            purpose: "The resolved machine-readable API-documentation settings."
+            fields:
+              enabled:
+                required: true
+                purpose: "Whether API documentation is enabled."
+              type:
+                required: false
+                purpose: "The documentation format, present when documentation is enabled."
+          model_api:
+            required: true
+            purpose: "The resolved Model operations exposed through API."
+            fields:
+              source:
+                required: true
+                purpose: "The Logic Model surface consumed by API."
+              default_operations:
+                required: true
+                purpose: "The default Model operations exposed through API."
+              overrides:
+                required: true
+                purpose: "Model-specific API operation overrides, empty when none apply."
+          behaviours:
+            required: true
+            purpose: "The Logic Behaviour exposed to external consumers, empty when none applies."
+            fields:
+              "<behaviour>":
+                required: false
+                purpose: "One externally exposed Logic Behaviour."
+                fields:
+                  source_logic:
+                    required: true
+                    purpose: "The Logic Behaviour exposed by API."
+                  description:
+                    required: true
+                    purpose: "What the external API capability provides."
+          credential_handling:
+            required: true
+            purpose: "The resolved API treatment of fields marked as credentials in Model configuration."
+            fields:
+              source:
+                required: true
+                purpose: "The Model field marker used to identify credentials."
+              write_only:
+                required: true
+                purpose: "Whether credentials are accepted only as write input."
+              exclude_from_responses:
+                required: true
+                purpose: "Whether credentials are excluded from API responses and response schemas."
+              redact:
+                required: true
+                purpose: "Whether credentials are redacted from diagnostic output."
+          provides:
+            required: true
+            purpose: "The external interface published by API."
+
   boundaries:
     required: true
-    purpose: "The limits of the backend."
+    purpose: "The resolved ownership boundaries of Backend."
     fields:
       owns:
         required: true
-        purpose: "What belongs to the backend — its application code, business behavior, and implemented HTTP interface."
+        purpose: "The responsibilities owned by Backend."
       does_not_own:
         required: true
-        purpose: "What is explicitly not the backend's, including frontend code and the database engine, storage, connection, ORM, mappings, schema, and migrations."
+        purpose: "Responsibilities explicitly outside Backend."
       interface:
         required: true
-        purpose: "The only thing the backend offers the outside — its implemented HTTP API and framework-generated machine-readable description."
+        purpose: "The external interface published by Backend."
 
-  # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
   out_of_scope:
     required: true
-    purpose: "What the backend does not do — named so it is never inferred into a task."
+    purpose: "Resolved work explicitly outside Backend."

@@ -59,10 +59,10 @@ Components are the subjects described through the layers:
 | --- | --- |
 | **Definition** | Structured project description, conceptual models, project structure, behaviours, and ordered phases |
 | **Model** | Shared domain models, fields, relationships, rules, and initial data |
-| **Development** | Independent application layers, declared-interface connections, and the Platform that runs and deploys them |
-| **State** | Current workflow state, working modes, and transition authority |
+| **Development** | Independent application layers, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them |
+| **State** | Current workflow position, repeatable working modes, critical blockers, and open questions |
 | **Task** | Phase plans, contextual groups, and atomic self-contained tasks with explicit execution and verification context |
-| **Backend** | Application behaviour and the HTTP API |
+| **Backend** | Application and Model Logic, Database communication through Data Access, and the external API |
 | **Frontend** | User interface and access to application data through the backend API |
 | **Database** | Persistence, storage mapping, migrations, and the generic data-access interface |
 

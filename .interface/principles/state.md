@@ -1,29 +1,74 @@
 # State Principles
 
-This document is the personality of State — `config/state.yaml`, the one file that defines the working modes, records where the project stands, and controls who is allowed to move it. It is written for every Agent operation that touches State and for the Developer who wants to know why State is guarded the way it is.
+State is the Component that records where the Interface Workflow currently stands. It provides a small, shared runtime view of the active working mode, the active phase when one applies, critical blockers, and unresolved human questions.
 
-The shape of `state.yaml`, and the default modes and State Authority seeded into every newly created copy of it, live in the Schema. There is no Preferences file for State: State has no technical choices, only workflow authority.
-
-Every statement here is mandatory.
+Every statement here is mandatory. Technical defaults, when any are defined, belong to State Preferences. The exact shape of the generated State configuration belongs to the State Schema.
 
 <br>
 
-## 1. State owns workflow modes and runtime state
+## 1. State records Workflow position
 
-State contains the fixed working-mode definitions, the project-wide runtime state, the State Authority that governs it, and the transition rules — in one file. It contains no project definition or task status. A task's status travels with the task, in `task.yaml`.
+State records the current or most recently entered Workflow mode and the phase being acted on when the operation is phase-specific. It describes what is happening; it does not contain the project definition, implementation plan, application configuration, or product code.
 
-<br>
-
-## 2. The live file is the authority, not the schema
-
-`state.yaml` is the source of truth for the State. Its own `content.state_authority` section is the live authority: the working modes, every field, its owner, the allowed transitions, and which authorized operation may perform each.
-
-The Schema defines only the shape of that section and the default that is seeded into every newly created `state.yaml`. Once the file exists, the live copy governs and the Schema default is not consulted at runtime. `interface.yaml` locates the State files and does not define or own their modes or authority.
+Task progress belongs to the Task Component. State may reference the active phase or a blocking condition, but it never duplicates the status or history of individual Tasks.
 
 <br>
 
-## 3. The default is always seeded, verbatim, and authorizes its own seeding
+## 2. The Workflow has four modes
 
-A Schema section carrying a `default` is always written into `state.yaml` when the file is created — the default is the seed, written verbatim under transition S0. This includes the working modes and their permissions. No newly generated `state.yaml` exists without it; there is no exception.
+State recognizes these modes:
 
-While no `state.yaml` exists there is no live authority, so the default State Authority in the schema is what authorizes its own seeding: transition S0 is defined inside it.
+- `not set` — no Workflow operation has yet been recorded;
+- `configuring` — project Understanding is being generated or refreshed;
+- `planning` — Plans, Groups, and Tasks are being generated or reconciled; and
+- `development` — eligible Tasks are being implemented and verified.
+
+The initial mode is `not set`. A phase is absent when the active operation does not act on one specific phase.
+
+<br>
+
+## 3. Modes never make an operation one-time-only
+
+Every Workflow operation is repeatable. Configuring may run after configuring, planning, or development. Planning may run again for an already planned phase. Development may run again for an already developed or partially developed phase.
+
+State never rejects an invocation merely because that operation ran before or because the same mode is already active. Each operation is responsible for reconciling its own existing output, preserving information it does not own, and skipping work that is already complete.
+
+An operation may still reject invalid input or stop for a genuine critical blocker. That decision comes from the operation's own contract and current project Understanding, never from a one-way State lifecycle.
+
+<br>
+
+## 4. Active State is descriptive, not an authorization gate
+
+The active State records the mode, optional phase, reason, provenance, and time of the latest State update. Entering a mode replaces those active values with the current operation's values.
+
+No fixed transition graph restricts which mode may follow another. The human may request any applicable Workflow operation from any current mode, including re-entering the same mode.
+
+<br>
+
+## 5. Operations update only the State they own
+
+An operation may record its own active mode and may raise, update, or release blockers and questions encountered during its work. It does not rewrite project meaning, Task content, or another Component's owned information through State.
+
+Reset may restore active State as part of its explicit reset behaviour, but State does not duplicate the reset algorithm or the files affected by it.
+
+<br>
+
+## 6. Blockers are reserved for critical stoppages
+
+A Blocker records a condition that genuinely prevents safe or valid continuation. Ordinary ambiguity, an unspecified implementation detail, or a decision that can be made through professional judgment is not a Blocker.
+
+Every Blocker states what is blocked, what is missing, why continuation is impossible, and who or what can resolve it. A resolved Blocker is removed or marked resolved by an operation authorized to verify its resolution.
+
+<br>
+
+## 7. Open Questions belong to the human
+
+An Open Question records a critical decision that cannot safely be resolved without human input. It explains the decision required, why it matters, and any Blocker it would release.
+
+An operation may raise the question and record an answer supplied by the human. It never invents the human's answer. Non-critical uncertainty is resolved through professional judgment and does not become an Open Question.
+
+<br>
+
+## 8. State changes retain provenance
+
+Every active-State update records why it occurred, who or which operation recorded it, and when it was recorded. State must remain understandable without reconstructing its latest transition from logs elsewhere.

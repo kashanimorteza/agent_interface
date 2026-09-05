@@ -1,51 +1,95 @@
 # Backend Principles
 
-This document is the personality of the backend item: the fixed rules that govern how the backend is generated, planned, and implemented, whatever language, framework, or project is in play. It is written for the Agent that works on the backend item and for the Developer who wants to know why the backend behaves the way it does.
+Backend is the Component that executes application Behaviour and publishes the application's API. Its architecture is independent of any language, framework, protocol, package, database engine, or project.
 
-It deliberately names no language, framework, package, or version. Those are technical choices and live in the preferences file (`.interface/preferences/backend.yaml`); they may change from project to project without touching a line here. The exact shape of the generated `config/backend.yaml` lives in the schema (`.interface/schema/backend.yaml`). The three layers answer different questions: this document answers *why and under what rules*, the preferences answer *with what*, and the schema answers *in what form*.
+Technical choices and defaults belong to Backend Preferences. The exact shape of the generated Backend configuration belongs to the Backend Schema.
 
-Every statement here is mandatory. A preference can never override a principle, and a project may only add stricter rules, never looser ones.
-
-<br>
-
-## 1. The backend runs behaviour and publishes the API — it does not own persistence
-
-The backend never owns the database engine, storage, connection, ORM, model mappings, schema, or migrations. It calls the generic data-access interface published by the database item.
-
-This keeps two responsibilities apart. The database item decides how persistent data is represented and accessed; the backend decides how application behaviour uses the database interface. When the backend needs the persistence interface to change, that is a request to the database item, never a change the backend makes itself.
+Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 2. Every domain model gets an API, resolved from the shared model set
+## 1. Backend has three internal layers
 
-When the project asks for an API for its domain models without naming the allowed operations, the default set of operations from the preferences is applied to every model currently indexed in `model.yaml`. An explicit project rule for a model replaces the default operations for that model.
+Backend is formed from three distinct layers:
 
-Models are resolved dynamically from `model.yaml` at generation time; they are never copied into these principles or into the preferences. Only model-level operation *intent* is resolved here — which operations a model supports. Endpoint paths, HTTP method mappings, payloads, response shapes, and implementation layout are implementation output and are decided when the backend is built, not here.
+- **API** is the external communication boundary;
+- **Logic** implements application Behaviour and Model-specific logic; and
+- **Data Access** is the only Backend boundary that consumes the Database interface.
 
-<br>
-
-## 3. Credentials are write-only and never leave the backend
-
-A field is a credential when, and only when, the shared model configuration explicitly identifies it as one. The backend never guesses credential fields from their names and never re-decides the database-owned at-rest mode.
-
-A credential field is write-only input: it may be accepted when required to create or update the owning model, and that is the only direction it travels. It is never exposed in an API response, in a generated response schema, or in an error payload. Its value is always redacted from application logs, diagnostics, traces, and exception details.
+The dependency direction is API → Logic → Data Access → Database interface. No layer bypasses the layer immediately responsible for the next boundary.
 
 <br>
 
-## 4. Packages are chosen from supported compatibility, never at random
+## 2. Logic owns application Behaviour
 
-Runtime packages are resolved from the selected language, API framework, and project requirements through an explicitly supported compatibility entry in the preferences when one exists. Database ORM and driver packages belong to the database item and never enter the backend package set. For an unlisted combination, the Agent chooses a well-supported compatible package from current evidence and records the consequential choice. It asks only when no safe compatible stack can be established.
+Logic implements what the application does and the rules under which it does it. It is independent of HTTP, API frameworks, database engines, ORM implementations, physical storage, and transport-specific request or response shapes.
 
-<br>
-
-## 5. Versions are concrete
-
-Every concrete version the project states is preserved exactly. When a preference supplies *latest*, the generation operation resolves it to the latest stable version compatible with the complete selected backend stack and writes only that concrete version into the configuration; the token *latest* never appears in generated config.
-
-If the current stable version cannot be verified, the best supported concrete compatible version available from current evidence is selected and the choice is recorded. An open question is raised only when compatibility or safety cannot be established without a critical human decision.
+Logic communicates with persistence only through Data Access. It can therefore remain valid when the API technology or Database implementation changes.
 
 <br>
 
-## 6. When the project is silent, decide deliberately
+## 3. Every Model has a standard Logic surface
 
-An explicit project value always wins. When a backend technical choice is unstated, the generation operation resolves it from the supported preferences or selects a compatible implementation option, and records the result in the configuration. Downstream operations consume that resolved backend configuration and never reinterpret the preferences on their own.
+Every shared Model receives its own logical unit inside Logic. That unit provides a consistent baseline for common Model operations such as create, get, list, update, and delete.
+
+Model-specific Behaviour may extend this baseline. One Model may perform validation, calculations, coordination, or other actions that another Model does not. These additions remain inside that Model's Logic and never weaken the common interface expected across Models.
+
+An API request for a Model is handled by the corresponding Model Logic. That Logic may use Data Access and may perform other Behaviour required by the Model; API never substitutes direct persistence for Model Logic.
+
+<br>
+
+## 4. Data Access is the only Backend route to Database
+
+Data Access translates the data operations requested by Logic into calls to the generic interface published by Database and translates the results back into logical data.
+
+Data Access contains no application Behaviour. It never owns or directly reaches into the database engine, connection, ORM, tables, schema, or migrations. API and Logic never bypass it to access Database.
+
+<br>
+
+## 5. API is the external Backend boundary
+
+API receives external requests, validates their transport-level shape, invokes Logic, and converts Logic results into external responses. It does not implement application Behaviour and never calls Data Access or Database directly.
+
+Domain validation remains in Logic. API owns only communication concerns such as request decoding, transport-level validation, response serialization, protocol handling, and mapping logical outcomes to API responses.
+
+The existence and responsibility of API are philosophical. Its framework, version, protocol, and other technical settings are resolved through Backend Preferences and generated Backend configuration.
+
+<br>
+
+## 6. Model definitions are shared, never copied
+
+Backend obtains logical Model definitions from the generated Model configuration. It does not copy, redefine, or create a competing representation of Model meaning.
+
+Logic uses Model meaning and domain rules, Data Access uses Model identity and fields when calling Database, and API derives its data-facing input and output representations from the same shared definition. HTTP-specific and storage-specific details remain outside Model.
+
+<br>
+
+## 7. API serves Model operations and project Behaviour
+
+Backend is not limited to Model CRUD. Logic implements Backend-targeted project Behaviour, and API exposes the Behaviour that must be available to external consumers.
+
+Model-level API intent and externally exposed Behaviour are resolved in Backend configuration without fixing endpoint paths, HTTP method mappings, file layout, or framework implementation details. Those details are implementation output.
+
+<br>
+
+## 8. API documentation belongs to API
+
+The capability to publish a machine-readable description of available operations and data shapes belongs to the API layer. No other Backend layer owns or generates the public API description.
+
+Whether documentation is enabled, its format, and the tool that produces it are technical choices resolved through Backend Preferences. The preferred default is enabled.
+
+<br>
+
+## 9. Credentials are write-only at the API boundary
+
+A Model field marked as a credential is write-only API input. It may be accepted when required to create or update its owning Model, but it is never exposed in an API response, response schema, error payload, diagnostic, trace, or recorded output.
+
+Backend reads the credential marker from Model configuration and never guesses credential fields from their names. Database owns the credential's at-rest storage mode; Backend does not redefine it.
+
+<br>
+
+## 10. Logic may orchestrate resolved supporting services
+
+Model Logic may use Data Access and may also coordinate supporting services or cross-cutting capabilities selected by Development. Such services are consumed through explicit interfaces and are used only by the Model Logic that needs them.
+
+A supporting service does not become a fourth mandatory Backend layer and does not weaken the API → Logic → Data Access dependency path for persistence. Its availability and application scope are resolved outside Backend rather than hard-coded into Model Logic.

@@ -1,25 +1,43 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/development.yaml"
-  path_note: "The Preferences layer of the Development Component. It currently defines no Component-specific technical choices or defaults."
+  path_note: "The Preferences layer of the Development Component — defaults for capabilities that may apply across application layers."
+  purpose: "Cross-cutting capability defaults used when no explicit project choice exists."
+  standard: "Agent Project Interface"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned and is read only when resolving Development preferences."
-  changed_by: "The human, directly"
-  precedence: "An explicit project value and every applicable Principle take precedence over this file."
-  consumption: "The empty content provides no Development defaults; consumers continue with the other applicable authorities."
+  rule: "This file is human-owned. Generation reads it and never writes resolved Development choices back into it."
+  changed_by: "The human, directly."
+  precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
+  consumption: "Generation resolves unstated cross-cutting choices from this file and records their concrete state and application scope in generated Development configuration."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
-read_order: []
+read_order:
+  - "cross_cutting"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
-content_map: {}
+content_map:
+  cross_cutting: "Default enabled state and application scope for capabilities coordinated across application layers."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
-content: {}
+content:
+
+  cross_cutting:
+    testing:
+      enabled: false
+      applies_to: []
+    logging:
+      enabled: false
+      applies_to: []
+    error_handling:
+      enabled: false
+      applies_to: []
+    authentication:
+      enabled: false
+      applies_to: []

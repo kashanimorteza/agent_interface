@@ -49,6 +49,9 @@ sections:
                   unique:
                     required: false
                     purpose: "Whether this field must be unique by itself; omitted when false."
+                  credential:
+                    required: false
+                    purpose: "Whether the field contains credential material requiring protected storage and write-only API handling; omitted when false."
                   purpose:
                     required: false
                     purpose: "The field's logical meaning when its name and type are insufficient."

@@ -7,7 +7,6 @@ structure:
   - code_path
   - code_path_note
   - summary
-  - needs_test
   - verify_cwd
   - responsibility
   - tech
@@ -34,11 +33,6 @@ sections:
   summary:
     required: true
     purpose: "A one-line summary of the database item."
-
-  # <!--------------------------------------------------------------------------------- Needs_Test -->
-  needs_test:
-    required: true
-    purpose: "Whether every task that changes database behavior is proven by a written test."
 
   # <!--------------------------------------------------------------------------------- Verify_Cwd -->
   verify_cwd:
@@ -113,7 +107,7 @@ sections:
             purpose: "The migration tool and version."
           environment:
             required: true
-            purpose: "The isolated environment used only for database tooling."
+            purpose: "The resolved environment used for Database tooling."
           packages:
             required: true
             purpose: "The resolved packages used for migration and schema tooling."

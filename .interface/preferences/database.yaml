@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/database.yaml"
-  path_note: "The Preferences layer of the database item — the supported technical choices used only when the human project definition leaves a database choice unstated. Its related Principles, Schema, and generated configuration are resolved through interface.yaml"
+  path_note: "The Preferences layer of the Database Component — supported technical choices and defaults used when a Database choice is unstated."
   purpose: "The supported database technical choices and defaults used when the human project definition leaves a corresponding choice unstated."
   standard: "Agent Project Interface"
   version: "3.0"
@@ -12,9 +12,11 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. No operation edits it; generation reads it and never writes a resolved value back into it"
-  changed_by: "The human, directly. A preference an agent believes is missing or wrong is raised through the mapped State mechanism"
-  precedence: "An explicit project value always wins over every value here. A preference never overrides a database Principle; it only fills a technical choice the Principles leave open"
-  consumption: "Generation resolves each unstated database choice from this file and writes the concrete result into the mapped generated database configuration. Downstream operations consume that resolved configuration and never reinterpret this file. The token latest is resolved to a concrete version and never appears in generated configuration"
+  changed_by: "The human, directly. A missing critical technical choice is raised through State."
+  precedence: "An explicit project value and every applicable Database Principle take precedence over this file."
+  consumption: "Generation resolves each unstated Database choice from this file and records the concrete result in generated Database configuration. Downstream operations consume that resolved result."
+  selection: "Prefer a supported compatible entry. For an unlisted need, select a well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Database stack; latest never appears in generated configuration."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -30,11 +32,11 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "The item-level defaults — code path, test switch, and which engine, ORM, and migration tool are selected when the project names none"
+  defaults: "The Component-level defaults — code path and the engine, ORM, and migration tool selected when those choices are unstated"
   engines: "One entry per supported engine — version, physical storage, connection behavior, and object naming conventions"
   orms: "One entry per supported ORM — language, package, version, and database-layer capabilities"
   migration_tools: "One entry per supported migration tool — language, isolated environment, packages, and canonical commands"
-  relationship_defaults: "Nullability, indexing, and referential actions applied to a relationship the project leaves unspecified"
+  relationship_defaults: "Field naming, referenced key, nullability, indexing, and referential actions used when a relationship leaves them unspecified"
   credential_storage: "The default at-rest mode for credential fields and the meaning of each supported mode"
   capabilities: "The default on/off state of optional database capabilities"
 
@@ -44,7 +46,6 @@ content:
 
   defaults:
     code_path: "database/"
-    needs_test: false
     engine: "SQLite"
     orm: "SQLAlchemy"
     migration_tool: "Alembic"
@@ -88,6 +89,9 @@ content:
         upgrade: "uv run alembic upgrade head"
         downgrade: "uv run alembic downgrade -1"
   relationship_defaults:
+    field_name: "<referenced_model>_id"
+    role_field_name: "<role>_<referenced_model>_id"
+    referenced_key: "primary_key"
     nullable: false
     index: true
     on_delete: "RESTRICT"
