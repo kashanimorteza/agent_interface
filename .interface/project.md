@@ -4,12 +4,17 @@ Defines what the project is and the main parts that make up the system.
 
 **Name:** Trading Assistant  
 **Description:**  A platform for defining and managing trading information, strategies, actions, and related data.  
+**Goals:** Trade
 
 <br><br>
 
-## Goals
+## behaviour
 
 - Enable users to enter and manage all defined project data.
+
+<br><br>
+
+## Structure
 
 <br><br>
 
