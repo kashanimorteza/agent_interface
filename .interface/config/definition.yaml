@@ -1,0 +1,125 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/definition.yaml"
+  path_note: "Generated configuration of the Definition Component — the project description, conceptual Models, conceptual Structure, Behaviours, and ordered phases interpreted from .interface/project.md. Shape: schema/definition.yaml; rules: principles/definition.md; the Definition Preferences layer is empty"
+  standard: "Agent Project Interface"
+  schema_version: "7.0"
+  source: ".interface/project.md"
+  generated: "2026-09-06"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "Written only by the configuring operation while interpreting project.md. Outside a configuring run this file is human-owned; planning and development read it and never write it"
+  changed_by: "The human, by editing project.md and re-running the configuring operation, or by editing this file directly"
+  fidelity: "Every value is copied or normalized from project.md. A subject the project does not state stays structurally present and empty; nothing is invented. The document preamble sentence in project.md describes the document rather than the project and is not recorded as an overview"
+  derived_keys: "Model and Behaviour keys are the project headings or bullet meaning normalized to lower_snake_case. The Behaviour name is a short label derived from its own description because project.md states the Behaviour as one sentence without a separate name"
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "project"
+  - "models"
+  - "structure"
+  - "behaviours"
+  - "phases"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  project: "Identity, explanation, context, outcomes, scope, and constraints of the project"
+  models: "The conceptual Models — name and description only"
+  structure: "How the project is conceptually organized"
+  behaviours: "What the resulting system must be able to do"
+  phases: "The ordered project phases — id, title, order, target Component, and description"
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- project -->
+  project:
+    name: "Trading Assistant"
+    description: "A platform for defining and managing trading information, strategies, actions, and related data."
+    overview: ""
+    concept: ""
+    information: {}
+    goals:
+      - "Trade"
+    scope:
+      included: []
+      excluded: []
+    constraints: []
+
+  # <!-------------------------------------------- models -->
+  models:
+    user:
+      name: "User"
+      description: "Defines an independent user of the system and enables multi-user operation. Each user can have a separate set of settings, allowing new users to be added with configurations that remain distinct from those of existing users."
+    currency:
+      name: "Currency"
+      description: "Defines a currency that can be used by the trading system and identifies its standard code, display symbol, associated country or region, and monetary decimal precision."
+    trading_platform:
+      name: "Trading Platform"
+      description: "Defines a supported trading API standard, such as MetaTrader 5 or Binance, while keeping the system independent of any specific exchange or broker. Every trading platform implementation exposes the same application-facing trading functions through a dedicated class, while handling communication with its destination API according to that platform's own mechanism. Additional platform implementations can be added without changing the system's common trading interface."
+    broker:
+      name: "Broker"
+      description: "Defines a broker that the system can work with through its selected trading platform. Multiple brokers can be added so the system is not limited to a specific broker and can operate with any configured broker."
+    account:
+      name: "Account"
+      description: "Defines a funded trading account through which the system executes trades and launches positions. Each account identifies its broker, account model, and login credentials so the system knows where the trade must be sent, how it must connect, and which account must be used for the operation."
+    asset:
+      name: "Asset"
+      description: "Defines an asset that can be selected for trading. It provides the system with the complete set of available tradable assets and identifies the category of each asset so the system knows exactly what is being traded."
+    trailing_group:
+      name: "Trailing Group"
+      description: "Defines an independent group for organizing the rules that manage Stop Loss and Take Profit during a trade. The group identifies the rule set, while each rule separately defines its activation condition and the changes to apply."
+    trailing_rule:
+      name: "Trailing Rule"
+      description: "Defines an individual rule within a Trailing Group that tells the system when and how to manage Take Profit and Stop Loss. Each rule provides the activation condition and the parameters used to apply the required adjustments."
+    partial_group:
+      name: "Partial Group"
+      description: "Defines an independent group of rules for managing portions of an open trade. Its rules determine how much of the trade volume must be closed when profit or loss reaches specified thresholds."
+    partial_rule:
+      name: "Partial Rule"
+      description: "Defines an individual Partial Close rule that tells the system under which condition part of an open position must be closed and how much of its volume must be closed."
+    action_group:
+      name: "Action Group"
+      description: "Defines an independent grouping for trading actions based on their risk profile, such as high risk, normal risk, or low risk. Actions are assigned to these groups so trades can be organized and selected by their intended risk level."
+    action:
+      name: "Action"
+      description: "Defines how a position must be opened. An action selects the asset and account and provides the risk, Take Profit, Stop Loss, Partial Group, and Trailing Group settings that determine the position's parameters and execution behavior."
+    position:
+      name: "Position"
+      description: "Stores the complete information for every position created by the system. It allows the system to identify and track positions that have been opened as well as positions that are still pending execution."
+
+  # <!-------------------------------------------- structure -->
+  structure:
+    description: ""
+
+  # <!-------------------------------------------- behaviours -->
+  behaviours:
+    manage_project_data:
+      name: "Enter and manage project data"
+      description: "Enable users to enter and manage all defined project data."
+
+  # <!-------------------------------------------- phases -->
+  phases:
+    - id: "P1"
+      title: "Database"
+      order: 1
+      target: "database"
+      description: "Implement the database, apply the defined model structure, and insert the defined initial data."
+
+    - id: "P2"
+      title: "Backend"
+      order: 2
+      target: "backend"
+      description: "Implement the backend layer, including its application logic and API for operating on the defined models."
+
+    - id: "P3"
+      title: "Frontend"
+      order: 3
+      target: "frontend"
+      description: "Implement the frontend based on the backend API."
