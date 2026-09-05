@@ -1,7 +1,7 @@
 schema:
   id: agent-interface-frontend
-  version: "6.0"
-  purpose: "The shape of the generated Frontend configuration"
+  version: "7.0"
+  purpose: "The shape of the generated layered Frontend configuration"
 
 structure:
   - code_path
@@ -11,72 +11,69 @@ structure:
   - responsibility
   - tech
   - standards
-  - interfaces
+  - layers
   - boundaries
   - out_of_scope
 
 sections:
 
-  # <!--------------------------------------------------------------------------------- Code_Path -->
   code_path:
     required: true
     purpose: "The project-relative folder containing Frontend implementation artifacts."
 
-  # <!--------------------------------------------------------------------------------- Code_Path_Note -->
   code_path_note:
     required: true
     purpose: "Explains what code_path is relative to."
 
-  # <!--------------------------------------------------------------------------------- Summary -->
   summary:
     required: true
     purpose: "A one-line summary of Frontend."
 
-  # <!--------------------------------------------------------------------------------- Verify_Cwd -->
   verify_cwd:
     required: true
     purpose: "The resolved working directory and environment for Frontend verification commands."
 
-  # <!--------------------------------------------------------------------------------- Responsibility -->
   responsibility:
     required: true
     purpose: "The resolved responsibilities of Frontend."
 
-  # <!--------------------------------------------------------------------------------- Tech -->
   tech:
     required: true
-    purpose: "The resolved language, library, framework, package manager, and run command used by Frontend."
+    purpose: "The resolved Frontend-wide language, library, framework, package manager, run command, and additional packages."
     fields:
       language:
         required: true
-        purpose: "The frontend programming language and version."
+        purpose: "The resolved Frontend programming language."
         fields:
           name:
             required: true
             purpose: "The language name."
           version:
             required: true
-            purpose: "The language version."
+            purpose: "The concrete language version."
       library:
         required: true
-        purpose: "The UI library."
+        purpose: "The resolved user-interface library."
         fields:
           name:
             required: true
             purpose: "The library name."
           version:
             required: true
-            purpose: "The library version."
+            purpose: "The concrete library version."
       framework:
         required: true
-        purpose: "The application framework and its resolved conventions."
+        purpose: "The resolved application framework."
         fields:
           name:
             required: true
             purpose: "The framework name."
           version:
             required: true
-            purpose: "The framework version."
+            purpose: "The concrete framework version."
+          router:
+            required: true
+            purpose: "The resolved routing system."
       package_manager:
         required: true
         purpose: "The resolved Frontend package manager."
@@ -86,39 +83,226 @@ sections:
             purpose: "The package manager name."
           version:
             required: true
-            purpose: "The package manager version."
+            purpose: "The concrete package-manager version."
       run:
         required: true
-        purpose: "The command that starts the frontend."
+        purpose: "The command that starts Frontend."
+      packages:
+        required: true
+        purpose: "Additional resolved Frontend packages, empty when none apply."
+        fields:
+          "<package>":
+            required: false
+            purpose: "One package keyed by its role."
+            fields:
+              name:
+                required: true
+                purpose: "The package name."
+              version:
+                required: true
+                purpose: "The concrete package version."
 
-  # <!--------------------------------------------------------------------------------- Standards -->
   standards:
     required: true
-    purpose: "The resolved frontend naming and component conventions."
+    purpose: "The resolved Frontend implementation conventions."
     fields:
       naming:
         required: true
-        purpose: "The case style for frontend identifiers, files, folders, and components."
+        purpose: "The resolved case style for Frontend identifiers, files, folders, and Components."
       component_style:
         required: true
-        purpose: "The resolved component declaration style."
+        purpose: "The resolved Component declaration style."
 
-  # <!--------------------------------------------------------------------------------- Interfaces -->
-  interfaces:
+  layers:
     required: true
-    purpose: "The resolved interfaces Frontend provides and consumes."
+    purpose: "The resolved Presentation, Interaction Logic, and API Access layers of Frontend."
     fields:
-      provides:
-        required: true
-        purpose: "The interface Frontend publishes, or none."
-      uses:
-        required: true
-        purpose: "The interface consumed by Frontend."
-      rule:
-        required: true
-        purpose: "The resolved rule governing Frontend interface use."
 
-  # <!--------------------------------------------------------------------------------- Boundaries -->
+      presentation:
+        required: true
+        purpose: "The resolved visual presentation and Component-composition layer."
+        fields:
+          responsibility:
+            required: true
+            purpose: "The responsibility of the Presentation layer."
+          component_architecture:
+            required: true
+            purpose: "The resolved rule for composing reusable interface Components."
+          theme:
+            required: true
+            purpose: "The resolved visual system shared by Presentation Components."
+            fields:
+              name:
+                required: true
+                purpose: "The resolved Theme name."
+              color_mode:
+                required: true
+                purpose: "The resolved light, dark, system, or project-defined display mode."
+              direction:
+                required: true
+                purpose: "The resolved content direction."
+              token_based:
+                required: true
+                purpose: "Whether shared visual decisions are represented as reusable tokens."
+              tokens:
+                required: true
+                purpose: "Resolved project visual tokens, empty when no explicit tokens apply."
+          routes:
+            required: true
+            purpose: "The resolved user-facing routes, empty when none apply."
+            fields:
+              "<route>":
+                required: false
+                purpose: "One route keyed by its stable identifier."
+                fields:
+                  path:
+                    required: true
+                    purpose: "The public route path."
+                  title:
+                    required: true
+                    purpose: "The user-facing route title."
+                  page:
+                    required: true
+                    purpose: "The page presented for this route."
+          pages:
+            required: true
+            purpose: "The resolved pages and their composition, empty when none apply."
+            fields:
+              "<page>":
+                required: false
+                purpose: "One page keyed by its stable identifier."
+                fields:
+                  responsibility:
+                    required: true
+                    purpose: "What the page presents to the user."
+                  components:
+                    required: true
+                    purpose: "The ordered Components composed by the page."
+                  behaviours:
+                    required: true
+                    purpose: "Frontend-targeted project Behaviours available through the page, empty when none apply."
+                  models:
+                    required: true
+                    purpose: "Shared Models presented by the page, empty when none apply."
+          components:
+            required: true
+            purpose: "The resolved reusable user-interface Components, empty when none apply."
+            fields:
+              "<component>":
+                required: false
+                purpose: "One user-interface Component keyed by its stable identifier."
+                fields:
+                  responsibility:
+                    required: true
+                    purpose: "What the Component presents or enables."
+                  kind:
+                    required: true
+                    purpose: "The resolved Component role."
+                  reusable:
+                    required: true
+                    purpose: "Whether the Component is intentionally reusable."
+                  uses_components:
+                    required: true
+                    purpose: "Other Components composed by this Component, empty when none apply."
+                  models:
+                    required: true
+                    purpose: "Shared Models used by the Component, empty when none apply."
+
+      interaction_logic:
+        required: true
+        purpose: "The resolved user-interface state and interaction-coordination layer."
+        fields:
+          responsibility:
+            required: true
+            purpose: "The responsibility of the Interaction Logic layer."
+          state_management:
+            required: true
+            purpose: "The resolved strategy for user-interface state."
+            fields:
+              strategy:
+                required: true
+                purpose: "The state-management strategy."
+              package:
+                required: false
+                purpose: "The resolved package when the strategy requires one."
+          behaviours:
+            required: true
+            purpose: "Frontend-targeted project Behaviour coordinated by Interaction Logic, empty when none applies."
+            fields:
+              "<behaviour>":
+                required: false
+                purpose: "One Frontend-targeted Behaviour."
+                fields:
+                  source:
+                    required: true
+                    purpose: "The referenced project Behaviour."
+                  description:
+                    required: true
+                    purpose: "What the user-interface flow must accomplish."
+                  models:
+                    required: true
+                    purpose: "Shared Models involved in the Behaviour, empty when none apply."
+                  components:
+                    required: true
+                    purpose: "Presentation Components involved in the Behaviour."
+
+      api_access:
+        required: true
+        purpose: "The resolved Frontend boundary that consumes Backend API."
+        fields:
+          responsibility:
+            required: true
+            purpose: "The responsibility of the API Access layer."
+          uses:
+            required: true
+            purpose: "The Backend API consumed by Frontend."
+          contract_source:
+            required: true
+            purpose: "The resolved source describing available Backend API operations and data shapes."
+          client:
+            required: true
+            purpose: "The resolved Frontend API client."
+            fields:
+              name:
+                required: true
+                purpose: "The client name."
+              version:
+                required: true
+                purpose: "The concrete client version or supplying runtime."
+              package:
+                required: false
+                purpose: "The package supplying the client when one is required."
+          generated_types:
+            required: true
+            purpose: "Whether transport types are generated from the Backend API description."
+          model_operations:
+            required: true
+            purpose: "The Backend Model operations consumed by Frontend, empty when none apply."
+            fields:
+              source:
+                required: true
+                purpose: "The Backend Model API surface."
+              operations:
+                required: true
+                purpose: "Consumed operations grouped by shared Model."
+          behaviours:
+            required: true
+            purpose: "Backend Behaviour capabilities consumed by Frontend, empty when none apply."
+            fields:
+              "<behaviour>":
+                required: false
+                purpose: "One consumed Backend Behaviour."
+                fields:
+                  source:
+                    required: true
+                    purpose: "The referenced Backend API Behaviour."
+                  used_by:
+                    required: true
+                    purpose: "The Interaction Logic Behaviour that consumes it."
+          rule:
+            required: true
+            purpose: "The resolved rule prohibiting direct Database and Backend implementation access."
+
   boundaries:
     required: true
     purpose: "The resolved ownership boundaries of Frontend."
@@ -131,9 +315,8 @@ sections:
         purpose: "Responsibilities explicitly outside Frontend."
       interface:
         required: true
-        purpose: "The interface Frontend exposes outside its boundary."
+        purpose: "The user-facing interface published by Frontend."
 
-  # <!--------------------------------------------------------------------------------- Out_Of_Scope -->
   out_of_scope:
     required: true
     purpose: "Resolved work explicitly outside Frontend."

@@ -102,7 +102,7 @@ content:
 
           frontend:
             path: "frontend.md"
-            responsibility: "Frontend boundaries, HTTP API data access, shared Models, and package resolution"
+            responsibility: "Layered Frontend boundaries, component-based Presentation, Interaction Logic, Backend API access, shared Models, and a coherent visual system"
 
           database:
             path: "database.md"
@@ -140,7 +140,7 @@ content:
 
           frontend:
             path: "frontend.yaml"
-            responsibility: "Supported Frontend languages, libraries, frameworks, package managers, and versions"
+            responsibility: "Supported Frontend technologies and layer-specific Presentation, Interaction Logic, API client, and Theme defaults"
 
           database:
             path: "database.yaml"
@@ -182,7 +182,7 @@ content:
 
           frontend:
             path: "frontend.yaml"
-            responsibility: "Shape of the generated Frontend configuration"
+            responsibility: "Shape of the generated layered Frontend configuration"
 
           database:
             path: "database.yaml"
@@ -240,7 +240,7 @@ content:
           config: "content.structure.generated_configuration.files.backend"
 
       frontend:
-        responsibility: "User interface and access to application data through the Backend API"
+        responsibility: "Component-based Presentation, user Interaction Logic, and application access through Backend API"
         resources:
           principle: "content.structure.layers.principles.files.frontend"
           preference: "content.structure.layers.preferences.files.frontend"
@@ -321,7 +321,7 @@ content:
 
         frontend:
           path: "frontend.yaml"
-          responsibility: "Resolved Frontend project configuration"
+          responsibility: "Resolved Presentation, Interaction Logic, API Access, and visual-system configuration"
 
         database:
           path: "database.yaml"

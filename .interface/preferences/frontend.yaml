@@ -2,19 +2,20 @@
 meta:
   path: ".interface/preferences/frontend.yaml"
   path_note: "The Preferences layer of the Frontend Component — supported technical choices and defaults used when a Frontend choice is unstated."
+  purpose: "Defaults and supported technical profiles for Presentation, Interaction Logic, and API Access."
   standard: "Agent Project Interface"
-  version: "1.1"
-  updated: "2026-09-04"
+  version: "2.0"
+  updated: "2026-09-05"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. No mode edits it; an agent reads it during generation and never writes a resolved value back into it"
+  rule: "This file is human-owned. Generation reads it and never writes resolved Frontend choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit project value and every applicable Frontend Principle take precedence over this file."
   consumption: "Generation resolves each unstated Frontend choice from this file and records the concrete result in generated Frontend configuration. Downstream operations consume that resolved result."
-  selection: "Prefer a supported profile. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
+  selection: "Prefer a supported compatible entry. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Frontend stack; latest never appears in generated configuration."
 
 
@@ -25,15 +26,21 @@ read_order:
   - "libraries"
   - "frameworks"
   - "package_managers"
+  - "api_clients"
+  - "themes"
+  - "layers"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "The Component-level defaults — code path, language, library, framework, and package manager used when those choices are unstated"
-  languages: "One entry per supported language — version and naming conventions"
-  libraries: "One entry per supported UI library — version and component style"
-  frameworks: "One entry per supported application framework — version, router, and run command"
-  package_managers: "One entry per supported package manager and its version"
+  defaults: "Frontend-wide code path and primary technology defaults."
+  languages: "Supported Frontend languages, versions, and naming conventions."
+  libraries: "Supported user-interface libraries and Component conventions."
+  frameworks: "Supported application frameworks, routing conventions, and run commands."
+  package_managers: "Supported package managers and versions."
+  api_clients: "Supported Frontend-side clients for consuming Backend API."
+  themes: "Supported visual-system defaults."
+  layers: "Technical defaults grouped by Presentation, Interaction Logic, and API Access."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -45,6 +52,9 @@ content:
     library: "React"
     framework: "Next.js"
     package_manager: "npm"
+    api_client: "Fetch"
+    theme: "Default"
+
   languages:
     TypeScript:
       version: "latest"
@@ -56,15 +66,39 @@ content:
         constants: "UPPER_SNAKE_CASE"
         files: "kebab-case"
         folders: "kebab-case"
+
   libraries:
     React:
       version: "latest"
       component_style: "Function components"
+
   frameworks:
     Next.js:
       version: "latest"
       router: "App Router"
       run: "npm run dev"
+
   package_managers:
     npm:
       version: "latest"
+
+  api_clients:
+    Fetch:
+      version: "runtime-provided"
+      package: null
+
+  themes:
+    Default:
+      color_mode: "system"
+      direction: "auto"
+      token_based: true
+
+  layers:
+    presentation:
+      component_architecture: "reusable_composition"
+    interaction_logic:
+      state_management: "framework-native"
+    api_access:
+      client: "Fetch"
+      contract_source: "backend_api_description"
+      generated_types: true
