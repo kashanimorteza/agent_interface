@@ -2,6 +2,11 @@
 
 These are Claude-specific integration rules. They apply to every Agent Interface Skill and must not be duplicated inside the Interface.
 
+## Protected foundation files
+
+- Agent Interface Skills must never modify the Interface Map, the mapped human README, or the mapped human project definition.
+- These foundation files are human-owned. When an operation determines that one of them should change, it reports the required change to the human and leaves the file untouched.
+
 ## Operation bindings
 
 - `my-interface-interpreter` performs the generic generation operation.

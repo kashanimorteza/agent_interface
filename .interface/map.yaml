@@ -2,6 +2,7 @@
 meta:
   path: ".interface/map.yaml"
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
+  responsibility: "Machine-readable technical README and file map for the Agent Project Interface"
   standard: "Agent Project Interface"
   version: "7.0"
   updated: "2026-09-05"
@@ -10,164 +11,271 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file introduces the interface — no mode edits it. Every other file carries its own write rules, in its own policy section"
-  changed_by: "The human, directly. A change this file needs is raised as an open question in config/state.yaml, never applied by an agent"
-  state_authority: "Who may write each field of config/state.yaml, and on which transition, is decided in one place only: config/state.yaml under content.state_authority, seeded from the default in schema/state.yaml. This file references the State Authority and does not own it"
-  on_change_needed: "A change to the Interface structure is raised with the human, never applied by an agent"
+  rule: "This file introduces and maps the Interface. No operation edits it, and every other file carries its own write policy"
+  changed_by: "The human, directly"
+  on_change_needed: "Raise an open question through the mapped State configuration; never change this file autonomously"
+  state_authority: "The mapped live State configuration owns workflow authority. Its mapped Schema supplies only the initial seed; this Map locates both and owns neither"
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "files_and_folders"
+  - "interface"
+  - "structure"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  files_and_folders: "The folders and files of the interface, and what each is for"
+  interface: "The purpose and concept of the Agent Project Interface"
+  structure: "The Foundational Files, Layers, Components, Behaviours, and Generated Configuration that form the Interface"
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- files_and_folders -->
-  files_and_folders:
+  # <!-------------------------------------------- interface -->
+  interface:
+    description: "An independent interface between Developers and AI Agents for establishing a common protocol, structure, and standard for software development"
+    overview: "The Developer describes a project in human language; the Interface turns that definition into structured project Understanding that Agents can interpret, plan against, and develop"
+    concept: "Human project definitions are flexible, while Agents work more reliably with explicit and predictable information. Agent Project Interface is the communication layer between those two forms"
+    agent_independence: "The Interface is independent of any specific AI model, Agent, or external execution capability"
 
-    map:
-      path: ".interface/map.yaml"
-      responsibility: "Entry point and map of the Agent Project Interface"
+  # <!-------------------------------------------- structure -->
+  structure:
 
-    readme:
-      path: ".interface/readme.md"
-      responsibility: "Human-readable introduction, structure, workflow, and Quick Start for the Agent Project Interface"
+    # <!---------------------- foundations -->
+    foundations:
 
-    project:
-      path: ".interface/project.md"
-      responsibility: "Human-readable project definition provided by the Developer"
+      map:
+        path: ".interface/map.yaml"
+        responsibility: "Entry point, technical README, and map of the Agent Project Interface"
 
-    principles:
-      path: ".interface/principles/"
-      responsibility: "Holds each project item's mandatory principles — the fixed rules and convictions that govern the item independently of any tool, version, or project. A preference never overrides a principle"
+      project:
+        path: ".interface/project.md"
+        responsibility: "Human-managed natural-language definition of the project being built"
 
-      files:
-        definition:
-          path: "definition.md"
-          responsibility: "The principles of the definition layer — what belongs to the project definition and why phases are the units of work"
+      readme:
+        path: ".interface/readme.md"
+        responsibility: "Human-readable introduction to the Interface, its Structure, Agent Skills, and Workflow"
 
-        development:
-          path: "development.md"
-          responsibility: "The principles of the development layer — connecting selected items without redefining them, component selection, connections, and item authority"
+    # <!---------------------- layers -->
+    layers:
 
-        state:
-          path: "state.md"
-          responsibility: "The principles of State — working modes, runtime state, the live file as authority, and verbatim seeding of the default"
+      principles:
+        path: ".interface/principles/"
+        responsibility: "Mandatory philosophy, responsibilities, and boundaries for Components, independent of tools and versions"
+        answers: "Why and under what rules"
 
-        task:
-          path: "task.md"
-          responsibility: "The principles of the task layer — the human-fixed frame, plans from project phases, and shape versus permission"
+        files:
+          definition:
+            path: "definition.md"
+            responsibility: "What belongs to project Definition and why phases are the units of work"
 
-        backend:
-          path: "backend.md"
-          responsibility: "The principles of the backend item — database-interface boundary, model API resolution, credential handling, package and version resolution"
+          development:
+            path: "development.md"
+            responsibility: "How selected technical Components are connected without redefining them"
 
-        frontend:
-          path: "frontend.md"
-          responsibility: "The principles of the frontend item — the HTTP API as the only data door, shared models, package resolution"
+          state:
+            path: "state.md"
+            responsibility: "Working modes, runtime State, live authority, and default seeding"
 
-        database:
-          path: "database.md"
-          responsibility: "The principles of the database item — layer and engine independence, generic data access, ORM ownership, schema as code, migrations, interfaces, and access rules"
+          task:
+            path: "task.md"
+            responsibility: "The human-fixed Task frame, Plans derived from phases, and the separation of shape from permission"
 
-    preferences:
-      path: ".interface/preferences/"
-      responsibility: "Holds each project item's supported technical choices — tools, versions, and defaults used only when project.md leaves the choice unstated. Explicit project values always win"
+          backend:
+            path: "backend.md"
+            responsibility: "Backend boundaries, database-interface use, model API resolution, credentials, packages, and versions"
 
-      files:
-        backend:
-          path: "backend.yaml"
-          responsibility: "The backend item's preferences — languages, API frameworks, default model operations, and capability defaults. Follows the outer shape of schema/file.yaml"
+          frontend:
+            path: "frontend.md"
+            responsibility: "Frontend boundaries, HTTP API data access, shared Models, and package resolution"
 
-        frontend:
-          path: "frontend.yaml"
-          responsibility: "The frontend item's preferences — languages, UI libraries, frameworks, package managers, and capability defaults. Follows the outer shape of schema/file.yaml"
+          database:
+            path: "database.md"
+            responsibility: "Database independence, generic data access, persistence ownership, schema as code, migrations, and access rules"
 
-        database:
-          path: "database.yaml"
-          responsibility: "The database item's preferences — engines, ORMs, migration tooling, relationship defaults, credential storage modes, and capability defaults. Follows the outer shape of schema/file.yaml"
+      preferences:
+        path: ".interface/preferences/"
+        responsibility: "Supported technical choices and defaults used only when the project leaves a choice unstated; explicit project values always win"
+        answers: "With what"
 
-    schema:
-      path: ".interface/schema/"
-      responsibility: "Defines generated-file shapes only. Each layer's mandatory rules live in principles/, and each technical item's supported choices live in preferences/"
+        files:
+          backend:
+            path: "backend.yaml"
+            responsibility: "Supported backend languages, API frameworks, model operations, packages, versions, and capability defaults"
 
-      files:
-        file:
-          path: "file.yaml"
-          responsibility: "Defines the outer shape every interface file follows — meta, policy, read_order, content_map, content"
+          frontend:
+            path: "frontend.yaml"
+            responsibility: "Supported frontend languages, libraries, frameworks, package managers, versions, and capability defaults"
 
-        definition:
-          path: "definition.yaml"
-          responsibility: "Defines the shape of definition.yaml — its principles live in principles/definition.md"
+          database:
+            path: "database.yaml"
+            responsibility: "Supported database engines, ORMs, migration tools, relationship defaults, credential modes, versions, and capability defaults"
 
-        model:
-          path: "model.yaml"
-          responsibility: "Defines the shared structure and format of model.yaml"
+      schemas:
+        path: ".interface/schema/"
+        responsibility: "Shapes and validation rules for generated Interface files; Schemas contain neither Component philosophy nor technical preferences"
+        answers: "In what form"
 
-        development:
-          path: "development.yaml"
-          responsibility: "Defines the shape of development.yaml — technical composition, cross-item connections, runtime, and deployment; its principles live in principles/development.md"
+        files:
+          file:
+            path: "file.yaml"
+            responsibility: "Outer shape shared by Interface YAML files"
 
-        task:
-          path: "task.yaml"
-          responsibility: "Defines the shape of task.yaml — its principles live in principles/task.md"
+          definition:
+            path: "definition.yaml"
+            responsibility: "Shape of the generated Definition configuration"
 
-        state:
-          path: "state.yaml"
-          responsibility: "Defines the shape of state.yaml and the default modes and State Authority seeded into every newly created state.yaml; its principles live in principles/state.md"
+          model:
+            path: "model.yaml"
+            responsibility: "Shape of the generated shared Model configuration"
 
-        backend:
-          path: "backend.yaml"
-          responsibility: "Defines the shape of backend.yaml only — its principles and preferences live in principles/backend.md and preferences/backend.yaml"
+          development:
+            path: "development.yaml"
+            responsibility: "Shape of the generated Development configuration"
 
-        frontend:
-          path: "frontend.yaml"
-          responsibility: "Defines the shape of frontend.yaml only — its principles and preferences live in principles/frontend.md and preferences/frontend.yaml"
+          state:
+            path: "state.yaml"
+            responsibility: "Shape of the State configuration and its initial working modes and State Authority seed"
 
-        database:
-          path: "database.yaml"
-          responsibility: "Defines the shape of database.yaml only — its principles and preferences live in principles/database.md and preferences/database.yaml"
+          task:
+            path: "task.yaml"
+            responsibility: "Shape of the Task configuration"
 
-    config:
+          backend:
+            path: "backend.yaml"
+            responsibility: "Shape of the generated Backend configuration"
+
+          frontend:
+            path: "frontend.yaml"
+            responsibility: "Shape of the generated Frontend configuration"
+
+          database:
+            path: "database.yaml"
+            responsibility: "Shape of the generated Database configuration"
+
+    # <!---------------------- components -->
+    components:
+
+      definition:
+        responsibility: "Structured project identity, intended outcomes, and ordered phases"
+        resources:
+          principle: "content.structure.layers.principles.files.definition"
+          schema: "content.structure.layers.schemas.files.definition"
+          config: "content.structure.generated_configuration.files.definition"
+
+      model:
+        responsibility: "Shared domain Models, fields, relationships, rules, and initial data"
+        resources:
+          schema: "content.structure.layers.schemas.files.model"
+          config: "content.structure.generated_configuration.files.model"
+
+      development:
+        responsibility: "Technical Component selection, connections, runtime, and deployment"
+        resources:
+          principle: "content.structure.layers.principles.files.development"
+          schema: "content.structure.layers.schemas.files.development"
+          config: "content.structure.generated_configuration.files.development"
+
+      state:
+        responsibility: "Current Workflow State, working modes, and transition authority"
+        resources:
+          principle: "content.structure.layers.principles.files.state"
+          schema: "content.structure.layers.schemas.files.state"
+          config: "content.structure.generated_configuration.files.state"
+
+      task:
+        responsibility: "Plans, Groups, Tasks, progress, and Task history"
+        resources:
+          principle: "content.structure.layers.principles.files.task"
+          schema: "content.structure.layers.schemas.files.task"
+          config: "content.structure.generated_configuration.files.task"
+
+      backend:
+        responsibility: "Application behaviour and the HTTP API"
+        resources:
+          principle: "content.structure.layers.principles.files.backend"
+          preference: "content.structure.layers.preferences.files.backend"
+          schema: "content.structure.layers.schemas.files.backend"
+          config: "content.structure.generated_configuration.files.backend"
+
+      frontend:
+        responsibility: "User interface and access to application data through the Backend API"
+        resources:
+          principle: "content.structure.layers.principles.files.frontend"
+          preference: "content.structure.layers.preferences.files.frontend"
+          schema: "content.structure.layers.schemas.files.frontend"
+          config: "content.structure.generated_configuration.files.frontend"
+
+      database:
+        responsibility: "Persistence, storage mapping, migrations, and the generic data-access interface"
+        resources:
+          principle: "content.structure.layers.principles.files.database"
+          preference: "content.structure.layers.preferences.files.database"
+          schema: "content.structure.layers.schemas.files.database"
+          config: "content.structure.generated_configuration.files.database"
+
+    # <!---------------------- behaviours -->
+    behaviours:
+
+      interpretation:
+        responsibility: "Transform the current human project definition into complete and consistent generated project Understanding"
+        inputs:
+          project: "content.structure.foundations.project"
+          existing_understanding: "content.structure.generated_configuration"
+        output: "content.structure.generated_configuration"
+
+      planning:
+        responsibility: "Transform the generated Understanding for a requested project phase into implementation-ready Tasks"
+        inputs:
+          definition: "content.structure.components.definition"
+          understanding: "content.structure.generated_configuration"
+          task: "content.structure.components.task"
+        scope: "The requested phase; its target selects the Component being planned"
+        output: "content.structure.generated_configuration.files.task"
+
+      development:
+        responsibility: "Execute and verify eligible planned Tasks to produce the project implementation"
+        inputs:
+          understanding: "content.structure.generated_configuration"
+          task: "content.structure.components.task"
+        scope: "The requested phase; its target selects the Component being developed"
+        output: "Implementation inside the selected Component's resolved code boundary"
+
+    # <!---------------------- generated_configuration -->
+    generated_configuration:
       path: ".interface/config/"
-      responsibility: "Contains the project configuration generated after understanding project.md"
+      responsibility: "Project-specific Understanding generated from the human project definition through the applicable Layers and Components; it is an output of the Structure, not a fourth Layer"
 
       files:
         definition:
           path: "definition.yaml"
-          responsibility: "Project identity, intended outcomes, and ordered project phases in structured format"
+          responsibility: "Project identity, intended outcomes, and ordered phases"
 
         model:
           path: "model.yaml"
-          responsibility: "Shared logical models, fields, relationships, rules, and initial data consumed by mapped technical items"
+          responsibility: "Shared logical Models, fields, relationships, rules, and initial data"
 
         development:
           path: "development.yaml"
-          responsibility: "Technical composition, cross-item connections, runtime, and deployment choices"
-
-        task:
-          path: "task.yaml"
-          responsibility: "Project tasks and plans"
+          responsibility: "Technical composition, cross-Component connections, runtime, and deployment choices"
 
         state:
           path: "state.yaml"
-          responsibility: "Current project modes and state, and the live State Authority that governs them"
+          responsibility: "Current Workflow modes, State, and live transition authority"
+
+        task:
+          path: "task.yaml"
+          responsibility: "Plans and executable Tasks"
 
         backend:
           path: "backend.yaml"
-          responsibility: "Backend project configuration"
+          responsibility: "Resolved Backend project configuration"
 
         frontend:
           path: "frontend.yaml"
-          responsibility: "Frontend project configuration"
+          responsibility: "Resolved Frontend project configuration"
 
         database:
           path: "database.yaml"
-          responsibility: "Database project configuration and the generic data-access interface used by the backend"
+          responsibility: "Resolved Database configuration and generic data-access interface"
