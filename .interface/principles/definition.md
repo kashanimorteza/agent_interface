@@ -1,34 +1,42 @@
 # Definition Principles
 
-Definition is the Component that expresses what a project is, what it is intended to achieve, the concepts and behaviours that define it, its scope and constraints, and the ordered phases through which it is developed. It describes the project independently of any particular implementation, execution capability, or example project.
+Definition is the Component that expresses a project through five distinct subjects: the project itself, its conceptual Models, its conceptual Structure, its expected Behaviours, and its ordered phases. It describes the project independently of any particular implementation, execution capability, or example project.
 
 Every statement here is mandatory.
 
 <br>
 
-## 1. Definition describes the project, not its implementation
+## 1. Project explains what the project is and why it exists
 
-Definition is the semantic overview of a project. It describes project identity, general information, intended outcomes, conceptual Models, expected project Behaviours, scope, project-wide constraints, and ordered phases.
+Project contains the project's name, concise description, broader overview, central concept, general information, and independent Goals. It also records project Scope and project-wide Constraints when they are defined.
 
-It never defines technologies, packages, runtime composition, deployment, source layout, executable Tasks, workflow State, or implementation details owned by another Component.
+Description summarizes the project. Overview provides broader context. Concept explains the core idea. Information supplies open-ended context and classification. Goals describe the outcomes the project is intended to achieve. Scope identifies what is included and excluded. Constraints state limitations that apply to the project as a whole.
 
-<br>
-
-## 2. Definition subjects remain distinct
-
-Identity names and describes the project. Information provides open-ended context and classification. Goals describe the independent outcomes the project is intended to achieve.
-
-Models identify the concepts and entities that make up the project. A Model entry contains only its name and description; fields, relationships, data rules, initial data, persistence, API behaviour, and presentation belong outside Definition.
-
-Project Behaviours identify what the resulting system must be able to do. A Behaviour entry contains only its name and description and states no implementation mechanism.
-
-Scope identifies what is included and excluded. Constraints state project-wide limitations that do not belong to one implementation Component. These subjects may remain empty when the project defines no information for them.
-
-Goals, Behaviours, and phases are independent: Goals state desired outcomes, Behaviours state required capabilities, and phases organize delivery. None is a grouping mechanism for another.
+Goals remain independent from Behaviours and phases: they define intended outcomes without organizing capabilities or delivery work.
 
 <br>
 
-## 3. Phases organize project delivery
+## 2. Models describe the project's concepts
+
+Models identify the concepts and entities that make up the project. Each Model contains only its name and description.
+
+Fields, relationships, data rules, initial data, persistence, API behaviour, and presentation are not part of Definition.
+
+<br>
+
+## 3. Structure describes conceptual organization
+
+Project Structure explains at a high level how the project is conceptually organized. It describes the project as a system without defining source directories, technologies, packages, runtime composition, deployment, or implementation details.
+
+<br>
+
+## 4. Behaviours describe what the project must do
+
+Project Behaviours identify the capabilities the resulting system must provide. Each Behaviour contains only its name and a description of the expected action or capability, never its implementation mechanism.
+
+<br>
+
+## 5. Phases organize project delivery
 
 Phases are ordered units of project work. Each phase has a stable identity, title, order, target, and description of the work it is intended to accomplish.
 
@@ -36,12 +44,12 @@ A phase target identifies the Component addressed by that phase. It does not def
 
 <br>
 
-## 4. Missing project information remains missing
+## 6. Missing project information remains missing
 
-Definition preserves stated project meaning without silently adding goals, Models, Behaviours, scope, constraints, phases, or other project intent. A structurally present subject remains empty when no information exists for it.
+Definition preserves stated project meaning without silently adding project information, Goals, Models, Structure, Behaviours, Scope, Constraints, phases, or other project intent. A structurally present subject or field remains empty when no information exists for it.
 
 <br>
 
-## 5. Project versioning and lifecycle are not modeled
+## 7. Project versioning and lifecycle are not modeled
 
 Definition contains no project version, release lifecycle, or communication lifecycle. Technical metadata used elsewhere in the Interface does not create project-level versioning or lifecycle meaning in Definition.

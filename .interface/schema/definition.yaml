@@ -1,26 +1,23 @@
 schema:
   id: agent-interface-definition
-  version: "6.0"
+  version: "7.0"
   purpose: "The shape of a Definition configuration: a structured, implementation-independent description of a project"
   principles: ".interface/principles/definition.md"
   layering: "This file defines shape only. Definition philosophy and boundaries belong to its Principles, while supported defaults belong to its Preferences."
 
 structure:
-  - identity
-  - information
-  - goals
+  - project
   - models
+  - structure
   - behaviours
-  - scope
-  - constraints
   - phases
 
 sections:
 
-  # <!--------------------------------------------------------------------------------- Identity -->
-  identity:
+  # <!--------------------------------------------------------------------------------- Project -->
+  project:
     required: true
-    purpose: "The project's identifying information."
+    purpose: "The project's identity, explanation, context, outcomes, scope, and constraints."
     fields:
       name:
         required: true
@@ -28,34 +25,61 @@ sections:
       description:
         required: true
         purpose: "A concise description of the project."
-
-  # <!--------------------------------------------------------------------------------- Information -->
-  information:
-    required: true
-    purpose: "An open-ended collection of general project context and classification; empty when none is defined."
-    fields:
-      "<item>":
-        required: false
-        purpose: "One named item of general project information."
+      overview:
+        required: true
+        purpose: "A broader explanation of the project and its context; empty when none is defined."
+      concept:
+        required: true
+        purpose: "The central idea behind the project; empty when none is defined."
+      information:
+        required: true
+        purpose: "An open-ended collection of general project context and classification; empty when none is defined."
         fields:
-          name:
-            required: true
-            purpose: "The name of the information item."
-          value:
-            required: true
-            purpose: "The value of the information item."
-          description:
+          "<item>":
             required: false
-            purpose: "Additional explanation when the name and value are insufficient."
-
-  # <!--------------------------------------------------------------------------------- Goals -->
-  goals:
-    required: true
-    purpose: "An ordered collection of independent project outcomes; empty when none is defined."
-    fields:
-      "<goal>":
-        required: false
-        purpose: "One project outcome."
+            purpose: "One named item of general project information."
+            fields:
+              name:
+                required: true
+                purpose: "The name of the information item."
+              value:
+                required: true
+                purpose: "The value of the information item."
+              description:
+                required: false
+                purpose: "Additional explanation when the name and value are insufficient."
+      goals:
+        required: true
+        purpose: "An ordered collection of independent project outcomes; empty when none is defined."
+        fields:
+          "<goal>":
+            required: false
+            purpose: "One project outcome."
+      scope:
+        required: true
+        purpose: "The boundaries of the project; both collections may be empty."
+        fields:
+          included:
+            required: true
+            purpose: "An ordered collection of subjects included in the project."
+            fields:
+              "<item>":
+                required: false
+                purpose: "One included subject."
+          excluded:
+            required: true
+            purpose: "An ordered collection of subjects explicitly excluded from the project."
+            fields:
+              "<item>":
+                required: false
+                purpose: "One excluded subject."
+      constraints:
+        required: true
+        purpose: "An ordered collection of project-wide constraints; empty when none is defined."
+        fields:
+          "<constraint>":
+            required: false
+            purpose: "One project-wide constraint."
 
   # <!--------------------------------------------------------------------------------- Models -->
   models:
@@ -73,6 +97,15 @@ sections:
             required: true
             purpose: "What the Model represents in the project."
 
+  # <!--------------------------------------------------------------------------------- Structure -->
+  structure:
+    required: true
+    purpose: "A high-level description of the project's conceptual organization."
+    fields:
+      description:
+        required: true
+        purpose: "How the project is conceptually organized; empty when none is defined."
+
   # <!--------------------------------------------------------------------------------- Behaviours -->
   behaviours:
     required: true
@@ -88,35 +121,6 @@ sections:
           description:
             required: true
             purpose: "What the project must be able to do."
-
-  # <!--------------------------------------------------------------------------------- Scope -->
-  scope:
-    required: true
-    purpose: "The boundaries of the project; both collections may be empty."
-    fields:
-      included:
-        required: true
-        purpose: "An ordered collection of subjects included in the project."
-        fields:
-          "<item>":
-            required: false
-            purpose: "One included subject."
-      excluded:
-        required: true
-        purpose: "An ordered collection of subjects explicitly excluded from the project."
-        fields:
-          "<item>":
-            required: false
-            purpose: "One excluded subject."
-
-  # <!--------------------------------------------------------------------------------- Constraints -->
-  constraints:
-    required: true
-    purpose: "An ordered collection of project-wide constraints; empty when none is defined."
-    fields:
-      "<constraint>":
-        required: false
-        purpose: "One project-wide constraint."
 
   # <!--------------------------------------------------------------------------------- Phases -->
   phases:
