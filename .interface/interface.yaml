@@ -106,7 +106,7 @@ content:
 
           database:
             path: "database.md"
-            responsibility: "Database independence, generic data access, persistence ownership, schema as code, migrations, and access rules"
+            responsibility: "Layered Database architecture, engine independence, generic data access, persistence ownership, schema as code, migrations, and access rules"
 
       preferences:
         path: ".interface/preferences/"
@@ -144,7 +144,7 @@ content:
 
           database:
             path: "database.yaml"
-            responsibility: "Supported database engines, ORMs, migration tools, relationship defaults, credential modes, versions, and capability defaults"
+            responsibility: "Defaults and supported technical profiles for Database Interface, Data Logic, and Storage Adapter"
 
       schemas:
         path: ".interface/schema/"
@@ -186,7 +186,7 @@ content:
 
           database:
             path: "database.yaml"
-            responsibility: "Shape of the generated Database configuration"
+            responsibility: "Shape of the generated layered Database configuration"
 
     # <!---------------------- components -->
     components:
@@ -248,7 +248,7 @@ content:
           config: "content.structure.generated_configuration.files.frontend"
 
       database:
-        responsibility: "Persistence, storage mapping, migrations, and the generic data-access interface"
+        responsibility: "Generic Database Interface, Model-driven Data Logic and Mapping, and Engine-specific Storage Adapter"
         resources:
           principle: "content.structure.layers.principles.files.database"
           preference: "content.structure.layers.preferences.files.database"
@@ -325,7 +325,7 @@ content:
 
         database:
           path: "database.yaml"
-          responsibility: "Resolved Database configuration and generic data-access interface"
+          responsibility: "Resolved Database Interface, Data Logic and Mapping, and Storage Adapter configuration"
 
 
   # <!-------------------------------------------- agent_skills -->

@@ -64,7 +64,7 @@ Components are the subjects described through the layers:
 | **Task** | Phase plans, contextual groups, and atomic self-contained tasks with explicit execution and verification context |
 | **Backend** | Application and Model Logic, Database communication through Data Access, and the external API |
 | **Frontend** | User interface and access to application data through the backend API |
-| **Database** | Persistence, storage mapping, migrations, and the generic data-access interface |
+| **Database** | Generic Database Interface, Model-driven Data Logic and Mapping, and Engine-specific Storage Adapter |
 
 For example, understanding the Backend component means combining its Principle, Preferences, and Schema. The same reading model applies to every component, with empty layer files contributing no additional information.
 

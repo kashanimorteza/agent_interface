@@ -2,16 +2,16 @@
 meta:
   path: ".interface/preferences/database.yaml"
   path_note: "The Preferences layer of the Database Component — supported technical choices and defaults used when a Database choice is unstated."
-  purpose: "The supported database technical choices and defaults used when the human project definition leaves a corresponding choice unstated."
+  purpose: "Defaults and supported technical profiles for the Database Interface, Data Logic, and Storage Adapter layers."
   standard: "Agent Project Interface"
-  version: "3.0"
+  version: "4.0"
   updated: "2026-09-05"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. No operation edits it; generation reads it and never writes a resolved value back into it"
+  rule: "This file is human-owned. Generation reads it and never writes resolved Database choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit project value and every applicable Database Principle take precedence over this file."
   consumption: "Generation resolves each unstated Database choice from this file and records the concrete result in generated Database configuration. Downstream operations consume that resolved result."
@@ -22,23 +22,21 @@ policy:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "defaults"
+  - "layers"
   - "engines"
   - "orms"
   - "migration_tools"
-  - "relationship_defaults"
   - "credential_storage"
-  - "capabilities"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "The Component-level defaults — code path and the engine, ORM, and migration tool selected when those choices are unstated"
-  engines: "One entry per supported engine — version, physical storage, connection behavior, and object naming conventions"
-  orms: "One entry per supported ORM — language, package, version, and database-layer capabilities"
-  migration_tools: "One entry per supported migration tool — language, isolated environment, packages, and canonical commands"
-  relationship_defaults: "Field naming, referenced key, nullability, indexing, and referential actions used when a relationship leaves them unspecified"
-  credential_storage: "The default at-rest mode for credential fields and the meaning of each supported mode"
-  capabilities: "The default on/off state of optional database capabilities"
+  defaults: "Database-wide defaults."
+  layers: "Technical defaults grouped by Database Interface, Data Logic, and Storage Adapter."
+  engines: "Supported Database Engines and their physical storage, connection, and naming profiles."
+  orms: "Supported ORM implementations and capabilities."
+  migration_tools: "Supported migration tools, environments, packages, and canonical commands."
+  credential_storage: "Supported at-rest modes for fields marked as credentials."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -46,9 +44,28 @@ content:
 
   defaults:
     code_path: "database/"
-    engine: "SQLite"
-    orm: "SQLAlchemy"
-    migration_tool: "Alembic"
+
+  layers:
+    database_interface: {}
+    data_logic:
+      relationship_defaults:
+        field_name: "<referenced_model>_id"
+        role_field_name: "<role>_<referenced_model>_id"
+        referenced_key: "primary_key"
+        nullable: false
+        index: true
+        on_delete: "RESTRICT"
+        on_update: "RESTRICT"
+      initial_data:
+        enabled_when_present: true
+    storage_adapter:
+      engine: "SQLite"
+      orm: "SQLAlchemy"
+      migration_tool: "Alembic"
+      credential_storage_mode: "plaintext"
+      backups:
+        enabled: false
+
   engines:
     SQLite:
       version: "runtime-provided"
@@ -64,6 +81,7 @@ content:
         columns: "snake_case"
         constraints: "snake_case"
         indexes: "ix_<table>_<column>"
+
   orms:
     SQLAlchemy:
       version: "latest"
@@ -72,6 +90,7 @@ content:
       capabilities:
         model_mapping: true
         parameterized_sql: true
+
   migration_tools:
     Alembic:
       version: "latest"
@@ -88,16 +107,8 @@ content:
       commands:
         upgrade: "uv run alembic upgrade head"
         downgrade: "uv run alembic downgrade -1"
-  relationship_defaults:
-    field_name: "<referenced_model>_id"
-    role_field_name: "<role>_<referenced_model>_id"
-    referenced_key: "primary_key"
-    nullable: false
-    index: true
-    on_delete: "RESTRICT"
-    on_update: "RESTRICT"
+
   credential_storage:
-    default: "plaintext"
     modes:
       plaintext:
         stored_as: "string"
@@ -112,9 +123,4 @@ content:
         stored_as: "string"
         transformation: "reversible_encryption"
         recoverable: true
-        key_source: "Runtime configuration outside the database and generated Interface files."
-  capabilities:
-    seed_data:
-      default_enabled: false
-    backups:
-      default_enabled: false
+        key_source: "Runtime configuration outside Database and generated Interface files."
