@@ -325,24 +325,24 @@ Defines the project's implementation phases. Phases are executed step by step in
 
 ### Phase 1
 
-**Title:** Data Foundation
+**Title:** Database
 
 **Target:** Database
 
-**Goal:** Fully implement the database layer, create the database, apply the defined model structure, and insert all data defined in the models' `Initial Data` sections.
+**Goal:** Implement the database, apply the defined model structure, and insert the defined initial data.
 
 ### Phase 2
 
-**Title:** Data Operations
+**Title:** Backend
 
 **Target:** Backend
 
-**Goal:** Make all defined project data available for consistent creation, retrieval, update, and deletion operations.
+**Goal:** Implement the backend layer, including its application logic and API for operating on the defined models.
 
 ### Phase 3
 
-**Title:** Data Management Interface
+**Title:** Frontend
 
 **Target:** Frontend
 
-**Goal:** Enable users to enter and manage all defined project data through a user-facing experience.
+**Goal:** Implement the frontend based on the backend API.
