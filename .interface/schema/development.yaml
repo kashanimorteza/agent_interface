@@ -1,118 +1,114 @@
 schema:
   id: agent-interface-development
-  version: "2.0"
-  purpose: "The shape of development.yaml — the project's technical composition, cross-item integration, runtime, and deployment"
+  version: "3.0"
+  purpose: "The shape of a Development configuration: independent application layers, their connections, and the Platform that runs and deploys them"
   principles: ".interface/principles/development.md"
-  layering: "This file defines shape only. The mandatory rules of this layer live in its principles document and are not restated here."
+  layering: "This file defines shape only. Development philosophy and boundaries belong to its Principles, while supported technical defaults belong to its Preferences."
 
 structure:
   - summary
-  - components
+  - layers
   - connections
-  - runtime
-  - deployment
+  - platform
 
 sections:
 
   # <!--------------------------------------------------------------------------------- Summary -->
   summary:
     required: true
-    purpose: "The complete technical shape of the project in one sentence — which kinds of components participate, how they connect, and how the result runs."
+    purpose: "A concise description of the project's resolved layered composition."
 
-  # <!--------------------------------------------------------------------------------- Components -->
-  components:
+  # <!--------------------------------------------------------------------------------- Layers -->
+  layers:
     required: true
-    purpose: "The technical items selected for this project — one entry per mapped component actually required by the project Understanding."
+    purpose: "The application layers participating in the project."
     fields:
-      "<component>":
-        required: true
-        purpose: "One selected technical component, keyed by the item type through which interface.yaml resolves its Schema and generated configuration."
+      "<layer>":
+        required: false
+        purpose: "One independent application layer."
         fields:
+          name:
+            required: true
+            purpose: "The layer's human-readable name."
           configuration:
             required: true
-            purpose: "The generated item-configuration file resolved through the current Interface root."
+            purpose: "A reference to the configuration owned by the layer."
           responsibility:
             required: true
-            purpose: "A one-sentence summary of the responsibility owned by this component's generated configuration."
-          owns:
+            purpose: "A concise description of the responsibility owned by the layer."
+          provides:
             required: true
-            purpose: "A summary of the component's authoritative owned boundary."
-          does_not_own:
-            required: true
-            purpose: "A summary of the component's authoritative excluded boundary."
-          produces:
-            required: false
-            purpose: "A summary of the runtime interfaces provided by this component."
+            purpose: "The declared interfaces the layer provides; empty when it provides none."
           consumes:
-            required: false
-            purpose: "A summary of the runtime interfaces used by this component."
+            required: true
+            purpose: "The declared interfaces the layer consumes; empty when it consumes none."
 
   # <!--------------------------------------------------------------------------------- Connections -->
   connections:
     required: true
-    purpose: "The directed integration graph between selected components — one entry per producer-to-consumer connection."
+    purpose: "The ordered collection of directed connections between application layers; empty when no connection is required."
     fields:
       "<connection>":
-        required: true
-        purpose: "One directed connection, named for its producer and consumer."
+        required: false
+        purpose: "One connection from a consuming layer to a providing layer."
         fields:
           from:
             required: true
-            purpose: "The selected component providing the runtime interface."
+            purpose: "The layer consuming the interface."
           to:
             required: true
-            purpose: "The selected component using the runtime interface."
+            purpose: "The layer providing the interface."
           interface:
             required: true
-            purpose: "The implemented runtime interface used by the consumer, as owned by the endpoint configurations."
-          path:
-            required: false
-            purpose: "Where the consumer reads the interface when that location is known at configuration time; omitted when implementation produces it later."
-          rule:
+            purpose: "The declared provider interface used by the consumer."
+          description:
             required: true
-            purpose: "The integration boundary both endpoint configurations require."
+            purpose: "A concise explanation of the connection."
 
-  # <!--------------------------------------------------------------------------------- Runtime -->
-  runtime:
+  # <!--------------------------------------------------------------------------------- Platform -->
+  platform:
     required: true
-    purpose: "How the project's selected components run together."
+    purpose: "The composition layer that supplies the operating environment, coordinates the application layers, and deploys the complete project."
     fields:
-      strategy:
+      environment:
         required: true
-        purpose: "The execution strategy, such as native processes, containers, managed services, or a mixed topology."
-      operating_system:
-        required: false
-        purpose: "The required operating system or platform constraint when one exists."
-      orchestration:
-        required: false
-        purpose: "The mechanism coordinating component processes or containers when coordination is required."
-      startup:
+        purpose: "The environment in which the complete project operates."
+        fields:
+          execution_model:
+            required: true
+            purpose: "The resolved model used to run the application layers."
+          operating_system:
+            required: false
+            purpose: "The operating-system requirement when one exists."
+      composition:
         required: true
-        purpose: "The component startup order and the mechanism that brings the complete project online."
-      configuration:
+        purpose: "How the application layers are connected and brought online together."
+        fields:
+          startup:
+            required: true
+            purpose: "The startup order and mechanism for the complete project."
+          orchestration:
+            required: false
+            purpose: "The coordination mechanism when the project requires one."
+          networking:
+            required: true
+            purpose: "How declared interfaces are made reachable between layers."
+          configuration:
+            required: true
+            purpose: "How runtime and environment-specific configuration is supplied to the layers."
+      deployment:
         required: true
-        purpose: "How runtime configuration, environment-specific values, and secrets are supplied without placing secret values in Interface Config."
-
-  # <!--------------------------------------------------------------------------------- Deployment -->
-  deployment:
-    required: true
-    purpose: "Where and how the complete project is delivered."
-    fields:
-      platform:
-        required: true
-        purpose: "The deployment class, such as a local machine, server, container platform, cloud platform, or another supported destination."
-      provider:
-        required: false
-        purpose: "The selected platform or cloud provider when the project requires one."
-      service:
-        required: false
-        purpose: "The selected provider service or hosting product when applicable."
-      region:
-        required: false
-        purpose: "The deployment region or location constraint when applicable."
-      artifacts:
-        required: true
-        purpose: "The deployable artifacts and configuration needed to deliver the selected components."
-      release:
-        required: true
-        purpose: "The mechanism that publishes, starts, updates, and verifies a release."
+        purpose: "How and where the complete project is delivered."
+        fields:
+          target:
+            required: true
+            purpose: "The resolved deployment destination."
+          provider:
+            required: false
+            purpose: "The deployment provider when one is selected."
+          location:
+            required: false
+            purpose: "The deployment location when one is required."
+          artifacts:
+            required: true
+            purpose: "The artifacts and instructions required to deliver the complete project."

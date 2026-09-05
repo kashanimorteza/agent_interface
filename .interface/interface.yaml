@@ -86,7 +86,7 @@ content:
 
           development:
             path: "development.md"
-            responsibility: "How selected technical Components are connected without redefining them"
+            responsibility: "Layered application architecture, interface-only communication, explicit connections, and Platform composition"
 
           state:
             path: "state.md"
@@ -166,7 +166,7 @@ content:
 
           development:
             path: "development.yaml"
-            responsibility: "Shape of the generated Development configuration"
+            responsibility: "Shape of the project's application layers, connections, and Platform configuration"
 
           state:
             path: "state.yaml"
@@ -208,7 +208,7 @@ content:
           config: "content.structure.generated_configuration.files.model"
 
       development:
-        responsibility: "Technical Component selection, connections, runtime, and deployment"
+        responsibility: "Independent application layers, their declared-interface connections, and the Platform that runs and deploys them"
         resources:
           principle: "content.structure.layers.principles.files.development"
           preference: "content.structure.layers.preferences.files.development"
@@ -305,7 +305,7 @@ content:
 
         development:
           path: "development.yaml"
-          responsibility: "Technical composition, cross-Component connections, runtime, and deployment choices"
+          responsibility: "Application layers, declared-interface connections, and the Platform environment, composition, and deployment"
 
         state:
           path: "state.yaml"

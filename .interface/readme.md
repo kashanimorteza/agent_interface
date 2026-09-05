@@ -59,7 +59,7 @@ Components are the subjects described through the layers:
 | --- | --- |
 | **Definition** | Structured project description, conceptual models, project structure, behaviours, and ordered phases |
 | **Model** | Shared domain models, fields, relationships, rules, and initial data |
-| **Development** | Technical component selection, connections, runtime, and deployment |
+| **Development** | Independent application layers, declared-interface connections, and the Platform that runs and deploys them |
 | **State** | Current workflow state, working modes, and transition authority |
 | **Task** | Plans, groups, tasks, progress, and task history |
 | **Backend** | Application behaviour and the HTTP API |
@@ -82,7 +82,7 @@ Behaviours are part of the Interface's operating model. Agent Skills are externa
 
 The `config/` directory is not a fourth descriptive layer. It is the generated project Understanding: the project-specific result produced from `project.md` using the applicable Principles and Preferences and written in the forms defined by the Schemas.
 
-Each generated configuration belongs to one component. Definition captures the project description, conceptual models, project structure, behaviours, and phases; Model provides the detailed shared domain language; the technical components define their own resolved configuration; Development connects the selected technical components and explains how they run and deploy; Task holds executable plans; and State records where the Workflow currently stands.
+Each generated configuration belongs to one component. Definition captures the project description, conceptual models, project structure, behaviours, and phases; Model provides the detailed shared domain language; the application layers define their own resolved configuration; Development connects those layers through declared interfaces and defines the Platform that runs and deploys them; Task holds executable plans; and State records where the Workflow currently stands.
 
 Project phases are the units of planning and development. A phase target selects the component developed by that phase, while Development independently describes how all selected technical components connect and operate together.
 

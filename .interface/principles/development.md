@@ -1,45 +1,53 @@
 # Development Principles
 
-This document is the personality of the development layer — the part of the Interface that says how the project's selected technical items are connected, run, and deployed. It is written for the Agent that generates `config/development.yaml` and for the Developer who wants to know what that file is allowed to decide.
+Development defines the project's layered software architecture and the way its independent application layers are composed into one runnable system. It is an implementation-independent standard and contains no project-specific technology, provider, topology, or execution capability.
 
-The exact shape of `config/development.yaml` lives in the schema (`.interface/schema/development.yaml`). There is no preferences file for this layer: development has no technical defaults of its own, because every technology it mentions belongs to an item.
+The application architecture separates Database, Backend, Frontend, and Platform responsibilities. Platform is the composition layer that connects the other layers, supplies their operating environment, brings the complete system online, and delivers it to its destination.
 
 Every statement here is mandatory.
 
 <br>
 
-## 1. Development connects items; it does not define them
+## 1. Every layer is an independent boundary
 
-Project identity, intended outcomes, and each phase's target belong to `definition.yaml`. Domain models belong to `model.yaml`. Each technical item owns its own internal configuration. Development owns only how the selected items are connected, run, and deployed.
+Each application layer owns its internal implementation, rules, configuration, and provided interfaces. Another layer may depend on what that layer provides, but never on how it is implemented.
 
-Each component's mapped generated configuration remains the source of truth for its internal technology, responsibility, boundaries, interfaces, paths, and implementation details. Development summarizes and connects those values without redefining them.
-
-<br>
-
-## 2. The layer is project-independent
-
-The development schema describes a general technical-development layer and contains no project-specific components, providers, platforms, or topology. Every generated value is resolved for the current project at generation time.
+A layer can evolve or be replaced without requiring consumers to change while its declared interface remains compatible.
 
 <br>
 
-## 3. Components are selected, not assumed
+## 2. Communication happens only through declared interfaces
 
-Components are selected dynamically from the item types currently referenced by `interface.yaml`. Every target named by a project phase must resolve to a selected component; additional components are selected only when the project Understanding requires them. The existence of an item schema does not by itself add that component to the project.
+A consumer communicates with another layer only through the interface that the provider declares for that purpose. It never reads or modifies another layer's internal storage, implementation, configuration, or private resources directly.
 
-<br>
-
-## 4. A connection names the interface between its endpoints
-
-Every connection is derived from the interfaces provided and used by the selected components. A connection cannot invent an interface that neither endpoint configuration defines.
+Database access happens through the Database interface. Backend capabilities are consumed through the Backend interface. The same rule applies to every current or future layer.
 
 <br>
 
-## 5. Runtime and deployment choices are resolved and recorded
+## 3. Connections are explicit
 
-The generation operation resolves unspecified runtime and deployment choices using the active agent integration's decision policy. Explicit project constraints are preserved, and consequential agent-selected choices are recorded in `development.yaml`.
+Every dependency between layers is represented as a directed connection from a consumer to a provider through one declared interface. Hidden coupling, undeclared communication, and duplicated ownership are not part of the architecture.
+
+A connection describes integration between two boundaries; it does not redefine either boundary or invent an interface that its provider does not own.
 
 <br>
 
-## 6. When development disagrees with an item, the item wins
+## 4. Platform composes the complete system
 
-Component summaries and connections must agree with their owning item configurations. When they differ, the owning item configuration governs and `development.yaml` is reconciled rather than treated as a competing authority.
+Platform owns cross-layer composition: the operating environment, process or service coordination, startup, networking, runtime configuration delivery, and deployment of the complete project.
+
+Platform connects layers through their declared interfaces and never absorbs their application, presentation, or persistence responsibilities. It may run the system on any suitable operating system, local environment, server, container platform, cloud platform, or future destination without changing the ownership of another layer.
+
+<br>
+
+## 5. Development records composition, not internal implementation
+
+Development identifies the participating application layers, their public responsibilities and interfaces, the connections between them, and the Platform configuration that makes the complete project runnable.
+
+Internal technologies, packages, source layout, domain data, API implementation, user-interface implementation, and persistence implementation remain owned by their respective layers.
+
+<br>
+
+## 6. The architecture remains project-independent
+
+Development defines a reusable layered standard. Project-specific choices populate that standard but never change its separation of ownership, interface-only communication, explicit connections, or Platform responsibility.
