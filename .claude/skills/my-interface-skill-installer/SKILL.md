@@ -8,11 +8,9 @@ disable-model-invocation: true
 
 Install compatible AI Agent Skills for technologies found in the configured target project. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
 
-## Bootstrap and detect
+## Detect
 
-Read `.interface/map.yaml`. This is the only Interface path this Skill may assume. Follow its current map and read order to discover the generated Understanding, configured target-project locations, current authorities, and read and write boundaries required for this run.
-
-Re-read required sources on every invocation. Do not rely on remembered paths, file shapes, technologies, versions, permissions, or installation state. Use the human project definition for context only; detect eligible technologies from the current generated configuration and from dependency manifests, lockfiles, runtime-version files, and framework configuration inside authorized target-project locations.
+On every run, detect eligible technologies from the current generated configuration and from dependency manifests, lockfiles, runtime-version files, and framework configuration inside the target-project locations.
 
 Check project and personal Skills currently visible to Claude Code, then inspect installed plugins with `claude plugin list --json` so compatible existing capabilities are not duplicated.
 
@@ -37,7 +35,7 @@ If the Claude CLI is present and `claude plugin list --available --json` succeed
 
 ## Boundaries
 
-Determine all write boundaries and responses to missing or conflicting information from the current authorities. Do not change Interface data, application code, architecture, manifests, lockfiles, or runtime dependencies. Do not install for a technology that was not detected inside a configured target-project location, remove a compatible Skill, or install duplicates.
+Do not change Interface data, application code, architecture, manifests, lockfiles, or runtime dependencies. Do not install for a technology that was not detected inside a configured target-project location, remove a compatible Skill, or install duplicates.
 
 The operation must be idempotent: a second run against unchanged Config, dependencies, and installed Skills makes no changes.
 

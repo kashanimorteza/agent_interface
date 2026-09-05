@@ -12,7 +12,9 @@ Convert the mapped human project definition into the generated project Understan
 
 Transform the mapped project facts into every generated configuration required by the current Interface.
 
-Resolve and cross-check the complete candidate Understanding before writing. Validate every generated output against its mapped Schema.
+On every run, rebuild the complete candidate Understanding from the current mapped sources before writing. Reconcile the generated configuration with that candidate so additions and changes in the human project definition are reflected consistently.
+
+Cross-check the complete candidate Understanding and validate every generated output against its mapped Schema.
 
 ## Boundaries
 
