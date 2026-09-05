@@ -31,7 +31,7 @@ Agent Interface provides the communication layer between these two worlds.
 
 ## Structure
 
-The internal structure of Agent Interface lives in the `.interface/` directory. It has foundational files, three descriptive layers, a set of components, and the generated project configuration.
+The internal structure of Agent Interface lives in the `.interface/` directory. It has foundational files, three descriptive layers, a set of components, operating modes, and the generated project configuration.
 
 Agent Skills and Workflow use this structure, but they are not part of it.
 
@@ -68,15 +68,16 @@ Components are the subjects described through the layers:
 
 For example, understanding the Backend component means combining its Principle, Preferences, and Schema. The same reading model applies to every component, with empty layer files contributing no additional information.
 
-### Behaviours
+### Modes
 
-Behaviours describe what is done with the structure:
+Modes describe the current kind of activity performed through the Interface:
 
-- **Interpretation** — Transforms the human project definition into the standardized generated project Understanding.
+- **Not Set** — Represents the resting State before an Interface operation has been recorded.
+- **Configuring** — Transforms the human project definition into the standardized generated project Understanding.
 - **Planning** — Transforms the generated Understanding for a requested project phase into implementation-ready Tasks.
 - **Development** — Executes and verifies the planned Tasks to produce the project implementation.
 
-Behaviours are part of the Interface's operating model. Agent Skills are external capabilities that perform these behaviours, while Workflow describes the order in which the behaviours are used.
+State records the active Mode. Agent Skills are external capabilities that perform the operation represented by a Mode, while Workflow describes the order in which those operations are used. These operating Modes are distinct from project Behaviours: project Behaviours describe what the target application must do.
 
 ### Generated Configuration
 
@@ -91,7 +92,7 @@ Project phases are the units of planning and development. A phase target selects
 
 ## Agent Skills
 
-Agent Skills are external executors of Agent Interface behaviours. They use the Interface, but they do not define its structure and are not part of its project model.
+Agent Skills are external executors of operations represented by Agent Interface Modes. They use the Interface, but they do not define its structure and are not part of its project model.
 
 ### `my-interface-interpreter`
 

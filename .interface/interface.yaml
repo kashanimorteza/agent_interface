@@ -4,7 +4,7 @@ meta:
   path_note: "The entry point of the Agent Project Interface — the only file an agent finds without guidance"
   responsibility: "Machine-readable technical definition and entry point for the Agent Project Interface"
   standard: "Agent Project Interface"
-  version: "7.0"
+  version: "8.0"
   updated: "2026-09-05"
 
 
@@ -28,8 +28,8 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   interface: "The purpose and concept of the Agent Project Interface"
-  structure: "The Foundational Files, Layers, Components, Behaviours, and Generated Configuration that form the Interface"
-  agent_skills: "External Agent Skills available to execute Interface Behaviours and supporting operations"
+  structure: "The Foundational Files, Layers, Components, Modes, and Generated Configuration that form the Interface"
+  agent_skills: "External Agent Skills available to execute operations represented by Interface Modes and supporting operations"
   workflow: "The ordered human-facing path for using the Interface"
 
 
@@ -255,39 +255,52 @@ content:
           schema: "content.structure.layers.schemas.files.database"
           config: "content.structure.generated_configuration.files.database"
 
-    # <!---------------------- behaviours -->
-    behaviours:
+    # <!---------------------- modes -->
+    modes:
+      authority: "content.structure.components.state"
 
-      interpretation:
-        responsibility: "Generate complete and consistent project Understanding for downstream Planning and Development"
-        inputs:
-          project: "content.structure.foundations.project"
-          existing_understanding: "content.structure.generated_configuration"
-        resolution: "For every current Component, resolve the target-project Understanding through that Component's Principles and Preferences and express the result in the form required by its Schema"
-        completeness: "Produce one structurally valid current configuration for every current Component; an empty Layer contributes no information and never removes the Component's required output"
-        refresh: "On every run, rebuild the complete candidate from the current Interface and target project, then reconcile it with existing generated configuration"
-        preservation: "Remove stale interpreter-owned information while preserving information owned by the human, runtime, or another Behaviour according to the current authorities"
-        validation: "Validate every candidate output against its current Schema and validate the complete set for cross-Component consistency before writing any result"
-        idempotency: "When the current Interface, target project, and owned generated information are unchanged, another run makes no changes"
-        downstream_readiness: "The generated Understanding must let Planning create Tasks and Development execute them without reinterpreting the human project definition"
-        output: "content.structure.generated_configuration"
+      items:
+        not_set:
+          state_value: "not set"
+          phase_specific: false
+          responsibility: "Represent the resting State before an Interface operation has been recorded"
 
-      planning:
-        responsibility: "Transform the generated Understanding for a requested project phase into implementation-ready Tasks"
-        inputs:
-          definition: "content.structure.components.definition"
-          understanding: "content.structure.generated_configuration"
-          task: "content.structure.components.task"
-        scope: "The requested phase; its target selects the Component being planned"
-        output: "content.structure.generated_configuration.files.task"
+        configuring:
+          state_value: "configuring"
+          phase_specific: false
+          responsibility: "Generate complete and consistent project Understanding for downstream Planning and Development"
+          inputs:
+            project: "content.structure.foundations.project"
+            existing_understanding: "content.structure.generated_configuration"
+          resolution: "For every current Component, resolve the target-project Understanding through that Component's Principles and Preferences and express the result in the form required by its Schema"
+          completeness: "Produce one structurally valid current configuration for every current Component; an empty Layer contributes no information and never removes the Component's required output"
+          refresh: "On every run, rebuild the complete candidate from the current Interface and target project, then reconcile it with existing generated configuration"
+          preservation: "Remove stale interpreter-owned information while preserving information owned by the human, runtime, or another operation according to the current authorities"
+          validation: "Validate every candidate output against its current Schema and validate the complete set for cross-Component consistency before writing any result"
+          idempotency: "When the current Interface, target project, and owned generated information are unchanged, another run makes no changes"
+          downstream_readiness: "The generated Understanding must let Planning create Tasks and Development execute them without reinterpreting the human project definition"
+          output: "content.structure.generated_configuration"
 
-      development:
-        responsibility: "Execute and verify eligible planned Tasks to produce the project implementation"
-        inputs:
-          understanding: "content.structure.generated_configuration"
-          task: "content.structure.components.task"
-        scope: "The requested phase; its target selects the Component being developed"
-        output: "Implementation inside the selected Component's resolved code boundary"
+        planning:
+          state_value: "planning"
+          phase_specific: true
+          responsibility: "Transform the generated Understanding for a requested project phase into implementation-ready Tasks"
+          inputs:
+            definition: "content.structure.components.definition"
+            understanding: "content.structure.generated_configuration"
+            task: "content.structure.components.task"
+          scope: "The requested phase; its target selects the Component being planned"
+          output: "content.structure.generated_configuration.files.task"
+
+        development:
+          state_value: "development"
+          phase_specific: true
+          responsibility: "Execute and verify eligible planned Tasks to produce the project implementation"
+          inputs:
+            understanding: "content.structure.generated_configuration"
+            task: "content.structure.components.task"
+          scope: "The requested phase; its target selects the Component being developed"
+          output: "Implementation inside the selected Component's resolved code boundary"
 
     # <!---------------------- generated_configuration -->
     generated_configuration:
@@ -330,7 +343,7 @@ content:
 
   # <!-------------------------------------------- agent_skills -->
   agent_skills:
-    responsibility: "External capabilities that execute Interface Behaviours or supporting operations without defining the Interface Structure"
+    responsibility: "External capabilities that execute operations represented by Interface Modes or supporting operations without defining the Interface Structure"
 
     items:
       interpreter:
@@ -338,21 +351,21 @@ content:
         path: ".claude/skills/my-interface-interpreter/SKILL.md"
         invocation: "/my-interface-interpreter"
         responsibility: "Generate or refresh complete Project Understanding for every current Component and reconcile it for downstream Planning and Development"
-        behaviour: "content.structure.behaviours.interpretation"
+        mode: "content.structure.modes.items.configuring"
 
       tasker:
         name: "my-interface-tasker"
         path: ".claude/skills/my-interface-tasker/SKILL.md"
         invocation: "/my-interface-tasker <phase-id>"
         responsibility: "Create or reconcile an implementation-ready plan for one requested project phase"
-        behaviour: "content.structure.behaviours.planning"
+        mode: "content.structure.modes.items.planning"
 
       developer:
         name: "my-interface-developer"
         path: ".claude/skills/my-interface-developer/SKILL.md"
         invocation: "/my-interface-developer <phase-id>"
         responsibility: "Implement and verify eligible planned Tasks for one requested project phase"
-        behaviour: "content.structure.behaviours.development"
+        mode: "content.structure.modes.items.development"
 
       reviewer:
         name: "my-interface-reviewer"

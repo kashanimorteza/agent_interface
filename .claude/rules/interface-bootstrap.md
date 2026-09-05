@@ -14,7 +14,7 @@ The self-contained clear and reset operations are the only exceptions to this bo
 
 ## Separation
 
-- The Interface remains structurally agent-independent when it catalogs an external Agent Skill. It may record a Skill's name, physical path, short purpose, invocation, and Behaviour binding as integration metadata outside the Interface Structure.
+- The Interface remains structurally agent-independent when it catalogs an external Agent Skill. It may record a Skill's name, physical path, short purpose, invocation, and Mode binding as integration metadata outside the Interface Structure.
 - Skill integration metadata grants no authority and does not define or override the Skill's instructions, shared execution rules, or the owning Interface files.
 - Do not copy complete Skill instructions or shared Claude operating rules into the Interface. Technology-to-Skill guidance remains in the Claude Rules unless the Interface explicitly introduces a separate agent-independent capability model.
 - Claude-specific behavior belongs under the Claude configuration layer. Skills contain only their specialized workflow; shared behavior belongs in Rules.
