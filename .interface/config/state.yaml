@@ -58,10 +58,10 @@ content:
 
   # <!-------------------------------------------- active -->
   active:
-    mode: "configuring"
-    phase: null
-    mode_reason: "The human requested interpretation of project.md. The configuring operation created this State file and generated the complete project Understanding for every Component; it acted on no single phase."
-    set_by: "configuring operation — acting on the human's request to interpret project.md"
+    mode: "planning"
+    phase: "P1"
+    mode_reason: "The human requested planning for phase P1 (Data Foundation, target database). The planning operation built and validated the P1 Plan and wrote it into task.yaml — 7 Groups and 45 Tasks, all todo; no Blocker or Open Question was raised."
+    set_by: "planning operation — acting on the human's planning request naming phase P1"
     set_at: "2026-09-06"
 
   # <!-------------------------------------------- blockers -->
