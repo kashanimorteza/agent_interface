@@ -382,8 +382,8 @@ content:
       reset:
         name: "my-interface-reset"
         path: ".claude/skills/my-interface-reset/SKILL.md"
-        invocation: "/my-interface-reset <planning|development>"
-        responsibility: "Preview and reset planning output or developed code through a fixed reset stage after human confirmation"
+        invocation: "/my-interface-reset <1|2|3>"
+        responsibility: "Preview and reset after human confirmation: 1 = interpreter (configuration), 2 = task (planning output), 3 = develop (implementation)"
 
       skill_installer:
         name: "my-interface-skill-installer"

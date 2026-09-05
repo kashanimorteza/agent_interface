@@ -116,7 +116,7 @@ Clears generated Interface configuration and the fixed generated project directo
 
 ### `my-interface-reset`
 
-Resets either planning output or developed code through a fixed two-stage script. A planning reset clears every Plan's Groups and Tasks and clears active State; a development reset returns Tasks to `todo`, returns active State to planning, and removes the root backend, frontend, and database directories.
+Run `/my-interface-reset <1|2|3>`: `1 = interpreter`, `2 = task`, `3 = develop`. Every stage removes the root `backend/`, `frontend/`, `database/`, and `developer/` output directories when present, after preview and confirmation. `1` also clears all entries inside `config/`. `2` clears Groups and Tasks while preserving phase Plan shells and returns active State to `not set`. `3` preserves Tasks and their history, returns every Task to `todo`, and returns active State to `planning`. Both `2` and `3` set the active phase to null.
 
 ### `my-interface-skill-installer`
 

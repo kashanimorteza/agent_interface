@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preview or apply the fixed planning and development resets."""
+"""Preview or apply a reset: 1 = interpreter, 2 = task, 3 = develop."""
 
 import argparse
 from datetime import date
@@ -9,9 +9,11 @@ import shutil
 import yaml
 
 
-TASK_FILE = Path(".interface/config/task.yaml")
-STATE_FILE = Path(".interface/config/state.yaml")
-CODE_DIRECTORIES = (Path("backend"), Path("frontend"), Path("database"))
+CONFIG_DIRECTORY = Path(".interface/config")
+TASK_FILE = CONFIG_DIRECTORY / "task.yaml"
+STATE_FILE = CONFIG_DIRECTORY / "state.yaml"
+CODE_DIRECTORIES = tuple(Path(name) for name in ("backend", "frontend", "database", "developer"))
+STAGES = {"1": "interpreter", "2": "task", "3": "develop"}
 
 
 def load(path):
@@ -27,63 +29,80 @@ def save(path, value):
     )
 
 
+def entries(value):
+    if isinstance(value, dict):
+        return value.values()
+    if isinstance(value, list):
+        return value
+    raise SystemExit("Expected a list or mapping in the Task structure; nothing changed.")
+
+
 def all_tasks(plans):
-    for plan in plans.values():
-        for group in plan.get("groups", {}).values():
-            yield from group.get("tasks", {}).values()
+    for plan in entries(plans):
+        for group in entries(plan.get("groups", {})):
+            yield from entries(group.get("tasks", {}))
+
+
+def remove(path):
+    if path.is_symlink() or path.is_file():
+        path.unlink()
+    elif path.is_dir():
+        shutil.rmtree(path)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("stage", choices=("planning", "development"))
+    parser.add_argument("stage", choices=STAGES, help="1 = interpreter, 2 = task, 3 = develop")
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
+    stage = STAGES[args.stage]
 
-    task = load(TASK_FILE)
-    state = load(STATE_FILE)
-    plans = task["content"]["plans"]
-
-    if args.stage == "planning":
-        group_count = sum(len(plan.get("groups", {})) for plan in plans.values())
-        task_count = sum(1 for _ in all_tasks(plans))
-        changes = [
-            f"Clear {group_count} Group(s) and {task_count} Task(s) from {TASK_FILE}",
-            f"Set content.active to null in {STATE_FILE}",
-        ]
-        if args.apply:
-            for plan in plans.values():
-                plan["groups"] = {}
-            state["content"]["active"] = None
-            save(TASK_FILE, task)
-            save(STATE_FILE, state)
+    directories = [p for p in CODE_DIRECTORIES if p.is_dir() or p.is_symlink()]
+    config_entries = []
+    changes = []
+    if stage == "interpreter":
+        if CONFIG_DIRECTORY.is_symlink():
+            raise SystemExit("Config directory is a symlink; refusing to traverse it.")
+        if CONFIG_DIRECTORY.exists():
+            config_entries = sorted(CONFIG_DIRECTORY.iterdir())
+        changes.extend(f"Delete config entry: {p}" for p in config_entries)
     else:
+        task = load(TASK_FILE)
+        state = load(STATE_FILE)
+        plans = task["content"]["plans"]
         tasks = list(all_tasks(plans))
-        directories = [path for path in CODE_DIRECTORIES if path.exists() or path.is_symlink()]
-        changes = [
-            f"Set content.active to planning / none in {STATE_FILE}",
-            f"Set {len(tasks)} Task(s) to todo and remove their blocker fields in {TASK_FILE}",
-            *(f"Delete root directory: {path}/" for path in directories),
-        ]
-        if args.apply:
-            state["content"]["active"] = {
-                "mode": "planning",
-                "mode_reason": "Development reset requested by the human.",
-                "phase": "none",
-                "set_by": "reset operation",
-                "set_at": date.today().isoformat(),
-            }
-            save(STATE_FILE, state)
+        if not all(isinstance(item, dict) for item in tasks):
+            raise SystemExit("Every Task must be a mapping; nothing changed.")
+        if stage == "task":
+            group_count = sum(len(p.get("groups", {})) for p in entries(plans))
+            changes.append(f"Clear {group_count} Group(s) and {len(tasks)} Task(s) from {TASK_FILE}; preserve Plan shells")
+            for plan in entries(plans):
+                plan["groups"] = [] if isinstance(plan.get("groups"), list) else {}
+            mode = "not set"
+        else:
+            changes.append(f"Set {len(tasks)} Task(s) to todo and remove their blocker fields in {TASK_FILE}; preserve content and history")
             for item in tasks:
                 item["status"] = "todo"
                 item.pop("blocker", None)
-            save(TASK_FILE, task)
-            for path in directories:
-                if path.is_symlink():
-                    path.unlink()
-                elif path.is_dir():
-                    shutil.rmtree(path)
+            mode = "planning"
+        state["content"]["active"] = {
+            "mode": mode,
+            "mode_reason": f"{stage} reset requested by the human.",
+            "phase": None,
+            "set_by": "reset operation",
+            "set_at": date.today().isoformat(),
+        }
+        changes.append(f"Set active State to {mode} with phase null; preserve shared blockers and questions")
 
-    print(f"RESET {'APPLIED' if args.apply else 'PREVIEW'}: {args.stage}")
+    changes.extend(f"Delete root directory: {p}/" for p in directories)
+    if args.apply:
+        if stage != "interpreter":
+            save(STATE_FILE, state)
+            save(TASK_FILE, task)
+        for path in config_entries + directories:
+            remove(path)
+
+    print(f"RESET {'APPLIED' if args.apply else 'PREVIEW'}: {args.stage} = {stage}")
     for change in changes:
         print(f"- {change}")
     if not args.apply:
