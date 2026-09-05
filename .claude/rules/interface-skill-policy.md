@@ -2,10 +2,18 @@
 
 These are shared Claude execution rules for every Agent Interface Skill and must not be copied into individual Skills. The Interface may catalog Skill integration metadata, but that metadata neither defines nor overrides these rules.
 
-## Protected foundation files
+## Human-owned files
 
-- Agent Interface Skills must never modify the Interface root, the referenced human README, or the referenced human project definition.
-- These foundation files are human-owned. When an operation determines that one of them should change, it reports the required change to the human and leaves the file untouched.
+Agent Interface Skills may read these files, but must never edit or delete them. They are changed only by a human:
+
+- `.interface/interface.yaml`
+- `.interface/project.md`
+- `.interface/readme.md`
+- every file under `.interface/principles/`
+- every file under `.interface/preferences/`
+- every file under `.interface/schema/`
+
+When an operation determines that one of these files should change, it reports the required change to the human and leaves the file untouched.
 
 ## Understanding
 
