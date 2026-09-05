@@ -1,13 +1,18 @@
 schema:
   id: agent-interface-definition
-  version: "5.0"
-  purpose: "The shape of definition.yaml — the project's identity, intended outcomes, and ordered project phases, without technical composition or deployment concerns"
+  version: "6.0"
+  purpose: "The shape of a Definition configuration: a structured, implementation-independent description of a project"
   principles: ".interface/principles/definition.md"
-  layering: "This file defines shape only. The mandatory rules of this layer live in its principles document and are not restated here."
+  layering: "This file defines shape only. Definition philosophy and boundaries belong to its Principles, while supported defaults belong to its Preferences."
 
 structure:
   - identity
+  - information
   - goals
+  - models
+  - behaviours
+  - scope
+  - constraints
   - phases
 
 sections:
@@ -15,41 +20,125 @@ sections:
   # <!--------------------------------------------------------------------------------- Identity -->
   identity:
     required: true
-    purpose: "Who the product is — set by the human, never inferred."
+    purpose: "The project's identifying information."
     fields:
       name:
         required: true
-        purpose: "The product's human-readable name."
+        purpose: "The project's human-readable name."
       description:
         required: true
-        purpose: "The product description stated by the human in project.md, copied faithfully without reinterpretation."
+        purpose: "A concise description of the project."
+
+  # <!--------------------------------------------------------------------------------- Information -->
+  information:
+    required: true
+    purpose: "An open-ended collection of general project context and classification; empty when none is defined."
+    fields:
+      "<item>":
+        required: false
+        purpose: "One named item of general project information."
+        fields:
+          name:
+            required: true
+            purpose: "The name of the information item."
+          value:
+            required: true
+            purpose: "The value of the information item."
+          description:
+            required: false
+            purpose: "Additional explanation when the name and value are insufficient."
 
   # <!--------------------------------------------------------------------------------- Goals -->
   goals:
     required: true
-    purpose: "The independent product-level outcomes the project is intended to achieve — one outcome per list entry, copied faithfully from project.md. Goals do not define, group, or reference project phases."
+    purpose: "An ordered collection of independent project outcomes; empty when none is defined."
+    fields:
+      "<goal>":
+        required: false
+        purpose: "One project outcome."
+
+  # <!--------------------------------------------------------------------------------- Models -->
+  models:
+    required: true
+    purpose: "The conceptual Models that make up the project; empty when none is defined."
+    fields:
+      "<model>":
+        required: false
+        purpose: "One conceptual Model."
+        fields:
+          name:
+            required: true
+            purpose: "The Model's human-readable name."
+          description:
+            required: true
+            purpose: "What the Model represents in the project."
+
+  # <!--------------------------------------------------------------------------------- Behaviours -->
+  behaviours:
+    required: true
+    purpose: "The behaviours the project must provide; empty when none is defined."
+    fields:
+      "<behaviour>":
+        required: false
+        purpose: "One expected project Behaviour."
+        fields:
+          name:
+            required: true
+            purpose: "The Behaviour's human-readable name."
+          description:
+            required: true
+            purpose: "What the project must be able to do."
+
+  # <!--------------------------------------------------------------------------------- Scope -->
+  scope:
+    required: true
+    purpose: "The boundaries of the project; both collections may be empty."
+    fields:
+      included:
+        required: true
+        purpose: "An ordered collection of subjects included in the project."
+        fields:
+          "<item>":
+            required: false
+            purpose: "One included subject."
+      excluded:
+        required: true
+        purpose: "An ordered collection of subjects explicitly excluded from the project."
+        fields:
+          "<item>":
+            required: false
+            purpose: "One excluded subject."
+
+  # <!--------------------------------------------------------------------------------- Constraints -->
+  constraints:
+    required: true
+    purpose: "An ordered collection of project-wide constraints; empty when none is defined."
+    fields:
+      "<constraint>":
+        required: false
+        purpose: "One project-wide constraint."
 
   # <!--------------------------------------------------------------------------------- Phases -->
   phases:
     required: true
-    purpose: "The authoritative ordered project workflow copied from project.md. Phases are the primary units of planning, development, review, and progress. Their count is unrestricted, and any number of phases may target the same technical item."
+    purpose: "The ordered collection of project phases; empty when none is defined."
     fields:
       "<phase>":
-        required: true
-        purpose: "One project phase — a list entry, kept in the same order as project.md."
+        required: false
+        purpose: "One project phase."
         fields:
           id:
             required: true
-            purpose: "P1, P2, ... — derived mechanically as P plus the number in the project's Phase heading and unique across the project."
+            purpose: "A stable identifier unique among the project's phases."
           title:
             required: true
-            purpose: "The phase title stated by the project, copied faithfully."
+            purpose: "The phase's human-readable title."
           order:
             required: true
-            purpose: "The phase's one-based position in project.md."
+            purpose: "The phase's one-based position in the ordered collection."
           target:
             required: true
-            purpose: "The technical item named by the human for this phase. It resolves the applicable item configuration, Policy, interfaces, verification context, and code boundary."
-          goal:
+            purpose: "The Component addressed by the phase."
+          description:
             required: true
-            purpose: "What the project states this phase must accomplish, copied faithfully."
+            purpose: "What the phase is intended to accomplish."

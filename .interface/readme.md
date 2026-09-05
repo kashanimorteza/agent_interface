@@ -57,7 +57,7 @@ Components are the subjects described through the layers:
 
 | Component | Responsibility |
 | --- | --- |
-| **Definition** | Structured project identity, intended outcomes, and ordered phases |
+| **Definition** | Structured project identity, information, goals, conceptual models, behaviours, scope, constraints, and ordered phases |
 | **Model** | Shared domain models, fields, relationships, rules, and initial data |
 | **Development** | Technical component selection, connections, runtime, and deployment |
 | **State** | Current workflow state, working modes, and transition authority |

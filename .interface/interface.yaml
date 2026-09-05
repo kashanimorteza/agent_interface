@@ -78,7 +78,7 @@ content:
         files:
           definition:
             path: "definition.md"
-            responsibility: "What belongs to project Definition and why phases are the units of work"
+            responsibility: "The philosophy, subjects, boundaries, and delivery meaning of project Definition"
 
           model:
             path: "model.md"
@@ -158,7 +158,7 @@ content:
 
           definition:
             path: "definition.yaml"
-            responsibility: "Shape of the generated Definition configuration"
+            responsibility: "Shape of the generated project identity, information, goals, conceptual Models, Behaviours, scope, constraints, and phases"
 
           model:
             path: "model.yaml"
@@ -192,7 +192,7 @@ content:
     components:
 
       definition:
-        responsibility: "Structured project identity, intended outcomes, and ordered phases"
+        responsibility: "Structured project identity, information, goals, conceptual Models, Behaviours, scope, constraints, and ordered phases"
         resources:
           principle: "content.structure.layers.principles.files.definition"
           preference: "content.structure.layers.preferences.files.definition"
@@ -297,7 +297,7 @@ content:
       files:
         definition:
           path: "definition.yaml"
-          responsibility: "Project identity, intended outcomes, and ordered phases"
+          responsibility: "Project identity, information, goals, conceptual Models, Behaviours, scope, constraints, and ordered phases"
 
         model:
           path: "model.yaml"
