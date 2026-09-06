@@ -2727,9 +2727,9 @@ content:
           - id: P3-G1-T1
             title: Prepare and verify the resolved Node.js and npm toolchain
             description: 'Ensure that the resolved Frontend runtime is available on PATH: Node.js 24 LTS (resolved v24.20.0)
-              and npm 12.0.2. Install the missing runtime using a compatible installation method and make it available to
-              non-interactive development commands. If Node.js 24 is present but npm is not 12.0.2, upgrade npm
-              within that Node installation with `npm install -g npm@12.0.2`, as development.yaml''s Frontend startup step resolves.'
+              and npm 12.0.2. Install the missing runtime using a compatible installation method and make it available to non-interactive
+              development commands. If Node.js 24 is present but npm is not 12.0.2, upgrade npm within that Node installation
+              with `npm install -g npm@12.0.2`, as development.yaml''s Frontend startup step resolves.'
             reason: Every Frontend Task runs through npm on Node.js; development.yaml records Node.js 24 LTS with npm 12.0.2
               as the resolved runtime. Preparing this required toolchain is part of Development.
             target: frontend
@@ -2740,9 +2740,9 @@ content:
               technologies:
               - Node.js 24.20.0 LTS
               - npm 12.0.2
-              instructions: Check `node --version` and `npm --version`. Install missing tools and configure their PATH for
-                non-interactive commands. Re-run the version checks in the execution
-                environment and record the installation method, changes, and observed versions in the Task log.
+              instructions: Check `node --version` and `npm --version`. Install missing tools and configure their PATH for non-interactive
+                commands. Re-run the version checks in the execution environment and record the installation method, changes,
+                and observed versions in the Task log.
               inputs:
               - .interface/config/development.yaml — platform.environment.operating_system (Node.js 24 LTS v24.20.0 with npm
                 12.0.2) and composition.startup (Frontend step)
@@ -2751,14 +2751,14 @@ content:
                 versions recorded in the Task log. Record a Blocker only if setup cannot proceed.
             depends_on: []
             constraints:
-            - Follow the shared Development toolchain setup policy and preserve unrelated installations. Preserve resolved
-              versions and report an actual installation obstacle rather than changing versions silently.
+            - Follow the shared Development toolchain setup policy and preserve unrelated installations. Preserve resolved versions
+              and report an actual installation obstacle rather than changing versions silently.
             acceptance: '`node --version` reports v24.x and `npm --version` reports exactly 12.0.2.'
             verify: node --version | grep -Eq '^v24\.' && npm --version | grep -qx '12.0.2' && echo ok
             touches:
             - node and npm executables on PATH
             - The selected runtime installation and PATH configuration needed by non-interactive development commands
-            status: todo
+            status: done
             log:
             - at: '2026-09-06T04:32:41+03:30'
               from: todo
@@ -2782,9 +2782,32 @@ content:
               from: blocked
               to: todo
               by: assistant — applying the human's requested installation-policy correction
-              note: 'Removed the unsupported installation prohibition and expanded this Task to prepare the required toolchain.
-                B2 no longer requires human-only installation. Node.js and npm have not been installed or verified by this
-                correction; setup remains pending. Previous blocked-run evidence is preserved above.'
+              note: Removed the unsupported installation prohibition and expanded this Task to prepare the required toolchain.
+                B2 no longer requires human-only installation. Node.js and npm have not been installed or verified by this correction;
+                setup remains pending. Previous blocked-run evidence is preserved above.
+            - at: '2026-09-06T11:25:35+03:30'
+              from: todo
+              to: blocked
+              by: development operation (my-interface-developer)
+              note: 'Re-checked on a third development run: node and npm still absent from PATH, no Homebrew node formula, no
+                nvm installation. Blocker B2 remains; no P3 Task is eligible.'
+            - at: '2026-09-06T11:28:08+03:30'
+              from: blocked
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: 'Correction and resume: the previous blocked entry on this run was written before re-reading the Task, which
+                the human re-planned (commit 0692299) to make toolchain installation part of Development under the new ''Development
+                toolchain setup'' rule. Installing Node.js 24 LTS via the existing Homebrew (x86_64 under Rosetta, prefix /usr/local)
+                with the node@24 24.20.0 bottle, then linking it and upgrading npm to 12.0.2.'
+            - at: '2026-09-06T11:31:00+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: node v24.20.0 and npm 12.0.2 available to non-interactive commands via /usr/local/bin. Installation
+                method: brew install node@24 (bottle 24.20.0 from homebrew-core; dependency simdjson built from source because
+                no bottle matched this macOS), brew link --force node@24 (keg-only formula, no other node existed so nothing
+                was overwritten), npm install -g npm@12.0.2 inside that keg. Homebrew warned that a newer Command Line Tools
+                release is available; not required for this work.'
           - id: P3-G1-T2
             title: Initialize the Next.js project
             description: 'Create frontend/ as a Next.js 16.3.4 App Router project in TypeScript with the src/ directory layout,
@@ -2845,7 +2868,23 @@ content:
             - src/app/layout.tsx
             - src/app/page.tsx
             - src/app/globals.css
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:31:23+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; frontend/ does not exist, creating it with create-next-app 16.3.4.
+            - at: '2026-09-06T11:34:41+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: package.json pins next 16.3.4, react 19.2.8, react-dom 19.2.8, typescript 5.9.3, openapi-typescript
+                7.13.0 with engines; installed packages report those versions; .node-version 24.20.0; tsconfig allowImportingTsExtensions;
+                tsc --noEmit clean → ok. Scaffolded with create-next-app 16.3.4 (--ts --app --src-dir --eslint --no-tailwind
+                --import-alias @/* --use-npm --empty --disable-git); the generator also produced AGENTS.md and CLAUDE.md guidance
+                files, kept as generated. npm 12 blocked the unrs-resolver install script by default (lint-only dependency),
+                left blocked.'
           - id: P3-G1-T3
             title: Runtime-configuration template and ignore rules
             description: Add frontend/.env.example with the single variable NEXT_PUBLIC_API_BASE_URL= (no value) preceded by
@@ -2879,7 +2918,19 @@ content:
             touches:
             - .env.example
             - .gitignore
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:34:41+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T11:34:41+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: .env.example names NEXT_PUBLIC_API_BASE_URL without a value and is not ignored; .env, .backend.pid,
+                .build.log, and node_modules are ignored → ok.'
         P3-G2:
           id: P3-G2
           title: Shared Models and API Access
@@ -2965,7 +3016,22 @@ content:
               rm -f .specs.json
             touches:
             - src/lib/models/model-specs.ts
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:36:32+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; generating the specification module from .interface/config/model.yaml, definition.yaml, frontend.yaml,
+                and database.yaml so the transcription is exact.
+            - at: '2026-09-06T11:36:34+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: executed by Node, MODEL_SPECS matches model.yaml for all 13 Models (order, fields, types,
+                nullability, defaults, sizes, credential flags, relationships), routes and titles match frontend.yaml, resources
+                match the Backend table names, modelForRoute resolves segments and getSpec throws for unknown keys → ok. Generated
+                from the config files with a one-off script so the transcription is exact.'
           - id: P3-G2-T2
             title: API transport types generated from the Backend OpenAPI description
             description: 'Add the npm script "generate:api": "openapi-typescript ${NEXT_PUBLIC_API_BASE_URL:-http://127.0.0.1:8000}/openapi.json
@@ -3018,7 +3084,36 @@ content:
             - package.json
             - scripts/generate-api.mjs
             - src/lib/api/schema.d.ts
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:36:33+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T11:36:46+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: with the Backend on port 8765 over a throw-away Database, npm run generate:api regenerated
+                src/lib/api/schema.d.ts containing the 13 resource paths and the Create/Update/Read schemas, UserRead declares
+                no credential property, tsc clean → ok. The generated file is committed with the source.'
+            - at: '2026-09-06T11:38:13+03:30'
+              from: done
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: 'Correction: the previous done entry was false — the verify''s generate:api step failed (the script resolved
+                openapi-typescript/bin/cli.js through the package''s exports map to a non-existent cli.mjs) while my shell harness
+                ignored the failure because set -e is not honoured inside an if condition. Harness replaced by running each
+                Plan verify verbatim under a separate bash -e process. Fixing the script and re-verifying.'
+            - at: '2026-09-06T11:38:19+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed under the verbatim harness: with the Backend on port 8765 over a throw-away Database, npm
+                run generate:api regenerated src/lib/api/schema.d.ts with the 13 resource paths and the Create/Update/Read schemas,
+                UserRead declares no credential property, tsc clean → ok. generate-api.mjs now locates the CLI through the package''s
+                bin field.'
           - id: P3-G2-T3
             title: API client and Model operations
             description: 'Implement src/lib/api/client.ts — apiBaseUrl() returning process.env.NEXT_PUBLIC_API_BASE_URL or http://127.0.0.1:8000
@@ -3094,7 +3189,13 @@ content:
             touches:
             - src/lib/api/client.ts
             - src/lib/api/models.ts
-            status: todo
+            status: claimed
+            log:
+            - at: '2026-09-06T11:40:25+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
         P3-G3:
           id: P3-G3
           title: Presentation
@@ -3145,7 +3246,19 @@ content:
             touches:
             - src/app/globals.css
             - src/app/layout.tsx
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:36:33+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T11:36:37+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: globals.css declares color-scheme light dark with a dark-mode token override and the token
+                set; layout.tsx sets dir=auto and the title Trading Assistant; tsc clean → ok.'
           - id: P3-G3-T2
             title: Application shell, navigation, and notification Components
             description: 'Implement src/components/navigation.tsx (links to the home route and to every Model''s route with
@@ -3192,7 +3305,13 @@ content:
             - src/components/navigation.tsx
             - src/components/notification.tsx
             - src/app/layout.tsx
-            status: todo
+            status: claimed
+            log:
+            - at: '2026-09-06T11:40:26+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
           - id: P3-G3-T3
             title: FormField and RecordForm Components
             description: 'Implement src/components/form-field.tsx rendering one FieldSpec as a labelled input: string → text
@@ -3239,7 +3358,13 @@ content:
             touches:
             - src/components/form-field.tsx
             - src/components/record-form.tsx
-            status: todo
+            status: claimed
+            log:
+            - at: '2026-09-06T11:40:26+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
           - id: P3-G3-T4
             title: DataTable, StatusToggle, and ConfirmDialog Components
             description: Implement src/components/status-toggle.tsx (an accessible switch — a checkbox styled as a toggle —
@@ -3285,7 +3410,13 @@ content:
             - src/components/data-table.tsx
             - src/components/status-toggle.tsx
             - src/components/confirm-dialog.tsx
-            status: todo
+            status: claimed
+            log:
+            - at: '2026-09-06T11:40:26+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
           - id: P3-G3-T5
             title: Home page and the Model management pages
             description: 'Implement src/app/page.tsx (the home page: the application name, a short line inviting the user to
@@ -3383,7 +3514,19 @@ content:
               npx tsc --noEmit && echo ok
             touches:
             - src/hooks/use-notification.tsx
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:36:33+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T11:36:39+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: client module exporting NotificationProvider and useNotification (success auto-dismisses
+                after 4 s, error stays, misuse outside the provider throws); tsc clean → ok.'
           - id: P3-G4-T2
             title: The Model records hook
             description: 'Implement src/hooks/use-model-records.ts: useModelRecords(spec) returning {records, related, loading,

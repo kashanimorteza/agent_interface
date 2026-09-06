@@ -60,9 +60,9 @@ content:
   active:
     mode: development
     phase: P3
-    mode_reason: 'P3 remains the current phase. The human authorized Development to install required tools; P3-G1-T1 now includes toolchain setup and is todo. B2 was cleared as a human-only installation gate. Runtime installation and verification are still pending; development was not executed during this policy correction.'
-    set_by: assistant — applying the human's requested installation-policy correction
-    set_at: '2026-09-06T07:48:45+00:00'
+    mode_reason: 'The human requested development of phase P3 (Frontend) again. The development operation re-checked the toolchain: Node.js 24 LTS with npm 12.0.2 is still not installed (Blocker B2 remains), so no P3 Task is eligible and nothing in frontend/ was created.'
+    set_by: development operation (my-interface-developer) — acting on the human's request to develop P3
+    set_at: '2026-09-06T11:25:35+03:30'
 
   # <!-------------------------------------------- blockers -->
   blockers:
