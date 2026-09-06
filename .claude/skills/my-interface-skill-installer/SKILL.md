@@ -14,7 +14,7 @@ Support the configured project by discovering and, after approval, installing co
 
 ### Detect
 
-Using the resources located through the shared bootstrap, read the current generated configuration needed to identify configured target-project locations and resolved technologies. On every run, detect eligible technologies from that configuration and inspect dependency manifests, lockfiles, runtime-version files, and framework configuration inside those locations as compatibility and installation evidence. These artifacts do not replace the generated project specification or authorize new project requirements.
+After establishing both shared Understandings, use the resources located through the shared bootstrap to read the current generated configuration needed to identify configured target-project locations and resolved technologies. On every run, detect eligible technologies from that configuration and inspect dependency manifests, lockfiles, runtime-version files, and framework configuration inside those locations as compatibility and installation evidence. These artifacts do not replace the generated project specification or authorize new project requirements.
 
 Check project and personal Skills currently visible to Claude Code, then inspect installed plugins with `claude plugin list --json` so compatible existing capabilities are not duplicated.
 

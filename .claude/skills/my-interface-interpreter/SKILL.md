@@ -8,11 +8,11 @@ disable-model-invocation: true
 
 ## Role
 
-Interpret the human project definition and produce or refresh the shared structured Project Understanding. This is the generation operation: downstream Planning turns its outputs into Tasks, Development executes those Tasks, and Review checks the implementation against the resolved requirements. Supply enough complete, consistent context for those consumers to work without interpreting the human definition themselves.
+Interpret the human project definition and produce or refresh the shared structured Project Understanding. This is the generation operation: downstream Planning turns its outputs into Tasks, Development executes those Tasks, and Review checks the implementation against the resolved requirements. Supply enough complete, consistent context for those consumers to work without independently resolving the human definition or creating competing configuration.
 
 ## Workflow
 
-Using the resources located through the shared bootstrap, read the current human project definition and its applicable source rules, defaults, and formats. Build the target-project Understanding and identify the full set of required generated outputs, their validation requirements, destinations, and ownership boundaries. Discover these from the current sources rather than assuming a fixed organization or list of outputs. Inspect existing generated content for reconciliation, not as a substitute for reading the current definition.
+After establishing both shared Understandings, use the resources located through the shared bootstrap to read the current human project definition and its applicable source rules, defaults, and formats. Build the target-project Understanding and identify the full set of required generated outputs, their validation requirements, destinations, and ownership boundaries. Discover these from the current sources rather than assuming a fixed organization or list of outputs. Inspect existing generated content for reconciliation, not as a substitute for reading the current definition.
 
 For each required output, build a complete candidate that expresses the current project intent under its applicable rules, uses defined defaults where intent leaves choices open, and follows its required format. An empty optional source contributes no information and does not remove a required output; handle a missing required source according to the current rules. Resolve unspecified details through the shared decision policy.
 

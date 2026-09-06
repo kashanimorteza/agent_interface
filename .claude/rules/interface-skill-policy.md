@@ -4,7 +4,7 @@ These are shared Claude execution rules for every Agent Interface Skill and supp
 
 ## Human-owned files
 
-Agent Interface Skills and supporting agents must never edit or delete these files. They are changed only by a human. Read access is separately limited by the project-source policy below:
+Agent Interface Skills and supporting agents must never edit or delete these files. They are changed only by a human. Read access is governed separately by the Understanding and source-access policy below:
 
 - `.interface/interface.md`
 - `.interface/project.md`
@@ -14,24 +14,28 @@ Agent Interface Skills and supporting agents must never edit or delete these fil
 
 When an operation determines that one of these files should change, it reports the required change to the human and leaves the file untouched.
 
-## Project Understanding and source access
+## Understanding and source access
 
-- Roles and workflows are defined once in each Skill's or agent's own instructions. Follow the shared bootstrap to read current structural metadata and locate needed files; do not rebuild Interface Understanding or infer a new role on each run.
-- The Interpreter role alone reads and interprets the human project definition located through the map. It produces and refreshes the shared Project Understanding in the mapped generated configuration, using the applicable source rules, defaults, and formats. Existing configuration may be absent or incomplete before generation.
-- Every other Agent Interface Skill and supporting agent consumes the needed portions of that generated configuration as its source of project intent and resolved decisions. It must not read the human project definition, obtain it through another capability, or reconstruct a competing interpretation from memory or conversation.
-- Consumers may read mapped structural authorities to apply current formats and execution rules. Plans, implementation files, dependency manifests, and verification results remain available as role-specific execution evidence; they do not replace generated configuration as the source of project intent.
-- If required generated information is missing, inconsistent, or known to be stale, do not fill the gap by reading the human project definition or silently regenerating the shared Understanding. Report the affected work and the needed Interpreter refresh when interpretation is required. Continue independently supported work and use the decision policy for ordinary unspecified execution details; not every omission requires a refresh or a question.
-- Never treat Interface metadata as target-project requirements. Supporting capabilities inherit the active operation's source restrictions and cannot bypass them.
+- Roles and specialized workflows are defined once in each Skill's or agent's own instructions. Understanding informs execution of that fixed role; it never replaces, infers, or redefines the role.
+- Every Agent Interface Skill and supporting agent except the fixed reset operation establishes two distinct Understandings on each run from the current sources located through the shared bootstrap.
+- **Agent Interface Understanding** comes from the current Interface root. It explains what Agent Interface is, how its current system is organized, where its resources are, and how the fixed role participates in it. Interface metadata is structural context, not a target-project requirement.
+- **Target Project Understanding** comes from the current human project definition. It explains the project being built, its intent, domain, scope, structure, and phases. Every role may read this definition for project context.
+- Interpreter alone resolves the human project definition through the applicable Principles, Preferences, and Schemas and produces or refreshes the mapped generated configuration. Existing configuration may be absent or incomplete before generation.
+- Every other role uses the human project definition for Understanding and consumes the applicable generated configuration as the authoritative record of resolved project decisions for its operation. It must not independently regenerate that configuration, write a competing interpretation, or silently replace a resolved decision with its own reading of the human definition.
+- Consumers may read mapped structural authorities to apply current formats and execution rules. Plans, implementation files, dependency manifests, and verification results remain available as role-specific execution evidence; they do not replace either source of Understanding or generated configuration as the record of resolved decisions.
+- If required generated information is missing, inconsistent, stale, or conflicts with the current human definition, do not silently reinterpret or regenerate it outside Interpreter. Report the affected work and the required Interpreter refresh. Continue independently supported work and use the decision policy for ordinary unspecified execution details; not every omission requires a refresh or a question.
+- Supporting capabilities inherit the active operation's source restrictions and cannot bypass them.
 
 ## Shared Skill workflow
 
 For every Agent Interface Skill except the fixed reset operation:
 
-1. Follow the role already defined in the active instructions and use the shared bootstrap to locate its current resources.
-2. Load authorized project inputs: the Interpreter role reads the human definition and applicable generation sources; every other role reads the generated configuration needed for its work. Generation itself occurs in the Interpreter's specialized Workflow.
-3. Discover relevant available Skills and plugin capabilities using the capability discovery policy below.
-4. Execute the specialized `Workflow` in the active Skill, using the relevant capabilities discovered.
-5. Validate and report the result as required by the current authorities.
+1. Follow the fixed role already defined in the active instructions.
+2. Establish Agent Interface Understanding from the current Interface root and use its map to locate current resources.
+3. Establish Target Project Understanding from the current human project definition, then load the generated configuration and other role-specific inputs required for the operation. Only Interpreter generates or refreshes Project Understanding in configuration.
+4. Discover relevant available Skills and plugin capabilities using the capability discovery policy below.
+5. Execute the specialized `Workflow` in the active Skill, using both Understandings, the fixed role, the current authorities, and relevant capabilities discovered.
+6. Validate and report the result as required by the current authorities.
 
 The reset operation skips map discovery and project interpretation and executes only its fixed local Workflow.
 

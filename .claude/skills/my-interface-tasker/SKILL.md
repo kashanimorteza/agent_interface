@@ -17,7 +17,7 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 ## Workflow
 
-Using the shared bootstrap, locate and read the generated configuration needed to resolve the requested phase and the current authorities governing Planning. Treat recorded project decisions as the source of project intent.
+After establishing both shared Understandings, use the shared bootstrap to locate and read the generated configuration needed to resolve the requested phase and the current authorities governing Planning. Treat generated project decisions as the authoritative resolved inputs for the Plan.
 
 Derive the required planning format, content, granularity, progress handling, validation, ownership, and write boundaries from those live authorities. Do not assume or reproduce a fixed planning structure in this Skill.
 

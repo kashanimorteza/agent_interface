@@ -17,7 +17,7 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 ## Workflow
 
-Using the shared bootstrap, locate and read the requested phase's current planning output, the generated configuration needed for execution, and the current authorities governing Development. Inspect the existing implementation as execution context and evidence, not as a replacement definition of project intent.
+After establishing both shared Understandings, use the shared bootstrap to locate and read the requested phase's current planning output, the generated configuration needed for execution, and the current authorities governing Development. Inspect the existing implementation as execution context and evidence, not as a replacement definition of project intent.
 
 Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from those live authorities. Do not assume or reproduce their current fields, statuses, or policies in this Skill.
 
