@@ -108,7 +108,7 @@ Implements and verifies eligible planned Tasks for one requested project phase w
 
 ### `my-interface-reviewer`
 
-Reviews the implemented result for one requested project phase and reports evidence-based findings without repairing it.
+Reviews the implemented result for one requested project phase and reports evidence-based findings without repairing it. Accepts a phase number: `1` selects phase one, `2` selects phase two, and so on; existing phase identifiers remain unchanged.
 
 ### `my-interface-reset`
 

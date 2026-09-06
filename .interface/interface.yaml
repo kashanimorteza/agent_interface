@@ -370,7 +370,7 @@ content:
       reviewer:
         name: "my-interface-reviewer"
         path: ".claude/skills/my-interface-reviewer/SKILL.md"
-        invocation: "/my-interface-reviewer <phase-id>"
+        invocation: "/my-interface-reviewer <phase-number>"
         responsibility: "Review an implemented project phase and report evidence-based findings without repairing it"
 
       reset:
