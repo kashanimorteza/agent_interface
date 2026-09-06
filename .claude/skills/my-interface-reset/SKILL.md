@@ -7,31 +7,30 @@ disable-model-invocation: true
 
 # Reset the project workflow
 
+## Role
+
+Preview and reset exactly one selected workflow stage using the current Interface authorities. Reset does not interpret project intent, generate configuration, create Tasks, develop, or review.
+
 ## Workflow
 
-Perform the fixed reset directly from the project root for exactly one numeric argument: `1` (interpreter), `2` (task), or `3` (develop).
-
-Do not read the Interface root, project definition, Schema, Principles, Preferences, or unrelated configuration. The operation uses only these fixed targets:
-
-- `.interface/config/` (all entries for `1`; only `task.yaml` and `state.yaml` for `2` and `3`)
-- Root `model/`, `models/`, `backend/`, `frontend/`, `database/`, and `developer/` directories in all three stages
+After establishing both shared Understandings, accept exactly one numeric argument: `1` (interpreter), `2` (task), or `3` (develop). Use the current Interface authorities to resolve the generated outputs, workflow records, ownership boundaries, and implementation directories affected by the selected stage. Do not hardcode or reproduce their current addresses in this Skill.
 
 ### 1 = Interpreter reset
 
-Delete every entry inside the fixed config directory, preserving the directory itself, and delete the fixed root output directories when present. This stage works even when config files are missing or malformed. It does not regenerate configuration or create State.
+Remove all generated configuration contents and developed implementation outputs owned by the current Interface. Preserve their container when required by the current structure. Do not regenerate configuration or create State.
 
 ### 2 = Task reset
 
-Clear all Groups and Tasks while preserving the Task frame and phase Plan shells. Set active State to `not set` with a null phase and reset provenance. Delete the fixed root output directories when present. Preserve other configuration, shared blockers, and open questions.
+Clear planned Groups and Tasks while preserving the Task frame and phase Plan shells. Return State to its resolved pre-planning position and clear the active phase. Remove developed implementation outputs. Preserve other generated Understanding and shared records according to current ownership.
 
 ### 3 = Develop reset
 
-Set active State to `planning` with a null phase and reset provenance. Return every existing Task to `todo`, remove its blocker field, and preserve its content and log. Delete the fixed root output directories when present. Preserve Plans, Groups, other configuration, shared blockers, and open questions.
+Return State to its resolved pre-development position and clear the active phase. Return every existing Task to the current initial Task status, remove transient blocking association when required, and preserve its content and history. Remove developed implementation outputs while preserving Plans, Groups, other generated Understanding, and shared records according to current ownership.
 
 Numeric stage arguments do not rename the existing State modes.
 
 ### Confirmation
 
-First inspect the fixed targets for the selected stage and show the exact changes without making any mutation. Ask the user for confirmation.
+First inspect the resolved targets for the selected stage and show the exact changes without making any mutation. Ask the user for confirmation.
 
-The initial invocation is not approval. Apply the fixed changes directly only after the user explicitly accepts that preview. Report the result and deleted targets briefly; deletion is permanent for untracked files unless separately backed up. Do not invoke another workflow operation.
+The initial invocation is not approval. Apply the resolved changes only after the user explicitly accepts that preview. Report the result and deleted targets briefly; deletion is permanent for untracked files unless separately backed up. Do not invoke another workflow operation.
