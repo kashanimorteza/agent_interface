@@ -12,6 +12,8 @@ Every statement here is mandatory.
 
 Each application layer owns its internal implementation, rules, configuration, and provided interfaces. Another layer may depend on what that layer provides, but never on how it is implemented.
 
+Every application layer is organized as a package. The same principle applies recursively to each architectural sublayer it contains: a sublayer is a package within its parent's boundary, with its own responsibility and public interface. Ordinary files, classes, and functions do not automatically become separate packages.
+
 A layer can evolve or be replaced without requiring consumers to change while its declared interface remains compatible.
 
 <br>
@@ -42,9 +44,9 @@ Platform connects layers through their declared interfaces and never absorbs the
 
 ## 5. Development records composition, not internal implementation
 
-Development identifies the participating application layers, their public responsibilities and interfaces, the connections between them, and the Platform configuration that makes the complete project runnable.
+Development identifies the participating application layers, their public responsibilities and interfaces, the connections between them, and the Platform configuration that makes the complete project runnable. It also defines the common package standard and records package identities, parent relationships, ownership, and integration boundaries.
 
-Internal technologies, packages, source layout, domain data, API implementation, user-interface implementation, and persistence implementation remain owned by their respective layers.
+Internal technologies, third-party dependencies, detailed source layout, domain data, API implementation, user-interface implementation, and persistence implementation remain owned by their respective layers. The package map references those owning definitions rather than independently redefining their technology choices, operations, or domain meaning.
 
 <br>
 
@@ -59,3 +61,29 @@ Development defines a reusable layered standard. Project-specific choices popula
 Capabilities that may affect more than one application layer are coordinated by Development rather than owned as an isolated default by Backend, Frontend, or Database. Examples include testing, logging, error handling, and authentication.
 
 Development records whether each capability is enabled, which layers it applies to, and the shared integration expectations that keep those layers compatible. Each affected layer still owns its internal implementation and consumes the capability through an explicit boundary.
+
+<br>
+
+## 8. A package is an encapsulated implementation boundary
+
+A package is an identifiable collection of implementation resources with a cohesive responsibility, explicit dependencies, owned configuration, and a documented public interface. Its internal details remain private to that boundary. This definition is independent of a programming language or package manager.
+
+A package may be an importable library, a runnable application, or a nested module supported by its implementation technology. Being a package does not require public registry publication, a separate process, or an independently installable distribution. Nested packages may share their parent's installation, dependency management, and runtime while preserving their own logical boundaries.
+
+Package identity follows responsibility. Naming conventions and prefixes are supplied by Development Preferences and resolved consistently with the selected ecosystem. A generic name does not imply that the package's implementation or domain data is reusable across unrelated projects.
+
+<br>
+
+## 9. Package interfaces define how consumers use a boundary
+
+Each package explicitly identifies what it exposes and what it consumes. Its public interface may be an import surface, network API, command, user interface, or another appropriate mechanism. Consumers use only the interface intended for them; they do not depend on private files or implementation details. A package with no external consumer records that fact instead of inventing an interface.
+
+A nested package's interface is available only to its declared consumers within the permitted boundary. Nesting alone does not expose its internals to consumers of the parent; the parent explicitly provides or delegates any capabilities it makes available outside itself. The owning architecture still determines permitted dependency directions.
+
+<br>
+
+## 10. Every package documents its use
+
+Each package, including architectural subpackages, carries a README describing its purpose, boundaries, public interface, dependencies, configuration, and concrete usage examples. It explains installation and startup when applicable; a nested package may refer to its parent's setup instructions rather than duplicate them.
+
+The README lets a consumer use the package without inspecting its implementation. It distinguishes supported public operations from internal details and explains how to access the package's interface documentation. It documents configuration names and non-secret examples without recording credentials or other secret values. Documentation remains consistent with the implemented interface.

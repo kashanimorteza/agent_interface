@@ -1,11 +1,13 @@
 schema:
   id: agent-interface-development
   version: "4.0"
-  purpose: "The shape of a Development configuration: independent application layers, their connections, and the Platform that runs and deploys them"
+  purpose: "The shape of a Development configuration: independent application layers, their package boundaries and connections, and the Platform that runs and deploys them"
 
 structure:
   - summary
   - layers
+  - package_standard
+  - packages
   - connections
   - cross_cutting
   - platform
@@ -32,6 +34,9 @@ sections:
           configuration:
             required: true
             purpose: "A reference to the configuration owned by the layer."
+          package:
+            required: true
+            purpose: "The key of the top-level package representing this layer in packages."
           responsibility:
             required: true
             purpose: "A concise description of the responsibility owned by the layer."
@@ -41,6 +46,95 @@ sections:
           consumes:
             required: true
             purpose: "The declared interfaces the layer consumes; empty when it consumes none."
+
+  # <!--------------------------------------------------------------------------------- Package_Standard -->
+  package_standard:
+    required: true
+    purpose: "The resolved common package conventions, derived from Development Preferences under the applicable Principles. Package-specific choices are recorded on the owning package."
+    fields:
+      naming:
+        required: true
+        purpose: "Resolved role-based naming, top-level prefix, nested naming and namespace, ecosystem adaptation, and collision handling."
+      distribution:
+        required: true
+        purpose: "Resolved visibility, publication, and local dependency conventions."
+      nested_packages:
+        required: true
+        purpose: "Resolved defaults for independent installation, dependency management, and runtime sharing of nested packages."
+      documentation:
+        required: true
+        purpose: "Resolved README filename, location, sections, and handling of parent setup references."
+
+  # <!--------------------------------------------------------------------------------- Packages -->
+  packages:
+    required: true
+    purpose: "The package map for the current application layers and their architectural sublayers at every depth. Ordinary source files need no package entry. Keys are unique within this map; parent links must be acyclic."
+    fields:
+      "<package>":
+        required: false
+        purpose: "One package boundary; nested entries identify their parent without duplicating the parent's definition."
+        fields:
+          name:
+            required: true
+            purpose: "The resolved responsibility-based package name in its namespace."
+          parent:
+            required: true
+            nullable: true
+            purpose: "The parent package key, or null for a top-level package. Sibling names must be distinct; equal local names under different parents are qualified by their parent namespace."
+          owner:
+            required: true
+            purpose: "A reference to the owning layer or Platform responsibility and its source configuration, including the sublayer when applicable."
+          responsibility:
+            required: true
+            purpose: "The package's cohesive purpose and owned implementation boundary."
+          kind:
+            required: true
+            purpose: "The resolved package form appropriate to its technology, such as an importable library, runnable application, or nested module."
+          code_path:
+            required: true
+            purpose: "The project-relative root of this package's implementation, consistent with its owning Component's code path. Nested packages reside within the parent's implementation boundary."
+          interfaces:
+            required: true
+            purpose: "The public interfaces provided by this package, empty when it has no consumers. References preserve the operations and meaning defined by the owning Component."
+            fields:
+              "<interface>":
+                required: false
+                purpose: "One public entry into this package."
+                fields:
+                  source:
+                    required: true
+                    purpose: "The owning definition of the interface and its capabilities."
+                  kind:
+                    required: true
+                    purpose: "The resolved communication mechanism, such as import, network API, command, or user interface."
+                  entrypoint:
+                    required: false
+                    purpose: "The public import name, command, or configuration-based endpoint when resolved. No secret values are stored here."
+                  consumers:
+                    required: true
+                    purpose: "The package references or external consumer roles allowed to use this interface; nested interfaces are not implicitly public through their parent."
+          dependencies:
+            required: true
+            purpose: "The other package interfaces and owning technology configurations this package consumes; empty when none apply. Third-party dependency versions remain defined by their owning Components."
+          configuration:
+            required: true
+            purpose: "References to owned settings and how they are supplied or inherited from the parent; empty when no configuration is needed. No secret values are stored here."
+          distribution:
+            required: true
+            purpose: "Resolved visibility, publication, installation method, and parent-managed or independent setup. Include the ecosystem distribution name when applicable; it may differ from the import name."
+          readme:
+            required: true
+            purpose: "The package's implementation documentation, distinct from Interface documentation."
+            fields:
+              path:
+                required: true
+                purpose: "The project-relative path to the README at this package's root."
+              sections:
+                required: true
+                purpose: "The resolved documentation topics for this package, including its public interface and usage examples."
+              setup_reference:
+                required: false
+                purpose: "The parent README or shared installation and startup instructions when this package uses them."
 
   # <!--------------------------------------------------------------------------------- Connections -->
   connections:
@@ -88,6 +182,9 @@ sections:
     required: true
     purpose: "The composition layer that supplies the operating environment, coordinates the application layers, and deploys the complete project."
     fields:
+      package:
+        required: false
+        purpose: "The package key for Platform implementation when it has its own implementation resources; omitted when Platform is only a description of composition."
       environment:
         required: true
         purpose: "The environment in which the complete project operates."

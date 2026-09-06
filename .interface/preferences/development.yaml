@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/development.yaml"
-  path_note: "The Preferences layer of the Development Component — defaults for capabilities that may apply across application layers."
-  purpose: "Cross-cutting capability defaults used when no explicit project choice exists."
+  path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers."
+  purpose: "Package and cross-cutting capability defaults used when no explicit project choice exists."
   standard: "Agent Project Interface"
 
 
@@ -12,21 +12,52 @@ policy:
   rule: "This file is human-owned. Generation reads it and never writes resolved Development choices back into it."
   changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
-  consumption: "Generation resolves unstated cross-cutting choices from this file and records their concrete state and application scope in generated Development configuration."
+  consumption: "Resolve unstated package and cross-cutting choices from this file into generated Development configuration. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
+  - "packages"
   - "cross_cutting"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
+  packages: "Default package naming, distribution, nested-package setup, and README conventions."
   cross_cutting: "Default enabled state and application scope for capabilities coordinated across application layers."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
+
+  packages:
+    naming:
+      basis: "responsibility"
+      top_level_prefix: "my_"
+      top_level_name: "<prefix><role>"
+      nested_name: "<role>"
+      nested_namespace: "parent_package"
+      ecosystem_adaptation: "Adapt separators, case, import names, and distribution names to the selected language and package manager. Keep the logical role recognizable."
+      collision_handling: "Check the intended namespace for collisions. Use a distinct role-based qualifier when needed; the prefix alone does not guarantee uniqueness."
+    distribution:
+      visibility: "internal"
+      publication: "none"
+      local_dependency: "Use the selected ecosystem's local path or workspace mechanism when one package must be installed by another. Network consumers use the provider's API instead of installing its implementation."
+    nested_packages:
+      independently_installable: false
+      dependency_management: "parent"
+      runtime: "parent_when_applicable"
+    documentation:
+      filename: "README.md"
+      location: "package_root"
+      sections:
+        - "purpose_and_boundaries"
+        - "public_interface"
+        - "dependencies"
+        - "configuration"
+        - "installation_and_startup_when_applicable"
+        - "usage_examples"
+      nested_setup: "Reference the parent README for shared setup and document this package's interface and usage locally."
 
   cross_cutting:
     testing:
