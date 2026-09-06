@@ -40,7 +40,7 @@ The reset operation skips map discovery and project interpretation and executes 
 
 - The active Skill or agent defines its operation and boundaries. The live Interface supplies applicable execution constraints and write authority for that operation, not a replacement role. Neither source expands the other's permissions.
 - A supporting capability receives no additional Interface write authority merely because it is discovered or invoked.
-- The reset operation receives no authority from the Interface root and performs no discovery. Its sole authority is the human's explicit confirmation after the Skill previews one fixed reset stage, and its scope is exactly the fixed workflow implemented by that Skill and its bundled script.
+- The reset operation receives no authority from the Interface root and performs no discovery. Its sole authority is the human's explicit confirmation after the Skill previews one fixed reset stage, and its scope is exactly the fixed workflow defined by that Skill.
 
 ## Decision policy
 

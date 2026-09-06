@@ -10,7 +10,7 @@ The sole fixed navigation entry point is `.interface/interface.yaml`. Its addres
 - Read only the current mapped sources required for the operation, subject to the shared project-source policy. A mapped path or read order does not authorize any role other than Interpreter to read the human project definition. Structural discovery does not grant write access.
 - Do not substitute remembered contents for current sources. Renaming or relocating a mapped resource must require only an Interface-root update, never a Skill update.
 
-The self-contained reset operation is the only exception to this bootstrap. It does not interpret, generate, or reconcile Interface content and therefore does not read the Interface root. It may assume only the fixed targets and behavior defined by its own Skill and bundled script. This exception grants no other capability permission to hardcode an Interface path.
+The self-contained reset operation is the only exception to this bootstrap. It does not interpret, generate, or reconcile Interface content and therefore does not read the Interface root. It may assume only the fixed targets and behavior defined by its own Skill. This exception grants no other capability permission to hardcode an Interface path.
 
 ## Separation
 
