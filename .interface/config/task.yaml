@@ -122,7 +122,16 @@ content:
             - Unrelated tools, projects, and installations on the machine are preserved.
             acceptance: '`uv --version` reports 0.12.10 and `uv python find 3.14.7` resolves an interpreter.'
             verify: uv --version | grep -q '^uv 0\.12\.10\b' && uv python find 3.14.7
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T21:59:33+03:30'
+              status: claimed
+              note: Claimed by the development operation for phase 1. Checking the resolved toolchain before any change.
+            - at: '2026-09-06T22:00:30+03:30'
+              status: done
+              note: The machine already carried uv 0.12.10 and a uv-managed CPython 3.14.7 from an earlier installation, so no installation or upgrade was needed; no unrelated tool was changed.
+              evidence: 'Recorded verify run, clean shell: "uv --version | grep -q ''^uv 0\.12\.10\b'' && uv python find 3.14.7" exited 0 and printed /Users/morteza/.local/share/uv/python/cpython-3.14.7-macos-x86_64-none/bin/python3.14
+                (uv --version reports: uv 0.12.10 (3c979abda 2026-09-04 aarch64-apple-darwin)).'
           - id: P1-G1-T2
             title: Establish the my_model project with its isolated environment
             description: Establish the my_model package at model/ as the resolved uv-managed Python project so that, inside its own environment, `import my_model` succeeds with CPython 3.14.7 and pydantic 2.13.5
@@ -154,7 +163,20 @@ content:
             - pydantic is the only run-time dependency; pyyaml, used by verify commands, is supplied through `uv run --with pyyaml` and is never a project dependency.
             acceptance: From model/, the lock is current and the project environment imports my_model under Python 3.14.7 with pydantic 2.13.5.
             verify: uv lock --check && uv run python -c 'import sys, pydantic, my_model; assert sys.version_info[:3] == (3, 14, 7), sys.version; assert pydantic.VERSION == "2.13.5", pydantic.VERSION; print("ok")'
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:00:30+03:30'
+              status: claimed
+              note: 'Claimed. model/ does not exist after the stage-1 reset, so the project is created from nothing in the resolved form recorded by development.yaml: uv project, uv_build backend, src layout, distribution
+                name my-model, import name my_model.'
+            - at: '2026-09-06T22:02:27+03:30'
+              status: done
+              note: 'Created model/ as a uv project in the resolved form: pyproject.toml (distribution my-model 0.1.0, requires-python >=3.14,<3.15, single dependency pydantic==2.13.5, uv_build backend), .python-version
+                pinning 3.14.7, src layout with the import package my_model, and a placeholder README.md that P1-G4-T1 replaces with the required documentation. uv sync created .venv and uv.lock; neither .venv nor
+                build output is committed (the repository .gitignore already covers them).'
+              evidence: 'Recorded verify run, clean shell from model/: ''uv lock --check && uv run python -c ...'' exited 0 and printed ok, so the lock is current and the project environment imports my_model under
+                CPython 3.14.7 with pydantic 2.13.5. uv sync installed 6 packages: annotated-types 0.8.0, my-model 0.1.0 (editable from this project), pydantic 2.13.5, pydantic-core 2.46.5, typing-extensions 4.16.0,
+                typing-inspection 0.4.4.'
         P1-G2:
           id: P1-G2
           title: Shared Model classes
@@ -235,7 +257,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("user ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided User from the my_model package root as a validated class carrying the 7 recorded fields in order, 0 relationship(s), 2 rule(s), and 1 initial record(s). The field(s) id, password, api_key
+                may be omitted on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "user ok": a User was constructed from its 2 required field(s) with 1 nullable field(s) passed as null; the declared defaults were observed
+                (status=True); pydantic.ValidationError was raised for each of the 2 missing required field(s), for a wrong-typed value in each of the 4 checked field(s), and for null in each of the 3 non-nullable
+                checked field(s).'
           - id: P1-G2-T2
             title: Provide the Currency Model with its domain validation
             description: Make the Currency Model available from the my_model package root as a class whose instances carry the 8 resolved fields of the currency Model (id, name, code, symbol, country, decimal_digits,
@@ -305,7 +338,20 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("currency ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: 'Provided Currency from the my_model package root as a validated class carrying the 8 recorded fields in order, 0 relationship(s), 0 rule(s), and 8 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model''s definition. Decision: the recorded
+                size of code is carried as declared metadata and is not enforced as a construction-time length limit, because the acceptance criterion covers types, nullability, and defaults and the physical column
+                length belongs to Database.'
+              evidence: 'Recorded verify run from model/ exited 0 and printed "currency ok": a Currency was constructed from its 2 required field(s) with 3 nullable field(s) passed as null; the declared defaults were
+                observed (decimal_digits=2, status=True); pydantic.ValidationError was raised for each of the 2 missing required field(s), for a wrong-typed value in each of the 7 checked field(s), and for null in
+                each of the 4 non-nullable checked field(s).'
           - id: P1-G2-T3
             title: Provide the TradingPlatform Model with its domain validation
             description: Make the TradingPlatform Model available from the my_model package root as a class whose instances carry the 5 resolved fields of the trading_platform Model (id, name, code, status,
@@ -375,7 +421,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("trading_platform ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided TradingPlatform from the my_model package root as a validated class carrying the 5 recorded fields in order, 0 relationship(s), 0 rule(s), and 2 initial record(s). The field(s) id may be
+                omitted on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "trading_platform ok": a TradingPlatform was constructed from its 2 required field(s) with 1 nullable field(s) passed as null; the declared
+                defaults were observed (status=True); pydantic.ValidationError was raised for each of the 2 missing required field(s), for a wrong-typed value in each of the 4 checked field(s), and for null in each
+                of the 3 non-nullable checked field(s).'
           - id: P1-G2-T4
             title: Provide the Broker Model with its domain validation
             description: Make the Broker Model available from the my_model package root as a class whose instances carry the 6 resolved fields of the broker Model (id, name, user_id, trading_platform_id, status,
@@ -445,7 +502,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("broker ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided Broker from the my_model package root as a validated class carrying the 6 recorded fields in order, 2 relationship(s), 1 rule(s), and 1 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "broker ok": a Broker was constructed from its 3 required field(s) with 1 nullable field(s) passed as null; the declared defaults were observed
+                (status=True); pydantic.ValidationError was raised for each of the 3 missing required field(s), for a wrong-typed value in each of the 5 checked field(s), and for null in each of the 4 non-nullable
+                checked field(s).'
           - id: P1-G2-T5
             title: Provide the AccountGroup Model with its domain validation
             description: Make the AccountGroup Model available from the my_model package root as a class whose instances carry the 4 resolved fields of the account_group Model (id, name, status, description)
@@ -515,7 +583,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("account_group ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided AccountGroup from the my_model package root as a validated class carrying the 4 recorded fields in order, 0 relationship(s), 0 rule(s), and 1 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "account_group ok": a AccountGroup was constructed from its 1 required field(s) with 1 nullable field(s) passed as null; the declared defaults
+                were observed (status=True); pydantic.ValidationError was raised for each of the 1 missing required field(s), for a wrong-typed value in each of the 3 checked field(s), and for null in each of the 2
+                non-nullable checked field(s).'
           - id: P1-G2-T6
             title: Provide the Account Model with its domain validation
             description: Make the Account Model available from the my_model package root as a class whose instances carry the 12 resolved fields of the account Model (id, name, account_group_id, broker_id,
@@ -586,7 +665,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("account ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided Account from the my_model package root as a validated class carrying the 12 recorded fields in order, 3 relationship(s), 1 rule(s), and 1 initial record(s). The field(s) id, password may
+                be omitted on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "account ok": a Account was constructed from its 7 required field(s) with 1 nullable field(s) passed as null; the declared defaults were
+                observed (balance=0, status=True); pydantic.ValidationError was raised for each of the 7 missing required field(s), for a wrong-typed value in each of the 10 checked field(s), and for null in each of
+                the 9 non-nullable checked field(s).'
           - id: P1-G2-T7
             title: Provide the Asset Model with its domain validation
             description: Make the Asset Model available from the my_model package root as a class whose instances carry the 8 resolved fields of the asset Model (id, name, symbol, category, point_size, digits,
@@ -656,7 +746,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("asset ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided Asset from the my_model package root as a validated class carrying the 8 recorded fields in order, 0 relationship(s), 0 rule(s), and 4 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "asset ok": a Asset was constructed from its 3 required field(s) with 1 nullable field(s) passed as null; the declared defaults were observed
+                (point_size=0.0, digits=0, status=True); pydantic.ValidationError was raised for each of the 3 missing required field(s), for a wrong-typed value in each of the 7 checked field(s), and for null in each
+                of the 6 non-nullable checked field(s).'
           - id: P1-G2-T8
             title: Provide the TrailingGroup Model with its domain validation
             description: Make the TrailingGroup Model available from the my_model package root as a class whose instances carry the 4 resolved fields of the trailing_group Model (id, name, status, description)
@@ -726,7 +827,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("trailing_group ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided TrailingGroup from the my_model package root as a validated class carrying the 4 recorded fields in order, 0 relationship(s), 0 rule(s), and 1 initial record(s). The field(s) id may be
+                omitted on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "trailing_group ok": a TrailingGroup was constructed from its 1 required field(s) with 1 nullable field(s) passed as null; the declared
+                defaults were observed (status=True); pydantic.ValidationError was raised for each of the 1 missing required field(s), for a wrong-typed value in each of the 3 checked field(s), and for null in each
+                of the 2 non-nullable checked field(s).'
           - id: P1-G2-T9
             title: Provide the TrailingRule Model with its domain validation
             description: Make the TrailingRule Model available from the my_model package root as a class whose instances carry the 8 resolved fields of the trailing_rule Model (id, name, trailing_group_id,
@@ -797,7 +909,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("trailing_rule ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided TrailingRule from the my_model package root as a validated class carrying the 8 recorded fields in order, 1 relationship(s), 0 rule(s), and 0 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "trailing_rule ok": a TrailingRule was constructed from its 3 required field(s) with 3 nullable field(s) passed as null; the declared defaults
+                were observed (status=True); pydantic.ValidationError was raised for each of the 3 missing required field(s), for a wrong-typed value in each of the 7 checked field(s), and for null in each of the 4
+                non-nullable checked field(s).'
           - id: P1-G2-T10
             title: Provide the PartialGroup Model with its domain validation
             description: Make the PartialGroup Model available from the my_model package root as a class whose instances carry the 4 resolved fields of the partial_group Model (id, name, status, description)
@@ -867,7 +990,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("partial_group ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided PartialGroup from the my_model package root as a validated class carrying the 4 recorded fields in order, 0 relationship(s), 0 rule(s), and 1 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "partial_group ok": a PartialGroup was constructed from its 1 required field(s) with 1 nullable field(s) passed as null; the declared defaults
+                were observed (status=True); pydantic.ValidationError was raised for each of the 1 missing required field(s), for a wrong-typed value in each of the 3 checked field(s), and for null in each of the 2
+                non-nullable checked field(s).'
           - id: P1-G2-T11
             title: Provide the PartialRule Model with its domain validation
             description: Make the PartialRule Model available from the my_model package root as a class whose instances carry the 7 resolved fields of the partial_rule Model (id, name, partial_group_id, profit_percentage,
@@ -937,7 +1071,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("partial_rule ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided PartialRule from the my_model package root as a validated class carrying the 7 recorded fields in order, 1 relationship(s), 0 rule(s), and 0 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "partial_rule ok": a PartialRule was constructed from its 4 required field(s) with 1 nullable field(s) passed as null; the declared defaults
+                were observed (status=True); pydantic.ValidationError was raised for each of the 4 missing required field(s), for a wrong-typed value in each of the 6 checked field(s), and for null in each of the 5
+                non-nullable checked field(s).'
           - id: P1-G2-T12
             title: Provide the ActionGroup Model with its domain validation
             description: Make the ActionGroup Model available from the my_model package root as a class whose instances carry the 4 resolved fields of the action_group Model (id, name, status, description)
@@ -1007,7 +1152,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("action_group ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided ActionGroup from the my_model package root as a validated class carrying the 4 recorded fields in order, 0 relationship(s), 0 rule(s), and 1 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "action_group ok": a ActionGroup was constructed from its 1 required field(s) with 1 nullable field(s) passed as null; the declared defaults
+                were observed (status=True); pydantic.ValidationError was raised for each of the 1 missing required field(s), for a wrong-typed value in each of the 3 checked field(s), and for null in each of the 2
+                non-nullable checked field(s).'
           - id: P1-G2-T13
             title: Provide the Action Model with its domain validation
             description: Make the Action Model available from the my_model package root as a class whose instances carry the 12 resolved fields of the action Model (id, name, action_group_id, asset_id, account_id,
@@ -1078,7 +1234,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("action ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:27+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided Action from the my_model package root as a validated class carrying the 12 recorded fields in order, 5 relationship(s), 0 rule(s), and 1 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "action ok": a Action was constructed from its 9 required field(s) with 1 nullable field(s) passed as null; the declared defaults were observed
+                (status=True); pydantic.ValidationError was raised for each of the 9 missing required field(s), for a wrong-typed value in each of the 11 checked field(s), and for null in each of the 10 non-nullable
+                checked field(s).'
           - id: P1-G2-T14
             title: Provide the Position Model with its domain validation
             description: Make the Position Model available from the my_model package root as a class whose instances carry the 20 resolved fields of the position Model (id, name, trading_platform_id, broker_id,
@@ -1149,7 +1316,18 @@ content:
                       assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
               print("position ok")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:02:28+03:30'
+              status: claimed
+              note: Claimed. The fourteen Model activities became ready together once the project existed; each is implemented within the my_model package and verified independently through the package's public interface.
+            - at: '2026-09-06T22:05:43+03:30'
+              status: done
+              note: Provided Position from the my_model package root as a validated class carrying the 20 recorded fields in order, 7 relationship(s), 0 rule(s), and 0 initial record(s). The field(s) id may be omitted
+                on construction because Database assigns the primary key on create and returns instances without credential values; their recorded nullability stays false in the Model's definition.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "position ok": a Position was constructed from its 15 required field(s) with 1 nullable field(s) passed as null; the declared defaults were
+                observed (profit=0, is_executed=False, status=True); pydantic.ValidationError was raised for each of the 15 missing required field(s), for a wrong-typed value in each of the 19 checked field(s), and
+                for null in each of the 18 non-nullable checked field(s).'
         P1-G3:
           id: P1-G3
           title: Registry and metadata interface
@@ -1223,7 +1401,16 @@ content:
                   assert MODELS[key] is getattr(my_model, name), key
               print("ok: " + str(len(MODELS)) + " Models registered")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:05:17+03:30'
+              status: claimed
+              note: Claimed; every Model activity it depends on is done.
+            - at: '2026-09-06T22:06:33+03:30'
+              status: done
+              note: Exposed MODELS from the my_model package root as an immutable mapping (MappingProxyType) from each Model key to its class, in the project order recorded by model.yaml.
+              evidence: 'Recorded verify run from model/ exited 0 and printed "ok: 14 Models registered": list(MODELS) equals the fourteen Model keys of content.models in order, and each mapped class is identical to
+                the root export of the same name.'
           - id: P1-G3-T2
             title: Provide the model_metadata accessor
             description: Expose model_metadata from the my_model package root so that, given any shared Model class or instance, it returns that Model's resolved logical definition — key, purpose, the fields
@@ -1322,7 +1509,21 @@ content:
                   check(model_metadata(cls(**kw)), key)
               print("ok: " + str(len(MODELS)) + " Models")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:06:33+03:30'
+              status: claimed
+              note: Claimed; the registry it depends on is done.
+            - at: '2026-09-06T22:07:22+03:30'
+              status: done
+              note: 'Exposed model_metadata from the my_model package root. It accepts a Model class or an instance, rejects anything that is not a shared Model with LookupError, and returns the Model''s definition
+                as an immutable structure whose parts are addressable by the recorded names (key, purpose, fields, relationships, rules, initial_data). A property the configuration does not record is left unset rather
+                than invented, and a generate instruction in initial data stays an instruction — producing the value belongs to Database at seed time. Decision: the types that definition is made of (ModelSpec, FieldSpec,
+                RelationshipSpec, RuleSpec, LogicalType, GenerateValue, UNSET) are exported from the root as well, so a consumer can name what model_metadata returns — in particular recognize a generate instruction
+                — without importing an internal module.'
+              evidence: 'Recorded verify run from model/ exited 0 and printed "ok: 14 Models": for all fourteen Models, the definition returned for the class and for an instance matches content.models of model.yaml
+                in key, purpose, field order and every field property (type, size, nullable, default, auto_increment, primary_key, unique, credential, purpose), relationships in order, rules including the composite
+                unique fields, and initial data including the two generate instructions of User.'
         P1-G4:
           id: P1-G4
           title: Documentation and distribution
@@ -1367,7 +1568,18 @@ content:
                   exec(compile(b, "README.md", "exec"), {})
               print("ok: " + str(len(blocks)) + " example(s) ran")
               '
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:07:22+03:30'
+              status: claimed
+              note: Claimed; the public interface it documents is complete.
+            - at: '2026-09-06T22:08:01+03:30'
+              status: done
+              note: 'Replaced the placeholder README at the package root with the documentation the package standard requires: purpose and boundaries, the public interface as a table of every export plus the two consumer-facing
+                conventions (the primary key is absent until Database assigns it; credential values are never carried back and stay required in the domain), dependencies, configuration (none), installation and the
+                editable local path dependency a consumer declares, and three runnable usage examples. Only non-secret example values are recorded.'
+              evidence: 'Recorded verify run from model/ exited 0 and printed "ok: 3 example(s) ran": a heading was found for each of the six required sections (purpose, interface, dependencies, configuration, installation,
+                usage) and all three Python examples executed successfully in a fresh namespace.'
           - id: P1-G4-T2
             title: Prove the package installs as a local dependency
             description: 'Prove that the my_model project is distributable in the resolved form: its lock is current, its build backend produces a wheel and a source distribution, and a separate environment
@@ -1400,7 +1612,17 @@ content:
               Models.
             verify: uv lock --check && rm -rf dist && uv build && ls dist/my_model-*.whl dist/my_model-*.tar.gz && uv run --isolated --no-project --python 3.14.7 --with-editable . python -c 'import my_model;
               assert len(my_model.MODELS) == 14, len(my_model.MODELS); print("ok")'
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T22:08:01+03:30'
+              status: claimed
+              note: Claimed; the documented package and the registry it depends on are done.
+            - at: '2026-09-06T22:08:27+03:30'
+              status: done
+              note: 'Confirmed the package is distributable in the resolved form: the uv_build backend produces both artifacts from the src layout, and a separate environment installs the project the way development.yaml
+                records for my_database and my_backend (editable local path dependency) and sees the complete Model set. Build output stays out of the repository.'
+              evidence: 'Recorded verify run from model/ exited 0: uv lock --check passed, uv build produced dist/my_model-0.1.0-py3-none-any.whl and dist/my_model-0.1.0.tar.gz, and an isolated environment (uv run
+                --isolated --no-project --python 3.14.7 --with-editable .) imported my_model and printed ok with 14 registered Models.'
     P2:
       id: P2
       title: Database
