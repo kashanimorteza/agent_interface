@@ -1,0 +1,1341 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/config/task.yaml
+  path_note: 'Generated configuration of the Task Component — the resolved Task frame, the Task-state vocabulary, and one Plan per project phase. Shape: schema/task.yaml; rules: principles/task.md; the Task Preferences layer is empty'
+  standard: Agent Project Interface
+  schema_version: '5.0'
+  generated: '2026-09-06'
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: The configuring operation materializes task_schema, task_states, and one Plan shell per phase with empty groups; it never creates a Group or Task. The planning operation fills the groups of the one phase it was invoked for. The development operation changes only the status, blocker, and log of a Task it has claimed. Reset acts as its own fixed script defines
+  changed_by: The planning operation (Plan groups), the development operation (Task status, blocker, log), the reset operation, and the configuring operation (frame and empty shells only)
+  preservation: On re-configuring, an existing Plan whose groups are non-empty is preserved when its source phase is unchanged. Removing or changing a phase whose Plan holds Tasks is a critical conflict, reported and never applied silently
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+- task_schema
+- task_states
+- plans
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_schema: The resolved field frame every Task carries
+  task_states: The Task-status vocabulary and the derived readiness and completion conditions
+  plans: One Plan per project phase, keyed by phase id from definition.yaml
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- task_schema -->
+  task_schema:
+    rule: Every Task carries exactly these fields — no more, no fewer. blocker and log are structurally part of the frame but are absent until they first apply.
+    fields:
+      id: Identifier in the form <phase>-G<group>-T<n>, unique within its Plan and unambiguous across all Plans.
+      title: A concise statement of the one atomic action.
+      description: A complete explanation of what must be done.
+      reason: Why the Task is necessary.
+      target: The Component in which the Task performs its work — the phase target from definition.yaml.
+      area: The specific module, subsystem, or work area inside the target Component, such as one of its resolved layers.
+      execution_context:
+        kind: The nature of the work — code, configuration, documentation, data, or command execution.
+        language: The applicable programming or configuration language, or null when none applies.
+        technologies: The ordered technologies, frameworks, packages, protocols, or tools relevant to the Task, resolved from the target Component's configuration; empty when none apply.
+        instructions: Implementation guidance sufficient to perform this specific Task.
+        inputs: The information, artifacts, interfaces, or completed results the Task consumes; empty when none apply.
+        expected_output: The concrete artifact or observable result the Task must produce.
+      depends_on: The identifiers of Tasks whose completed outputs are prerequisites; empty when the Task is independent.
+      constraints: Task-specific restrictions and invariants the implementation must preserve; empty when none apply.
+      acceptance: The observable criterion that determines whether the intended result is correct.
+      verify: A runnable command or precise executable check, run from the target Component's verify_cwd, that proves acceptance.
+      touches: The explicit files, directories, or resources the Task inspects or modifies, relative to the target Component's code_path.
+      status: The current Task state, using the task_states vocabulary.
+      blocker: The identifier of the critical Blocker in state.yaml when the Task is blocked; absent otherwise.
+      log: The append-only Task-local progress history of dated entries; absent until the first recorded transition.
+    status_lives_here: The current status is stored on each Task, so Plans and State never drift apart.
+    history_lives_here_too: There is no separate history file. While a Task exists, how it reached its state is recorded in its own append-only log.
+
+  # <!-------------------------------------------- task_states -->
+  task_states:
+    path: The status field on each Task.
+    states:
+      todo: Defined and not yet started.
+      claimed: An executor has taken the Task and written the claim before starting work.
+      blocked: Work cannot safely continue; the Task's blocker field names the Blocker in state.yaml.
+      done: Acceptance is proven by a passing verify run.
+      cancelled: The Task will not be done and no other Task replaces it.
+      superseded: Another Task replaced this one; the log names the replacement.
+    derived_ready: A Task is ready when its phase is ready, its status is todo, and every Task in its depends_on is done. Ready is computed when needed and never stored.
+    phase_ready: A phase is ready for development when its Plan has at least one Group with at least one Task and every earlier phase is complete. Readiness is derived, never stored.
+    phase_complete: A phase is complete when its Plan is non-empty, every Task not cancelled or superseded is done, and no Task remains todo, claimed, or blocked. Completion is derived, never stored.
+
+  # <!-------------------------------------------- plans -->
+  plans:
+    P1:
+      id: P1
+      title: Database
+      order: 1
+      target: database
+      does: Implement the database, apply the defined model structure, and insert the defined initial data.
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Package foundation
+          description: 'Everything the Database implementation stands on: the uv-managed package with exactly pinned dependencies,
+            the ignore and configuration templates, the runtime settings resolution, and the error types shared by all three
+            layers.'
+          target: database
+          area: package foundation — code_path root and src/trading_database/ top-level modules
+          does: database/ is an installable, reproducible Python package whose settings resolve DATABASE_URL and CREDENTIAL_ENCRYPTION_KEY
+            from runtime configuration and whose error types are ready for the Storage Adapter, Data Logic, and Database Interface.
+          task_count: 4
+          tasks:
+          - id: P1-G1-T1
+            title: Initialize the uv-managed Database package
+            description: 'Create database/ as a uv project with a src-layout import package named trading_database: pyproject.toml
+              declaring project name trading-assistant-database, version 0.1.0, requires-python ">=3.14", exactly pinned dependencies
+              SQLAlchemy==2.0.52, alembic==1.19.2 and cryptography==50.0.1, and the uv_build build backend that `uv init --package`
+              generates, plus [tool.uv.build-backend] module-name = "trading_database" because the import package name differs
+              from the distribution name; a .python-version file containing 3.14; src/trading_database/__init__.py holding only
+              a module docstring and __version__ = "0.1.0"; and a generated uv.lock. Remove any sample entry point or main()
+              that uv init adds.'
+            reason: Every later Task runs inside this environment, and Backend installs this directory as a local path dependency,
+              so the Database must be a buildable package with reproducible, exactly pinned dependencies.
+            target: database
+            area: package foundation — code_path root
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - SQLAlchemy 2.0.52
+              - Alembic 1.19.2
+              - SQLite (runtime-provided by the Python sqlite3 module)
+              - cryptography 50.0.1
+              instructions: From the project root run `mkdir -p database && cd database && uv init --package --name trading-assistant-database
+                --python 3.14 .` (or author the same files by hand), rename the generated import package directory to src/trading_database
+                and strip it to a docstring plus __version__, then run `uv add "SQLAlchemy==2.0.52" "alembic==1.19.2" "cryptography==50.0.1"`
+                followed by `uv lock` and `uv sync`. Without the module-name setting uv_build looks for src/trading_assistant_database/
+                and the build fails. Set the project description to "Database Component of Trading Assistant — generic Database
+                Interface over SQLite via SQLAlchemy and Alembic". cryptography is the Planning-selected package for the reversible
+                encryption mode of credential columns; the one-way hash mode uses the standard library. Do not add any other
+                dependency.
+              inputs:
+              - .interface/config/database.yaml — code_path, verify_cwd, layers.storage_adapter.tech (engine, ORM, migration
+                versions)
+              - .interface/config/development.yaml — platform.environment.operating_system (Python 3.14.7 with uv 0.12.10) and
+                connections.backend_to_database (Backend installs this package as a local path dependency)
+              expected_output: database/pyproject.toml, database/uv.lock, database/.python-version, database/src/trading_database/__init__.py,
+                and an untracked database/.venv with the pinned packages installed.
+            depends_on: []
+            constraints:
+            - No secret value, generated credential, or encryption key is written into any committed file, Interface file, or
+              Task log.
+            - Versions are pinned exactly as listed; the token latest never appears.
+            - The import package is trading_database under src/; the distribution name is trading-assistant-database.
+            acceptance: uv sync succeeds, uv.lock matches pyproject.toml, and inside the environment trading_database imports
+              while sqlalchemy, alembic, and cryptography report versions 2.0.52, 1.19.2, and 50.0.1.
+            verify: uv sync --quiet && uv lock --check && uv run python -c "import trading_database, sqlalchemy, alembic, cryptography;
+              assert sqlalchemy.__version__ == '2.0.52', sqlalchemy.__version__; assert alembic.__version__ == '1.19.2', alembic.__version__;
+              assert cryptography.__version__ == '50.0.1', cryptography.__version__; print('ok')"
+            touches:
+            - pyproject.toml
+            - uv.lock
+            - .python-version
+            - src/trading_database/__init__.py
+            status: todo
+          - id: P1-G1-T2
+            title: Ignore rules and runtime-configuration template
+            description: 'Add database/.gitignore with one entry per line: .venv/, __pycache__/, *.pyc, app.db, *.db, *.db-journal,
+              *.db-wal, *.db-shm, and .env. Add database/.env.example listing the two runtime variables with an explanatory
+              comment each and no values: DATABASE_URL (SQLAlchemy URL; empty means the default sqlite URL of database/app.db)
+              and CREDENTIAL_ENCRYPTION_KEY (a Fernet key; required before the first encrypted credential is written, including
+              the initial-data migration).'
+            reason: The database file, the virtual environment, and secrets must never be committed, and the variable names
+              delivered by the Platform must be discoverable by developers without exposing values.
+            target: database
+            area: package foundation — code_path root
+            execution_context:
+              kind: configuration
+              language: null
+              technologies:
+              - git
+              instructions: 'Write both files by hand. Keep .env.example value-free: the CREDENTIAL_ENCRYPTION_KEY line must
+                be exactly `CREDENTIAL_ENCRYPTION_KEY=` and the DATABASE_URL line exactly `DATABASE_URL=`; put the default and
+                the key-generation command in comments above them.'
+              inputs:
+              - .interface/config/development.yaml — platform.composition.configuration (mechanism and the DATABASE_URL and
+                CREDENTIAL_ENCRYPTION_KEY variables)
+              - .interface/config/database.yaml — layers.storage_adapter.tech.storage.location (database/app.db, never committed)
+              expected_output: database/.gitignore and database/.env.example.
+            depends_on: []
+            constraints:
+            - No value is written for any variable in .env.example.
+            - The ignore list contains the exact lines app.db, .env, and .venv/.
+            acceptance: Both files exist, the ignore rules cover app.db, .env, and .venv/, and .env.example names both variables
+              without values.
+            verify: test -f .gitignore && test -f .env.example && grep -qx 'app.db' .gitignore && grep -qx '.env' .gitignore
+              && grep -qx '.venv/' .gitignore && grep -qx 'DATABASE_URL=' .env.example && grep -qx 'CREDENTIAL_ENCRYPTION_KEY='
+              .env.example && echo ok
+            touches:
+            - .gitignore
+            - .env.example
+            status: todo
+          - id: P1-G1-T3
+            title: Runtime settings module
+            description: 'Implement src/trading_database/settings.py: a frozen dataclass Settings(database_url: str, credential_encryption_key:
+              str | None) and get_settings(*, environ: Mapping[str, str] | None = None, load_env_file: bool = True) -> Settings.
+              Resolution order per variable: the given environ (default os.environ) first; then, when load_env_file is true,
+              a .env file in the Database code root parsed as KEY=VALUE lines (blank lines and # comments ignored, surrounding
+              quotes stripped) without overriding variables already present; finally the default DATABASE_URL, the sqlite URL
+              of <code root>/app.db as an absolute path. The code root is the nearest ancestor of settings.py containing pyproject.toml;
+              when none exists (non-editable install) fall back to the current working directory. Expose constants ENV_DATABASE_URL,
+              ENV_CREDENTIAL_ENCRYPTION_KEY, DEFAULT_DATABASE_FILENAME = "app.db". Never read .env.example. get_settings is
+              a pure function without caching.'
+            reason: Database Principle 9 and development.yaml require the connection URL and the encryption key to come from
+              runtime configuration through one resolution path shared by the engine, the migrations, and the credential transformations.
+            target: database
+            area: package foundation — src/trading_database/settings.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              instructions: Use only the standard library (dataclasses, os, pathlib). Implement a small _parse_env_file(path)
+                helper. The default URL must be built as f"sqlite:///{absolute_path}" (four slashes for an absolute path). A
+                CREDENTIAL_ENCRYPTION_KEY that is absent or empty resolves to None.
+              inputs:
+              - .interface/config/development.yaml — platform.composition.configuration.variables (DATABASE_URL, CREDENTIAL_ENCRYPTION_KEY)
+              - .interface/config/database.yaml — layers.storage_adapter.tech.storage and tech.connection (sqlite scheme, file
+                app.db in code_path)
+              expected_output: src/trading_database/settings.py with Settings and get_settings.
+            depends_on:
+            - P1-G1-T1
+            constraints:
+            - No secret value, generated credential, or encryption key is written into any committed file, Interface file, or
+              Task log.
+            - Process environment always wins over the .env file; the .env file never overrides it.
+            acceptance: With an empty environ and no .env file the default URL is a sqlite URL ending in /app.db under the database
+              code root; explicit environ values are returned unchanged.
+            verify: |-
+              uv run python - <<'PY'
+              from pathlib import Path
+              from trading_database.settings import get_settings, ENV_DATABASE_URL, ENV_CREDENTIAL_ENCRYPTION_KEY
+              s = get_settings(environ={}, load_env_file=False)
+              assert s.database_url.startswith('sqlite:////'), s.database_url
+              assert s.database_url.endswith('/app.db'), s.database_url
+              assert Path(s.database_url.removeprefix('sqlite:///')).parent == Path.cwd().resolve(), s.database_url
+              assert s.credential_encryption_key is None
+              s = get_settings(environ={ENV_DATABASE_URL: 'sqlite:///./x.db', ENV_CREDENTIAL_ENCRYPTION_KEY: 'k'}, load_env_file=False)
+              assert s.database_url == 'sqlite:///./x.db' and s.credential_encryption_key == 'k', s
+              print('ok')
+              PY
+            touches:
+            - src/trading_database/settings.py
+            status: todo
+          - id: P1-G1-T4
+            title: Database error types
+            description: 'Implement src/trading_database/errors.py with the exception hierarchy every layer raises and consumers
+              catch: DatabaseError(Exception) as the base, and subclasses UnknownModelError, UnknownFieldError, RecordNotFoundError,
+              ConstraintViolationError, InvalidActionError, UnsupportedOperationError, CredentialKeyMissingError, and UnsupportedCredentialModeError,
+              each accepting a human-readable message.'
+            reason: Consumers must be able to handle Database failures without depending on SQLAlchemy or sqlite3 exception
+              types, which would leak the engine and ORM through the interface boundary.
+            target: database
+            area: package foundation — src/trading_database/errors.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              instructions: Plain exception classes with docstrings; no logic. Keep the names exactly as listed because later
+                Tasks import them.
+              inputs:
+              - .interface/config/database.yaml — layers.database_interface (operations and rejection rules) and Database Principle
+                6 (consumers never see engine internals)
+              expected_output: src/trading_database/errors.py defining the nine classes.
+            depends_on:
+            - P1-G1-T1
+            constraints: []
+            acceptance: All nine classes import and every specific error is a subclass of DatabaseError.
+            verify: |-
+              uv run python - <<'PY'
+              from trading_database import errors as e
+              names = ['UnknownModelError','UnknownFieldError','RecordNotFoundError','ConstraintViolationError','InvalidActionError','UnsupportedOperationError','CredentialKeyMissingError','UnsupportedCredentialModeError']
+              for n in names:
+                  assert issubclass(getattr(e, n), e.DatabaseError), n
+              assert issubclass(e.DatabaseError, Exception)
+              print('ok')
+              PY
+            touches:
+            - src/trading_database/errors.py
+            status: todo
+        P1-G2:
+          id: P1-G2
+          title: Storage Adapter
+          description: 'The engine-specific persistence layer: the SQLite connection with foreign keys enforced, the SQLAlchemy
+            declarative mapping of all 13 resolved tables, and the credential at-rest transformations. Tables are mapped in
+            dependency tiers so each tier is verifiable on its own.'
+          target: database
+          area: storage_adapter — src/trading_database/storage/
+          does: Base.metadata describes the complete storage schema exactly as resolved in database.yaml, the engine enforces
+            SQLite foreign keys, and hash and encrypted credential modes are implemented for Data Logic and seeding to use.
+          task_count: 6
+          tasks:
+          - id: P1-G2-T1
+            title: Declarative base with naming conventions
+            description: 'Create src/trading_database/storage/__init__.py (docstring only) and storage/base.py defining NAMING_CONVENTION
+              = {"ix": "ix_%(table_name)s_%(column_0_name)s", "uq": "uq_%(table_name)s_%(column_0_N_name)s", "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+              "pk": "pk_%(table_name)s", "ck": "ck_%(table_name)s_%(constraint_name)s"}, metadata = MetaData(naming_convention=NAMING_CONVENTION),
+              class Base(DeclarativeBase) bound to that metadata, and decimal_type() -> Numeric returning Numeric(18, 8), the
+              resolved precision for every logical decimal field.'
+            reason: database.yaml fixes the names uq_<table>_<columns> and ix_<table>_<column>; a metadata-level naming convention
+              makes every constraint and index name deterministic so migrations and the storage schema stay traceable.
+            target: database
+            area: storage_adapter — src/trading_database/storage/base.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              instructions: 'Use SQLAlchemy 2.0 declarative style (sqlalchemy.orm.DeclarativeBase). Export Base, metadata, NAMING_CONVENTION,
+                and decimal_type. Numeric(18, 8) is a Planning decision: database.yaml resolves the logical decimal type to
+                Numeric and leaves precision open; 18 digits with 8 decimals covers prices, volumes, balances, and percentages.'
+              inputs:
+              - .interface/config/database.yaml — layers.storage_adapter.standards.naming (constraints, indexes, types)
+              expected_output: src/trading_database/storage/__init__.py and src/trading_database/storage/base.py.
+            depends_on:
+            - P1-G1-T1
+            constraints: []
+            acceptance: Base.metadata carries the five naming conventions and decimal_type() returns Numeric(18, 8).
+            verify: |-
+              uv run python - <<'PY'
+              from sqlalchemy import Numeric
+              from trading_database.storage.base import Base, NAMING_CONVENTION, decimal_type
+              nc = Base.metadata.naming_convention
+              assert nc['uq'] == 'uq_%(table_name)s_%(column_0_N_name)s' and nc['ix'] == 'ix_%(table_name)s_%(column_0_name)s', nc
+              assert set(nc) >= {'ix', 'uq', 'fk', 'pk', 'ck'}
+              d = decimal_type(); assert isinstance(d, Numeric) and (d.precision, d.scale) == (18, 8), d
+              print('ok')
+              PY
+            touches:
+            - src/trading_database/storage/__init__.py
+            - src/trading_database/storage/base.py
+            status: todo
+          - id: P1-G2-T2
+            title: Engine and session factory with SQLite foreign-key enforcement
+            description: 'Implement src/trading_database/storage/engine.py: create_database_engine(url: str | None = None) ->
+              Engine building sqlalchemy.create_engine on url or get_settings().database_url, passing connect_args={"check_same_thread":
+              False} for sqlite URLs and registering a "connect" event listener that executes PRAGMA foreign_keys=ON on every
+              new sqlite connection; get_engine() -> Engine returning a module-level engine cached per resolved URL; reset_engine()
+              disposing and clearing the cache; session_factory(engine: Engine | None = None) -> sessionmaker with expire_on_commit=False.'
+            reason: The Storage Adapter alone owns the connection; database.yaml requires foreign-key enforcement and check_same_thread
+              false for SQLite, and every other module must obtain the engine from this one place.
+            target: database
+            area: storage_adapter — src/trading_database/storage/engine.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              - SQLite (runtime-provided by the Python sqlite3 module)
+              instructions: Use sqlalchemy.event.listens_for(engine, "connect") and execute the pragma through the raw DBAPI
+                cursor. Detect sqlite with make_url(url).get_backend_name() == "sqlite". Nothing here is exported from the package
+                root.
+              inputs:
+              - .interface/config/database.yaml — layers.storage_adapter.tech.connection (url_scheme sqlite, foreign_keys true,
+                check_same_thread false)
+              - src/trading_database/settings.py from P1-G1-T3 (database_url)
+              expected_output: src/trading_database/storage/engine.py with create_database_engine, get_engine, reset_engine,
+                and session_factory.
+            depends_on:
+            - P1-G1-T3
+            constraints:
+            - The engine, connection, and session never leave the package through the Database Interface (Database Principle
+              6).
+            acceptance: A connection from get_engine() against a sqlite URL reports PRAGMA foreign_keys = 1 and the engine URL
+              uses the sqlite driver.
+            verify: |-
+              ( set -e
+                trap 'rm -f .verify.db' EXIT
+                rm -f .verify.db
+                export DATABASE_URL=sqlite:///./.verify.db
+                uv run python - <<'PY'
+              from sqlalchemy import text
+              from trading_database.storage.engine import get_engine, session_factory
+              e = get_engine()
+              assert e.url.get_backend_name() == 'sqlite', e.url
+              with e.connect() as c:
+                  assert c.execute(text('PRAGMA foreign_keys')).scalar() == 1
+              with session_factory()() as s:
+                  assert s.execute(text('select 1')).scalar() == 1
+              print('ok')
+              PY
+              )
+            touches:
+            - src/trading_database/storage/engine.py
+            status: todo
+          - id: P1-G2-T3
+            title: Map the seven independent tables
+            description: In src/trading_database/storage/tables.py define SQLAlchemy 2.0 declarative classes (Mapped[...] /
+              mapped_column) for the tables that reference no other table — User→users, Currency→currencies, TradingPlatform→trading_platforms,
+              Asset→assets, TrailingGroup→trailing_groups, PartialGroup→partial_groups, ActionGroup→action_groups — with columns
+              in the exact order, type, nullability, and default resolved under database.yaml data_logic.storage_schema.tables.
+              Each class declares __model_key__ with its source Model key (user, currency, trading_platform, asset, trailing_group,
+              partial_group, action_group).
+            reason: 'Database Principle 7: every persistent Model maps to a table traceably; the mapping is the source of the
+              storage schema migration and of the Model registry, so it must match the resolved schema exactly.'
+            target: database
+            area: storage_adapter — src/trading_database/storage/tables.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              instructions: 'Types: Integer, String, String(3) for currencies.code, Boolean, Float, and decimal_type() from
+                base.py for Numeric. id: mapped_column(Integer, primary_key=True, autoincrement=True). Columns with a resolved
+                default carry both a Python default= and a server_default= (sa.text("1") for true, sa.text("0") for false, sa.text("2"),
+                sa.text("0.0"), sa.text("0")) so the schema itself holds the default. unique=True on users.name, currencies.code,
+                assets.name, assets.symbol, trailing_groups.name, partial_groups.name, and action_groups.name so the convention
+                yields uq_<table>_<column>. Credential columns (users.password, users.api_key) are ordinary non-nullable String
+                columns here; the transformation is applied by Data Logic. Do not define relationship() attributes; foreign
+                keys arrive in the next Tasks.'
+              inputs:
+              - .interface/config/database.yaml — data_logic.storage_schema.tables for users, currencies, trading_platforms,
+                assets, trailing_groups, partial_groups, action_groups
+              - .interface/config/model.yaml — content.models (purpose and field meaning of the source Models)
+              expected_output: src/trading_database/storage/tables.py with seven mapped classes registered on Base.metadata.
+            depends_on:
+            - P1-G2-T1
+            constraints:
+            - Column names and order are exactly those resolved in database.yaml; nothing is added or renamed.
+            acceptance: Base.metadata holds the seven tables with the resolved column lists, currencies.code has length 3, the
+              seven uq_ constraints exist, and each class carries its __model_key__.
+            verify: |-
+              uv run python - <<'PY'
+              from trading_database.storage.base import Base
+              import trading_database.storage.tables  # noqa: F401 — registers the mappings
+              md = Base.metadata
+              expected = {'users': ['id', 'name', 'username', 'password', 'api_key', 'status', 'description'], 'currencies': ['id', 'name', 'code', 'symbol', 'country', 'decimal_digits', 'status', 'description'], 'trading_platforms': ['id', 'name', 'code', 'status', 'description'], 'assets': ['id', 'name', 'symbol', 'category', 'point_size', 'digits', 'status', 'description'], 'trailing_groups': ['id', 'name', 'status', 'description'], 'partial_groups': ['id', 'name', 'status', 'description'], 'action_groups': ['id', 'name', 'status', 'description']}
+              for name, cols in expected.items():
+                  assert name in md.tables, name
+                  got = [c.name for c in md.tables[name].columns]
+                  assert got == cols, (name, got)
+              assert md.tables['currencies'].c.code.type.length == 3
+              constraint_names = {c.name for n in expected for c in md.tables[n].constraints}
+              for n in ['uq_users_name', 'uq_currencies_code', 'uq_assets_name', 'uq_assets_symbol', 'uq_trailing_groups_name', 'uq_partial_groups_name', 'uq_action_groups_name']:
+                  assert n in constraint_names, (n, constraint_names)
+              by_table = {m.local_table.name: m.class_ for m in Base.registry.mappers}
+              keys = {by_table[n].__model_key__ for n in expected}
+              assert keys == {'user', 'currency', 'trading_platform', 'asset', 'trailing_group', 'partial_group', 'action_group'}, keys
+              assert md.tables['users'].c.password.nullable is False and md.tables['currencies'].c.symbol.nullable is True
+              print('ok')
+              PY
+            touches:
+            - src/trading_database/storage/tables.py
+            status: todo
+          - id: P1-G2-T4
+            title: Map the four first-level dependent tables
+            description: Extend src/trading_database/storage/tables.py with Broker→brokers (user_id → users.id, trading_platform_id
+              → trading_platforms.id, and __table_args__ = (UniqueConstraint("user_id", "name"),) yielding uq_brokers_user_id_name),
+              Account→accounts (broker_id → brokers.id, base_currency_id → currencies.id, name unique, balance decimal default
+              0, password as an ordinary non-nullable String), TrailingRule→trailing_rules (trailing_group_id → trailing_groups.id,
+              name unique), and PartialRule→partial_rules (partial_group_id → partial_groups.id, name unique), each with __model_key__
+              (broker, account, trailing_rule, partial_rule) and columns exactly as resolved in database.yaml.
+            reason: These tables carry the first relationships; Database Principle 8 requires explicit foreign keys with the
+              resolved referential actions, and the composite Broker rule must become a traceable constraint.
+            target: database
+            area: storage_adapter — src/trading_database/storage/tables.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              instructions: 'Every foreign-key column: mapped_column(Integer, ForeignKey("<table>.id", ondelete="RESTRICT",
+                onupdate="RESTRICT"), nullable=False, index=True) so the convention yields ix_<table>_<column>. Keep column
+                order exactly as database.yaml. Numeric columns use decimal_type(); accounts.balance has default 0 and server_default
+                sa.text("0").'
+              inputs:
+              - .interface/config/database.yaml — data_logic.storage_schema.tables for brokers, accounts, trailing_rules, partial_rules
+                (columns, references, constraints, indexes)
+              - .interface/config/model.yaml — broker rule 'The combination of user_id and name must be unique'
+              expected_output: The four mapped classes added to src/trading_database/storage/tables.py.
+            depends_on:
+            - P1-G2-T3
+            constraints:
+            - Referential actions are RESTRICT on delete and on update for every foreign key (database.yaml).
+            acceptance: The four tables exist in Base.metadata with the resolved column lists, every foreign key targets <table>.id
+              with RESTRICT actions and an ix_ index, and uq_brokers_user_id_name plus the three name constraints exist.
+            verify: |-
+              uv run python - <<'PY'
+              from trading_database.storage.base import Base
+              import trading_database.storage.tables  # noqa: F401
+              md = Base.metadata
+              expected = {'brokers': ['id', 'name', 'user_id', 'trading_platform_id', 'status', 'description'], 'accounts': ['id', 'name', 'broker_id', 'base_currency_id', 'username', 'password', 'leverage', 'balance', 'account_type', 'status', 'description'], 'trailing_rules': ['id', 'name', 'trailing_group_id', 'trigger_percentage', 'take_profit_adjustment', 'stop_loss_adjustment', 'status', 'description'], 'partial_rules': ['id', 'name', 'partial_group_id', 'profit_percentage', 'close_percentage', 'status', 'description']}
+              for name, cols in expected.items():
+                  got = [c.name for c in md.tables[name].columns]
+                  assert got == cols, (name, got)
+              fks = {(fk.parent.table.name, fk.parent.name): (fk.column.table.name, fk.column.name, fk.ondelete, fk.onupdate) for n in expected for fk in md.tables[n].foreign_keys}
+              assert fks == {('brokers','user_id'): ('users','id','RESTRICT','RESTRICT'), ('brokers','trading_platform_id'): ('trading_platforms','id','RESTRICT','RESTRICT'), ('accounts','broker_id'): ('brokers','id','RESTRICT','RESTRICT'), ('accounts','base_currency_id'): ('currencies','id','RESTRICT','RESTRICT'), ('trailing_rules','trailing_group_id'): ('trailing_groups','id','RESTRICT','RESTRICT'), ('partial_rules','partial_group_id'): ('partial_groups','id','RESTRICT','RESTRICT')}, fks
+              idx = {i.name for n in expected for i in md.tables[n].indexes}
+              assert idx == {'ix_brokers_user_id','ix_brokers_trading_platform_id','ix_accounts_broker_id','ix_accounts_base_currency_id','ix_trailing_rules_trailing_group_id','ix_partial_rules_partial_group_id'}, idx
+              cons = {c.name for n in expected for c in md.tables[n].constraints}
+              for n in ['uq_brokers_user_id_name','uq_accounts_name','uq_trailing_rules_name','uq_partial_rules_name']:
+                  assert n in cons, (n, cons)
+              by_table = {m.local_table.name: m.class_ for m in Base.registry.mappers}
+              assert {by_table[n].__model_key__ for n in expected} == {'broker','account','trailing_rule','partial_rule'}
+              print('ok')
+              PY
+            touches:
+            - src/trading_database/storage/tables.py
+            status: todo
+          - id: P1-G2-T5
+            title: Map actions and positions
+            description: Extend src/trading_database/storage/tables.py with Action→actions (action_group_id, asset_id, account_id,
+              partial_group_id, trailing_group_id; risk_by_reward, take_profit, stop_loss decimals; name unique) and Position→positions
+              (trading_platform_id, broker_id, account_id, trailing_group_id, partial_group_id, action_group_id, action_id;
+              date DateTime; volume, profit (default 0), base_tp, base_sl, real_tp, real_sl decimals; is_executed Boolean default
+              false; order_type String; name unique), with __model_key__ action and position and columns exactly as resolved.
+            reason: These two tables complete the storage schema; without them the migration, the registry, and the interface
+              cannot cover every Model.
+            target: database
+            area: storage_adapter — src/trading_database/storage/tables.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              instructions: 'Same rules as the previous mapping Tasks: ForeignKey("<table>.id", ondelete="RESTRICT", onupdate="RESTRICT"),
+                nullable=False, index=True on every foreign key; decimal_type() for decimals; positions.profit default 0 with
+                server_default sa.text("0"); positions.is_executed default False with server_default sa.text("0"); positions.date
+                is DateTime and nullable=False.'
+              inputs:
+              - .interface/config/database.yaml — data_logic.storage_schema.tables for actions and positions
+              expected_output: Action and Position mapped classes added to src/trading_database/storage/tables.py; Base.metadata
+                now holds all 13 tables.
+            depends_on:
+            - P1-G2-T4
+            constraints:
+            - Column names and order are exactly those resolved in database.yaml.
+            acceptance: Base.metadata holds exactly the 13 resolved tables; actions has 5 and positions 7 RESTRICT foreign keys
+              each with an ix_ index; uq_actions_name and uq_positions_name exist.
+            verify: |-
+              uv run python - <<'PY'
+              from trading_database.storage.base import Base
+              import trading_database.storage.tables  # noqa: F401
+              md = Base.metadata
+              assert set(md.tables) == set(['users', 'currencies', 'trading_platforms', 'brokers', 'accounts', 'assets', 'trailing_groups', 'trailing_rules', 'partial_groups', 'partial_rules', 'action_groups', 'actions', 'positions']), set(md.tables)
+              expected = {'actions': ['id', 'name', 'action_group_id', 'asset_id', 'account_id', 'partial_group_id', 'trailing_group_id', 'risk_by_reward', 'take_profit', 'stop_loss', 'status', 'description'], 'positions': ['id', 'name', 'trading_platform_id', 'broker_id', 'account_id', 'trailing_group_id', 'partial_group_id', 'action_group_id', 'action_id', 'date', 'volume', 'profit', 'is_executed', 'order_type', 'base_tp', 'base_sl', 'real_tp', 'real_sl', 'status', 'description']}
+              for name, cols in expected.items():
+                  got = [c.name for c in md.tables[name].columns]
+                  assert got == cols, (name, got)
+              for n, count in (('actions', 5), ('positions', 7)):
+                  fks = list(md.tables[n].foreign_keys)
+                  assert len(fks) == count and all(fk.ondelete == 'RESTRICT' and fk.onupdate == 'RESTRICT' and fk.column.name == 'id' for fk in fks), n
+                  assert {i.name for i in md.tables[n].indexes} == {f'ix_{n}_{fk.parent.name}' for fk in fks}, n
+              cons = {c.name for n in expected for c in md.tables[n].constraints}
+              assert 'uq_actions_name' in cons and 'uq_positions_name' in cons, cons
+              from sqlalchemy import DateTime, Boolean
+              assert isinstance(md.tables['positions'].c.date.type, DateTime) and isinstance(md.tables['positions'].c.is_executed.type, Boolean)
+              by_table = {m.local_table.name: m.class_ for m in Base.registry.mappers}
+              assert [by_table[n].__model_key__ for n in ['users', 'currencies', 'trading_platforms', 'brokers', 'accounts', 'assets', 'trailing_groups', 'trailing_rules', 'partial_groups', 'partial_rules', 'action_groups', 'actions', 'positions']] == ['user', 'currency', 'trading_platform', 'broker', 'account', 'asset', 'trailing_group', 'trailing_rule', 'partial_group', 'partial_rule', 'action_group', 'action', 'position']
+              print('ok')
+              PY
+            touches:
+            - src/trading_database/storage/tables.py
+            status: todo
+          - id: P1-G2-T6
+            title: Credential at-rest transformations
+            description: 'Implement src/trading_database/storage/credentials.py: hash_credential(value: str) -> str using hashlib.scrypt
+              (n=2**14, r=8, p=1, dklen=32) with a fresh 16-byte secrets.token_bytes salt, encoded as scrypt$<n>$<r>$<p>$<salt_b64url>$<hash_b64url>;
+              verify_hashed_credential(value: str, stored: str) -> bool using hmac.compare_digest; encrypt_credential(value:
+              str, key: str | None = None) -> str and decrypt_credential(token: str, key: str | None = None) -> str using cryptography.fernet.Fernet
+              with key, else get_settings().credential_encryption_key, raising CredentialKeyMissingError when the resolved key
+              is None or empty; and transform_for_storage(value: str, mode: str, key: str | None = None) -> str dispatching
+              hash → hash_credential, encrypted → encrypt_credential, plaintext → value unchanged, any other mode → UnsupportedCredentialModeError.'
+            reason: 'Database Principle 9 and database.yaml credential_storage: hash columns are one-way and non-recoverable,
+              encrypted columns are reversible with a key from runtime configuration, and the transformation is applied by Database,
+              never by consumers.'
+            target: database
+            area: storage_adapter — src/trading_database/storage/credentials.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - cryptography 50.0.1
+              instructions: Standard library for hashing (hashlib, hmac, secrets, base64) and cryptography.fernet for encryption.
+                scrypt with these parameters and Fernet are the Planning-selected realizations of the modes 'hash' and 'encrypted'.
+                Decryption exists for future authorized internal use only; no interface operation returns a decrypted value.
+              inputs:
+              - .interface/config/database.yaml — layers.storage_adapter.standards.migrations.credentials and credential_storage
+                of users.password (hash), users.api_key (hash), accounts.password (encrypted)
+              - src/trading_database/settings.py (credential_encryption_key) and src/trading_database/errors.py
+              expected_output: src/trading_database/storage/credentials.py with the five functions.
+            depends_on:
+            - P1-G1-T3
+            - P1-G1-T4
+            constraints:
+            - No secret value, generated credential, or encryption key is written into any committed file, Interface file, or
+              Task log.
+            - 'Hashing is salted per value: hashing the same input twice yields different stored strings that both verify.'
+            acceptance: Hashing produces distinct salted scrypt strings that verify correctly and reject wrong values; encryption
+              round-trips with an explicit key; an empty key raises CredentialKeyMissingError; an unknown mode raises UnsupportedCredentialModeError.
+            verify: |-
+              uv run python - <<'PY'
+              from cryptography.fernet import Fernet
+              from trading_database.storage import credentials as c
+              from trading_database.errors import CredentialKeyMissingError, UnsupportedCredentialModeError
+              h1, h2 = c.hash_credential('secret'), c.hash_credential('secret')
+              assert h1 != h2 and h1.startswith('scrypt$') and c.verify_hashed_credential('secret', h1) and c.verify_hashed_credential('secret', h2)
+              assert not c.verify_hashed_credential('wrong', h1)
+              key = Fernet.generate_key().decode()
+              tok = c.encrypt_credential('p@ss', key=key); assert tok != 'p@ss' and c.decrypt_credential(tok, key=key) == 'p@ss'
+              assert c.transform_for_storage('x', 'plaintext') == 'x' and c.transform_for_storage('x', 'hash').startswith('scrypt$')
+              assert c.decrypt_credential(c.transform_for_storage('x', 'encrypted', key=key), key=key) == 'x'
+              try:
+                  c.encrypt_credential('x', key=''); raise SystemExit('missing key not detected')
+              except CredentialKeyMissingError:
+                  pass
+              try:
+                  c.transform_for_storage('x', 'rot13'); raise SystemExit('unknown mode not detected')
+              except UnsupportedCredentialModeError:
+                  pass
+              print('ok')
+              PY
+            touches:
+            - src/trading_database/storage/credentials.py
+            status: todo
+        P1-G3:
+          id: P1-G3
+          title: Migrations
+          description: 'The ordered, reversible migration history that recreates the Database from nothing: the Alembic environment
+            bound to the package settings and metadata, the storage-schema revision, the idempotent seed functions, and the
+            initial-data revision.'
+          target: database
+          area: storage_adapter — migration tooling (alembic.ini, alembic/, src/trading_database/storage/seed.py)
+          does: '`uv run alembic upgrade head` on an empty database creates all 13 tables exactly as resolved and seeds the
+            21 initial records, `uv run alembic downgrade -1` and `downgrade base` undo it, and the history is the sole authority
+            over the schema.'
+          task_count: 4
+          tasks:
+          - id: P1-G3-T1
+            title: Alembic environment bound to package settings and metadata
+            description: 'Create the Alembic environment in database/: alembic.ini with script_location = alembic, file_template
+              = %%(rev)s, and an empty sqlalchemy.url; alembic/env.py that imports trading_database.storage.tables (registering
+              every mapping), sets target_metadata = Base.metadata, uses trading_database.storage.engine.get_engine() for online
+              migrations (so the settings URL and the foreign-key pragma apply) and get_settings().database_url for offline
+              mode, and configures the context with render_as_batch=True and compare_type=True; alembic/script.py.mako; and
+              alembic/versions/.'
+            reason: 'Database Principles 3 and 4: the whole Database is defined as code and every structural change is an ordered,
+              reversible migration; binding Alembic to the package settings keeps one connection configuration for runtime and
+              tooling.'
+            target: database
+            area: storage_adapter — migration tooling (alembic.ini, alembic/)
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - Alembic 1.19.2
+              - SQLAlchemy 2.0.52
+              - SQLite (runtime-provided by the Python sqlite3 module)
+              instructions: Run `uv run alembic init alembic` then edit the generated files; delete the generated alembic/README.
+                Never place a URL in alembic.ini. In env.py wrap run_migrations_online() around get_engine().connect(). render_as_batch
+                is required for future ALTER operations on SQLite.
+              inputs:
+              - .interface/config/database.yaml — layers.storage_adapter.tech.migration (tool, commands) and standards.migrations
+              - src/trading_database/storage/engine.py (P1-G2-T2) and src/trading_database/storage/tables.py (P1-G2-T5)
+              expected_output: database/alembic.ini, database/alembic/env.py, database/alembic/script.py.mako, database/alembic/versions/
+                (empty).
+            depends_on:
+            - P1-G2-T2
+            - P1-G2-T5
+            constraints:
+            - Application code never creates, alters, or drops database objects; only Alembic migrations change the storage
+              schema (database.yaml standards.migrations).
+            - No secret value, generated credential, or encryption key is written into any committed file, Interface file, or
+              Task log.
+            - alembic.ini carries no connection URL; the URL comes only from settings.
+            acceptance: '`uv run alembic heads` and `uv run alembic current` run without error against a throw-away database,
+              env.py configures render_as_batch, and alembic.ini has no URL value.'
+            verify: ( trap 'rm -f .verify.db' EXIT; rm -f .verify.db; export DATABASE_URL=sqlite:///./.verify.db; uv run alembic
+              heads && uv run alembic current && grep -q 'render_as_batch=True' alembic/env.py && grep -q 'target_metadata =
+              Base.metadata' alembic/env.py && ! grep -Eq '^sqlalchemy.url *= *.+' alembic.ini && grep -Eq '^file_template *=
+              *%%\(rev\)s$' alembic.ini && echo ok )
+            touches:
+            - alembic.ini
+            - alembic/env.py
+            - alembic/script.py.mako
+            - alembic/versions/
+            status: todo
+          - id: P1-G3-T2
+            title: 'Revision 0001: create the storage schema'
+            description: Create alembic/versions/0001_storage_schema.py (revision = "0001_storage_schema", down_revision = None)
+              whose upgrade() creates the 13 tables in dependency order — users, currencies, trading_platforms, brokers, accounts,
+              assets, trailing_groups, trailing_rules, partial_groups, partial_rules, action_groups, actions, positions — with
+              every column, server default, unique constraint (uq_*), index (ix_*), and foreign key with ondelete and onupdate
+              RESTRICT exactly as database.yaml data_logic.storage_schema, and whose downgrade() drops them in reverse order.
+            reason: 'Database Principle 4: the storage schema never changes without a recorded, reversible migration, and migration
+              history is the authoritative record of the structure; this revision is the first entry of that history.'
+            target: database
+            area: storage_adapter — alembic/versions/0001_storage_schema.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - Alembic 1.19.2
+              - SQLAlchemy 2.0.52
+              - SQLite (runtime-provided by the Python sqlite3 module)
+              instructions: 'Generate against an empty throw-away database: `DATABASE_URL=sqlite:///./.gen.db uv run alembic
+                revision --autogenerate --rev-id 0001_storage_schema -m "storage schema"`, then review the file line by line
+                against database.yaml (names, order, server defaults, RESTRICT actions, uq_ and ix_ names), reorder create_table
+                calls into the dependency order above and drop_table calls into the reverse, and delete .gen.db. The file must
+                not import from trading_database; it is self-contained op.create_table calls.'
+              inputs:
+              - .interface/config/database.yaml — data_logic.storage_schema.tables (complete)
+              - Base.metadata from src/trading_database/storage/tables.py (P1-G2-T5) as the autogenerate source
+              expected_output: alembic/versions/0001_storage_schema.py creating and dropping the complete storage schema.
+            depends_on:
+            - P1-G3-T1
+            constraints:
+            - Application code never creates, alters, or drops database objects; only Alembic migrations change the storage
+              schema (database.yaml standards.migrations).
+            - No secret value, generated credential, or encryption key is written into any committed file, Interface file, or
+              Task log.
+            - The migration is self-contained and does not import the package's mapped classes.
+            acceptance: After upgrade head on an empty database exactly the 13 tables exist, `alembic check` reports no drift
+              from the mapping, positions carries 7 RESTRICT foreign keys, brokers carries ix_brokers_user_id and the named
+              uq_brokers_user_id_name constraint, and downgrade base leaves no table.
+            verify: |-
+              ( set -e; trap 'rm -f .verify.db' EXIT; rm -f .verify.db; export DATABASE_URL=sqlite:///./.verify.db
+                uv run alembic upgrade head
+                uv run alembic check
+                uv run python - <<'PY'
+              import sqlite3
+              c = sqlite3.connect('.verify.db')
+              names = {r[0] for r in c.execute("select name from sqlite_master where type='table' and name != 'alembic_version'")}
+              assert names == set(['users', 'currencies', 'trading_platforms', 'brokers', 'accounts', 'assets', 'trailing_groups', 'trailing_rules', 'partial_groups', 'partial_rules', 'action_groups', 'actions', 'positions']), names
+              fks = c.execute('pragma foreign_key_list(positions)').fetchall()
+              assert len(fks) == 7 and all(f[5] == 'RESTRICT' and f[6] == 'RESTRICT' for f in fks), fks
+              idx = {r[1] for r in c.execute('pragma index_list(brokers)')}
+              assert 'ix_brokers_user_id' in idx, idx
+              sql = c.execute("select sql from sqlite_master where name='brokers'").fetchone()[0]
+              assert 'uq_brokers_user_id_name' in sql, sql
+              cols = [r[1] for r in c.execute('pragma table_info(positions)')]
+              assert cols == ['id', 'name', 'trading_platform_id', 'broker_id', 'account_id', 'trailing_group_id', 'partial_group_id', 'action_group_id', 'action_id', 'date', 'volume', 'profit', 'is_executed', 'order_type', 'base_tp', 'base_sl', 'real_tp', 'real_sl', 'status', 'description'], cols
+              print('ok')
+              PY
+                uv run alembic downgrade base
+                uv run python - <<'PY'
+              import sqlite3
+              n = sqlite3.connect('.verify.db').execute("select count(*) from sqlite_master where type='table' and name != 'alembic_version'").fetchone()[0]
+              assert n == 0, n
+              print('ok')
+              PY
+              )
+            touches:
+            - alembic/versions/0001_storage_schema.py
+            status: todo
+          - id: P1-G3-T3
+            title: Initial-data records and idempotent seed functions
+            description: 'Implement src/trading_database/storage/seed.py: INITIAL_DATA, an ordered list of (table_name, records)
+              copied exactly from database.yaml data_logic.initial_data.records in the order users, currencies, trading_platforms,
+              brokers, accounts, assets, trailing_groups, partial_groups, action_groups, actions, with the generate instructions
+              of users.password, users.api_key, and accounts.password represented by a GENERATE sentinel; NATURAL_KEYS mapping
+              users→(name,), currencies→(code,), trading_platforms→(name,), brokers→(user_id, name), accounts→(name,), assets→(symbol,),
+              trailing_groups→(name,), partial_groups→(name,), action_groups→(name,), actions→(name,); seed(connection) -> dict[str,
+              int] inserting each record only when no row matches its natural key, resolving GENERATE with secrets.token_urlsafe(32),
+              transforming credential fields through transform_for_storage using the mode from the Model registry, printing
+              each generated plaintext exactly once to stdout as ''GENERATED CREDENTIAL <table>.<natural key>.<field>: <value>'',
+              and returning inserted counts per table; and unseed(connection) -> dict[str, int] deleting rows matching the natural
+              keys in reverse table order.'
+            reason: 'Database Principle 10 and database.yaml standards.migrations.seeding: initial data is part of Database,
+              resolved in dependency order, repeatable without duplicate logical records, with generated secrets never persisted
+              in plain form.'
+            target: database
+            area: storage_adapter — src/trading_database/storage/seed.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              - cryptography 50.0.1
+              instructions: Use SQLAlchemy Core on the given Connection with reflected tables (Table(name, MetaData(), autoload_with=connection));
+                do not use ORM sessions so the functions work inside a migration. Literal relationship ids (user_id 1, trading_platform_id
+                1, broker_id 1, base_currency_id 1, action_group_id 1, asset_id 1, account_id 1, partial_group_id 1, trailing_group_id
+                1) are inserted exactly as given. Keep account_type 'CFD' exactly as stated. Credential modes come from trading_database.logic.registry
+                (P1-G4-T1); accounts.password requires the encryption key, so seeding without CREDENTIAL_ENCRYPTION_KEY must
+                fail with CredentialKeyMissingError before any row is written.
+              inputs:
+              - .interface/config/database.yaml — data_logic.initial_data.records and standards.migrations.seeding
+              - .interface/config/model.yaml — initial_data of each Model
+              - src/trading_database/storage/credentials.py (P1-G2-T6) and src/trading_database/logic/registry.py (P1-G4-T1)
+              expected_output: src/trading_database/storage/seed.py with INITIAL_DATA, NATURAL_KEYS, seed, and unseed.
+            depends_on:
+            - P1-G2-T6
+            - P1-G3-T2
+            - P1-G4-T1
+            constraints:
+            - No secret value, generated credential, or encryption key is written into any committed file, Interface file, or
+              Task log.
+            - Initial records are copied from database.yaml verbatim; no record, field, or value is added or changed.
+            - Generated credentials are printed once to stdout and never written to a file or log.
+            acceptance: On a schema-only database seed() inserts 21 rows with the resolved per-table counts, a second seed()
+              inserts 0, stored user credentials are scrypt hashes and the account password is a Fernet token, and unseed()
+              removes every seeded row.
+            verify: |-
+              ( set -e
+                trap 'rm -f .verify.db' EXIT
+                rm -f .verify.db
+                export DATABASE_URL=sqlite:///./.verify.db
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                uv run alembic upgrade 0001_storage_schema
+                uv run python - <<'PY'
+              from sqlalchemy import text
+              from trading_database.storage.engine import get_engine
+              from trading_database.storage.seed import seed, unseed
+              e = get_engine()
+              with e.begin() as c:
+                  first = seed(c)
+              with e.begin() as c:
+                  second = seed(c)
+              assert sum(first.values()) == 21 and sum(second.values()) == 0, (first, second)
+              with e.connect() as c:
+                  counts = {t: c.execute(text(f'select count(*) from {t}')).scalar() for t in ['users', 'currencies', 'trading_platforms', 'brokers', 'accounts', 'assets', 'trailing_groups', 'partial_groups', 'action_groups', 'actions']}
+                  assert counts == {'users': 1, 'currencies': 8, 'trading_platforms': 2, 'brokers': 1, 'accounts': 1, 'assets': 4, 'trailing_groups': 1, 'partial_groups': 1, 'action_groups': 1, 'actions': 1}, counts
+                  pw, key = c.execute(text("select password, api_key from users where name = 'Admin'")).one()
+                  assert pw.startswith('scrypt$') and key.startswith('scrypt$') and pw != key, (pw, key)
+                  acc = c.execute(text("select password from accounts where name = 'Acc-1'")).scalar()
+                  assert acc.startswith('gAAAA'), acc
+                  assert c.execute(text("select account_type, leverage from accounts where name = 'Acc-1'")).one() == ('CFD', 100)
+              with e.begin() as c:
+                  removed = unseed(c)
+              assert sum(removed.values()) == 21, removed
+              with e.connect() as c:
+                  assert sum(c.execute(text(f'select count(*) from {t}')).scalar() for t in ['users', 'currencies', 'trading_platforms', 'brokers', 'accounts', 'assets', 'trailing_groups', 'partial_groups', 'action_groups', 'actions']) == 0
+              print('ok')
+              PY
+              )
+            touches:
+            - src/trading_database/storage/seed.py
+            status: todo
+          - id: P1-G3-T4
+            title: 'Revision 0002: seed the initial data'
+            description: Create alembic/versions/0002_initial_data.py (revision = "0002_initial_data", down_revision = "0001_storage_schema")
+              whose upgrade() calls trading_database.storage.seed.seed(op.get_bind()) and whose downgrade() calls unseed(op.get_bind()).
+              The module docstring states that CREDENTIAL_ENCRYPTION_KEY must be set when upgrading and that generated credentials
+              are printed once during the upgrade.
+            reason: Applying `alembic upgrade head` must recreate the Database from nothing including its declared initial data
+              (Database Principle 3), and the seeding must be undoable in the same ordered history (Principle 4).
+            target: database
+            area: storage_adapter — alembic/versions/0002_initial_data.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - Alembic 1.19.2
+              - SQLAlchemy 2.0.52
+              instructions: Create the file with `uv run alembic revision --rev-id 0002_initial_data -m "initial data"` and
+                fill upgrade/downgrade. This is the one migration allowed to import from the package, because the seed logic
+                is Database-owned data, not structure.
+              inputs:
+              - src/trading_database/storage/seed.py (P1-G3-T3)
+              - .interface/config/database.yaml — layers.storage_adapter.tech.migration.commands
+              expected_output: alembic/versions/0002_initial_data.py; `uv run alembic upgrade head` on an empty database yields
+                the seeded schema.
+            depends_on:
+            - P1-G3-T3
+            constraints:
+            - Application code never creates, alters, or drops database objects; only Alembic migrations change the storage
+              schema (database.yaml standards.migrations).
+            - No secret value, generated credential, or encryption key is written into any committed file, Interface file, or
+              Task log.
+            acceptance: After upgrade head the current revision is 0002_initial_data with the resolved seed counts, downgrade
+              -1 removes the seeded rows but keeps the tables, and upgrading again restores the same counts without duplicates.
+            verify: |-
+              ( set -e; trap 'rm -f .verify.db' EXIT; rm -f .verify.db; export DATABASE_URL=sqlite:///./.verify.db
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                uv run alembic upgrade head | grep -c 'GENERATED CREDENTIAL' | grep -qx 3
+                uv run alembic current | grep -q '0002_initial_data'
+                uv run python - <<'PY'
+              import sqlite3
+              c = sqlite3.connect('.verify.db')
+              counts = {t: c.execute(f'select count(*) from {t}').fetchone()[0] for t in ['users', 'currencies', 'trading_platforms', 'brokers', 'accounts', 'assets', 'trailing_groups', 'partial_groups', 'action_groups', 'actions']}
+              assert counts == {'users': 1, 'currencies': 8, 'trading_platforms': 2, 'brokers': 1, 'accounts': 1, 'assets': 4, 'trailing_groups': 1, 'partial_groups': 1, 'action_groups': 1, 'actions': 1}, counts
+              print('ok')
+              PY
+                uv run alembic downgrade -1
+                uv run python - <<'PY'
+              import sqlite3
+              c = sqlite3.connect('.verify.db')
+              assert sum(c.execute(f'select count(*) from {t}').fetchone()[0] for t in ['users', 'currencies', 'trading_platforms', 'brokers', 'accounts', 'assets', 'trailing_groups', 'partial_groups', 'action_groups', 'actions']) == 0
+              assert c.execute("select count(*) from sqlite_master where type='table' and name='positions'").fetchone()[0] == 1
+              print('ok')
+              PY
+                uv run alembic upgrade head > /dev/null
+                uv run python - <<'PY'
+              import sqlite3
+              c = sqlite3.connect('.verify.db')
+              assert c.execute('select count(*) from currencies').fetchone()[0] == 8
+              print('ok')
+              PY
+              )
+            touches:
+            - alembic/versions/0002_initial_data.py
+            status: todo
+        P1-G4:
+          id: P1-G4
+          title: Data Logic and Mapping
+          description: 'The generic, Model-driven layer between the interface and the storage: a registry resolving each Model
+            key to its table, columns, primary key, credential modes, and status capability, and one operation pipeline implementing
+            create, read, list, update, delete, and status for every Model with credential handling.'
+          target: database
+          area: data_logic — src/trading_database/logic/
+          does: Every persistent Model is served by the same pipeline; differences come only from the registry, credential columns
+            are transformed on write and never returned, and every rejection is a Database error type.
+          task_count: 3
+          tasks:
+          - id: P1-G4-T1
+            title: Model registry
+            description: 'Create src/trading_database/logic/__init__.py (docstring) and logic/registry.py: a frozen dataclass
+              ModelInfo(key, table_name, mapped_class, primary_key, columns: tuple[str, ...], credential_fields: Mapping[str,
+              str], has_status: bool); CREDENTIAL_MODES = {"user": {"password": "hash", "api_key": "hash"}, "account": {"password":
+              "encrypted"}}; build_registry() -> dict[str, ModelInfo] derived from Base.registry.mappers through each class''s
+              __model_key__, ordered as [''user'', ''currency'', ''trading_platform'', ''broker'', ''account'', ''asset'', ''trailing_group'',
+              ''trailing_rule'', ''partial_group'', ''partial_rule'', ''action_group'', ''action'', ''position'']; get_model(key)
+              -> ModelInfo raising UnknownModelError; get_model_by_table(table_name) -> ModelInfo; and MODEL_KEYS.'
+            reason: 'Database Principle 6: Data Logic runs one Model-driven pipeline, so it needs one place that resolves a
+              Model key to its table, primary key, columns, credential modes, and status capability instead of per-Model code.'
+            target: database
+            area: data_logic — src/trading_database/logic/registry.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              instructions: Import trading_database.storage.tables to register the mappings, then iterate Base.registry.mappers.
+                has_status is true when the table has a column named status. CREDENTIAL_MODES mirrors database.yaml credential_storage
+                exactly; do not infer credentials from column names.
+              inputs:
+              - .interface/config/database.yaml — layers.database_interface.model_selector and data_logic.storage_schema (source_model,
+                credential_storage)
+              - .interface/config/model.yaml — content.models order
+              - src/trading_database/storage/tables.py (P1-G2-T5) and src/trading_database/errors.py (P1-G1-T4)
+              expected_output: src/trading_database/logic/__init__.py and src/trading_database/logic/registry.py.
+            depends_on:
+            - P1-G2-T5
+            - P1-G1-T4
+            constraints:
+            - Credential fields are taken only from the resolved modes, never guessed from names (Backend Principle 9 mirrors
+              this).
+            acceptance: The registry holds the 13 Model keys in model.yaml order, every entry has primary key id and has_status
+              true, user carries password and api_key as hash and account carries password as encrypted, position lists its
+              20 columns, and an unknown key raises UnknownModelError.
+            verify: |-
+              uv run python - <<'PY'
+              from trading_database.logic.registry import build_registry, get_model, get_model_by_table, MODEL_KEYS
+              from trading_database.errors import UnknownModelError
+              reg = build_registry()
+              assert list(reg) == ['user', 'currency', 'trading_platform', 'broker', 'account', 'asset', 'trailing_group', 'trailing_rule', 'partial_group', 'partial_rule', 'action_group', 'action', 'position'] == list(MODEL_KEYS), list(reg)
+              assert all(m.primary_key == 'id' and m.has_status for m in reg.values())
+              assert dict(reg['user'].credential_fields) == {'password': 'hash', 'api_key': 'hash'}
+              assert dict(reg['account'].credential_fields) == {'password': 'encrypted'}
+              assert all(not m.credential_fields for k, m in reg.items() if k not in ('user', 'account'))
+              assert list(reg['position'].columns) == ['id', 'name', 'trading_platform_id', 'broker_id', 'account_id', 'trailing_group_id', 'partial_group_id', 'action_group_id', 'action_id', 'date', 'volume', 'profit', 'is_executed', 'order_type', 'base_tp', 'base_sl', 'real_tp', 'real_sl', 'status', 'description']
+              assert get_model('trading_platform').table_name == 'trading_platforms' and get_model_by_table('trading_platforms').key == 'trading_platform'
+              try:
+                  get_model('nope'); raise SystemExit('unknown model accepted')
+              except UnknownModelError:
+                  pass
+              print('ok')
+              PY
+            touches:
+            - src/trading_database/logic/__init__.py
+            - src/trading_database/logic/registry.py
+            status: todo
+          - id: P1-G4-T2
+            title: Generic create, read, and list operations
+            description: 'Implement src/trading_database/logic/operations.py with functions taking a Session and a Model key:
+              create(session, model, data: Mapping) -> dict inserting one record and returning it; read(session, model, record_id)
+              -> dict | None returning None when absent; list_records(session, model, *, filters: Mapping | None = None, order_by:
+              Sequence[str] | None = None, limit: int | None = None, offset: int | None = None) -> list[dict] with equality
+              filters, ordering by field names (a leading ''-'' means descending, default ascending primary key), and paging;
+              plus to_record(instance) -> dict that excludes credential columns. Unknown Model → UnknownModelError; a field
+              not in the Model, or the primary key supplied on create, or a credential field used as a filter or ordering →
+              UnknownFieldError; credential fields in data are transformed with transform_for_storage using the registry mode;
+              sqlalchemy IntegrityError → ConstraintViolationError after rollback.'
+            reason: 'Database Principle 6: one generic Model-driven pipeline serves every Model, and database.yaml requires
+              credential columns to be transformed on write and never returned on read or list.'
+            target: database
+            area: data_logic — src/trading_database/logic/operations.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              instructions: Resolve the mapped class from the registry, build instances with cls(**data) after validation, session.flush()
+                to obtain the id, and select() with where(getattr(cls, f) == v) for filters. Return plain dicts with Python
+                values (Decimal, datetime, bool) — never ORM instances. Do not commit inside these functions; the caller owns
+                the transaction.
+              inputs:
+              - .interface/config/database.yaml — layers.database_interface.operations.create/read/list and data_logic.responsibility
+              - src/trading_database/logic/registry.py (P1-G4-T1), src/trading_database/storage/credentials.py (P1-G2-T6), src/trading_database/errors.py
+              expected_output: src/trading_database/logic/operations.py with create, read, list_records, and to_record.
+            depends_on:
+            - P1-G4-T1
+            - P1-G2-T6
+            - P1-G3-T4
+            constraints:
+            - Returned records never contain a credential column, in any operation.
+            acceptance: 'Against a freshly migrated and seeded database: create returns the new record with an id, read returns
+              it and None for a missing id, list filters and pages correctly, records of user never expose password or api_key
+              while the stored value is a scrypt hash, and the error types are raised for unknown fields, unknown models, and
+              unique violations.'
+            verify: |-
+              ( set -e
+                trap 'rm -f .verify.db' EXIT
+                rm -f .verify.db
+                export DATABASE_URL=sqlite:///./.verify.db
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                uv run alembic upgrade head
+                uv run python - <<'PY'
+              from sqlalchemy import text
+              from trading_database.storage.engine import get_engine, session_factory
+              from trading_database.logic import operations as ops
+              from trading_database.errors import UnknownFieldError, UnknownModelError, ConstraintViolationError
+              Session = session_factory(get_engine())
+              with Session() as s, s.begin():
+                  tp = ops.create(s, 'trading_platform', {'name': 'Test Platform', 'code': 'test_platform'})
+                  assert tp['id'] and tp['status'] is True and tp['description'] is None, tp
+                  assert ops.read(s, 'trading_platform', tp['id']) == tp
+                  assert ops.read(s, 'trading_platform', 999999) is None
+                  assert len(ops.list_records(s, 'trading_platform')) == 3
+                  assert [r['code'] for r in ops.list_records(s, 'trading_platform', filters={'code': 'test_platform'})] == ['test_platform']
+                  assert [r['id'] for r in ops.list_records(s, 'currency', order_by=['-id'], limit=2)] == [8, 7]
+                  assert [r['code'] for r in ops.list_records(s, 'currency', order_by=['code'], limit=1, offset=1)] == ['CAD']
+                  u = ops.create(s, 'user', {'name': 'Second', 'username': 'second', 'password': 'pw', 'api_key': 'ak'})
+                  assert 'password' not in u and 'api_key' not in u and 'password' not in ops.read(s, 'user', 1)
+                  stored = s.execute(text('select password from users where id = :i'), {'i': u['id']}).scalar()
+                  assert stored.startswith('scrypt$') and stored != 'pw'
+                  for bad in ({'name': 'x', 'code': 'y', 'nope': 1}, {'id': 5, 'name': 'x', 'code': 'y'}):
+                      try:
+                          ops.create(s, 'trading_platform', bad); raise SystemExit('bad field accepted')
+                      except UnknownFieldError:
+                          pass
+                  try:
+                      ops.list_records(s, 'user', filters={'password': 'x'}); raise SystemExit('credential filter accepted')
+                  except UnknownFieldError:
+                      pass
+                  try:
+                      ops.read(s, 'nope', 1); raise SystemExit('unknown model accepted')
+                  except UnknownModelError:
+                      pass
+              with Session() as s:
+                  try:
+                      with s.begin():
+                          ops.create(s, 'currency', {'name': 'Dup', 'code': 'USD'})
+                      raise SystemExit('unique violation not detected')
+                  except ConstraintViolationError:
+                      pass
+              print('ok')
+              PY
+              )
+            touches:
+            - src/trading_database/logic/operations.py
+            status: todo
+          - id: P1-G4-T3
+            title: Generic update, delete, and status operations
+            description: 'Extend src/trading_database/logic/operations.py with update(session, model, record_id, data: Mapping)
+              -> dict applying a partial update with the same field validation and credential transformation as create and raising
+              RecordNotFoundError when absent; delete(session, model, record_id) -> None raising RecordNotFoundError when absent
+              and ConstraintViolationError when a RESTRICT foreign key blocks it; and set_status(session, model, record_id,
+              action: str) -> dict where action ''enable'' writes status true and ''disable'' writes status false, any other
+              action raises InvalidActionError, and a Model without a status field raises UnsupportedOperationError.'
+            reason: database.yaml database_interface.operations resolves update, delete, and status with exactly these semantics,
+              including the two accepted status actions and the RESTRICT referential behaviour.
+            target: database
+            area: data_logic — src/trading_database/logic/operations.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              instructions: Load the instance with session.get(cls, record_id); apply attributes; flush; convert with to_record.
+                Catch IntegrityError around flush for delete and update, roll back, and raise ConstraintViolationError. Check
+                the registry's has_status before validating the action.
+              inputs:
+              - .interface/config/database.yaml — layers.database_interface.operations.update/delete/status (actions enable/disable,
+                required_field status, value_mapping)
+              - src/trading_database/logic/operations.py from P1-G4-T2
+              expected_output: update, delete, and set_status added to src/trading_database/logic/operations.py.
+            depends_on:
+            - P1-G4-T2
+            constraints:
+            - The status operation accepts exactly the actions enable and disable.
+            acceptance: 'Against a freshly migrated and seeded database: update changes only the given fields, delete removes
+              an unreferenced record and raises ConstraintViolationError for a referenced one, set_status toggles status with
+              enable/disable and rejects other actions, and missing records raise RecordNotFoundError.'
+            verify: |-
+              ( set -e
+                trap 'rm -f .verify.db' EXIT
+                rm -f .verify.db
+                export DATABASE_URL=sqlite:///./.verify.db
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                uv run alembic upgrade head
+                uv run python - <<'PY'
+              from trading_database.storage.engine import get_engine, session_factory
+              from trading_database.logic import operations as ops
+              from trading_database.errors import RecordNotFoundError, ConstraintViolationError, InvalidActionError
+              Session = session_factory(get_engine())
+              with Session() as s, s.begin():
+                  r = ops.update(s, 'trading_platform', 1, {'description': 'MT5'})
+                  assert r['description'] == 'MT5' and r['name'] == 'MetaTrader 5', r
+                  tmp = ops.create(s, 'asset', {'name': 'Tmp', 'symbol': 'TMP/USD', 'category': 'Currency'})
+                  ops.delete(s, 'asset', tmp['id']); assert ops.read(s, 'asset', tmp['id']) is None
+                  assert ops.set_status(s, 'asset', 1, 'disable')['status'] is False
+                  assert ops.set_status(s, 'asset', 1, 'enable')['status'] is True
+                  for call in (lambda: ops.update(s, 'asset', 999999, {'name': 'x'}), lambda: ops.delete(s, 'asset', 999999)):
+                      try:
+                          call(); raise SystemExit('missing record accepted')
+                      except RecordNotFoundError:
+                          pass
+                  try:
+                      ops.set_status(s, 'asset', 1, 'toggle'); raise SystemExit('bad action accepted')
+                  except InvalidActionError:
+                      pass
+              with Session() as s:
+                  try:
+                      with s.begin():
+                          ops.delete(s, 'currency', 1)
+                      raise SystemExit('RESTRICT not enforced')
+                  except ConstraintViolationError:
+                      pass
+              print('ok')
+              PY
+              )
+            touches:
+            - src/trading_database/logic/operations.py
+            status: todo
+        P1-G5:
+          id: P1-G5
+          title: Database Interface
+          description: 'The only boundary published to consumers: one generic Database class implementing the resolved operations
+            and controlled parameterized SQL, exported from the package root together with the error types, and documented for
+            the Backend that will consume it.'
+          target: database
+          area: database_interface — src/trading_database/interface.py, src/trading_database/__init__.py, README.md
+          does: '`from trading_database import Database` gives consumers create, read, list, update, delete, status, and execute_sql
+            for every Model without any access to the engine, ORM, migrations, or database file.'
+          task_count: 2
+          tasks:
+          - id: P1-G5-T1
+            title: The generic Database interface class
+            description: 'Implement src/trading_database/interface.py with class Database: __init__(self, url: str | None =
+              None) creating a private engine via create_database_engine(url) and a private session factory; methods create(model,
+              data), read(model, record_id), list(model, *, filters=None, order_by=None, limit=None, offset=None), update(model,
+              record_id, data), delete(model, record_id), status(model, record_id, action), each running the matching Data Logic
+              function inside one session transaction that commits on success and rolls back on any error; and execute_sql(statement:
+              str, parameters: Mapping | Sequence[Mapping] | None = None) -> list[dict] | int executing sqlalchemy.text(statement)
+              with bound parameters in a transaction, returning rows as dicts when the statement returns rows and the rowcount
+              otherwise, and raising TypeError for a non-string statement. No public attribute or return value exposes the Engine,
+              Connection, Session, or ORM instances.'
+            reason: 'Database Principle 6 and database.yaml layers.database_interface: consumers use one generic interface —
+              Model key, operation, data or criteria — and controlled parameterized SQL, and never receive the connection or
+              internals.'
+            target: database
+            area: database_interface — src/trading_database/interface.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - SQLAlchemy 2.0.52
+              - SQLite (runtime-provided by the Python sqlite3 module)
+              instructions: Keep the engine and factory as underscore-prefixed attributes. Implement a small _transaction()
+                context manager used by every method. execute_sql must never format values into the statement text; only text(statement).bindparams-style
+                named parameters (:name) are supported. Method names are fixed because Backend Data Access binds to them.
+              inputs:
+              - .interface/config/database.yaml — layers.database_interface (style, model_selector, operations, sql_commands)
+                and boundaries.interface
+              - src/trading_database/logic/operations.py (P1-G4-T3) and src/trading_database/storage/engine.py (P1-G2-T2)
+              expected_output: src/trading_database/interface.py with the Database class.
+            depends_on:
+            - P1-G4-T3
+            constraints:
+            - The Database class exposes only the resolved operations; engine, session, connection, ORM classes, and the file
+              are never returned or exposed as public attributes.
+            acceptance: Against a freshly migrated and seeded database the Database class performs the full create, read, list,
+              update, status, delete flow, execute_sql returns parameterized rows and rowcounts, and no public attribute exposes
+              engine, session, or connection.
+            verify: |-
+              ( set -e
+                trap 'rm -f .verify.db' EXIT
+                rm -f .verify.db
+                export DATABASE_URL=sqlite:///./.verify.db
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                uv run alembic upgrade head
+                uv run python - <<'PY'
+              from trading_database.interface import Database
+              db = Database()
+              public = {a for a in dir(db) if not a.startswith('_')}
+              assert public == {'create', 'read', 'list', 'update', 'delete', 'status', 'execute_sql'}, public
+              a = db.create('asset', {'name': 'GBPUSD', 'symbol': 'GBP/USD', 'category': 'Currency', 'point_size': 0.0001, 'digits': 5})
+              assert a['id'] and db.read('asset', a['id'])['symbol'] == 'GBP/USD'
+              assert len(db.list('asset', filters={'category': 'Currency'})) == 3
+              assert db.update('asset', a['id'], {'digits': 4})['digits'] == 4
+              assert db.status('asset', a['id'], 'disable')['status'] is False
+              db.delete('asset', a['id']); assert db.read('asset', a['id']) is None
+              rows = db.execute_sql('select code, symbol from currencies where code = :code', {'code': 'USD'})
+              assert rows == [{'code': 'USD', 'symbol': '$'}], rows
+              n = db.execute_sql('update currencies set description = :d where code = :c', {'d': 'seeded', 'c': 'USD'})
+              assert n == 1, n
+              assert db.read('currency', 1)['description'] == 'seeded'
+              assert 'password' not in db.read('user', 1)
+              try:
+                  db.execute_sql(123); raise SystemExit('non-string statement accepted')
+              except TypeError:
+                  pass
+              print('ok')
+              PY
+              )
+            touches:
+            - src/trading_database/interface.py
+            status: todo
+          - id: P1-G5-T2
+            title: Public exports and Database README
+            description: 'Set src/trading_database/__init__.py to export exactly Database and the nine error classes through
+              __all__ (no engine, session, settings, Base, or mapped classes), and write database/README.md describing: the
+              package''s role as the Database Component; installing it from a consumer with `uv add --editable <path to database/>`;
+              the runtime variables DATABASE_URL and CREDENTIAL_ENCRYPTION_KEY with the key-generation command; the commands
+              `uv run alembic upgrade head`, `uv run alembic downgrade -1`, and `uv run alembic current`; the one-time printed
+              GENERATED CREDENTIAL lines during the first upgrade; the Database class operations and error types; and the rule
+              that consumers never open app.db, tables, the ORM, or migrations directly.'
+            reason: The package root is the interface Backend imports (development.yaml connection backend_to_database), and
+              the human operating the Database needs its commands, variables, and one-time credential behaviour documented once.
+            target: database
+            area: database_interface — src/trading_database/__init__.py and README.md
+            execution_context:
+              kind: documentation
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - Markdown
+              instructions: Keep __init__.py free of side effects beyond imports. The README documents; it introduces no new
+                behaviour.
+              inputs:
+              - .interface/config/database.yaml — layers.storage_adapter.tech.migration.commands, boundaries, out_of_scope
+              - .interface/config/development.yaml — connections.backend_to_database and platform.composition.configuration
+              expected_output: src/trading_database/__init__.py with __all__ and database/README.md.
+            depends_on:
+            - P1-G5-T1
+            constraints:
+            - Only the interface class and error types are exported from the package root.
+            acceptance: Importing trading_database yields Database and the error types via __all__ without exposing internals,
+              and README.md names the three commands and both variables.
+            verify: uv run python -c "import trading_database as t; assert set(t.__all__) == {'Database','DatabaseError','UnknownModelError','UnknownFieldError','RecordNotFoundError','ConstraintViolationError','InvalidActionError','UnsupportedOperationError','CredentialKeyMissingError','UnsupportedCredentialModeError'},
+              t.__all__; from trading_database import Database, UnknownModelError; print('ok')" && grep -q 'uv run alembic upgrade
+              head' README.md && grep -q 'uv run alembic downgrade -1' README.md && grep -q 'uv run alembic current' README.md
+              && grep -q 'CREDENTIAL_ENCRYPTION_KEY' README.md && grep -q 'DATABASE_URL' README.md && grep -q 'GENERATED CREDENTIAL'
+              README.md && echo ok
+            touches:
+            - src/trading_database/__init__.py
+            - README.md
+            status: todo
+        P1-G6:
+          id: P1-G6
+          title: Database delivery
+          description: Bringing the real Database online at its resolved location from the migration history, with the runtime
+            configuration in place, so the phase outcome is observable and Backend can consume it.
+          target: database
+          area: delivery — database/app.db
+          does: database/app.db exists at revision 0002_initial_data with the complete storage schema and the 21 initial records,
+            and database/.env supplies the encryption key; neither is committed.
+          task_count: 1
+          tasks:
+          - id: P1-G6-T1
+            title: Build the Database from nothing at its resolved location
+            description: In database/ create the untracked .env from .env.example with CREDENTIAL_ENCRYPTION_KEY set to a freshly
+              generated Fernet key and DATABASE_URL left empty (default database/app.db); ensure no stale app.db exists (remove
+              only an untracked development file); run `uv run alembic upgrade head`; hand the three printed GENERATED CREDENTIAL
+              lines to the human in the console output without recording their values anywhere; then confirm with `uv run alembic
+              current`.
+            reason: The phase outcome is a real Database at its resolved location built entirely from migration history and
+              seeded with the initial data, ready for Backend to consume through the interface in phase P2.
+            target: database
+            area: delivery — database/app.db and database/.env (both untracked)
+            execution_context:
+              kind: command execution
+              language: null
+              technologies:
+              - uv 0.12.10
+              - Alembic 1.19.2
+              - SQLite (runtime-provided by the Python sqlite3 module)
+              instructions: 'Generate the key with `uv run python -c ''from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())''`
+                and write it into .env as CREDENTIAL_ENCRYPTION_KEY=<key>. Run the upgrade from database/. Record in the Task
+                log only that credentials were generated and shown once — never the values. If the upgrade fails with CredentialKeyMissingError,
+                the .env is not being read: fix .env, do not export the key in a committed file.'
+              inputs:
+              - .interface/config/database.yaml — layers.storage_adapter.tech.storage.location (database/app.db) and tech.migration.commands
+              - .interface/config/development.yaml — platform.composition.startup (Database step) and configuration variables
+              - The complete migration history (P1-G3-T4) and the package exports (P1-G5-T2)
+              expected_output: database/app.db at revision 0002_initial_data containing the 13 tables and 21 initial records,
+                and database/.env holding the encryption key; both ignored by git.
+            depends_on:
+            - P1-G3-T4
+            - P1-G5-T2
+            - P1-G1-T2
+            constraints:
+            - Application code never creates, alters, or drops database objects; only Alembic migrations change the storage
+              schema (database.yaml standards.migrations).
+            - No secret value, generated credential, or encryption key is written into any committed file, Interface file, or
+              Task log.
+            - app.db and .env stay untracked; the generated credential values are shown once and never stored in plain form.
+            acceptance: app.db exists and is ignored, the current revision is 0002_initial_data with no schema drift, the seeded
+              counts match, and the Database class reads the Admin user through the default URL without exposing credentials.
+            verify: |-
+              test -f app.db && test -f .env && git check-ignore -q app.db && git check-ignore -q .env && uv run alembic current | grep -q '0002_initial_data' && uv run alembic check && uv run python - <<'PY'
+              from trading_database import Database
+              db = Database()
+              counts = {t: db.execute_sql(f'select count(*) as n from {t}')[0]['n'] for t in ['users', 'currencies', 'trading_platforms', 'brokers', 'accounts', 'assets', 'trailing_groups', 'partial_groups', 'action_groups', 'actions']}
+              assert counts == {'users': 1, 'currencies': 8, 'trading_platforms': 2, 'brokers': 1, 'accounts': 1, 'assets': 4, 'trailing_groups': 1, 'partial_groups': 1, 'action_groups': 1, 'actions': 1}, counts
+              admin = db.read('user', 1)
+              assert admin['name'] == 'Admin' and 'password' not in admin and 'api_key' not in admin, admin
+              assert db.read('account', 1)['name'] == 'Acc-1' and 'password' not in db.read('account', 1)
+              print('ok')
+              PY
+            touches:
+            - .env
+            - app.db
+            status: todo
+    P2:
+      id: P2
+      title: Backend
+      order: 2
+      target: backend
+      does: Implement the backend layer, including its application logic and API for operating on the defined models.
+      groups: {}
+    P3:
+      id: P3
+      title: Frontend
+      order: 3
+      target: frontend
+      does: Implement the frontend based on the backend API.
+      groups: {}
