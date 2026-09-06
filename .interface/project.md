@@ -342,13 +342,21 @@ Defines the project's implementation phases. Phases are executed step by step in
 
 ### Phase 1
 
+**Title:** Model
+
+**Target:** Model
+
+**Goal:** Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
+
+### Phase 2
+
 **Title:** Database
 
 **Target:** Database
 
-**Goal:** Implement the database, apply the defined model structure, and insert the defined initial data.
+**Goal:** Implement the database using the shared Model package and insert the defined initial data.
 
-### Phase 2
+### Phase 3
 
 **Title:** Backend
 
@@ -356,7 +364,7 @@ Defines the project's implementation phases. Phases are executed step by step in
 
 **Goal:** Implement the backend layer, including its application logic and API for operating on the defined models.
 
-### Phase 3
+### Phase 4
 
 **Title:** Frontend
 
