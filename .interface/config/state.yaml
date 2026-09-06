@@ -58,11 +58,11 @@ content:
 
   # <!-------------------------------------------- active -->
   active:
-    mode: planning
+    mode: development
     phase: P1
-    mode_reason: The human requested a plan for phase P1 (Database). The planning operation built the P1 Plan in task.yaml — its Groups and Tasks — from the current generated Understanding; every other Plan and every shared Blocker and Open Question is untouched.
-    set_by: planning operation (my-interface-tasker) — acting on the human's request to plan P1
-    set_at: '2026-09-06T14:26:33+03:30'
+    mode_reason: 'The development operation completed every Task of the P1 (Database) Plan: 21 of 21 Tasks are done with passing verification. database/app.db exists at revision 0002_initial_data; my_database with its nested packages and READMEs is delivered and ready for phase 2.'
+    set_by: development operation (my-interface-developer) — acting on the human's request to develop P1
+    set_at: '2026-09-06T14:35:00+03:30'
 
   # <!-------------------------------------------- blockers -->
   blockers: {}

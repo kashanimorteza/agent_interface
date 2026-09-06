@@ -156,7 +156,19 @@ content:
             - uv.lock
             - .python-version
             - src/my_database/__init__.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:29:56+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; database/ does not exist.
+            - at: '2026-09-06T14:30:00+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: uv sync, uv lock --check, imports report SQLAlchemy 2.0.52, Alembic 1.19.2, cryptography
+                50.0.1; module-name my_database declared for uv_build → ok.'
           - id: P1-G1-T2
             title: Ignore rules and runtime-configuration template
             description: 'Add database/.gitignore with one entry per line: .venv/, __pycache__/, *.pyc, app.db, *.db, *.db-journal,
@@ -193,7 +205,19 @@ content:
             touches:
             - .gitignore
             - .env.example
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:29:56+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed (independent).
+            - at: '2026-09-06T14:30:01+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: .gitignore covers app.db/.env/.venv/; .env.example names both variables without values →
+                ok.'
           - id: P1-G1-T3
             title: Runtime settings module
             description: 'Implement src/my_database/settings.py: a frozen dataclass Settings(database_url: str, credential_encryption_key:
@@ -245,7 +269,19 @@ content:
               PY
             touches:
             - src/my_database/settings.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:30:01+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:30:02+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: default URL sqlite:////…/database/app.db with no key; explicit environ values returned unchanged
+                → ok.'
           - id: P1-G1-T4
             title: Database error types
             description: 'Implement src/my_database/errors.py with the exception hierarchy every layer raises and consumers
@@ -282,7 +318,18 @@ content:
               PY
             touches:
             - src/my_database/errors.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:30:01+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:30:02+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: nine error classes import, every specific error subclasses DatabaseError → ok.'
         P1-G2:
           id: P1-G2
           title: Storage Adapter
@@ -335,7 +382,19 @@ content:
             touches:
             - src/my_database/storage_adapter/__init__.py
             - src/my_database/storage_adapter/base.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:30:01+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:30:03+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: ix/uq/fk/pk/ck naming conventions on Base.metadata in the storage_adapter nested package;
+                decimal_type() is Numeric(18, 8) → ok.'
           - id: P1-G2-T2
             title: Engine and session factory with SQLite foreign-key enforcement
             description: 'Implement src/my_database/storage_adapter/engine.py: create_database_engine(url: str | None = None)
@@ -389,7 +448,19 @@ content:
               )
             touches:
             - src/my_database/storage_adapter/engine.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:31:21+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:31:22+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: sqlite backend, PRAGMA foreign_keys = 1 on a get_engine() connection, session executes select
+                1 → ok.'
           - id: P1-G2-T3
             title: Map the seven independent tables
             description: In src/my_database/storage_adapter/tables.py define SQLAlchemy 2.0 declarative classes (Mapped[...]
@@ -449,7 +520,19 @@ content:
               PY
             touches:
             - src/my_database/storage_adapter/tables.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:31:22+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:31:23+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: seven tables with resolved column lists, currencies.code length 3, seven uq_ constraints,
+                __model_key__ on each class → ok.'
           - id: P1-G2-T4
             title: Map the four first-level dependent tables
             description: Extend src/my_database/storage_adapter/tables.py with Broker→brokers (user_id → users.id, trading_platform_id
@@ -505,7 +588,19 @@ content:
               PY
             touches:
             - src/my_database/storage_adapter/tables.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:31:26+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:31:26+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: four tables with resolved columns, six RESTRICT foreign keys each with an ix_ index, uq_brokers_user_id_name
+                plus three name constraints → ok.'
           - id: P1-G2-T5
             title: Map actions and positions
             description: Extend src/my_database/storage_adapter/tables.py with Action→actions (action_group_id, asset_id, account_id,
@@ -561,7 +656,19 @@ content:
               PY
             touches:
             - src/my_database/storage_adapter/tables.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:31:27+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:31:27+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: all 13 tables present, actions 5 and positions 7 RESTRICT foreign keys each indexed, uq_actions_name/uq_positions_name,
+                DateTime/Boolean types, model keys in model.yaml order → ok.'
           - id: P1-G2-T6
             title: Credential at-rest transformations
             description: 'Implement src/my_database/storage_adapter/credentials.py: hash_credential(value: str) -> str using
@@ -623,7 +730,19 @@ content:
               PY
             touches:
             - src/my_database/storage_adapter/credentials.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:31:22+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:31:26+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: salted scrypt hashes verify and reject correctly, Fernet round trip, empty key → CredentialKeyMissingError,
+                unknown mode → UnsupportedCredentialModeError → ok.'
         P1-G3:
           id: P1-G3
           title: Migrations
@@ -686,7 +805,19 @@ content:
             - alembic/env.py
             - alembic/script.py.mako
             - alembic/versions/
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:32:18+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:32:20+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: alembic heads/current run against a throw-away database, env.py configures render_as_batch
+                and Base.metadata from the storage_adapter package, alembic.ini has no URL and file_template = %%(rev)s → ok.'
           - id: P1-G3-T2
             title: 'Revision 0001: create the storage schema'
             description: Create alembic/versions/0001_storage_schema.py (revision = "0001_storage_schema", down_revision = None)
@@ -755,7 +886,22 @@ content:
               )
             touches:
             - alembic/versions/0001_storage_schema.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:32:21+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; generating with autogenerate against an empty throw-away database, then reordering into the resolved
+                dependency order.
+            - at: '2026-09-06T14:32:23+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: upgrade head creates exactly the 13 tables, alembic check reports no drift, positions has
+                7 RESTRICT foreign keys, brokers has ix_brokers_user_id and the named uq_brokers_user_id_name constraint, downgrade
+                base leaves no table → ok. Autogenerated, then create/drop statements reordered into the resolved dependency
+                order.'
           - id: P1-G3-T3
             title: Initial-data records and idempotent seed functions
             description: 'Implement src/my_database/storage_adapter/seed.py: INITIAL_DATA, an ordered list of (table_name, records)
@@ -839,7 +985,20 @@ content:
               )
             touches:
             - src/my_database/storage_adapter/seed.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:33:29+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:33:30+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed on a schema-only throw-away database: seed() inserted 21 rows with the resolved counts and
+                printed 3 GENERATED CREDENTIAL lines, a second seed() inserted 0, user credentials are scrypt hashes, the account
+                password is a Fernet token, CFD/100 preserved, unseed() removed 21 → ok.'
           - id: P1-G3-T4
             title: 'Revision 0002: seed the initial data'
             description: Create alembic/versions/0002_initial_data.py (revision = "0002_initial_data", down_revision = "0001_storage_schema")
@@ -904,7 +1063,20 @@ content:
               )
             touches:
             - alembic/versions/0002_initial_data.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:33:31+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:33:33+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: upgrade head printed exactly 3 GENERATED CREDENTIAL lines and reached 0002_initial_data
+                with the resolved counts; downgrade -1 removed the seeded rows and kept the tables; upgrading again restored
+                8 currencies without duplicates → ok.'
         P1-G4:
           id: P1-G4
           title: Data Logic and Mapping
@@ -975,7 +1147,19 @@ content:
             touches:
             - src/my_database/data_logic/__init__.py
             - src/my_database/data_logic/registry.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:32:18+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:32:21+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: 13 Model keys in model.yaml order, primary key id and has_status everywhere, user/account
+                credential modes, position 20 columns, UnknownModelError on unknown key → ok.'
           - id: P1-G4-T2
             title: Generic create, read, and list operations
             description: 'Implement src/my_database/data_logic/operations.py with functions taking a Session and a Model key:
@@ -1067,7 +1251,20 @@ content:
               )
             touches:
             - src/my_database/data_logic/operations.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:33:33+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:33:34+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed against a migrated and seeded throw-away database: create/read/list with filters, ordering,
+                and paging; user records never expose credentials while the stored value is a scrypt hash; UnknownFieldError,
+                UnknownModelError, and ConstraintViolationError raised as specified → ok.'
           - id: P1-G4-T3
             title: Generic update, delete, and status operations
             description: 'Extend src/my_database/data_logic/operations.py with update(session, model, record_id, data: Mapping)
@@ -1141,7 +1338,20 @@ content:
               )
             touches:
             - src/my_database/data_logic/operations.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:33:34+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; update, delete, and set_status were written together with the create/read/list module in the same
+                file and are verified here.
+            - at: '2026-09-06T14:33:35+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: partial update, delete of an unreferenced record, ConstraintViolationError for the referenced
+                currency 1, enable/disable toggle, InvalidActionError, RecordNotFoundError → ok.'
         P1-G5:
           id: P1-G5
           title: Database Interface
@@ -1229,7 +1439,20 @@ content:
             touches:
             - src/my_database/database_interface/__init__.py
             - src/my_database/database_interface/interface.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:34:55+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:34:56+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: public surface is exactly create/read/list/update/delete/status/execute_sql; full create→read→list→update→status→delete
+                flow; execute_sql returns parameterized rows and rowcount 1; user record hides credentials; non-string statement
+                → TypeError → ok. The class lives in the nested database_interface package and is re-exported from it.'
           - id: P1-G5-T2
             title: Public exports and Database README
             description: 'Set src/my_database/__init__.py to export exactly Database and the nine error classes through __all__
@@ -1271,7 +1494,20 @@ content:
             touches:
             - src/my_database/__init__.py
             - README.md
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:34:56+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:34:57+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: __all__ is exactly Database plus the nine error types; README carries the package-standard
+                sections, the three commands, both variables, the GENERATED CREDENTIAL behaviour, public interface, and usage
+                → ok.'
           - id: P1-G5-T3
             title: READMEs of the three nested packages
             description: Write README.md at the root of each nested package — src/my_database/database_interface/README.md,
@@ -1315,7 +1551,19 @@ content:
             - src/my_database/database_interface/README.md
             - src/my_database/data_logic/README.md
             - src/my_database/storage_adapter/README.md
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:34:57+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T14:34:58+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: the three nested package READMEs exist with public interface and usage sections and reference
+                database/README.md for setup → ok.'
         P1-G6:
           id: P1-G6
           title: Database delivery
@@ -1381,7 +1629,21 @@ content:
             touches:
             - .env
             - app.db
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T14:34:58+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; no app.db or .env present, building from nothing.
+            - at: '2026-09-06T14:35:00+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: app.db and .env exist and are git-ignored, alembic current is 0002_initial_data, alembic
+                check reports no drift, seeded counts match, Database() reads Admin and Acc-1 through the default URL without
+                credential fields → ok. Three credentials were generated and shown once in the console; their values are recorded
+                nowhere.'
     P2:
       id: P2
       title: Backend
