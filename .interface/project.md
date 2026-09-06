@@ -137,7 +137,7 @@ Defines the project's models.
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The account's display name.
-- `account_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the account group that contains the account.
+- `group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the account group that contains the account.
 - `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker that owns the account.
 - `base_currency_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the base currency used by the account.
 - `username` — Type: `string`; Nullable: `false`; Purpose: The username identifier used to access the trading account.
@@ -150,7 +150,7 @@ Defines the project's models.
 
 **Relationships:**
 
-- Belongs to one Account Group through `account_group_id`.
+- Belongs to one Account Group through `group_id`.
 - Belongs to one Broker through `broker_id`.
 - Uses one Currency as its base currency through `base_currency_id`.
 
@@ -160,7 +160,7 @@ Defines the project's models.
 
 **Initial Data:**
 
-- `name`: `Acc-1`; `account_group_id`: `1`; `broker_id`: `1`; `base_currency_id`: `1`; `username`: `test`; `password`: Generate securely; `leverage`: `100`; `account_type`: `CFD`.
+- `name`: `Acc-1`; `group_id`: `1`; `broker_id`: `1`; `base_currency_id`: `1`; `username`: `test`; `password`: Generate securely; `leverage`: `100`; `account_type`: `CFD`.
 
 ### Asset
 
