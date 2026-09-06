@@ -6,13 +6,15 @@ disable-model-invocation: true
 
 # Install technology Skills
 
-Install compatible AI Agent Skills for technologies found in the configured target project. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
+## Role
+
+Support the configured project by discovering and, after approval, installing compatible AI Agent Skills for its technologies. Consume the shared generated configuration; do not interpret project intent, generate configuration, plan implementation, or develop the application. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
 
 ## Workflow
 
 ### Detect
 
-On every run, detect eligible technologies from the current generated configuration and from dependency manifests, lockfiles, runtime-version files, and framework configuration inside the target-project locations.
+Using the resources located through the shared bootstrap, read the current generated configuration needed to identify configured target-project locations and resolved technologies. On every run, detect eligible technologies from that configuration and inspect dependency manifests, lockfiles, runtime-version files, and framework configuration inside those locations as compatibility and installation evidence. These artifacts do not replace the generated project specification or authorize new project requirements.
 
 Check project and personal Skills currently visible to Claude Code, then inspect installed plugins with `claude plugin list --json` so compatible existing capabilities are not duplicated.
 

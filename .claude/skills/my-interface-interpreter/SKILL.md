@@ -6,11 +6,13 @@ disable-model-invocation: true
 
 # Interpret the project
 
-Produce complete current project Understanding that downstream Planning can turn into Tasks and Development can execute.
+## Role
+
+Interpret the human project definition and produce or refresh the shared structured Project Understanding. This is the generation operation: downstream Planning turns its outputs into Tasks, Development executes those Tasks, and Review checks the implementation against the resolved requirements. Supply enough complete, consistent context for those consumers to work without interpreting the human definition themselves.
 
 ## Workflow
 
-Begin with both current Interface Understanding and current target-project Understanding, established through the shared rules. Use them to identify the Interpreter's live role, the full set of required outputs, and the sources, rules, precedence, formats, validation requirements, destinations, and ownership boundaries that govern each output. Discover these from the current sources rather than assuming a fixed organization or list of outputs.
+Using the resources located through the shared bootstrap, read the current human project definition and its applicable source rules, defaults, and formats. Build the target-project Understanding and identify the full set of required generated outputs, their validation requirements, destinations, and ownership boundaries. Discover these from the current sources rather than assuming a fixed organization or list of outputs. Inspect existing generated content for reconciliation, not as a substitute for reading the current definition.
 
 For each required output, build a complete candidate that expresses the current project intent under its applicable rules, uses defined defaults where intent leaves choices open, and follows its required format. An empty optional source contributes no information and does not remove a required output; handle a missing required source according to the current rules. Resolve unspecified details through the shared decision policy.
 

@@ -7,7 +7,9 @@ disable-model-invocation: true
 
 # Develop one project phase
 
-Execute the unfinished eligible work for the project phase selected by the number in `$ARGUMENTS`.
+## Role
+
+Implement and verify the unfinished eligible Tasks in one requested phase's existing Plan. Use the Plan and shared generated Project Understanding as the resolved specification, and record actual execution progress and evidence. Do not plan new work or independently interpret project intent. Select the phase by the number in `$ARGUMENTS`.
 
 ## Input
 
@@ -15,7 +17,7 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 ## Workflow
 
-With current Interface Understanding and target-project Understanding established, identify the Developer's live role and resolve the requested phase, its target, its current Plan, the applicable generated configuration, the implementation boundary, and the current Task and State authorities. Enter the workflow state required for this operation.
+Using the resources located through the shared bootstrap, read the requested phase's current Plan and the generated configuration needed for its execution. Resolve the target, implementation boundary, and current Task and State execution rules. Enter the workflow state required for Development. Inspect implementation files as execution evidence, not as a replacement definition of project intent.
 
 Derive eligibility from the current Plan and live Task rules. Skip work already complete, work whose dependencies are incomplete, and work outside the requested phase. Select an eligible unfinished Task, claim it through its authorized state transition, and re-read the information that can affect its execution.
 

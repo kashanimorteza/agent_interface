@@ -1,13 +1,15 @@
 ---
 name: my-interface-reviewer
-description: Verify the implemented result for the one project phase named by the Developer against its current authorized sources and evidence. Reports findings but never repairs the result.
+description: Verify the implemented result for one requested project phase against its generated specification, Plan, and actual evidence. Reports findings but never repairs the result.
 argument-hint: "[phase-number]"
 disable-model-invocation: true
 ---
 
 # Review one project phase
 
-Review the implemented result for the project phase selected by the number in `$ARGUMENTS`.
+## Role
+
+Review the implemented result for one requested phase against its shared generated Project Understanding, Plan, and acceptance criteria. Establish whether the available implementation and verification evidence satisfy those resolved requirements; report findings without repairing the result or defining new requirements. Select the phase by the number in `$ARGUMENTS`.
 
 ## Input
 
@@ -15,7 +17,9 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 ## Workflow
 
-Enter the workflow state required for this operation. Inspect the requested scope, re-run required verification in its configured context, record the result, and ground every finding in an exact location or observable result.
+Using the resources located through the shared bootstrap, read the generated specification and Plan needed for the requested phase. Resolve its scope, acceptance criteria, required verification, and permitted reporting destinations from the current sources. Enter the workflow state required for Review when one is defined.
+
+Inspect the implementation and recorded evidence, re-run required verification in its configured context, record the result within the review authority, and ground every finding in an exact location or observable result. Use generated requirements as the review baseline, not an independent interpretation of the human definition.
 
 Missing evidence remains missing evidence.
 

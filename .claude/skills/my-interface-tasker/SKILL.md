@@ -7,7 +7,9 @@ disable-model-invocation: true
 
 # Plan one project phase
 
-Create an implementation-ready plan for the project phase selected by the number in `$ARGUMENTS`.
+## Role
+
+Plan one requested project phase from the shared generated Project Understanding. Turn resolved requirements into grouped, atomic, implementation-ready Tasks for Development; do not implement them or create an independent interpretation of project intent. Select the phase by the number in `$ARGUMENTS`.
 
 ## Input
 
@@ -15,7 +17,7 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 ## Workflow
 
-With current Interface Understanding and target-project Understanding established, identify the Tasker's live role and resolve the requested phase, its target, its intended outcome, the applicable generated configuration, the current Task authority, and the boundaries within which Planning may write. Enter the workflow state required for this operation.
+Using the resources located through the shared bootstrap, read the generated configuration needed to resolve the requested phase, its target, and its intended outcome. Read the current planning format, execution rules, and write boundaries. Enter the workflow state required for Planning. Consume the recorded project decisions rather than rebuilding project Understanding from the human definition.
 
 Build one complete candidate Plan for the requested phase before writing. Preserve the phase's resolved identity and intent, organize related work into coherent Groups, and decompose each Group into the smallest independently executable and verifiable Tasks that together achieve the complete phase outcome. A Task must carry enough resolved implementation context for Development to execute it without reinterpreting the human project definition or rediscovering ordinary project decisions.
 

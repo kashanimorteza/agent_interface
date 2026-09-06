@@ -29,7 +29,7 @@ When an operation determines that one of these files should change, it reports t
 For every Agent Interface Skill except the fixed reset operation:
 
 1. Follow the role already defined in the active instructions and use the shared bootstrap to locate its current resources.
-2. Load authorized project inputs: the Interpreter reads the human definition and produces Project Understanding; consumers read the generated configuration needed for their role.
+2. Load authorized project inputs: the Interpreter reads the human definition and applicable generation sources; consumers read the generated configuration needed for their role. Generation itself occurs in the Interpreter's specialized Workflow.
 3. Discover relevant available Skills and plugin capabilities using the capability discovery policy below.
 4. Execute the specialized `Workflow` in the active Skill, using the relevant capabilities discovered.
 5. Validate and report the result as required by the current authorities.
