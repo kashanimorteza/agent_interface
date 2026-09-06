@@ -53,6 +53,22 @@ sections:
                   version:
                     required: true
                     purpose: "The concrete environment-tool version."
+              naming:
+                required: true
+                purpose: "The resolved naming conventions for Model implementation resources in the selected language."
+                fields:
+                  variables:
+                    required: true
+                    purpose: "The naming convention for variables and field identifiers."
+                  classes:
+                    required: true
+                    purpose: "The naming convention for Model classes or equivalent named types."
+                  files:
+                    required: true
+                    purpose: "The naming convention for Model implementation files."
+                  folders:
+                    required: true
+                    purpose: "The naming convention for Model package folders."
           modeling_library:
             required: true
             purpose: "The resolved library used to implement and validate Models."
@@ -78,7 +94,15 @@ sections:
             purpose: "The resolved public import entrypoint."
           exports:
             required: true
-            purpose: "The public Model symbols exposed to consumers."
+            purpose: "The ordered mapping of resolved Models to their public symbols. It contains every key from models exactly once and contains no unknown Model key."
+            fields:
+              "<model>":
+                required: false
+                purpose: "One exported Model, keyed by the same normalized Model key used in models."
+                fields:
+                  symbol:
+                    required: true
+                    purpose: "The ecosystem-compatible public symbol through which consumers import the Model."
       boundaries:
         required: true
         purpose: "The resolved ownership boundary of the Model package."
@@ -96,7 +120,7 @@ sections:
     purpose: "The resolved collection of logical Models."
     fields:
       "<model>":
-        required: true
+        required: false
         purpose: "One logical Model, keyed by its normalized lower_snake_case name."
         fields:
           purpose:
@@ -133,7 +157,7 @@ sections:
                     purpose: "Whether this field must be unique by itself; omitted when false."
                   credential:
                     required: false
-                    purpose: "Whether the field contains credential material requiring protected storage and write-only API handling; omitted when false."
+                    purpose: "Whether the field represents a credential; omitted when false."
                   purpose:
                     required: false
                     purpose: "The field's logical meaning when its name and type are insufficient."

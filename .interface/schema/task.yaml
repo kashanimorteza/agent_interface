@@ -43,8 +43,31 @@ sections:
             purpose: "The specific module, subsystem, or work area inside the target Component."
           metadata:
             required: true
-            purpose: "Resolved descriptive metadata that helps identify the nature and technical context of the activity without prescribing implementation."
+            purpose: "Resolved descriptive metadata that identifies the Task's planning context, nature, and technical context without prescribing implementation."
             fields:
+              phase:
+                required: true
+                purpose: "The phase context carried by the Task so its identity does not depend on nesting."
+                fields:
+                  id:
+                    required: true
+                    purpose: "The stable identifier of the phase containing the Task."
+                  title:
+                    required: true
+                    purpose: "The human-readable title of the phase containing the Task."
+                  order:
+                    required: true
+                    purpose: "The phase's one-based position in project order."
+              group:
+                required: true
+                purpose: "The Group context carried by the Task so its identity does not depend on nesting."
+                fields:
+                  id:
+                    required: true
+                    purpose: "The stable identifier of the Group containing the Task."
+                  title:
+                    required: true
+                    purpose: "The human-readable title of the Group containing the Task."
               kind:
                 required: true
                 purpose: "The nature of the work, such as code, configuration, documentation, data, or command execution."
@@ -79,10 +102,10 @@ sections:
             required: true
             purpose: "The current Task state, using the resolved Task-state vocabulary."
           blocker:
-            required: true
+            required: false
             purpose: "The identifier of the critical blocking condition when the Task is blocked; absent otherwise."
           log:
-            required: true
+            required: false
             purpose: "The append-only Task-local progress history; absent until the first recorded transition."
       status_lives_here:
         required: true
@@ -145,11 +168,11 @@ sections:
             purpose: "A non-negative integer equal to the number of Tasks stored across all Groups in this phase Plan, regardless of status. Sum the Group task_count values; use zero for an empty Plan. Recalculate whenever Tasks are added or removed."
           groups:
             required: true
-            purpose: "The ordered Groups that decompose the Plan; empty before the phase is planned."
+            purpose: "The ordered mapping of Groups that decompose the Plan, keyed by Group identifier; empty before the phase is planned."
             fields:
               "<group>":
-                required: true
-                purpose: "One coherent area of related work."
+                required: false
+                purpose: "One coherent area of related work, keyed by its id."
                 fields:
                   id:
                     required: true
@@ -174,4 +197,8 @@ sections:
                     purpose: "A non-negative integer equal to the number of Tasks currently contained in the Group, regardless of status, including cancelled and superseded Tasks while they remain stored. Recalculate whenever Tasks are added or removed."
                   tasks:
                     required: true
-                    purpose: "The ordered Tasks in the Group, each conforming to task_schema."
+                    purpose: "The ordered mapping of Tasks in the Group, keyed by Task identifier; empty when the Group has no Tasks. Every value conforms to task_schema, and its key equals the value's id."
+                    fields:
+                      "<task>":
+                        required: false
+                        purpose: "One Task keyed by its id and carrying the complete field frame defined by task_schema."

@@ -15,7 +15,7 @@ Database is implemented as an independent package with a documented public inter
 Database is formed from three distinct internal layers:
 
 - **Database Interface** is the only boundary published to consumers and exposes Model operations plus Instance discovery and selection;
-- **Data Logic and Mapping** implements generic Model operations and resolves logical Models, fields, relationships, rules, and initial data into storage meaning; and
+- **Data Logic and Mapping** implements generic Model operations and resolves the physical persistence mapping and enforcement of logical Models, fields, relationships, rules, and initial data; and
 - **Storage Adapter** owns the connection to the selected Database Engine and performs physical persistence operations.
 
 The dependency direction is Database Interface → Data Logic and Mapping → Storage Adapter → Database Engine. Consumers never bypass Database Interface, and an internal layer never bypasses the layer responsible for the next boundary.
@@ -26,7 +26,7 @@ Migration is internal Database tooling rather than a runtime application layer. 
 
 ## 2. Database is independent of its engine
 
-The design of Database — its tables, fields, relationships, constraints, and rules — is described in terms that do not belong to any particular database server. The engine is an implementation detail chosen late, and it must be possible to replace it without redesigning the data.
+The physical persistence design owned by Database — its tables, columns, foreign keys, constraints, indexes, and enforcement mechanisms — is derived from the logical Model and described in terms that do not belong to any particular database server. The engine is an implementation detail chosen late, and it must be possible to replace it without redesigning the domain data.
 
 If the engine changes, consumers retain the same data-access behaviour and domain meaning while only internal storage and engine-specific configuration may need to differ.
 
@@ -50,7 +50,7 @@ Application code never creates, alters, or drops database objects directly. Sile
 
 ## 5. Database owns the complete persistence layer
 
-Database alone owns supported engine integration, Database Instances, physical storage, runtime connections, ORM, model-to-storage mappings, storage schema, constraints, indexes, migration history, and the generic data-access interface it publishes. No other Component makes or changes those decisions.
+Database alone owns supported engine integration, Database Instances, physical storage, runtime connections, ORM, model-to-storage mappings, storage schema, physical constraints, indexes, migration history, and the generic data-access interface it publishes. Logical Models, fields, relationships, and domain rules remain owned by Model; Database owns only their persistence mapping and enforcement. No other Component makes or changes Database-owned decisions.
 
 Database does not own application behaviour, the HTTP API, Frontend, or deployment secrets. Its resolved boundaries remain explicit in its generated configuration.
 

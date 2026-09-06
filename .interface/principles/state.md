@@ -57,7 +57,7 @@ Reset may restore active State as part of its explicit reset behaviour, but Stat
 
 A Blocker records a condition that genuinely prevents safe or valid continuation. Ordinary ambiguity, an unspecified implementation detail, or a decision that can be made through professional judgment is not a Blocker.
 
-Every Blocker states what is blocked, what is missing, why continuation is impossible, and who or what can resolve it. A resolved Blocker is removed or marked resolved by an operation authorized to verify its resolution.
+Every Blocker states what is blocked, what is missing, why continuation is impossible, who or what can resolve it, and which operation or human raised it. After an authorized operation verifies resolution, the Blocker is removed from the unresolved collection.
 
 <br>
 
@@ -65,7 +65,7 @@ Every Blocker states what is blocked, what is missing, why continuation is impos
 
 An Open Question records a critical decision that cannot safely be resolved without human input. It explains the decision required, why it matters, and any Blocker it would release.
 
-An operation may raise the question and record an answer supplied by the human. It never invents the human's answer. Non-critical uncertainty is resolved through professional judgment and does not become an Open Question.
+An operation may raise the question and record an answer supplied by the human. The question records who raised it and when; a supplied answer records its value, author, and time. It never invents the human's answer. After the answer fully resolves the question, the question is removed from the unresolved collection. Non-critical uncertainty is resolved through professional judgment and does not become an Open Question.
 
 <br>
 

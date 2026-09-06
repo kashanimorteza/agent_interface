@@ -23,7 +23,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Layers -->
   layers:
     required: true
-    purpose: "The application layers participating in the project."
+    purpose: "The application layers participating in the project. Every layer references exactly one valid top-level package owned by that layer."
     fields:
       "<layer>":
         required: false
@@ -37,7 +37,7 @@ sections:
             purpose: "A reference to the configuration owned by the layer."
           package:
             required: true
-            purpose: "The key of the top-level package representing this layer in packages."
+            purpose: "The key of the single top-level package representing this layer in packages. The referenced package must exist, have no parent, and identify this layer as its owner."
           responsibility:
             required: true
             purpose: "A concise description of the responsibility owned by the layer."
@@ -64,6 +64,9 @@ sections:
               path:
                 required: true
                 purpose: "The project-relative path of the public configuration file."
+              location:
+                required: true
+                purpose: "The boundary relative to which the public configuration path is resolved."
               format:
                 required: true
                 purpose: "The public configuration format."
@@ -73,6 +76,9 @@ sections:
               user_editable:
                 required: true
                 purpose: "Whether a user may change runtime selections without editing package source."
+              content:
+                required: true
+                purpose: "A concise description of the non-secret information stored in the public configuration file."
           secrets:
             required: true
             purpose: "The runtime source for secret values and private environment-specific settings."
@@ -80,15 +86,24 @@ sections:
               path:
                 required: true
                 purpose: "The project-relative secret-file path."
+              location:
+                required: true
+                purpose: "The boundary relative to which the secret-file path is resolved."
               format:
                 required: true
                 purpose: "The secret-file format."
               committed:
                 required: true
                 purpose: "Whether the secret-value file belongs in source control; this must resolve to false."
+              user_editable:
+                required: true
+                purpose: "Whether an authorized user may supply or change secret values without editing package source."
               example_path:
                 required: true
                 purpose: "The committed non-secret example file documenting required variable names."
+              content:
+                required: true
+                purpose: "A concise description of the secret and private information stored in the runtime source, without containing secret values."
       sections:
         required: true
         purpose: "One runtime configuration section for every participating application layer and Platform."
@@ -151,20 +166,75 @@ sections:
       naming:
         required: true
         purpose: "Resolved role-based naming, top-level prefix, nested naming and namespace, ecosystem adaptation, and collision handling."
+        fields:
+          basis:
+            required: true
+            purpose: "The architectural basis used to derive package names."
+          top_level_prefix:
+            required: true
+            purpose: "The prefix applied to top-level package names, which may be empty."
+          top_level_name:
+            required: true
+            purpose: "The naming template used for top-level packages."
+          nested_name:
+            required: true
+            purpose: "The naming template used for nested packages."
+          nested_namespace:
+            required: true
+            purpose: "The namespace in which nested package names must be unique."
+          ecosystem_adaptation:
+            required: true
+            purpose: "How logical package names are adapted to the selected implementation ecosystem."
+          collision_handling:
+            required: true
+            purpose: "How naming collisions are detected and resolved without losing the package's responsibility."
       distribution:
         required: true
         purpose: "Resolved visibility, publication, and local dependency conventions."
+        fields:
+          visibility:
+            required: true
+            purpose: "The default visibility of project packages."
+          publication:
+            required: true
+            purpose: "Whether and how packages are published outside the project."
+          local_dependency:
+            required: true
+            purpose: "How one package consumes another package inside the project."
       nested_packages:
         required: true
         purpose: "Resolved defaults for independent installation, dependency management, and runtime sharing of nested packages."
+        fields:
+          independently_installable:
+            required: true
+            purpose: "Whether nested packages are installed independently by default."
+          dependency_management:
+            required: true
+            purpose: "Which boundary manages dependencies for nested packages."
+          runtime:
+            required: true
+            purpose: "How nested packages obtain or share their runtime environment."
       documentation:
         required: true
         purpose: "Resolved README filename, location, sections, and handling of parent setup references."
+        fields:
+          filename:
+            required: true
+            purpose: "The documentation filename used at a package boundary."
+          location:
+            required: true
+            purpose: "The documentation location relative to the package."
+          sections:
+            required: true
+            purpose: "The ordered documentation topics required for each package."
+          nested_setup:
+            required: true
+            purpose: "How a nested package refers to shared installation and startup instructions while documenting its own interface locally."
 
   # <!--------------------------------------------------------------------------------- Packages -->
   packages:
     required: true
-    purpose: "The package map for the current application layers and their architectural sublayers at every depth. Ordinary source files need no package entry. Keys are unique within this map; parent links must be acyclic."
+    purpose: "The package map for the current application layers and their architectural sublayers at every depth. Every participating application layer references exactly one matching top-level package; every such package has a matching owner. Ordinary source files need no package entry. Keys are unique within this map; references must resolve and parent links must be acyclic."
     fields:
       "<package>":
         required: false

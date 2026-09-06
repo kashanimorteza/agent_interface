@@ -37,18 +37,19 @@ A Task remains understandable when viewed outside its Plan, Group, or project. I
 - what must be done;
 - why the work is necessary;
 - what result it must produce;
+- which phase and Group provide its planning context;
 - which Component and specific work area it targets;
 - which resolved language and technology metadata apply, when relevant;
 - which inputs, dependencies, constraints, and existing resources matter; and
 - how completion is accepted and verified.
 
-The Task does not need to repeat the identity or general description of the project. It carries the context required to understand its activity and expected result, while Development reads the applicable generated configuration before deciding how to implement it.
+The Task does not need to repeat the identity or general description of the project. Its metadata identifies its phase and Group without requiring its nesting location to be known. It carries the context required to understand its activity and expected result, while Development reads the applicable generated configuration before deciding how to implement it.
 
 <br>
 
 ## 5. Task defines the activity and Development defines the implementation
 
-A Task defines what must be achieved, why it is needed, where its responsibility belongs, which resolved constraints apply, and what evidence demonstrates completion. It may record metadata already resolved by generated configuration, such as the target, language, relevant technologies, and interface references.
+A Task defines what must be achieved, why it is needed, where its responsibility belongs, which resolved constraints apply, and what evidence demonstrates completion. It may record descriptive context already resolved by Planning or generated configuration, such as its phase, Group, target, language, relevant technologies, and interface references.
 
 Task does not prescribe implementation steps, algorithms, source layout, classes, functions, code, commands for performing the work, or new technical decisions. It does not guess the files that Development should change. Development owns the implementation method and reads the referenced generated configuration and current implementation when executing the Task.
 

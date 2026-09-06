@@ -18,24 +18,63 @@ sections:
     fields:
       initial:
         required: true
-        purpose: "The mode used before any Workflow operation has been recorded."
+        purpose: "The mode used before any Workflow operation has been recorded; must resolve to not set."
       available:
         required: true
-        purpose: "The available modes and their meanings."
+        purpose: "The four fixed Workflow modes and their meanings. No additional mode is permitted."
         fields:
-          "<mode>":
+          "not set":
             required: true
-            purpose: "One Workflow mode, keyed by its stable name."
+            purpose: "The initial state before any Workflow operation has been recorded."
             fields:
               purpose:
                 required: true
                 purpose: "What activity the mode represents."
               phase_specific:
                 required: true
-                purpose: "Whether entering the mode requires one active phase."
+                purpose: "Whether entering the mode requires one active phase; must resolve to false."
               repeatable:
                 required: true
-                purpose: "Whether the represented operation may be invoked again after an earlier run."
+                purpose: "Whether the mode may be entered again; must resolve to true."
+          configuring:
+            required: true
+            purpose: "The mode in which project Understanding is generated or refreshed."
+            fields:
+              purpose:
+                required: true
+                purpose: "What activity the mode represents."
+              phase_specific:
+                required: true
+                purpose: "Whether entering the mode requires one active phase; must resolve to false."
+              repeatable:
+                required: true
+                purpose: "Whether the represented operation may be invoked again after an earlier run; must resolve to true."
+          planning:
+            required: true
+            purpose: "The mode in which Plans, Groups, and Tasks are generated or reconciled."
+            fields:
+              purpose:
+                required: true
+                purpose: "What activity the mode represents."
+              phase_specific:
+                required: true
+                purpose: "Whether entering the mode requires one active phase; must resolve to true."
+              repeatable:
+                required: true
+                purpose: "Whether the represented operation may be invoked again after an earlier run; must resolve to true."
+          development:
+            required: true
+            purpose: "The mode in which eligible Tasks are implemented and verified."
+            fields:
+              purpose:
+                required: true
+                purpose: "What activity the mode represents."
+              phase_specific:
+                required: true
+                purpose: "Whether entering the mode requires one active phase; must resolve to true."
+              repeatable:
+                required: true
+                purpose: "Whether the represented operation may be invoked again after an earlier run; must resolve to true."
 
   # <!--------------------------------------------------------------------------------- Active -->
   active:
@@ -84,6 +123,9 @@ sections:
           resolution_owner:
             required: true
             purpose: "The human, operation, or external condition capable of resolving the Blocker."
+          raised_by:
+            required: true
+            purpose: "The human or operation that raised the Blocker."
           raised_at:
             required: true
             purpose: "When the Blocker was raised."
@@ -109,6 +151,22 @@ sections:
           blocks:
             required: false
             purpose: "The Blocker identifier released by the answer, omitted when the question blocks no current work."
+          raised_by:
+            required: true
+            purpose: "The human or operation that raised the Open Question."
+          raised_at:
+            required: true
+            purpose: "When the Open Question was raised."
           answered_so_far:
             required: false
-            purpose: "Only the answer or partial answer already supplied by the human, together with its provenance."
+            purpose: "The answer or partial answer already supplied by the human, together with its provenance; omitted until the human supplies one."
+            fields:
+              answer:
+                required: true
+                purpose: "The answer or partial answer supplied by the human."
+              answered_by:
+                required: true
+                purpose: "The human who supplied the answer."
+              answered_at:
+                required: true
+                purpose: "When the answer was supplied."

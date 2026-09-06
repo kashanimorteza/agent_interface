@@ -16,7 +16,7 @@ Models describe the project domain rather than source-code classes, database tab
 
 ## 2. Model is an independent shared package
 
-The resolved Model set is implemented as its own package with a documented public import interface. Compatible application layers import this package rather than maintaining private copies of the same Models. A consumer that cannot import the package directly uses a representation derived from the same generated Model configuration through its declared layer interface.
+The resolved Model set is implemented as its own package with a documented public import interface. Every resolved Model is exposed through that interface exactly once, using an ecosystem-compatible public symbol without changing its logical identity. Compatible application layers import this package rather than maintaining private copies of the same Models. A consumer that cannot import the package directly uses a representation derived from the same generated Model configuration through its declared layer interface.
 
 The Model package owns domain representations and their validation. It does not own persistence mappings, business behaviour, API transport, user-interface presentation, or deployment. Its implementation language and modeling technology are resolved through Model Preferences, while its package identity and general package conventions are coordinated through Development.
 
@@ -28,7 +28,7 @@ The package can evolve independently while its public Model interface remains co
 
 The Model Component is the shared logical source for Components that need domain data. In particular, it connects the meaning of data persisted by the Database with the meaning of data accepted and exposed by APIs.
 
-The Database determines how a Model is stored, related, constrained, and retrieved. An API determines how that Model is received, validated for transport, and presented to consumers. Neither side independently redefines the Model's domain meaning.
+The Database determines how a Model and its declared relationships and rules are physically mapped, enforced, stored, and retrieved. An API determines how that Model is received, validated for transport, and presented to consumers. Neither side independently redefines the Model's logical fields, relationships, rules, or domain meaning.
 
 Backend, Frontend, Database, and other Components may create their own technical representations, but those representations preserve the same logical identity, fields, relationships, and rules.
 

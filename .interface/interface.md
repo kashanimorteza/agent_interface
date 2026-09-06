@@ -224,6 +224,15 @@ config = .interface/config/task.yaml
 
 State records the active Mode. Agent Skills are external capabilities that perform the operations represented by Modes. These Modes are distinct from target-project Behaviours, which describe what the target application must do.
 
+<!-------------------------- Not Set -->
+### Not Set
+
+- **State value:** `not set`
+- **Phase-specific:** no
+- **Responsibility:** represents the initial Workflow position before an operation has been recorded, or the position restored by an applicable reset.
+- **Inputs:** none.
+- **Output:** active State with no phase.
+
 <!-------------------------- Configuring -->
 ### Configuring
 
@@ -247,7 +256,7 @@ The generated Understanding must allow Planning and Development to work without 
 - **State value:** `planning`
 - **Phase-specific:** yes
 - **Responsibility:** transforms generated Understanding for one requested phase into bounded, verifiable activities without prescribing implementation.
-- **Inputs:** the requested phase from `.interface/config/definition.yaml`, generated Understanding under `.interface/config/`, and the Task Component authorities.
+- **Inputs:** the requested phase resolved from the generated Understanding under `.interface/config/`, together with the Task Component authorities.
 - **Scope:** the requested phase; its target selects the Component being planned.
 - **Output:** `.interface/config/task.yaml`.
 

@@ -78,10 +78,36 @@ sections:
             purpose: "The Engine's physical storage kind, such as file or server."
           connection:
             required: true
-            purpose: "The Engine's URL scheme, default port when applicable, accepted configuration parameters, and non-secret connection defaults."
+            purpose: "The Engine's common connection contract and Engine-specific non-secret settings."
+            fields:
+              url_scheme:
+                required: true
+                purpose: "The URL scheme used by the Engine driver."
+              default_port:
+                required: false
+                purpose: "The Engine's default network port; omitted for Engines that do not use one."
+              parameters:
+                required: true
+                purpose: "The ordered connection parameters accepted by this Engine."
+              settings:
+                required: true
+                purpose: "Engine-specific non-secret connection settings not represented by the common fields; empty when none apply."
           naming:
             required: true
             purpose: "The resolved physical-object naming conventions for this Engine."
+            fields:
+              tables:
+                required: true
+                purpose: "The naming convention for physical tables."
+              columns:
+                required: true
+                purpose: "The naming convention for physical columns."
+              constraints:
+                required: true
+                purpose: "The naming convention for physical constraints."
+              indexes:
+                required: true
+                purpose: "The naming convention for physical indexes."
 
   # <!--------------------------------------------------------------------------------- Instances -->
   instances:
@@ -190,22 +216,102 @@ sections:
               create:
                 required: true
                 purpose: "The resolved create operation."
+                fields:
+                  input:
+                    required: true
+                    purpose: "A typed Model instance accepted for creation."
+                  instance_selection:
+                    required: true
+                    purpose: "How the caller selects an Instance or accepts the default."
+                  result:
+                    required: true
+                    purpose: "The typed created Model result."
               read:
                 required: true
                 purpose: "The resolved read operation."
+                fields:
+                  model:
+                    required: true
+                    purpose: "The Model type being read."
+                  criteria:
+                    required: true
+                    purpose: "Typed or Model-derived criteria identifying one record."
+                  instance_selection:
+                    required: true
+                    purpose: "How the caller selects an Instance or accepts the default."
+                  result:
+                    required: true
+                    purpose: "The typed Model result or the resolved not-found result."
               list:
                 required: true
                 purpose: "The resolved list operation."
+                fields:
+                  model:
+                    required: true
+                    purpose: "The Model type being listed."
+                  criteria:
+                    required: true
+                    purpose: "Typed or Model-derived filtering criteria; empty when all records are requested."
+                  ordering:
+                    required: true
+                    purpose: "The supported deterministic ordering contract."
+                  pagination:
+                    required: true
+                    purpose: "The supported pagination contract."
+                  instance_selection:
+                    required: true
+                    purpose: "How the caller selects an Instance or accepts the default."
+                  result:
+                    required: true
+                    purpose: "The ordered collection of typed Model results and applicable page metadata."
               update:
                 required: true
                 purpose: "The resolved update operation."
+                fields:
+                  model:
+                    required: true
+                    purpose: "The Model type being updated."
+                  criteria:
+                    required: true
+                    purpose: "Typed or Model-derived criteria identifying the record to update."
+                  changes:
+                    required: true
+                    purpose: "The validated Model fields and values to change."
+                  instance_selection:
+                    required: true
+                    purpose: "How the caller selects an Instance or accepts the default."
+                  result:
+                    required: true
+                    purpose: "The typed updated Model result or the resolved not-found result."
               delete:
                 required: true
                 purpose: "The resolved delete operation."
+                fields:
+                  model:
+                    required: true
+                    purpose: "The Model type being deleted."
+                  criteria:
+                    required: true
+                    purpose: "Typed or Model-derived criteria identifying the record to delete."
+                  instance_selection:
+                    required: true
+                    purpose: "How the caller selects an Instance or accepts the default."
+                  result:
+                    required: true
+                    purpose: "The resolved deletion result, including whether a record was deleted."
               status:
                 required: true
                 purpose: "The resolved status operation."
                 fields:
+                  model:
+                    required: true
+                    purpose: "The Model type whose status is changed."
+                  criteria:
+                    required: true
+                    purpose: "Typed or Model-derived criteria identifying the record."
+                  instance_selection:
+                    required: true
+                    purpose: "How the caller selects an Instance or accepts the default."
                   actions:
                     required: true
                     purpose: "The accepted status actions: enable and disable."
@@ -222,6 +328,9 @@ sections:
                       disable:
                         required: true
                         purpose: "The resolved disabled value."
+                  result:
+                    required: true
+                    purpose: "The typed updated Model result or the resolved not-found result."
           sql_commands:
             required: true
             purpose: "The controlled SQL-command capability published through Database Interface."
@@ -312,6 +421,13 @@ sections:
               capabilities:
                 required: true
                 purpose: "The resolved ORM capabilities used by Database."
+                fields:
+                  model_mapping:
+                    required: true
+                    purpose: "Whether the ORM provides Model-to-storage mapping."
+                  parameterized_sql:
+                    required: true
+                    purpose: "Whether the ORM supports parameterized SQL execution."
           migration:
             required: true
             purpose: "The resolved migration tool, environment, packages, and commands."
@@ -319,15 +435,50 @@ sections:
               tool:
                 required: true
                 purpose: "The migration tool and concrete version."
+                fields:
+                  name:
+                    required: true
+                    purpose: "The migration tool name."
+                  version:
+                    required: true
+                    purpose: "The concrete migration tool version."
+                  language:
+                    required: true
+                    purpose: "The implementation language required by the migration tool."
+                  compatible_orms:
+                    required: true
+                    purpose: "The ORM implementations with which the selected migration tool is compatible."
               environment:
                 required: true
                 purpose: "The resolved Database-tooling environment."
+                fields:
+                  name:
+                    required: true
+                    purpose: "The environment and dependency-management tool name."
+                  version:
+                    required: true
+                    purpose: "The concrete environment-tool version."
               packages:
                 required: true
                 purpose: "The resolved migration and schema-tooling packages."
+                fields:
+                  "<package>":
+                    required: false
+                    purpose: "One tooling package, keyed by its responsibility."
+                    fields:
+                      name:
+                        required: true
+                        purpose: "The ecosystem package name."
+                      version:
+                        required: true
+                        purpose: "The concrete package version."
               commands:
                 required: true
                 purpose: "The canonical migration commands."
+                fields:
+                  "<command>":
+                    required: false
+                    purpose: "One canonical migration command keyed by its operation."
           connections:
             required: true
             purpose: "How Engine adapters create and manage connections for configured Instances."
@@ -343,7 +494,65 @@ sections:
                 purpose: "How connections are created, reused, and closed within the application runtime."
           credential_storage:
             required: true
-            purpose: "The supported and default at-rest transformations for Model fields marked as credentials."
+            purpose: "The resolved at-rest transformations for Model fields marked as credentials."
+            fields:
+              resolution:
+                required: true
+                purpose: "The precedence used to resolve a storage mode for each credential field."
+              default_mode:
+                required: true
+                purpose: "The supported mode used when no explicit or exact-name field default applies."
+              field_defaults:
+                required: true
+                purpose: "Exact-name defaults applied only to existing fields marked as credentials; empty when none apply."
+                fields:
+                  "<field>":
+                    required: false
+                    purpose: "One credential field-name default."
+                    fields:
+                      mode:
+                        required: true
+                        purpose: "The supported at-rest mode selected by this default."
+              resolved_fields:
+                required: true
+                purpose: "The resolved storage mode for every credential field in the current Model configuration."
+                fields:
+                  "<credential>":
+                    required: false
+                    purpose: "One credential field keyed by a stable qualified Model and field identity."
+                    fields:
+                      model:
+                        required: true
+                        purpose: "The Model key containing the credential field."
+                      field:
+                        required: true
+                        purpose: "The credential field key."
+                      mode:
+                        required: true
+                        purpose: "The supported at-rest mode resolved for this field."
+              modes:
+                required: true
+                purpose: "The supported credential-storage modes."
+                fields:
+                  "<mode>":
+                    required: false
+                    purpose: "One supported mode keyed by its stable name."
+                    fields:
+                      stored_as:
+                        required: true
+                        purpose: "The logical storage representation produced by the mode."
+                      transformation:
+                        required: true
+                        purpose: "The transformation applied before persistence."
+                      recoverable:
+                        required: true
+                        purpose: "Whether the original credential can be recovered."
+                      use_case:
+                        required: false
+                        purpose: "The intended use when additional explanation is needed."
+                      key_source:
+                        required: false
+                        purpose: "The runtime source of encryption key material when the mode requires it."
           standards:
             required: true
             purpose: "The resolved migration and physical-storage conventions not already owned by Model."

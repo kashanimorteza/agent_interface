@@ -17,7 +17,7 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 ## Workflow
 
-After establishing both shared Understandings, use the resources located through the shared bootstrap to read the generated specification and Plan needed for the requested phase. Resolve its scope, acceptance criteria, required verification, and permitted reporting destinations from the current sources. Enter the workflow state required for Review when one is defined.
+After establishing both shared Understandings, use the resources located through the shared bootstrap to read the generated specification and Plan needed for the requested phase. Resolve its scope, acceptance criteria, required verification, and permitted reporting destinations from the current sources. Review is a supporting operation and does not enter or change a Workflow mode.
 
 Inspect the implementation and recorded evidence, re-run required verification in its configured context, record the result within the review authority, and ground every finding in an exact location or observable result. Use generated requirements as the review baseline.
 
