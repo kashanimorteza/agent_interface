@@ -36,7 +36,7 @@ content_map:
   engines: "Supported Database Engines and their physical storage, connection, and naming profiles."
   orms: "Supported ORM implementations and capabilities."
   migration_tools: "Supported migration tools, environments, packages, and canonical commands."
-  credential_storage: "Supported at-rest modes for fields marked as credentials."
+  credential_storage: "Field-name defaults and supported at-rest modes for fields marked as credentials."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -109,6 +109,12 @@ content:
         downgrade: "uv run alembic downgrade -1"
 
   credential_storage:
+    resolution: "For an existing field resolved as a credential, preserve any explicit project storage mode. Otherwise use its exact-name field_defaults entry, falling back to layers.storage_adapter.credential_storage_mode only when no field-specific default applies. These defaults neither add fields nor override an explicit non-credential classification."
+    field_defaults:
+      password:
+        mode: "hash"
+      api_key:
+        mode: "hash"
     modes:
       plaintext:
         stored_as: "string"

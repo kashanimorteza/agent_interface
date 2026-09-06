@@ -48,8 +48,8 @@ A Model may contain rules that constrain its valid domain state and initial reco
 
 <br>
 
-## 6. Common fields are defaults, not universal requirements
+## 6. Field defaults complete unspecified properties
 
-Common fields may be supplied through Model Preferences when their definitions are absent. They are conveniences for resolving an otherwise unspecified Model, not mandatory properties of every entity.
+Model Preferences may supply missing properties of fields already present in a Model definition. A default entry does not introduce a field into a Model or require every entity to contain it.
 
-An explicit Model definition always takes precedence: it may change a default field, replace it, or state that it does not apply. Technical Components consume the resulting resolved Model rather than independently adding their own common fields.
+An explicit Model property always takes precedence over its default, including an explicit false or null value. Defaults are applied separately to each unspecified property, so a partially defined field can be completed without replacing its stated meaning. A field-name pattern alone does not define a domain relationship. Technical Components consume the resulting resolved Model rather than independently adding their own common fields.

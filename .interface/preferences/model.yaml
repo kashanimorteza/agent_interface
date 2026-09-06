@@ -2,7 +2,7 @@
 meta:
   path: ".interface/preferences/model.yaml"
   path_note: "The Preferences layer of the Model Component — common logical field defaults used only when a Model definition leaves them unstated."
-  purpose: "Default logical fields for Models that do not explicitly define or exclude them."
+  purpose: "Default properties and credential classification for existing Model fields whose attributes are unstated."
   standard: "Agent Project Interface"
 
 
@@ -12,17 +12,20 @@ policy:
   rule: "This file is human-owned. Generation reads it and never writes resolved Model fields back into it."
   changed_by: "The human, directly."
   precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
-  consumption: "Generation applies these common fields only where the Model definition does not explicitly define, replace, or exclude them, then writes the resolved result into the generated Model configuration."
+  consumption: "Apply defaults property by property only to fields present in the Model definition. Preserve every explicit property, including false and null, and never add a field merely because it appears in these defaults. Write the resolved fields into generated Model configuration."
+  matching: "Match normalized field names. An explicit Model property takes priority, followed by an exact-name default in common_fields, then a matching field_patterns default. A name pattern alone does not establish a relationship or its target."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "common_fields"
+  - "field_patterns"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  common_fields: "Ordered logical field defaults available to every Model when its own definition leaves them unspecified."
+  common_fields: "Exact-name defaults for missing properties of existing fields; these are not a list of fields to add."
+  field_patterns: "Defaults for missing properties of existing fields whose names match a pattern."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -38,10 +41,27 @@ content:
       type: "string"
       nullable: false
       unique: true
+      purpose: "The entity's display name."
+    api_key:
+      type: "string"
+      nullable: false
+      credential: true
+      purpose: "The API key assigned to the entity."
+    password:
+      credential: true
     status:
       type: "boolean"
       nullable: false
       default: true
+      purpose: "Indicates whether the entity is active."
     description:
       type: "string"
       nullable: true
+      purpose: "Describes the entity."
+
+  field_patterns:
+    "*_id":
+      match: "A field name ending in _id; the exact name id is not included."
+      defaults:
+        type: "integer"
+        nullable: false

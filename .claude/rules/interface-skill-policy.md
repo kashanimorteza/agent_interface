@@ -53,6 +53,13 @@ The reset operation skips both forms of Understanding and executes only its fixe
 - Agent discretion fills execution details inside authorized scope. It never invents project goals, product requirements, permissions, phases, interfaces, or write authority, and it never widens the requested work.
 - Record a consequential agent-selected assumption or technical decision in the nearest owning generated configuration, Task, log, or final report when that format supports it. Ordinary incidental choices need no question.
 
+## Development toolchain setup
+
+- Development may install the runtimes, package managers, build tools, and system dependencies required to execute the requested project's planned work, including system-level installation when needed. Preparing these prerequisites is part of Development's execution scope.
+- The human's request to develop the project authorizes installation of its required prerequisites; do not ask for a separate project-level confirmation for that installation. Use the resolved technology versions and an installation method compatible with the existing environment. Preserve unrelated installations and projects.
+- Planning includes prerequisite installation and verification as actionable work when needed. It must not invent a blanket prohibition on installing system software or assign installation exclusively to the human unless an explicit applicable restriction requires it.
+- A missing tool alone is work to perform, not a reason to stop. Record a blocker only when an actual installation obstacle prevents progress or the required tool cannot be obtained. Verify tool availability in the actual execution environment before declaring setup complete.
+
 ## Technology guidance
 
 - When the resolved technology is FastAPI, planning and development use the `fastapi` Skill as technical guidance when it is available.

@@ -149,7 +149,19 @@ content:
             - uv.lock
             - .python-version
             - src/trading_database/__init__.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:47:02+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; database/ does not exist, starting from an empty code path.
+            - at: '2026-09-06T03:47:06+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: uv sync, uv lock --check, and imports report SQLAlchemy 2.0.52, Alembic 1.19.2, cryptography
+                50.0.1 → ok. pyproject declares [tool.uv.build-backend] module-name = trading_database as the Task requires.'
           - id: P1-G1-T2
             title: Ignore rules and runtime-configuration template
             description: 'Add database/.gitignore with one entry per line: .venv/, __pycache__/, *.pyc, app.db, *.db, *.db-journal,
@@ -186,7 +198,19 @@ content:
             touches:
             - .gitignore
             - .env.example
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:47:02+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed (independent of P1-G1-T1).
+            - at: '2026-09-06T03:47:06+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: .gitignore contains app.db, .env, .venv/; .env.example names DATABASE_URL and CREDENTIAL_ENCRYPTION_KEY
+                without values → ok.'
           - id: P1-G1-T3
             title: Runtime settings module
             description: 'Implement src/trading_database/settings.py: a frozen dataclass Settings(database_url: str, credential_encryption_key:
@@ -238,7 +262,19 @@ content:
               PY
             touches:
             - src/trading_database/settings.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:47:06+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:47:07+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: default URL is sqlite:////…/database/app.db with no key; explicit environ values returned
+                unchanged → ok.'
           - id: P1-G1-T4
             title: Database error types
             description: 'Implement src/trading_database/errors.py with the exception hierarchy every layer raises and consumers
@@ -275,7 +311,18 @@ content:
               PY
             touches:
             - src/trading_database/errors.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:47:06+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:47:07+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: nine error classes import and every specific error subclasses DatabaseError → ok.'
         P1-G2:
           id: P1-G2
           title: Storage Adapter
@@ -328,7 +375,18 @@ content:
             touches:
             - src/trading_database/storage/__init__.py
             - src/trading_database/storage/base.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:47:06+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:47:07+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: ix/uq/fk/pk/ck naming conventions on Base.metadata; decimal_type() is Numeric(18, 8) → ok.'
           - id: P1-G2-T2
             title: Engine and session factory with SQLite foreign-key enforcement
             description: 'Implement src/trading_database/storage/engine.py: create_database_engine(url: str | None = None) ->
@@ -382,7 +440,19 @@ content:
               )
             touches:
             - src/trading_database/storage/engine.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:48:49+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:48:52+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: sqlite backend, PRAGMA foreign_keys = 1 on a get_engine() connection, session executes select
+                1 → ok.'
           - id: P1-G2-T3
             title: Map the seven independent tables
             description: In src/trading_database/storage/tables.py define SQLAlchemy 2.0 declarative classes (Mapped[...] /
@@ -442,7 +512,19 @@ content:
               PY
             touches:
             - src/trading_database/storage/tables.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:48:49+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:48:52+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: seven tables with resolved column lists, currencies.code length 3, seven uq_ constraints,
+                __model_key__ on each class → ok.'
           - id: P1-G2-T4
             title: Map the four first-level dependent tables
             description: Extend src/trading_database/storage/tables.py with Broker→brokers (user_id → users.id, trading_platform_id
@@ -498,7 +580,19 @@ content:
               PY
             touches:
             - src/trading_database/storage/tables.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:48:53+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:48:53+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: four tables with resolved columns, six RESTRICT foreign keys to <table>.id each with an
+                ix_ index, uq_brokers_user_id_name plus three name constraints → ok.'
           - id: P1-G2-T5
             title: Map actions and positions
             description: Extend src/trading_database/storage/tables.py with Action→actions (action_group_id, asset_id, account_id,
@@ -554,7 +648,19 @@ content:
               PY
             touches:
             - src/trading_database/storage/tables.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:48:53+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:48:54+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: all 13 tables present, actions 5 and positions 7 RESTRICT foreign keys each indexed, uq_actions_name/uq_positions_name,
+                DateTime/Boolean types, model keys in model.yaml order → ok.'
           - id: P1-G2-T6
             title: Credential at-rest transformations
             description: 'Implement src/trading_database/storage/credentials.py: hash_credential(value: str) -> str using hashlib.scrypt
@@ -616,7 +722,19 @@ content:
               PY
             touches:
             - src/trading_database/storage/credentials.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:48:50+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:48:53+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: salted scrypt hashes verify and reject correctly, Fernet round trip, empty key → CredentialKeyMissingError,
+                unknown mode → UnsupportedCredentialModeError → ok.'
         P1-G3:
           id: P1-G3
           title: Migrations
@@ -679,7 +797,19 @@ content:
             - alembic/env.py
             - alembic/script.py.mako
             - alembic/versions/
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:49:58+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:50:00+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: alembic heads/current run against a throw-away database, env.py configures render_as_batch
+                and Base.metadata, alembic.ini has no URL and file_template = %%(rev)s → ok.'
           - id: P1-G3-T2
             title: 'Revision 0001: create the storage schema'
             description: Create alembic/versions/0001_storage_schema.py (revision = "0001_storage_schema", down_revision = None)
@@ -748,7 +878,21 @@ content:
               )
             touches:
             - alembic/versions/0001_storage_schema.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:50:00+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; generating with autogenerate against an empty throw-away database, then reviewing.
+            - at: '2026-09-06T03:50:59+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: upgrade head creates exactly the 13 tables, alembic check reports no drift, positions has
+                7 RESTRICT foreign keys, brokers has ix_brokers_user_id and the named uq_brokers_user_id_name constraint, downgrade
+                base leaves no table → ok. Generated with autogenerate, then create_table/drop_table statements reordered into
+                the resolved dependency order (autogenerate had emitted a valid but alphabetical tier order).'
           - id: P1-G3-T3
             title: Initial-data records and idempotent seed functions
             description: 'Implement src/trading_database/storage/seed.py: INITIAL_DATA, an ordered list of (table_name, records)
@@ -832,7 +976,20 @@ content:
               )
             touches:
             - src/trading_database/storage/seed.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:52:15+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:52:16+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed on a schema-only throw-away database: seed() inserted 21 rows with the resolved per-table
+                counts and printed 3 GENERATED CREDENTIAL lines, a second seed() inserted 0, users credentials are scrypt hashes,
+                accounts.password is a Fernet token, account_type CFD and leverage 100 preserved, unseed() removed 21 → ok.'
           - id: P1-G3-T4
             title: 'Revision 0002: seed the initial data'
             description: Create alembic/versions/0002_initial_data.py (revision = "0002_initial_data", down_revision = "0001_storage_schema")
@@ -897,7 +1054,20 @@ content:
               )
             touches:
             - alembic/versions/0002_initial_data.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:52:16+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:52:18+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: upgrade head printed exactly 3 GENERATED CREDENTIAL lines and reached 0002_initial_data
+                with the resolved seed counts; downgrade -1 removed the seeded rows and kept the tables; upgrading again restored
+                8 currencies without duplicates → ok.'
         P1-G4:
           id: P1-G4
           title: Data Logic and Mapping
@@ -968,7 +1138,19 @@ content:
             touches:
             - src/trading_database/logic/__init__.py
             - src/trading_database/logic/registry.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:49:58+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:50:00+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: 13 Model keys in model.yaml order, primary key id and has_status everywhere, user/account
+                credential modes, position 20 columns, UnknownModelError on unknown key → ok.'
           - id: P1-G4-T2
             title: Generic create, read, and list operations
             description: 'Implement src/trading_database/logic/operations.py with functions taking a Session and a Model key:
@@ -1059,7 +1241,21 @@ content:
               )
             touches:
             - src/trading_database/logic/operations.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:53:39+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:53:40+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed on a migrated and seeded throw-away database: create returns the record with id and defaults,
+                read returns it and None for a missing id, filters/order/limit/offset behave, user records never expose password/api_key
+                while the stored value is a scrypt hash, UnknownFieldError/UnknownModelError/ConstraintViolationError raised
+                as specified → ok.'
           - id: P1-G4-T3
             title: Generic update, delete, and status operations
             description: 'Extend src/trading_database/logic/operations.py with update(session, model, record_id, data: Mapping)
@@ -1133,7 +1329,20 @@ content:
               )
             touches:
             - src/trading_database/logic/operations.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:53:40+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:53:41+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: partial update changes only the given field, delete removes an unreferenced record and raises
+                ConstraintViolationError for the referenced currency 1 (RESTRICT enforced), enable/disable toggle status, invalid
+                action → InvalidActionError, missing records → RecordNotFoundError → ok.'
         P1-G5:
           id: P1-G5
           title: Database Interface
@@ -1218,7 +1427,20 @@ content:
               )
             touches:
             - src/trading_database/interface.py
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:54:36+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:54:37+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: public surface is exactly create/read/list/update/delete/status/execute_sql; full create→read→list→update→status→delete
+                flow works; execute_sql returns parameterized rows and rowcount 1; user record hides credentials; non-string
+                statement → TypeError → ok.'
           - id: P1-G5-T2
             title: Public exports and Database README
             description: 'Set src/trading_database/__init__.py to export exactly Database and the nine error classes through
@@ -1258,7 +1480,19 @@ content:
             touches:
             - src/trading_database/__init__.py
             - README.md
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:54:37+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T03:54:38+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: __all__ is exactly Database plus the nine error types, imports succeed, README names the
+                three commands, both variables, and the GENERATED CREDENTIAL behaviour → ok.'
         P1-G6:
           id: P1-G6
           title: Database delivery
@@ -1324,18 +1558,1973 @@ content:
             touches:
             - .env
             - app.db
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T03:55:07+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; no app.db or .env present, building from nothing.
+            - at: '2026-09-06T03:55:09+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: app.db and .env exist and are git-ignored, alembic current is 0002_initial_data, alembic
+                check reports no drift, seeded counts match, Database() reads Admin and Acc-1 through the default URL without
+                credential fields → ok. Three credentials were generated and shown once in the console; their values are recorded
+                nowhere.'
     P2:
       id: P2
       title: Backend
       order: 2
       target: backend
       does: Implement the backend layer, including its application logic and API for operating on the defined models.
-      groups: {}
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Package foundation
+          description: The uv-managed Backend package with the pinned framework and server, the Database package as an editable
+            path dependency, ignore and configuration templates, runtime settings with the server runner, and the error types
+            shared by all three layers.
+          target: backend
+          area: package foundation — code_path root and src/trading_backend/ top-level modules
+          does: backend/ is an installable, reproducible package that imports FastAPI, uvicorn, and the Database Interface,
+            resolves its host, port, and allowed origins from runtime configuration, and defines the Backend error types.
+          task_count: 4
+          tasks:
+          - id: P2-G1-T1
+            title: Initialize the uv-managed Backend package
+            description: 'Create backend/ as a uv project with a src-layout import package trading_backend: pyproject.toml declaring
+              project name trading-assistant-backend, version 0.1.0, requires-python ">=3.14", dependencies fastapi[standard-no-fastapi-cloud-cli]==0.141.1,
+              uvicorn==0.52.4, and trading-assistant-database supplied from the sibling directory as an editable path source
+              ([tool.uv.sources] trading-assistant-database = { path = "../database", editable = true }); the uv_build backend
+              with [tool.uv.build-backend] module-name = "trading_backend"; [tool.fastapi] entrypoint = "trading_backend.main:app";
+              a .python-version containing 3.14; src/trading_backend/__init__.py with a docstring and __version__ = "0.1.0";
+              and uv.lock.'
+            reason: Every Backend Task runs in this environment, the Database Interface must be importable as a package (development.yaml
+              connection backend_to_database), and the framework and server versions are fixed by backend.yaml.
+            target: backend
+            area: package foundation — code_path root
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - FastAPI 0.141.1
+              - uvicorn 0.52.4
+              - trading-assistant-database (local editable path dependency, import trading_database)
+              instructions: 'From the project root: `mkdir -p backend && cd backend && uv init --package --name trading-assistant-backend
+                --python 3.14 .`, rename the generated package directory to src/trading_backend, strip it to a docstring plus
+                __version__, then `uv add "fastapi[standard-no-fastapi-cloud-cli]==0.141.1" "uvicorn==0.52.4"` and `uv add --editable
+                ../database`, then `uv lock` and `uv sync`. The standard-no-fastapi-cloud-cli extra brings the fastapi CLI,
+                httpx, and uvicorn[standard] without the cloud CLI — the smallest extra that supports `fastapi dev`/`fastapi
+                run` and in-process verification. Do not add any other dependency (no ORM, driver, or migration package: persistence
+                belongs to Database).'
+              inputs:
+              - .interface/config/backend.yaml — code_path, verify_cwd, tech (Python 3.14.7, uv 0.12.10, uvicorn 0.52.4), layers.api.framework
+                (FastAPI 0.141.1)
+              - .interface/config/development.yaml — connections.backend_to_database (local path dependency) and platform.environment
+              - database/pyproject.toml — the distribution trading-assistant-database built by uv_build (P1 output)
+              expected_output: backend/pyproject.toml, backend/uv.lock, backend/.python-version, backend/src/trading_backend/__init__.py,
+                and an untracked backend/.venv with fastapi, uvicorn, and trading_database installed.
+            depends_on: []
+            constraints:
+            - Versions are pinned exactly; the token latest never appears.
+            - The Database package is consumed only as a dependency; Backend never holds ORM, driver, or migration packages
+              of its own (backend.yaml out_of_scope).
+            acceptance: uv sync succeeds, uv.lock matches pyproject.toml, and inside the environment fastapi 0.141.1, uvicorn
+              0.52.4, trading_database, and trading_backend import; pyproject pins the extra, the editable path source, and
+              the module name.
+            verify: uv sync --quiet && uv lock --check && uv run python -c "import fastapi, uvicorn, trading_database, trading_backend;
+              assert fastapi.__version__ == '0.141.1', fastapi.__version__; assert uvicorn.__version__ == '0.52.4', uvicorn.__version__;
+              print('ok')" && grep -q 'fastapi\[standard-no-fastapi-cloud-cli\]==0.141.1' pyproject.toml && grep -q 'uvicorn==0.52.4'
+              pyproject.toml && grep -q 'editable = true' pyproject.toml && grep -q 'module-name = "trading_backend"' pyproject.toml
+              && echo ok
+            touches:
+            - pyproject.toml
+            - uv.lock
+            - .python-version
+            - src/trading_backend/__init__.py
+            status: done
+            log:
+            - at: '2026-09-06T04:13:04+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: 'Recorded after the fact: the transition helper failed with a syntax error during the first wave, so this
+                claim could not be written before implementation; the Task was implemented and its verify run in that wave,
+                evidence follows in the done entry.'
+            - at: '2026-09-06T04:14:17+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: uv sync and uv lock --check succeed; fastapi 0.141.1, uvicorn 0.52.4, trading_database (editable
+                from ../database), and trading_backend import; pyproject pins the extra, the editable source, and module-name
+                → ok (re-run confirmed before this entry).'
+          - id: P2-G1-T2
+            title: Ignore rules and runtime-configuration template
+            description: 'Add backend/.gitignore with one entry per line: .venv/, __pycache__/, *.pyc, .env, *.db; and backend/.env.example
+              listing BACKEND_HOST and BACKEND_PORT with a comment each and no values, plus a comment explaining that DATABASE_URL
+              and CREDENTIAL_ENCRYPTION_KEY are read by the Database package from database/.env (or the process environment)
+              and are not set here.'
+            reason: development.yaml delivers Backend host and port through environment variables that must be discoverable
+              without exposing values, and the virtual environment and local secrets must never be committed.
+            target: backend
+            area: package foundation — code_path root
+            execution_context:
+              kind: configuration
+              language: null
+              technologies:
+              - git
+              instructions: Write both files by hand. The BACKEND_HOST and BACKEND_PORT lines are exactly `BACKEND_HOST=` and
+                `BACKEND_PORT=`; put the defaults 127.0.0.1 and 8000 in comments.
+              inputs:
+              - .interface/config/development.yaml — platform.composition.configuration.variables (BACKEND_HOST, BACKEND_PORT)
+                and networking defaults
+              expected_output: backend/.gitignore and backend/.env.example.
+            depends_on: []
+            constraints:
+            - No value is written for any variable in .env.example.
+            acceptance: Both files exist, .gitignore covers .venv/ and .env, and .env.example names BACKEND_HOST and BACKEND_PORT
+              without values.
+            verify: test -f .gitignore && test -f .env.example && grep -qx '.venv/' .gitignore && grep -qx '.env' .gitignore
+              && grep -qx 'BACKEND_HOST=' .env.example && grep -qx 'BACKEND_PORT=' .env.example && echo ok
+            touches:
+            - .gitignore
+            - .env.example
+            status: done
+            log:
+            - at: '2026-09-06T04:13:04+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: 'Recorded after the fact: the transition helper failed with a syntax error during the first wave, so this
+                claim could not be written before implementation; the Task was implemented and its verify run in that wave,
+                evidence follows in the done entry.'
+            - at: '2026-09-06T04:14:17+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: .gitignore covers .venv/ and .env; .env.example names BACKEND_HOST, BACKEND_PORT, BACKEND_CORS_ORIGINS
+                without values → ok.'
+          - id: P2-G1-T3
+            title: Runtime settings and the server runner
+            description: 'Implement src/trading_backend/settings.py with a frozen dataclass Settings(host: str, port: int, cors_origins:
+              tuple[str, ...]) and get_settings(*, environ=None, load_env_file=True): process environment first (BACKEND_HOST,
+              BACKEND_PORT, BACKEND_CORS_ORIGINS as a comma-separated list), then an untracked .env in the Backend code root
+              (nearest ancestor of settings.py containing pyproject.toml; KEY=VALUE lines, comments ignored, never overriding
+              the environment), then the defaults 127.0.0.1, 8000, and ("http://127.0.0.1:3000", "http://localhost:3000"). Implement
+              src/trading_backend/__main__.py with main() that calls uvicorn.run("trading_backend.main:app", host=settings.host,
+              port=settings.port) so `uv run python -m trading_backend` starts the server.'
+            reason: development.yaml names BACKEND_HOST and BACKEND_PORT as the Platform-delivered runtime configuration; browsers
+              at the Frontend's origin can only call the API if the API allows that origin, so the allowed origins are configuration
+              too.
+            target: backend
+            area: package foundation — src/trading_backend/settings.py and __main__.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uvicorn 0.52.4
+              instructions: Standard library only for settings. BACKEND_CORS_ORIGINS is a Planning-selected Backend setting
+                (development.yaml lists no CORS variable) defaulting to the Frontend's resolved local origin; record it in the
+                README. An invalid BACKEND_PORT raises ValueError with a clear message. Do not import the FastAPI app in settings.py.
+              inputs:
+              - .interface/config/development.yaml — platform.composition.networking (Backend at 127.0.0.1:8000, Frontend at
+                127.0.0.1:3000) and configuration.variables
+              - .interface/config/backend.yaml — layers.api.transport (HTTP)
+              expected_output: src/trading_backend/settings.py and src/trading_backend/__main__.py.
+            depends_on:
+            - P2-G1-T1
+            constraints:
+            - Process environment always wins over the .env file.
+            acceptance: With an empty environ and no .env the settings are 127.0.0.1, 8000, and the two local Frontend origins;
+              explicit environ values are returned typed; __main__ exposes a callable main.
+            verify: |-
+              uv run python - <<'PY'
+              from trading_backend.settings import get_settings
+              s = get_settings(environ={}, load_env_file=False)
+              assert (s.host, s.port) == ('127.0.0.1', 8000), s
+              assert s.cors_origins == ('http://127.0.0.1:3000', 'http://localhost:3000'), s
+              s = get_settings(environ={'BACKEND_HOST': '0.0.0.0', 'BACKEND_PORT': '9001', 'BACKEND_CORS_ORIGINS': 'http://a:1, http://b:2'}, load_env_file=False)
+              assert (s.host, s.port, s.cors_origins) == ('0.0.0.0', 9001, ('http://a:1', 'http://b:2')), s
+              try:
+                  get_settings(environ={'BACKEND_PORT': 'x'}, load_env_file=False); raise SystemExit('bad port accepted')
+              except ValueError:
+                  pass
+              from trading_backend.__main__ import main
+              assert callable(main)
+              print('ok')
+              PY
+            touches:
+            - src/trading_backend/settings.py
+            - src/trading_backend/__main__.py
+            status: done
+            log:
+            - at: '2026-09-06T04:14:17+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: 'Recorded after the fact: the transition helper failed with a syntax error during the first wave, so this
+                claim could not be written before implementation; the Task was implemented and its verify run in that wave,
+                evidence follows in the done entry.'
+            - at: '2026-09-06T04:14:18+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: defaults 127.0.0.1/8000 and the two local Frontend origins; typed environ overrides; invalid
+                port → ValueError; __main__.main callable → ok.'
+          - id: P2-G1-T4
+            title: Backend error types
+            description: 'Implement src/trading_backend/errors.py: BackendError(Exception) as base and subclasses NotFoundError
+              (a record does not exist), ConflictError (a storage constraint such as uniqueness or a RESTRICT reference rejected
+              the change), InvalidFieldError (an unknown field, a field that may not be written, or an invalid value), UnknownModelError,
+              and UnsupportedActionError, each accepting a message.'
+            reason: Logic and API must express outcomes without depending on Database exception types; Data Access translates
+              Database errors into these, Logic raises them for domain conditions, and API maps them to HTTP responses.
+            target: backend
+            area: package foundation — src/trading_backend/errors.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              instructions: Plain exception classes with docstrings, names exactly as listed because later Tasks import them.
+              inputs:
+              - .interface/config/backend.yaml — layers.data_access.responsibility (translates results back into logical data)
+                and layers.api.responsibility (maps logical outcomes to responses)
+              expected_output: src/trading_backend/errors.py with the six classes.
+            depends_on:
+            - P2-G1-T1
+            constraints: []
+            acceptance: All six classes import and every specific error subclasses BackendError.
+            verify: |-
+              uv run python - <<'PY'
+              from trading_backend import errors as e
+              for n in ['NotFoundError', 'ConflictError', 'InvalidFieldError', 'UnknownModelError', 'UnsupportedActionError']:
+                  assert issubclass(getattr(e, n), e.BackendError), n
+              assert issubclass(e.BackendError, Exception)
+              print('ok')
+              PY
+            touches:
+            - src/trading_backend/errors.py
+            status: done
+            log:
+            - at: '2026-09-06T04:14:18+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: 'Recorded after the fact: the transition helper failed with a syntax error during the first wave, so this
+                claim could not be written before implementation; the Task was implemented and its verify run in that wave,
+                evidence follows in the done entry.'
+            - at: '2026-09-06T04:14:18+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: six error classes import, every specific error subclasses BackendError → ok.'
+        P2-G2:
+          id: P2-G2
+          title: Shared Model specification
+          description: The one in-package, static description of the 13 shared Models — transcribed from the generated Model
+            configuration and verified against it — from which Logic derives its units and API derives its schemas.
+          target: backend
+          area: logic — src/trading_backend/logic/model_specs.py
+          does: Logic and API read Model identity, fields, types, defaults, credential markers, and resource names from one
+            module that provably matches model.yaml.
+          task_count: 1
+          tasks:
+          - id: P2-G2-T1
+            title: Model specifications derived from the shared Model configuration
+            description: 'Implement src/trading_backend/logic/__init__.py (docstring) and logic/model_specs.py: frozen dataclasses
+              FieldSpec(name, type, nullable, primary_key: bool, default: Any | None, has_default: bool, size: int | None, credential:
+              bool, purpose: str | None) and ModelSpec(key, name, purpose, fields: tuple[FieldSpec, ...], relationships: tuple[tuple[str,
+              str, str], ...] as (field, target_model_key, type)); MODEL_SPECS: dict[str, ModelSpec] with the 13 Models in model.yaml
+              order, every field in model.yaml order with the exact logical type (integer, string, boolean, decimal, float,
+              datetime), nullability, default, size (currency.code = 3), and credential flag (user.password, user.api_key, account.password);
+              plus RESOURCE_NAMES: dict[str, str] mapping each Model key to its API resource name: {''user'': ''users'', ''currency'':
+              ''currencies'', ''trading_platform'': ''trading-platforms'', ''broker'': ''brokers'', ''account'': ''accounts'',
+              ''asset'': ''assets'', ''trailing_group'': ''trailing-groups'', ''trailing_rule'': ''trailing-rules'', ''partial_group'':
+              ''partial-groups'', ''partial_rule'': ''partial-rules'', ''action_group'': ''action-groups'', ''action'': ''actions'',
+              ''position'': ''positions''}.'
+            reason: 'Backend Principle 6: Backend derives its Model Logic units and its API representations from the shared
+              Model configuration and never redefines Model meaning; one static specification module is the single in-package
+              source both Logic and API read.'
+            target: backend
+            area: logic — src/trading_backend/logic/model_specs.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              instructions: Transcribe from .interface/config/model.yaml exactly; the verify compares the module against that
+                file field by field. The resource names are the Database table names with underscores replaced by hyphens (a
+                Planning decision recorded here so Frontend can rely on them). Provide get_spec(key) raising UnknownModelError
+                for an unknown key. No Pydantic here.
+              inputs:
+              - .interface/config/model.yaml — content.models (fields, relationships, rules, credential markers)
+              - .interface/config/database.yaml — data_logic.storage_schema.tables (table names → resource names)
+              - src/trading_backend/errors.py (P2-G1-T4)
+              expected_output: src/trading_backend/logic/__init__.py and src/trading_backend/logic/model_specs.py.
+            depends_on:
+            - P2-G1-T4
+            constraints:
+            - Nothing about a Model is invented, renamed, or omitted; credential flags come only from model.yaml credential
+              markers.
+            acceptance: 'MODEL_SPECS matches .interface/config/model.yaml for every Model: key order, field order, type, nullable,
+              default, size, credential flag, and relationships; RESOURCE_NAMES holds the 13 resolved names; an unknown key
+              raises UnknownModelError.'
+            verify: |-
+              uv run --with pyyaml python - <<'PY'
+              import yaml
+              from decimal import Decimal
+              from trading_backend.logic.model_specs import MODEL_SPECS, RESOURCE_NAMES, get_spec
+              from trading_backend.errors import UnknownModelError
+              models = yaml.safe_load(open('../.interface/config/model.yaml'))['content']['models']
+              assert list(MODEL_SPECS) == list(models), list(MODEL_SPECS)
+              for key, m in models.items():
+                  spec = MODEL_SPECS[key]
+                  assert spec.key == key and spec.purpose == m['purpose'], key
+                  assert [f.name for f in spec.fields] == list(m['fields']), key
+                  for f in spec.fields:
+                      d = m['fields'][f.name]
+                      assert f.type == d['type'] and f.nullable == d['nullable'], (key, f.name)
+                      assert f.primary_key == bool(d.get('primary_key', False)) and f.credential == bool(d.get('credential', False)), (key, f.name)
+                      assert f.has_default == ('default' in d) and (not f.has_default or f.default == d['default']), (key, f.name)
+                      assert f.size == d.get('size'), (key, f.name)
+                  rels = {(r['field'], r['target'], r['type']) for r in (m.get('relationships') or {}).values()}
+                  assert set(spec.relationships) == rels, (key, spec.relationships)
+              assert RESOURCE_NAMES == {'user': 'users', 'currency': 'currencies', 'trading_platform': 'trading-platforms', 'broker': 'brokers', 'account': 'accounts', 'asset': 'assets', 'trailing_group': 'trailing-groups', 'trailing_rule': 'trailing-rules', 'partial_group': 'partial-groups', 'partial_rule': 'partial-rules', 'action_group': 'action-groups', 'action': 'actions', 'position': 'positions'}, RESOURCE_NAMES
+              try:
+                  get_spec('nope'); raise SystemExit('unknown key accepted')
+              except UnknownModelError:
+                  pass
+              print('ok')
+              PY
+            touches:
+            - src/trading_backend/logic/__init__.py
+            - src/trading_backend/logic/model_specs.py
+            status: done
+            log:
+            - at: '2026-09-06T04:14:19+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; generating the static specification from .interface/config/model.yaml so the transcription is exact.
+            - at: '2026-09-06T04:14:21+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: MODEL_SPECS matches model.yaml for all 13 Models (order, fields, types, nullability, defaults,
+                sizes, credential flags, relationships); RESOURCE_NAMES holds the 13 resolved names; unknown key → UnknownModelError
+                → ok. Generated from model.yaml with a one-off script so the transcription is exact.'
+        P2-G3:
+          id: P2-G3
+          title: Data Access
+          description: 'The only Backend boundary that consumes the Database Interface: a thin translation of Logic''s data
+            operations into Database calls and of Database errors into Backend errors.'
+          target: backend
+          area: data_access — src/trading_backend/data_access/
+          does: Logic can persist and retrieve any Model through DataAccess without knowing the Database package, its engine,
+            or its errors.
+          task_count: 1
+          tasks:
+          - id: P2-G3-T1
+            title: Data Access over the Database Interface
+            description: 'Implement src/trading_backend/data_access/__init__.py (docstring) and data_access/database.py: class
+              DataAccess wrapping one trading_database.Database instance held in a private attribute, with methods create(model,
+              data) -> dict, read(model, record_id) -> dict | None, list(model, *, filters=None, order_by=None, limit=None,
+              offset=None) -> list[dict], update(model, record_id, data) -> dict, delete(model, record_id) -> None, and set_status(model,
+              record_id, action) -> dict, each calling the matching Database operation and translating trading_database errors:
+              RecordNotFoundError → NotFoundError, ConstraintViolationError → ConflictError, UnknownFieldError → InvalidFieldError,
+              UnknownModelError → UnknownModelError, InvalidActionError and UnsupportedOperationError → UnsupportedActionError,
+              any other DatabaseError → BackendError. Provide get_data_access() returning a lazily created module-level DataAccess
+              built from Database() (settings-driven URL) and reset_data_access() for verification.'
+            reason: 'Backend Principle 4: Data Access is the only Backend route to Database; it translates Logic''s data operations
+              into Database Interface calls and results back into logical data, without application Behaviour and without exposing
+              the engine.'
+            target: backend
+            area: data_access — src/trading_backend/data_access/database.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - trading-assistant-database (local editable path dependency, import trading_database)
+              instructions: 'Import only from trading_database (Database and its error classes) — never from trading_database.storage
+                or trading_database.logic. Do not wrap execute_sql: no Logic needs controlled SQL in this phase, so it stays
+                unexposed. Construct Database lazily so importing the module does not open the database file.'
+              inputs:
+              - .interface/config/backend.yaml — layers.data_access (responsibility, uses, operations)
+              - .interface/config/database.yaml — layers.database_interface (operations and error behaviour)
+              - database/README.md — the Database class and its error types (P1 output)
+              - src/trading_backend/errors.py (P2-G1-T4)
+              expected_output: src/trading_backend/data_access/__init__.py and src/trading_backend/data_access/database.py.
+            depends_on:
+            - P2-G1-T1
+            - P2-G1-T4
+            constraints:
+            - Dependency direction is API → Logic → Data Access → Database Interface; no layer imports or calls past the next
+              boundary, and nothing in Backend imports trading_database except the Data Access layer (Backend Principles 1,
+              4, 5).
+            - Data Access contains no application Behaviour and never reaches the engine, connection, ORM, tables, schema, or
+              migrations.
+            acceptance: 'Against a freshly migrated throw-away Database: create/read/list/update/set_status/delete round-trip
+              a trading_platform record; a missing id reads as None and updates raise NotFoundError; deleting the referenced
+              currency raises ConflictError; an unknown field raises InvalidFieldError; an unknown model raises UnknownModelError;
+              no public attribute exposes the Database object.'
+            verify: |-
+              ( set -e
+                trap 'rm -f .verify.db' EXIT
+                rm -f .verify.db
+                export DATABASE_URL="sqlite:///$PWD/.verify.db"
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                ( cd ../database && uv run alembic upgrade head >/dev/null 2>&1 )
+                uv run python - <<'PY'
+              from trading_backend.data_access.database import get_data_access, reset_data_access, DataAccess
+              from trading_backend.errors import NotFoundError, ConflictError, InvalidFieldError, UnknownModelError, UnsupportedActionError
+              reset_data_access()
+              da = get_data_access()
+              assert isinstance(da, DataAccess) and get_data_access() is da
+              assert not {a for a in dir(da) if not a.startswith('_')} - {'create', 'read', 'list', 'update', 'delete', 'set_status'}, dir(da)
+              tp = da.create('trading_platform', {'name': 'Test', 'code': 'test'})
+              assert tp['id'] and da.read('trading_platform', tp['id']) == tp
+              assert da.read('trading_platform', 999999) is None
+              assert len(da.list('trading_platform')) == 3 and da.list('currency', order_by=['-id'], limit=1)[0]['id'] == 8
+              assert da.update('trading_platform', tp['id'], {'description': 'd'})['description'] == 'd'
+              assert da.set_status('trading_platform', tp['id'], 'disable')['status'] is False
+              da.delete('trading_platform', tp['id']); assert da.read('trading_platform', tp['id']) is None
+              for call, exc in ((lambda: da.update('asset', 999999, {'name': 'x'}), NotFoundError), (lambda: da.delete('currency', 1), ConflictError),
+                                (lambda: da.create('asset', {'name': 'x', 'symbol': 'y', 'category': 'c', 'nope': 1}), InvalidFieldError),
+                                (lambda: da.read('nope', 1), UnknownModelError), (lambda: da.set_status('asset', 1, 'toggle'), UnsupportedActionError)):
+                  try:
+                      call(); raise SystemExit(f'{exc.__name__} not raised')
+                  except exc:
+                      pass
+              print('ok')
+              PY
+              )
+            touches:
+            - src/trading_backend/data_access/__init__.py
+            - src/trading_backend/data_access/database.py
+            status: done
+            log:
+            - at: '2026-09-06T04:14:19+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T04:14:22+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed against a migrated throw-away Database: create/read/list/update/set_status/delete round-trip;
+                missing id → None, update → NotFoundError, delete of referenced currency → ConflictError, unknown field → InvalidFieldError,
+                unknown model → UnknownModelError, bad status action → UnsupportedActionError; only the six operations are public
+                → ok.'
+        P2-G4:
+          id: P2-G4
+          title: Logic
+          description: 'Application Behaviour and Model Logic: a shared baseline of the five standard operations with spec-driven
+            validation, one logical unit per shared Model, and the declaration that the project''s one Behaviour is fulfilled
+            by those units.'
+          target: backend
+          area: logic — src/trading_backend/logic/
+          does: Every Model has a Logic unit offering create, get, list, update, and delete through Data Access, validated against
+            the shared specification and independent of HTTP and persistence technology.
+          task_count: 2
+          tasks:
+          - id: P2-G4-T1
+            title: The standard Model Logic baseline
+            description: 'Implement src/trading_backend/logic/model_logic.py: class ModelLogic with class attribute model: str,
+              constructed with a DataAccess, exposing the standard operations create(data) -> dict, get(record_id) -> dict (NotFoundError
+              when absent), list(*, order_by=None, limit=None, offset=None) -> list[dict], update(record_id, data) -> dict,
+              and delete(record_id) -> None. create and update validate against the Model spec before touching Data Access:
+              unknown fields and the primary key raise InvalidFieldError; update rejects an explicit None for a non-nullable
+              field with InvalidFieldError; create fills nothing itself (Database applies defaults). Credential fields pass
+              through untouched to Data Access.'
+            reason: 'Backend Principles 2 and 3: Logic owns application Behaviour and gives every Model a consistent baseline
+              of create, get, list, update, and delete, independent of HTTP and of the Database implementation.'
+            target: backend
+            area: logic — src/trading_backend/logic/model_logic.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              instructions: 'Keep ModelLogic independent of FastAPI, Pydantic, and trading_database: it depends only on DataAccess,
+                the Model spec, and the Backend errors. list validates order_by field names against the spec and rejects credential
+                fields with InvalidFieldError before calling Data Access.'
+              inputs:
+              - .interface/config/backend.yaml — layers.logic (responsibility, model_logic.standard_operations)
+              - src/trading_backend/logic/model_specs.py (P2-G2-T1)
+              - src/trading_backend/data_access/database.py (P2-G3-T1)
+              expected_output: src/trading_backend/logic/model_logic.py with ModelLogic.
+            depends_on:
+            - P2-G2-T1
+            - P2-G3-T1
+            constraints:
+            - Dependency direction is API → Logic → Data Access → Database Interface; no layer imports or calls past the next
+              boundary, and nothing in Backend imports trading_database except the Data Access layer (Backend Principles 1,
+              4, 5).
+            - Logic never imports FastAPI, Pydantic, or trading_database.
+            acceptance: Against a freshly migrated throw-away Database a ModelLogic bound to trading_platform performs create,
+              get, list, update, and delete; get of a missing id raises NotFoundError; an unknown field, the primary key, and
+              an explicit null for a non-nullable field raise InvalidFieldError; ordering by a credential field on user raises
+              InvalidFieldError; the module imports neither fastapi nor trading_database.
+            verify: |-
+              ( set -e
+                trap 'rm -f .verify.db' EXIT
+                rm -f .verify.db
+                export DATABASE_URL="sqlite:///$PWD/.verify.db"
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                ( cd ../database && uv run alembic upgrade head >/dev/null 2>&1 )
+                uv run python - <<'PY'
+              import sys
+              from trading_backend.data_access.database import get_data_access, reset_data_access
+              from trading_backend.logic.model_logic import ModelLogic
+              from trading_backend.errors import NotFoundError, InvalidFieldError
+              assert 'fastapi' not in sys.modules
+              import trading_backend.logic.model_logic as m
+              assert not any(n.startswith('trading_database') or n.startswith('fastapi') or n.startswith('pydantic') for n in vars(m).get('__builtins__', {}) and [] )
+              src = open(m.__file__).read(); assert 'trading_database' not in src and 'fastapi' not in src and 'pydantic' not in src
+              reset_data_access()
+              class TradingPlatformLogic(ModelLogic):
+                  model = 'trading_platform'
+              logic = TradingPlatformLogic(get_data_access())
+              tp = logic.create({'name': 'Test', 'code': 'test'})
+              assert logic.get(tp['id']) == tp and len(logic.list()) == 3 and logic.list(order_by=['-id'], limit=1)[0]['id'] == tp['id']
+              assert logic.update(tp['id'], {'description': 'd'})['description'] == 'd'
+              logic.delete(tp['id'])
+              for call, exc in ((lambda: logic.get(tp['id']), NotFoundError), (lambda: logic.create({'name': 'x', 'code': 'y', 'nope': 1}), InvalidFieldError),
+                                (lambda: logic.create({'id': 9, 'name': 'x', 'code': 'y'}), InvalidFieldError), (lambda: logic.update(1, {'name': None}), InvalidFieldError)):
+                  try:
+                      call(); raise SystemExit(f'{exc.__name__} not raised')
+                  except exc:
+                      pass
+              class UserLogic(ModelLogic):
+                  model = 'user'
+              try:
+                  UserLogic(get_data_access()).list(order_by=['password']); raise SystemExit('credential ordering accepted')
+              except InvalidFieldError:
+                  pass
+              print('ok')
+              PY
+              )
+            touches:
+            - src/trading_backend/logic/model_logic.py
+            status: done
+            log:
+            - at: '2026-09-06T04:15:13+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T04:15:14+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed against a migrated throw-away Database: create/get/list/update/delete via a trading_platform
+                unit; missing id → NotFoundError; unknown field, primary key, and explicit null on a non-nullable field → InvalidFieldError;
+                ordering user by password → InvalidFieldError; the module''s source references neither the Database package,
+                FastAPI, nor Pydantic → ok.'
+          - id: P2-G4-T2
+            title: One Logic unit per Model and the project Behaviour
+            description: 'Implement src/trading_backend/logic/models.py defining one ModelLogic subclass per shared Model —
+              UserLogic (model = "user"), CurrencyLogic, TradingPlatformLogic, BrokerLogic, AccountLogic, AssetLogic, TrailingGroupLogic,
+              TrailingRuleLogic, PartialGroupLogic, PartialRuleLogic, ActionGroupLogic, ActionLogic, PositionLogic — with MODEL_LOGIC:
+              dict[str, type[ModelLogic]] in model.yaml order and get_logic(model, data_access) -> ModelLogic raising UnknownModelError;
+              and src/trading_backend/logic/behaviours.py declaring PROJECT_BEHAVIOURS = {"enable_users_to_enter_and_manage_all_defined_project_data":
+              ("user", …, "position")} with a docstring stating that the Behaviour is fulfilled by the standard operations of
+              every Model Logic unit.'
+            reason: Backend Principle 3 gives every shared Model its own logical unit, and Backend Principle 7 has Logic implement
+              the Backend-targeted project Behaviour — here entirely through those units' standard operations, as backend.yaml
+              resolves.
+            target: backend
+            area: logic — src/trading_backend/logic/models.py and behaviours.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              instructions: Each subclass is minimal (class attribute model only); Model-specific Behaviour is empty for every
+                Model in backend.yaml, so no unit adds methods. PROJECT_BEHAVIOURS values list the 13 Model keys in order.
+              inputs:
+              - .interface/config/backend.yaml — layers.logic.model_logic.models (13 units, behaviours empty) and layers.logic.project_behaviours
+              - .interface/config/definition.yaml — content.behaviours
+              - src/trading_backend/logic/model_logic.py (P2-G4-T1)
+              expected_output: src/trading_backend/logic/models.py and src/trading_backend/logic/behaviours.py.
+            depends_on:
+            - P2-G4-T1
+            constraints: []
+            acceptance: MODEL_LOGIC has the 13 keys in model.yaml order, each value is a ModelLogic subclass whose model attribute
+              equals its key, get_logic returns a bound unit and raises UnknownModelError otherwise, and PROJECT_BEHAVIOURS
+              maps the one Behaviour key to all 13 Models.
+            verify: |-
+              uv run python - <<'PY'
+              from trading_backend.logic.models import MODEL_LOGIC, get_logic
+              from trading_backend.logic.model_logic import ModelLogic
+              from trading_backend.logic.behaviours import PROJECT_BEHAVIOURS
+              from trading_backend.errors import UnknownModelError
+              assert list(MODEL_LOGIC) == ['user', 'currency', 'trading_platform', 'broker', 'account', 'asset', 'trailing_group', 'trailing_rule', 'partial_group', 'partial_rule', 'action_group', 'action', 'position'], list(MODEL_LOGIC)
+              assert all(issubclass(c, ModelLogic) and c.model == k for k, c in MODEL_LOGIC.items())
+              assert {c.__name__ for c in MODEL_LOGIC.values()} >= {'UserLogic', 'CurrencyLogic', 'PositionLogic'}
+              class FakeDA: pass
+              assert isinstance(get_logic('asset', FakeDA()), MODEL_LOGIC['asset'])
+              try:
+                  get_logic('nope', FakeDA()); raise SystemExit('unknown model accepted')
+              except UnknownModelError:
+                  pass
+              assert PROJECT_BEHAVIOURS == {'enable_users_to_enter_and_manage_all_defined_project_data': tuple(['user', 'currency', 'trading_platform', 'broker', 'account', 'asset', 'trailing_group', 'trailing_rule', 'partial_group', 'partial_rule', 'action_group', 'action', 'position'])}, PROJECT_BEHAVIOURS
+              print('ok')
+              PY
+            touches:
+            - src/trading_backend/logic/models.py
+            - src/trading_backend/logic/behaviours.py
+            status: done
+            log:
+            - at: '2026-09-06T04:15:14+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T04:15:15+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: MODEL_LOGIC holds the 13 keys in model.yaml order with matching subclasses, get_logic binds
+                a unit and raises UnknownModelError otherwise, PROJECT_BEHAVIOURS maps the one Behaviour to all 13 Models →
+                ok.'
+        P2-G5:
+          id: P2-G5
+          title: API
+          description: 'The external HTTP boundary: Pydantic schemas derived from the shared specification with write-only credentials,
+            HTTP error mapping that never echoes submitted values, one generic router per Model exposing the five standard operations,
+            the application with its OpenAPI description and allowed origins, and the README.'
+          target: backend
+          area: api — src/trading_backend/api/ and src/trading_backend/main.py
+          does: A FastAPI application serving /api/<resource> for all 13 Models with create, list, get, update, and delete,
+            documented at /openapi.json and /docs, callable from the Frontend origin, with credentials accepted only as input.
+          task_count: 5
+          tasks:
+          - id: P2-G5-T1
+            title: Pydantic schema factory derived from the Model specifications
+            description: 'Implement src/trading_backend/api/__init__.py (docstring) and api/schemas.py: build_schemas(spec)
+              -> Schemas(create, update, read) using pydantic.create_model from a ModelSpec: type mapping integer→int, string→str
+              (Field(max_length=size) when a size exists), boolean→bool, decimal→Decimal, float→float, datetime→datetime; Create
+              has every non-primary-key field — required when non-nullable without default, defaulting to the spec default when
+              one exists, `T | None = None` when nullable; Update has every non-primary-key field as `T | None = None`; Read
+              has every non-credential field including the primary key with nullable fields as `T | None`; Create and Update
+              forbid extra fields (model_config extra="forbid") and include credential fields as write-only input; field descriptions
+              come from the spec purpose. SCHEMAS: dict[str, Schemas] for all 13 Models, named <PascalModel>Create, <PascalModel>Update,
+              <PascalModel>Read.'
+            reason: 'Backend Principle 6: API derives its data-facing input and output representations from the shared definition;
+              Backend Principle 9: credentials are write-only, so the response schema must not even declare them.'
+            target: backend
+            area: api — src/trading_backend/api/schemas.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - Pydantic v2 (bundled with FastAPI)
+              - FastAPI 0.141.1
+              instructions: 'Follow the FastAPI guidance: no Ellipsis defaults (use Field(description=…) with a real default
+                or none), no RootModel. Use pydantic.create_model with __config__=ConfigDict(extra="forbid") for Create/Update.
+                PascalCase the Model key for class names (trading_platform → TradingPlatform).'
+              inputs:
+              - .interface/config/backend.yaml — layers.api.credential_handling (write_only, exclude_from_responses) and model_api
+              - src/trading_backend/logic/model_specs.py (P2-G2-T1)
+              expected_output: src/trading_backend/api/__init__.py and src/trading_backend/api/schemas.py.
+            depends_on:
+            - P2-G2-T1
+            constraints:
+            - 'Fields marked credential in model.yaml (user.password, user.api_key, account.password) are write-only: accepted
+              on create and update, never returned in any response, response schema, error payload, or log (Backend Principle
+              9).'
+            - Create and Update reject unknown fields at the API boundary (extra="forbid").
+            acceptance: 'For every Model the three schemas exist with the resolved fields: UserRead lacks password and api_key
+              while UserCreate requires them; CurrencyCreate enforces code max_length 3 and defaults decimal_digits to 2; AccountUpdate
+              accepts a partial body; PositionRead types date as datetime and volume as Decimal; unknown fields are rejected.'
+            verify: |-
+              uv run python - <<'PY'
+              from datetime import datetime
+              from decimal import Decimal
+              from pydantic import ValidationError
+              from trading_backend.api.schemas import SCHEMAS
+              assert len(SCHEMAS) == 13
+              u = SCHEMAS['user']
+              assert set(u.read.model_fields) == {'id', 'name', 'username', 'status', 'description'}, set(u.read.model_fields)
+              assert {'password', 'api_key'} <= set(u.create.model_fields) and u.create.model_fields['password'].is_required()
+              assert u.create.__name__ == 'UserCreate' and u.read.__name__ == 'UserRead' and u.update.__name__ == 'UserUpdate'
+              c = SCHEMAS['currency'].create(name='Test', code='TST')
+              assert c.decimal_digits == 2 and c.status is True and c.symbol is None
+              try:
+                  SCHEMAS['currency'].create(name='Test', code='TOOLONG'); raise SystemExit('max_length not enforced')
+              except ValidationError:
+                  pass
+              try:
+                  SCHEMAS['currency'].create(name='Test', code='TST', nope=1); raise SystemExit('extra field accepted')
+              except ValidationError:
+                  pass
+              a = SCHEMAS['account'].update(leverage=200)
+              assert a.model_dump(exclude_unset=True) == {'leverage': 200}
+              p = SCHEMAS['position'].read.model_fields
+              assert p['date'].annotation is datetime and p['volume'].annotation is Decimal and 'id' in p, p['date'].annotation
+              assert SCHEMAS['trading_platform'].create.__name__ == 'TradingPlatformCreate'
+              print('ok')
+              PY
+            touches:
+            - src/trading_backend/api/__init__.py
+            - src/trading_backend/api/schemas.py
+            status: done
+            log:
+            - at: '2026-09-06T04:16:12+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T04:16:13+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: 13 schema triples; UserRead lacks password/api_key while UserCreate requires them; CurrencyCreate
+                enforces code max_length 3 and defaults decimal_digits 2 and status true; extra fields rejected; AccountUpdate
+                partial dump; PositionRead types date as datetime and volume as Decimal; PascalCase names → ok.'
+          - id: P2-G5-T2
+            title: HTTP error mapping with credential-safe validation errors
+            description: 'Implement src/trading_backend/api/errors.py: register_error_handlers(app) adding exception handlers
+              that map NotFoundError → 404, ConflictError → 409, InvalidFieldError → 422, UnsupportedActionError → 400, UnknownModelError
+              and any other BackendError → 500, each returning a JSON body {"detail": <message>}; and a RequestValidationError
+              handler returning 422 with {"detail": [{"loc": …, "msg": …, "type": …}, …]} that omits the framework''s default
+              input echo so submitted values — including credentials — never appear in an error payload.'
+            reason: Backend Principle 5 has API map logical outcomes to responses, and Backend Principle 9 forbids credentials
+              in error payloads; FastAPI's default validation response echoes the submitted body, so it must be replaced.
+            target: backend
+            area: api — src/trading_backend/api/errors.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - FastAPI 0.141.1
+              instructions: 'Use app.add_exception_handler for each class; handlers are plain functions returning fastapi.responses.JSONResponse.
+                Order matters: register specific BackendError subclasses before the BackendError fallback.'
+              inputs:
+              - .interface/config/backend.yaml — layers.api.credential_handling (exclude_from_responses, redact) and responsibility
+              - src/trading_backend/errors.py (P2-G1-T4)
+              expected_output: src/trading_backend/api/errors.py with register_error_handlers.
+            depends_on:
+            - P2-G1-T4
+            constraints:
+            - 'Fields marked credential in model.yaml (user.password, user.api_key, account.password) are write-only: accepted
+              on create and update, never returned in any response, response schema, error payload, or log (Backend Principle
+              9).'
+            acceptance: On a minimal FastAPI app with the handlers registered, raising each Backend error yields the mapped
+              status code and a detail message, and a body failing validation yields 422 whose payload does not contain the
+              submitted values.
+            verify: |-
+              uv run python - <<'PY'
+              from fastapi import FastAPI
+              from fastapi.testclient import TestClient
+              from pydantic import BaseModel
+              from trading_backend.api.errors import register_error_handlers
+              from trading_backend import errors as e
+              app = FastAPI()
+              register_error_handlers(app)
+              class Body(BaseModel):
+                  name: str
+                  password: str
+              cases = {'nf': (e.NotFoundError, 404), 'cf': (e.ConflictError, 409), 'inv': (e.InvalidFieldError, 422), 'act': (e.UnsupportedActionError, 400), 'um': (e.UnknownModelError, 500), 'be': (e.BackendError, 500)}
+              for path, (exc, _) in cases.items():
+                  def make(exc):
+                      def handler():
+                          raise exc(f'boom {exc.__name__}')
+                      return handler
+                  app.add_api_route(f'/{path}', make(exc), methods=['GET'])
+              @app.post('/v')
+              def v(body: Body):
+                  return body
+              c = TestClient(app, raise_server_exceptions=False)
+              for path, (exc, code) in cases.items():
+                  r = c.get(f'/{path}')
+                  assert r.status_code == code and exc.__name__ in r.json()['detail'], (path, r.status_code, r.text)
+              r = c.post('/v', json={'name': 5, 'password': 'S3CRET-VALUE'})
+              assert r.status_code == 422 and 'S3CRET-VALUE' not in r.text and 'input' not in r.json()['detail'][0], r.text
+              assert set(r.json()['detail'][0]) == {'loc', 'msg', 'type'}, r.json()
+              print('ok')
+              PY
+            touches:
+            - src/trading_backend/api/errors.py
+            status: done
+            log:
+            - at: '2026-09-06T04:16:12+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T04:16:13+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: NotFound→404, Conflict→409, InvalidField→422, UnsupportedAction→400, UnknownModel and BackendError→500
+                with detail messages; a failing body yields 422 whose payload carries only loc/msg/type and does not contain
+                the submitted secret → ok.'
+          - id: P2-G5-T3
+            title: Generic Model routers for every Model
+            description: 'Implement src/trading_backend/api/dependencies.py with DataAccessDep = Annotated[DataAccess, Depends(get_data_access)]
+              and logic_dependency(model) returning a function that builds the Model''s Logic unit from DataAccessDep; and api/routers.py
+              with build_model_router(model) -> APIRouter(prefix=f"/api/{RESOURCE_NAMES[model]}", tags=[model]) declaring one
+              function per HTTP operation: POST "" (status 201, body <Model>Create, returns <Model>Read), GET "" (query limit:
+              Annotated[int, Query(ge=1, le=500)] = 100, offset: Annotated[int, Query(ge=0)] = 0, order_by: Annotated[str |
+              None, Query()] = None as a comma-separated list; returns list[<Model>Read]), GET "/{record_id}" (returns <Model>Read
+              or 404), PATCH "/{record_id}" (body <Model>Update applied with exclude_unset, returns <Model>Read), DELETE "/{record_id}"
+              (status 204); and ROUTERS: list[APIRouter] for the 13 Models in model.yaml order.'
+            reason: 'Backend Principle 5: API receives requests, validates their transport shape, invokes Logic, and converts
+              results into responses; backend.yaml exposes the five standard operations for every Model, so one generic router
+              factory serves all 13.'
+            target: backend
+            area: api — src/trading_backend/api/dependencies.py and routers.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - FastAPI 0.141.1
+              - Pydantic v2 (bundled with FastAPI)
+              - HTTP
+              instructions: 'Follow the FastAPI guidance: Annotated for parameters and dependencies, router-level prefix and
+                tags, one function per HTTP operation, plain def path operations (Logic and Database are blocking), return types
+                from the Read schema. Path operations call only the Logic unit — never Data Access or trading_database. Use
+                response_model=Read where the returned dict must be filtered. Set unique operation ids per Model (for example
+                f"{model}_create") so the OpenAPI document is unambiguous for Frontend type generation.'
+              inputs:
+              - .interface/config/backend.yaml — layers.api.model_api (default_operations, overrides empty) and provides
+              - src/trading_backend/api/schemas.py (P2-G5-T1)
+              - src/trading_backend/logic/models.py (P2-G4-T2)
+              - src/trading_backend/data_access/database.py (P2-G3-T1)
+              expected_output: src/trading_backend/api/dependencies.py and src/trading_backend/api/routers.py.
+            depends_on:
+            - P2-G5-T1
+            - P2-G4-T2
+            constraints:
+            - Dependency direction is API → Logic → Data Access → Database Interface; no layer imports or calls past the next
+              boundary, and nothing in Backend imports trading_database except the Data Access layer (Backend Principles 1,
+              4, 5).
+            - 'Fields marked credential in model.yaml (user.password, user.api_key, account.password) are write-only: accepted
+              on create and update, never returned in any response, response schema, error payload, or log (Backend Principle
+              9).'
+            - Path operations never call Data Access or trading_database directly.
+            acceptance: 'Against a freshly migrated throw-away Database, an app including ROUTERS serves the five operations
+              for currencies and users: POST 201 returns the record without credentials, GET list honours limit/offset/order_by,
+              GET by id returns 200 and 404, PATCH applies a partial update, DELETE returns 204 then 404, a duplicate code returns
+              409, and an unknown field returns 422 without echoing values.'
+            verify: |-
+              ( set -e
+                trap 'rm -f .verify.db' EXIT
+                rm -f .verify.db
+                export DATABASE_URL="sqlite:///$PWD/.verify.db"
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                ( cd ../database && uv run alembic upgrade head >/dev/null 2>&1 )
+                uv run python - <<'PY'
+              from fastapi import FastAPI
+              from fastapi.testclient import TestClient
+              from trading_backend.api.routers import ROUTERS
+              from trading_backend.api.errors import register_error_handlers
+              from trading_backend.data_access.database import reset_data_access
+              reset_data_access()
+              app = FastAPI(); register_error_handlers(app)
+              for r in ROUTERS: app.include_router(r)
+              assert len(ROUTERS) == 13 and [r.prefix for r in ROUTERS][:3] == ['/api/users', '/api/currencies', '/api/trading-platforms'], [r.prefix for r in ROUTERS]
+              c = TestClient(app)
+              r = c.post('/api/currencies', json={'name': 'Test', 'code': 'TST', 'symbol': 'T'}); assert r.status_code == 201, r.text
+              cid = r.json()['id']; assert r.json()['decimal_digits'] == 2 and r.json()['status'] is True
+              assert c.get('/api/currencies').status_code == 200 and len(c.get('/api/currencies').json()) == 9
+              assert [x['id'] for x in c.get('/api/currencies', params={'order_by': '-id', 'limit': 2}).json()] == [cid, 8]
+              assert c.get('/api/currencies', params={'order_by': 'code', 'limit': 1, 'offset': 1}).json()[0]['code'] == 'CAD'
+              assert c.get(f'/api/currencies/{cid}').status_code == 200 and c.get('/api/currencies/999999').status_code == 404
+              assert c.patch(f'/api/currencies/{cid}', json={'country': 'Testland'}).json()['country'] == 'Testland'
+              assert c.post('/api/currencies', json={'name': 'Dup', 'code': 'USD'}).status_code == 409
+              r = c.post('/api/currencies', json={'name': 'X', 'code': 'XXX', 'nope': 'LEAK-ME'}); assert r.status_code == 422 and 'LEAK-ME' not in r.text, r.text
+              assert c.delete(f'/api/currencies/{cid}').status_code == 204 and c.get(f'/api/currencies/{cid}').status_code == 404
+              r = c.post('/api/users', json={'name': 'Second', 'username': 'second', 'password': 'PW-SECRET', 'api_key': 'KEY-SECRET'})
+              assert r.status_code == 201 and 'password' not in r.json() and 'PW-SECRET' not in r.text, r.text
+              assert 'password' not in c.get('/api/users/1').json()
+              assert c.get('/api/users', params={'order_by': 'password'}).status_code == 422
+              ids = {route.operation_id for route in app.routes if hasattr(route, 'operation_id') and route.operation_id}
+              assert {'currency_create', 'currency_list', 'currency_get', 'currency_update', 'currency_delete'} <= ids, ids
+              print('ok')
+              PY
+              )
+            touches:
+            - src/trading_backend/api/dependencies.py
+            - src/trading_backend/api/routers.py
+            status: blocked
+            blocker: B1
+            log:
+            - at: '2026-09-06T04:17:36+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T04:17:38+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed against a migrated throw-away Database via the in-process client: POST 201 with defaults
+                applied, list honours limit/offset/order_by, GET 200/404, PATCH partial update, duplicate code 409, unknown
+                field 422 without echoing the value, DELETE 204 then 404, user create hides credentials and never echoes them,
+                ordering by a credential field 422, operation ids unique per Model → ok.'
+            - at: '2026-09-06T04:20:11+03:30'
+              from: done
+              to: blocked
+              by: development operation (my-interface-developer)
+              note: 'Correction: the previous done entry was recorded in error — my shell wrapper did not stop when the verify
+                subshell failed. The verify''s functional assertions all passed (routers, status codes, credential handling,
+                ordering, 422 without echo), but its final assertion (route introspection for operation_id in app.routes) fails
+                under FastAPI 0.141.1''s lazy router inclusion and cannot pass as written; operation ids are proven unique via
+                /openapi.json in P2-G5-T4. Blocked on B1 pending a corrected verify from Planning.'
+          - id: P2-G5-T4
+            title: Application factory with OpenAPI description and allowed origins
+            description: 'Implement src/trading_backend/main.py: create_app() -> FastAPI building FastAPI(title="Trading Assistant
+              API", version=__version__, description=…, openapi_url="/openapi.json", docs_url="/docs"), registering the error
+              handlers, adding CORSMiddleware with allow_origins from get_settings().cors_origins (allow_methods and allow_headers
+              "*", allow_credentials False), and including every router from ROUTERS; module-level app = create_app() as the
+              entrypoint declared in pyproject ([tool.fastapi] entrypoint = "trading_backend.main:app").'
+            reason: 'Backend Principle 8: the machine-readable API description belongs to the API layer and backend.yaml enables
+              OpenAPI; development.yaml makes the running Backend''s OpenAPI document the Frontend''s contract source, reached
+              from the browser at the Frontend origin.'
+            target: backend
+            area: api — src/trading_backend/main.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - FastAPI 0.141.1
+              - HTTP
+              - OpenAPI
+              instructions: Import settings lazily inside create_app so importing the module has no side effects beyond building
+                the app. Keep the app free of any route that is not a Model router (no health or root route). The description
+                states that credential fields are write-only.
+              inputs:
+              - .interface/config/backend.yaml — layers.api.api_documentation (enabled, OpenAPI), transport (HTTP), provides
+              - .interface/config/development.yaml — connections.frontend_to_backend and platform.composition.networking
+              - src/trading_backend/api/routers.py (P2-G5-T3), api/errors.py (P2-G5-T2), settings.py (P2-G1-T3)
+              expected_output: src/trading_backend/main.py exposing create_app and app.
+            depends_on:
+            - P2-G5-T3
+            - P2-G5-T2
+            - P2-G1-T3
+            constraints:
+            - 'Fields marked credential in model.yaml (user.password, user.api_key, account.password) are write-only: accepted
+              on create and update, never returned in any response, response schema, error payload, or log (Backend Principle
+              9).'
+            - Serving HTTPS is out of scope; the transport is HTTP (backend.yaml).
+            acceptance: Importing trading_backend.main yields a FastAPI app whose /openapi.json lists 65 Model operations (13
+              Models × 5) with unique operation ids and no credential property in any *Read schema, whose /docs responds 200,
+              and whose CORS preflight from http://127.0.0.1:3000 is allowed.
+            verify: |-
+              uv run python - <<'PY'
+              from fastapi.testclient import TestClient
+              from trading_backend.main import app, create_app
+              from fastapi import FastAPI
+              assert isinstance(app, FastAPI) and isinstance(create_app(), FastAPI)
+              c = TestClient(app)
+              spec = c.get('/openapi.json').json()
+              ops = [(p, m, o.get('operationId')) for p, ms in spec['paths'].items() for m, o in ms.items()]
+              assert len(ops) == 65, len(ops)
+              assert len({o for _, _, o in ops}) == 65, 'operation ids not unique'
+              assert spec['info']['title'] == 'Trading Assistant API'
+              schemas = spec['components']['schemas']
+              for name, s in schemas.items():
+                  if name.endswith('Read'):
+                      assert not ({'password', 'api_key'} & set(s.get('properties', {}))), name
+              assert {'password', 'api_key'} <= set(schemas['UserCreate']['properties'])
+              assert c.get('/docs').status_code == 200
+              r = c.options('/api/users', headers={'Origin': 'http://127.0.0.1:3000', 'Access-Control-Request-Method': 'GET'})
+              assert r.status_code == 200 and r.headers.get('access-control-allow-origin') == 'http://127.0.0.1:3000', (r.status_code, dict(r.headers))
+              print('ok')
+              PY
+            touches:
+            - src/trading_backend/main.py
+            status: done
+            log:
+            - at: '2026-09-06T04:17:38+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T04:17:39+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: /openapi.json lists 65 operations with unique ids, no *Read schema declares password or
+                api_key while UserCreate does, /docs responds 200, CORS preflight from http://127.0.0.1:3000 is allowed → ok.'
+            - at: '2026-09-06T04:20:11+03:30'
+              from: done
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Annotation: this Task was claimed while P2-G5-T3 carried an erroneous done record (see P2-G5-T3 log and
+                Blocker B1). Its own verify passed as recorded; its implementation depends on the routers, which are functionally
+                verified.'
+          - id: P2-G5-T5
+            title: Package exports and Backend README
+            description: 'Set src/trading_backend/__init__.py to export __version__ only (the package is an application, not
+              a library; the app lives in trading_backend.main) and write backend/README.md describing: the Backend''s role
+              and its three layers; installation (`uv sync`, which installs the Database package from ../database); runtime
+              variables BACKEND_HOST, BACKEND_PORT, and BACKEND_CORS_ORIGINS with defaults, and the note that DATABASE_URL and
+              CREDENTIAL_ENCRYPTION_KEY are read by the Database package from database/.env; the run commands `uv run fastapi
+              dev src/trading_backend/main.py` (development) and `uv run python -m trading_backend` (host and port from settings);
+              the URLs /docs and /openapi.json; the resource paths /api/<resource> for the 13 Models with the five operations
+              and their status codes (201, 200, 200/404, 200/404/409/422, 204/404/409); and that credential fields are write-only.'
+            reason: The README is the operator's and the Frontend developer's entry point to the API; development.yaml relies
+              on the documented startup commands and the OpenAPI URL.
+            target: backend
+            area: api — src/trading_backend/__init__.py and README.md
+            execution_context:
+              kind: documentation
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - Markdown
+              instructions: Documentation only; introduce no behaviour. Keep the resource table in model.yaml order.
+              inputs:
+              - .interface/config/backend.yaml — layers.api.provides, boundaries, out_of_scope
+              - .interface/config/development.yaml — platform.composition.startup (Backend step) and configuration.variables
+              - src/trading_backend/api/routers.py (P2-G5-T3)
+              expected_output: src/trading_backend/__init__.py and backend/README.md.
+            depends_on:
+            - P2-G5-T4
+            constraints: []
+            acceptance: The package root exposes __version__ and no app import side effect, and README.md names the two run
+              commands, the three Backend variables, both documentation URLs, and every resource path.
+            verify: uv run python -c "import sys, trading_backend; assert trading_backend.__version__ == '0.1.0'; assert 'fastapi'
+              not in sys.modules, 'package import must not import the app'; print('ok')" && grep -q 'uv run fastapi dev src/trading_backend/main.py'
+              README.md && grep -q 'uv run python -m trading_backend' README.md && grep -q 'BACKEND_HOST' README.md && grep
+              -q 'BACKEND_PORT' README.md && grep -q 'BACKEND_CORS_ORIGINS' README.md && grep -q '/openapi.json' README.md &&
+              grep -q '/docs' README.md && grep -q '/api/users' README.md && grep -q '/api/currencies' README.md && grep -q
+              '/api/trading-platforms' README.md && grep -q '/api/brokers' README.md && grep -q '/api/accounts' README.md &&
+              grep -q '/api/assets' README.md && grep -q '/api/trailing-groups' README.md && grep -q '/api/trailing-rules' README.md
+              && grep -q '/api/partial-groups' README.md && grep -q '/api/partial-rules' README.md && grep -q '/api/action-groups'
+              README.md && grep -q '/api/actions' README.md && grep -q '/api/positions' README.md && echo ok
+            touches:
+            - src/trading_backend/__init__.py
+            - README.md
+            status: done
+            log:
+            - at: '2026-09-06T04:17:39+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T04:17:40+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: package root exposes __version__ without importing the app; README names both run commands,
+                the three Backend variables, both documentation URLs, and all 13 resource paths → ok.'
+            - at: '2026-09-06T04:20:12+03:30'
+              from: done
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Annotation: claimed while P2-G5-T3 carried an erroneous done record (see Blocker B1); its own verify passed
+                as recorded.'
+        P2-G6:
+          id: P2-G6
+          title: Backend delivery
+          description: Bringing the Backend online against the delivered Database so the phase outcome is observable over HTTP.
+          target: backend
+          area: delivery — the running Backend process
+          does: The Backend serves its OpenAPI description and the seeded data at the resolved local address, ready for the
+            Frontend phase.
+          task_count: 1
+          tasks:
+          - id: P2-G6-T1
+            title: Run the Backend against the delivered Database
+            description: From backend/, create the untracked .env from .env.example (values may stay empty to use the defaults),
+              start the server with `uv run python -m trading_backend` against the real Database delivered by P1 (database/app.db,
+              key in database/.env), confirm that http://127.0.0.1:8000/openapi.json is served and that GET /api/currencies
+              returns the 8 seeded currencies and GET /api/users/1 returns Admin without credential fields, then stop the server.
+            reason: The phase outcome is a running Backend API over the delivered Database, which is the readiness signal development.yaml
+              defines for the Backend startup step and the contract source the Frontend phase consumes.
+            target: backend
+            area: delivery — the running Backend process on 127.0.0.1:8000
+            execution_context:
+              kind: command execution
+              language: null
+              technologies:
+              - uv 0.12.10
+              - uvicorn 0.52.4
+              - HTTP
+              instructions: Run `uv run python -m trading_backend &`, poll the OpenAPI URL with curl for up to 30 seconds, perform
+                the two GET checks, then terminate the background process. Do not seed, migrate, or alter the Database from
+                Backend. If port 8000 is busy, set BACKEND_PORT in .env to a free port and use it consistently in the checks
+                and in the Task log.
+              inputs:
+              - .interface/config/development.yaml — platform.composition.startup and networking (Backend at 127.0.0.1:8000)
+              - database/app.db and database/.env (P1 delivery)
+              - src/trading_backend/main.py (P2-G5-T4) and __main__.py (P2-G1-T3)
+              expected_output: 'A verified server start: /openapi.json served, seeded data readable over HTTP, and the process
+                stopped cleanly; backend/.env present and ignored.'
+            depends_on:
+            - P2-G5-T5
+            - P2-G1-T2
+            - P2-G3-T1
+            constraints:
+            - Backend never opens database/app.db, tables, or migrations directly — only through the Database Interface (development.yaml
+              connection backend_to_database).
+            acceptance: The server starts from the runner, serves /openapi.json with 65 operations, lists 8 currencies and the
+              Admin user without credentials over HTTP, and stops cleanly; .env exists and is git-ignored.
+            verify: |-
+              ( set -e; test -f .env && git check-ignore -q .env
+                PORT=$(uv run python -c 'from trading_backend.settings import get_settings; print(get_settings().port)')
+                uv run python -m trading_backend > .server.log 2>&1 &
+                SERVER=$!
+                trap 'kill $SERVER 2>/dev/null; rm -f .server.log' EXIT
+                for i in $(seq 1 30); do curl -sf "http://127.0.0.1:$PORT/openapi.json" >/dev/null 2>&1 && break; sleep 1; done
+                curl -sf "http://127.0.0.1:$PORT/openapi.json" | uv run python -c "import sys, json; s = json.load(sys.stdin); n = sum(len(v) for v in s['paths'].values()); assert n == 65, n; print('openapi ok', n)"
+                curl -sf "http://127.0.0.1:$PORT/api/currencies" | uv run python -c "import sys, json; d = json.load(sys.stdin); assert len(d) == 8 and {c['code'] for c in d} >= {'USD', 'EUR', 'GBP'}, d; print('currencies ok')"
+                curl -sf "http://127.0.0.1:$PORT/api/users/1" | uv run python -c "import sys, json; u = json.load(sys.stdin); assert u['name'] == 'Admin' and 'password' not in u and 'api_key' not in u, u; print('admin ok')"
+                kill $SERVER; wait $SERVER 2>/dev/null || true; trap - EXIT; rm -f .server.log; echo ok )
+            touches:
+            - .env
+            - .server.log (temporary)
+            status: done
+            log:
+            - at: '2026-09-06T04:20:12+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: 'Claimed; dependencies P2-G5-T5, P2-G1-T2, P2-G3-T1 are done. Note: phase completion remains blocked by
+                B1 (P2-G5-T3).'
+            - at: '2026-09-06T04:20:17+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: the runner started the server from .env settings, /openapi.json served 65 operations, GET
+                /api/currencies returned the 8 seeded currencies, GET /api/users/1 returned Admin without password or api_key,
+                and the process was stopped cleanly; .env is git-ignored → ok.'
     P3:
       id: P3
       title: Frontend
       order: 3
       target: frontend
       does: Implement the frontend based on the backend API.
-      groups: {}
+      groups:
+        P3-G1:
+          id: P3-G1
+          title: Package foundation
+          description: The confirmed Node.js toolchain, the exactly pinned Next.js project, and the configuration and ignore
+            templates that every later Frontend Task builds on.
+          target: frontend
+          area: package foundation — code_path root
+          does: frontend/ is a reproducible Next.js 16 TypeScript project on Node.js 24 with the resolved versions pinned and
+            the Backend base URL configurable through NEXT_PUBLIC_API_BASE_URL.
+          task_count: 3
+          tasks:
+          - id: P3-G1-T1
+            title: Prepare and verify the resolved Node.js and npm toolchain
+            description: 'Ensure that the resolved Frontend runtime is available on PATH: Node.js 24 LTS (resolved v24.20.0)
+              and npm 12.0.2. Install the missing runtime using a compatible installation method and make it available to
+              non-interactive development commands. If Node.js 24 is present but npm is not 12.0.2, upgrade npm
+              within that Node installation with `npm install -g npm@12.0.2`, as development.yaml''s Frontend startup step resolves.'
+            reason: Every Frontend Task runs through npm on Node.js; development.yaml records Node.js 24 LTS with npm 12.0.2
+              as the resolved runtime. Preparing this required toolchain is part of Development.
+            target: frontend
+            area: package foundation — runtime installation and toolchain verification
+            execution_context:
+              kind: command execution
+              language: null
+              technologies:
+              - Node.js 24.20.0 LTS
+              - npm 12.0.2
+              instructions: Check `node --version` and `npm --version`. Install missing tools and configure their PATH for
+                non-interactive commands. Re-run the version checks in the execution
+                environment and record the installation method, changes, and observed versions in the Task log.
+              inputs:
+              - .interface/config/development.yaml — platform.environment.operating_system (Node.js 24 LTS v24.20.0 with npm
+                12.0.2) and composition.startup (Frontend step)
+              - .interface/config/frontend.yaml — tech.package_manager (npm 12.0.2)
+              expected_output: The required Node.js and npm available to non-interactive development commands, with verified
+                versions recorded in the Task log. Record a Blocker only if setup cannot proceed.
+            depends_on: []
+            constraints:
+            - Follow the shared Development toolchain setup policy and preserve unrelated installations. Preserve resolved
+              versions and report an actual installation obstacle rather than changing versions silently.
+            acceptance: '`node --version` reports v24.x and `npm --version` reports exactly 12.0.2.'
+            verify: node --version | grep -Eq '^v24\.' && npm --version | grep -qx '12.0.2' && echo ok
+            touches:
+            - node and npm executables on PATH
+            - The selected runtime installation and PATH configuration needed by non-interactive development commands
+            status: todo
+            log:
+            - at: '2026-09-06T04:32:41+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; checking PATH and common version-manager locations for Node.js 24 and npm 12.0.2.
+            - at: '2026-09-06T04:33:15+03:30'
+              from: claimed
+              to: blocked
+              by: development operation (my-interface-developer)
+              note: 'Verify failed: node and npm are not on PATH and no Node.js installation was found under Homebrew, nvm,
+                Volta, fnm, or asdf locations (Homebrew is present at /usr/local/bin/brew). Per the Task, Development does not
+                install system software; Blocker B2 raised for the human to install Node.js 24.20.0 LTS.'
+            - at: '2026-09-06T04:40:03+03:30'
+              from: blocked
+              to: blocked
+              by: development operation (my-interface-developer)
+              note: 'Re-checked on a new development run: node and npm are still absent from PATH, Homebrew has no node formula
+                installed, and no nvm installation exists. Blocker B2 remains; no P3 Task is eligible.'
+            - at: '2026-09-06T07:48:45+00:00'
+              from: blocked
+              to: todo
+              by: assistant — applying the human's requested installation-policy correction
+              note: 'Removed the unsupported installation prohibition and expanded this Task to prepare the required toolchain.
+                B2 no longer requires human-only installation. Node.js and npm have not been installed or verified by this
+                correction; setup remains pending. Previous blocked-run evidence is preserved above.'
+          - id: P3-G1-T2
+            title: Initialize the Next.js project
+            description: 'Create frontend/ as a Next.js 16.3.4 App Router project in TypeScript with the src/ directory layout,
+              ESLint, no Tailwind, the import alias @/*, npm as the package manager, and no example content; then pin exact
+              versions in package.json — next 16.3.4, react 19.2.8, react-dom 19.2.8, typescript 5.9.3 — add the devDependency
+              openapi-typescript 7.13.0, add "engines": {"node": "^24.15.0", "npm": "12.0.2"}, add a .node-version file containing
+              24.20.0, set "allowImportingTsExtensions": true in tsconfig.json, and install so package-lock.json exists.'
+            reason: The resolved Frontend stack (frontend.yaml tech) must exist as a reproducible, exactly pinned project before
+              any Component, hook, or page can be written.
+            target: frontend
+            area: package foundation — code_path root
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - Node.js 24.20.0 LTS
+              - npm 12.0.2
+              - TypeScript 5.9.3
+              - React 19.2.8
+              - Next.js 16.3.4 (App Router)
+              - openapi-typescript 7.13.0
+              instructions: 'From the project root: `mkdir -p frontend && cd frontend && npx --yes create-next-app@16.3.4 .
+                --ts --app --src-dir --eslint --no-tailwind --import-alias "@/*" --use-npm --empty --yes`. Edit package.json
+                to replace caret ranges of next, react, react-dom, and typescript with the exact versions, add openapi-typescript,
+                then `npm install`. Keep the generated scripts dev, build, start, and lint. Leave src/app/layout.tsx, page.tsx,
+                and globals.css in place for later Tasks to rewrite.'
+              inputs:
+              - .interface/config/frontend.yaml — tech (language, library, framework with App Router, package manager, packages.type_generator)
+                and standards.naming
+              - .interface/config/development.yaml — platform.environment.operating_system
+              expected_output: frontend/package.json with exact pins and engines, package-lock.json, .node-version, tsconfig.json
+                with allowImportingTsExtensions, next.config.ts, eslint config, src/app/ skeleton, and an untracked node_modules/.
+            depends_on:
+            - P3-G1-T1
+            constraints:
+            - Versions are pinned exactly; the token latest never appears in package.json.
+            - No UI, CSS, state, or HTTP library beyond the resolved stack is added.
+            acceptance: package.json pins next 16.3.4, react 19.2.8, react-dom 19.2.8, typescript 5.9.3, and openapi-typescript
+              7.13.0 exactly; the installed packages report those versions; the TypeScript project type-checks; .node-version
+              reads 24.20.0.
+            verify: 'test -f package-lock.json && node -e "const p = require(''./package.json''); const d = {...p.dependencies,
+              ...p.devDependencies}; for (const [n, v] of Object.entries({next: ''16.3.4'', react: ''19.2.8'', ''react-dom'':
+              ''19.2.8'', typescript: ''5.9.3'', ''openapi-typescript'': ''7.13.0''})) { if (d[n] !== v) throw new Error(n +
+              '' is '' + d[n] + '', expected '' + v); } if (!p.engines || !p.engines.node) throw new Error(''engines.node missing'');
+              console.log(''pins ok'');" && node -e "for (const n of [''next'', ''react'', ''typescript'', ''openapi-typescript''])
+              { const v = require(n + ''/package.json'').version; const e = {next: ''16.3.4'', react: ''19.2.8'', typescript:
+              ''5.9.3'', ''openapi-typescript'': ''7.13.0''}[n]; if (v !== e) throw new Error(n + '' installed '' + v); } console.log(''installed
+              ok'');" && grep -qx ''24.20.0'' .node-version && node -e "const t = require(''./tsconfig.json''); if (t.compilerOptions.allowImportingTsExtensions
+              !== true) throw new Error(''allowImportingTsExtensions missing''); console.log(''tsconfig ok'');" && npx tsc --noEmit
+              && echo ok'
+            touches:
+            - package.json
+            - package-lock.json
+            - .node-version
+            - tsconfig.json
+            - next.config.ts
+            - eslint.config.mjs
+            - src/app/layout.tsx
+            - src/app/page.tsx
+            - src/app/globals.css
+            status: todo
+          - id: P3-G1-T3
+            title: Runtime-configuration template and ignore rules
+            description: Add frontend/.env.example with the single variable NEXT_PUBLIC_API_BASE_URL= (no value) preceded by
+              a comment stating the default http://127.0.0.1:8000 and that the value is inlined into the browser bundle at build
+              time; make sure .gitignore ignores .env and .env.local but not .env.example (add `!.env.example` after the generated
+              `.env*` rule), and also ignores .backend.pid, .frontend.pid, .verify.db, and .build.log (verification artifacts).
+            reason: development.yaml delivers the Backend base URL to Frontend through NEXT_PUBLIC_API_BASE_URL; the variable
+              must be discoverable without committing values, and the generated ignore rules would otherwise hide the template
+              itself.
+            target: frontend
+            area: package foundation — code_path root
+            execution_context:
+              kind: configuration
+              language: null
+              technologies:
+              - git
+              instructions: Edit the generated .gitignore rather than replacing it; keep node_modules/, .next/, and the other
+                generated entries.
+              inputs:
+              - .interface/config/development.yaml — platform.composition.configuration.variables (NEXT_PUBLIC_API_BASE_URL)
+                and networking
+              expected_output: frontend/.env.example and an updated frontend/.gitignore.
+            depends_on:
+            - P3-G1-T2
+            constraints:
+            - No value is written for the variable in .env.example.
+            acceptance: .env.example names NEXT_PUBLIC_API_BASE_URL without a value, is not ignored by git, while .env is ignored.
+            verify: test -f .env.example && grep -qx 'NEXT_PUBLIC_API_BASE_URL=' .env.example && ! git check-ignore -q .env.example
+              && git check-ignore -q .env && git check-ignore -q .backend.pid && git check-ignore -q .build.log && git check-ignore
+              -q node_modules && echo ok
+            touches:
+            - .env.example
+            - .gitignore
+            status: todo
+        P3-G2:
+          id: P3-G2
+          title: Shared Models and API Access
+          description: The static, verified specification of the 13 shared Models with their routes and resources, the transport
+            types generated from the Backend's OpenAPI description, and the Fetch-based client that is Frontend's only door
+            to application data.
+          target: frontend
+          area: api_access and shared models — src/lib/
+          does: Interaction Logic can list, get, create, update, and delete any Model through typed, generic API Access functions
+            that speak only to the Backend API.
+          task_count: 3
+          tasks:
+          - id: P3-G2-T1
+            title: Shared Model specification module
+            description: 'Implement src/lib/models/model-specs.ts exporting the type FieldSpec {name, type: ''integer''|''string''|''boolean''|''decimal''|''float''|''datetime'',
+              nullable, primaryKey, hasDefault, default?, size?, credential, purpose?, relation?: {target, type}}, the type
+              ModelSpec {key, name, purpose, route, title, resource, fields: FieldSpec[]}, the constant MODEL_SPECS: Record<string,
+              ModelSpec> with the 13 Models in model.yaml order (fields in model.yaml order, exact types, nullability, defaults,
+              sizes, credential flags, relationships as relation), route and title from frontend.yaml presentation.routes (/user,
+              Users …), and resource from the Backend resource names (trading-platforms …); plus MODEL_KEYS, getSpec(key) throwing
+              for an unknown key, and modelForRoute(slug) mapping a route segment (without the leading slash) to its Model key
+              or undefined.'
+            reason: 'Frontend Principle 5: Presentation and Interaction Logic use the shared Models'' logical meaning without
+              redefining it; one static, verifiable specification module lets a generic table and form serve every Model.'
+            target: frontend
+            area: shared models — src/lib/models/model-specs.ts
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - TypeScript 5.9.3
+              - Node.js 24.20.0 LTS
+              instructions: Transcribe from .interface/config/model.yaml exactly; the verify executes the module with Node and
+                compares it against model.yaml, frontend.yaml, and database.yaml. Use only erasable TypeScript syntax and no
+                imports. Name and purpose come from definition.yaml (name) and model.yaml (purpose).
+              inputs:
+              - .interface/config/model.yaml — content.models
+              - .interface/config/frontend.yaml — layers.presentation.routes (path, title)
+              - .interface/config/database.yaml — data_logic.storage_schema.tables (table names → resource names, matching the
+                Backend README)
+              - .interface/config/definition.yaml — content.models (names)
+              expected_output: src/lib/models/model-specs.ts.
+            depends_on:
+            - P3-G1-T2
+            constraints:
+            - Lib modules under src/lib use only erasable TypeScript syntax (no enum, namespace, or parameter properties) and
+              relative imports with explicit .ts extensions, so Node 24 can execute them directly for verification.
+            - Nothing about a Model is invented, renamed, or omitted; credential flags come only from model.yaml credential
+              markers.
+            acceptance: Executed by Node, MODEL_SPECS matches model.yaml for every Model (order, fields, types, nullability,
+              defaults, sizes, credential flags, relationships), routes and titles match frontend.yaml, resources match the
+              Backend, and modelForRoute resolves every route segment.
+            verify: |-
+              node --input-type=module -e 'const m = await import('"'"'./src/lib/models/model-specs.ts'"'"');
+              if (m.getSpec('"'"'currency'"'"').key !== '"'"'currency'"'"') throw new Error('"'"'getSpec'"'"');
+              if (m.modelForRoute('"'"'trading-platform'"'"') !== '"'"'trading_platform'"'"' || m.modelForRoute('"'"'nope'"'"') !== undefined) throw new Error('"'"'modelForRoute'"'"');
+              let threw = false; try { m.getSpec('"'"'nope'"'"'); } catch { threw = true; } if (!threw) throw new Error('"'"'getSpec must throw'"'"');
+              console.log(JSON.stringify(m.MODEL_SPECS));' > .specs.json && uv run --with pyyaml python - <<'PY'
+              import json, yaml
+              specs = json.load(open('.specs.json'))
+              models = yaml.safe_load(open('../.interface/config/model.yaml'))['content']['models']
+              defs = yaml.safe_load(open('../.interface/config/definition.yaml'))['content']['models']
+              routes = yaml.safe_load(open('../.interface/config/frontend.yaml'))['content']['layers']['presentation']['routes']
+              tables = yaml.safe_load(open('../.interface/config/database.yaml'))['content']['layers']['data_logic']['storage_schema']['tables']
+              table_of = {t['source_model']: n for n, t in tables.items()}
+              assert list(specs) == list(models), list(specs)
+              for key, m in models.items():
+                  s = specs[key]
+                  assert s['key'] == key and s['purpose'] == m['purpose'] and s['name'] == defs[key]['name'], key
+                  assert [f['name'] for f in s['fields']] == list(m['fields']), key
+                  for f in s['fields']:
+                      d = m['fields'][f['name']]
+                      assert f['type'] == d['type'] and f['nullable'] == d['nullable'], (key, f['name'])
+                      assert f['primaryKey'] == bool(d.get('primary_key', False)) and f['credential'] == bool(d.get('credential', False)), (key, f['name'])
+                      assert f['hasDefault'] == ('default' in d) and (not f['hasDefault'] or f['default'] == d['default']), (key, f['name'])
+                      assert f.get('size') == d.get('size'), (key, f['name'])
+                      rel = next((r for r in (m.get('relationships') or {}).values() if r['field'] == f['name']), None)
+                      assert (f.get('relation') or None) == ({'target': rel['target'], 'type': rel['type']} if rel else None), (key, f['name'])
+                  assert s['route'] == routes[key]['path'] and s['title'] == routes[key]['title'], key
+                  assert s['resource'] == table_of[key].replace('_', '-'), key
+              print('ok')
+              PY
+              rm -f .specs.json
+            touches:
+            - src/lib/models/model-specs.ts
+            status: todo
+          - id: P3-G2-T2
+            title: API transport types generated from the Backend OpenAPI description
+            description: 'Add the npm script "generate:api": "openapi-typescript ${NEXT_PUBLIC_API_BASE_URL:-http://127.0.0.1:8000}/openapi.json
+              -o src/lib/api/schema.d.ts" (use a small node wrapper script scripts/generate-api.mjs if shell expansion is not
+              portable), run it once against the running Backend, and commit the generated src/lib/api/schema.d.ts so builds
+              work without a live server. The generated file must contain the paths of all 13 resources and the schemas <Model>Create,
+              <Model>Update, and <Model>Read.'
+            reason: frontend.yaml resolves generated_types true with the Backend's OpenAPI description as the contract source;
+              the types keep API Access honest about the Backend's shapes without copying Model definitions by hand.
+            target: frontend
+            area: api_access — src/lib/api/schema.d.ts and the generate:api script
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - openapi-typescript 7.13.0
+              - Node.js 24.20.0 LTS
+              - npm 12.0.2
+              - OpenAPI
+              instructions: Prefer a node script (scripts/generate-api.mjs) that reads NEXT_PUBLIC_API_BASE_URL with the default
+                and spawns openapi-typescript, so the command behaves the same on every shell. Regenerate whenever the Backend
+                API changes.
+              inputs:
+              - .interface/config/frontend.yaml — layers.api_access (contract_source, generated_types, client)
+              - .interface/config/backend.yaml — layers.api.api_documentation (OpenAPI at /openapi.json)
+              - backend/README.md — resource paths and operations (P2 output)
+              expected_output: package.json script generate:api, scripts/generate-api.mjs, and the committed src/lib/api/schema.d.ts.
+            depends_on:
+            - P3-G1-T3
+            constraints:
+            - The generated file is never edited by hand; it is regenerated from the running Backend.
+            acceptance: With the Backend running on a dedicated verification port, `npm run generate:api` regenerates schema.d.ts
+              containing the 13 resource paths and the UserRead, UserCreate, and PositionRead schemas, UserRead declares no
+              password or api_key property, and the project still type-checks.
+            verify: |-
+              ( set -e
+                trap 'if [ -f .backend.pid ]; then kill $(cat .backend.pid) 2>/dev/null || true; rm -f .backend.pid; fi; rm -f .verify.db' EXIT
+                rm -f .verify.db .backend.pid
+                export DATABASE_URL="sqlite:///$PWD/.verify.db"
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run --with cryptography python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                ( cd ../database && uv run alembic upgrade head >/dev/null 2>&1 )
+                ( cd ../backend && BACKEND_PORT=8765 uv run python -m trading_backend >/dev/null 2>&1 & echo $! > ../frontend/.backend.pid )
+                for i in $(seq 1 30); do curl -sf http://127.0.0.1:8765/openapi.json >/dev/null 2>&1 && break; sleep 1; done
+                export NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8765
+                npm run --silent generate:api
+                node -e "const s = require('fs').readFileSync('src/lib/api/schema.d.ts', 'utf8'); for (const r of [\"users\", \"currencies\", \"trading-platforms\", \"brokers\", \"accounts\", \"assets\", \"trailing-groups\", \"trailing-rules\", \"partial-groups\", \"partial-rules\", \"action-groups\", \"actions\", \"positions\"]) { if (!s.includes('\"/api/' + r + '\"')) throw new Error('missing path ' + r); } for (const n of ['UserRead', 'UserCreate', 'UserUpdate', 'PositionRead', 'CurrencyCreate']) { if (!s.includes(n + ':')) throw new Error('missing schema ' + n); } const read = s.slice(s.indexOf('UserRead:'), s.indexOf('UserRead:') + 600); if (/password|api_key/.test(read)) throw new Error('UserRead exposes credentials'); console.log('schema ok');"
+                npx tsc --noEmit && echo ok
+              )
+            touches:
+            - package.json
+            - scripts/generate-api.mjs
+            - src/lib/api/schema.d.ts
+            status: todo
+          - id: P3-G2-T3
+            title: API client and Model operations
+            description: 'Implement src/lib/api/client.ts — apiBaseUrl() returning process.env.NEXT_PUBLIC_API_BASE_URL or http://127.0.0.1:8000
+              with a trailing slash removed; class ApiError extends Error with status: number and detail: unknown; request<T>(method,
+              path, body?) using fetch with JSON headers, returning undefined for 204, parsed JSON otherwise, and throwing ApiError
+              with the Backend''s detail for non-2xx responses (network failures become ApiError with status 0) — and src/lib/api/models.ts
+              — type Schemas = components[''schemas''] from ./schema.d.ts; type RecordData = Record<string, unknown>; listRecords(model,
+              {limit?, offset?, orderBy?}) -> Promise<RecordData[]>, getRecord(model, id), createRecord(model, data), updateRecord(model,
+              id, data), deleteRecord(model, id), each resolving the path /api/<resource> from MODEL_SPECS and never touching
+              credential values beyond forwarding them in a body.'
+            reason: 'Frontend Principle 4: API Access is the only door to application data — it owns the client boundary, transport,
+              and the translation between API representations and the data Interaction Logic uses.'
+            target: frontend
+            area: api_access — src/lib/api/client.ts and models.ts
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - TypeScript 5.9.3
+              - Fetch API (runtime-provided)
+              - Node.js 24.20.0 LTS
+              instructions: Use the runtime Fetch API only (no HTTP library). Build query strings with URLSearchParams (limit,
+                offset, order_by joined by commas). Keep both modules free of React and Next imports so Node can execute them
+                directly.
+              inputs:
+              - .interface/config/frontend.yaml — layers.api_access (uses, client, model_operations, rule)
+              - backend/README.md — operations, status codes, error shape {detail}
+              - src/lib/models/model-specs.ts (P3-G2-T1) and src/lib/api/schema.d.ts (P3-G2-T2)
+              expected_output: src/lib/api/client.ts and src/lib/api/models.ts.
+            depends_on:
+            - P3-G2-T1
+            - P3-G2-T2
+            constraints:
+            - Dependency direction is Presentation → Interaction Logic → API Access → Backend API; Presentation never performs
+              API communication, and nothing in Frontend connects to Database or imports Backend code (Frontend Principles 1
+              and 4).
+            - 'Credential fields (user.password, user.api_key, account.password) are write-only input: never displayed, never
+              read back, and omitted from an update when left blank (frontend.yaml api_access.rule).'
+            - Lib modules under src/lib use only erasable TypeScript syntax (no enum, namespace, or parameter properties) and
+              relative imports with explicit .ts extensions, so Node 24 can execute them directly for verification.
+            acceptance: 'Against the Backend on the verification port with a fresh Database: listRecords(''currency'') returns
+              8 records; createRecord/getRecord/updateRecord/deleteRecord round-trip an asset; a missing id rejects with ApiError
+              status 404; a duplicate code rejects with 409; a created user carries no password; the default base URL is http://127.0.0.1:8000
+              when the variable is unset.'
+            verify: |-
+              ( set -e
+                trap 'if [ -f .backend.pid ]; then kill $(cat .backend.pid) 2>/dev/null || true; rm -f .backend.pid; fi; rm -f .verify.db' EXIT
+                rm -f .verify.db .backend.pid
+                export DATABASE_URL="sqlite:///$PWD/.verify.db"
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run --with cryptography python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                ( cd ../database && uv run alembic upgrade head >/dev/null 2>&1 )
+                ( cd ../backend && BACKEND_PORT=8765 uv run python -m trading_backend >/dev/null 2>&1 & echo $! > ../frontend/.backend.pid )
+                for i in $(seq 1 30); do curl -sf http://127.0.0.1:8765/openapi.json >/dev/null 2>&1 && break; sleep 1; done
+                export NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8765
+                node --input-type=module -e 'const { apiBaseUrl, ApiError } = await import('"'"'./src/lib/api/client.ts'"'"');
+              const api = await import('"'"'./src/lib/api/models.ts'"'"');
+              if (apiBaseUrl() !== process.env.NEXT_PUBLIC_API_BASE_URL) throw new Error('"'"'base url '"'"' + apiBaseUrl());
+              const currencies = await api.listRecords('"'"'currency'"'"');
+              if (currencies.length !== 8) throw new Error('"'"'currencies '"'"' + currencies.length);
+              const ordered = await api.listRecords('"'"'currency'"'"', { orderBy: ['"'"'-id'"'"'], limit: 2 });
+              if (ordered[0].id !== 8) throw new Error('"'"'ordering'"'"');
+              const a = await api.createRecord('"'"'asset'"'"', { name: '"'"'GBPUSD'"'"', symbol: '"'"'GBP/USD'"'"', category: '"'"'Currency'"'"', point_size: 0.0001, digits: 5 });
+              if (!(await api.getRecord('"'"'asset'"'"', a.id)) || (await api.updateRecord('"'"'asset'"'"', a.id, { digits: 4 })).digits !== 4) throw new Error('"'"'round trip'"'"');
+              await api.deleteRecord('"'"'asset'"'"', a.id);
+              try { await api.getRecord('"'"'asset'"'"', a.id); throw new Error('"'"'404 expected'"'"'); } catch (e) { if (!(e instanceof ApiError) || e.status !== 404) throw e; }
+              try { await api.createRecord('"'"'currency'"'"', { name: '"'"'Dup'"'"', code: '"'"'USD'"'"' }); throw new Error('"'"'409 expected'"'"'); } catch (e) { if (!(e instanceof ApiError) || e.status !== 409) throw e; }
+              const u = await api.createRecord('"'"'user'"'"', { name: '"'"'Second'"'"', username: '"'"'second'"'"', password: '"'"'PW-SECRET'"'"', api_key: '"'"'KEY-SECRET'"'"' });
+              if ('"'"'password'"'"' in u || '"'"'api_key'"'"' in u) throw new Error('"'"'credential returned'"'"');
+              delete process.env.NEXT_PUBLIC_API_BASE_URL;
+              if (apiBaseUrl() !== '"'"'http://127.0.0.1:8000'"'"') throw new Error('"'"'default base url '"'"' + apiBaseUrl());
+              console.log('"'"'ok'"'"');'
+              )
+            touches:
+            - src/lib/api/client.ts
+            - src/lib/api/models.ts
+            status: todo
+        P3-G3:
+          id: P3-G3
+          title: Presentation
+          description: The visual system and the reusable Components — shell, navigation, notification, form, table, toggle,
+            dialog — composed into the home page and one management page per Model.
+          target: frontend
+          area: presentation — src/app/ and src/components/
+          does: Users can navigate to every Model and see its records in a coherent, token-themed interface built from reusable
+            Components.
+          task_count: 5
+          tasks:
+          - id: P3-G3-T1
+            title: Theme tokens and root document
+            description: 'Rewrite src/app/globals.css as the token-based Default Theme: CSS custom properties on :root for colours
+              (background, surface, text, muted text, border, accent, accent text, danger, success), spacing scale, radius,
+              and font stacks; `color-scheme: light dark` with a `@media (prefers-color-scheme: dark)` block redefining only
+              the colour tokens; base element styles (body, headings, tables, inputs, buttons, dialog) consuming the tokens;
+              and utility classes for layout (.stack, .row, .surface, .visually-hidden). Update src/app/layout.tsx to render
+              <html lang="en" dir="auto">, import globals.css, and set metadata title "Trading Assistant".'
+            reason: 'Frontend Principle 7: appearance is governed by one coherent visual system resolved once; frontend.yaml
+              resolves the Default Theme with system colour mode, automatic direction, and token-based values.'
+            target: frontend
+            area: presentation — src/app/globals.css and src/app/layout.tsx
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - CSS custom properties (design tokens)
+              - Next.js 16.3.4 (App Router)
+              - React 19.2.8
+              instructions: No CSS framework or UI library. Keep every colour, spacing, and radius decision in tokens; Components
+                reference tokens only. The layout is a server component and, for now, renders children directly; a later Task
+                wraps them in the application shell.
+              inputs:
+              - .interface/config/frontend.yaml — layers.presentation.theme (Default, system, auto, token_based) and standards
+              - .interface/config/definition.yaml — project.name
+              expected_output: src/app/globals.css with the token system and src/app/layout.tsx with the root document.
+            depends_on:
+            - P3-G1-T2
+            constraints:
+            - Colours, typography, spacing, direction, and display mode are resolved once as tokens and never hard-coded in
+              Components.
+            acceptance: globals.css declares the colour-scheme and a dark-mode token override, layout.tsx sets dir="auto" and
+              the title, and the project type-checks.
+            verify: 'grep -q ''color-scheme: light dark'' src/app/globals.css && grep -q ''prefers-color-scheme: dark'' src/app/globals.css
+              && grep -Eq -- ''--color-(bg|background)'' src/app/globals.css && grep -q ''dir="auto"'' src/app/layout.tsx &&
+              grep -q ''Trading Assistant'' src/app/layout.tsx && npx tsc --noEmit && echo ok'
+            touches:
+            - src/app/globals.css
+            - src/app/layout.tsx
+            status: todo
+          - id: P3-G3-T2
+            title: Application shell, navigation, and notification Components
+            description: 'Implement src/components/navigation.tsx (links to the home route and to every Model''s route with
+              its title, from MODEL_SPECS, marking the current route with aria-current), src/components/notification.tsx (renders
+              the current notification from useNotification as a dismissible role="status" or role="alert" element), and src/components/app-shell.tsx
+              (the persistent frame: header with the application name, the Navigation region, the Notification, and the content
+              area); update src/app/layout.tsx to wrap children in <NotificationProvider><AppShell>…</AppShell></NotificationProvider>.'
+            reason: frontend.yaml resolves app_shell, navigation, and notification as reusable Components every page renders
+              inside; the shell is the one place the frame and feedback are composed.
+            target: frontend
+            area: presentation — src/components/app-shell.tsx, navigation.tsx, notification.tsx
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - React 19.2.8
+              - Next.js 16.3.4 (App Router)
+              - TypeScript 5.9.3
+              instructions: Function components, PascalCase names, kebab-case files. Navigation and Notification are client
+                components (they use usePathname and context); AppShell may be a server component that composes them. Use next/link
+                for navigation.
+              inputs:
+              - .interface/config/frontend.yaml — layers.presentation.components.app_shell/navigation/notification and routes
+              - src/lib/models/model-specs.ts (P3-G2-T1)
+              - src/hooks/use-notification.tsx (P3-G4-T1)
+              expected_output: src/components/app-shell.tsx, src/components/navigation.tsx, src/components/notification.tsx,
+                and the updated src/app/layout.tsx.
+            depends_on:
+            - P3-G3-T1
+            - P3-G2-T1
+            - P3-G4-T1
+            constraints:
+            - Dependency direction is Presentation → Interaction Logic → API Access → Backend API; Presentation never performs
+              API communication, and nothing in Frontend connects to Database or imports Backend code (Frontend Principles 1
+              and 4).
+            acceptance: The three Components exist as function components, layout.tsx composes NotificationProvider and AppShell,
+              navigation.tsx builds its links from MODEL_SPECS, and the project type-checks.
+            verify: test -f src/components/app-shell.tsx && test -f src/components/navigation.tsx && test -f src/components/notification.tsx
+              && grep -q 'MODEL_SPECS' src/components/navigation.tsx && grep -q 'aria-current' src/components/navigation.tsx
+              && grep -q 'AppShell' src/app/layout.tsx && grep -q 'NotificationProvider' src/app/layout.tsx && npx tsc --noEmit
+              && echo ok
+            touches:
+            - src/components/app-shell.tsx
+            - src/components/navigation.tsx
+            - src/components/notification.tsx
+            - src/app/layout.tsx
+            status: todo
+          - id: P3-G3-T3
+            title: FormField and RecordForm Components
+            description: 'Implement src/components/form-field.tsx rendering one FieldSpec as a labelled input: string → text
+              input (maxLength from size), integer → number input step 1, decimal and float → number input step any, boolean
+              → checkbox, datetime → datetime-local input, credential → password input with autoComplete="new-password" and
+              the hint that a blank value leaves the stored credential unchanged when editing, relation → select whose options
+              come from the related records passed in (label = the record''s name or code, value = id); required marking for
+              non-nullable fields without a default; and src/components/record-form.tsx composing one FormField per writable
+              field of a ModelSpec (never the primary key), with props {spec, initial?, related, onSubmit, onCancel, busy},
+              interaction-level validation (required fields present, numbers finite), conversion of input strings to the field''s
+              logical type, omission of blank credential fields when editing, and Create/Save and Cancel buttons.'
+            reason: frontend.yaml resolves record_form and form_field as the reusable way users enter and edit any Model; Frontend
+              Principle 3 keeps interaction-level validation here while authoritative rules stay in Backend.
+            target: frontend
+            area: presentation — src/components/form-field.tsx and record-form.tsx
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - React 19.2.8
+              - TypeScript 5.9.3
+              instructions: Client components with local form state (useState). Do not call API Access from these Components;
+                they only emit values via onSubmit. Display validation problems inline next to the field. Use token-based classes
+                from globals.css.
+              inputs:
+              - .interface/config/frontend.yaml — layers.presentation.components.record_form and form_field, layers.interaction_logic.responsibility
+              - src/lib/models/model-specs.ts (P3-G2-T1)
+              expected_output: src/components/form-field.tsx and src/components/record-form.tsx.
+            depends_on:
+            - P3-G2-T1
+            - P3-G3-T1
+            constraints:
+            - Dependency direction is Presentation → Interaction Logic → API Access → Backend API; Presentation never performs
+              API communication, and nothing in Frontend connects to Database or imports Backend code (Frontend Principles 1
+              and 4).
+            - 'Credential fields (user.password, user.api_key, account.password) are write-only input: never displayed, never
+              read back, and omitted from an update when left blank (frontend.yaml api_access.rule).'
+            acceptance: Both Components exist, RecordForm renders FormField per writable field, credential fields render as
+              password inputs, relation fields render selects, and the project type-checks.
+            verify: test -f src/components/form-field.tsx && test -f src/components/record-form.tsx && grep -q 'FormField' src/components/record-form.tsx
+              && grep -q 'type="password"' src/components/form-field.tsx && grep -q '<select' src/components/form-field.tsx
+              && grep -q 'datetime-local' src/components/form-field.tsx && grep -q 'primaryKey' src/components/record-form.tsx
+              && npx tsc --noEmit && echo ok
+            touches:
+            - src/components/form-field.tsx
+            - src/components/record-form.tsx
+            status: todo
+          - id: P3-G3-T4
+            title: DataTable, StatusToggle, and ConfirmDialog Components
+            description: Implement src/components/status-toggle.tsx (an accessible switch — a checkbox styled as a toggle —
+              showing a record's status and calling onToggle(record) when changed, disabled while busy), src/components/confirm-dialog.tsx
+              (a native <dialog> with title, message, Confirm and Cancel buttons, props {open, title, message, onConfirm, onCancel}),
+              and src/components/data-table.tsx rendering the records of one ModelSpec with one column per non-credential field
+              (booleans as Yes/No, the status column as StatusToggle when the Model has a status field, relation fields showing
+              the related record's label when provided), an actions column with Edit and Delete buttons, an empty state message,
+              and a loading state.
+            reason: frontend.yaml resolves data_table, status_toggle, and confirm_dialog as the reusable Components through
+              which users see, enable or disable, and delete any Model's records.
+            target: frontend
+            area: presentation — src/components/data-table.tsx, status-toggle.tsx, confirm-dialog.tsx
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - React 19.2.8
+              - TypeScript 5.9.3
+              instructions: 'Client components. DataTable props: {spec, records, related, busy, onEdit, onDelete, onToggleStatus}.
+                Never render a credential column even if a record unexpectedly contains one. Use semantic table markup with
+                scope="col" headers.'
+              inputs:
+              - .interface/config/frontend.yaml — layers.presentation.components.data_table, status_toggle, confirm_dialog
+              - src/lib/models/model-specs.ts (P3-G2-T1)
+              expected_output: src/components/data-table.tsx, src/components/status-toggle.tsx, and src/components/confirm-dialog.tsx.
+            depends_on:
+            - P3-G2-T1
+            - P3-G3-T1
+            constraints:
+            - Dependency direction is Presentation → Interaction Logic → API Access → Backend API; Presentation never performs
+              API communication, and nothing in Frontend connects to Database or imports Backend code (Frontend Principles 1
+              and 4).
+            - 'Credential fields (user.password, user.api_key, account.password) are write-only input: never displayed, never
+              read back, and omitted from an update when left blank (frontend.yaml api_access.rule).'
+            acceptance: The three Components exist, DataTable composes StatusToggle and filters credential fields, ConfirmDialog
+              uses a native dialog element, and the project type-checks.
+            verify: test -f src/components/data-table.tsx && test -f src/components/status-toggle.tsx && test -f src/components/confirm-dialog.tsx
+              && grep -q 'StatusToggle' src/components/data-table.tsx && grep -q 'credential' src/components/data-table.tsx
+              && grep -q '<dialog' src/components/confirm-dialog.tsx && grep -q 'role="switch"' src/components/status-toggle.tsx
+              && npx tsc --noEmit && echo ok
+            touches:
+            - src/components/data-table.tsx
+            - src/components/status-toggle.tsx
+            - src/components/confirm-dialog.tsx
+            status: todo
+          - id: P3-G3-T5
+            title: Home page and the Model management pages
+            description: 'Implement src/app/page.tsx (the home page: the application name, a short line inviting the user to
+              manage the defined data, and a list of links to every Model''s management page from MODEL_SPECS) and the management
+              pages as one dynamic route src/app/[model]/page.tsx that resolves the segment with modelForRoute, calls notFound()
+              for an unknown segment, exports generateStaticParams returning the 13 route segments and dynamicParams = false,
+              and renders src/components/management-page.tsx — a client component that uses useModelRecords(spec) and composes
+              DataTable, RecordForm (shown for create or edit), ConfirmDialog (before delete), StatusToggle (via DataTable),
+              and the notification outcome, under a heading with the Model''s title and purpose.'
+            reason: frontend.yaml resolves one management page per Model reached from the home page; the dynamic route realizes
+              the 13 resolved routes with one page file while keeping every route path exactly as resolved.
+            target: frontend
+            area: presentation — src/app/page.tsx, src/app/[model]/page.tsx, src/components/management-page.tsx
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - Next.js 16.3.4 (App Router)
+              - React 19.2.8
+              - TypeScript 5.9.3
+              instructions: The dynamic segment is named [model] and its value is the route segment (for example trading-platform),
+                mapped to the Model key through modelForRoute. The page component is a server component that only resolves the
+                spec and renders the client ManagementPage; all data loading happens client-side in the hook so builds need
+                no running Backend.
+              inputs:
+              - '.interface/config/frontend.yaml — layers.presentation.routes and pages (home, <model>_management: components,
+                behaviours, models)'
+              - .interface/config/definition.yaml — content.behaviours
+              - src/hooks/use-model-records.ts (P3-G4-T2), the Components of P3-G3-T2..T4, src/lib/models/model-specs.ts
+              expected_output: src/app/page.tsx, src/app/[model]/page.tsx, and src/components/management-page.tsx.
+            depends_on:
+            - P3-G3-T2
+            - P3-G3-T3
+            - P3-G3-T4
+            - P3-G4-T2
+            constraints:
+            - Dependency direction is Presentation → Interaction Logic → API Access → Backend API; Presentation never performs
+              API communication, and nothing in Frontend connects to Database or imports Backend code (Frontend Principles 1
+              and 4).
+            - 'Credential fields (user.password, user.api_key, account.password) are write-only input: never displayed, never
+              read back, and omitted from an update when left blank (frontend.yaml api_access.rule).'
+            - The route paths are exactly those resolved in frontend.yaml; no route is added or renamed.
+            acceptance: '`npm run build` succeeds and prerenders the home page and the 13 management routes; the home HTML links
+              to every route; the built app returns 404 for an unknown segment.'
+            verify: npm run build > .build.log 2>&1 && grep -q 'href="/user"' .next/server/app/index.html && grep -q 'href="/currency"'
+              .next/server/app/index.html && grep -q 'href="/trading-platform"' .next/server/app/index.html && grep -q 'href="/position"'
+              .next/server/app/index.html && test -f .next/server/app/trading-platform.html && test -f .next/server/app/position.html
+              && rm -f .build.log && echo ok
+            touches:
+            - src/app/page.tsx
+            - src/app/[model]/page.tsx
+            - src/components/management-page.tsx
+            status: todo
+        P3-G4:
+          id: P3-G4
+          title: Interaction Logic
+          description: 'User-interface state and flow: notifications of operation outcomes and the per-Model records hook that
+            lists, creates, updates, deletes, and toggles records through API Access.'
+          target: frontend
+          area: interaction_logic — src/hooks/
+          does: 'The project Behaviour (enable_users_to_enter_and_manage_all_defined_project_data) is realized as one flow every
+            management page runs: list, create or edit, confirm before delete, toggle status, and show the outcome.'
+          task_count: 2
+          tasks:
+          - id: P3-G4-T1
+            title: Notification state
+            description: 'Implement src/hooks/use-notification.tsx: a React context with NotificationProvider and useNotification()
+              returning {current: {kind: ''success'' | ''error'', message} | null, notify(kind, message), dismiss()}; a success
+              notification clears itself after a few seconds, an error stays until dismissed; useNotification throws a clear
+              error when used outside the provider.'
+            reason: frontend.yaml's interaction flow shows the outcome of every operation; Interaction Logic owns that user-interface
+              state (Frontend Principle 3).
+            target: frontend
+            area: interaction_logic — src/hooks/use-notification.tsx
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - React 19.2.8
+              - TypeScript 5.9.3
+              instructions: Client module ('use client'). Framework-native state only (useState, useContext, useEffect); no
+                external state library.
+              inputs:
+              - .interface/config/frontend.yaml — layers.interaction_logic (responsibility, state_management framework-native)
+                and components.notification
+              expected_output: src/hooks/use-notification.tsx exporting NotificationProvider and useNotification.
+            depends_on:
+            - P3-G1-T2
+            constraints:
+            - No external state-management library (frontend.yaml state_management).
+            acceptance: The module exports NotificationProvider and useNotification, marks itself a client module, and the project
+              type-checks.
+            verify: grep -q "'use client'" src/hooks/use-notification.tsx && grep -q 'export function NotificationProvider'
+              src/hooks/use-notification.tsx && grep -q 'export function useNotification' src/hooks/use-notification.tsx &&
+              npx tsc --noEmit && echo ok
+            touches:
+            - src/hooks/use-notification.tsx
+            status: todo
+          - id: P3-G4-T2
+            title: The Model records hook
+            description: 'Implement src/hooks/use-model-records.ts: useModelRecords(spec) returning {records, related, loading,
+              busy, error, reload, create(values), update(id, values), remove(id), toggleStatus(record)}; on mount and after
+              every mutation it loads the Model''s records via listRecords (ordered by id) and, for every relation field, the
+              related Model''s records into related[target]; create/update/remove call the API Access functions, notify success
+              or the ApiError detail through useNotification, and never send a blank credential value in an update; toggleStatus
+              sends updateRecord(id, {status: !record.status}).'
+            reason: 'Frontend Principle 3: Interaction Logic manages loading, selection, and coordination between Components,
+              and requests authoritative outcomes from the Backend rather than deciding them itself.'
+            target: frontend
+            area: interaction_logic — src/hooks/use-model-records.ts
+            execution_context:
+              kind: code
+              language: TypeScript
+              technologies:
+              - React 19.2.8
+              - TypeScript 5.9.3
+              instructions: Client module. Use useState, useEffect, useCallback; guard against state updates after unmount.
+                Map ApiError.detail to a readable message (a string as is; a validation list joined by field location). This
+                hook is the only place Presentation reaches API Access.
+              inputs:
+              - .interface/config/frontend.yaml — layers.interaction_logic.behaviours (the flow) and layers.api_access.model_operations
+              - src/lib/api/models.ts (P3-G2-T3), src/hooks/use-notification.tsx (P3-G4-T1), src/lib/models/model-specs.ts
+              expected_output: src/hooks/use-model-records.ts exporting useModelRecords.
+            depends_on:
+            - P3-G2-T3
+            - P3-G4-T1
+            constraints:
+            - Dependency direction is Presentation → Interaction Logic → API Access → Backend API; Presentation never performs
+              API communication, and nothing in Frontend connects to Database or imports Backend code (Frontend Principles 1
+              and 4).
+            - 'Credential fields (user.password, user.api_key, account.password) are write-only input: never displayed, never
+              read back, and omitted from an update when left blank (frontend.yaml api_access.rule).'
+            acceptance: The hook module exists as a client module that imports only API Access, the notification hook, and the
+              Model specification, exposes useModelRecords, and the project type-checks.
+            verify: grep -q "'use client'" src/hooks/use-model-records.ts && grep -q 'export function useModelRecords' src/hooks/use-model-records.ts
+              && grep -q 'lib/api/models' src/hooks/use-model-records.ts && ! grep -q 'fetch(' src/hooks/use-model-records.ts
+              && grep -q 'credential' src/hooks/use-model-records.ts && npx tsc --noEmit && echo ok
+            touches:
+            - src/hooks/use-model-records.ts
+            status: todo
+        P3-G5:
+          id: P3-G5
+          title: Frontend delivery
+          description: 'Documentation and the observable outcome: the production build served against the Backend with every
+            resolved route reachable.'
+          target: frontend
+          area: delivery — README.md and the running Frontend
+          does: The Frontend builds, serves the home page and all 13 management routes on the resolved local address, and is
+            documented for its operator.
+          task_count: 2
+          tasks:
+          - id: P3-G5-T1
+            title: Frontend README
+            description: Write frontend/README.md describing the Frontend's role and its three layers with their directories
+              (src/components, src/hooks, src/lib/api and src/lib/models); the toolchain (Node.js 24 LTS, npm 12.0.2); installation
+              (`npm install`); the runtime variable NEXT_PUBLIC_API_BASE_URL with its default; the commands `npm run dev`, `npm
+              run build`, `npm run start`, and `npm run generate:api` (with the Backend running); the routes (home and the 13
+              management routes with their titles); and the rule that credential fields are write-only.
+            reason: The README is the operator's entry point; development.yaml relies on the documented startup commands.
+            target: frontend
+            area: delivery — README.md
+            execution_context:
+              kind: documentation
+              language: null
+              technologies:
+              - Markdown
+              instructions: Documentation only. Keep the route table in model.yaml order.
+              inputs:
+              - .interface/config/frontend.yaml — tech.run, layers.presentation.routes, boundaries, out_of_scope
+              - .interface/config/development.yaml — platform.composition.startup (Frontend step) and configuration.variables
+              expected_output: frontend/README.md.
+            depends_on:
+            - P3-G3-T5
+            constraints: []
+            acceptance: README.md names the four commands, the variable, and every route.
+            verify: grep -q 'npm run dev' README.md && grep -q 'npm run build' README.md && grep -q 'npm run start' README.md
+              && grep -q 'npm run generate:api' README.md && grep -q 'NEXT_PUBLIC_API_BASE_URL' README.md && grep -q '/user'
+              README.md && grep -q '/currency' README.md && grep -q '/trading-platform' README.md && grep -q '/broker' README.md
+              && grep -q '/account' README.md && grep -q '/asset' README.md && grep -q '/trailing-group' README.md && grep -q
+              '/trailing-rule' README.md && grep -q '/partial-group' README.md && grep -q '/partial-rule' README.md && grep
+              -q '/action-group' README.md && grep -q '/action' README.md && grep -q '/position' README.md && echo ok
+            touches:
+            - README.md
+            status: todo
+          - id: P3-G5-T2
+            title: Build and serve the Frontend against the Backend
+            description: Produce the production build with `npm run build`, start the Backend on the verification port with
+              a fresh Database and the built Frontend with `npm run start -- --port 3000`, confirm over HTTP that the home page
+              links to every Model route, that a management route renders its title, and that an unknown route returns 404,
+              then stop both servers.
+            reason: The phase outcome is a Frontend that builds and serves every resolved route against the Backend API, which
+              is the readiness signal development.yaml defines for the Frontend startup step.
+            target: frontend
+            area: delivery — the running Frontend on 127.0.0.1:3000
+            execution_context:
+              kind: command execution
+              language: null
+              technologies:
+              - npm 12.0.2
+              - Next.js 16.3.4 (App Router)
+              - HTTP
+              instructions: The build inlines NEXT_PUBLIC_API_BASE_URL; build with it unset so the default Backend address is
+                used. Run the servers in the background, poll with curl, and terminate them in a trap. If port 3000 is busy,
+                use another port consistently and record it.
+              inputs:
+              - .interface/config/development.yaml — platform.composition.startup and networking (Frontend at 127.0.0.1:3000)
+              - The complete Frontend implementation (P3-G3-T5, P3-G5-T1)
+              expected_output: A verified build and server start; no committed artifacts beyond the repository (the .next/ build
+                output is ignored).
+            depends_on:
+            - P3-G5-T1
+            - P3-G2-T2
+            constraints:
+            - Frontend reaches data only through the Backend API; the verification Backend uses a throw-away Database.
+            acceptance: The build succeeds, the served home page contains links to all 13 routes, /currency responds 200 with
+              the title Currencies, /nope responds 404, and both servers stop.
+            verify: |-
+              ( set -e
+                trap 'if [ -f .backend.pid ]; then kill $(cat .backend.pid) 2>/dev/null || true; rm -f .backend.pid; fi; rm -f .verify.db' EXIT
+                rm -f .verify.db .backend.pid
+                export DATABASE_URL="sqlite:///$PWD/.verify.db"
+                export CREDENTIAL_ENCRYPTION_KEY=$(uv run --with cryptography python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
+                ( cd ../database && uv run alembic upgrade head >/dev/null 2>&1 )
+                ( cd ../backend && BACKEND_PORT=8765 uv run python -m trading_backend >/dev/null 2>&1 & echo $! > ../frontend/.backend.pid )
+                for i in $(seq 1 30); do curl -sf http://127.0.0.1:8765/openapi.json >/dev/null 2>&1 && break; sleep 1; done
+                export NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8765
+                unset NEXT_PUBLIC_API_BASE_URL
+                npm run build > .build.log 2>&1 || { tail -40 .build.log; exit 1; }
+                rm -f .build.log
+                ( npm run start -- --port 3000 >/dev/null 2>&1 & echo $! > .frontend.pid )
+                trap 'if [ -f .frontend.pid ]; then kill $(cat .frontend.pid) 2>/dev/null || true; rm -f .frontend.pid; fi; if [ -f .backend.pid ]; then kill $(cat .backend.pid) 2>/dev/null || true; rm -f .backend.pid; fi; rm -f .verify.db' EXIT
+                for i in $(seq 1 60); do curl -sf http://127.0.0.1:3000/ >/dev/null 2>&1 && break; sleep 1; done
+                HOME_HTML=$(curl -sf http://127.0.0.1:3000/)
+                for r in /user /currency /trading-platform /broker /account /asset /trailing-group /trailing-rule /partial-group /partial-rule /action-group /action /position; do echo "$HOME_HTML" | grep -q "href=\"$r\"" || { echo "missing link $r"; exit 1; }; done
+                curl -sf http://127.0.0.1:3000/currency | grep -q 'Currencies'
+                test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000/nope)" = "404"
+                echo ok
+              )
+            touches:
+            - node_modules/ (installed)
+            - .next/ (build output, ignored)
+            status: todo

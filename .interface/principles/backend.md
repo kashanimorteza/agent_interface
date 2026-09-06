@@ -32,6 +32,10 @@ Logic communicates with persistence only through Data Access. It can therefore r
 
 Every shared Model receives its own logical unit inside Logic. That unit provides a consistent baseline for common Model operations such as create, get, list, update, and delete.
 
+Each Model's Logic unit must be defined in its own source file named after that Model, following the selected language's naming conventions and file extension. Defining several Model Logic units together in one source file does not satisfy this separation. A shared registry may import and connect the units without defining them itself.
+
+Common operations may be implemented in a shared base or helper and reused through inheritance or composition. Each Model retains its own file even when it currently uses only the common baseline, so its operations and Behaviour can later be extended independently without changing another Model's Logic.
+
 Model-specific Behaviour may extend this baseline. One Model may perform validation, calculations, coordination, or other actions that another Model does not. These additions remain inside that Model's Logic and never weaken the common interface expected across Models.
 
 An API request for a Model is handled by the corresponding Model Logic. That Logic may use Data Access and may perform other Behaviour required by the Model; API never substitutes direct persistence for Model Logic.
