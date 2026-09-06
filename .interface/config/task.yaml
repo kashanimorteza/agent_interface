@@ -77,7 +77,7 @@ content:
     phase_complete: A phase is complete when its Plan is non-empty, every Task not cancelled or superseded is done, and no Task remains todo, claimed, or blocked. Completion is derived, never stored.
 
   # <!-------------------------------------------- task_count -->
-  task_count: 0
+  task_count: 22
 
   # <!-------------------------------------------- plans -->
   plans:
@@ -87,8 +87,1584 @@ content:
       order: 1
       target: model
       does: Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
-      task_count: 0
-      groups: {}
+      task_count: 22
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Package scaffold
+          description: Establishes the toolchain and the my_model uv project inside model/ so every later Task has an isolated environment with the resolved Python, uv, and Pydantic versions. The Tasks are
+            related because nothing in the package can be written or verified before the project and its environment exist.
+          target: model
+          area: package root (model/) and the development toolchain
+          does: A uv-managed project at model/ named my-model, pinned to Python 3.14.7 with pydantic 2.13.5 locked, an importable empty my_model package under src/, and a verified toolchain.
+          tasks:
+          - id: P1-G1-T1
+            title: Install and verify the resolved toolchain (uv 0.12.10 and Python 3.14.7)
+            description: Make uv 0.12.10 and CPython 3.14.7 available on the development machine so the Model package can be created and verified with the exact resolved versions. Check the current uv version
+              first; if it is not 0.12.10, install 0.12.10 with the version-pinned standalone installer (curl -LsSf https://astral.sh/uv/0.12.10/install.sh | sh) or, when Homebrew provides exactly 0.12.10,
+              with brew upgrade uv, and make sure the installed binary is the one resolved on PATH (the standalone installer places it in ~/.local/bin, which must precede /usr/local/bin). Then run uv python
+              install 3.14.7 so uv manages that interpreter.
+            reason: model.yaml resolves the Model package to Python 3.14.7 managed by uv 0.12.10; every verify command in this Plan runs through uv with those versions, and the shared toolchain policy makes
+              installing required prerequisites part of Development.
+            target: model
+            area: development toolchain
+            execution_context:
+              kind: command execution
+              language: null
+              technologies:
+              - uv 0.12.10
+              - Python 3.14.7
+              instructions: |
+                1. Run `uv --version`. If it prints `uv 0.12.10`, skip to step 3.
+                2. Install uv 0.12.10: either `curl -LsSf https://astral.sh/uv/0.12.10/install.sh | sh` (installs to ~/.local/bin) or `brew upgrade uv` when Homebrew's formula is exactly 0.12.10. Open a new shell (or export PATH so ~/.local/bin precedes /usr/local/bin) and confirm `uv --version` prints `uv 0.12.10`. Preserve any other uv installation; do not remove Homebrew packages.
+                3. Run `uv python install 3.14.7` and confirm `uv python find 3.14.7` prints an interpreter path.
+                4. Record the installation method actually used in this Task's log.
+              inputs:
+              - .interface/config/model.yaml — implementation.tech (language and environment versions)
+              - The machine's current uv installation, if any (this machine had Homebrew uv 0.12.7 and a uv-managed CPython 3.14.7 when the Plan was written)
+              expected_output: A shell in which `uv --version` prints `uv 0.12.10` and `uv python find 3.14.7` resolves an interpreter.
+            depends_on: []
+            constraints:
+            - Do not uninstall or downgrade unrelated tools; other projects on the machine keep their installations.
+            - Use only the official uv installer or Homebrew; do not build uv from source.
+            acceptance: '`uv --version` reports exactly 0.12.10 and uv can find CPython 3.14.7.'
+            verify: uv --version | grep -qx 'uv 0.12.10' && uv python find 3.14.7
+            touches:
+            - ~/.local/bin/uv or /usr/local/bin/uv (toolchain, outside the package)
+            - uv-managed Python installations (outside the package)
+            status: todo
+          - id: P1-G1-T2
+            title: Create the my_model uv project with src layout and a locked pydantic dependency
+            description: 'Create the model/ directory as a uv project for the importable library my_model: a pyproject.toml declaring the distribution name my-model, version 0.1.0, requires-python >=3.14,<3.15,
+              the single dependency pydantic==2.13.5, and the uv_build build backend (requires uv_build>=0.12.10,<0.13.0, build-backend uv_build, which defaults to the src layout and derives the module name
+              my_model); a .python-version file pinning 3.14.7; a README.md stub holding only the title line `# my_model` and one sentence (the full README is written by P1-G4-T3); and src/my_model/__init__.py
+              containing only a module docstring for now. Run uv sync to create the .venv and uv.lock.'
+            reason: Every later Task adds modules to this package and verifies them through uv run inside this environment; the src layout and uv_build backend are the resolved package form recorded in development.yaml,
+              and the Database and Backend phases later install this project as an editable path dependency, which requires a working build backend.
+            target: model
+            area: package root (model/)
+            execution_context:
+              kind: configuration
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                1. Create model/pyproject.toml with:
+                   [project] name = "my-model", version = "0.1.0", description = "Shared logical Models of Trading Assistant", readme = "README.md", requires-python = ">=3.14,<3.15", dependencies = ["pydantic==2.13.5"]
+                   [build-system] requires = ["uv_build>=0.12.10,<0.13.0"], build-backend = "uv_build"
+                   Do not add a [tool.uv.build-backend] table: the defaults (module-root src, module-name my_model) are the intended layout.
+                2. Write model/.python-version containing `3.14.7`.
+                3. Write model/README.md with the line `# my_model` and one sentence saying it is the shared Model package of Trading Assistant.
+                4. Create model/src/my_model/__init__.py with a docstring only (`"""Shared logical Models of Trading Assistant."""`).
+                5. From model/ run `uv sync`; it must create model/.venv and model/uv.lock and install pydantic 2.13.5.
+                6. Confirm the root .gitignore already ignores .venv, dist/, and __pycache__/ (it does); commit uv.lock and .python-version, never .venv.
+              inputs:
+              - P1-G1-T1 — the verified toolchain
+              - .interface/config/model.yaml — implementation (code_path, package, tech)
+              - .interface/config/development.yaml — packages.my_model (kind, distribution) and package_standard.naming
+              expected_output: model/pyproject.toml, model/.python-version, model/README.md (stub), model/src/my_model/__init__.py, model/uv.lock, and a synced model/.venv.
+            depends_on:
+            - P1-G1-T1
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - The only run-time dependency is pydantic; pyyaml is used by verify commands through `uv run --with pyyaml` and is never added to the project.
+            acceptance: uv sync succeeds, the lock is current, and the environment runs CPython 3.14.7 with pydantic 2.13.5 and an importable my_model package.
+            verify: uv lock --check && uv run python -c 'import sys, pydantic, my_model; assert sys.version_info[:3] == (3, 14, 7), sys.version; assert pydantic.VERSION == "2.13.5", pydantic.VERSION; print("ok")'
+            touches:
+            - pyproject.toml
+            - .python-version
+            - README.md
+            - src/my_model/__init__.py
+            - uv.lock
+            - .venv/ (created, never committed)
+            status: todo
+          task_count: 2
+        P1-G2:
+          id: P1-G2
+          title: Logical metadata and base class
+          description: 'Builds the private foundation every Model module relies on: the immutable metadata structures that carry a Model''s resolved logical definition, and the shared Pydantic base class with
+            the field-annotation helper, the metadata builder, and the consistency check. The Tasks are related because the Model classes can only be declared once these two modules exist.'
+          target: model
+          area: private modules src/my_model/_metadata.py and src/my_model/_base.py
+          does: A metadata frame whose as_dict output reproduces the exact shape of content.models in model.yaml, and a Model base class from which every shared Model derives its validation and its metadata.
+          tasks:
+          - id: P1-G2-T1
+            title: Implement the logical metadata structures in _metadata.py
+            description: 'Create src/my_model/_metadata.py with immutable structures describing a Model''s resolved logical definition: LogicalType, an UNSET sentinel for an undeclared default, FieldMeta, RelationshipMeta,
+              RuleMeta, GenerateInstruction, and ModelMeta. Each structure has an as_dict() method that renders exactly the shape used under content.models in .interface/config/model.yaml so a Model''s metadata
+              can be compared with the generated configuration verbatim.'
+            reason: model.yaml requires model_metadata(model) to return the resolved logical definition of a Model — fields with type, size, nullable, default, auto_increment, primary_key, unique, credential,
+              and purpose; relationships; rules; and initial data — in a stable structure that Database and Backend consume instead of parsing the file.
+            target: model
+            area: src/my_model/_metadata.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Implement, using dataclasses(frozen=True, kw_only=True) and enum.StrEnum:
+                - `class LogicalType(StrEnum)`: integer, string, boolean, decimal, float, datetime.
+                - `UNSET`: a module-level sentinel object (its own class with a readable repr) meaning no logical default is declared; distinct from None and False.
+                - `FieldMeta`: name: str | None = None; type: LogicalType; size: int | None = None; nullable: bool; default: object = UNSET; auto_increment: bool = False; primary_key: bool = False; unique: bool = False; credential: bool = False; purpose: str | None = None. as_dict() returns keys in this order and only when applicable: type (the enum value), size (when not None), nullable (always), default (when not UNSET, the literal as declared — False and 0 are included), auto_increment, primary_key, unique, credential (each only when True), purpose (when not None).
+                - `RelationshipMeta`: name: str; type: str (belongs_to or uses); target: str; field: str | None = None; role: str | None = None. as_dict() returns type, target, field (when set), role (when set).
+                - `RuleMeta`: rule: str; kind: str; field: str | None = None; fields: tuple[str, ...] | None = None; storage: str | None = None. as_dict() returns rule, kind, field (when set), fields as a list (when set), storage (when set).
+                - `GenerateInstruction`: instruction: str = "Generate securely". as_dict() returns {"generate": instruction}.
+                - `ModelMeta`: key: str; purpose: str; fields: tuple[FieldMeta, ...]; relationships: tuple[RelationshipMeta, ...] = (); rules: tuple[RuleMeta, ...] = (); initial_data: tuple[Mapping[str, object], ...] = (). as_dict() returns purpose, fields as an ordered mapping name -> FieldMeta.as_dict(), relationships as a mapping name -> as_dict() only when non-empty, rules as a list only when non-empty, and initial_data as a list of plain dicts only when non-empty, rendering every GenerateInstruction value through its as_dict(). Also provide `field(name)` returning the FieldMeta or raising KeyError.
+                Export nothing from the package root yet; that is P1-G4-T2. Use only the standard library.
+              inputs:
+              - P1-G1-T2 — the project and environment
+              - .interface/config/model.yaml — content.models (the target shape of as_dict) and implementation.public_interface.exports.metadata
+              expected_output: src/my_model/_metadata.py defining LogicalType, UNSET, FieldMeta, RelationshipMeta, RuleMeta, GenerateInstruction, and ModelMeta with as_dict renderers.
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Structures are immutable; as_dict must never emit a key for an absent optional property, and must emit default when it is declared even if the value is False or 0.
+            acceptance: Each structure renders exactly the model.yaml shape for representative inputs, including the omission rules for absent properties and the inclusion of False and 0 defaults.
+            verify: |
+              uv run python -c '
+              from my_model._metadata import LogicalType, UNSET, FieldMeta, RelationshipMeta, RuleMeta, GenerateInstruction, ModelMeta
+              f = FieldMeta(name="is_executed", type=LogicalType.boolean, nullable=False, default=False, purpose="x")
+              assert f.as_dict() == {"type": "boolean", "nullable": False, "default": False, "purpose": "x"}, f.as_dict()
+              i = FieldMeta(name="id", type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)
+              assert i.as_dict() == {"type": "integer", "nullable": False, "auto_increment": True, "primary_key": True}, i.as_dict()
+              c = FieldMeta(name="code", type=LogicalType.string, size=3, nullable=False, unique=True, purpose="p")
+              assert c.as_dict() == {"type": "string", "size": 3, "nullable": False, "unique": True, "purpose": "p"}, c.as_dict()
+              assert list(c.as_dict()) == ["type", "size", "nullable", "unique", "purpose"]
+              d = FieldMeta(name="description", type=LogicalType.string, nullable=True, purpose="d")
+              assert d.as_dict() == {"type": "string", "nullable": True, "purpose": "d"} and d.default is UNSET
+              r = RelationshipMeta(name="base_currency", type="uses", target="currency", field="base_currency_id", role="base currency")
+              assert r.as_dict() == {"type": "uses", "target": "currency", "field": "base_currency_id", "role": "base currency"}
+              u = RuleMeta(rule="r", kind="unique", fields=("user_id", "name"))
+              assert u.as_dict() == {"rule": "r", "kind": "unique", "fields": ["user_id", "name"]}
+              k = RuleMeta(rule="r", kind="credential", field="password", storage="hash")
+              assert k.as_dict() == {"rule": "r", "kind": "credential", "field": "password", "storage": "hash"}
+              assert GenerateInstruction().as_dict() == {"generate": "Generate securely"}
+              m = ModelMeta(key="user", purpose="p", fields=(i, c), rules=(k,), initial_data=({"name": "Admin", "password": GenerateInstruction()},))
+              assert m.as_dict() == {"purpose": "p", "fields": {"id": i.as_dict(), "code": c.as_dict()}, "rules": [k.as_dict()], "initial_data": [{"name": "Admin", "password": {"generate": "Generate securely"}}]}, m.as_dict()
+              assert "relationships" not in m.as_dict() and m.field("code") is c
+              print("ok")
+              '
+            touches:
+            - src/my_model/_metadata.py
+            status: todo
+          - id: P1-G2-T2
+            title: Implement the shared Model base class, metadata builder, and consistency check in _base.py
+            description: Create src/my_model/_base.py with the Pydantic base class every shared Model extends, the mapping from logical types to Python types, build_metadata(cls) which assembles a ModelMeta
+              from a Model class, and check_consistency(cls) which proves that the Python representation of a class agrees with its logical metadata. Each Model class declares its logical facts as class variables
+              (logical_key, logical_purpose, logical_relationships, logical_rules, logical_initial_data) and annotates every field as Annotated[<python type>, FieldMeta(...)] with the Python default alongside.
+            reason: The Model Principles require every Model to carry one shared logical meaning with domain validation, and model.yaml requires that metadata to be derivable from the package; a single base
+              class keeps the fourteen Model modules uniform and lets the verify commands prove each module against the generated configuration.
+            target: model
+            area: src/my_model/_base.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Implement in src/my_model/_base.py:
+                - `PYTHON_TYPES: dict[LogicalType, type]` = {integer: int, string: str, boolean: bool, decimal: decimal.Decimal, float: float, datetime: datetime.datetime}.
+                - `class Model(pydantic.BaseModel)` with `model_config = ConfigDict(extra="forbid", validate_assignment=True, from_attributes=True)` and ClassVar declarations `logical_key: ClassVar[str]`, `logical_purpose: ClassVar[str]`, `logical_relationships: ClassVar[tuple[RelationshipMeta, ...]] = ()`, `logical_rules: ClassVar[tuple[RuleMeta, ...]] = ()`, `logical_initial_data: ClassVar[tuple[Mapping[str, object], ...]] = ()`. Subclasses declare fields as `name: Annotated[<type>, FieldMeta(...)] [= default]`; Pydantic keeps the FieldMeta in `cls.model_fields[name].metadata`.
+                - `build_metadata(cls) -> ModelMeta`: iterate cls.model_fields in declaration order, take the single FieldMeta from each field's metadata (raise TypeError when absent or duplicated), copy it with name set (dataclasses.replace), and return ModelMeta(key=cls.logical_key, purpose=cls.logical_purpose, fields=..., relationships=cls.logical_relationships, rules=cls.logical_rules, initial_data=cls.logical_initial_data).
+                - `check_consistency(cls) -> None`, raising ValueError naming the first violation: (a) every field carries exactly one FieldMeta; (b) the annotation's base type, after unwrapping `X | None`, is PYTHON_TYPES[meta.type]; (c) the annotation is optional (`X | None`) if and only if meta.nullable or meta.auto_increment or meta.credential; (d) when meta.default is declared the field is not required and its Python default equals the declared literal converted for the type (Decimal(str(literal)) for decimal, the literal itself otherwise); (e) when no default is declared the field is required unless optional, in which case its default is None; (f) logical_key is non-empty lower_snake_case; every relationship field, rule field, and initial-data key names a declared field.
+                The rules for optional fields encode the resolved decision that a Model instance exists before persistence assigns its auto-increment key and that Database returns instances without credential values (database.yaml, layers.database_interface.operations), while the metadata keeps their logical nullability false.
+              inputs:
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — implementation.public_interface.exports.validation and content.models
+              - .interface/config/database.yaml — layers.database_interface.operations (credential fields are never populated in returned instances)
+              expected_output: src/my_model/_base.py defining PYTHON_TYPES, Model, build_metadata, and check_consistency.
+            depends_on:
+            - P1-G2-T1
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Class-variable names use the logical_ prefix, never Pydantic's model_ namespace.
+            - Unknown fields are rejected (extra=forbid) and assignments are validated.
+            acceptance: A throwaway subclass declared with the documented conventions passes check_consistency, yields the expected ModelMeta with fields in declaration order, validates required fields, rejects
+              unknown fields, and applies defaults.
+            verify: |
+              uv run python -c '
+              from typing import Annotated, ClassVar
+              from decimal import Decimal
+              import pydantic
+              from my_model._base import Model, build_metadata, check_consistency, PYTHON_TYPES
+              from my_model._metadata import FieldMeta, LogicalType, RelationshipMeta
+              class Thing(Model):
+                  logical_key: ClassVar[str] = "thing"
+                  logical_purpose: ClassVar[str] = "A thing."
+                  logical_relationships: ClassVar[tuple] = (RelationshipMeta(name="owner", type="belongs_to", target="user", field="owner_id"),)
+                  logical_initial_data: ClassVar[tuple] = ({"name": "One", "owner_id": 1},)
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="Name.")]
+                  owner_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False)]
+                  secret: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=False, credential=True)] = None
+                  amount: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, default=0)] = Decimal("0")
+                  note: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True)] = None
+              check_consistency(Thing)
+              m = build_metadata(Thing)
+              assert m.key == "thing" and [f.name for f in m.fields] == ["id", "name", "owner_id", "secret", "amount", "note"]
+              assert m.as_dict()["fields"]["amount"] == {"type": "decimal", "nullable": False, "default": 0}
+              assert m.as_dict()["fields"]["secret"] == {"type": "string", "nullable": False, "credential": True}
+              assert m.as_dict()["relationships"] == {"owner": {"type": "belongs_to", "target": "user", "field": "owner_id"}}
+              t = Thing(name="n", owner_id=1)
+              assert t.id is None and t.secret is None and t.amount == Decimal("0") and PYTHON_TYPES[LogicalType.decimal] is Decimal
+              bad = 0
+              for kw in ({"name": "n"}, {"name": "n", "owner_id": 1, "extra": 1}, {"name": "n", "owner_id": "x"}):
+                  try:
+                      Thing(**kw)
+                  except pydantic.ValidationError:
+                      bad += 1
+              assert bad == 3, bad
+              class Wrong(Model):
+                  logical_key: ClassVar[str] = "wrong"
+                  logical_purpose: ClassVar[str] = "w"
+                  value: Annotated[str, FieldMeta(type=LogicalType.integer, nullable=False)]
+              try:
+                  check_consistency(Wrong); raise SystemExit("inconsistent class accepted")
+              except ValueError:
+                  pass
+              print("ok")
+              '
+            touches:
+            - src/my_model/_base.py
+            status: todo
+          task_count: 2
+        P1-G3:
+          id: P1-G3
+          title: Model classes
+          description: Declares the fourteen shared Models, one module per Model in project order, each deriving from the shared base class and carrying its resolved fields, relationships, rules, and initial
+            data. The Tasks are related because together they realize the complete Model set; they depend only on the base class and are independent of each other.
+          target: model
+          area: src/my_model/<model>.py — one module per Model in project order (user, currency, trading_platform, broker, account_group, account, asset, trailing_group, trailing_rule, partial_group, partial_rule,
+            action_group, action, position)
+          does: Fourteen Model classes whose validation and metadata reproduce content.models of model.yaml exactly.
+          tasks:
+          - id: P1-G3-T1
+            title: Implement the User Model module (user.py)
+            description: Create the User class in its own module src/my_model/user.py, deriving from the shared Model base class and declaring the 7 resolved fields of the user Model with their logical metadata,
+              0 relationship(s), 2 rule(s) and 1 initial record(s), exactly as recorded under content.models.user in .interface/config/model.yaml.
+            reason: The user Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database, Backend,
+              and Frontend consume one meaning.
+            target: model
+            area: src/my_model/user.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/user.py declaring `class User(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType, RuleMeta, GenerateInstruction; from my_model._base import Model.
+                Class variables: logical_key = "user"; logical_purpose = "Defines an independent user of the system and enables multi-user operation. Each user can have a separate set of settings, allowing new users to be added with configurations that remain distinct from those of existing users.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The user's display name.")]
+                  username: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, purpose="The username used to identify the user.")]
+                  password: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=False, credential=True, purpose="The password credential used by the user.")] = None
+                  api_key: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=False, credential=True, purpose="The API key assigned to the user.")] = None
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the user is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the user.")] = None
+                logical_relationships = ()
+                logical_rules = (RuleMeta(rule="password is a credential and must use hash storage at rest.", kind="credential", field="password", storage="hash"), RuleMeta(rule="api_key is a credential and must use hash storage at rest.", kind="credential", field="api_key", storage="hash"),)
+                logical_initial_data = ({"name": "Admin", "username": "admin", "password": GenerateInstruction(), "api_key": GenerateInstruction()},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.user
+              expected_output: src/my_model/user.py defining User whose build_metadata(...).as_dict() equals content.models.user of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(User) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and any credential
+              field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.user import User
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["user"]
+              check_consistency(User)
+              got = build_metadata(User).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = User(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  User(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  User()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("user ok")
+              '
+            touches:
+            - src/my_model/user.py
+            status: todo
+          - id: P1-G3-T2
+            title: Implement the Currency Model module (currency.py)
+            description: Create the Currency class in its own module src/my_model/currency.py, deriving from the shared Model base class and declaring the 8 resolved fields of the currency Model with their
+              logical metadata, 0 relationship(s), 0 rule(s) and 8 initial record(s), exactly as recorded under content.models.currency in .interface/config/model.yaml.
+            reason: The currency Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database, Backend,
+              and Frontend consume one meaning.
+            target: model
+            area: src/my_model/currency.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/currency.py declaring `class Currency(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType; from my_model._base import Model.
+                Class variables: logical_key = "currency"; logical_purpose = "Defines a currency that can be used by the trading system and identifies its standard code, display symbol, associated country or region, and monetary decimal precision.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The currency's full name.")]
+                  code: Annotated[str, FieldMeta(type=LogicalType.string, size=3, nullable=False, unique=True, purpose="The currency's standard three-letter code, such as USD or EUR.")]
+                  symbol: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="The currency's display symbol, such as $, €, or £.")] = None
+                  country: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Identifies the country or region associated with the currency.")] = None
+                  decimal_digits: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, default=2, purpose="Defines the number of decimal digits normally used for monetary values in the currency.")] = 2
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the currency is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the currency.")] = None
+                logical_relationships = ()
+                logical_rules = ()
+                logical_initial_data = ({"name": "US Dollar", "code": "USD", "symbol": "$", "country": "United States", "decimal_digits": 2}, {"name": "Euro", "code": "EUR", "symbol": "€", "country": "Eurozone", "decimal_digits": 2}, {"name": "British Pound", "code": "GBP", "symbol": "£", "country": "United Kingdom", "decimal_digits": 2}, {"name": "Japanese Yen", "code": "JPY", "symbol": "¥", "country": "Japan", "decimal_digits": 0}, {"name": "Swiss Franc", "code": "CHF", "symbol": "CHF", "country": "Switzerland", "decimal_digits": 2}, {"name": "Canadian Dollar", "code": "CAD", "symbol": "C$", "country": "Canada", "decimal_digits": 2}, {"name": "Australian Dollar", "code": "AUD", "symbol": "A$", "country": "Australia", "decimal_digits": 2}, {"name": "New Zealand Dollar", "code": "NZD", "symbol": "NZ$", "country": "New Zealand", "decimal_digits": 2},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.currency
+              expected_output: src/my_model/currency.py defining Currency whose build_metadata(...).as_dict() equals content.models.currency of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(Currency) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and any
+              credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.currency import Currency
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["currency"]
+              check_consistency(Currency)
+              got = build_metadata(Currency).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = Currency(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  Currency(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  Currency()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("currency ok")
+              '
+            touches:
+            - src/my_model/currency.py
+            status: todo
+          - id: P1-G3-T3
+            title: Implement the TradingPlatform Model module (trading_platform.py)
+            description: Create the TradingPlatform class in its own module src/my_model/trading_platform.py, deriving from the shared Model base class and declaring the 5 resolved fields of the trading_platform
+              Model with their logical metadata, 0 relationship(s), 0 rule(s) and 2 initial record(s), exactly as recorded under content.models.trading_platform in .interface/config/model.yaml.
+            reason: The trading_platform Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database,
+              Backend, and Frontend consume one meaning.
+            target: model
+            area: src/my_model/trading_platform.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/trading_platform.py declaring `class TradingPlatform(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType; from my_model._base import Model.
+                Class variables: logical_key = "trading_platform"; logical_purpose = "Defines a supported trading API standard, such as MetaTrader 5 or Binance, while keeping the system independent of any specific exchange or broker. Every trading platform implementation exposes the same application-facing trading functions through a dedicated class, while handling communication with its destination API according to that platform's own mechanism. Additional platform implementations can be added without changing the system's common trading interface.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The platform's display name.")]
+                  code: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, purpose="Identifies the implementation class the application must use for this trading platform, such as binance or metatrader_5.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the platform is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the platform.")] = None
+                logical_relationships = ()
+                logical_rules = ()
+                logical_initial_data = ({"name": "MetaTrader 5", "code": "metatrader_5"}, {"name": "Binance", "code": "binance"},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.trading_platform
+              expected_output: src/my_model/trading_platform.py defining TradingPlatform whose build_metadata(...).as_dict() equals content.models.trading_platform of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(TradingPlatform) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id
+              (and any credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.trading_platform import TradingPlatform
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["trading_platform"]
+              check_consistency(TradingPlatform)
+              got = build_metadata(TradingPlatform).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = TradingPlatform(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  TradingPlatform(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  TradingPlatform()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("trading_platform ok")
+              '
+            touches:
+            - src/my_model/trading_platform.py
+            status: todo
+          - id: P1-G3-T4
+            title: Implement the Broker Model module (broker.py)
+            description: Create the Broker class in its own module src/my_model/broker.py, deriving from the shared Model base class and declaring the 6 resolved fields of the broker Model with their logical
+              metadata, 2 relationship(s), 1 rule(s) and 1 initial record(s), exactly as recorded under content.models.broker in .interface/config/model.yaml.
+            reason: The broker Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database, Backend,
+              and Frontend consume one meaning.
+            target: model
+            area: src/my_model/broker.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/broker.py declaring `class Broker(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType, RelationshipMeta, RuleMeta; from my_model._base import Model.
+                Class variables: logical_key = "broker"; logical_purpose = "Defines a broker that the system can work with through its selected trading platform. Multiple brokers can be added so the system is not limited to a specific broker and can operate with any configured broker.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, purpose="The broker's display name.")]
+                  user_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the user who owns the broker configuration.")]
+                  trading_platform_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the trading platform used by the broker.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the broker is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the broker.")] = None
+                logical_relationships = (RelationshipMeta(name="user", type="belongs_to", target="user", field="user_id"), RelationshipMeta(name="trading_platform", type="belongs_to", target="trading_platform", field="trading_platform_id"),)
+                logical_rules = (RuleMeta(rule="The combination of user_id and name must be unique.", kind="unique", fields=("user_id", "name",)),)
+                logical_initial_data = ({"name": "FxPro", "user_id": 1, "trading_platform_id": 1},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.broker
+              expected_output: src/my_model/broker.py defining Broker whose build_metadata(...).as_dict() equals content.models.broker of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(Broker) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and any
+              credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.broker import Broker
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["broker"]
+              check_consistency(Broker)
+              got = build_metadata(Broker).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = Broker(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  Broker(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  Broker()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("broker ok")
+              '
+            touches:
+            - src/my_model/broker.py
+            status: todo
+          - id: P1-G3-T5
+            title: Implement the AccountGroup Model module (account_group.py)
+            description: Create the AccountGroup class in its own module src/my_model/account_group.py, deriving from the shared Model base class and declaring the 4 resolved fields of the account_group Model
+              with their logical metadata, 0 relationship(s), 0 rule(s) and 1 initial record(s), exactly as recorded under content.models.account_group in .interface/config/model.yaml.
+            reason: The account_group Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database,
+              Backend, and Frontend consume one meaning.
+            target: model
+            area: src/my_model/account_group.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/account_group.py declaring `class AccountGroup(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType; from my_model._base import Model.
+                Class variables: logical_key = "account_group"; logical_purpose = "Defines an independent group for organizing trading accounts.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The account group's display name.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the account group is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the account group.")] = None
+                logical_relationships = ()
+                logical_rules = ()
+                logical_initial_data = ({"name": "Default"},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.account_group
+              expected_output: src/my_model/account_group.py defining AccountGroup whose build_metadata(...).as_dict() equals content.models.account_group of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(AccountGroup) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and
+              any credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.account_group import AccountGroup
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["account_group"]
+              check_consistency(AccountGroup)
+              got = build_metadata(AccountGroup).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = AccountGroup(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  AccountGroup(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  AccountGroup()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("account_group ok")
+              '
+            touches:
+            - src/my_model/account_group.py
+            status: todo
+          - id: P1-G3-T6
+            title: Implement the Account Model module (account.py)
+            description: Create the Account class in its own module src/my_model/account.py, deriving from the shared Model base class and declaring the 12 resolved fields of the account Model with their logical
+              metadata, 3 relationship(s), 1 rule(s) and 1 initial record(s), exactly as recorded under content.models.account in .interface/config/model.yaml.
+            reason: The account Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database, Backend,
+              and Frontend consume one meaning.
+            target: model
+            area: src/my_model/account.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/account.py declaring `class Account(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from decimal import Decimal; from my_model._metadata import FieldMeta, LogicalType, RelationshipMeta, RuleMeta, GenerateInstruction; from my_model._base import Model.
+                Class variables: logical_key = "account"; logical_purpose = "Defines a funded trading account through which the system executes trades and launches positions. Each account identifies its broker, account model, and login credentials so the system knows where the trade must be sent, how it must connect, and which account must be used for the operation.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The account's display name.")]
+                  account_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the account group that contains the account.")]
+                  broker_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the broker that owns the account.")]
+                  base_currency_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the base currency used by the account.")]
+                  username: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, purpose="The username identifier used to access the trading account.")]
+                  password: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=False, credential=True, purpose="The credential used to access the trading account.")] = None
+                  leverage: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Defines the account's leverage multiplier.")]
+                  balance: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, default=0, purpose="Stores the account's current balance.")] = Decimal("0")
+                  account_type: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, purpose="Identifies the account model, such as cfd or spread_betting.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the account is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the account.")] = None
+                logical_relationships = (RelationshipMeta(name="account_group", type="belongs_to", target="account_group", field="account_group_id"), RelationshipMeta(name="broker", type="belongs_to", target="broker", field="broker_id"), RelationshipMeta(name="base_currency", type="uses", target="currency", field="base_currency_id", role="base currency"),)
+                logical_rules = (RuleMeta(rule="password is a credential and must use encrypted storage at rest.", kind="credential", field="password", storage="encrypted"),)
+                logical_initial_data = ({"name": "Acc-1", "account_group_id": 1, "broker_id": 1, "base_currency_id": 1, "username": "test", "password": GenerateInstruction(), "leverage": 100, "account_type": "CFD"},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.account
+              expected_output: src/my_model/account.py defining Account whose build_metadata(...).as_dict() equals content.models.account of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(Account) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and any
+              credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.account import Account
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["account"]
+              check_consistency(Account)
+              got = build_metadata(Account).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = Account(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  Account(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  Account()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("account ok")
+              '
+            touches:
+            - src/my_model/account.py
+            status: todo
+          - id: P1-G3-T7
+            title: Implement the Asset Model module (asset.py)
+            description: Create the Asset class in its own module src/my_model/asset.py, deriving from the shared Model base class and declaring the 8 resolved fields of the asset Model with their logical metadata,
+              0 relationship(s), 0 rule(s) and 4 initial record(s), exactly as recorded under content.models.asset in .interface/config/model.yaml.
+            reason: The asset Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database, Backend,
+              and Frontend consume one meaning.
+            target: model
+            area: src/my_model/asset.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/asset.py declaring `class Asset(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType; from my_model._base import Model.
+                Class variables: logical_key = "asset"; logical_purpose = "Defines an asset that can be selected for trading. It provides the system with the complete set of available tradable assets and identifies the category of each asset so the system knows exactly what is being traded.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The asset's display name.")]
+                  symbol: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="Identifies the tradable asset, such as EUR/USD, XAU/USD, or USOil.")]
+                  category: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, purpose="Identifies the asset category, such as Currency, Commodity, or Cryptocurrency.")]
+                  point_size: Annotated[float, FieldMeta(type=LogicalType.float, nullable=False, default=0.0, purpose="Stores the size of one point for the asset.")] = 0.0
+                  digits: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, default=0, purpose="Stores the number of decimal digits used for the asset's price.")] = 0
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the asset is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the asset.")] = None
+                logical_relationships = ()
+                logical_rules = ()
+                logical_initial_data = ({"name": "EURUSD", "symbol": "EUR/USD", "category": "Currency", "point_size": 0.0001, "digits": 5}, {"name": "EURGBP", "symbol": "EUR/GBP", "category": "Currency", "point_size": 0.001, "digits": 5}, {"name": "XAUUSD", "symbol": "XAU/USD", "category": "Commodity", "point_size": 0.01, "digits": 2}, {"name": "USOil", "symbol": "USOil", "category": "Commodity", "point_size": 0.01, "digits": 3},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.asset
+              expected_output: src/my_model/asset.py defining Asset whose build_metadata(...).as_dict() equals content.models.asset of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(Asset) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and any credential
+              field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.asset import Asset
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["asset"]
+              check_consistency(Asset)
+              got = build_metadata(Asset).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = Asset(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  Asset(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  Asset()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("asset ok")
+              '
+            touches:
+            - src/my_model/asset.py
+            status: todo
+          - id: P1-G3-T8
+            title: Implement the TrailingGroup Model module (trailing_group.py)
+            description: Create the TrailingGroup class in its own module src/my_model/trailing_group.py, deriving from the shared Model base class and declaring the 4 resolved fields of the trailing_group
+              Model with their logical metadata, 0 relationship(s), 0 rule(s) and 1 initial record(s), exactly as recorded under content.models.trailing_group in .interface/config/model.yaml.
+            reason: The trailing_group Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database,
+              Backend, and Frontend consume one meaning.
+            target: model
+            area: src/my_model/trailing_group.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/trailing_group.py declaring `class TrailingGroup(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType; from my_model._base import Model.
+                Class variables: logical_key = "trailing_group"; logical_purpose = "Defines an independent group for organizing the rules that manage Stop Loss and Take Profit during a trade. The group identifies the rule set, while each rule separately defines its activation condition and the changes to apply.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The trailing group's display name.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the trailing group is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the trailing group.")] = None
+                logical_relationships = ()
+                logical_rules = ()
+                logical_initial_data = ({"name": "Default"},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.trailing_group
+              expected_output: src/my_model/trailing_group.py defining TrailingGroup whose build_metadata(...).as_dict() equals content.models.trailing_group of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(TrailingGroup) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and
+              any credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.trailing_group import TrailingGroup
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["trailing_group"]
+              check_consistency(TrailingGroup)
+              got = build_metadata(TrailingGroup).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = TrailingGroup(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  TrailingGroup(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  TrailingGroup()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("trailing_group ok")
+              '
+            touches:
+            - src/my_model/trailing_group.py
+            status: todo
+          - id: P1-G3-T9
+            title: Implement the TrailingRule Model module (trailing_rule.py)
+            description: Create the TrailingRule class in its own module src/my_model/trailing_rule.py, deriving from the shared Model base class and declaring the 8 resolved fields of the trailing_rule Model
+              with their logical metadata, 1 relationship(s), 0 rule(s), exactly as recorded under content.models.trailing_rule in .interface/config/model.yaml.
+            reason: The trailing_rule Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database,
+              Backend, and Frontend consume one meaning.
+            target: model
+            area: src/my_model/trailing_rule.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/trailing_rule.py declaring `class TrailingRule(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from decimal import Decimal; from my_model._metadata import FieldMeta, LogicalType, RelationshipMeta; from my_model._base import Model.
+                Class variables: logical_key = "trailing_rule"; logical_purpose = "Defines an individual rule within a Trailing Group that tells the system when and how to manage Take Profit and Stop Loss. Each rule provides the activation condition and the parameters used to apply the required adjustments.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The trailing rule's display name.")]
+                  trailing_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the trailing group that contains the rule.")]
+                  trigger_percentage: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Defines the profit percentage of the take-profit target that activates the rule.")]
+                  take_profit_adjustment: Annotated[Decimal | None, FieldMeta(type=LogicalType.decimal, nullable=True, purpose="Defines the take-profit adjustment applied when the rule is activated.")] = None
+                  stop_loss_adjustment: Annotated[Decimal | None, FieldMeta(type=LogicalType.decimal, nullable=True, purpose="Defines the stop-loss adjustment applied when the rule is activated.")] = None
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the trailing rule is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the trailing rule.")] = None
+                logical_relationships = (RelationshipMeta(name="trailing_group", type="belongs_to", target="trailing_group", field="trailing_group_id"),)
+                logical_rules = ()
+                logical_initial_data = ()
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.trailing_rule
+              expected_output: src/my_model/trailing_rule.py defining TrailingRule whose build_metadata(...).as_dict() equals content.models.trailing_rule of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(TrailingRule) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and
+              any credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.trailing_rule import TrailingRule
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["trailing_rule"]
+              check_consistency(TrailingRule)
+              got = build_metadata(TrailingRule).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = TrailingRule(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  TrailingRule(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  TrailingRule()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("trailing_rule ok")
+              '
+            touches:
+            - src/my_model/trailing_rule.py
+            status: todo
+          - id: P1-G3-T10
+            title: Implement the PartialGroup Model module (partial_group.py)
+            description: Create the PartialGroup class in its own module src/my_model/partial_group.py, deriving from the shared Model base class and declaring the 4 resolved fields of the partial_group Model
+              with their logical metadata, 0 relationship(s), 0 rule(s) and 1 initial record(s), exactly as recorded under content.models.partial_group in .interface/config/model.yaml.
+            reason: The partial_group Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database,
+              Backend, and Frontend consume one meaning.
+            target: model
+            area: src/my_model/partial_group.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/partial_group.py declaring `class PartialGroup(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType; from my_model._base import Model.
+                Class variables: logical_key = "partial_group"; logical_purpose = "Defines an independent group of rules for managing portions of an open trade. Its rules determine how much of the trade volume must be closed when profit or loss reaches specified thresholds.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The partial group's display name.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the partial group is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the partial group.")] = None
+                logical_relationships = ()
+                logical_rules = ()
+                logical_initial_data = ({"name": "Default"},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.partial_group
+              expected_output: src/my_model/partial_group.py defining PartialGroup whose build_metadata(...).as_dict() equals content.models.partial_group of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(PartialGroup) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and
+              any credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.partial_group import PartialGroup
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["partial_group"]
+              check_consistency(PartialGroup)
+              got = build_metadata(PartialGroup).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = PartialGroup(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  PartialGroup(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  PartialGroup()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("partial_group ok")
+              '
+            touches:
+            - src/my_model/partial_group.py
+            status: todo
+          - id: P1-G3-T11
+            title: Implement the PartialRule Model module (partial_rule.py)
+            description: Create the PartialRule class in its own module src/my_model/partial_rule.py, deriving from the shared Model base class and declaring the 7 resolved fields of the partial_rule Model
+              with their logical metadata, 1 relationship(s), 0 rule(s), exactly as recorded under content.models.partial_rule in .interface/config/model.yaml.
+            reason: The partial_rule Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database,
+              Backend, and Frontend consume one meaning.
+            target: model
+            area: src/my_model/partial_rule.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/partial_rule.py declaring `class PartialRule(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from decimal import Decimal; from my_model._metadata import FieldMeta, LogicalType, RelationshipMeta; from my_model._base import Model.
+                Class variables: logical_key = "partial_rule"; logical_purpose = "Defines an individual Partial Close rule that tells the system under which condition part of an open position must be closed and how much of its volume must be closed.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The partial rule's display name.")]
+                  partial_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the partial group that contains the rule.")]
+                  profit_percentage: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Defines the profit percentage that activates the rule.")]
+                  close_percentage: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Defines the percentage of the position closed when the rule is activated.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the partial rule is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the partial rule.")] = None
+                logical_relationships = (RelationshipMeta(name="partial_group", type="belongs_to", target="partial_group", field="partial_group_id"),)
+                logical_rules = ()
+                logical_initial_data = ()
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.partial_rule
+              expected_output: src/my_model/partial_rule.py defining PartialRule whose build_metadata(...).as_dict() equals content.models.partial_rule of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(PartialRule) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and
+              any credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.partial_rule import PartialRule
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["partial_rule"]
+              check_consistency(PartialRule)
+              got = build_metadata(PartialRule).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = PartialRule(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  PartialRule(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  PartialRule()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("partial_rule ok")
+              '
+            touches:
+            - src/my_model/partial_rule.py
+            status: todo
+          - id: P1-G3-T12
+            title: Implement the ActionGroup Model module (action_group.py)
+            description: Create the ActionGroup class in its own module src/my_model/action_group.py, deriving from the shared Model base class and declaring the 4 resolved fields of the action_group Model
+              with their logical metadata, 0 relationship(s), 0 rule(s) and 1 initial record(s), exactly as recorded under content.models.action_group in .interface/config/model.yaml.
+            reason: The action_group Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database,
+              Backend, and Frontend consume one meaning.
+            target: model
+            area: src/my_model/action_group.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/action_group.py declaring `class ActionGroup(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from my_model._metadata import FieldMeta, LogicalType; from my_model._base import Model.
+                Class variables: logical_key = "action_group"; logical_purpose = "Defines an independent grouping for trading actions based on their risk profile, such as high risk, normal risk, or low risk. Actions are assigned to these groups so trades can be organized and selected by their intended risk level.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The action group's display name.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the action group is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the action group.")] = None
+                logical_relationships = ()
+                logical_rules = ()
+                logical_initial_data = ({"name": "Default"},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.action_group
+              expected_output: src/my_model/action_group.py defining ActionGroup whose build_metadata(...).as_dict() equals content.models.action_group of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(ActionGroup) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and
+              any credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.action_group import ActionGroup
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["action_group"]
+              check_consistency(ActionGroup)
+              got = build_metadata(ActionGroup).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = ActionGroup(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  ActionGroup(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  ActionGroup()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("action_group ok")
+              '
+            touches:
+            - src/my_model/action_group.py
+            status: todo
+          - id: P1-G3-T13
+            title: Implement the Action Model module (action.py)
+            description: Create the Action class in its own module src/my_model/action.py, deriving from the shared Model base class and declaring the 12 resolved fields of the action Model with their logical
+              metadata, 5 relationship(s), 0 rule(s) and 1 initial record(s), exactly as recorded under content.models.action in .interface/config/model.yaml.
+            reason: The action Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database, Backend,
+              and Frontend consume one meaning.
+            target: model
+            area: src/my_model/action.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/action.py declaring `class Action(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from decimal import Decimal; from my_model._metadata import FieldMeta, LogicalType, RelationshipMeta; from my_model._base import Model.
+                Class variables: logical_key = "action"; logical_purpose = "Defines how a position must be opened. An action selects the asset and account and provides the risk, Take Profit, Stop Loss, Partial Group, and Trailing Group settings that determine the position's parameters and execution behavior.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The action's display name.")]
+                  action_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the action group that contains the action.")]
+                  asset_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the asset traded by the action.")]
+                  account_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the account used to execute the action.")]
+                  partial_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the Partial Group used by the action.")]
+                  trailing_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the Trailing Group used by the action.")]
+                  risk_by_reward: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Defines the numeric risk-to-reward value used by the action.")]
+                  take_profit: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Defines the Take Profit value used by the action.")]
+                  stop_loss: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Defines the Stop Loss value used by the action.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the action is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the action.")] = None
+                logical_relationships = (RelationshipMeta(name="action_group", type="belongs_to", target="action_group", field="action_group_id"), RelationshipMeta(name="asset", type="uses", target="asset", field="asset_id"), RelationshipMeta(name="account", type="uses", target="account", field="account_id"), RelationshipMeta(name="partial_group", type="uses", target="partial_group", field="partial_group_id"), RelationshipMeta(name="trailing_group", type="uses", target="trailing_group", field="trailing_group_id"),)
+                logical_rules = ()
+                logical_initial_data = ({"name": "Default", "action_group_id": 1, "asset_id": 1, "account_id": 1, "partial_group_id": 1, "trailing_group_id": 1, "risk_by_reward": 1, "take_profit": 1, "stop_loss": 1},)
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.action
+              expected_output: src/my_model/action.py defining Action whose build_metadata(...).as_dict() equals content.models.action of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(Action) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and any
+              credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.action import Action
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["action"]
+              check_consistency(Action)
+              got = build_metadata(Action).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = Action(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  Action(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  Action()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("action ok")
+              '
+            touches:
+            - src/my_model/action.py
+            status: todo
+          - id: P1-G3-T14
+            title: Implement the Position Model module (position.py)
+            description: Create the Position class in its own module src/my_model/position.py, deriving from the shared Model base class and declaring the 20 resolved fields of the position Model with their
+              logical metadata, 7 relationship(s), 0 rule(s), exactly as recorded under content.models.position in .interface/config/model.yaml.
+            reason: The position Model is one of the fourteen shared logical Models; the package must expose it with domain validation and metadata identical to the generated configuration so Database, Backend,
+              and Frontend consume one meaning.
+            target: model
+            area: src/my_model/position.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                Create src/my_model/position.py declaring `class Position(Model)` with a one-line docstring taken from the Model purpose. Imports: from typing import Annotated, ClassVar; from decimal import Decimal; from datetime import datetime; from my_model._metadata import FieldMeta, LogicalType, RelationshipMeta; from my_model._base import Model.
+                Class variables: logical_key = "position"; logical_purpose = "Stores the complete information for every position created by the system. It allows the system to identify and track positions that have been opened as well as positions that are still pending execution.".
+                Fields, in exactly this order and with exactly these declarations:
+                  id: Annotated[int | None, FieldMeta(type=LogicalType.integer, nullable=False, auto_increment=True, primary_key=True)] = None
+                  name: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, unique=True, purpose="The position's display name.")]
+                  trading_platform_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the trading platform used to execute the position.")]
+                  broker_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the broker through which the position is executed.")]
+                  account_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the trading account used for the position.")]
+                  trailing_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the Trailing Group applied to the position.")]
+                  partial_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the Partial Group applied to the position.")]
+                  action_group_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the Action Group associated with the position.")]
+                  action_id: Annotated[int, FieldMeta(type=LogicalType.integer, nullable=False, purpose="Identifies the action from which the position is created.")]
+                  date: Annotated[datetime, FieldMeta(type=LogicalType.datetime, nullable=False, purpose="Stores the position's date and time.")]
+                  volume: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Stores the position's trading volume.")]
+                  profit: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, default=0, purpose="Stores the position's current profit or loss.")] = Decimal("0")
+                  is_executed: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=False, purpose="Indicates whether the position has been executed.")] = False
+                  order_type: Annotated[str, FieldMeta(type=LogicalType.string, nullable=False, purpose="Stores the position's order type.")]
+                  base_tp: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Stores the position's initial Take Profit value.")]
+                  base_sl: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Stores the position's initial Stop Loss value.")]
+                  real_tp: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Stores the position's current Take Profit value.")]
+                  real_sl: Annotated[Decimal, FieldMeta(type=LogicalType.decimal, nullable=False, purpose="Stores the position's current Stop Loss value.")]
+                  status: Annotated[bool, FieldMeta(type=LogicalType.boolean, nullable=False, default=True, purpose="Indicates whether the position is active.")] = True
+                  description: Annotated[str | None, FieldMeta(type=LogicalType.string, nullable=True, purpose="Describes the position.")] = None
+                logical_relationships = (RelationshipMeta(name="trading_platform", type="uses", target="trading_platform", field="trading_platform_id"), RelationshipMeta(name="broker", type="uses", target="broker", field="broker_id"), RelationshipMeta(name="account", type="uses", target="account", field="account_id"), RelationshipMeta(name="trailing_group", type="uses", target="trailing_group", field="trailing_group_id"), RelationshipMeta(name="partial_group", type="uses", target="partial_group", field="partial_group_id"), RelationshipMeta(name="action_group", type="uses", target="action_group", field="action_group_id"), RelationshipMeta(name="action", type="belongs_to", target="action", field="action_id"),)
+                logical_rules = ()
+                logical_initial_data = ()
+                Declare nothing else: no methods, no nested objects for relationships (only the foreign-key field), and no persistence, API, or presentation detail.
+              inputs:
+              - P1-G2-T2 — src/my_model/_base.py (Model, build_metadata, check_consistency)
+              - P1-G2-T1 — src/my_model/_metadata.py
+              - .interface/config/model.yaml — content.models.position
+              expected_output: src/my_model/position.py defining Position whose build_metadata(...).as_dict() equals content.models.position of model.yaml.
+            depends_on:
+            - P1-G2-T2
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - Field names, order, types, defaults, and markers must match model.yaml exactly; do not add, rename, or reorder fields and do not add uniqueness or defaults the configuration does not state.
+            acceptance: check_consistency(Position) passes, the class metadata equals the model.yaml entry with fields in the same order, a valid instance is constructed from required values with id (and any
+              credential field) left None, and unknown or missing required fields are rejected.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic
+              from my_model.position import Position
+              from my_model._base import build_metadata, check_consistency
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["position"]
+              check_consistency(Position)
+              got = build_metadata(Position).as_dict()
+              assert got == exp, (got, exp)
+              assert list(got["fields"]) == list(exp["fields"]), "field order differs"
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": "1", "float": 1.0, "datetime": "2026-01-01T00:00:00"}
+              required = {n: sample[f["type"]] for n, f in exp["fields"].items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+              inst = Position(**required)
+              assert inst.id is None
+              for n, f in exp["fields"].items():
+                  if f.get("credential"):
+                      assert getattr(inst, n) is None
+              rejected = False
+              try:
+                  Position(**{**required, "no_such_field": 1})
+              except pydantic.ValidationError:
+                  rejected = True
+              assert rejected, "unknown field was accepted"
+              missing = False
+              try:
+                  Position()
+              except pydantic.ValidationError:
+                  missing = True
+              assert missing or not required, "missing required fields were accepted"
+              print("position ok")
+              '
+            touches:
+            - src/my_model/position.py
+            status: todo
+          task_count: 14
+        P1-G4:
+          id: P1-G4
+          title: Public interface and package documentation
+          description: Publishes the package's documented import interface — the registry, the metadata accessor, and the root exports — documents the package, and proves that it builds and installs as a local
+            dependency. The Tasks are related because they turn the private modules into the one interface consumers are allowed to use.
+          target: model
+          area: src/my_model/_registry.py, src/my_model/__init__.py, README.md, and the distribution built from pyproject.toml
+          does: An importable my_model root exposing the fourteen Model classes, MODELS, model_metadata, and the metadata types; a README covering the required sections; and a buildable, lock-checked distribution.
+          tasks:
+          - id: P1-G4-T1
+            title: Implement the MODELS registry and the model_metadata accessor in _registry.py
+            description: Create src/my_model/_registry.py defining MODELS, the immutable ordered mapping from each Model key to its class in project order, and model_metadata(model), which accepts a Model class
+              or instance, rejects anything that is not a shared Model, and returns its ModelMeta built once and cached.
+            reason: model.yaml names MODELS and model_metadata as the registry and metadata exports of the public interface; Database resolves Model identity through the registry and every consumer reads Model
+              definitions through the accessor.
+            target: model
+            area: src/my_model/_registry.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                1. Import the fourteen classes from their modules and define `MODELS: Mapping[str, type[Model]] = MappingProxyType({...})` with the keys in this exact order: "user", "currency", "trading_platform", "broker", "account_group", "account", "asset", "trailing_group", "trailing_rule", "partial_group", "partial_rule", "action_group", "action", "position".
+                2. Define `model_metadata(model: type[Model] | Model) -> ModelMeta`: resolve the class (`model if isinstance(model, type) else type(model)`); if the class is not one of MODELS' values raise `LookupError(f"{cls.__qualname__} is not a shared Model")`; return the ModelMeta from build_metadata(cls) computed once per class (functools.cache on a private helper keyed by class).
+                3. Keep the module private; the root package re-exports MODELS and model_metadata in P1-G4-T2.
+              inputs:
+              - P1-G3-T1 … P1-G3-T14 — the fourteen Model modules
+              - P1-G2-T2 — build_metadata
+              - .interface/config/model.yaml — implementation.public_interface.exports.registry and exports.metadata; content.models (key order)
+              expected_output: src/my_model/_registry.py defining MODELS and model_metadata.
+            depends_on:
+            - P1-G3-T1
+            - P1-G3-T2
+            - P1-G3-T3
+            - P1-G3-T4
+            - P1-G3-T5
+            - P1-G3-T6
+            - P1-G3-T7
+            - P1-G3-T8
+            - P1-G3-T9
+            - P1-G3-T10
+            - P1-G3-T11
+            - P1-G3-T12
+            - P1-G3-T13
+            - P1-G3-T14
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            - MODELS is immutable and preserves project order; model_metadata never accepts a Model-name string.
+            acceptance: MODELS lists the fourteen keys in model.yaml order mapped to the right classes, model_metadata returns metadata equal to model.yaml for every Model whether given a class or an instance,
+              the result is cached, and a non-Model raises LookupError.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml
+              from my_model._registry import MODELS, model_metadata
+              from my_model._base import Model
+              exp = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]
+              assert list(MODELS) == list(exp), (list(MODELS), list(exp))
+              for key, cls in MODELS.items():
+                  assert issubclass(cls, Model) and cls.logical_key == key
+                  assert model_metadata(cls).as_dict() == exp[key], key
+                  assert model_metadata(cls) is model_metadata(cls)
+              first = MODELS["currency"](name="US Dollar", code="USD")
+              assert model_metadata(first).key == "currency"
+              try:
+                  MODELS["x"] = None; raise SystemExit("MODELS is mutable")
+              except TypeError:
+                  pass
+              try:
+                  model_metadata(dict); raise SystemExit("non-Model accepted")
+              except LookupError:
+                  pass
+              print("ok")
+              '
+            touches:
+            - src/my_model/_registry.py
+            status: todo
+          - id: P1-G4-T2
+            title: Publish the package root exports in __init__.py
+            description: 'Replace the placeholder src/my_model/__init__.py with the public interface: import and re-export the fourteen Model classes, MODELS, model_metadata, and the metadata types (ModelMeta,
+              FieldMeta, RelationshipMeta, RuleMeta, LogicalType, GenerateInstruction, UNSET), declare __all__ with exactly those names, and keep the module docstring describing the package and stating that
+              consumers import only from my_model.'
+            reason: development.yaml records my_model as the import entrypoint consumed by Database and Backend; model.yaml requires the Model classes, the registry, and the metadata accessor to be exposed
+              from the package root and nowhere else.
+            target: model
+            area: src/my_model/__init__.py
+            execution_context:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+              instructions: |
+                1. In src/my_model/__init__.py import User, Currency, TradingPlatform, Broker, AccountGroup, Account, Asset, TrailingGroup, TrailingRule, PartialGroup, PartialRule, ActionGroup, Action, Position from their modules, MODELS and model_metadata from ._registry, and ModelMeta, FieldMeta, RelationshipMeta, RuleMeta, LogicalType, GenerateInstruction, UNSET from ._metadata.
+                2. Set `__all__ = ["User", "Currency", "TradingPlatform", "Broker", "AccountGroup", "Account", "Asset", "TrailingGroup", "TrailingRule", "PartialGroup", "PartialRule", "ActionGroup", "Action", "Position", "MODELS", "model_metadata", "ModelMeta", "FieldMeta", "RelationshipMeta", "RuleMeta", "LogicalType", "GenerateInstruction", "UNSET"]`.
+                3. Keep the docstring; add a `__version__ = "0.1.0"` matching pyproject.toml.
+              inputs:
+              - P1-G4-T1 — src/my_model/_registry.py
+              - .interface/config/model.yaml — implementation.public_interface (entrypoint, exports)
+              expected_output: src/my_model/__init__.py exporting the documented public interface.
+            depends_on:
+            - P1-G4-T1
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            acceptance: Every documented export is importable from my_model, __all__ contains exactly the documented names, and the exported classes are the same objects the registry maps.
+            verify: |
+              uv run python -c '
+              import my_model
+              expected = ["User", "Currency", "TradingPlatform", "Broker", "AccountGroup", "Account", "Asset", "TrailingGroup", "TrailingRule", "PartialGroup", "PartialRule", "ActionGroup", "Action", "Position", "MODELS", "model_metadata", "ModelMeta", "FieldMeta", "RelationshipMeta", "RuleMeta", "LogicalType", "GenerateInstruction", "UNSET"]
+              assert sorted(my_model.__all__) == sorted(expected), (sorted(my_model.__all__), sorted(expected))
+              for name in expected:
+                  assert hasattr(my_model, name), name
+              for key, cls in my_model.MODELS.items():
+                  assert getattr(my_model, cls.__name__) is cls, key
+              assert my_model.model_metadata(my_model.User).key == "user" and my_model.__version__ == "0.1.0"
+              print("ok")
+              '
+            touches:
+            - src/my_model/__init__.py
+            status: todo
+          - id: P1-G4-T3
+            title: Write the package README with the required sections
+            description: 'Replace the README.md stub with the package documentation required by development.yaml: purpose and boundaries, public interface, dependencies, configuration, installation and startup,
+              and usage examples, so a consumer can use my_model without reading its implementation.'
+            reason: The Development Principles require every package to carry a README that lets a consumer use it without inspecting the implementation; development.yaml records the required sections for my_model.
+            target: model
+            area: README.md
+            execution_context:
+              kind: documentation
+              language: Markdown
+              technologies:
+              - Markdown
+              - Python 3.14.7
+              instructions: 'Write model/README.md with the title `# my_model` and these second-level headings in this order: `## Purpose and boundaries` (what the package is, that it owns Model meaning and
+                validation only, and what it does not own — persistence, Behaviour, API, presentation); `## Public interface` (the fourteen Model classes, MODELS, model_metadata, the metadata types, that consumers
+                import only from my_model, and the convention that id and credential fields are None before persistence and in instances returned by Database); `## Dependencies` (Python 3.14.7, pydantic 2.13.5,
+                uv 0.12.10; no other run-time dependency); `## Configuration` (the package accepts no runtime configuration); `## Installation and startup` (uv sync in model/, and how a consumer installs it
+                as an editable path dependency: tool.uv.sources with path ../model and editable true); `## Usage examples` (a fenced python block containing exactly: from my_model import User, MODELS, model_metadata;
+                u = User(name="Admin", username="admin", password="secret", api_key="key"); meta = model_metadata(User); assert meta.key == "user" and list(MODELS)[0] == "user"; print(u.model_dump(exclude={"password",
+                "api_key"})) — written as separate lines — plus a short example of reading meta.fields and meta.relationships). Record no secret values.'
+              inputs:
+              - P1-G4-T2 — the public interface
+              - .interface/config/development.yaml — packages.my_model.readme.sections and package_standard.documentation
+              - .interface/config/model.yaml — implementation (summary, public_interface, boundaries)
+              expected_output: model/README.md with the six required sections and a runnable usage example.
+            depends_on:
+            - P1-G4-T2
+            constraints:
+            - Document configuration names and non-secret examples only; never record credentials or generated values.
+            - Keep the documentation consistent with the implemented interface.
+            acceptance: The README contains the six required headings in order and its usage example runs successfully against the package.
+            verify: |
+              for h in "## Purpose and boundaries" "## Public interface" "## Dependencies" "## Configuration" "## Installation and startup" "## Usage examples"; do grep -qF "$h" README.md || { echo "missing: $h"; exit 1; }; done && uv run python -c '
+              from my_model import User, MODELS, model_metadata
+              u = User(name="Admin", username="admin", password="secret", api_key="key")
+              meta = model_metadata(User)
+              assert meta.key == "user" and list(MODELS)[0] == "user"
+              print(u.model_dump(exclude={"password", "api_key"}))
+              '
+            touches:
+            - README.md
+            status: todo
+          - id: P1-G4-T4
+            title: Verify the lockfile, build the distribution, and install it in isolation
+            description: 'Prove the package is distributable as the local dependency the Database and Backend phases will install: confirm uv.lock is current, build the wheel and sdist with the uv_build backend,
+              and import the built wheel in an isolated interpreter to confirm the fourteen Models are reachable without the source tree.'
+            reason: development.yaml records my_model as an editable local path dependency of my_database and my_backend; a working build backend and a current lockfile are prerequisites for those installs
+              and for reproducing the package from a fresh checkout.
+            target: model
+            area: distribution (pyproject.toml, uv.lock, dist/)
+            execution_context:
+              kind: command execution
+              language: null
+              technologies:
+              - uv 0.12.10
+              - Python 3.14.7
+              instructions: |
+                1. From model/ run `uv lock --check`; if it fails, run `uv lock` and inspect why the lock was stale before continuing.
+                2. Run `uv build`; it must produce dist/my_model-0.1.0-py3-none-any.whl and dist/my_model-0.1.0.tar.gz.
+                3. Run the isolated import check in the verify command; it installs the wheel into a throwaway environment and counts the registry.
+                4. Leave dist/ untracked (the root .gitignore ignores it); do not commit build artifacts.
+              inputs:
+              - P1-G4-T2 — the public interface
+              - P1-G4-T3 — README.md referenced by pyproject.toml
+              - P1-G1-T2 — pyproject.toml and uv.lock
+              expected_output: A current uv.lock, dist/my_model-0.1.0-py3-none-any.whl, dist/my_model-0.1.0.tar.gz, and a passing isolated import of the wheel.
+            depends_on:
+            - P1-G4-T2
+            - P1-G4-T3
+            constraints:
+            - Consumers import only from the my_model package root; every internal module is private and may change freely.
+            - The package depends on nothing but pydantic at run time and never reads .interface files at run time; the verify commands may read them.
+            - Do not commit .venv, dist, or __pycache__ directories.
+            acceptance: uv lock --check passes, uv build produces the wheel and sdist, and an isolated interpreter that installs only the wheel imports my_model with fourteen registered Models.
+            verify: uv lock --check && rm -rf dist && uv build && test -f dist/my_model-0.1.0-py3-none-any.whl && test -f dist/my_model-0.1.0.tar.gz && uv run --isolated --no-project --python 3.14.7 --with
+              ./dist/my_model-0.1.0-py3-none-any.whl python -c 'import my_model; assert len(my_model.MODELS) == 14; print("ok")'
+            touches:
+            - uv.lock
+            - dist/ (created, never committed)
+            - pyproject.toml (read)
+            status: todo
+          task_count: 4
     P2:
       id: P2
       title: Database
