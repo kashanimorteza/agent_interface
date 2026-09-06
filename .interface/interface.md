@@ -19,9 +19,6 @@ Use this document as the entry point and follow its sections in this order:
 
 
 
-
-
-
 <!--------------------------------------------------------------------------------- Introduction --->
 <br > <br>
 
@@ -57,8 +54,6 @@ Agent Interface operations and supporting Agents must not edit this file. If an 
 
 
 
-
-
 <!--------------------------------------------------------------------------------- Foundational files --->
 <br > <br>
 
@@ -87,10 +82,6 @@ name = Schema
 path = .interface/schema/
 responsibility = Foundational shapes and validation rules for generated Component configuration; contains no Component philosophy or technical preference
 ```
-
-
-
-
 
 
 <!--------------------------------------------------------------------------------- Layers --->
@@ -129,20 +120,12 @@ generated = true
 ```
 
 
-
-
-
-
-
-
-
-
-
 <!--------------------------------------------------------------------------------- Component --->
 <br > <br>
 
 ## Component
 
+<!-------------------------- Development -->
 ### Development
 
 ```text
@@ -154,6 +137,7 @@ schema = .interface/schema/development.yaml
 config = .interface/config/development.yaml
 ```
 
+<!-------------------------- Model -->
 ### Model
 
 ```text
@@ -165,6 +149,8 @@ schema = .interface/schema/model.yaml
 config = .interface/config/model.yaml
 ```
 
+<!-------------------------- Database -->
+
 ### Database
 
 ```text
@@ -175,6 +161,7 @@ preference = .interface/preferences/database.yaml
 schema = .interface/schema/database.yaml
 config = .interface/config/database.yaml
 ```
+<!-------------------------- Backend -->
 
 ### Backend
 
@@ -187,6 +174,8 @@ schema = .interface/schema/backend.yaml
 config = .interface/config/backend.yaml
 ```
 
+<!-------------------------- Frontend -->
+
 ### Frontend
 
 ```text
@@ -198,6 +187,8 @@ schema = .interface/schema/frontend.yaml
 config = .interface/config/frontend.yaml
 ```
 
+<!-------------------------- State -->
+
 ### State
 
 ```text
@@ -208,6 +199,8 @@ preference = .interface/preferences/state.yaml
 schema = .interface/schema/state.yaml
 config = .interface/config/state.yaml
 ```
+
+<!-------------------------- Task -->
 
 ### Task
 
@@ -350,11 +343,6 @@ The reset stages are:
 3. **Develop:** remove root implementation directories, preserve Tasks and their history while returning every Task to `todo`, set active State to `planning`, and clear the active phase.
 
 The fixed root implementation directories currently recognized by Reset are `model/`, `database/`, `backend/`, `frontend/`, and `developer/`.
-
-
-
-
-
 
 
 
