@@ -58,11 +58,11 @@ content:
 
   # <!-------------------------------------------- active -->
   active:
-    mode: configuring
-    phase: null
-    mode_reason: The human invoked the configuring operation after a stage-1 reset had emptied the generated configuration and removed the model/ implementation, and after the Task Principles and Task Schema (5.0 to 6.0) had changed so that Tasks define activities, expected results, and verification without prescribing implementation. The operation rebuilt the complete project Understanding for every Component from the current sources — project.md and every other authority were unchanged since the previous generation — regenerated the Task frame under the new Schema, and created this State file; it acted on no single phase.
-    set_by: configuring operation (my-interface-interpreter) — acting on the human's request to interpret project.md
-    set_at: '2026-09-06T21:43:25+03:30'
+    mode: planning
+    phase: P1
+    mode_reason: The human invoked the planning operation for phase 1, which resolves to P1 (Model, target model). Its Plan was empty after the reset and re-interpretation, so the operation created 4 Groups with 20 Tasks from the generated Model, Development, and Database configuration under Task Schema 6.0 — activities with expected results and verification, without implementation steps — and recorded them in task.yaml; no other Plan was touched.
+    set_by: planning operation (my-interface-tasker) — acting on the human's request to plan phase 1
+    set_at: '2026-09-06T21:51:44+03:30'
 
   # <!-------------------------------------------- blockers -->
   blockers: {}

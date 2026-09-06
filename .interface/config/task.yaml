@@ -76,7 +76,7 @@ content:
     phase_complete: A phase is complete when its Plan is non-empty, every Task not cancelled or superseded is done, and no Task remains todo, claimed, or blocked. Completion is derived, never stored.
 
   # <!-------------------------------------------- task_count -->
-  task_count: 0
+  task_count: 20
 
   # <!-------------------------------------------- plans -->
   plans:
@@ -86,8 +86,1321 @@ content:
       order: 1
       target: model
       does: Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
-      task_count: 0
-      groups: {}
+      task_count: 20
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Package foundation
+          description: Establishes the toolchain and the my_model project so that the Model package can exist, be imported, and be verified inside its own isolated environment. The Tasks are related because
+            no Model can be provided or verified before the resolved toolchain and project exist.
+          target: model
+          area: the my_model package root and its isolated environment (model/)
+          does: A verified toolchain and an importable my_model project at model/ running CPython 3.14.7 with Pydantic 2.13.5 under uv 0.12.10, ready to receive the shared Models.
+          task_count: 2
+          tasks:
+          - id: P1-G1-T1
+            title: Make the resolved toolchain available
+            description: 'Ensure the development machine provides the toolchain the Model package is resolved to: uv 0.12.10 as the environment tool and CPython 3.14.7 as the interpreter uv manages. Installing
+              or upgrading them is part of this activity when they are absent or at another version.'
+            reason: model.yaml resolves the Model package to Python 3.14.7 managed by uv 0.12.10; every verify command of this Plan runs through uv with those versions, and preparing required prerequisites
+              is part of Development under the shared toolchain policy.
+            target: model
+            area: development toolchain for the my_model package
+            metadata:
+              kind: command execution
+              language: null
+              technologies:
+              - uv 0.12.10
+              - Python 3.14.7
+            inputs:
+            - The current uv and Python installations on the development machine
+            references:
+            - .interface/config/model.yaml — content.implementation.tech (language and environment versions)
+            expected_result: uv 0.12.10 and a uv-managed CPython 3.14.7 are available on PATH for every later verify command of this Plan.
+            depends_on: []
+            constraints:
+            - Unrelated tools, projects, and installations on the machine are preserved.
+            acceptance: '`uv --version` reports 0.12.10 and `uv python find 3.14.7` resolves an interpreter.'
+            verify: uv --version | grep -q '^uv 0\.12\.10\b' && uv python find 3.14.7
+            status: todo
+          - id: P1-G1-T2
+            title: Establish the my_model project with its isolated environment
+            description: Establish the my_model package at model/ as the resolved uv-managed Python project so that, inside its own environment, `import my_model` succeeds with CPython 3.14.7 and pydantic 2.13.5
+              in use and the dependency lock current. The package holds no Model yet; the later Tasks add them.
+            reason: Every later Task of this Plan is verified inside this environment, and the Database and Backend phases install this project as an editable local path dependency, which requires a valid project
+              in the resolved form.
+            target: model
+            area: the my_model package root and its isolated environment (model/)
+            metadata:
+              kind: configuration
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T1 — the resolved toolchain
+            references:
+            - .interface/config/model.yaml — content.implementation (code_path, verify_cwd, package, tech, public_interface, boundaries)
+            - .interface/config/development.yaml — content.packages.my_model (kind, code_path, interfaces, configuration, distribution, readme) and content.package_standard
+            - '.interface/config/development.yaml — content.cross_cutting (every capability is disabled: no test framework, logging, error handling, or authentication is introduced)'
+            expected_result: A uv project at model/ whose environment runs CPython 3.14.7 with pydantic 2.13.5 as its only run-time dependency, whose lock is current, and in which `import my_model` succeeds.
+            depends_on:
+            - P1-G1-T1
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - pydantic is the only run-time dependency; pyyaml, used by verify commands, is supplied through `uv run --with pyyaml` and is never a project dependency.
+            acceptance: From model/, the lock is current and the project environment imports my_model under Python 3.14.7 with pydantic 2.13.5.
+            verify: uv lock --check && uv run python -c 'import sys, pydantic, my_model; assert sys.version_info[:3] == (3, 14, 7), sys.version; assert pydantic.VERSION == "2.13.5", pydantic.VERSION; print("ok")'
+            status: todo
+        P1-G2:
+          id: P1-G2
+          title: Shared Model classes
+          description: Provides the fourteen shared Models, one activity per Model in project order, each exposed from the package root with its resolved fields, validation, and logical definition. The Tasks
+            are related because together they realize the complete Model set; they depend only on the project and are independent of each other.
+          target: model
+          area: the fourteen logical Models exposed by my_model (user, currency, trading_platform, broker, account_group, account, asset, trailing_group, trailing_rule, partial_group, partial_rule, action_group,
+            action, position)
+          does: Fourteen Model classes whose validation behaviour and logical definitions reproduce content.models of model.yaml.
+          task_count: 14
+          tasks:
+          - id: P1-G2-T1
+            title: Provide the User Model with its domain validation
+            description: Make the User Model available from the my_model package root as a class whose instances carry the 7 resolved fields of the user Model (id, name, username, password, api_key, status,
+              description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries the Model's
+              complete resolved logical definition — purpose, fields, 0 relationship(s), 2 rule(s), and 1 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The user Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the user Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved user Model definition: 7 fields, 0 relationship(s), 2 rule(s), 1 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.user
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import User` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and null
+              in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id, password, api_key.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.user exactly; nothing is added, renamed, reordered,
+              or defaulted beyond the configuration.
+            - The fields id, password, api_key may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays
+              false in the Model's definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid User from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field, and
+              a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import User
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["user"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = User(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      User(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("user ok")
+              '
+            status: todo
+          - id: P1-G2-T2
+            title: Provide the Currency Model with its domain validation
+            description: Make the Currency Model available from the my_model package root as a class whose instances carry the 8 resolved fields of the currency Model (id, name, code, symbol, country, decimal_digits,
+              status, description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries
+              the Model's complete resolved logical definition — purpose, fields, 0 relationship(s), 0 rule(s), and 8 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The currency Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the currency Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved currency Model definition: 8 fields, 0 relationship(s), 0 rule(s), 8 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.currency
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import Currency` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and null
+              in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.currency exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid Currency from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import Currency
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["currency"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = Currency(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      Currency(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("currency ok")
+              '
+            status: todo
+          - id: P1-G2-T3
+            title: Provide the TradingPlatform Model with its domain validation
+            description: Make the TradingPlatform Model available from the my_model package root as a class whose instances carry the 5 resolved fields of the trading_platform Model (id, name, code, status,
+              description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries the Model's
+              complete resolved logical definition — purpose, fields, 0 relationship(s), 0 rule(s), and 2 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The trading_platform Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the trading_platform Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved trading_platform Model definition: 5 fields, 0 relationship(s), 0 rule(s), 2 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.trading_platform
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import TradingPlatform` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field,
+              and null in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.trading_platform exactly; nothing is added,
+              renamed, reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid TradingPlatform from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required
+              field, and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import TradingPlatform
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["trading_platform"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = TradingPlatform(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      TradingPlatform(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("trading_platform ok")
+              '
+            status: todo
+          - id: P1-G2-T4
+            title: Provide the Broker Model with its domain validation
+            description: Make the Broker Model available from the my_model package root as a class whose instances carry the 6 resolved fields of the broker Model (id, name, user_id, trading_platform_id, status,
+              description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries the Model's
+              complete resolved logical definition — purpose, fields, 2 relationship(s), 1 rule(s), and 1 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The broker Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the broker Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved broker Model definition: 6 fields, 2 relationship(s), 1 rule(s), 1 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.broker
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import Broker` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and null
+              in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.broker exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid Broker from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import Broker
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["broker"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = Broker(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      Broker(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("broker ok")
+              '
+            status: todo
+          - id: P1-G2-T5
+            title: Provide the AccountGroup Model with its domain validation
+            description: Make the AccountGroup Model available from the my_model package root as a class whose instances carry the 4 resolved fields of the account_group Model (id, name, status, description)
+              and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries the Model's complete
+              resolved logical definition — purpose, fields, 0 relationship(s), 0 rule(s), and 1 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The account_group Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the account_group Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved account_group Model definition: 4 fields, 0 relationship(s), 0 rule(s), 1 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.account_group
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import AccountGroup` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and
+              null in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.account_group exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid AccountGroup from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import AccountGroup
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["account_group"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = AccountGroup(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      AccountGroup(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("account_group ok")
+              '
+            status: todo
+          - id: P1-G2-T6
+            title: Provide the Account Model with its domain validation
+            description: Make the Account Model available from the my_model package root as a class whose instances carry the 12 resolved fields of the account Model (id, name, account_group_id, broker_id,
+              base_currency_id, username, password, leverage, balance, account_type, status, description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly as
+              the generated Model configuration records them. The class also carries the Model's complete resolved logical definition — purpose, fields, 3 relationship(s), 1 rule(s), and 1 initial record(s)
+              — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The account Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the account Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved account Model definition: 12 fields, 3 relationship(s), 1 rule(s), 1 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.account
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import Account` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and null
+              in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id, password.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.account exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id, password may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in
+              the Model's definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid Account from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import Account
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["account"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = Account(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      Account(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("account ok")
+              '
+            status: todo
+          - id: P1-G2-T7
+            title: Provide the Asset Model with its domain validation
+            description: Make the Asset Model available from the my_model package root as a class whose instances carry the 8 resolved fields of the asset Model (id, name, symbol, category, point_size, digits,
+              status, description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries
+              the Model's complete resolved logical definition — purpose, fields, 0 relationship(s), 0 rule(s), and 4 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The asset Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the asset Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved asset Model definition: 8 fields, 0 relationship(s), 0 rule(s), 4 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.asset
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import Asset` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and null
+              in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.asset exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid Asset from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field, and
+              a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import Asset
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["asset"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = Asset(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      Asset(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("asset ok")
+              '
+            status: todo
+          - id: P1-G2-T8
+            title: Provide the TrailingGroup Model with its domain validation
+            description: Make the TrailingGroup Model available from the my_model package root as a class whose instances carry the 4 resolved fields of the trailing_group Model (id, name, status, description)
+              and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries the Model's complete
+              resolved logical definition — purpose, fields, 0 relationship(s), 0 rule(s), and 1 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The trailing_group Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the trailing_group Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved trailing_group Model definition: 4 fields, 0 relationship(s), 0 rule(s), 1 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.trailing_group
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import TrailingGroup` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field,
+              and null in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.trailing_group exactly; nothing is added,
+              renamed, reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid TrailingGroup from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required
+              field, and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import TrailingGroup
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["trailing_group"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = TrailingGroup(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      TrailingGroup(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("trailing_group ok")
+              '
+            status: todo
+          - id: P1-G2-T9
+            title: Provide the TrailingRule Model with its domain validation
+            description: Make the TrailingRule Model available from the my_model package root as a class whose instances carry the 8 resolved fields of the trailing_rule Model (id, name, trailing_group_id,
+              trigger_percentage, take_profit_adjustment, stop_loss_adjustment, status, description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the
+              generated Model configuration records them. The class also carries the Model's complete resolved logical definition — purpose, fields, 1 relationship(s), 0 rule(s), and 0 initial record(s) — so
+              the metadata accessor of P1-G3-T2 can return it.
+            reason: The trailing_rule Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the trailing_rule Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved trailing_rule Model definition: 8 fields, 1 relationship(s), 0 rule(s), 0 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.trailing_rule
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import TrailingRule` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and
+              null in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.trailing_rule exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid TrailingRule from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import TrailingRule
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["trailing_rule"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = TrailingRule(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      TrailingRule(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("trailing_rule ok")
+              '
+            status: todo
+          - id: P1-G2-T10
+            title: Provide the PartialGroup Model with its domain validation
+            description: Make the PartialGroup Model available from the my_model package root as a class whose instances carry the 4 resolved fields of the partial_group Model (id, name, status, description)
+              and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries the Model's complete
+              resolved logical definition — purpose, fields, 0 relationship(s), 0 rule(s), and 1 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The partial_group Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the partial_group Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved partial_group Model definition: 4 fields, 0 relationship(s), 0 rule(s), 1 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.partial_group
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import PartialGroup` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and
+              null in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.partial_group exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid PartialGroup from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import PartialGroup
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["partial_group"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = PartialGroup(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      PartialGroup(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("partial_group ok")
+              '
+            status: todo
+          - id: P1-G2-T11
+            title: Provide the PartialRule Model with its domain validation
+            description: Make the PartialRule Model available from the my_model package root as a class whose instances carry the 7 resolved fields of the partial_rule Model (id, name, partial_group_id, profit_percentage,
+              close_percentage, status, description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The
+              class also carries the Model's complete resolved logical definition — purpose, fields, 1 relationship(s), 0 rule(s), and 0 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The partial_rule Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the partial_rule Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved partial_rule Model definition: 7 fields, 1 relationship(s), 0 rule(s), 0 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.partial_rule
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import PartialRule` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and
+              null in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.partial_rule exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid PartialRule from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import PartialRule
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["partial_rule"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = PartialRule(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      PartialRule(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("partial_rule ok")
+              '
+            status: todo
+          - id: P1-G2-T12
+            title: Provide the ActionGroup Model with its domain validation
+            description: Make the ActionGroup Model available from the my_model package root as a class whose instances carry the 4 resolved fields of the action_group Model (id, name, status, description)
+              and whose construction validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries the Model's complete
+              resolved logical definition — purpose, fields, 0 relationship(s), 0 rule(s), and 1 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The action_group Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the action_group Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved action_group Model definition: 4 fields, 0 relationship(s), 0 rule(s), 1 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.action_group
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import ActionGroup` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and
+              null in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.action_group exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid ActionGroup from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import ActionGroup
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["action_group"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = ActionGroup(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      ActionGroup(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("action_group ok")
+              '
+            status: todo
+          - id: P1-G2-T13
+            title: Provide the Action Model with its domain validation
+            description: Make the Action Model available from the my_model package root as a class whose instances carry the 12 resolved fields of the action Model (id, name, action_group_id, asset_id, account_id,
+              partial_group_id, trailing_group_id, risk_by_reward, take_profit, stop_loss, status, description) and whose construction validates field types, nullability, and defaults through Pydantic, exactly
+              as the generated Model configuration records them. The class also carries the Model's complete resolved logical definition — purpose, fields, 5 relationship(s), 0 rule(s), and 1 initial record(s)
+              — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The action Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the action Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved action Model definition: 12 fields, 5 relationship(s), 0 rule(s), 1 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.action
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import Action` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and null
+              in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.action exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid Action from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import Action
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["action"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = Action(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      Action(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("action ok")
+              '
+            status: todo
+          - id: P1-G2-T14
+            title: Provide the Position Model with its domain validation
+            description: Make the Position Model available from the my_model package root as a class whose instances carry the 20 resolved fields of the position Model (id, name, trading_platform_id, broker_id,
+              account_id, trailing_group_id, partial_group_id, action_group_id, action_id, date, volume, profit, is_executed, order_type, base_tp, base_sl, real_tp, real_sl, status, description) and whose construction
+              validates field types, nullability, and defaults through Pydantic, exactly as the generated Model configuration records them. The class also carries the Model's complete resolved logical definition
+              — purpose, fields, 7 relationship(s), 0 rule(s), and 0 initial record(s) — so the metadata accessor of P1-G3-T2 can return it.
+            reason: The position Model is one of the fourteen shared Models; Database, Backend, and Frontend consume one domain meaning through this class and its metadata instead of redefining it.
+            target: model
+            area: the position Model of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G1-T2 — the importable my_model project
+            - 'The resolved position Model definition: 20 fields, 7 relationship(s), 0 rule(s), 0 initial record(s)'
+            references:
+            - .interface/config/model.yaml — content.models.position
+            - .interface/config/model.yaml — content.implementation.public_interface (exports.models, exports.validation)
+            - .interface/config/database.yaml — content.layers.database_interface.operations (the primary key is generated on create; returned instances never carry credential values)
+            expected_result: '`from my_model import Position` succeeds; an instance is constructed from the required fields with every declared default applied; a wrong type, a missing required field, and null
+              in a non-nullable field are each rejected with pydantic.ValidationError; an instance may exist without a value for id.'
+            depends_on:
+            - P1-G1-T2
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - Field names, order, logical types, nullability, defaults, uniqueness, credential markers, relationships, rules, and initial data match content.models.position exactly; nothing is added, renamed,
+              reordered, or defaulted beyond the configuration.
+            - The fields id may be absent on an instance because Database assigns the primary key on create and returns instances without credential values; their logical nullability stays false in the Model's
+              definition.
+            - The class carries no persistence, API, or presentation detail.
+            acceptance: The verify run constructs a valid Position from the required fields, observes every declared default, and observes pydantic.ValidationError for a wrong type, a missing required field,
+              and a null non-nullable field.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, pydantic, datetime, decimal
+              from my_model import Position
+              e = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]["position"]["fields"]
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              absent_ok = {n for n, f in e.items() if f.get("auto_increment") or f.get("credential")}
+              required = [n for n, f in e.items() if not f["nullable"] and "default" not in f and n not in absent_ok]
+              nullable = [n for n, f in e.items() if f["nullable"]]
+              kw = {n: sample[e[n]["type"]] for n in required} | {n: None for n in nullable}
+              inst = Position(**kw)
+              for n, f in e.items():
+                  if "default" in f:
+                      assert getattr(inst, n) == f["default"], (n, getattr(inst, n), f["default"])
+                  if n in absent_ok or n in nullable:
+                      assert getattr(inst, n, None) is None, n
+              def rejected(**bad):
+                  try:
+                      Position(**bad)
+                  except pydantic.ValidationError:
+                      return True
+                  return False
+              for n in required:
+                  assert rejected(**{k: v for k, v in kw.items() if k != n}), "missing required field accepted: " + n
+              for n, f in e.items():
+                  if n in absent_ok:
+                      continue
+                  assert rejected(**{**kw, n: object()}), "wrong type accepted: " + n
+                  if not f["nullable"]:
+                      assert rejected(**{**kw, n: None}), "null accepted in non-nullable field: " + n
+              print("position ok")
+              '
+            status: todo
+        P1-G3:
+          id: P1-G3
+          title: Registry and metadata interface
+          description: 'Completes the documented public interface of the package beyond the Model classes: the ordered registry that names every Model and the accessor that exposes each Model''s resolved definition.
+            The Tasks are related because both make the Model set discoverable and readable by Database and Backend without parsing the Interface.'
+          target: model
+          area: the MODELS registry and model_metadata accessor of the my_model public interface
+          does: MODELS and model_metadata exported from the my_model root, exposing the fourteen Models in project order and their definitions with the same content as model.yaml.
+          task_count: 2
+          tasks:
+          - id: P1-G3-T1
+            title: Provide the MODELS registry
+            description: 'Expose MODELS from the my_model package root: the ordered mapping from every Model key of the generated configuration (lower_snake_case) to its exported class, in project order.'
+            reason: model.yaml names MODELS as the registry export of the public interface; Database resolves Model identity through it and Backend iterates it to connect one Logic unit per Model.
+            target: model
+            area: the MODELS registry of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G2-T1 — the User Model
+            - P1-G2-T2 — the Currency Model
+            - P1-G2-T3 — the TradingPlatform Model
+            - P1-G2-T4 — the Broker Model
+            - P1-G2-T5 — the AccountGroup Model
+            - P1-G2-T6 — the Account Model
+            - P1-G2-T7 — the Asset Model
+            - P1-G2-T8 — the TrailingGroup Model
+            - P1-G2-T9 — the TrailingRule Model
+            - P1-G2-T10 — the PartialGroup Model
+            - P1-G2-T11 — the PartialRule Model
+            - P1-G2-T12 — the ActionGroup Model
+            - P1-G2-T13 — the Action Model
+            - P1-G2-T14 — the Position Model
+            references:
+            - .interface/config/model.yaml — content.implementation.public_interface.exports.registry
+            - .interface/config/model.yaml — content.models (key order)
+            expected_result: list(MODELS) equals the fourteen Model keys in project order, and each value is the class exported from my_model under the corresponding name.
+            depends_on:
+            - P1-G2-T1
+            - P1-G2-T2
+            - P1-G2-T3
+            - P1-G2-T4
+            - P1-G2-T5
+            - P1-G2-T6
+            - P1-G2-T7
+            - P1-G2-T8
+            - P1-G2-T9
+            - P1-G2-T10
+            - P1-G2-T11
+            - P1-G2-T12
+            - P1-G2-T13
+            - P1-G2-T14
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - The registry preserves project order and contains exactly the fourteen shared Models.
+            acceptance: The verify run finds the fourteen keys in model.yaml order and each mapped class identical to the root export of the same Model.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, my_model
+              from my_model import MODELS
+              exp = list(yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"])
+              assert list(MODELS) == exp, (list(MODELS), exp)
+              for key, name in zip(exp, ["User", "Currency", "TradingPlatform", "Broker", "AccountGroup", "Account", "Asset", "TrailingGroup", "TrailingRule", "PartialGroup", "PartialRule", "ActionGroup", "Action", "Position"]):
+                  assert MODELS[key] is getattr(my_model, name), key
+              print("ok: " + str(len(MODELS)) + " Models registered")
+              '
+            status: todo
+          - id: P1-G3-T2
+            title: Provide the model_metadata accessor
+            description: Expose model_metadata from the my_model package root so that, given any shared Model class or instance, it returns that Model's resolved logical definition — key, purpose, the fields
+              in declared order with their type, size, nullable, default, auto_increment, primary_key, unique, credential, and purpose, the relationships, the rules, and the initial data — with the same content
+              as the generated Model configuration.
+            reason: model.yaml names model_metadata as the metadata export so Database and Backend derive their own representations from the package instead of parsing model.yaml at run time; database.yaml
+              relies on it for fields, relationships, rules, credential markers, and initial data.
+            target: model
+            area: the model_metadata accessor of my_model
+            metadata:
+              kind: code
+              language: Python
+              technologies:
+              - Python 3.14.7
+              - uv 0.12.10
+              - Pydantic 2.13.5
+            inputs:
+            - P1-G3-T1 — the MODELS registry
+            - The resolved definitions of the fourteen Models carried by their classes
+            references:
+            - .interface/config/model.yaml — content.implementation.public_interface.exports.metadata
+            - .interface/config/model.yaml — content.models
+            - .interface/config/database.yaml — content.layers.data_logic (model_metadata supplies fields, relationships, rules, credential markers, and initial data)
+            expected_result: For every Model in MODELS, model_metadata(class) and model_metadata(instance) expose the recorded definition with equal content, addressable by the recorded names; a property the
+              configuration does not record is absent or unset rather than invented, and a generate instruction in initial data remains an instruction.
+            depends_on:
+            - P1-G3-T1
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            - The returned definition is a stable structure whose parts are addressable by the recorded names (key, purpose, fields, relationships, rules, initial_data, and the field properties); its concrete
+              container type is Development's choice.
+            - The Model package never generates a value for a generate instruction; fulfilling it belongs to Database at seed time.
+            acceptance: The verify run compares the definition returned for every Model class and for an instance of it against content.models of model.yaml and finds equal content in every recorded property.
+            verify: |
+              uv run --with pyyaml python -c '
+              import yaml, datetime, decimal
+              from collections.abc import Mapping
+              from my_model import MODELS, model_metadata
+              EXP = yaml.safe_load(open("../.interface/config/model.yaml"))["content"]["models"]
+              def get(o, k):
+                  return o.get(k) if isinstance(o, Mapping) else getattr(o, k, None)
+              def plain(v):
+                  return v if v is None or isinstance(v, (str, int, float, bool)) else getattr(v, "value", v)
+              def named(items):
+                  return dict(items) if isinstance(items, Mapping) else {get(i, "name"): i for i in (items or [])}
+              LITERALS = (str, int, float, bool, decimal.Decimal)
+              sample = {"integer": 1, "string": "x", "boolean": True, "decimal": decimal.Decimal("1.5"), "float": 1.5, "datetime": datetime.datetime(2026, 1, 1)}
+              def check(m, key):
+                  e = EXP[key]
+                  assert get(m, "key") == key, (key, get(m, "key"))
+                  assert get(m, "purpose") == e["purpose"], (key, "purpose")
+                  fm = named(get(m, "fields"))
+                  assert list(fm) == list(e["fields"]), (key, "field order", list(fm))
+                  for n, ef in e["fields"].items():
+                      f = fm[n]
+                      assert plain(get(f, "type")) == ef["type"], (key, n, "type", plain(get(f, "type")))
+                      assert bool(get(f, "nullable")) == ef["nullable"], (key, n, "nullable")
+                      assert get(f, "size") == ef.get("size"), (key, n, "size")
+                      assert get(f, "purpose") == ef.get("purpose"), (key, n, "purpose")
+                      for flag in ("auto_increment", "primary_key", "unique", "credential"):
+                          assert bool(get(f, flag)) == bool(ef.get(flag)), (key, n, flag)
+                      d = get(f, "default")
+                      if "default" in ef:
+                          assert d == ef["default"], (key, n, "default", d)
+                      else:
+                          assert not isinstance(d, LITERALS), (key, n, "default not recorded but present", d)
+                  rm = named(get(m, "relationships"))
+                  assert list(rm) == list(e.get("relationships") or {}), (key, "relationships", list(rm))
+                  for n, er in (e.get("relationships") or {}).items():
+                      for p in ("type", "target", "field", "role"):
+                          assert plain(get(rm[n], p)) == er.get(p), (key, n, p)
+                  rules = list(get(m, "rules") or []); erules = e.get("rules") or []
+                  assert len(rules) == len(erules), (key, "rules", len(rules))
+                  for r, er in zip(rules, erules):
+                      for p in ("rule", "kind", "field", "storage"):
+                          assert plain(get(r, p)) == er.get(p), (key, "rule", p)
+                      fs = get(r, "fields")
+                      assert (list(fs) if fs else None) == er.get("fields"), (key, "rule fields")
+                  data = list(get(m, "initial_data") or []); edata = e.get("initial_data") or []
+                  assert len(data) == len(edata), (key, "initial_data", len(data))
+                  for rec, erec in zip(data, edata):
+                      assert isinstance(rec, Mapping), (key, "initial record must be a mapping of field values")
+                      assert list(rec) == list(erec), (key, "record keys", list(rec))
+                      for k, ev in erec.items():
+                          gv = rec[k]
+                          if isinstance(ev, Mapping) and "generate" in ev:
+                              assert gv == ev or get(gv, "generate") == ev["generate"] or get(gv, "instruction") == ev["generate"], (key, k, "generate instruction", gv)
+                          else:
+                              assert gv == ev, (key, k, gv, ev)
+              for key, cls in MODELS.items():
+                  check(model_metadata(cls), key)
+                  e = EXP[key]["fields"]
+                  kw = {n: sample[f["type"]] for n, f in e.items() if not f["nullable"] and "default" not in f and not f.get("auto_increment") and not f.get("credential")}
+                  check(model_metadata(cls(**kw)), key)
+              print("ok: " + str(len(MODELS)) + " Models")
+              '
+            status: todo
+        P1-G4:
+          id: P1-G4
+          title: Documentation and distribution
+          description: 'Makes the finished package usable by its consumers: documents it as the package standard requires and proves it installs as the local dependency the Database and Backend phases rely
+            on. The Tasks are related because both concern handing the package to other layers rather than its domain content.'
+          target: model
+          area: package documentation and local-dependency distribution of my_model
+          does: A README covering the required sections with runnable examples, and a lock-checked, buildable project that a separate environment installs as an editable path dependency.
+          task_count: 2
+          tasks:
+          - id: P1-G4-T1
+            title: Document the my_model package
+            description: Provide the package README that the package standard requires at the package root, covering purpose and boundaries, the public interface (the fourteen Model classes, MODELS, model_metadata,
+              the validation behaviour, and the convention that the primary key and credential values may be absent on an instance), dependencies, configuration (none), installation and startup including how
+              a consumer installs the package as an editable local path dependency, and runnable usage examples.
+            reason: The Development Principles require every package to carry a README that lets a consumer use it without inspecting its implementation; development.yaml records the required sections for my_model.
+            target: model
+            area: package documentation (model/README.md)
+            metadata:
+              kind: documentation
+              language: Markdown
+              technologies:
+              - Markdown
+            inputs:
+            - P1-G3-T2 — the complete public interface
+            references:
+            - .interface/config/development.yaml — content.packages.my_model.readme and content.package_standard.documentation
+            - .interface/config/model.yaml — content.implementation (code_path, verify_cwd, package, tech, public_interface, boundaries)
+            expected_result: model/README.md with the six required sections, consistent with the implemented interface, whose usage examples execute successfully.
+            depends_on:
+            - P1-G3-T2
+            constraints:
+            - Document configuration names and non-secret examples only; never record credentials or generated values.
+            - Usage examples are Python code blocks that run against the installed package.
+            acceptance: The README contains a heading for each required section and every Python usage example executes without error.
+            verify: |
+              for k in purpose interface dependenc configuration installation usage; do grep -qiE "^#{1,6} .*$k" README.md || { echo "missing section: $k"; exit 1; }; done && uv run python -c '
+              import re, pathlib
+              blocks = re.findall(r"```python\n(.*?)```", pathlib.Path("README.md").read_text(), re.S)
+              assert blocks, "no Python usage example"
+              for b in blocks:
+                  exec(compile(b, "README.md", "exec"), {})
+              print("ok: " + str(len(blocks)) + " example(s) ran")
+              '
+            status: todo
+          - id: P1-G4-T2
+            title: Prove the package installs as a local dependency
+            description: 'Prove that the my_model project is distributable in the resolved form: its lock is current, its build backend produces a wheel and a source distribution, and a separate environment
+              that installs the project as an editable path dependency imports my_model and sees the fourteen registered Models — the mechanism the Database and Backend phases will use.'
+            reason: development.yaml records my_model as an internal package installed by my_database and my_backend as an editable local path dependency; a working build and a current lock are prerequisites
+              for those installs and for reproducing the package from a fresh checkout.
+            target: model
+            area: local-dependency distribution of my_model
+            metadata:
+              kind: command execution
+              language: null
+              technologies:
+              - uv 0.12.10
+              - Python 3.14.7
+            inputs:
+            - P1-G4-T1 — the documented package
+            - P1-G3-T1 — the MODELS registry
+            references:
+            - .interface/config/development.yaml — content.package_standard.distribution.local_dependency and content.packages.my_model.distribution
+            - .interface/config/model.yaml — content.implementation (code_path, verify_cwd, package, tech, public_interface, boundaries)
+            expected_result: A current lock, a wheel and a source distribution of my-model, and a successful editable-path import of my_model with fourteen registered Models from an isolated environment.
+            depends_on:
+            - P1-G4-T1
+            - P1-G3-T1
+            constraints:
+            - Consumers import only from the my_model package root; no internal module is part of the public interface.
+            - The package accepts no runtime configuration and reads no Interface file at run time; only verify commands read .interface/config/model.yaml.
+            - The isolated environment and build artifacts are never committed.
+            acceptance: uv lock --check passes, uv build produces the wheel and source distribution, and an isolated environment installing the project as an editable path dependency imports my_model with fourteen
+              Models.
+            verify: uv lock --check && rm -rf dist && uv build && ls dist/my_model-*.whl dist/my_model-*.tar.gz && uv run --isolated --no-project --python 3.14.7 --with-editable . python -c 'import my_model;
+              assert len(my_model.MODELS) == 14, len(my_model.MODELS); print("ok")'
+            status: todo
     P2:
       id: P2
       title: Database
