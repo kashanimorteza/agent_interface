@@ -104,7 +104,7 @@ Creates or reconciles an implementation-ready plan for one requested project pha
 
 ### `my-interface-developer`
 
-Implements and verifies eligible planned Tasks for one requested project phase within its authorized boundaries.
+Implements and verifies eligible planned Tasks for one requested project phase within its authorized boundaries. Accepts a phase number: `1` selects phase one, `2` selects phase two, and so on; existing phase identifiers remain unchanged.
 
 ### `my-interface-reviewer`
 
@@ -137,4 +137,4 @@ Define the project, its models, and its ordered phases in `project.md`.
 
 ### 4. Develop the Tasks
 
-`/my-interface-developer <phase-id>`
+`/my-interface-developer <phase-number>`

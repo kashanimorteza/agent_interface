@@ -363,7 +363,7 @@ content:
       developer:
         name: "my-interface-developer"
         path: ".claude/skills/my-interface-developer/SKILL.md"
-        invocation: "/my-interface-developer <phase-id>"
+        invocation: "/my-interface-developer <phase-number>"
         responsibility: "Implement and verify eligible planned Tasks for one requested project phase"
         mode: "content.structure.modes.items.development"
 
@@ -413,4 +413,4 @@ content:
         order: 4
         title: "Develop the Tasks"
         skill: "content.agent_skills.items.developer"
-        argument: "phase-id"
+        argument: "phase-number"

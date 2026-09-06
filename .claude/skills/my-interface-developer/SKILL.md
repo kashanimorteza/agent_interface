@@ -1,13 +1,17 @@
 ---
 name: my-interface-developer
 description: Execute and reconcile eligible planned work for one requested project phase from its current implementation-ready Plan. Implements and verifies only; never plans, reviews, or interprets the human project definition.
-argument-hint: "[phase-id]"
+argument-hint: "[phase-number]"
 disable-model-invocation: true
 ---
 
 # Develop one project phase
 
-Execute the unfinished eligible work for the project phase named in `$ARGUMENTS`.
+Execute the unfinished eligible work for the project phase selected by the number in `$ARGUMENTS`.
+
+## Input
+
+Accept one positive integer: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in the current generated Project Understanding and use that phase's existing identifier to locate its Plan and throughout development. The number is an input convenience; it never renames a phase or changes stored identifiers or references. If the number is missing, invalid, or does not uniquely select an existing phase, request a valid phase number before changing any files.
 
 ## Workflow
 
