@@ -59,12 +59,12 @@ Components are the subjects described through the layers:
 | --- | --- |
 | **Definition** | Structured project description, conceptual models, project structure, behaviours, and ordered phases |
 | **Model** | Independent shared Model package, domain models, fields, relationships, rules, validation, and initial data |
-| **Development** | Independent Model, Database, Backend, and Frontend layers, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them |
+| **Development** | Independent Model, Database, Backend, and Frontend layers, centralized runtime configuration, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them |
 | **State** | Current workflow position, repeatable working modes, critical blockers, and open questions |
 | **Task** | Phase plans, contextual groups, and atomic self-contained tasks with explicit execution and verification context |
 | **Backend** | Application and Model Logic, Database communication through Data Access, and the external API |
 | **Frontend** | Component-based Presentation, user Interaction Logic, and application access through the Backend API |
-| **Database** | Generic Database Interface, Model-driven Data Logic and Mapping, and Engine-specific Storage Adapter |
+| **Database** | Independent package with typed Model operations, supported Engines, selectable Instances, Model-driven mapping, and Engine-specific Storage Adapters |
 
 For example, understanding the Backend component means combining its Principle, Preferences, and Schema. The same reading model applies to every component, with empty layer files contributing no additional information.
 
@@ -83,7 +83,9 @@ State records the active Mode. Agent Skills are external capabilities that perfo
 
 The `config/` directory is not a fourth descriptive layer. It is the generated project Understanding: the project-specific result produced from `project.md` using the applicable Principles and Preferences and written in the forms defined by the Schemas.
 
-Each generated configuration belongs to one component. Definition captures the project description, conceptual models, project structure, behaviours, and phases; Model provides the independent shared package and detailed domain language; the application layers define their own resolved configuration; Development connects Model, Database, Backend, and Frontend through declared interfaces and defines the Platform that runs and deploys them; Task holds executable plans; and State records where the Workflow currently stands.
+Each generated configuration belongs to one component. Definition captures the project description, conceptual models, project structure, behaviours, and phases; Model provides the independent shared package and detailed domain language; Database defines supported Engines, configured Instances, and typed persistence access without copying Model definitions; the application layers define their own resolved configuration; Development connects Model, Database, Backend, and Frontend through declared interfaces and defines the Platform that runs and deploys them; Task holds executable plans; and State records where the Workflow currently stands.
+
+Development also defines the project-level runtime configuration boundary. By default, implementation places non-secret user-editable settings and layer bindings in `application.yaml`, while `.env` supplies secret values and private environment settings. Platform validates these sources and injects only the applicable section and declared bindings into each package.
 
 Project phases are the units of planning and development. A phase target selects the component developed by that phase, while Development independently describes how all selected technical components connect and operate together.
 

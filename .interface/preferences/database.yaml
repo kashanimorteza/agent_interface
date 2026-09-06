@@ -2,7 +2,7 @@
 meta:
   path: ".interface/preferences/database.yaml"
   path_note: "The Preferences layer of the Database Component — supported technical choices and defaults used when a Database choice is unstated."
-  purpose: "Defaults and supported technical profiles for the Database Interface, Data Logic, and Storage Adapter layers."
+  purpose: "Defaults and supported technical profiles for Database Instances, Engines, Database Interface, Data Logic, and Storage Adapter."
   standard: "Agent Project Interface"
   version: "4.0"
   updated: "2026-09-05"
@@ -14,7 +14,7 @@ policy:
   rule: "This file is human-owned. Generation reads it and never writes resolved Database choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit project value and every applicable Database Principle take precedence over this file."
-  consumption: "Generation resolves each unstated Database choice from this file and records the concrete result in generated Database configuration. Downstream operations consume that resolved result."
+  consumption: "Generation resolves each unstated Database choice from this file, creates the default Instance when no explicit Instance is defined, and records the concrete result in generated Database configuration. Downstream operations consume that resolved result."
   selection: "Prefer a supported compatible entry. For an unlisted need, select a well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Database stack; latest never appears in generated configuration."
 
@@ -22,6 +22,8 @@ policy:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "defaults"
+  - "instance_defaults"
+  - "instances"
   - "layers"
   - "engines"
   - "orms"
@@ -31,7 +33,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "Database-wide defaults."
+  defaults: "Database-wide code path and default-Instance selection."
+  instance_defaults: "Naming, configuration, and secret-reference defaults shared by Database Instances."
+  instances: "Default Instances created only when the project defines no explicit replacement."
   layers: "Technical defaults grouped by Database Interface, Data Logic, and Storage Adapter."
   engines: "Supported Database Engines and their physical storage, connection, and naming profiles."
   orms: "Supported ORM implementations and capabilities."
@@ -44,6 +48,29 @@ content:
 
   defaults:
     code_path: "database/"
+    default_instance: "general"
+
+  instance_defaults:
+    naming:
+      key: "<role>"
+      name: "<project> <role>"
+      database: "<project>_<role>"
+      normalization: "lower_snake_case"
+    connection:
+      host: "localhost"
+      port: "engine_default"
+    secrets:
+      source: "environment"
+      username: "<PROJECT>_<INSTANCE>_DATABASE_USERNAME"
+      password: "<PROJECT>_<INSTANCE>_DATABASE_PASSWORD"
+      store_values_in_configuration: false
+
+  instances:
+    general:
+      name: "<project> General"
+      purpose: "General application data."
+      engine: "SQLite"
+      database: "<project>_general"
 
   layers:
     database_interface: {}
@@ -69,13 +96,65 @@ content:
   engines:
     SQLite:
       version: "runtime-provided"
+      driver:
+        name: "sqlite3"
+        version: "runtime-provided"
+        package: null
       storage:
         kind: "file"
-        path: "app.db"
       connection:
         url_scheme: "sqlite"
+        parameters:
+          - "database"
         foreign_keys: true
         check_same_thread: false
+      naming:
+        tables: "plural_snake_case"
+        columns: "snake_case"
+        constraints: "snake_case"
+        indexes: "ix_<table>_<column>"
+
+    PostgreSQL:
+      version: "latest"
+      driver:
+        name: "psycopg"
+        version: "latest"
+        package: "psycopg"
+      storage:
+        kind: "server"
+      connection:
+        url_scheme: "postgresql+psycopg"
+        default_port: 5432
+        parameters:
+          - "host"
+          - "port"
+          - "database"
+          - "username_secret"
+          - "password_secret"
+      naming:
+        tables: "plural_snake_case"
+        columns: "snake_case"
+        constraints: "snake_case"
+        indexes: "ix_<table>_<column>"
+
+    MySQL:
+      version: "latest"
+      driver:
+        name: "PyMySQL"
+        version: "latest"
+        package: "PyMySQL"
+      storage:
+        kind: "server"
+      connection:
+        url_scheme: "mysql+pymysql"
+        default_port: 3306
+        parameters:
+          - "host"
+          - "port"
+          - "database"
+          - "username_secret"
+          - "password_secret"
+        charset: "utf8mb4"
       naming:
         tables: "plural_snake_case"
         columns: "snake_case"

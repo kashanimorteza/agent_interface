@@ -1,11 +1,12 @@
 schema:
   id: agent-interface-development
-  version: "4.0"
-  purpose: "The shape of a Development configuration: independent application layers, their package boundaries and connections, and the Platform that runs and deploys them"
+  version: "5.0"
+  purpose: "The shape of a Development configuration: independent application layers, centralized runtime configuration, package boundaries and connections, and the Platform that runs and deploys them"
 
 structure:
   - summary
   - layers
+  - runtime_configuration
   - package_standard
   - packages
   - connections
@@ -46,6 +47,101 @@ sections:
           consumes:
             required: true
             purpose: "The declared interfaces the layer consumes; empty when it consumes none."
+
+  # <!--------------------------------------------------------------------------------- Runtime_Configuration -->
+  runtime_configuration:
+    required: true
+    purpose: "The project-level settings boundary loaded and distributed by Platform without embedding user-changeable configuration inside packages."
+    fields:
+      files:
+        required: true
+        purpose: "The resolved public configuration and secret-value files."
+        fields:
+          public:
+            required: true
+            purpose: "The user-editable non-secret runtime configuration file."
+            fields:
+              path:
+                required: true
+                purpose: "The project-relative path of the public configuration file."
+              format:
+                required: true
+                purpose: "The public configuration format."
+              committed:
+                required: true
+                purpose: "Whether the public configuration belongs in source control."
+              user_editable:
+                required: true
+                purpose: "Whether a user may change runtime selections without editing package source."
+          secrets:
+            required: true
+            purpose: "The runtime source for secret values and private environment-specific settings."
+            fields:
+              path:
+                required: true
+                purpose: "The project-relative secret-file path."
+              format:
+                required: true
+                purpose: "The secret-file format."
+              committed:
+                required: true
+                purpose: "Whether the secret-value file belongs in source control; this must resolve to false."
+              example_path:
+                required: true
+                purpose: "The committed non-secret example file documenting required variable names."
+      sections:
+        required: true
+        purpose: "One runtime configuration section for every participating application layer and Platform."
+        fields:
+          "<section>":
+            required: true
+            purpose: "The settings and declared bindings owned by one layer or Platform."
+            fields:
+              owner:
+                required: true
+                purpose: "The layer or Platform that owns this section."
+              settings:
+                required: true
+                purpose: "User-changeable non-secret settings accepted by the owner; empty when none apply."
+              bindings:
+                required: true
+                purpose: "Provider selections and interface references consumed by the owner; empty when none apply."
+                fields:
+                  "<binding>":
+                    required: false
+                    purpose: "One declared cross-layer runtime binding."
+                    fields:
+                      provider:
+                        required: true
+                        purpose: "The providing layer."
+                      interface:
+                        required: true
+                        purpose: "The declared provider interface used by this binding."
+                      selection:
+                        required: false
+                        purpose: "The selected provider resource, such as a Database Instance; omitted when the interface needs no selectable resource."
+      precedence:
+        required: true
+        purpose: "The ordered runtime override precedence from highest to lowest priority."
+      delivery:
+        required: true
+        purpose: "How Platform validates and supplies configuration to each boundary."
+        fields:
+          owner:
+            required: true
+            purpose: "The configuration-loading owner; this resolves to Platform."
+          method:
+            required: true
+            purpose: "The resolved validation and injection mechanism."
+          scope:
+            required: true
+            purpose: "The information each layer is permitted to receive."
+      validation:
+        required: true
+        purpose: "When and how settings, bindings, and secret references are validated."
+      override_boundary:
+        required: true
+        purpose: "The limit preventing runtime settings from redefining architecture, ownership, interfaces, or unsupported technologies."
 
   # <!--------------------------------------------------------------------------------- Package_Standard -->
   package_standard:
@@ -210,7 +306,7 @@ sections:
             purpose: "How declared interfaces are made reachable between layers."
           configuration:
             required: true
-            purpose: "How runtime and environment-specific configuration is supplied to the layers."
+            purpose: "How the top-level runtime_configuration is applied during composition without duplicating layer settings."
       deployment:
         required: true
         purpose: "How and where the complete project is delivered."

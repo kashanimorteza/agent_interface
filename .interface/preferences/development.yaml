@@ -2,7 +2,7 @@
 meta:
   path: ".interface/preferences/development.yaml"
   path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers, including Model."
-  purpose: "Package and cross-cutting capability defaults used when no explicit project choice exists."
+  purpose: "Central runtime-configuration, package, and cross-cutting capability defaults used when no explicit project choice exists."
   standard: "Agent Project Interface"
 
 
@@ -12,23 +12,62 @@ policy:
   rule: "This file is human-owned. Generation reads it and never writes resolved Development choices back into it."
   changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
-  consumption: "Resolve unstated package and cross-cutting choices from this file into generated Development configuration. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
+  consumption: "Resolve unstated runtime-configuration, package, and cross-cutting choices from this file into generated Development configuration. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
+  - "runtime_configuration"
   - "packages"
   - "cross_cutting"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
+  runtime_configuration: "Default project-level public settings file, secret source, layer sections, precedence, validation, and Platform delivery."
   packages: "Default package naming, distribution, nested-package setup, and README conventions."
   cross_cutting: "Default enabled state and application scope for capabilities coordinated across application layers."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
+
+  runtime_configuration:
+    files:
+      public:
+        path: "application.yaml"
+        location: "project_root"
+        format: "YAML"
+        committed: true
+        user_editable: true
+        content: "Non-secret runtime settings and cross-layer bindings."
+      secrets:
+        path: ".env"
+        location: "project_root"
+        format: "dotenv"
+        committed: false
+        user_editable: true
+        example_path: ".env.example"
+        content: "Secret values and environment-specific private settings."
+    sections:
+      - "model"
+      - "database"
+      - "backend"
+      - "frontend"
+      - "platform"
+    section_contract:
+      settings: "Settings owned by the named layer."
+      bindings: "Declared provider, interface, and selectable resource references consumed by the named layer."
+    precedence:
+      - "runtime_environment"
+      - "public_configuration"
+      - "generated_defaults"
+    delivery:
+      owner: "platform"
+      method: "validated_injection"
+      scope: "Each layer receives only its own section and declared binding references."
+    validation: "Validate the complete public configuration and all references before application startup."
+    override_boundary: "Runtime configuration may select among resolved compatible choices but never redefine architecture, package ownership, interfaces, or unsupported technologies."
 
   packages:
     naming:

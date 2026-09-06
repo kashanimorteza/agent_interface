@@ -114,6 +114,21 @@ Defines the project's models.
 
 - `name`: `FxPro`; `user_id`: `1`; `trading_platform_id`: `1`.
 
+### Account Group
+
+**Purpose:** Defines an independent group for organizing trading accounts.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The account group's display name.
+- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account group is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the account group.
+
+**Initial Data:**
+
+- `name`: `Default`.
+
 ### Account
 
 **Purpose:** Defines a funded trading account through which the system executes trades and launches positions. Each account identifies its broker, account model, and login credentials so the system knows where the trade must be sent, how it must connect, and which account must be used for the operation.
@@ -122,6 +137,7 @@ Defines the project's models.
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The account's display name.
+- `account_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the account group that contains the account.
 - `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker that owns the account.
 - `base_currency_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the base currency used by the account.
 - `username` — Type: `string`; Nullable: `false`; Purpose: The username identifier used to access the trading account.
@@ -134,6 +150,7 @@ Defines the project's models.
 
 **Relationships:**
 
+- Belongs to one Account Group through `account_group_id`.
 - Belongs to one Broker through `broker_id`.
 - Uses one Currency as its base currency through `base_currency_id`.
 
@@ -143,7 +160,7 @@ Defines the project's models.
 
 **Initial Data:**
 
-- `name`: `Acc-1`; `broker_id`: `1`; `base_currency_id`: `1`; `username`: `test`; `password`: Generate securely; `leverage`: `100`; `account_type`: `CFD`.
+- `name`: `Acc-1`; `account_group_id`: `1`; `broker_id`: `1`; `base_currency_id`: `1`; `username`: `test`; `password`: Generate securely; `leverage`: `100`; `account_type`: `CFD`.
 
 ### Asset
 

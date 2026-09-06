@@ -1,7 +1,7 @@
 schema:
   id: agent-interface-database
-  version: "9.0"
-  purpose: "The shape of the generated layered Database configuration"
+  version: "10.0"
+  purpose: "The shape of a Database configuration containing the independent package, supported Engines, configured Instances, typed Model interface, and persistence implementation"
 
 structure:
   - code_path
@@ -9,12 +9,17 @@ structure:
   - summary
   - verify_cwd
   - responsibility
+  - package
+  - engines
+  - instances
+  - default_instance
   - layers
   - boundaries
   - out_of_scope
 
 sections:
 
+  # <!--------------------------------------------------------------------------------- Code_Path -->
   code_path:
     required: true
     purpose: "The project-relative folder containing Database implementation artifacts."
@@ -25,7 +30,7 @@ sections:
 
   summary:
     required: true
-    purpose: "A one-line summary of Database."
+    purpose: "A concise description of Database."
 
   verify_cwd:
     required: true
@@ -35,27 +40,152 @@ sections:
     required: true
     purpose: "The resolved responsibilities of Database."
 
+  package:
+    required: true
+    purpose: "The package key owned by the Database layer in generated Development configuration."
+
+  # <!--------------------------------------------------------------------------------- Engines -->
+  engines:
+    required: true
+    purpose: "The supported Database Engine profiles resolved from Database Preferences and explicit project choices. An Engine describes a technology; it is not a configured connection."
+    fields:
+      "<engine>":
+        required: false
+        purpose: "One supported Database Engine profile, keyed by its stable Engine identifier."
+        fields:
+          name:
+            required: true
+            purpose: "The Engine's resolved name."
+          version:
+            required: true
+            purpose: "The concrete Engine version or the runtime that supplies it."
+          driver:
+            required: true
+            purpose: "The resolved driver used by the Storage Adapter."
+            fields:
+              name:
+                required: true
+                purpose: "The driver name."
+              version:
+                required: true
+                purpose: "The concrete driver version or the runtime that supplies it."
+              package:
+                required: true
+                nullable: true
+                purpose: "The package supplying the driver, or null when the runtime supplies it."
+          storage_kind:
+            required: true
+            purpose: "The Engine's physical storage kind, such as file or server."
+          connection:
+            required: true
+            purpose: "The Engine's URL scheme, default port when applicable, accepted configuration parameters, and non-secret connection defaults."
+          naming:
+            required: true
+            purpose: "The resolved physical-object naming conventions for this Engine."
+
+  # <!--------------------------------------------------------------------------------- Instances -->
+  instances:
+    required: true
+    purpose: "The configured Database Instances. Each entry selects one supported Engine and supplies its user-editable non-secret connection configuration."
+    fields:
+      "<instance>":
+        required: true
+        purpose: "One Database Instance, keyed by its stable normalized identifier."
+        fields:
+          name:
+            required: true
+            purpose: "The Instance's human-readable name."
+          purpose:
+            required: true
+            purpose: "What this Instance stores or supports."
+          engine:
+            required: true
+            purpose: "The key of the supported Engine used by this Instance."
+          database:
+            required: true
+            purpose: "The resolved database name or file-backed database identity."
+          connection:
+            required: true
+            purpose: "Instance-specific non-secret connection values and secret references. Unused Engine parameters are omitted."
+            fields:
+              host:
+                required: false
+                purpose: "The server host when required by the selected Engine."
+              port:
+                required: false
+                purpose: "The server port when required by the selected Engine."
+              username_secret:
+                required: false
+                purpose: "The environment-variable name or external secret reference supplying the username."
+              password_secret:
+                required: false
+                purpose: "The environment-variable name or external secret reference supplying the password."
+              settings:
+                required: true
+                purpose: "Additional non-secret settings accepted by the selected Engine; empty when none apply."
+
+  default_instance:
+    required: true
+    purpose: "The key of exactly one entry in instances used when a consumer does not explicitly select an Instance."
+
+  # <!--------------------------------------------------------------------------------- Layers -->
   layers:
     required: true
-    purpose: "The resolved Database Interface, Data Logic, and Storage Adapter layers."
+    purpose: "The resolved Database Interface, Data Logic and Mapping, and Storage Adapter layers."
     fields:
 
       database_interface:
         required: true
-        purpose: "The generic interface published to Database consumers."
+        purpose: "The only Database boundary published to consumers."
         fields:
           responsibility:
             required: true
             purpose: "The responsibility of the Database Interface layer."
-          style:
+          public_interface:
             required: true
-            purpose: "The resolved interface style used across persistent Models."
-          model_selector:
+            purpose: "The public import surface exported by the Database package."
+            fields:
+              kind:
+                required: true
+                purpose: "The interface mechanism, normally an import surface."
+              entrypoint:
+                required: true
+                purpose: "The resolved public package entrypoint."
+              database:
+                required: true
+                purpose: "The exported Database gateway used to execute Model operations."
+              instance_registry:
+                required: true
+                purpose: "The exported Registry used to discover and select public Instance identities."
+          instance_selection:
             required: true
-            purpose: "How a caller identifies the Model governed by an operation."
+            purpose: "How explicit and default Instance selection works without exposing raw connections or secrets."
+            fields:
+              explicit:
+                required: true
+                purpose: "How a caller selects an Instance by its public identity."
+              default:
+                required: true
+                purpose: "How omission selects default_instance."
+          model_contract:
+            required: true
+            purpose: "The typed contract through which Database accepts shared Models."
+            fields:
+              configuration:
+                required: true
+                purpose: "The generated Model configuration that defines Model meaning."
+              package:
+                required: true
+                purpose: "The public Model package consumed by Database."
+              accepts:
+                required: true
+                purpose: "The accepted Model type and Model instance forms."
+              untyped_model_selector:
+                required: true
+                purpose: "Whether an untyped Model-name string and unrelated field dictionary are accepted; must resolve to false."
           operations:
             required: true
-            purpose: "The standard Model-data operations published by Database Interface."
+            purpose: "The standard typed operations published for persistent Models."
             fields:
               create:
                 required: true
@@ -108,200 +238,115 @@ sections:
 
       data_logic:
         required: true
-        purpose: "The generic Model-driven data logic and storage-mapping layer."
+        purpose: "The generic typed Model-operation and storage-mapping layer."
         fields:
           responsibility:
             required: true
-            purpose: "The responsibility of the Data Logic layer."
+            purpose: "The responsibility of Data Logic and Mapping."
           model_source:
             required: true
-            purpose: "The generated Model configuration supplying Models, fields, relationships, rules, credentials, and initial data."
-          storage_schema:
-            required: true
-            purpose: "The resolved physical storage mapping produced from logical Models."
+            purpose: "References to the generated Model configuration and public Model package. Database does not copy the complete Model definitions."
             fields:
-              tables:
+              configuration:
                 required: true
-                purpose: "The resolved physical tables."
-                fields:
-                  "<table>":
-                    required: true
-                    purpose: "One physical table, keyed by its resolved name."
-                    fields:
-                      source_model:
-                        required: true
-                        purpose: "The shared logical Model implemented by this table."
-                      columns:
-                        required: true
-                        purpose: "The resolved physical columns."
-                        fields:
-                          "<column>":
-                            required: true
-                            purpose: "One physical column, keyed by its resolved name."
-                            fields:
-                              type:
-                                required: true
-                                purpose: "The resolved Database type."
-                              nullable:
-                                required: true
-                                purpose: "Whether the column accepts null."
-                              primary_key:
-                                required: true
-                                purpose: "Whether the column belongs to the primary key."
-                              auto_increment:
-                                required: true
-                                purpose: "Whether Database generates the numeric value by incrementing it."
-                              default:
-                                required: true
-                                purpose: "The Database default, or null when none applies."
-                              credential_storage:
-                                required: false
-                                purpose: "The resolved at-rest mode for a credential field."
-                              references:
-                                required: false
-                                purpose: "The resolved foreign-key target for a relationship column."
-                                fields:
-                                  table:
-                                    required: true
-                                    purpose: "The referenced physical table."
-                                  column:
-                                    required: true
-                                    purpose: "The referenced key column."
-                                  on_delete:
-                                    required: true
-                                    purpose: "The resolved action when the referenced row is deleted."
-                                  on_update:
-                                    required: true
-                                    purpose: "The resolved action when the referenced key is updated."
-                      constraints:
-                        required: true
-                        purpose: "Named table constraints, empty when none apply."
-                        fields:
-                          "<constraint>":
-                            required: false
-                            purpose: "One named constraint."
-                            validation: "A unique constraint requires columns. A check constraint requires expression."
-                            fields:
-                              type:
-                                required: true
-                                purpose: "The constraint kind."
-                              columns:
-                                required: false
-                                purpose: "The ordered columns governed by a column-based constraint."
-                              expression:
-                                required: false
-                                purpose: "The resolved expression for an expression-based constraint."
-                              source_rule:
-                                required: false
-                                purpose: "The logical Model rule that produced the constraint."
-                      indexes:
-                        required: true
-                        purpose: "Named indexes, empty when none apply."
-                        fields:
-                          "<index>":
-                            required: false
-                            purpose: "One named index."
-                            fields:
-                              columns:
-                                required: true
-                                purpose: "The ordered columns covered by the index."
-                              unique:
-                                required: true
-                                purpose: "Whether the index enforces uniqueness."
+                purpose: "The generated Model configuration supplying fields, relationships, rules, credentials, and initial data."
+              package:
+                required: true
+                purpose: "The Model package supplying the runtime Model types."
+          mapping:
+            required: true
+            purpose: "The conventions used to derive physical persistence from Model configuration plus only explicit Database-specific overrides."
+            fields:
+              strategy:
+                required: true
+                purpose: "How physical storage mappings are derived from Models."
+              naming:
+                required: true
+                purpose: "The resolved default naming conventions used by the selected Engine."
+              relationships:
+                required: true
+                purpose: "The resolved default foreign-key and referential-action conventions."
+              overrides:
+                required: true
+                purpose: "Database-specific mapping overrides keyed by Model; empty when derived mapping is sufficient. Overrides contain only changed physical details, never a complete Model copy."
           initial_data:
             required: true
-            purpose: "The resolved initial records mapped from Model configuration."
+            purpose: "How initial records declared by Model are seeded without copying those records into Database configuration."
             fields:
-              enabled:
+              source:
                 required: true
-                purpose: "Whether initial-data seeding is enabled."
-              records:
+                purpose: "The initial_data section of generated Model configuration."
+              enabled_when_present:
                 required: true
-                purpose: "Initial records grouped by resolved table, empty when none exist."
-                fields:
-                  "<table>":
-                    required: false
-                    purpose: "The ordered initial records for one table."
+                purpose: "Whether Model-declared initial data is seeded when present."
+              ordering:
+                required: true
+                purpose: "How relationship dependency order is respected."
+              idempotent:
+                required: true
+                purpose: "Whether repeated seeding avoids duplicate logical records."
 
       storage_adapter:
         required: true
-        purpose: "The resolved physical persistence and Database Engine adapter."
+        purpose: "The resolved physical persistence implementation used for every configured Instance."
         fields:
           responsibility:
             required: true
             purpose: "The responsibility of the Storage Adapter layer."
-          tech:
+          orm:
             required: true
-            purpose: "The resolved Engine, storage, connection, ORM, migration environment, and packages."
+            purpose: "The resolved ORM implementation shared by compatible Engine adapters."
             fields:
-              engine:
+              name:
                 required: true
-                purpose: "The resolved Database Engine."
-                fields:
-                  name:
-                    required: true
-                    purpose: "The Engine name."
-                  version:
-                    required: true
-                    purpose: "The concrete Engine version or supplying runtime."
-              storage:
+                purpose: "The ORM name."
+              version:
                 required: true
-                purpose: "Where and how Database state is physically stored."
-                fields:
-                  kind:
-                    required: true
-                    purpose: "The storage kind, such as file or server."
-                  location:
-                    required: true
-                    purpose: "The resolved storage location."
-              connection:
+                purpose: "The concrete ORM version."
+              language:
                 required: true
-                purpose: "The resolved Engine-specific runtime connection settings."
-              orm:
+                purpose: "The ORM implementation language."
+              package:
                 required: true
-                purpose: "The resolved ORM implementation."
-                fields:
-                  name:
-                    required: true
-                    purpose: "The ORM name."
-                  version:
-                    required: true
-                    purpose: "The concrete ORM version."
-                  language:
-                    required: true
-                    purpose: "The ORM implementation language."
-                  package:
-                    required: true
-                    purpose: "The package supplying the ORM."
-                  capabilities:
-                    required: true
-                    purpose: "The resolved ORM capabilities used by Database."
-              migration:
+                purpose: "The package supplying the ORM."
+              capabilities:
                 required: true
-                purpose: "The resolved migration tool, environment, packages, and commands."
-                fields:
-                  tool:
-                    required: true
-                    purpose: "The migration tool and concrete version."
-                  environment:
-                    required: true
-                    purpose: "The resolved Database-tooling environment."
-                  packages:
-                    required: true
-                    purpose: "The resolved migration and schema-tooling packages."
-                  commands:
-                    required: true
-                    purpose: "The canonical migration commands."
+                purpose: "The resolved ORM capabilities used by Database."
+          migration:
+            required: true
+            purpose: "The resolved migration tool, environment, packages, and commands."
+            fields:
+              tool:
+                required: true
+                purpose: "The migration tool and concrete version."
+              environment:
+                required: true
+                purpose: "The resolved Database-tooling environment."
+              packages:
+                required: true
+                purpose: "The resolved migration and schema-tooling packages."
+              commands:
+                required: true
+                purpose: "The canonical migration commands."
+          connections:
+            required: true
+            purpose: "How Engine adapters create and manage connections for configured Instances."
+            fields:
+              instance_source:
+                required: true
+                purpose: "The instances section used to create connections."
+              secrets:
+                required: true
+                purpose: "How secret references are resolved at runtime without storing values in generated configuration."
+              management:
+                required: true
+                purpose: "How connections are created, reused, and closed within the application runtime."
+          credential_storage:
+            required: true
+            purpose: "The supported and default at-rest transformations for Model fields marked as credentials."
           standards:
             required: true
-            purpose: "The resolved naming and migration conventions."
-            fields:
-              naming:
-                required: true
-                purpose: "The Database object naming conventions."
-              migrations:
-                required: true
-                purpose: "The migration ordering, reversibility, and history conventions."
+            purpose: "The resolved migration and physical-storage conventions not already owned by Model."
           backups:
             required: true
             purpose: "The resolved backup and restore capability."
@@ -310,6 +355,7 @@ sections:
                 required: true
                 purpose: "Whether backup and restore automation is enabled."
 
+  # <!--------------------------------------------------------------------------------- Boundaries -->
   boundaries:
     required: true
     purpose: "The resolved ownership boundaries of Database."
@@ -322,7 +368,7 @@ sections:
         purpose: "Responsibilities explicitly outside Database."
       interface:
         required: true
-        purpose: "The interface published by Database."
+        purpose: "The public interface exported by the Database package."
 
   out_of_scope:
     required: true

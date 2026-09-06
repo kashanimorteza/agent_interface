@@ -86,7 +86,7 @@ content:
 
           development:
             path: "development.md"
-            responsibility: "Layered Model, Database, Backend, and Frontend architecture, interface-only communication, explicit connections, Platform composition, and cross-cutting capability coordination"
+            responsibility: "Layered Model, Database, Backend, and Frontend architecture, interface-only communication, centralized runtime configuration, Platform composition, and cross-cutting capability coordination"
 
           state:
             path: "state.md"
@@ -106,7 +106,7 @@ content:
 
           database:
             path: "database.md"
-            responsibility: "Layered Database architecture, engine independence, generic data access, persistence ownership, schema as code, migrations, and access rules"
+            responsibility: "Independent Database package, typed Model access, Engine and Instance ownership, persistence boundaries, schema as code, migrations, and access rules"
 
       preferences:
         path: ".interface/preferences/"
@@ -124,7 +124,7 @@ content:
 
           development:
             path: "development.yaml"
-            responsibility: "Common package conventions and defaults for capabilities coordinated across application layers"
+            responsibility: "Central runtime-configuration defaults, common package conventions, and defaults for cross-layer capabilities"
 
           state:
             path: "state.yaml"
@@ -144,7 +144,7 @@ content:
 
           database:
             path: "database.yaml"
-            responsibility: "Defaults and supported technical profiles for Database Interface, Data Logic, and Storage Adapter"
+            responsibility: "Defaults for Database Instances and supported Engines, Database Interface, Data Logic, and Storage Adapter"
 
       schemas:
         path: ".interface/schema/"
@@ -166,7 +166,7 @@ content:
 
           development:
             path: "development.yaml"
-            responsibility: "Shape of application layers, connections, cross-cutting capabilities, and Platform configuration"
+            responsibility: "Shape of application layers, centralized runtime configuration, connections, cross-cutting capabilities, and Platform configuration"
 
           state:
             path: "state.yaml"
@@ -186,7 +186,7 @@ content:
 
           database:
             path: "database.yaml"
-            responsibility: "Shape of the generated layered Database configuration"
+            responsibility: "Shape of the generated Database package, supported Engines, Instances, typed Model interface, and persistence configuration"
 
     # <!---------------------- components -->
     components:
@@ -208,7 +208,7 @@ content:
           config: "content.structure.generated_configuration.files.model"
 
       development:
-        responsibility: "Independent Model, Database, Backend, and Frontend layers, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them"
+        responsibility: "Independent Model, Database, Backend, and Frontend layers, centralized runtime configuration, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them"
         resources:
           principle: "content.structure.layers.principles.files.development"
           preference: "content.structure.layers.preferences.files.development"
@@ -248,7 +248,7 @@ content:
           config: "content.structure.generated_configuration.files.frontend"
 
       database:
-        responsibility: "Generic Database Interface, Model-driven Data Logic and Mapping, and Engine-specific Storage Adapter"
+        responsibility: "Independent Database package with typed Model operations, selectable Instances, Engine profiles, Model-driven mapping, and Storage Adapters"
         resources:
           principle: "content.structure.layers.principles.files.database"
           preference: "content.structure.layers.preferences.files.database"
@@ -318,7 +318,7 @@ content:
 
         development:
           path: "development.yaml"
-          responsibility: "Model, Database, Backend, and Frontend layers, their packages and declared-interface connections, cross-cutting capabilities, and the Platform environment, composition, and deployment"
+          responsibility: "Model, Database, Backend, and Frontend layers, centralized runtime configuration, packages, declared-interface connections, cross-cutting capabilities, and Platform composition and deployment"
 
         state:
           path: "state.yaml"
@@ -338,7 +338,7 @@ content:
 
         database:
           path: "database.yaml"
-          responsibility: "Resolved Database Interface, Data Logic and Mapping, and Storage Adapter configuration"
+          responsibility: "Resolved Database package, supported Engines, configured Instances, default Instance, typed Model interface, mapping rules, and Storage Adapter configuration"
 
 
   # <!-------------------------------------------- agent_skills -->
