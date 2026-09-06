@@ -1,12 +1,12 @@
 # Agent Interface bootstrap
 
-The sole fixed navigation entry point is `.interface/interface.yaml`. Its address belongs only in shared rules, never in individual Skills or agent instructions. It supplies the current file map and structural metadata, not a role to infer.
+The sole fixed navigation entry point is `.interface/interface.md`. Its address belongs only in shared rules, never in individual Skills or agent instructions. It supplies the current Interface definition, complete file map, and structural metadata, not a role to infer.
 
 ## Discovery
 
 - Read the current Interface root at the start of every operation. Use it to locate the resources needed by the role already defined in the active Skill or agent instructions.
 - Resolve all other paths, file responsibilities, generated outputs, formats, Policies, authorities, modes, interfaces, and code boundaries through this map and the owning files it identifies. Do not hardcode these paths or copy the current file layout into Skills or agents. The explicit protected-file list is a write restriction, not an additional discovery map.
-- There is no runtime Interface Understanding or role-discovery stage. The Interface README is a design-time reference for human-approved maintenance of role instructions, not a prerequisite that operating Skills reread to determine their role.
+- There is no runtime Interface role-discovery stage. The Interface document supplies current navigation and structural context; the active Skill or agent instructions already define the operating role.
 - Read only the current mapped sources required for the operation, subject to the shared project-source policy. A mapped path or read order does not authorize any role other than Interpreter to read the human project definition. Structural discovery does not grant write access.
 - Do not substitute remembered contents for current sources. Renaming or relocating a mapped resource must require only an Interface-root update, never a Skill update.
 

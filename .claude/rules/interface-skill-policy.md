@@ -6,9 +6,8 @@ These are shared Claude execution rules for every Agent Interface Skill and supp
 
 Agent Interface Skills and supporting agents must never edit or delete these files. They are changed only by a human. Read access is separately limited by the project-source policy below:
 
-- `.interface/interface.yaml`
+- `.interface/interface.md`
 - `.interface/project.md`
-- `.interface/readme.md`
 - every file under `.interface/principles/`
 - every file under `.interface/preferences/`
 - every file under `.interface/schema/`
