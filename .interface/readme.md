@@ -100,7 +100,7 @@ Transforms the human project definition into the generated project Understanding
 
 ### `my-interface-tasker`
 
-Creates or reconciles an implementation-ready plan for one requested project phase without implementing it.
+Creates or reconciles an implementation-ready plan for one requested project phase without implementing it. Accepts a phase number: `1` selects phase one, `2` selects phase two, and so on; existing phase identifiers remain unchanged.
 
 ### `my-interface-developer`
 
@@ -133,7 +133,7 @@ Define the project, its models, and its ordered phases in `project.md`.
 
 ### 3. Generate Tasks
 
-`/my-interface-tasker <phase-id>`
+`/my-interface-tasker <phase-number>`
 
 ### 4. Develop the Tasks
 

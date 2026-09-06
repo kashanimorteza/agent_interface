@@ -356,7 +356,7 @@ content:
       tasker:
         name: "my-interface-tasker"
         path: ".claude/skills/my-interface-tasker/SKILL.md"
-        invocation: "/my-interface-tasker <phase-id>"
+        invocation: "/my-interface-tasker <phase-number>"
         responsibility: "Create or reconcile an implementation-ready plan for one requested project phase"
         mode: "content.structure.modes.items.planning"
 
@@ -407,7 +407,7 @@ content:
         order: 3
         title: "Generate Tasks"
         skill: "content.agent_skills.items.tasker"
-        argument: "phase-id"
+        argument: "phase-number"
 
       develop_tasks:
         order: 4

@@ -3189,13 +3189,23 @@ content:
             touches:
             - src/lib/api/client.ts
             - src/lib/api/models.ts
-            status: claimed
+            status: done
             log:
             - at: '2026-09-06T11:40:25+03:30'
               from: todo
               to: claimed
               by: development operation (my-interface-developer)
               note: Claimed.
+            - at: '2026-09-06T11:42:50+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed (verbatim harness, three consecutive runs after clearing stray processes): against the Backend
+                on port 8765 over a throw-away Database, listRecords returns the 8 currencies with ordering, an asset round-trips
+                through create/get/update/delete, a missing id rejects with ApiError 404, a duplicate code with 409, a created
+                user carries no credential, and the default base URL is http://127.0.0.1:8000 when the variable is unset → ok.
+                Observation: the verify''s trap kills the uv wrapper but not its Python child, so a repeat run fails until the
+                leftover process on 8765 is killed; leftovers are cleared before each server-backed verify.'
         P3-G3:
           id: P3-G3
           title: Presentation
@@ -3305,13 +3315,19 @@ content:
             - src/components/navigation.tsx
             - src/components/notification.tsx
             - src/app/layout.tsx
-            status: claimed
+            status: done
             log:
             - at: '2026-09-06T11:40:26+03:30'
               from: todo
               to: claimed
               by: development operation (my-interface-developer)
               note: Claimed.
+            - at: '2026-09-06T11:42:51+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: app-shell, navigation (links from MODEL_SPECS with aria-current), and notification Components
+                exist; layout composes NotificationProvider and AppShell; tsc clean → ok.'
           - id: P3-G3-T3
             title: FormField and RecordForm Components
             description: 'Implement src/components/form-field.tsx rendering one FieldSpec as a labelled input: string → text
@@ -3358,13 +3374,20 @@ content:
             touches:
             - src/components/form-field.tsx
             - src/components/record-form.tsx
-            status: claimed
+            status: done
             log:
             - at: '2026-09-06T11:40:26+03:30'
               from: todo
               to: claimed
               by: development operation (my-interface-developer)
               note: Claimed.
+            - at: '2026-09-06T11:42:51+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: form-field renders password inputs for credentials, selects for relations, datetime-local
+                for datetimes; record-form composes FormField per non-primary-key field with interaction-level validation and
+                blank-credential omission when editing; tsc clean → ok.'
           - id: P3-G3-T4
             title: DataTable, StatusToggle, and ConfirmDialog Components
             description: Implement src/components/status-toggle.tsx (an accessible switch — a checkbox styled as a toggle —
@@ -3410,13 +3433,19 @@ content:
             - src/components/data-table.tsx
             - src/components/status-toggle.tsx
             - src/components/confirm-dialog.tsx
-            status: claimed
+            status: done
             log:
             - at: '2026-09-06T11:40:26+03:30'
               from: todo
               to: claimed
               by: development operation (my-interface-developer)
               note: Claimed.
+            - at: '2026-09-06T11:42:51+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: data-table filters credential columns and composes StatusToggle (role=switch); confirm-dialog
+                uses a native dialog; tsc clean → ok.'
           - id: P3-G3-T5
             title: Home page and the Model management pages
             description: 'Implement src/app/page.tsx (the home page: the application name, a short line inviting the user to
@@ -3469,7 +3498,21 @@ content:
             - src/app/page.tsx
             - src/app/[model]/page.tsx
             - src/components/management-page.tsx
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:42:57+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T11:43:11+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: npm run build succeeds; the prerendered home page links to /user, /currency, /trading-platform,
+                and /position; /trading-platform and /position are prerendered from generateStaticParams → ok. Realized as one
+                dynamic [model] route with dynamicParams=false plus a client ManagementPage composing DataTable, RecordForm,
+                ConfirmDialog, and the records hook.'
         P3-G4:
           id: P3-G4
           title: Interaction Logic
@@ -3568,7 +3611,20 @@ content:
               && grep -q 'credential' src/hooks/use-model-records.ts && npx tsc --noEmit && echo ok
             touches:
             - src/hooks/use-model-records.ts
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:42:52+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T11:42:57+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: client hook exporting useModelRecords that imports only API Access (lib/api/models), the
+                notification hook, and the Model specification, contains no direct fetch, omits blank credential values on write,
+                loads related records for relation fields; tsc clean → ok.'
         P3-G5:
           id: P3-G5
           title: Frontend delivery
@@ -3612,7 +3668,19 @@ content:
               -q '/action-group' README.md && grep -q '/action' README.md && grep -q '/position' README.md && echo ok
             touches:
             - README.md
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:43:51+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed.
+            - at: '2026-09-06T11:43:52+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed: README names npm run dev/build/start/generate:api, NEXT_PUBLIC_API_BASE_URL, and all 13
+                routes → ok.'
           - id: P3-G5-T2
             title: Build and serve the Frontend against the Backend
             description: Produce the production build with `npm run build`, start the Backend on the verification port with
@@ -3670,4 +3738,18 @@ content:
             touches:
             - node_modules/ (installed)
             - .next/ (build output, ignored)
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-06T11:43:52+03:30'
+              from: todo
+              to: claimed
+              by: development operation (my-interface-developer)
+              note: Claimed; clearing stray verification processes before the server-backed verify.
+            - at: '2026-09-06T11:44:13+03:30'
+              from: claimed
+              to: done
+              by: development operation (my-interface-developer)
+              note: 'Verify passed (verbatim harness, two consecutive runs): npm run build succeeded, the served home page at
+                127.0.0.1:3000 links to all 13 routes, /currency responded 200 containing Currencies, /nope responded 404, and
+                both servers were stopped; the Backend ran on port 8765 over a throw-away Database. Stray processes from the
+                harness''s kill-the-wrapper cleanup were cleared before and after.'

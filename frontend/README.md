@@ -1,34 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Trading Assistant — Frontend Component
 
-## Getting Started
+The Frontend presents Trading Assistant to users and lets them enter and manage all defined project
+data. It is a Next.js 16 (App Router) application in TypeScript with three layers:
 
-First, run the development server:
+- **Presentation** — `src/app/` (root layout, home page, and the `[model]` management route) and
+  `src/components/` (AppShell, Navigation, Notification, DataTable, RecordForm, FormField,
+  StatusToggle, ConfirmDialog, ManagementPage), themed by the token system in `src/app/globals.css`.
+- **Interaction Logic** — `src/hooks/` (`use-notification.tsx` for operation outcomes,
+  `use-model-records.ts` for the list / create / edit / delete / toggle flow of one Model).
+- **API Access** — `src/lib/api/` (`client.ts` Fetch client, `models.ts` Model operations,
+  `schema.d.ts` types generated from the Backend's OpenAPI description) and the shared Model
+  specification in `src/lib/models/model-specs.ts`.
+
+The Frontend reaches application data only through the Backend API. It never connects to the
+Database and never imports Backend code.
+
+## Toolchain
+
+Node.js 24 LTS (see `.node-version`) and npm 12.0.2.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Runtime configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | `http://127.0.0.1:8000` | Base URL of the Backend API. Inlined into the browser bundle at build time, so rebuild after changing it. |
 
-## Learn More
+Copy `.env.example` to `.env.local` (never committed) to set it.
 
-To learn more about Next.js, take a look at the following resources:
+## Commands
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev            # development server with reload at http://127.0.0.1:3000
+npm run build          # production build (type-checks the project)
+npm run start          # serve the production build
+npm run generate:api   # regenerate src/lib/api/schema.d.ts from the running Backend
+npm run lint           # ESLint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`npm run generate:api` needs the Backend running (see `backend/README.md`); the generated file is
+committed so builds work without a live server. Regenerate it whenever the Backend API changes.
 
-## Deploy on Vercel
+## Routes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Route | Title | Model |
+| --- | --- | --- |
+| `/` | Home | — |
+| `/user` | Users | user |
+| `/currency` | Currencies | currency |
+| `/trading-platform` | Trading Platforms | trading_platform |
+| `/broker` | Brokers | broker |
+| `/account` | Accounts | account |
+| `/asset` | Assets | asset |
+| `/trailing-group` | Trailing Groups | trailing_group |
+| `/trailing-rule` | Trailing Rules | trailing_rule |
+| `/partial-group` | Partial Groups | partial_group |
+| `/partial-rule` | Partial Rules | partial_rule |
+| `/action-group` | Action Groups | action_group |
+| `/action` | Actions | action |
+| `/position` | Positions | position |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Every management page lists the Model's records, creates or edits a record through a generated form,
+asks for confirmation before deleting, toggles the record's status, and shows the outcome of every
+operation.
+
+Credential fields — `user.password`, `user.api_key`, `account.password` — are **write-only**: they are
+entered through password inputs, never displayed, and left blank on edit to keep the stored value.

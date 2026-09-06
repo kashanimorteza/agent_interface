@@ -1,13 +1,17 @@
 ---
 name: my-interface-tasker
 description: Create or reconcile an implementation-ready plan for one requested project phase from current generated Project Understanding. Plans only; never implements or interprets the human project definition.
-argument-hint: "[phase-id]"
+argument-hint: "[phase-number]"
 disable-model-invocation: true
 ---
 
 # Plan one project phase
 
-Create an implementation-ready plan for the project phase named in `$ARGUMENTS`.
+Create an implementation-ready plan for the project phase selected by the number in `$ARGUMENTS`.
+
+## Input
+
+Accept one positive integer: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in the current generated Project Understanding and use that phase's existing identifier throughout planning. The number is an input convenience; it never renames a phase or changes stored identifiers or references. If the number is missing, invalid, or does not uniquely select an existing phase, request a valid phase number before changing any files.
 
 ## Workflow
 
