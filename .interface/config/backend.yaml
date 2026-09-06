@@ -1,0 +1,301 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/config/backend.yaml
+  path_note: 'Generated configuration of the Backend Component — Backend-wide technology and the resolved Logic, Data Access, and API layers. Shape: schema/backend.yaml; rules: principles/backend.md; defaults: preferences/backend.yaml'
+  standard: Agent Project Interface
+  schema_version: '9.0'
+  generated: '2026-09-06'
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: Written only by the configuring operation. Planning and development read it and never write it
+  changed_by: The human, directly, or by re-running the configuring operation
+  resolution: project.md states no Backend technology. Language, environment, API framework, transport, documentation, and standard Model operations were resolved from preferences/backend.yaml; each latest token was resolved to the concrete stable version verified against the package index on 2026-09-06. Model Logic units were derived from config/model.yaml and project Behaviour from config/definition.yaml
+  agent_selected: Python 3.14.7 was resolved as the latest stable release compatible with the resolved framework, the Model package, and the Database tooling, so one interpreter serves every uv environment. uvicorn 0.52.4 was selected as the ASGI server that runs the framework — the smallest well-supported compatible option, recorded so Planning and Development do not re-decide it. Backend obtains Model definitions by importing the my_model package and reaches persistence by importing the my_database package, both installed as editable local path dependencies as development.yaml records. Entrypoint, commands, and file layout are implementation output, except that every Model Logic unit occupies its own source file as the Backend Principles require and the Backend is organized as the my_backend package with api, logic, and data_access nested packages as development.yaml records
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+- code_path
+- code_path_note
+- summary
+- verify_cwd
+- responsibility
+- tech
+- standards
+- layers
+- boundaries
+- out_of_scope
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  code_path: The folder holding Backend implementation artifacts
+  code_path_note: What code_path is relative to
+  summary: The Backend in one line
+  verify_cwd: The directory and environment for Backend verification commands
+  responsibility: The resolved responsibilities of Backend
+  tech: The resolved Backend-wide language, environment, and packages
+  standards: The resolved naming conventions
+  layers: The resolved Logic, Data Access, and API layers
+  boundaries: What Backend owns, does not own, and offers outside
+  out_of_scope: Work explicitly outside Backend
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- code_path -->
+  code_path: backend/
+
+  # <!-------------------------------------------- code_path_note -->
+  code_path_note: Relative to the project root — the directory containing .interface/. It is never a path inside the Interface.
+
+  # <!-------------------------------------------- summary -->
+  summary: A Python FastAPI service whose API layer exposes every shared Model's standard operations, whose Logic layer implements Model Logic and project Behaviour over the my_model package, and whose Data Access layer is the only route to the Database Interface of my_database.
+
+  # <!-------------------------------------------- verify_cwd -->
+  verify_cwd: backend/ — every verify command runs from this directory inside the uv-managed virtual environment, invoked through uv run.
+
+  # <!-------------------------------------------- responsibility -->
+  responsibility: Executes application Behaviour and Model Logic, reaches persistence only through Data Access, and publishes the external HTTP API with its generated OpenAPI description.
+
+  # <!-------------------------------------------- tech -->
+  tech:
+    language:
+      name: Python
+      version: 3.14.7
+      environment:
+        name: uv
+        version: 0.12.10
+    packages:
+      asgi_server:
+        name: uvicorn
+        version: 0.52.4
+
+  # <!-------------------------------------------- standards -->
+  standards:
+    naming:
+      variables: snake_case
+      functions: snake_case
+      classes: PascalCase
+      constants: UPPER_SNAKE_CASE
+      files: snake_case
+      folders: snake_case
+
+  # <!-------------------------------------------- layers -->
+  layers:
+    logic:
+      responsibility: Implements what the application does and the rules under which it does it — one logical unit per shared Model plus Backend-targeted project Behaviour. Each Model Logic unit lives in its own source file named after the Model (snake_case, .py); common operations come from a shared base reused through inheritance or composition, and a registry imports and connects the units without defining them (principles/backend.md 3). Model meaning and domain validation come from the my_model classes. Independent of HTTP, the API framework, the database engine, the ORM, storage, and transport shapes; reaches persistence only through Data Access.
+      model_logic:
+        source: .interface/config/model.yaml — content.models, consumed at run time through the my_model package (Model classes, MODELS registry, model_metadata) recorded under content.implementation of model.yaml
+        standard_operations:
+        - create
+        - get
+        - list
+        - update
+        - delete
+        models:
+          user:
+            source_model: user
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          currency:
+            source_model: currency
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          trading_platform:
+            source_model: trading_platform
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          broker:
+            source_model: broker
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          account_group:
+            source_model: account_group
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          account:
+            source_model: account
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          asset:
+            source_model: asset
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          trailing_group:
+            source_model: trailing_group
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          trailing_rule:
+            source_model: trailing_rule
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          partial_group:
+            source_model: partial_group
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          partial_rule:
+            source_model: partial_rule
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          action_group:
+            source_model: action_group
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          action:
+            source_model: action
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+          position:
+            source_model: position
+            standard_operations:
+            - create
+            - get
+            - list
+            - update
+            - delete
+            behaviours: []
+      project_behaviours:
+        enable_users_to_enter_and_manage_all_defined_project_data:
+          source: .interface/config/definition.yaml — content.behaviours.enable_users_to_enter_and_manage_all_defined_project_data
+          description: Enable users to enter and manage all defined project data. Backend Logic fulfils this by providing consistent create, get, list, update, and delete operations for every shared Model through each Model Logic unit; no Behaviour beyond the standard operations is required.
+          models:
+          - user
+          - currency
+          - trading_platform
+          - broker
+          - account_group
+          - account
+          - asset
+          - trailing_group
+          - trailing_rule
+          - partial_group
+          - partial_rule
+          - action_group
+          - action
+          - position
+      supporting_services: {}
+    data_access:
+      responsibility: Translates data operations requested by Logic into calls on the typed Database gateway of my_database and translates results and Database errors back into logical data and Backend errors. Selects the Database Instance named by the Backend runtime binding recorded in development.yaml. Contains no application Behaviour and never reaches the Engine, connection, ORM, tables, schema, or migrations.
+      uses: .interface/config/database.yaml — content.layers.database_interface, imported from the my_database package installed into the Backend environment as an editable local path dependency; the Instance is selected through the InstanceRegistry from the backend section's database binding (default general)
+      operations:
+      - create
+      - read
+      - list
+      - update
+      - delete
+      - status
+      - sql_commands
+    api:
+      responsibility: Receives external requests, validates their transport-level shape, invokes Logic, and converts Logic results into responses. Owns request decoding, response serialization, protocol handling, allowed browser origins, and the machine-readable API description. Derives its data-facing input and output representations from the my_model classes without redefining them. Never calls Data Access or Database directly.
+      framework:
+        name: FastAPI
+        version: 0.141.1
+      transport:
+        protocol: HTTP
+      api_documentation:
+        enabled: true
+        type: OpenAPI
+      model_api:
+        source: content.layers.logic.model_logic of this file
+        default_operations:
+        - create
+        - get
+        - list
+        - update
+        - delete
+        overrides: {}
+      behaviours:
+        enable_users_to_enter_and_manage_all_defined_project_data:
+          source_logic: content.layers.logic.project_behaviours.enable_users_to_enter_and_manage_all_defined_project_data
+          description: Exposed entirely through the standard Model operations published for every Model; no additional endpoint is required.
+      credential_handling:
+        source: '.interface/config/model.yaml — fields marked credential: true, read through model_metadata of my_model'
+        write_only: true
+        exclude_from_responses: true
+        redact: true
+      provides: The implemented HTTP API for every Model's standard operations and exposed Behaviour, plus the framework-generated OpenAPI description of that API, served at the host and port supplied by the backend section of runtime configuration. Endpoint paths, HTTP method mappings, payloads, response shapes, entrypoints, commands, and file layout are implementation output.
+
+  # <!-------------------------------------------- boundaries -->
+  boundaries:
+    owns: Backend application code — the Logic, Data Access, and API layers — and the implemented HTTP interface with its generated OpenAPI description.
+    does_not_own: Model meaning (owned by Model), Frontend code, the Database Engine, storage, connection, ORM, mappings, storage schema, migrations, and initial data (owned by Database), and the centralized runtime configuration files, composition, and deployment (owned by Platform).
+    interface: The implemented HTTP API and its framework-generated machine-readable description.
+
+  # <!-------------------------------------------- out_of_scope -->
+  out_of_scope:
+  - Connecting to the database engine directly or holding ORM, migration, or driver packages.
+  - Redefining or copying Model definitions — they are imported from my_model.
+  - Authenticating API callers, centralized error handling, application logging, and automated tests — every cross-cutting capability is disabled in development.yaml.
+  - Serving HTTPS — the resolved transport protocol is HTTP.
+  - Live trading, order execution, broker or platform connectivity, and any position management logic beyond the standard operations on the defined Models.
+  - Rendering any user interface.
