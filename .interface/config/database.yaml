@@ -1,0 +1,350 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/config/database.yaml
+  path_note: 'Generated configuration of the Database Component — the independent Database package, supported Engines, configured Instances, default Instance, typed Model interface, mapping rules, and Storage
+    Adapter. Shape: schema/database.yaml; rules: principles/database.md; defaults: preferences/database.yaml'
+  standard: Agent Project Interface
+  schema_version: '10.0'
+  generated: '2026-09-07'
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: Written only by the configuring operation. Planning and development read it and never write it
+  changed_by: The human, directly, or by re-running the configuring operation
+  resolution: project.md states no Database technology and defines no Instance. The default Instance, its Engine, the ORM, the migration tool, relationship defaults, naming conventions, and credential modes
+    were resolved from preferences/database.yaml; each latest token was resolved to the concrete stable version verified against the package index on 2026-09-06 (SQLAlchemy 2.0.52, Alembic 1.19.2, uv 0.12.10,
+    Python 3.14.7). Tables, columns, constraints, indexes, and seed records are not copied into this file; they are derived at implementation time from config/model.yaml at implementation time under the
+    mapping rules recorded below, with the my_model classes as the runtime types
+  agent_selected: 'Only the SQLite Engine bound by the configured Instance is materialized under engines; PostgreSQL and MySQL remain supported by preferences/database.yaml and are resolved into this file,
+    with concrete versions, only when an Instance selects them, so no unused driver is installed. The Instance database file lives at database/data/trading_assistant_general.db inside code_path, is never
+    committed, and is user-changeable through the database section of runtime configuration. Column types are engine-independent SQLAlchemy generic types so the Engine can change without redesigning the
+    data. Initial data is seeded by an idempotent data migration because project.md declares initial data and the preference enables seeding whenever it is present. Credential at-rest modes follow preferences/database.yaml
+    credential_storage.resolution: the explicit project modes (user.password hash, user.api_key hash, account.password encrypted) take precedence, so the field-name defaults and the plaintext layer default
+    were not needed. The reversible-encryption key is referenced by the secret name TRADING_ASSISTANT_CREDENTIAL_ENCRYPTION_KEY, resolved from runtime configuration and never stored in any file of the repository.
+    Python 3.14.7 is shared with Model, Backend, and Platform so one interpreter serves every uv environment'
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+- code_path
+- code_path_note
+- summary
+- verify_cwd
+- responsibility
+- package
+- engines
+- instances
+- default_instance
+- layers
+- boundaries
+- out_of_scope
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  code_path: The project-relative folder for Database implementation artifacts
+  code_path_note: What code_path is relative to
+  summary: The Database in one line
+  verify_cwd: The directory and environment for Database verification commands
+  responsibility: The resolved responsibilities of Database
+  package: The package key owned by the Database layer in development.yaml
+  engines: The supported Engine profiles bound by configured Instances
+  instances: The configured Database Instances and their non-secret connection configuration
+  default_instance: The Instance used when a consumer selects none
+  layers: The resolved Database Interface, Data Logic and Mapping, and Storage Adapter layers
+  boundaries: What Database owns, does not own, and publishes
+  out_of_scope: Work explicitly outside Database
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- code_path -->
+  code_path: database/
+
+  # <!-------------------------------------------- code_path_note -->
+  code_path_note: Relative to the project root — the directory containing .interface/. It is never a path inside the Interface.
+
+  # <!-------------------------------------------- summary -->
+  summary: An importable Python package, my_database, that persists the shared Models of my_model in a file-based SQLite Instance mapped through SQLAlchemy and versioned by Alembic migrations, seeds the project's
+    initial data, and publishes one typed Database gateway and Instance Registry to Backend.
+
+  # <!-------------------------------------------- verify_cwd -->
+  verify_cwd: database/ — every verify command runs from this directory inside the uv-managed virtual environment, invoked through uv run.
+
+  # <!-------------------------------------------- responsibility -->
+  responsibility: Owns the complete persistence layer — supported Engine integration, Database Instances, physical storage, runtime connections, ORM, Model-to-storage mappings, storage schema, constraints,
+    indexes, migration history, credential at-rest transformations, and initial data — and publishes the typed Database Interface every consumer uses.
+
+  # <!-------------------------------------------- package -->
+  package: my_database
+
+  # <!-------------------------------------------- engines -->
+  engines:
+    sqlite:
+      name: SQLite
+      version: runtime-provided — the SQLite library bundled with the sqlite3 module of Python 3.14.7
+      driver:
+        name: sqlite3
+        version: runtime-provided — the standard-library module of Python 3.14.7
+        package: null
+      storage_kind: file
+      connection:
+        url_scheme: sqlite
+        parameters:
+        - database
+        settings:
+          url_form: sqlite:///<database file path>
+          foreign_keys: true
+          check_same_thread: false
+      naming:
+        tables: plural_snake_case
+        columns: snake_case
+        constraints: snake_case
+        indexes: ix_<table>_<column>
+
+  # <!-------------------------------------------- instances -->
+  instances:
+    general:
+      name: Trading Assistant General
+      purpose: General application data.
+      engine: sqlite
+      database: trading_assistant_general
+      connection:
+        settings:
+          file: database/data/trading_assistant_general.db
+          file_note: Project-relative path of the database file; user-changeable through the database section of runtime configuration recorded in development.yaml and never committed
+          foreign_keys: true
+          check_same_thread: false
+
+  # <!-------------------------------------------- default_instance -->
+  default_instance: general
+
+  # <!-------------------------------------------- layers -->
+  layers:
+    database_interface:
+      responsibility: The only boundary published to consumers. It accepts a shared Model type or Model instance from my_model, an operation, and that operation's criteria, resolves the Instance to use, and
+        never exposes the Engine, connection, ORM, tables, migrations, or database file.
+      public_interface:
+        kind: import
+        entrypoint: my_database — the package root re-exports the Database gateway, the InstanceRegistry, and the Database error types from the nested database_interface package; consumers import nothing
+          else
+        database: Database — the gateway class. Database() opens the default Instance and Database(instance="<key>") opens a named one; it publishes the typed operations below and controlled SQL execution
+        instance_registry: InstanceRegistry — lists every configured Instance as a public identity (key, name, purpose, engine key) and names the default; it exposes no connection, URL, or secret value
+      instance_selection:
+        explicit: A caller passes the Instance key published by the InstanceRegistry when constructing the Database gateway; an unknown key is rejected with a Database error before any connection is made.
+        default: A caller that omits the Instance receives default_instance (general) explicitly and predictably; the default is read from the resolved configuration, never guessed.
+      model_contract:
+        configuration: .interface/config/model.yaml — content.models, the meaning every Model carries
+        package: my_model — content.implementation.public_interface of model.yaml; the Model classes are the runtime types Database accepts and returns, and content.models of model.yaml is the definition
+          from which Database derives every mapping at implementation time
+        accepts: A Model class exported by my_model for read, list, delete, and status, and a Model instance for create and update (update takes the instance's primary key and its changed field values); Model
+          identity is resolved from the class, never from a name string
+        untyped_model_selector: false
+      operations:
+        create:
+          input: One typed Model instance of the selected Model; credential fields are transformed on write according to their at-rest mode.
+          instance_selection: The caller passes the Instance key published by the InstanceRegistry when constructing the Database gateway, or omits it and receives default_instance (general).
+          result: The created record as a Model instance carrying its generated primary key; credential fields are never populated in returned instances.
+        read:
+          model: The Model class exported by my_model.
+          criteria: The primary key of one record.
+          instance_selection: The caller passes the Instance key published by the InstanceRegistry when constructing the Database gateway, or omits it and receives default_instance (general).
+          result: The record as a Model instance, or nothing when absent; credential fields are never populated.
+        list:
+          model: The Model class exported by my_model.
+          criteria: Equality criteria on Model fields; empty when all records are requested.
+          ordering: By primary key ascending unless another Model field is requested.
+          pagination: Limit and offset.
+          instance_selection: The caller passes the Instance key published by the InstanceRegistry when constructing the Database gateway, or omits it and receives default_instance (general).
+          result: The ordered collection of Model instances for the requested page; credential fields are never populated.
+        update:
+          model: The Model class of the supplied instance.
+          criteria: The primary key carried by the instance.
+          changes: The instance's changed field values, validated by the Model class; credential fields are transformed on write and a credential the instance does not carry is left unchanged.
+          instance_selection: The caller passes the Instance key published by the InstanceRegistry when constructing the Database gateway, or omits it and receives default_instance (general).
+          result: The updated record as a Model instance; an absent record is reported as a Database error, never created.
+        delete:
+          model: The Model class exported by my_model.
+          criteria: The primary key of one record.
+          instance_selection: The caller passes the Instance key published by the InstanceRegistry when constructing the Database gateway, or omits it and receives default_instance (general).
+          result: Whether a record was deleted; a deletion blocked by the RESTRICT referential action of a referencing relationship is reported as a Database error.
+        status:
+          model: The Model class exported by my_model; the operation applies only to a Model that declares a status field and is rejected otherwise.
+          criteria: The primary key of one record.
+          instance_selection: The caller passes the Instance key published by the InstanceRegistry when constructing the Database gateway, or omits it and receives default_instance (general).
+          actions:
+          - enable
+          - disable
+          required_field: status
+          value_mapping:
+            enable: true
+            disable: false
+          result: The updated record as a Model instance, or the not-found result when absent.
+      sql_commands:
+        enabled: true
+        parameterized: true
+        scope: Executed inside the Database boundary against the selected Instance's own connection, with values supplied as explicit parameters and never interpolated into command text; results are returned
+          as plain rows and the connection is never returned to the caller.
+    data_logic:
+      responsibility: Implements the one generic Model-driven operation pipeline shared by every persistent Model and resolves the physical persistence mapping and enforcement of the logical Models, fields,
+        relationships, rules, credential markers, and initial data recorded in model.yaml. Differences between Models come only from their resolved definitions; no Model-specific application Behaviour lives
+        here.
+      model_source:
+        configuration: '.interface/config/model.yaml — content.models: the fields, relationships, rules, credential markers, and initial data from which every mapping and seed record is derived at implementation
+          time; Database copies no complete Model definition and reads no Interface file at run time'
+        package: my_model — the Model classes that Database accepts and returns at run time
+      mapping:
+        strategy: Derived — every Model under content.models of model.yaml maps to one table derived at implementation time under the naming and relationship conventions below; an explicit entry under overrides
+          takes precedence over the derived mapping; every resolved table records the Model it implements, and every Model rule becomes a traceable constraint (a single-field unique property becomes a unique
+          constraint, a composite unique rule becomes a composite unique constraint).
+        naming:
+          tables: plural_snake_case, derived from the Model key
+          table_names:
+            user: users
+            currency: currencies
+            trading_platform: trading_platforms
+            broker: brokers
+            account_group: account_groups
+            account: accounts
+            asset: assets
+            trailing_group: trailing_groups
+            trailing_rule: trailing_rules
+            partial_group: partial_groups
+            partial_rule: partial_rules
+            action_group: action_groups
+            action: actions
+            position: positions
+          columns: snake_case — the Model field name unchanged
+          constraints: snake_case — pk_<table> for the primary key, uq_<table>_<column> (columns joined by underscores for a composite rule) for unique constraints, fk_<table>_<column> for foreign keys
+          indexes: ix_<table>_<column>
+          types: 'Engine-independent SQLAlchemy generic types mapped from the logical field type: integer to Integer, string to String or String(size) when a size is declared, boolean to Boolean, decimal
+            to Numeric, float to Float, datetime to DateTime; the ORM maps them to the Engine'
+        relationships:
+          field_name: <referenced_model>_id
+          role_field_name: <role>_<referenced_model>_id
+          referenced_key: primary_key
+          nullable: false
+          index: true
+          on_delete: RESTRICT
+          on_update: RESTRICT
+          resolution: An explicit relationship field declared in model.yaml is always reused and never duplicated; the foreign key references the target table's primary key with the same type and carries
+            an index; relationship roles stay explicit, so account.base_currency_id references currencies.id as the account's base currency.
+        overrides: {}
+      initial_data:
+        source: .interface/config/model.yaml — content.models.<model>.initial_data, resolved at implementation time
+        enabled_when_present: true
+        ordering: Models are seeded in the order of content.models, which already respects every relationship dependency (user, currency, trading_platform, broker, account_group, account, asset, trailing_group,
+          partial_group, action_group, action); a literal relationship identifier in a record is preserved exactly and requires the referenced record to exist first.
+        idempotent: true
+    storage_adapter:
+      responsibility: Owns the connection to the SQLite Engine of every configured Instance, the SQLAlchemy mappings that realize the derived storage schema, the Alembic migration history that creates it,
+        credential at-rest transformations, seeding, and physical persistence operations.
+      orm:
+        name: SQLAlchemy
+        version: 2.0.52
+        language: Python
+        package: SQLAlchemy
+        capabilities:
+          model_mapping: true
+          parameterized_sql: true
+      migration:
+        tool:
+          name: Alembic
+          version: 1.19.2
+          language: Python
+          compatible_orms:
+          - SQLAlchemy
+        environment:
+          name: uv
+          version: 0.12.10
+        packages:
+          migration:
+            name: Alembic
+            version: 1.19.2
+          orm:
+            name: SQLAlchemy
+            version: 2.0.52
+        commands:
+          upgrade: uv run alembic upgrade head
+          downgrade: uv run alembic downgrade -1
+          verify: uv run alembic current
+      connections:
+        instance_source: content.instances of this file, delivered at runtime as the database section of the centralized runtime configuration recorded in .interface/config/development.yaml; the generated
+          defaults recorded above apply when no section is delivered.
+        secrets: Secret references name environment variables whose values are resolved from the process environment at runtime and never stored in this file, in application.yaml, or in the repository. The
+          SQLite Instance needs no username or password; the only secret is the credential-encryption key named under credential_storage.
+        management: One engine per Instance is created lazily on first use with foreign-key enforcement enabled on every connection; each operation runs in its own short-lived session that is committed or
+          rolled back and closed before the result is returned; nothing is shared with the caller.
+      credential_storage:
+        resolution: Each field marked credential in model.yaml is resolved to exactly one at-rest mode — the explicit project mode when the Model's rules state one, otherwise the field-name default of preferences/database.yaml,
+          otherwise the plaintext layer default. Database applies the matching transformation on every write and never exposes the stored representation.
+        default_mode: plaintext
+        field_defaults:
+          password:
+            mode: hash
+          api_key:
+            mode: hash
+        resolved_fields:
+          user_password:
+            model: user
+            field: password
+            mode: hash
+          user_api_key:
+            model: user
+            field: api_key
+            mode: hash
+          account_password:
+            model: account
+            field: password
+            mode: encrypted
+        modes:
+          hash:
+            stored_as: string
+            transformation: one_way_hash
+            recoverable: false
+            use_case: Credentials used only for verification; a salted one-way hash suitable for credential verification.
+          encrypted:
+            stored_as: string
+            transformation: reversible_encryption
+            recoverable: true
+            key_source: Runtime configuration outside Database and generated Interface files — the environment variable TRADING_ASSISTANT_CREDENTIAL_ENCRYPTION_KEY, named by the database section's credential_encryption_key_secret
+              setting, required before the first encrypted write including seeding, and never stored in any file of the repository.
+          plaintext:
+            stored_as: string
+            transformation: none
+            recoverable: true
+            use_case: The layer default; used by no current field.
+      standards:
+        migrations:
+          ordering: One Alembic revision per storage-schema change, each with a fixed position in a linear revision history.
+          reversibility: Every revision implements both upgrade and downgrade.
+          history: The revision history is the authoritative record of the storage schema; application code never creates, alters, or drops database objects, and the ORM never creates tables at startup.
+          seeding: 'Initial records are applied by an idempotent data migration after the schema revisions, matching each record on its Model''s natural key (user: name, currency: code, trading_platform:
+            name, broker: user_id + name, account_group: name, account: name, asset: symbol, trailing_group: name, partial_group: name, action_group: name, action: name) so re-running creates no duplicate
+            logical record and breaks no uniqueness rule. A value written as a generate instruction is fulfilled with a cryptographically random value at seed time and stored through the field''s credential
+            at-rest mode; it is never written into any file of the repository.'
+        storage:
+          location: The Instance database file resolved from content.instances, created by the first migration inside database/data/, and excluded from source control.
+          types: Engine-independent SQLAlchemy generic types only; no Engine-specific column type appears in mappings or migrations.
+      backups:
+        enabled: false
+
+  # <!-------------------------------------------- boundaries -->
+  boundaries:
+    owns: Supported Engine integration, Database Instances and their connection handling, physical storage, ORM, Model-to-storage mappings, storage schema, constraints, indexes, migration history, initial-data
+      seeding, credential at-rest transformations, and the typed Database Interface with its Instance Registry.
+    does_not_own: Model meaning (owned by Model), application Behaviour and the HTTP API (owned by Backend), Frontend, the centralized runtime configuration files and deployment (owned by Platform), and the
+      secret values of runtime configuration.
+    interface: The public import surface of my_database under content.layers.database_interface — the Database gateway and the InstanceRegistry — the only way any consumer reaches persistent data.
+
+  # <!-------------------------------------------- out_of_scope -->
+  out_of_scope:
+  - Exposing the Engine connection, tables, ORM mappings, migrations, or the database file to any consumer.
+  - Publishing an HTTP API or any user interface.
+  - Model-specific application Behaviour — that belongs to Backend Logic.
+  - Materializing PostgreSQL or MySQL adapters while no Instance selects those Engines.
+  - Backup and restore automation — disabled above.
+  - Storing encryption keys, connection secrets, or generated credential values in the repository or in Interface files.

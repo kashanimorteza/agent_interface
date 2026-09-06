@@ -13,7 +13,7 @@ Use this document as the entry point and follow its sections in this order:
 3. **Layers** — understand how Principles, Preferences, and Config represent each Component.
 4. **Component** — locate every Component's Principle, Preference, Schema, and Config files.
 5. **Modes** — understand the operating states used to configure, plan, and develop a project.
-6. **Agent Skills** — locate the external capabilities that perform Interface operations.
+6. **Core Interface Skills** — locate the external capabilities that perform Interface operations.
 7. **Workflow** — follow the ordered human-facing path from project definition to development.
 
 
@@ -83,6 +83,14 @@ path = .interface/schema/
 responsibility = Foundational shapes and validation rules for generated Component configuration; contains no Component philosophy or technical preference
 ```
 
+### File Schema
+
+```text
+name = File Schema
+path = .interface/schema/file.yaml
+responsibility = Common structural frame used by Interface YAML source files
+```
+
 
 <!--------------------------------------------------------------------------------- Layers --->
 <br > <br>
@@ -118,6 +126,33 @@ responsibility = Generated target-project Understanding resolved from Project th
 answers = What has been resolved for the target project
 generated = true
 ```
+
+
+<!--------------------------------------------------------------------------------- Authority and Ownership --->
+<br > <br>
+
+## Authority and Ownership
+
+The Interface resolves a target project through distinct authorities. Explicit project intent is binding when compatible with the mandatory Principles and Schema; Preferences supply defaults only where the project leaves a choice unstated. Schema defines the required shape and validation, while Config records the resolved result.
+
+```text
+Project = human-defined intent
+Principles = mandatory philosophy, responsibilities, and boundaries
+Preferences = technical defaults for unspecified choices
+Schema = structure and validation
+Config = generated, resolved target-project Understanding
+```
+
+```text
+Human = owns Interface, Project, Principles, Preferences, and Schema sources
+Interpreter = owns generated Config reconciliation
+Tasker = owns Plans, Groups, and Tasks
+Developer = owns implementation and execution progress
+Reviewer = owns verification findings and reports
+State = owns active Workflow position, Blockers, and Open Questions
+```
+
+Each operation may change only the information owned by its current authority. Generated outputs consume their source authorities and must not redefine them.
 
 
 <!--------------------------------------------------------------------------------- Component --->
@@ -278,9 +313,23 @@ The generated Understanding must allow Planning and Development to work without 
 <!--------------------------------------------------------------------------------- Agent Skills --->
 <br > <br>
 
-## Agent Skills
+## Core Interface Skills
 
-Agent Skills are external capabilities that execute Interface Modes or supporting operations. Their integration metadata does not define the Interface Structure, grant authority, or replace the instructions and shared rules owned by the Claude configuration layer.
+Core Interface Skills are the fixed external capabilities that execute Interface Modes or supporting operations. Their integration metadata does not define the Interface Structure, grant authority, or replace the instructions and shared rules owned by the Claude configuration layer. Technology-specific or third-party Skills are discovered dynamically from the configured target project and are not part of this fixed catalog; adding or removing one must not require an Interface change.
+
+### Shared Skill Rules
+
+```text
+name = Interface Bootstrap
+path = .claude/rules/interface-bootstrap.md
+responsibility = Defines shared Understanding and the separation between Agent Skills and the Interface Structure
+```
+
+```text
+name = Interface Skill Policy
+path = .claude/rules/interface-skill-policy.md
+responsibility = Defines shared file boundaries, Workflow, decision policy, and Development authority
+```
 
 
 <!-------------------------- Interpreter -->
@@ -396,4 +445,39 @@ order = 4
 name = Develop the Tasks
 skill = /my-interface-developer <phase-number>
 action = Implement and verify eligible Tasks for the requested phase
+```
+
+
+<!--------------------------------------------------------------------------------- Supporting Operations --->
+<br > <br>
+
+## Supporting Operations
+
+These operations support the main Define → Interpret → Plan → Develop Workflow without adding a new Workflow Mode or changing the ordered path.
+
+### Review
+
+```text
+skill = /my-interface-reviewer <phase-number>
+when = After Development, when the implemented result needs independent verification
+action = Inspect the requested phase against its generated specification and Plan, then report evidence-based findings without repairing it
+state = Does not enter or change a Workflow Mode
+```
+
+### Reset
+
+```text
+skill = /my-interface-reset <1|2|3>
+when = On explicit human request, whenever a selected Workflow stage must be reset
+action = Preview and, after confirmation, reset the selected Interpreter, Task, or Development output
+state = Does not add a new Workflow Mode; it restores State according to the selected reset stage
+```
+
+### Skill Installation
+
+```text
+skill = /my-interface-skill-installer
+when = When the configured target project requires a compatible technology Skill
+action = Discover and, after approval, install or refresh the matching external Skill
+state = Does not enter or change a Workflow Mode
 ```
