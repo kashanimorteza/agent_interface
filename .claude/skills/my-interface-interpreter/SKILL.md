@@ -1,6 +1,6 @@
 ---
 name: my-interface-interpreter
-description: Generate or refresh complete project Understanding for every current Interface Component. Use for explicit interpretation, configuration generation, refresh, or reconciliation requests.
+description: Generate or refresh complete structured project Understanding in all outputs required by the current Interface. Use for explicit interpretation, configuration generation, refresh, or reconciliation requests.
 disable-model-invocation: true
 ---
 
@@ -10,13 +10,13 @@ Produce complete current project Understanding that downstream Planning can turn
 
 ## Workflow
 
-Begin with both current Interface Understanding and current target-project Understanding. Use them to identify the Interpreter's live role, every current Component, each Component's applicable Layers and output, source precedence, validation requirements, and ownership boundaries.
+Begin with both current Interface Understanding and current target-project Understanding, established through the shared rules. Use them to identify the Interpreter's live role, the full set of required outputs, and the sources, rules, precedence, formats, validation requirements, destinations, and ownership boundaries that govern each output. Discover these from the current sources rather than assuming a fixed organization or list of outputs.
 
-For every Component, build one complete candidate configuration. Apply explicit project intent, enforce its Principles, use its Preferences for choices the project leaves open, and express the result in the form required by its Schema. An empty Layer contributes no information but never removes a required Component output. Use permitted judgment for non-critical unresolved details without inventing project intent.
+For each required output, build a complete candidate that expresses the current project intent under its applicable rules, uses defined defaults where intent leaves choices open, and follows its required format. An empty optional source contributes no information and does not remove a required output; handle a missing required source according to the current rules. Resolve unspecified details through the shared decision policy.
 
-Build the complete candidate set before writing. Validate each candidate against its current Schema and cross-check the complete set for consistency and downstream readiness.
+Build the complete candidate set before writing. Validate every candidate against the requirements discovered for it, check that every required output is covered, and cross-check the set for consistency and downstream readiness. Write valid results only to their discovered authorized destinations.
 
-On every run, rebuild from the current Interface and target project rather than treating existing generated content as source truth. Reconcile the valid candidate with existing outputs: add new information, update changed information, remove stale interpreter-owned information, and preserve information owned by the human, runtime, or another Behaviour.
+On every run, rebuild from the current Interface and target project rather than treating existing generated content as source truth. Reconcile the valid candidate with existing outputs: add new information, update changed information, remove stale interpreter-owned information, and preserve information owned by the human, runtime, or another operation.
 
 The operation is idempotent: unchanged current sources and owned generated information produce no changes.
 
