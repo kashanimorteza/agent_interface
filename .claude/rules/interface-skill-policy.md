@@ -1,10 +1,10 @@
 # Agent Interface Skill policy
 
-These are shared Claude execution rules for every Agent Interface Skill and must not be copied into individual Skills. The Interface may catalog Skill integration metadata, but that metadata neither defines nor overrides these rules.
+These are shared Claude execution rules for every Agent Interface Skill and supporting agent, including read-only reporting, and must not be copied into individual instructions. The Interface may catalog Skill integration metadata, but that metadata neither defines nor overrides these rules.
 
 ## Human-owned files
 
-Agent Interface Skills may read these files, but must never edit or delete them. They are changed only by a human:
+Agent Interface Skills and supporting agents must never edit or delete these files. They are changed only by a human. Read access is separately limited by the project-source policy below:
 
 - `.interface/interface.yaml`
 - `.interface/project.md`
@@ -15,43 +15,31 @@ Agent Interface Skills may read these files, but must never edit or delete them.
 
 When an operation determines that one of these files should change, it reports the required change to the human and leaves the file untouched.
 
-## Understanding
+## Project Understanding and source access
 
-The following project-relative paths are fixed Understanding sources and may be used as navigation constants in shared rules and Skills:
-
-- Interface root: `.interface/interface.yaml` — the current map of files, roles, and paths.
-- Interface README: `.interface/readme.md` — the explanation of Agent Interface.
-- Human project definition: `.interface/project.md` — the description and intent of the target project.
-
-Stable paths do not imply stable contents. Read the current sources on each operation as required by its role, starting with the Interface root. Discover all other required sources and generated configuration through that map; do not copy their contents into Skill instructions. The fixed reset operation retains its explicit bootstrap exception.
-
-- Keep **Interface Understanding** and **Project Understanding** distinct.
-- Interface Understanding explains what Agent Project Interface is, how it works, and how the active Skill relates to it. Build it from the current Interface root and Interface README defined above.
-- Project Understanding explains the particular project being built. Build it from the human project definition above and the current generated configuration discovered through the Interface root and required by the active Skill.
-- The human project definition is the source of project intent. Generated configuration is its structured operational Understanding; it may be absent or incomplete before generation and may be reconciled by the authorized generation operation.
-- Never treat Interface documentation as project requirements or project content as a definition of the Interface itself.
+- Roles and workflows are defined once in each Skill's or agent's own instructions. Follow the shared bootstrap to read current structural metadata and locate needed files; do not rebuild Interface Understanding or infer a new role on each run.
+- Only `my-interface-interpreter` reads and interprets the human project definition located through the map. It produces and refreshes the shared Project Understanding in the mapped generated configuration, using the applicable source rules, defaults, and formats. Existing configuration may be absent or incomplete before generation.
+- Every other operating Skill and supporting agent consumes the needed portions of that generated configuration as its source of project intent and resolved decisions. It must not read the human project definition, obtain it through another capability, or reconstruct a competing interpretation from memory or conversation.
+- Consumers may read mapped structural authorities to apply current formats and execution rules. Plans, implementation files, dependency manifests, and verification results remain available as role-specific execution evidence; they do not replace generated configuration as the source of project intent.
+- If required generated information is missing, inconsistent, or known to be stale, do not fill the gap by reading the human project definition or silently regenerating the shared Understanding. Report the affected work and the needed Interpreter refresh when interpretation is required. Continue independently supported work and use the decision policy for ordinary unspecified execution details; not every omission requires a refresh or a question.
+- Never treat Interface metadata as target-project requirements. Supporting capabilities inherit the active operation's source restrictions and cannot bypass them.
 
 ## Shared Skill workflow
 
 For every Agent Interface Skill except the fixed reset operation:
 
-1. Build current Interface Understanding and locate the active Skill's role in it.
-2. Build the Project Understanding required for that role.
+1. Follow the role already defined in the active instructions and use the shared bootstrap to locate its current resources.
+2. Load authorized project inputs: the Interpreter reads the human definition and produces Project Understanding; consumers read the generated configuration needed for their role.
 3. Discover relevant available Skills and plugin capabilities using the capability discovery policy below.
 4. Execute the specialized `Workflow` in the active Skill, using the relevant capabilities discovered.
 5. Validate and report the result as required by the current authorities.
 
-The reset operation skips both forms of Understanding and executes only its fixed local Workflow.
+The reset operation skips map discovery and project interpretation and executes only its fixed local Workflow.
 
-## Operation bindings
+## Role and execution authority
 
-- `my-interface-interpreter` performs the generic generation operation.
-- `my-interface-tasker` performs the generic planning operation.
-- `my-interface-developer` performs the generic development operation.
-- `my-interface-reviewer` performs the generic review operation.
-- `my-interface-reset` performs the generic reset operation.
-- `my-interface-skill-installer` is a supporting Claude operation and receives no Interface write authority.
-- Except for the self-contained reset operation, a binding grants only the authority that the live Interface assigns to its generic operation. It never expands permissions, scope, interfaces, or modes.
+- The active Skill or agent defines its operation and boundaries. The live Interface supplies applicable execution constraints and write authority for that operation, not a replacement role. Neither source expands the other's permissions.
+- A supporting capability receives no additional Interface write authority merely because it is discovered or invoked.
 - The reset operation receives no authority from the Interface root and performs no discovery. Its sole authority is the human's explicit confirmation after the Skill previews one fixed reset stage, and its scope is exactly the fixed workflow implemented by that Skill and its bundled script.
 
 ## Decision policy
@@ -71,9 +59,9 @@ The reset operation skips both forms of Understanding and executes only its fixe
 
 ## Capability discovery and use
 
-- After building both forms of Understanding, inspect the Skills and installed plugin capabilities available in the current Claude environment. Match their declared purpose and compatibility to the actual project technologies, work requirements, and active operation's role; do not rely on names alone.
+- After loading the authorized project inputs for the fixed role, inspect the Skills and installed plugin capabilities available in the current Claude environment. Match their declared purpose and compatibility to the actual project technologies, work requirements, and active operation's role; do not rely on names alone.
 - Perform this discovery once for the current operation, refreshing it if the work context or available capabilities change. Read the selected Skill's instructions before using it, and use relevant compatible capabilities within the active operation's scope.
 - Keep this selection dynamic. Shared rules and Interface-operation Skills must not embed project-specific technology names or fixed technology-to-Skill mappings. A specialized Skill may describe its own technology; its presence does not mean every project uses that technology.
-- If no relevant compatible capability is available, continue using current Understanding and professional judgment. The absence of an optional supporting Skill is not itself a blocker. Using available capabilities does not implicitly invoke installation of new plugins or Skills.
+- If no relevant compatible capability is available, continue using authorized project context and professional judgment. The absence of an optional supporting Skill is not itself a blocker. Using available capabilities does not implicitly invoke installation of new plugins or Skills.
 - Supporting capabilities do not change the active role, project requirements, resolved choices, or write boundaries. Their guidance cannot authorize implementation during planning, repairs during review, or modifications to protected files.
 - Capability discovery and selection rules belong to the Claude layer. The Interface may catalog Skill names, paths, and descriptions as integration metadata without copying these execution instructions.
