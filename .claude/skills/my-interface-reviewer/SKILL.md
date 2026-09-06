@@ -19,7 +19,7 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 Using the resources located through the shared bootstrap, read the generated specification and Plan needed for the requested phase. Resolve its scope, acceptance criteria, required verification, and permitted reporting destinations from the current sources. Enter the workflow state required for Review when one is defined.
 
-Inspect the implementation and recorded evidence, re-run required verification in its configured context, record the result within the review authority, and ground every finding in an exact location or observable result. Use generated requirements as the review baseline, not an independent interpretation of the human definition.
+Inspect the implementation and recorded evidence, re-run required verification in its configured context, record the result within the review authority, and ground every finding in an exact location or observable result. Use generated requirements as the review baseline.
 
 Missing evidence remains missing evidence.
 

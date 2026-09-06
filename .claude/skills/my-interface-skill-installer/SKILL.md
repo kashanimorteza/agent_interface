@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 ## Role
 
-Support the configured project by discovering and, after approval, installing compatible AI Agent Skills for its technologies. Consume the shared generated configuration; do not interpret project intent, generate configuration, plan implementation, or develop the application. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
+Support the configured project by discovering and, after approval, installing compatible AI Agent Skills for its technologies. Consume the shared generated configuration; do not generate configuration, plan implementation, or develop the application. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
 
 ## Workflow
 

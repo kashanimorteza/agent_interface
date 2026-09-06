@@ -61,7 +61,7 @@ Components are the subjects described through the layers:
 | **Model** | Independent shared Model package, domain models, fields, relationships, rules, validation, and initial data |
 | **Development** | Independent Model, Database, Backend, and Frontend layers, centralized runtime configuration, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them |
 | **State** | Current workflow position, repeatable working modes, critical blockers, and open questions |
-| **Task** | Phase plans, contextual groups, and atomic self-contained tasks with explicit execution and verification context |
+| **Task** | Phase plans, contextual groups, and atomic activities with clear purpose, scope, metadata, expected results, and verification |
 | **Backend** | Application and Model Logic, Database communication through Data Access, and the external API |
 | **Frontend** | Component-based Presentation, user Interaction Logic, and application access through the Backend API |
 | **Database** | Independent package with typed Model operations, supported Engines, selectable Instances, Model-driven mapping, and Engine-specific Storage Adapters |
@@ -74,7 +74,7 @@ Modes describe the current kind of activity performed through the Interface:
 
 - **Not Set** — Represents the resting State before an Interface operation has been recorded.
 - **Configuring** — Transforms the human project definition into the standardized generated project Understanding.
-- **Planning** — Transforms the generated Understanding for a requested project phase into implementation-ready Tasks.
+- **Planning** — Transforms the generated Understanding for a requested project phase into clear, bounded, and verifiable Tasks without prescribing implementation.
 - **Development** — Executes and verifies the planned Tasks to produce the project implementation.
 
 State records the active Mode. Agent Skills are external capabilities that perform the operation represented by a Mode, while Workflow describes the order in which those operations are used. These operating Modes are distinct from project Behaviours: project Behaviours describe what the target application must do.
@@ -102,7 +102,7 @@ Transforms the human project definition into the generated project Understanding
 
 ### `my-interface-tasker`
 
-Creates or reconciles an implementation-ready plan for one requested project phase without implementing it. Accepts a phase number: `1` selects phase one, `2` selects phase two, and so on; existing phase identifiers remain unchanged.
+Creates or reconciles a clear activity plan for one requested project phase. It defines required results and verification without prescribing implementation. Accepts a phase number: `1` selects phase one, `2` selects phase two, and so on; existing phase identifiers remain unchanged.
 
 ### `my-interface-developer`
 

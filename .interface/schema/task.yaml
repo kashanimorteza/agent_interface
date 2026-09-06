@@ -1,6 +1,6 @@
 schema:
   id: agent-interface-task
-  version: "5.0"
+  version: "6.0"
   purpose: "The shape of the generated Task configuration"
 
 structure:
@@ -41,9 +41,9 @@ sections:
           area:
             required: true
             purpose: "The specific module, subsystem, or work area inside the target Component."
-          execution_context:
+          metadata:
             required: true
-            purpose: "The resolved implementation context needed to execute the Task."
+            purpose: "Resolved descriptive metadata that helps identify the nature and technical context of the activity without prescribing implementation."
             fields:
               kind:
                 required: true
@@ -53,16 +53,16 @@ sections:
                 purpose: "The applicable programming or configuration language, or null when no language applies."
               technologies:
                 required: true
-                purpose: "The ordered technologies, frameworks, packages, protocols, or tools relevant to the Task; empty when none apply."
-              instructions:
-                required: true
-                purpose: "Implementation guidance sufficient to perform this specific Task."
-              inputs:
-                required: true
-                purpose: "The information, artifacts, interfaces, or completed results consumed by the Task; empty when none apply."
-              expected_output:
-                required: true
-                purpose: "The concrete artifact or observable result the Task must produce."
+                purpose: "The ordered resolved technologies relevant to the Task; empty when none apply. This is metadata, not a place to select or explain an implementation."
+          inputs:
+            required: true
+            purpose: "The information, artifacts, interfaces, or completed results consumed by the Task; empty when none apply."
+          references:
+            required: true
+            purpose: "References to the generated configuration that Development must consult for resolved technical decisions; empty when none apply."
+          expected_result:
+            required: true
+            purpose: "The concrete artifact, behaviour, state, or observable result the Task must produce."
           depends_on:
             required: true
             purpose: "The identifiers of Tasks whose completed outputs are prerequisites; empty when the Task is independent."
@@ -75,9 +75,6 @@ sections:
           verify:
             required: true
             purpose: "A runnable command or precise executable check that proves acceptance."
-          touches:
-            required: true
-            purpose: "The explicit files, directories, or resources the Task is expected to inspect or modify."
           status:
             required: true
             purpose: "The current Task state, using the resolved Task-state vocabulary."
@@ -122,7 +119,7 @@ sections:
   # <!--------------------------------------------------------------------------------- Plans -->
   plans:
     required: true
-    purpose: "The ordered collection of phase implementation Plans."
+    purpose: "The ordered collection of phase Plans prepared for Development."
     fields:
       "<phase>":
         required: true
@@ -168,7 +165,7 @@ sections:
                     purpose: "The Component in which the Group performs its work."
                   area:
                     required: true
-                    purpose: "The module, subsystem, or implementation area covered by the Group."
+                    purpose: "The functional area or subsystem covered by the Group."
                   does:
                     required: true
                     purpose: "The result produced when every applicable Task in the Group is complete."

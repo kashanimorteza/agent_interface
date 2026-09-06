@@ -1,6 +1,6 @@
 # Task Principles
 
-Task is the Component that turns project phases into precise, executable work. It organizes that work as Plans, Groups, and Tasks while preserving enough context for either a human or an Agent to understand and execute every Task reliably.
+Task is the Component that turns project phases into precise, bounded activities. It organizes those activities as Plans, Groups, and Tasks while preserving enough context for either a human or an Agent to understand what each Task requires and how its result is evaluated.
 
 Every statement here is mandatory. Technical defaults, when any are defined, belong to Task Preferences. The exact shape of the generated Task configuration belongs to the Task Schema.
 
@@ -8,7 +8,7 @@ Every statement here is mandatory. Technical defaults, when any are defined, bel
 
 ## 1. Every phase has its own Plan
 
-A Plan represents the implementation of one project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks.
+A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks.
 
 Planning does not invent a new project phase or silently change the meaning of an existing one. The phase remains the unit selected for planning and development.
 
@@ -24,7 +24,7 @@ Grouping supplies useful shared context, but it never replaces the information c
 
 ## 3. A Task is one atomic action
 
-Each Task describes one small, concrete implementation action that can be completed and verified independently. A Task never combines unrelated changes or hides several broad outcomes behind one title.
+Each Task describes one small, concrete activity with one independently observable result. A Task never combines unrelated changes or hides several broad outcomes behind one title.
 
 Large work is divided into as many precise Tasks as necessary. Clarity and executability take precedence over minimizing the number of Tasks.
 
@@ -38,20 +38,21 @@ A Task remains understandable when viewed outside its Plan, Group, or project. I
 - why the work is necessary;
 - what result it must produce;
 - which Component and specific work area it targets;
-- which language, technologies, and execution context apply;
-- which inputs, dependencies, constraints, and existing resources matter;
-- which files or resources it may touch; and
+- which resolved language and technology metadata apply, when relevant;
+- which inputs, dependencies, constraints, and existing resources matter; and
 - how completion is accepted and verified.
 
-The Task does not need to repeat the identity or general description of the project. It does need all context required to understand and perform its own work without reconstructing that context from unrelated documents.
+The Task does not need to repeat the identity or general description of the project. It carries the context required to understand its activity and expected result, while Development reads the applicable generated configuration before deciding how to implement it.
 
 <br>
 
-## 5. Task context is resolved from authoritative project Understanding
+## 5. Task defines the activity and Development defines the implementation
 
-The target, language, technologies, paths, interfaces, constraints, and other implementation context written into a Task are resolved from the applicable generated Component configurations. A Task does not create a competing technical decision.
+A Task defines what must be achieved, why it is needed, where its responsibility belongs, which resolved constraints apply, and what evidence demonstrates completion. It may record metadata already resolved by generated configuration, such as the target, language, relevant technologies, and interface references.
 
-The Task records the resolved context it needs so its executor does not have to rediscover that context before work can begin.
+Task does not prescribe implementation steps, algorithms, source layout, classes, functions, code, commands for performing the work, or new technical decisions. It does not guess the files that Development should change. Development owns the implementation method and reads the referenced generated configuration and current implementation when executing the Task.
+
+Verification describes how to prove the expected result after implementation. It never doubles as a hidden implementation procedure.
 
 <br>
 

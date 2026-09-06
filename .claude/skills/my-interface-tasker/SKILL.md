@@ -1,6 +1,6 @@
 ---
 name: my-interface-tasker
-description: Create or reconcile an implementation-ready plan for one requested project phase from current generated Project Understanding. Plans only; never implements or interprets the human project definition.
+description: Create or reconcile the planning output for one requested project phase from current generated Project Understanding. Plans only; never implements.
 argument-hint: "[phase-number]"
 disable-model-invocation: true
 ---
@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 ## Role
 
-Plan one requested project phase from the shared generated Project Understanding. Turn resolved requirements into grouped, atomic, implementation-ready Tasks for Development; do not implement them or create an independent interpretation of project intent. Select the phase by the number in `$ARGUMENTS`.
+Plan one requested project phase from the shared generated Project Understanding. Produce the planning output required by the current Interface for downstream Development without implementing the work. Select the phase by the number in `$ARGUMENTS`.
 
 ## Input
 
@@ -17,20 +17,20 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 ## Workflow
 
-Using the resources located through the shared bootstrap, read the generated configuration needed to resolve the requested phase, its target, and its intended outcome. Read the current planning format, execution rules, and write boundaries. Enter the workflow state required for Planning. Consume the recorded project decisions rather than rebuilding project Understanding from the human definition.
+Using the shared bootstrap, locate and read the generated configuration needed to resolve the requested phase and the current authorities governing Planning. Treat recorded project decisions as the source of project intent.
 
-Build one complete candidate Plan for the requested phase before writing. Preserve the phase's resolved identity and intent, organize related work into coherent Groups, and decompose each Group into the smallest independently executable and verifiable Tasks that together achieve the complete phase outcome. A Task must carry enough resolved implementation context for Development to execute it without reinterpreting the human project definition or rediscovering ordinary project decisions.
+Derive the required planning format, content, granularity, progress handling, validation, ownership, and write boundaries from those live authorities. Do not assume or reproduce a fixed planning structure in this Skill.
 
-Resolve technical context, inputs, interfaces, constraints, expected results, affected resources, acceptance, and verification from the current generated Project Understanding and applicable authorities. Do not create a competing architecture or silently replace a resolved project decision. Use dependencies only where one Task truly requires another Task's completed output, and ensure the resulting dependency graph is valid and executable.
+Build a complete candidate for the requested phase that preserves its resolved identity, intent, scope, and decisions and is usable by downstream Development. Apply the current planning authorities to every part of the candidate; do not embed remembered fields, defaults, or policies when the live sources define them.
 
-Validate the complete candidate against the current Task Schema and Principles before writing. Also check phase scope, identifier integrity, dependency references and cycles, target boundaries, actionable instructions, observable acceptance, executable verification, and readiness for downstream Development.
+Validate the complete candidate using the current authorities before writing it only to the authorized destination.
 
-On every run, rebuild the candidate Plan from current sources and reconcile it with the existing Plan. Add newly required work, update changed unstarted work, and remove stale Tasker-owned unstarted work when safe. Preserve completed or active work, Task status, Task-local history, human-owned information, runtime evidence, and information owned by another operation. Surface a critical conflict rather than silently invalidating meaningful work.
+On every run, rebuild the candidate from current sources and reconcile it with existing planning output according to the current ownership and reconciliation rules. Preserve information outside Tasker's authority and surface conflicts as required by the live policies.
 
-The operation is idempotent: unchanged current sources and Tasker-owned planning information produce no changes.
+The operation is idempotent with respect to unchanged sources and Tasker-owned planning information.
 
 ## Boundaries
 
-Plan only for the requested phase. Do not implement, execute or test product code, reshape another phase's Plan, review completed work as another role, reinterpret the human project definition, or modify generated Project Understanding or human-owned sources merely to make planning possible.
+Plan only for the requested phase. Do not implement product work, perform Review or Interpretation, alter project intent, or write outside Planning's current authority.
 
-Report the handled phase; created, updated, removed, unchanged, and preserved planning content; validation results; consequential planning decisions; and only the questions or blockers required by the current policies.
+Report the result according to the current reporting rules.

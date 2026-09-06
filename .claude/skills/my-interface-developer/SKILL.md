@@ -1,6 +1,6 @@
 ---
 name: my-interface-developer
-description: Execute and reconcile eligible planned work for one requested project phase from its current implementation-ready Plan. Implements and verifies only; never plans, reviews, or interprets the human project definition.
+description: Execute and reconcile eligible planned work for one requested project phase from current generated Project Understanding and planning output. Implements and verifies only; never plans or reviews.
 argument-hint: "[phase-number]"
 disable-model-invocation: true
 ---
@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 ## Role
 
-Implement and verify the unfinished eligible Tasks in one requested phase's existing Plan. Use the Plan and shared generated Project Understanding as the resolved specification, and record actual execution progress and evidence. Do not plan new work or independently interpret project intent. Select the phase by the number in `$ARGUMENTS`.
+Implement and verify eligible planned work for one requested project phase. Use the current planning output and shared generated Project Understanding as the resolved specification. Do not plan new work. Select the phase by the number in `$ARGUMENTS`.
 
 ## Input
 
@@ -17,20 +17,20 @@ Accept one positive integer: `1` selects phase one, `2` selects phase two, and s
 
 ## Workflow
 
-Using the resources located through the shared bootstrap, read the requested phase's current Plan and the generated configuration needed for its execution. Resolve the target, implementation boundary, and current Task and State execution rules. Enter the workflow state required for Development. Inspect implementation files as execution evidence, not as a replacement definition of project intent.
+Using the shared bootstrap, locate and read the requested phase's current planning output, the generated configuration needed for execution, and the current authorities governing Development. Inspect the existing implementation as execution context and evidence, not as a replacement definition of project intent.
 
-Derive eligibility from the current Plan and live Task rules. Skip work already complete, work whose dependencies are incomplete, and work outside the requested phase. Select an eligible unfinished Task, claim it through its authorized state transition, and re-read the information that can affect its execution.
+Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from those live authorities. Do not assume or reproduce their current fields, statuses, or policies in this Skill.
 
-Before editing, inspect the Task's declared inputs, affected resources, constraints, existing implementation, and the interfaces it must preserve. Implement only the Task's resolved outcome within its authorized Component boundary. Use professional judgment for unspecified implementation details, but do not expand phase scope, invent project intent, reshape the Plan, or replace decisions recorded in generated Project Understanding.
+Execute eligible planned work within the resolved scope and current authority. Apply the shared decision policy to unspecified implementation details, while preserving project intent, existing interfaces, and decisions recorded in generated Project Understanding.
 
-Run the Task's current verification and compare the observable result with its acceptance criteria. Mark a Task complete only after its required verification passes, and append the actual evidence to its Task-local history. When verification fails, preserve the truthful unfinished state and record useful evidence. Raise a Blocker or Open Question only when the current policies require one.
+Verify each result and record execution progress and evidence exactly as required by the live authorities. When work cannot complete, preserve truthful state and follow the current failure, question, and blocking policies.
 
-After every Task outcome, reconcile the live Task and State information owned by Development, then continue through other eligible work in the requested phase while the live rules allow it. Failure or blocking of one Task prevents only work that truly depends on it; independent eligible work may continue when safe.
+After each outcome, reconcile Development-owned information and continue according to the current execution rules.
 
-The operation is repeatable and idempotent with respect to completed work: rerunning Development skips valid completed Tasks, resumes eligible unfinished Tasks, and never repeats or rewrites completed implementation without an explicit current Task requiring that change.
+The operation is repeatable and idempotent according to the current execution and ownership rules.
 
 ## Boundaries
 
-Develop only the eligible Tasks in the requested phase. Do not create or reshape Plans, reinterpret the human project definition, review as another role, modify generated Project Understanding, bypass declared interfaces, or write outside the resolved implementation and workflow boundaries.
+Develop only eligible planned work in the requested phase. Do not perform Planning, Review, or Interpretation, alter generated Project Understanding, bypass resolved interfaces, or write outside Development's current authority.
 
-Report claimed, completed, resumed, skipped, failed, and blocked work; the observable verification evidence for every completed Task; consequential implementation decisions; remaining eligible work; and only the questions or blockers required by the current policies.
+Report the result according to the current reporting rules.
