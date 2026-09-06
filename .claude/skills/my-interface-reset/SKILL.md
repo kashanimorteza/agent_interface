@@ -14,7 +14,7 @@ Run the bundled `scripts/reset.py` from the project root with exactly one numeri
 Do not read the Interface root, project definition, Schema, Principles, Preferences, or unrelated configuration. The operation uses only these fixed targets:
 
 - `.interface/config/` (all entries for `1`; only `task.yaml` and `state.yaml` for `2` and `3`)
-- Root `backend/`, `frontend/`, `database/`, and `developer/` directories in all three stages
+- Root `model/`, `backend/`, `frontend/`, `database/`, and `developer/` directories in all three stages
 
 ### 1 = Interpreter reset
 

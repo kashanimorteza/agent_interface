@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/model.yaml"
-  path_note: "The Preferences layer of the Model Component — common logical field defaults used only when a Model definition leaves them unstated."
-  purpose: "Default properties and credential classification for existing Model fields whose attributes are unstated."
+  path_note: "The Preferences layer of the Model Component — implementation and logical-field defaults used when Model choices are unstated."
+  purpose: "Defaults for the independent Model package, supported modeling technologies, and properties of existing Model fields whose attributes are unstated."
   standard: "Agent Project Interface"
 
 
@@ -12,24 +12,56 @@ policy:
   rule: "This file is human-owned. Generation reads it and never writes resolved Model fields back into it."
   changed_by: "The human, directly."
   precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
-  consumption: "Apply defaults property by property only to fields present in the Model definition. Preserve every explicit property, including false and null, and never add a field merely because it appears in these defaults. Write the resolved fields into generated Model configuration."
+  consumption: "Resolve unstated Model-package technology from this file. Apply field defaults property by property only to fields present in the Model definition. Preserve every explicit property, including false and null, and never add a field merely because it appears in these defaults. Write the resolved implementation and fields into generated Model configuration."
   matching: "Match normalized field names. An explicit Model property takes priority, followed by an exact-name default in common_fields, then a matching field_patterns default. A name pattern alone does not establish a relationship or its target."
+  selection: "Resolve the modeling library through the selected language profile. For an unlisted language or incompatible explicit combination, select a well-supported compatible modeling library and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the selected Model stack; latest never appears in generated configuration."
+  environment_handling: "Create and use the selected isolated environment through its resolved tool, and do not commit environment artifacts."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
+  - "defaults"
+  - "languages"
+  - "modeling_libraries"
   - "common_fields"
   - "field_patterns"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
+  defaults: "Default Model-package code path and language."
+  languages: "Supported Model implementation languages, versions, environments, naming conventions, and language-compatible modeling-library defaults."
+  modeling_libraries: "Supported modeling and validation libraries."
   common_fields: "Exact-name defaults for missing properties of existing fields; these are not a list of fields to add."
   field_patterns: "Defaults for missing properties of existing fields whose names match a pattern."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
+
+  defaults:
+    code_path: "model/"
+    language: "Python"
+
+  languages:
+    Python:
+      version: "latest"
+      environment:
+        name: "uv"
+        version: "latest"
+      modeling_library: "Pydantic"
+      naming:
+        variables: "snake_case"
+        classes: "PascalCase"
+        files: "snake_case"
+        folders: "snake_case"
+
+  modeling_libraries:
+    Pydantic:
+      version: "latest"
+      language: "Python"
+      package: "pydantic"
 
   common_fields:
     id:

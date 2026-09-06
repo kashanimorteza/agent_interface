@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/development.yaml"
-  path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers."
+  path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers, including Model."
   purpose: "Package and cross-cutting capability defaults used when no explicit project choice exists."
   standard: "Agent Project Interface"
 

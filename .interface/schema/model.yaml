@@ -1,12 +1,94 @@
 schema:
   id: agent-interface-model
-  version: "1.0"
-  purpose: "The shape of the generated Model configuration"
+  version: "2.0"
+  purpose: "The shape of the generated independent Model package and shared logical Models"
 
 structure:
+  - implementation
   - models
 
 sections:
+
+  # <!--------------------------------------------------------------------------------- Implementation -->
+  implementation:
+    required: true
+    purpose: "The resolved implementation boundary for the independent shared Model package."
+    fields:
+      code_path:
+        required: true
+        purpose: "The project-relative folder containing the Model package implementation."
+      code_path_note:
+        required: true
+        purpose: "Explains what code_path is relative to."
+      summary:
+        required: true
+        purpose: "A concise description of the Model package."
+      verify_cwd:
+        required: true
+        purpose: "The resolved working directory and environment for Model verification commands."
+      package:
+        required: true
+        purpose: "The package key owned by the Model layer in generated Development configuration."
+      tech:
+        required: true
+        purpose: "The resolved language and modeling library owned by Model."
+        fields:
+          language:
+            required: true
+            purpose: "The resolved Model implementation language."
+            fields:
+              name:
+                required: true
+                purpose: "The language name."
+              version:
+                required: true
+                purpose: "The concrete language version."
+              environment:
+                required: true
+                purpose: "The resolved isolated environment and dependency-management tool."
+                fields:
+                  name:
+                    required: true
+                    purpose: "The environment tool name."
+                  version:
+                    required: true
+                    purpose: "The concrete environment-tool version."
+          modeling_library:
+            required: true
+            purpose: "The resolved library used to implement and validate Models."
+            fields:
+              name:
+                required: true
+                purpose: "The modeling-library name."
+              version:
+                required: true
+                purpose: "The concrete modeling-library version."
+              package:
+                required: true
+                purpose: "The ecosystem package providing the modeling library."
+      public_interface:
+        required: true
+        purpose: "The documented import interface through which compatible consumers use shared Models."
+        fields:
+          kind:
+            required: true
+            purpose: "The interface mechanism, normally an import surface."
+          entrypoint:
+            required: true
+            purpose: "The resolved public import entrypoint."
+          exports:
+            required: true
+            purpose: "The public Model symbols exposed to consumers."
+      boundaries:
+        required: true
+        purpose: "The resolved ownership boundary of the Model package."
+        fields:
+          owns:
+            required: true
+            purpose: "Responsibilities owned by Model."
+          does_not_own:
+            required: true
+            purpose: "Responsibilities explicitly outside Model."
 
   # <!--------------------------------------------------------------------------------- Models -->
   models:

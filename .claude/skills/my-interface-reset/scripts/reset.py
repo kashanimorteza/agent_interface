@@ -12,7 +12,7 @@ import yaml
 CONFIG_DIRECTORY = Path(".interface/config")
 TASK_FILE = CONFIG_DIRECTORY / "task.yaml"
 STATE_FILE = CONFIG_DIRECTORY / "state.yaml"
-CODE_DIRECTORIES = tuple(Path(name) for name in ("backend", "frontend", "database", "developer"))
+CODE_DIRECTORIES = tuple(Path(name) for name in ("model", "backend", "frontend", "database", "developer"))
 STAGES = {"1": "interpreter", "2": "task", "3": "develop"}
 
 

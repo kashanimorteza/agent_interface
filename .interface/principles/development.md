@@ -2,7 +2,7 @@
 
 Development defines the project's layered software architecture and the way its independent application layers are composed into one runnable system. It is an implementation-independent standard and contains no project-specific technology, provider, topology, or execution capability.
 
-The application architecture separates Database, Backend, Frontend, and Platform responsibilities. Platform is the composition layer that connects the other layers, supplies their operating environment, brings the complete system online, and delivers it to its destination.
+The application architecture separates Model, Database, Backend, Frontend, and Platform responsibilities. Model supplies the shared domain representation as an independent package. Platform is the composition layer that connects the application layers, supplies their operating environment, brings the complete system online, and delivers it to its destination.
 
 Every statement here is mandatory.
 
@@ -22,7 +22,7 @@ A layer can evolve or be replaced without requiring consumers to change while it
 
 A consumer communicates with another layer only through the interface that the provider declares for that purpose. It never reads or modifies another layer's internal storage, implementation, configuration, or private resources directly.
 
-Database access happens through the Database interface. Backend capabilities are consumed through the Backend interface. The same rule applies to every current or future layer.
+Shared domain representations are consumed through the Model package interface. Database access happens through the Database interface. Backend capabilities are consumed through the Backend interface. The same rule applies to every current or future layer.
 
 <br>
 
@@ -46,7 +46,7 @@ Platform connects layers through their declared interfaces and never absorbs the
 
 Development identifies the participating application layers, their public responsibilities and interfaces, the connections between them, and the Platform configuration that makes the complete project runnable. It also defines the common package standard and records package identities, parent relationships, ownership, and integration boundaries.
 
-Internal technologies, third-party dependencies, detailed source layout, domain data, API implementation, user-interface implementation, and persistence implementation remain owned by their respective layers. The package map references those owning definitions rather than independently redefining their technology choices, operations, or domain meaning.
+Internal technologies, third-party dependencies, detailed source layout, domain-model implementation, API implementation, user-interface implementation, and persistence implementation remain owned by their respective layers. The package map references those owning definitions rather than independently redefining their technology choices, operations, or domain meaning.
 
 <br>
 
@@ -58,7 +58,7 @@ Development defines a reusable layered standard. Project-specific choices popula
 
 ## 7. Cross-cutting capabilities are coordinated by Development
 
-Capabilities that may affect more than one application layer are coordinated by Development rather than owned as an isolated default by Backend, Frontend, or Database. Examples include testing, logging, error handling, and authentication.
+Capabilities that may affect more than one application layer are coordinated by Development rather than owned as an isolated default by Model, Backend, Frontend, or Database. Examples include testing, logging, error handling, and authentication.
 
 Development records whether each capability is enabled, which layers it applies to, and the shared integration expectations that keep those layers compatible. Each affected layer still owns its internal implementation and consumes the capability through an explicit boundary.
 

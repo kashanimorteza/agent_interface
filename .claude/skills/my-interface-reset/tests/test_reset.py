@@ -11,7 +11,7 @@ import yaml
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "reset.py"
-OUTPUTS = ("backend", "frontend", "database", "developer")
+OUTPUTS = ("model", "backend", "frontend", "database", "developer")
 
 
 class ResetTests(unittest.TestCase):

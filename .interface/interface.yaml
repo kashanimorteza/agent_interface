@@ -82,11 +82,11 @@ content:
 
           model:
             path: "model.md"
-            responsibility: "Domain-entity meaning, shared logical Models, and the boundaries between logical definitions and technical representations"
+            responsibility: "Domain-entity meaning, the independent shared Model package, and boundaries between logical definitions and technical representations"
 
           development:
             path: "development.md"
-            responsibility: "Layered application architecture, interface-only communication, explicit connections, Platform composition, and cross-cutting capability coordination"
+            responsibility: "Layered Model, Database, Backend, and Frontend architecture, interface-only communication, explicit connections, Platform composition, and cross-cutting capability coordination"
 
           state:
             path: "state.md"
@@ -120,11 +120,11 @@ content:
 
           model:
             path: "model.yaml"
-            responsibility: "Common logical field defaults applied when individual Model definitions leave them unspecified"
+            responsibility: "Model-package language and modeling-library defaults plus common logical field defaults"
 
           development:
             path: "development.yaml"
-            responsibility: "Defaults for capabilities coordinated across application layers"
+            responsibility: "Common package conventions and defaults for capabilities coordinated across application layers"
 
           state:
             path: "state.yaml"
@@ -162,7 +162,7 @@ content:
 
           model:
             path: "model.yaml"
-            responsibility: "Shape of the generated shared Model configuration"
+            responsibility: "Shape of the generated independent Model package and shared logical Model configuration"
 
           development:
             path: "development.yaml"
@@ -200,7 +200,7 @@ content:
           config: "content.structure.generated_configuration.files.definition"
 
       model:
-        responsibility: "Shared logical domain Models that connect persisted data with API representations, including fields, relationships, rules, and initial data"
+        responsibility: "Independent shared Model package and logical domain Models that connect persisted data with API representations, including fields, relationships, rules, and initial data"
         resources:
           principle: "content.structure.layers.principles.files.model"
           preference: "content.structure.layers.preferences.files.model"
@@ -208,7 +208,7 @@ content:
           config: "content.structure.generated_configuration.files.model"
 
       development:
-        responsibility: "Independent application layers, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them"
+        responsibility: "Independent Model, Database, Backend, and Frontend layers, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them"
         resources:
           principle: "content.structure.layers.principles.files.development"
           preference: "content.structure.layers.preferences.files.development"
@@ -314,11 +314,11 @@ content:
 
         model:
           path: "model.yaml"
-          responsibility: "Shared logical Models, fields, relationships, rules, and initial data"
+          responsibility: "Resolved independent Model package, modeling technology, public import interface, logical Models, fields, relationships, rules, and initial data"
 
         development:
           path: "development.yaml"
-          responsibility: "Application layers, declared-interface connections, cross-cutting capabilities, and the Platform environment, composition, and deployment"
+          responsibility: "Model, Database, Backend, and Frontend layers, their packages and declared-interface connections, cross-cutting capabilities, and the Platform environment, composition, and deployment"
 
         state:
           path: "state.yaml"

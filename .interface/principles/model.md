@@ -1,6 +1,6 @@
 # Model Principles
 
-Model is the Component that describes the domain entities and concepts from which a project is formed. It provides one shared logical meaning for data so every technical Component can implement the same concepts without redefining them.
+Model is the Component and independent application layer that describes the domain entities and concepts from which a project is formed. It provides one shared logical meaning and one reusable implementation boundary for domain data so technical Components can consume the same concepts without redefining them.
 
 Every statement here is mandatory. Technical defaults belong to Model Preferences, and the exact shape of the generated Model configuration belongs to the Model Schema.
 
@@ -14,7 +14,17 @@ Models describe the project domain rather than source-code classes, database tab
 
 <br>
 
-## 2. The logical Model connects persistence and APIs
+## 2. Model is an independent shared package
+
+The resolved Model set is implemented as its own package with a documented public import interface. Compatible application layers import this package rather than maintaining private copies of the same Models. A consumer that cannot import the package directly uses a representation derived from the same generated Model configuration through its declared layer interface.
+
+The Model package owns domain representations and their validation. It does not own persistence mappings, business behaviour, API transport, user-interface presentation, or deployment. Its implementation language and modeling technology are resolved through Model Preferences, while its package identity and general package conventions are coordinated through Development.
+
+The package can evolve independently while its public Model interface remains compatible.
+
+<br>
+
+## 3. The logical Model connects persistence and APIs
 
 The Model Component is the shared logical source for Components that need domain data. In particular, it connects the meaning of data persisted by the Database with the meaning of data accepted and exposed by APIs.
 
@@ -26,7 +36,7 @@ A technical Component may add implementation detail needed within its own bounda
 
 <br>
 
-## 3. Fields express domain data
+## 4. Fields express domain data
 
 Fields describe the information carried by a Model. Their logical type, identity, uniqueness, optionality, default behaviour, credential nature, and meaning may be expressed when applicable.
 
@@ -34,7 +44,7 @@ Field definitions remain independent of a particular programming language, stora
 
 <br>
 
-## 4. Relationships express domain connections
+## 5. Relationships express domain connections
 
 Relationships describe how Models are conceptually connected and, when needed, identify the logical field that carries that connection.
 
@@ -42,13 +52,13 @@ The physical realization of a relationship, including database constraints and s
 
 <br>
 
-## 5. Domain rules and initial data remain part of the Model
+## 6. Domain rules and initial data remain part of the Model
 
 A Model may contain rules that constrain its valid domain state and initial records that must exist when the project begins. These remain logical declarations until the responsible technical Components resolve and implement them.
 
 <br>
 
-## 6. Field defaults complete unspecified properties
+## 7. Field defaults complete unspecified properties
 
 Model Preferences may supply missing properties of fields already present in a Model definition. A default entry does not introduce a field into a Model or require every entity to contain it.
 

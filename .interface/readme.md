@@ -58,8 +58,8 @@ Components are the subjects described through the layers:
 | Component | Responsibility |
 | --- | --- |
 | **Definition** | Structured project description, conceptual models, project structure, behaviours, and ordered phases |
-| **Model** | Shared domain models, fields, relationships, rules, and initial data |
-| **Development** | Independent application layers, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them |
+| **Model** | Independent shared Model package, domain models, fields, relationships, rules, validation, and initial data |
+| **Development** | Independent Model, Database, Backend, and Frontend layers, declared-interface connections, cross-cutting capabilities, and the Platform that runs and deploys them |
 | **State** | Current workflow position, repeatable working modes, critical blockers, and open questions |
 | **Task** | Phase plans, contextual groups, and atomic self-contained tasks with explicit execution and verification context |
 | **Backend** | Application and Model Logic, Database communication through Data Access, and the external API |
@@ -83,7 +83,7 @@ State records the active Mode. Agent Skills are external capabilities that perfo
 
 The `config/` directory is not a fourth descriptive layer. It is the generated project Understanding: the project-specific result produced from `project.md` using the applicable Principles and Preferences and written in the forms defined by the Schemas.
 
-Each generated configuration belongs to one component. Definition captures the project description, conceptual models, project structure, behaviours, and phases; Model provides the detailed shared domain language; the application layers define their own resolved configuration; Development connects those layers through declared interfaces and defines the Platform that runs and deploys them; Task holds executable plans; and State records where the Workflow currently stands.
+Each generated configuration belongs to one component. Definition captures the project description, conceptual models, project structure, behaviours, and phases; Model provides the independent shared package and detailed domain language; the application layers define their own resolved configuration; Development connects Model, Database, Backend, and Frontend through declared interfaces and defines the Platform that runs and deploys them; Task holds executable plans; and State records where the Workflow currently stands.
 
 Project phases are the units of planning and development. A phase target selects the component developed by that phase, while Development independently describes how all selected technical components connect and operate together.
 
@@ -112,7 +112,7 @@ Reviews the implemented result for one requested project phase and reports evide
 
 ### `my-interface-reset`
 
-Run `/my-interface-reset <1|2|3>`: `1 = interpreter`, `2 = task`, `3 = develop`. Every stage removes the root `backend/`, `frontend/`, `database/`, and `developer/` output directories when present, after preview and confirmation. `1` also clears all entries inside `config/`. `2` clears Groups and Tasks while preserving phase Plan shells and returns active State to `not set`. `3` preserves Tasks and their history, returns every Task to `todo`, and returns active State to `planning`. Both `2` and `3` set the active phase to null.
+Run `/my-interface-reset <1|2|3>`: `1 = interpreter`, `2 = task`, `3 = develop`. Every stage removes the root `model/`, `backend/`, `frontend/`, `database/`, and `developer/` output directories when present, after preview and confirmation. `1` also clears all entries inside `config/`. `2` clears Groups and Tasks while preserving phase Plan shells and returns active State to `not set`. `3` preserves Tasks and their history, returns every Task to `todo`, and returns active State to `planning`. Both `2` and `3` set the active phase to null.
 
 ### `my-interface-skill-installer`
 
