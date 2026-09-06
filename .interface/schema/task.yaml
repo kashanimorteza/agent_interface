@@ -6,6 +6,7 @@ schema:
 structure:
   - task_schema
   - task_states
+  - task_count
   - plans
 
 sections:
@@ -114,6 +115,10 @@ sections:
         required: true
         purpose: "The condition from which phase completion is derived."
 
+  task_count:
+    required: true
+    purpose: "A non-negative integer equal to the total number of Tasks stored across all phase Plans, regardless of status. Sum the phase task_count values; use zero when no Tasks exist. Recalculate whenever Tasks are added or removed, including reconciliation and reset."
+
   # <!--------------------------------------------------------------------------------- Plans -->
   plans:
     required: true
@@ -138,6 +143,9 @@ sections:
           does:
             required: true
             purpose: "The intended implementation outcome of the phase."
+          task_count:
+            required: true
+            purpose: "A non-negative integer equal to the number of Tasks stored across all Groups in this phase Plan, regardless of status. Sum the Group task_count values; use zero for an empty Plan. Recalculate whenever Tasks are added or removed."
           groups:
             required: true
             purpose: "The ordered Groups that decompose the Plan; empty before the phase is planned."
@@ -166,7 +174,7 @@ sections:
                     purpose: "The result produced when every applicable Task in the Group is complete."
                   task_count:
                     required: true
-                    purpose: "The number of Tasks currently contained in the Group."
+                    purpose: "A non-negative integer equal to the number of Tasks currently contained in the Group, regardless of status, including cancelled and superseded Tasks while they remain stored. Recalculate whenever Tasks are added or removed."
                   tasks:
                     required: true
                     purpose: "The ordered Tasks in the Group, each conforming to task_schema."

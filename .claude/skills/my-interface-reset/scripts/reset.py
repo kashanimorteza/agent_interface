@@ -78,6 +78,10 @@ def main():
             changes.append(f"Clear {group_count} Group(s) and {len(tasks)} Task(s) from {TASK_FILE}; preserve Plan shells")
             for plan in entries(plans):
                 plan["groups"] = [] if isinstance(plan.get("groups"), list) else {}
+                if "task_count" in plan:
+                    plan["task_count"] = 0
+            if "task_count" in task["content"]:
+                task["content"]["task_count"] = 0
             mode = "not set"
         else:
             changes.append(f"Set {len(tasks)} Task(s) to todo and remove their blocker fields in {TASK_FILE}; preserve content and history")

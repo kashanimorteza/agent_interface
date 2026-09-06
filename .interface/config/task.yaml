@@ -11,14 +11,16 @@ meta:
 policy:
   agent_may_edit: true
   rule: The configuring operation materializes task_schema, task_states, and one Plan shell per phase with empty groups; it never creates a Group or Task. The planning operation fills the groups of the one phase it was invoked for. The development operation changes only the status, blocker, and log of a Task it has claimed. Reset acts as its own fixed script defines
-  changed_by: The planning operation (Plan groups), the development operation (Task status, blocker, log), the reset operation, and the configuring operation (frame and empty shells only)
+  changed_by: The planning operation (Plan groups and derived counts), the development operation (Task status, blocker, log), the reset operation, and the configuring operation (frame, empty shells, and derived counts)
   preservation: On re-configuring, an existing Plan whose groups are non-empty is preserved when its source phase is unchanged. Removing or changing a phase whose Plan holds Tasks is a critical conflict, reported and never applied silently
+  task_counts: Counts include all stored Tasks regardless of status. Group task_count equals the size of tasks; phase task_count sums its Group counts; content.task_count sums all phase counts. Recompute affected counts whenever Tasks are added or removed, including planning, reconciliation, and reset. Empty collections have count zero. Status-only changes do not change counts.
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
 - task_schema
 - task_states
+- task_count
 - plans
 
 
@@ -26,6 +28,7 @@ read_order:
 content_map:
   task_schema: The resolved field frame every Task carries
   task_states: The Task-status vocabulary and the derived readiness and completion conditions
+  task_count: Total number of stored Tasks across all phase Plans, regardless of status
   plans: One Plan per project phase, keyed by phase id from definition.yaml
 
 
@@ -74,6 +77,9 @@ content:
     phase_ready: A phase is ready for development when its Plan has at least one Group with at least one Task and every earlier phase is complete. Readiness is derived, never stored.
     phase_complete: A phase is complete when its Plan is non-empty, every Task not cancelled or superseded is done, and no Task remains todo, claimed, or blocked. Completion is derived, never stored.
 
+  # <!-------------------------------------------- task_count -->
+  task_count: 49
+
   # <!-------------------------------------------- plans -->
   plans:
     P1:
@@ -82,6 +88,7 @@ content:
       order: 1
       target: database
       does: Implement the database, apply the defined model structure, and insert the defined initial data.
+      task_count: 20
       groups:
         P1-G1:
           id: P1-G1
@@ -1579,6 +1586,7 @@ content:
       order: 2
       target: backend
       does: Implement the backend layer, including its application logic and API for operating on the defined models.
+      task_count: 14
       groups:
         P2-G1:
           id: P2-G1
@@ -2712,6 +2720,7 @@ content:
       order: 3
       target: frontend
       does: Implement the frontend based on the backend API.
+      task_count: 15
       groups:
         P3-G1:
           id: P3-G1

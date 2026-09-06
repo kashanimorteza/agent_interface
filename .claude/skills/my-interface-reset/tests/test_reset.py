@@ -24,9 +24,9 @@ class ResetTests(unittest.TestCase):
         ]
         if as_mapping:
             tasks = {t["id"]: t for t in tasks}
-        task = {"content": {"task_states": {"states": {"todo": "Not started"}},
-                "plans": {"P1": {"id": "P1", "groups": {"G1": {"task_count": 2, "tasks": tasks}}},
-                          "P2": {"id": "P2", "groups": {}}}}}
+        task = {"content": {"task_states": {"states": {"todo": "Not started"}}, "task_count": 2,
+                "plans": {"P1": {"id": "P1", "task_count": 2, "groups": {"G1": {"task_count": 2, "tasks": tasks}}},
+                          "P2": {"id": "P2", "task_count": 0, "groups": {}}}}}
         state = {"content": {"active": {"mode": "development", "phase": "P1"},
                              "blockers": {"B1": {"what_is_missing": "Input"}},
                              "open_questions": {"Q1": {"question": "Keep?"}}}}
@@ -70,8 +70,10 @@ class ResetTests(unittest.TestCase):
                     actual_state = yaml.safe_load((config / "state.yaml").read_text())["content"]
                     expected = copy.deepcopy(task)
                     if stage == "2":
+                        expected["content"]["task_count"] = 0
                         for plan in expected["content"]["plans"].values():
                             plan["groups"] = {}
+                            plan["task_count"] = 0
                     else:
                         tasks = expected["content"]["plans"]["P1"]["groups"]["G1"]["tasks"]
                         for item in tasks.values() if as_mapping else tasks:
