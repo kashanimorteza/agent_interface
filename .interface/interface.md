@@ -34,7 +34,7 @@ Its purpose is to let a Developer define a target project in natural language an
 <!-------------------------- Operation -->
 ### Operation
 
-The Developer supplies the human project definition. Each operation reads it and the applicable Principles and Preferences to establish its own Understanding. Planning records activities as Tasks; Development implements and verifies those Tasks.
+The Developer supplies the human project definition. Operations that need project meaning read it and the applicable Principles and Preferences to establish their own Understanding. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical operations such as Config initialization do not interpret the project.
 
 Config contains only the mutable Task and State files used to coordinate this work. Schemas define their storage format. Understanding is formed by each operation and is not stored in Config.
 
@@ -147,7 +147,7 @@ Config = mutable Task and State records
 
 ```text
 Human = owns Interface, Project, Principles, Preferences, and Schema sources
-Interpreter = initializes the mapped Config files from their Schema templates, preserving existing operational data
+Configure = generates the Task and State Config files from their Schema defaults, preserving existing operational data
 Tasker = owns Plans, Groups, and Tasks
 Developer = owns implementation and execution progress
 Reviewer = owns verification findings and reports
@@ -304,30 +304,30 @@ Configuring does not produce project descriptions, technical Component configura
 
 ## Core Interface Skills
 
-Core Interface Skills are the fixed external capabilities that execute Interface Modes or supporting operations. Their integration metadata does not define the Interface Structure, grant authority, or replace the instructions and shared rules owned by the Claude configuration layer. Technology-specific or third-party Skills are discovered dynamically from the configured target project and are not part of this fixed catalog; adding or removing one must not require an Interface change.
+Core Interface Skills are the fixed external capabilities that execute Interface Modes or supporting operations. Their integration metadata does not define the Interface Structure, grant authority, or replace the instructions and shared rules owned by the Claude configuration layer. Technology-specific or third-party Skills are discovered dynamically from the current target project and are not part of this fixed catalog; adding or removing one must not require an Interface change.
 
 ### Shared Skill Rules
 
 ```text
 name = Interface Bootstrap
 path = .claude/rules/interface-bootstrap.md
-responsibility = Defines shared Understanding and the separation between Agent Skills and the Interface Structure
+responsibility = Defines shared entry points and the separation between Agent Skills and the Interface Structure
 ```
 
 ```text
 name = Interface Skill Policy
 path = .claude/rules/interface-skill-policy.md
-responsibility = Defines shared file boundaries, Workflow, decision policy, and Development authority
+responsibility = Defines human-owned file boundaries and the decision policy shared by every Skill
 ```
 
 
-<!-------------------------- Interpreter -->
-### Interpreter
+<!-------------------------- Configure -->
+### Configure
 
 ```text
-name = my-interface-interpreter
-path = .claude/skills/my-interface-interpreter/SKILL.md
-invocation = /my-interface-interpreter
+name = my-interface-configure
+path = .claude/skills/my-interface-configure/SKILL.md
+invocation = /my-interface-configure
 responsibility = Initialize Task and State Config from their Schema templates, preserving existing records
 mode = configuring
 ```
@@ -368,7 +368,7 @@ mode = none
 name = my-interface-reset
 path = .claude/skills/my-interface-reset/SKILL.md
 invocation = /my-interface-reset <1|2|3>
-responsibility = Preview and, after human confirmation, reset Interpreter output, Task output, or developed implementation
+responsibility = Preview and, after human confirmation, reset Configure output, Task output, or developed implementation
 mode = none
 ```
 <!--------------------------  Skill Installer -->
@@ -385,7 +385,7 @@ mode = none
 
 The reset stages are:
 
-1. **Interpreter:** remove root implementation directories when present and clear every entry inside `.interface/config/`.
+1. **Configure:** remove root implementation directories when present and clear every entry inside `.interface/config/`.
 2. **Task:** remove root implementation directories, clear Groups and Tasks while preserving phase Plan shells, set active State to `not set`, and clear the active phase.
 3. **Develop:** remove root implementation directories, preserve Tasks and their history while returning every Task to `todo`, set active State to `planning`, and clear the active phase.
 
@@ -414,7 +414,7 @@ action = Define the target project, its Models, and its ordered phases in .inter
 ```text
 order = 2
 name = Initialize Config
-skill = /my-interface-interpreter
+skill = /my-interface-configure
 action = Initialize .interface/config/task.yaml and .interface/config/state.yaml from the initial templates in their Schemas; preserve existing operational records
 ```
 <!-------------------------- Generate Tasks -->
@@ -458,7 +458,7 @@ state = Does not enter or change a Workflow Mode
 ```text
 skill = /my-interface-reset <1|2|3>
 when = On explicit human request, whenever a selected Workflow stage must be reset
-action = Preview and, after confirmation, reset the selected Interpreter, Task, or Development output
+action = Preview and, after confirmation, reset the selected Configure, Task, or Development output
 state = Does not add a new Workflow Mode; it restores State according to the selected reset stage
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: my-interface-skill-installer
-description: Discover and install compatible AI Agent Skills for technologies present in the configured target project. Use for explicit install, synchronization, or refresh requests without changing application dependencies or code.
+description: Discover and install compatible AI Agent Skills for technologies present in the current target project. Use for explicit install, synchronization, or refresh requests without changing application dependencies or code.
 disable-model-invocation: true
 ---
 
@@ -8,13 +8,15 @@ disable-model-invocation: true
 
 ## Role
 
-Support the configured project by discovering and, after approval, installing compatible AI Agent Skills for its technologies. Consume the shared generated configuration; do not generate configuration, plan implementation, or develop the application. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
+Support the target project by discovering and, after approval, installing compatible AI Agent Skills for its technologies. Do not initialize Config, plan implementation, or develop the application. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
 
 ## Workflow
 
 ### Detect
 
-After establishing both shared Understandings, use the resources located through the shared bootstrap to read the current generated configuration needed to identify configured target-project locations and resolved technologies. On every run, detect eligible technologies from that configuration and inspect dependency manifests, lockfiles, runtime-version files, and framework configuration inside those locations as compatibility and installation evidence. These artifacts do not replace the generated project specification or authorize new project requirements.
+First establish Agent Interface Understanding by reading the canonical Interface document. Use it to understand the Interface organization, Skill Installer's supporting role, and the current locations of relevant project sources.
+
+Then establish Target Project Understanding by reading the human project definition and applicable Principles and Preferences. Detect eligible technologies from those current sources and inspect dependency manifests, lockfiles, runtime-version files, framework configuration, and existing implementation as compatibility and installation evidence. Task and State Config are operational records and do not define project technologies.
 
 Check project and personal Skills currently visible to Claude Code, then inspect installed plugins with `claude plugin list --json` so compatible existing capabilities are not duplicated.
 
@@ -39,9 +41,9 @@ If the Claude CLI is present and `claude plugin list --available --json` succeed
 
 ## Boundaries
 
-Do not change Interface data, application code, architecture, manifests, lockfiles, or runtime dependencies. Do not install for a technology that was not detected inside a configured target-project location, remove a compatible Skill, or install duplicates.
+Do not change Interface data, application code, architecture, manifests, lockfiles, or runtime dependencies. Do not install for a technology that was not detected in current target-project sources or implementation, remove a compatible Skill, or install duplicates.
 
-The operation must be idempotent: a second run against unchanged Config, dependencies, and installed Skills makes no changes.
+The operation must be idempotent: a second run against unchanged project sources, dependencies, and installed Skills makes no changes.
 
 ## Completion
 

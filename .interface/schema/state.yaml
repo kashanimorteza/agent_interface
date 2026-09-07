@@ -2,6 +2,14 @@ schema:
   id: "agent-interface-state"
   version: "10.0"
   purpose: "Operational State file structure. Sections describe stored content; initial is the empty configuration template. State meanings and behaviour are defined by the State Component."
+initialization:
+  source: "initial"
+  purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."
+  defaults: "Every section and field declares a default. Fixed required objects expand their child defaults; empty collections stay empty."
+  collections: "Keys enclosed in angle brackets describe future records. Do not create placeholder Plans, Groups, Tasks, Blockers, or questions during initialization."
+  optional_fields: "Optional fields remain absent until applicable. A null default on an optional field means no value is recorded, not an invented identifier or answer."
+  drafts: "Empty strings and zero order values are unfilled record defaults. Before storing usable planning work or an active issue, the owning operation supplies real identifiers, required descriptive content, valid phase order, and provenance."
+  preservation: "Initialization does not overwrite an existing Config file or reset its operational data."
 structure:
   - "active"
   - "blockers"
@@ -9,10 +17,12 @@ structure:
 sections:
   active:
     required: true
+    default: {}
     purpose: "The current or most recently entered Workflow position."
     fields:
       mode:
         required: true
+        default: "not set"
         purpose: "Current or most recently recorded Workflow mode."
         allowed:
           - "not set"
@@ -21,85 +31,110 @@ sections:
           - "development"
       phase:
         required: true
+        default: null
         nullable: true
         purpose: "The active phase identifier, or null when the mode is not acting on one phase."
       mode_reason:
         required: true
+        default: "No Workflow operation has been recorded."
         purpose: "Why the active values were recorded and what operation they represent."
       set_by:
         required: true
+        default: "initialization"
         purpose: "The human or operation that recorded the active values."
       set_at:
         required: true
+        default: null
         nullable: true
         purpose: "When the active values were recorded, or null before the first update."
   blockers:
     required: true
+    default: {}
     purpose: "The unresolved critical conditions currently preventing safe or valid continuation; empty when none exist."
     fields:
       "<blocker>":
         required: false
+        default: {}
         purpose: "One critical Blocker, keyed by its identifier."
         fields:
           id:
             required: true
+            default: ""
             purpose: "The stable Blocker identifier."
           blocks:
             required: true
+            default: ""
             purpose: "The work that cannot continue."
           what_is_missing:
             required: true
+            default: ""
             purpose: "The concrete unresolved condition."
           consequence:
             required: true
+            default: ""
             purpose: "Why the blocked work cannot safely or validly continue."
           resolution_owner:
             required: true
+            default: ""
             purpose: "The human, operation, or external condition capable of resolving the Blocker."
           raised_by:
             required: true
+            default: ""
             purpose: "The human or operation that raised the Blocker."
           raised_at:
             required: true
+            default: ""
             purpose: "When the Blocker was raised."
   open_questions:
     required: true
+    default: {}
     purpose: "The unresolved critical questions that require a human decision; empty when none exist."
     fields:
       "<question>":
         required: false
+        default: {}
         purpose: "One Open Question, keyed by its identifier."
         fields:
           id:
             required: true
+            default: ""
             purpose: "The stable question identifier."
           question:
             required: true
+            default: ""
             purpose: "The decision the human is being asked to make."
           why_it_matters:
             required: true
+            default: ""
             purpose: "What materially depends on the answer."
           blocks:
             required: false
+            default: null
             purpose: "The Blocker identifier released by the answer, omitted when the question blocks no current work."
           raised_by:
             required: true
+            default: ""
             purpose: "The human or operation that raised the Open Question."
           raised_at:
             required: true
+            default: ""
             purpose: "When the Open Question was raised."
           answered_so_far:
             required: false
+            default: null
             purpose: "The answer or partial answer already supplied by the human, together with its provenance; omitted until the human supplies one."
             fields:
               answer:
                 required: true
+                default: ""
                 purpose: "The answer or partial answer supplied by the human."
               answered_by:
                 required: true
+                default: ""
                 purpose: "The human who supplied the answer."
               answered_at:
                 required: true
+                default: ""
                 purpose: "When the answer was supplied."
 initial:
   meta:

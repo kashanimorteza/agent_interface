@@ -2,153 +2,207 @@ schema:
   id: "agent-interface-task"
   version: "6.0"
   purpose: "Operational Task file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Task Component."
+initialization:
+  source: "initial"
+  purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."
+  defaults: "Every section and field declares a default. Fixed required objects expand their child defaults; empty collections stay empty."
+  collections: "Keys enclosed in angle brackets describe future records. Do not create placeholder Plans, Groups, Tasks, Blockers, or questions during initialization."
+  optional_fields: "Optional fields remain absent until applicable. A null default on an optional field means no value is recorded, not an invented identifier or answer."
+  drafts: "Empty strings and zero order values are unfilled record defaults. Before storing usable planning work or an active issue, the owning operation supplies real identifiers, required descriptive content, valid phase order, and provenance."
+  preservation: "Initialization does not overwrite an existing Config file or reset its operational data."
 structure:
   - "task_count"
   - "plans"
 sections:
   task_count:
     required: true
+    default: 0
     purpose: "A non-negative integer equal to the total number of Tasks stored across all phase Plans, regardless of status. Sum the phase task_count values; use zero when no Tasks exist. Recalculate whenever Tasks are added or removed, including reconciliation and reset."
   plans:
     required: true
+    default: {}
     purpose: "Phase Plans created by Planning, keyed by phase identifier; empty before any phase is planned."
     fields:
       "<phase>":
         required: false
+        default: {}
         purpose: "One Plan keyed by its phase identifier."
         fields:
           id:
             required: true
+            default: ""
             purpose: "The phase identifier represented by this Plan."
           title:
             required: true
+            default: ""
             purpose: "The phase title represented by this Plan."
           order:
             required: true
+            default: 0
             purpose: "The phase's one-based position in project order."
           target:
             required: true
+            default: ""
             purpose: "The Component targeted by the phase."
           does:
             required: true
+            default: ""
             purpose: "The intended implementation outcome of the phase."
           task_count:
             required: true
+            default: 0
             purpose: "A non-negative integer equal to the number of Tasks stored across all Groups in this phase Plan, regardless of status. Sum the Group task_count values; use zero for an empty Plan. Recalculate whenever Tasks are added or removed."
           groups:
             required: true
+            default: {}
             purpose: "The ordered mapping of Groups that decompose the Plan, keyed by Group identifier; empty before the phase is planned."
             fields:
               "<group>":
                 required: false
+                default: {}
                 purpose: "One coherent area of related work, keyed by its id."
                 fields:
                   id:
                     required: true
+                    default: ""
                     purpose: "The Group identifier, unique across all Plans."
                   title:
                     required: true
+                    default: ""
                     purpose: "A concise name for the work area."
                   description:
                     required: true
+                    default: ""
                     purpose: "What belongs to the Group and why its Tasks are related."
                   target:
                     required: true
+                    default: ""
                     purpose: "The Component in which the Group performs its work."
                   area:
                     required: true
+                    default: ""
                     purpose: "The functional area or subsystem covered by the Group."
                   does:
                     required: true
+                    default: ""
                     purpose: "The result produced when every applicable Task in the Group is complete."
                   task_count:
                     required: true
+                    default: 0
                     purpose: "A non-negative integer equal to the number of Tasks currently contained in the Group, regardless of status, including cancelled and superseded Tasks while they remain stored. Recalculate whenever Tasks are added or removed."
                   tasks:
                     required: true
+                    default: {}
                     purpose: "Tasks keyed by identifier. Every key equals its Task id. Dependencies, not mapping order, determine execution eligibility."
                     fields:
                       "<task>":
                         required: false
+                        default: {}
                         purpose: "One Task containing its descriptive metadata, expected result, verification, and mutable progress."
                         fields:
                           id:
                             required: true
+                            default: ""
                             purpose: "The Task identifier, unique within its Plan and unambiguous across all Plans."
                           title:
                             required: true
+                            default: ""
                             purpose: "A concise statement of the atomic action."
                           description:
                             required: true
+                            default: ""
                             purpose: "A complete explanation of what must be done."
                           reason:
                             required: true
+                            default: ""
                             purpose: "Why the Task is necessary."
                           target:
                             required: true
+                            default: ""
                             purpose: "The Component in which the Task performs its work."
                           area:
                             required: true
+                            default: ""
                             purpose: "The specific module, subsystem, or work area inside the target Component."
                           metadata:
                             required: true
+                            default: {}
                             purpose: "Resolved descriptive metadata that identifies the Task's planning context, nature, and technical context without prescribing implementation."
                             fields:
                               phase:
                                 required: true
+                                default: {}
                                 purpose: "The phase context carried by the Task so its identity does not depend on nesting."
                                 fields:
                                   id:
                                     required: true
+                                    default: ""
                                     purpose: "The stable identifier of the phase containing the Task."
                                   title:
                                     required: true
+                                    default: ""
                                     purpose: "The human-readable title of the phase containing the Task."
                                   order:
                                     required: true
+                                    default: 0
                                     purpose: "The phase's one-based position in project order."
                               group:
                                 required: true
+                                default: {}
                                 purpose: "The Group context carried by the Task so its identity does not depend on nesting."
                                 fields:
                                   id:
                                     required: true
+                                    default: ""
                                     purpose: "The stable identifier of the Group containing the Task."
                                   title:
                                     required: true
+                                    default: ""
                                     purpose: "The human-readable title of the Group containing the Task."
                               kind:
                                 required: true
+                                default: ""
                                 purpose: "The nature of the work, such as code, configuration, documentation, data, or command execution."
                               language:
                                 required: true
+                                default: null
                                 purpose: "The applicable programming or configuration language, or null when no language applies."
+                                nullable: true
                               technologies:
                                 required: true
+                                default: []
                                 purpose: "The ordered resolved technologies relevant to the Task; empty when none apply. This is metadata, not a place to select or explain an implementation."
                           inputs:
                             required: true
+                            default: []
                             purpose: "The information, artifacts, interfaces, or completed results consumed by the Task; empty when none apply."
                           references:
                             required: true
+                            default: []
                             purpose: "References to applicable project sources and existing interfaces that Development should consult; empty when none apply."
                           expected_result:
                             required: true
+                            default: ""
                             purpose: "The concrete artifact, behaviour, state, or observable result the Task must produce."
                           depends_on:
                             required: true
+                            default: []
                             purpose: "The identifiers of Tasks whose completed outputs are prerequisites; empty when the Task is independent."
                           constraints:
                             required: true
+                            default: []
                             purpose: "Task-specific restrictions and invariants that the implementation must preserve; empty when none apply."
                           acceptance:
                             required: true
+                            default: ""
                             purpose: "The observable criterion that determines whether the intended result is correct."
                           verify:
                             required: true
+                            default: ""
                             purpose: "A runnable command or precise executable check that proves acceptance."
                           status:
                             required: true
+                            default: "todo"
                             purpose: "The current Task progress value."
                             allowed:
                               - "todo"
@@ -157,12 +211,13 @@ sections:
                               - "done"
                               - "cancelled"
                               - "superseded"
-                            default: "todo"
                           blocker:
                             required: false
+                            default: null
                             purpose: "The identifier of the critical blocking condition when the Task is blocked; absent otherwise."
                           log:
                             required: false
+                            default: []
                             purpose: "The append-only Task-local progress history; absent until the first recorded transition."
 definitions:
   task_status:
