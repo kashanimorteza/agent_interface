@@ -1,0 +1,28 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/review.yaml"
+  path_note: "Mutable Reviews, Findings and their state."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Review Component and the active operation's ownership rules."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "finding_count"
+  - "reviews"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  finding_count: "Total number of stored Findings."
+  reviews: "The current review record for each reviewed phase."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  finding_count: 0
+  reviews: {}
