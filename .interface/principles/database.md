@@ -17,7 +17,7 @@ Database is the Component that owns the project's complete persistence layer. It
 ## Relationships
 
 - **Consumes Model** — the logical Models, fields, relationships, rules, and initial data that Database maps and enforces.
-- **Consumes Development** — the common package standard and the centralized runtime configuration through which Platform delivers connection settings.
+- **Consumes Development** — the common package standard and runtime configuration delivery through which Platform supplies Database-owned settings and declared bindings without taking ownership of them.
 - **Consumed by Backend** — the generic data-access interface and Instance Registry, reached only through Backend's Data Access layer.
 
 Technical choices and defaults belong to Database Preferences. Database implementation applies those choices to the current project definition.
@@ -100,6 +100,8 @@ The interface also supports controlled SQL-command execution for cases that cann
 
 **Rule:** Every Database Instance has a stable identifier, human-readable name, stated purpose, and one supported Engine binding. Instance identity is distinct from Engine identity: several Instances may use the same Engine while serving different purposes. Database publishes an Instance Registry through its public interface so consumers can discover available Instance identities and select one. Exactly one Instance is the default, and when a consumer does not select an Instance, Database uses that default explicitly and predictably. The number of Instances is derived from the Instance collection and is never maintained as a separate authoritative value.
 
+Database-owned runtime configuration declares the supported Engine catalogue, the Instance catalogue, and the default selection. Each Instance refers to one supported Engine, and the default refers to an existing Instance. The public Registry derives from the configured Instances rather than maintaining a second catalogue in implementation. A consumer can supply an identity obtained from that Registry to select the Instance for an operation or transaction. An omitted selection uses the configured default; an explicit unknown Instance is rejected, never silently redirected to the default.
+
 **Why:** A project outgrows one database, and naming each Instance by purpose lets a consumer choose the right one without learning how any of them connect.
 
 **Boundary:** The registry exposes no raw connection objects and no secret values. Database owns Instance definitions and connection handling; Platform may select or bind an Instance for another layer without taking ownership of it.
@@ -176,6 +178,8 @@ The interface also supports controlled SQL-command execution for cases that cann
 - **Never** — a consumer receives the engine connection or accesses storage outside the published Database interface *(6)*
 - **Never** — Model identity is passed as an untyped name string with an unrelated field dictionary *(6)*
 - **Must** — every Instance has a stable identifier, name, purpose, and Engine binding, and exactly one is the default *(7)*
+- **Must** — Database-owned runtime configuration declares supported Engines, Instances, and a valid default; the public Registry derives from those Instances and provides selectable identities for operations and transactions *(7)*
+- **Never** — an explicit unknown Instance silently falls back to the default *(7)*
 - **Never** — the Instance Registry exposes raw connections or secret values *(7)*
 - **Must** — every persistent Model maps to a table that records its source Model, and persistence constraints remain traceable to their logical declarations *(8)*
 - **Must** — Database guarantees constraints requiring stored state at commit, including under concurrent access, and reuses shared Model validation *(8)*
