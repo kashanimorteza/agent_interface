@@ -37,6 +37,6 @@ Report in this order:
 3. **Eligible work** — the Tasks currently eligible to execute, with their phase and target, derived from the live readiness rules and current evidence. Explain any condition preventing eligibility without introducing new restrictions.
 4. **Blockers** — the recorded Blockers, what work each prevents, what is missing, and who or what can resolve it when stated.
 5. **Open questions** — the recorded questions and their connection to pending decisions or Blockers when documented. Do not assume every question has a Blocker.
-6. **Open Findings** — for each reviewed phase, its recorded outcome and the Findings still open, each with its kind, severity, and the Task it concerns when it concerns one. A gap is reported as work no activity covers, not as a failure of any Task.
+6. **Open Findings** — for each reviewed phase, its recorded outcome and the Findings still open, each with its kind, severity, and the Task it concerns when it concerns one. Resolve and explain the meaning and state of Findings using the current Review Component rules.
 
 End with the single most useful next step supported by the findings and the current operation instructions.

@@ -15,7 +15,7 @@ Reset is mechanical and destructive. It does not interpret project intent, gener
 
 The three stages are nested, not ordered by size: `3` discards development, `2` discards planning and development, and `1` discards everything the Interface has generated. The number chooses how far back to go, so a lower number destroys more rather than less.
 
-This is the only operation that deletes. Its preview is the one point in the Workflow where a human decides before something is lost, which is why the preview is always shown in full, the initial invocation is never treated as approval, and nothing is removed that the preview did not name.
+Reset removes or clears the outputs of the selected stage within its current authority. Show the complete preview so the human can approve the exact changes before they are applied. The initial invocation is never treated as approval, and nothing is removed that the preview did not name.
 
 ## Input
 
@@ -65,4 +65,4 @@ After confirmation, report the outcome:
 
 4. **Applied** — what was actually removed or changed, and the resulting State position.
 5. **Not applied** — anything in the preview that could not be changed, and why.
-6. **Required next step** — when the applied stage removed the operational Config records, say plainly that no other operation can run until Configure recreates them.
+6. **Required next step** — when the applied stage removed operational Config records, identify which operations require those records and must wait for Configure to recreate them. Operations that do not require the removed records remain available within their current authority.

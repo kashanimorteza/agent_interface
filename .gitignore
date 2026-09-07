@@ -147,7 +147,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-#.env
+.env
 .envrc
 .venv
 env/
@@ -233,3 +233,5 @@ log
 
 *.db
 database.db
+# Trading Assistant: file-based Database Instance storage
+data/

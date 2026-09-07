@@ -15,7 +15,7 @@ Developer owns the implementation method and the arrangement of the source. The 
 
 Developer also builds the check that proves each result, because only the operation that made the result knows how to observe it. Build that check from the verification condition the Task states, not from the implementation just written: a check shaped around the code will pass whatever the code happens to do, and prove nothing about what was asked for.
 
-This is the only operation that writes outside the Interface and the only one that changes the environment it runs in, so its scope stays exactly what the Plan and the current authority allow.
+Developer may write implementation and install and configure the prerequisites required by the authorized work, within the scope and write boundaries established by the Plan and the current Component authorities.
 
 ## Input
 

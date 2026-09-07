@@ -13,8 +13,6 @@ Plan one requested project phase from current Target Project Understanding, and 
 
 Tasker decides what work exists and how it is organized. It does not decide how that work is implemented, because a plan that prescribes implementation removes the judgment the implementer needs when the code turns out differently than the plan imagined.
 
-Planning is also a judgment about what the record should hold. Most of what a Task needs is already stated by the project definition, the Principles, and the Preferences, and is resolved from them at the moment the work is done; only what is true of this one activity and derivable from nowhere else belongs in the Task itself. The plan serves two readers — the operation that implements it and the operation that reviews it — so an expected result and an acceptance criterion must be observable to someone who was not present when the work was done.
-
 ## Input
 
 Accept one positive integer from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in Target Project Understanding and use that phase's existing identifier throughout planning.
@@ -27,7 +25,7 @@ First establish Agent Interface Understanding by reading the canonical Interface
 
 Then establish Target Project Understanding by reading the human project definition and the Principles and Preferences applicable to the requested phase and its target Component. Inspect existing implementation and interfaces when they provide relevant current evidence. Task and State Config are operational records, not a stored representation of this Understanding, so reading them back is not a substitute for reading the sources.
 
-Read the current Task and State Config files, and the Review Config for the requested phase: a Finding recorded as a gap names required work that no planned activity covers, and deciding that work is Planning's. Resolve the requested phase from the human project definition, then derive planning structure, content, granularity, progress handling, validation, ownership, and write boundaries from the Task Component. Do not assume or reproduce a fixed planning structure here: the Task Component changes independently of this Skill, and a structure remembered from an earlier run will silently disagree with it.
+Read the current Task and State Config files, and the Review Config for the requested phase. Derive the meaning of review Findings and how Planning handles them from the current Review and Task Component authorities. Resolve the requested phase from the human project definition, then derive planning structure, content, granularity, progress handling, validation, ownership, and write boundaries from the current owning Components. Do not assume or reproduce a fixed planning structure here: the Task Component changes independently of this Skill, and a structure remembered from an earlier run will silently disagree with it.
 
 Build a complete candidate for the requested phase that preserves its resolved identity, intent, scope, and decisions, and that is usable by downstream Development. Apply the current planning authorities to every part of the candidate rather than embedding remembered fields, defaults, or policies.
 

@@ -33,11 +33,11 @@ Inspect the implementation and the recorded evidence. For each verification cond
 
 Missing evidence remains missing evidence. Do not reconstruct it, infer it from the code, or treat a plausible implementation as proof that a check once passed.
 
-Record every Finding in the Review Config, in the shape the Review Schema defines, and reconcile it with what a previous review of the same phase already recorded: a Finding that no longer holds is settled rather than deleted, and one that still holds keeps the identity it was given, so that the second review of a phase is worth more than the first. Record the state of Findings and nothing else; a Finding never reopens a Task, raises a Blocker on another Component's behalf, or changes the Workflow position.
+Record Findings and reconcile them with previous review results for the same phase according to the current Review Component's structure, recording rules, and update rules. Handle any additional operational updates under the shared rules and the current authority of the Component that owns the record.
 
 ## Boundaries
 
-Review only. Do not repair code, plan work, develop, define new requirements, or reinterpret project intent. Write to the Review Config alone.
+Review only. Do not repair code, plan work, develop, define new requirements, or reinterpret project intent. Follow the shared rules and the current Component write boundaries.
 
 ## Report
 
@@ -48,4 +48,4 @@ Report in this order, evidence first:
 3. **Verification** — for each condition, what was observed, whether the implementer's recorded check establishes it, and any condition that could not be observed and why.
 4. **Missing evidence** — every acceptance criterion with no observable proof, named as missing rather than assumed.
 5. **Result for the requested scope** — whether the phase satisfies its requirements, and only the follow-up the current policy requires.
-6. **Recorded** — the Findings written to the Review Config, and the previously recorded Findings this run settled or carried forward unchanged.
+6. **Recorded** — the Findings recorded and the changes to previous review results under the current Review Component rules, plus any other operational records updated under the current authority.

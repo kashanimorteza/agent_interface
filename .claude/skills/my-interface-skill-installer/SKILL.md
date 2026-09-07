@@ -12,7 +12,7 @@ Support the target project by discovering and, after approval, installing compat
 
 A technology's presence in the project makes it eligible. Do not dismiss a compatible Skill because the technology is common, popular, or something the agent can already work with unaided: a Skill carries current practice for that technology, which general capability does not.
 
-This operation equips the environment, not the project. What it installs lives where the agent runs and does not travel with the repository, so a fresh checkout on another machine starts without any of it. Nothing here belongs in the project's own dependencies, and nothing the project needs in order to run may be introduced this way — that is Development's work.
+This operation equips the agent with Skills. Determine the actual installation scope and location from the environment's supported mechanism, and report whether the installed resources are stored in the repository or depend on machine-local setup. Do not assume that an installation travels with a checkout. Skill installation does not add application dependencies; installing what the project needs in order to run is Development's work.
 
 Detection reads what the project actually uses, which is not always what it chose. A technology found in the implementation but absent from the Preferences is still eligible, and the mismatch itself is worth reporting: it means the project is running on something its own choices do not describe.
 
@@ -37,7 +37,7 @@ Establish the current way to discover and install a Skill in this environment be
 For each detected technology:
 
 1. Skip installation when a compatible Skill is already available.
-2. Discover candidates through the environment's supported discovery mechanism, across every catalog it currently reports. A catalog may distribute a Skill inside a larger bundle, so a bundle is a valid candidate.
+2. Discover candidates through the environment's supported discovery mechanism, starting with the most authoritative available sources. A catalog may distribute a Skill inside a larger bundle, so a bundle is a valid candidate. Once a candidate's relevance, source, and compatibility have been verified, further catalog searches are optional unless the human requested a comparison of alternatives.
 3. Match candidates by their declared purpose, source, and component inventory, not by name alone. Inspect the candidate's own metadata and manifest at its declared source. Do not claim a candidate supplies a relevant Skill until its components confirm that; a name match, or a component of a different kind, is not a Skill match.
 4. Prefer the most authoritative source the environment reports for that candidate: an official catalog first, then a catalog maintained by the technology itself, then a trusted third party. Adding a catalog the environment does not already have is an external change and requires its own approval.
 5. Verify major-version compatibility before proposing installation.
@@ -61,7 +61,7 @@ Report one entry per detected technology, each stating:
 1. **Technology** — its name, and the project file that established its presence.
 2. **Version** — the detected version, or `unresolved`.
 3. **Status** — installed, updated, skipped, or blocked.
-4. **Skill and source** — the selected Skill and where it came from, when one applies.
+4. **Skill and source** — the selected Skill and where it came from, when one applies, together with its actual installation scope and location and whether it travels with the repository or requires machine-local setup.
 5. **Reason** — why that status was reached, including the catalogs checked when the status is skipped or blocked.
 6. **Not in Preferences** — mark the entry when the technology was found in the implementation but the applicable Preferences do not offer it, and say where it was found.
 

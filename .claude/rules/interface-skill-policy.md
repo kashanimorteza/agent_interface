@@ -8,6 +8,10 @@ Skills and supporting agents must never edit or delete a human-owned Interface s
 
 Only a human edits these sources. When a change appears necessary, report it and leave the source unchanged.
 
+## Related capabilities
+
+Check the Skills and capabilities already available in the environment for relevance to the current work. When applicable, read their instructions and use them within the active role and requested scope, respecting the project's resolved decisions and the current write boundaries.
+
 ## Decision policy
 
 - Explicit project decisions, the applicable Principles, the declared interfaces between Components, permissions, and write boundaries are binding. They constrain professional judgment rather than being weighed against it: judgment settles what is undecided, never whether a decided thing still applies.
