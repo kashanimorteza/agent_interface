@@ -27,10 +27,10 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "not set"
-    phase: null
-    mode_reason: "No Workflow operation has been recorded."
-    set_by: "initialization"
-    set_at: null
+    mode: "planning"
+    phase: "phase_1"
+    mode_reason: "Planning created the Plan for phase_1 (Model) from the current project definition, Principles, and Preferences after the Configure reset."
+    set_by: "my-interface-tasker"
+    set_at: "2026-09-07T20:49:19Z"
   blockers: {}
   open_questions: {}

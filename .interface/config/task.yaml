@@ -24,5 +24,405 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 0
-  plans: {}
+  task_count: 19
+  plans:
+
+    # <!-------------------------------------------- phase_1 -->
+    phase_1:
+      id: "phase_1"
+      title: "Model"
+      order: 1
+      target: "Model"
+      does: "The independent Model layer exists as one reusable package that declares every defined Model with its fields, relationships, rules, and initial data, validates what its own data can determine, and publishes them through one documented import interface."
+      constraints: []
+      task_count: 19
+      groups:
+
+        # <!-------------------- package -->
+        phase_1.package:
+          id: "phase_1.package"
+          title: "Model package"
+          description: "The package that holds the Model layer: its identity and isolated environment, the shared validation support every Model and every consumer reuses, the single public import interface through which every Model is reached, and the description a consumer reads to use it. The Tasks are related because each establishes one part of the boundary the domain Models live inside."
+          area: "The Model package boundary, its shared validation support, and its public import interface"
+          does: "The Model package exists as an installable, isolated boundary that exposes every declared Model once through one documented public import interface, together with the validation support consumers reuse instead of copying."
+          constraints: []
+          task_count: 4
+          tasks:
+
+            phase_1.package.establish:
+              id: "phase_1.package.establish"
+              title: "Establish the Model package"
+              description: "Create the Model layer as its own package with its resolved identity, an isolated environment, and its declared dependencies, ready to hold the domain Models. The package consumes no other application layer."
+              reason: "Every Model of the project must live in one shared boundary before any Model can be declared in it."
+              kind: "code"
+              inputs:
+                - "The package naming and distribution conventions"
+                - "The resolved Model language, isolated environment, and modeling technology"
+              expected_result: "An installable Model package with a stable identity, whose isolated environment resolves its dependencies and which can be imported by name."
+              depends_on: []
+              constraints: []
+              acceptance: "The package installs into a fresh isolated environment from its own declaration, imports by its resolved name, and declares no dependency on another application layer."
+              verify: "Installing the package into a clean isolated environment succeeds, and importing it by name succeeds without reaching any other application layer."
+              status: "todo"
+
+            phase_1.package.validation:
+              id: "phase_1.package.validation"
+              title: "Provide the shared validation support"
+              description: "Provide, for any declared Model, validation of a complete domain state and of a partial change, treating an absent field, an explicitly null field, and a field whose value awaits declared generation as three distinct things: an absent field keeps its current value in a partial change or takes its declared default or generation in a complete state, an explicit null is a value change valid only where the field permits null, and a pending generation is never replaced by a placeholder."
+              reason: "Every consumer must validate the same way from the same rules, and the three cases are exactly where consumers otherwise invent their own answers."
+              kind: "code"
+              inputs:
+                - "The field declaration and default conventions"
+              expected_result: "One validation capability, reusable by every Model and every consumer, that accepts a valid complete state, accepts a valid partial change, keeps a pending generation distinct from a value, and refuses each of the violations it is asked to refuse."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "For a Model with a required generated field and a nullable field: a complete state whose generated field is pending validates without a placeholder being invented and reports that field as pending; a partial change omitting every field validates and changes nothing; a partial change setting the nullable field to null validates; a partial change setting a required non-nullable field to null is refused; and a complete state missing a required field with no default and no generation is refused."
+              verify: "Applying the validation to a Model declared with a required generated field and a nullable field yields those five outcomes in turn, and the outcome of the pending case distinguishes the pending field from a supplied value and from an absent one."
+              status: "todo"
+
+            phase_1.package.interface:
+              id: "phase_1.package.interface"
+              title: "Publish the public import interface"
+              description: "Expose every declared Model exactly once through the package's single public import interface, each under an ecosystem-compatible public symbol that preserves the Model's logical identity, together with the shared validation support and the declaration types a consumer needs to read a Model."
+              reason: "Consumers must obtain every Model and the shared validation from one declared surface rather than from the package's internals."
+              kind: "code"
+              inputs:
+                - "Every declared Model of the phase"
+                - "The shared validation support"
+              expected_result: "One public import surface through which each of the fourteen defined Models and the shared validation support are reachable by name."
+              depends_on:
+                - "phase_1.models.user"
+                - "phase_1.models.currency"
+                - "phase_1.models.trading_platform"
+                - "phase_1.models.broker"
+                - "phase_1.models.account_group"
+                - "phase_1.models.account"
+                - "phase_1.models.asset"
+                - "phase_1.models.trailing_group"
+                - "phase_1.models.trailing_rule"
+                - "phase_1.models.partial_group"
+                - "phase_1.models.partial_rule"
+                - "phase_1.models.action_group"
+                - "phase_1.models.action"
+                - "phase_1.models.position"
+                - "phase_1.package.validation"
+              constraints: []
+              acceptance: "Each of the fourteen defined Models is importable from the public interface under exactly one symbol, the set of public Model symbols equals the set of defined Models, and the shared validation support is importable from the same interface."
+              verify: "Importing each defined Model by its public name from the interface succeeds, enumerating the interface's public Model symbols yields exactly the fourteen defined Models with no duplicate, and the validation support is reachable from the interface."
+              status: "todo"
+
+            phase_1.package.documentation:
+              id: "phase_1.package.documentation"
+              title: "Document the Model package"
+              description: "Write the package's public description covering its purpose and boundaries, its public interface including the shared validation and its three distinct cases, its dependencies, its configuration, how it is installed, and how it is used, consistent with the implemented interface."
+              reason: "A consumer must be able to install and use the package, and validate the way it validates, without inspecting its implementation."
+              kind: "documentation"
+              inputs:
+                - "The implemented public import interface"
+                - "The package documentation conventions"
+              expected_result: "A package description a reader can follow to install the package, to import and use any defined Model, and to validate a complete state or a partial change."
+              depends_on:
+                - "phase_1.package.interface"
+              constraints: []
+              acceptance: "The description carries every section the documentation conventions require, names every public Model exactly as the interface exposes it, explains the shared validation and its treatment of absent, null, and pending values, and records no secret value."
+              verify: "Following the description's installation and usage instructions from a clean environment succeeds, and every Model named in the description is importable exactly as written."
+              status: "todo"
+
+        # <!-------------------- models -->
+        phase_1.models:
+          id: "phase_1.models"
+          title: "Domain Models"
+          description: "The declaration of every Model the project defines, each with the fields, relationships, rules, and initial data that belong to it. The Tasks are related because each declares one Model inside the same package, and together they form the complete resolved Model set."
+          area: "The domain Model definitions and their own-data validation"
+          does: "Every Model the project defines is declared in the package with its fields completed from the applicable field defaults, its relationships, its domain rules, and its initial data, and each refuses a value that violates a property determinable from its own data while leaving stored-state rules to be declared for the layer that enforces them."
+          constraints:
+            - "A relationship is declared on the Model that carries the referencing field and names the referenced Model by its logical identity, so the referenced Model must already be declared."
+          task_count: 14
+          tasks:
+
+            phase_1.models.user:
+              id: "phase_1.models.user"
+              title: "Declare the User Model"
+              description: "Declare the User Model as the project defines it, with its fields, its two credential fields, its two storage rules, and its Admin initial record whose secrets await generation."
+              reason: "User is the entity every user-owned configuration refers to, and multi-user operation depends on it."
+              kind: "code"
+              inputs:
+                - "The User Model definition"
+              expected_result: "The User Model is declared with its seven fields, password and api_key marked as credentials, both hash-storage rules, and the Admin record with its password and api_key marked as awaiting generation."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "Every field the project defines for User is present with its declared properties, password and api_key carry their credential nature and hash-storage rule, and the Admin record is declared with its password and api_key marked as awaiting generation rather than holding a value."
+              verify: "A User built from the Admin record with its pending fields left pending reads back name, username, status, and description with their declared properties and reports password and api_key as pending, and a User without a username, or with a non-boolean status, is refused."
+              status: "todo"
+
+            phase_1.models.currency:
+              id: "phase_1.models.currency"
+              title: "Declare the Currency Model"
+              description: "Declare the Currency Model as the project defines it, with its fields, including the three-character unique code and the decimal-digit precision, and its eight initial records."
+              reason: "Every account and every monetary value in the system is expressed in a currency."
+              kind: "code"
+              inputs:
+                - "The Currency Model definition"
+              expected_result: "The Currency Model is declared with its eight fields and its eight initial currency records."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "Every field the project defines for Currency is present with its declared properties, code is limited to three characters and declared unique, decimal_digits defaults to two, and all eight initial records are declared."
+              verify: "A Currency built from the US Dollar record reads back every field as declared, decimal_digits reads two when left unstated, and a Currency whose code has four characters is refused."
+              status: "todo"
+
+            phase_1.models.trading_platform:
+              id: "phase_1.models.trading_platform"
+              title: "Declare the Trading Platform Model"
+              description: "Declare the Trading Platform Model as the project defines it, with its fields, including the code that identifies the implementation to use, and its two initial records."
+              reason: "Brokers and positions identify the trading API standard they operate through by this Model."
+              kind: "code"
+              inputs:
+                - "The Trading Platform Model definition"
+              expected_result: "The Trading Platform Model is declared with its five fields and its MetaTrader 5 and Binance initial records."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "Every field the project defines for Trading Platform is present with its declared properties, and both initial records are declared with their codes."
+              verify: "A Trading Platform built from the Binance record reads back name and code as declared with status true, and a Trading Platform without a code is refused."
+              status: "todo"
+
+            phase_1.models.broker:
+              id: "phase_1.models.broker"
+              title: "Declare the Broker Model"
+              description: "Declare the Broker Model as the project defines it, with its fields, its relationships to User and Trading Platform, its per-user name uniqueness rule, and its FxPro initial record."
+              reason: "Accounts and positions are reached through a broker, and a broker is owned by one user on one trading platform."
+              kind: "code"
+              inputs:
+                - "The Broker Model definition"
+                - "The declared User Model"
+                - "The declared Trading Platform Model"
+              expected_result: "The Broker Model is declared with its six fields, both relationships, the composite uniqueness rule, and the FxPro record."
+              depends_on:
+                - "phase_1.models.user"
+                - "phase_1.models.trading_platform"
+              constraints:
+                - "The Broker name is unique per user, as the composite rule states, and not unique on its own; the exact-name default that would make name unique alone does not apply to this Model."
+              acceptance: "Every field the project defines for Broker is present with its declared properties, the relationships to User and Trading Platform are declared through user_id and trading_platform_id, the uniqueness of user_id together with name is declared as a rule for the storing layer, and name alone is not declared unique."
+              verify: "A Broker built from the FxPro record reads back every field as declared, its relationships resolve to User and Trading Platform, and a Broker without a user_id is refused."
+              status: "todo"
+
+            phase_1.models.account_group:
+              id: "phase_1.models.account_group"
+              title: "Declare the Account Group Model"
+              description: "Declare the Account Group Model as the project defines it, with its fields and its Default initial record."
+              reason: "Every account belongs to a group, so the group must exist before accounts can be organized."
+              kind: "code"
+              inputs:
+                - "The Account Group Model definition"
+              expected_result: "The Account Group Model is declared with its four fields and its Default record."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "Every field the project defines for Account Group is present with its declared properties, name is declared unique, and the Default record is declared."
+              verify: "An Account Group built from the Default record reads back name as declared with status true and description absent, and an Account Group without a name is refused."
+              status: "todo"
+
+            phase_1.models.account:
+              id: "phase_1.models.account"
+              title: "Declare the Account Model"
+              description: "Declare the Account Model as the project defines it, with its fields, its credential password with its encrypted-storage rule, its relationships to Account Group, Broker, and Currency, and its Acc-1 initial record whose password awaits generation."
+              reason: "Trades are executed through a funded account, which must know its group, its broker, its base currency, and its access credentials."
+              kind: "code"
+              inputs:
+                - "The Account Model definition"
+                - "The declared Account Group Model"
+                - "The declared Broker Model"
+                - "The declared Currency Model"
+              expected_result: "The Account Model is declared with its twelve fields, password marked as a credential with its encrypted-storage rule, three relationships, and the Acc-1 record with its password marked as awaiting generation."
+              depends_on:
+                - "phase_1.models.account_group"
+                - "phase_1.models.broker"
+                - "phase_1.models.currency"
+              constraints: []
+              acceptance: "Every field the project defines for Account is present with its declared properties, balance defaults to zero, password carries its credential nature and encrypted-storage rule, the three relationships are declared through group_id, broker_id, and base_currency_id, and the Acc-1 record is declared with its password marked as awaiting generation."
+              verify: "An Account built from the Acc-1 record with its pending password left pending reads back leverage one hundred and account_type CFD with balance zero when unstated and reports password as pending, and an Account with a non-integer leverage, or without a base_currency_id, is refused."
+              status: "todo"
+
+            phase_1.models.asset:
+              id: "phase_1.models.asset"
+              title: "Declare the Asset Model"
+              description: "Declare the Asset Model as the project defines it, with its fields, including the unique symbol, the category, the point size, and the price digits, and its four initial records."
+              reason: "An action can only trade an asset the system knows, together with its category and price precision."
+              kind: "code"
+              inputs:
+                - "The Asset Model definition"
+              expected_result: "The Asset Model is declared with its eight fields and its four initial asset records."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "Every field the project defines for Asset is present with its declared properties, name and symbol are each declared unique, point_size and digits carry their zero defaults, and all four initial records are declared."
+              verify: "An Asset built from the EURUSD record reads back symbol, category, point_size, and digits as declared, and an Asset without a category, or with a non-numeric point_size, is refused."
+              status: "todo"
+
+            phase_1.models.trailing_group:
+              id: "phase_1.models.trailing_group"
+              title: "Declare the Trailing Group Model"
+              description: "Declare the Trailing Group Model as the project defines it, with its fields and its Default initial record."
+              reason: "Trailing rules and actions refer to a trailing group, so the group must exist before either can."
+              kind: "code"
+              inputs:
+                - "The Trailing Group Model definition"
+              expected_result: "The Trailing Group Model is declared with its four fields and its Default record."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "Every field the project defines for Trailing Group is present with its declared properties, name is declared unique, and the Default record is declared."
+              verify: "A Trailing Group built from the Default record reads back name as declared with status true, and a Trailing Group with a non-boolean status is refused."
+              status: "todo"
+
+            phase_1.models.trailing_rule:
+              id: "phase_1.models.trailing_rule"
+              title: "Declare the Trailing Rule Model"
+              description: "Declare the Trailing Rule Model as the project defines it, with its fields, including the trigger percentage and the optional take-profit and stop-loss adjustments, and its relationship to Trailing Group. It defines no initial record."
+              reason: "A trailing group is only useful through the rules that say when and how Take Profit and Stop Loss are adjusted."
+              kind: "code"
+              inputs:
+                - "The Trailing Rule Model definition"
+                - "The declared Trailing Group Model"
+              expected_result: "The Trailing Rule Model is declared with its eight fields and its relationship to Trailing Group, and declares no initial data."
+              depends_on:
+                - "phase_1.models.trailing_group"
+              constraints: []
+              acceptance: "Every field the project defines for Trailing Rule is present with its declared properties, take_profit_adjustment and stop_loss_adjustment are optional, trigger_percentage is required, the relationship is declared through trailing_group_id, and no initial record is declared."
+              verify: "A Trailing Rule built with a name, a trailing_group_id, and a trigger_percentage and no adjustments is accepted, and a Trailing Rule without a trigger_percentage is refused."
+              status: "todo"
+
+            phase_1.models.partial_group:
+              id: "phase_1.models.partial_group"
+              title: "Declare the Partial Group Model"
+              description: "Declare the Partial Group Model as the project defines it, with its fields and its Default initial record."
+              reason: "Partial rules and actions refer to a partial group, so the group must exist before either can."
+              kind: "code"
+              inputs:
+                - "The Partial Group Model definition"
+              expected_result: "The Partial Group Model is declared with its four fields and its Default record."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "Every field the project defines for Partial Group is present with its declared properties, name is declared unique, and the Default record is declared."
+              verify: "A Partial Group built from the Default record reads back name as declared with status true, and a Partial Group without a name is refused."
+              status: "todo"
+
+            phase_1.models.partial_rule:
+              id: "phase_1.models.partial_rule"
+              title: "Declare the Partial Rule Model"
+              description: "Declare the Partial Rule Model as the project defines it, with its fields, including the profit percentage that activates it and the percentage of the position to close, and its relationship to Partial Group. It defines no initial record."
+              reason: "A partial group is only useful through the rules that say when and how much of a position is closed."
+              kind: "code"
+              inputs:
+                - "The Partial Rule Model definition"
+                - "The declared Partial Group Model"
+              expected_result: "The Partial Rule Model is declared with its seven fields and its relationship to Partial Group, and declares no initial data."
+              depends_on:
+                - "phase_1.models.partial_group"
+              constraints: []
+              acceptance: "Every field the project defines for Partial Rule is present with its declared properties, profit_percentage and close_percentage are both required, the relationship is declared through partial_group_id, and no initial record is declared."
+              verify: "A Partial Rule built with a name, a partial_group_id, a profit_percentage, and a close_percentage is accepted, and a Partial Rule without a close_percentage is refused."
+              status: "todo"
+
+            phase_1.models.action_group:
+              id: "phase_1.models.action_group"
+              title: "Declare the Action Group Model"
+              description: "Declare the Action Group Model as the project defines it, with its fields and its Default initial record."
+              reason: "Actions are organized by risk profile through their group, so the group must exist before actions can."
+              kind: "code"
+              inputs:
+                - "The Action Group Model definition"
+              expected_result: "The Action Group Model is declared with its four fields and its Default record."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints: []
+              acceptance: "Every field the project defines for Action Group is present with its declared properties, name is declared unique, and the Default record is declared."
+              verify: "An Action Group built from the Default record reads back name as declared with description absent, and an Action Group with a numeric name is refused."
+              status: "todo"
+
+            phase_1.models.action:
+              id: "phase_1.models.action"
+              title: "Declare the Action Model"
+              description: "Declare the Action Model as the project defines it, with its fields, including the risk-to-reward, Take Profit, and Stop Loss values, its five relationships to Action Group, Asset, Account, Partial Group, and Trailing Group, and its Default initial record."
+              reason: "An action is the definition from which every position is opened, and it ties together the asset, the account, and the management rules of a trade."
+              kind: "code"
+              inputs:
+                - "The Action Model definition"
+                - "The declared Action Group Model"
+                - "The declared Asset Model"
+                - "The declared Account Model"
+                - "The declared Partial Group Model"
+                - "The declared Trailing Group Model"
+              expected_result: "The Action Model is declared with its twelve fields, its five relationships, and the Default record."
+              depends_on:
+                - "phase_1.models.action_group"
+                - "phase_1.models.asset"
+                - "phase_1.models.account"
+                - "phase_1.models.partial_group"
+                - "phase_1.models.trailing_group"
+              constraints: []
+              acceptance: "Every field the project defines for Action is present with its declared properties, risk_by_reward, take_profit, and stop_loss are required decimals, the five relationships are declared through their carrying fields, and the Default record is declared."
+              verify: "An Action built from the Default record reads back its five references and its three decimal values as declared, and an Action without a stop_loss, or with a non-numeric risk_by_reward, is refused."
+              status: "todo"
+
+            phase_1.models.position:
+              id: "phase_1.models.position"
+              title: "Declare the Position Model"
+              description: "Declare the Position Model as the project defines it, with its fields, including the date, volume, profit, execution flag, order type, and the base and current Take Profit and Stop Loss values, and its seven relationships to Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action. It defines no initial record."
+              reason: "Every position the system opens or holds pending is tracked through this Model, and it is the record every trading outcome is written to."
+              kind: "code"
+              inputs:
+                - "The Position Model definition"
+                - "The declared Trading Platform Model"
+                - "The declared Broker Model"
+                - "The declared Account Model"
+                - "The declared Trailing Group Model"
+                - "The declared Partial Group Model"
+                - "The declared Action Group Model"
+                - "The declared Action Model"
+              expected_result: "The Position Model is declared with its twenty fields and its seven relationships, and declares no initial data."
+              depends_on:
+                - "phase_1.models.trading_platform"
+                - "phase_1.models.broker"
+                - "phase_1.models.account"
+                - "phase_1.models.trailing_group"
+                - "phase_1.models.partial_group"
+                - "phase_1.models.action_group"
+                - "phase_1.models.action"
+              constraints: []
+              acceptance: "Every field the project defines for Position is present with its declared properties, profit defaults to zero and is_executed to false, date is a required datetime, the seven relationships are declared through their carrying fields, and no initial record is declared."
+              verify: "A Position built with every required field reads back profit zero and is_executed false when both are unstated, and a Position with a non-datetime date, or without a volume, is refused."
+              status: "todo"
+
+        # <!-------------------- composition -->
+        phase_1.composition:
+          id: "phase_1.composition"
+          title: "Platform composition"
+          description: "The Model layer's contribution to the runtime configuration: its own settings file inside its code path, its bindings section in the public root file, and its declared connections, so the system stays composable after this phase. Its single Task is the composition work this phase owes."
+          area: "The Model layer's part of the Platform composition"
+          does: "The Model layer's own settings file exists inside its code path, the public root configuration carries the Model layer's bindings, both satisfy the section contract, and the Model layer's connections are declared: it consumes no application layer and is provided to future consumers through its import interface."
+          constraints: []
+          task_count: 1
+          tasks:
+
+            phase_1.composition.runtime_configuration:
+              id: "phase_1.composition.runtime_configuration"
+              title: "Contribute the Model layer's runtime configuration"
+              description: "Establish the Model layer's own settings file inside its code path and the public root configuration with the Model layer's bindings section, each holding only what the section contract assigns to it, and record the Model layer's declared connections."
+              reason: "Every phase that delivers a layer also delivers that layer's part of the composition, so the system remains composable after this phase rather than only after the last."
+              kind: "configuration"
+              inputs:
+                - "The runtime configuration conventions"
+                - "The Model package identity"
+              expected_result: "The Model layer's settings file exists in its code path, the public root configuration exists with a Model bindings section, both satisfy the section contract, and the Model layer's connections are recorded as consuming no layer and providing its import interface."
+              depends_on:
+                - "phase_1.package.establish"
+              constraints:
+                - "The Model layer's settings file carries no settings and its bindings section carries no bindings, because nothing in the Model layer is changeable by a user or environment and it consumes no other layer."
+              acceptance: "The layer file holds only Model-owned settings and the public file holds only the Model bindings, neither holds anything the contract assigns to the other, both satisfy the contract, and neither names a secret value."
+              verify: "Reading the Model layer's settings file and the public configuration's Model section yields a settings mapping and a bindings mapping that each pass validation against the section contract, and the recorded connections show Model consuming no other layer."
+              status: "todo"
