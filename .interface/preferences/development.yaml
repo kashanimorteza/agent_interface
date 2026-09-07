@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers, including Model."
   purpose: "Central runtime-configuration, package, and cross-cutting capability defaults used when no explicit project choice exists."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "1.2"
   updated: "2026-09-07"
 
 
@@ -69,13 +69,20 @@ content:
 
     runtime_configuration:
       files:
+        layer:
+          path: "<layer>.yaml"
+          location: "<code_path>"
+          format: "YAML"
+          committed: true
+          user_editable: true
+          content: "The non-secret settings owned by that layer, and nothing owned by another. Lives inside the layer's own code path so the layer is complete within its own directory."
         public:
           path: "application.yaml"
           location: "project_root"
           format: "YAML"
           committed: true
           user_editable: true
-          content: "Non-secret runtime settings and cross-layer bindings."
+          content: "Cross-layer bindings only: which provider, interface, or selectable resource each layer consumes. No setting that a single layer owns."
         secrets:
           path: ".env"
           location: "project_root"
@@ -91,16 +98,17 @@ content:
         - "frontend"
         - "platform"
       section_contract:
-        settings: "Settings owned by the named layer."
-        bindings: "Declared provider, interface, and selectable resource references consumed by the named layer."
+        settings: "Settings owned by the named layer, held in that layer's own file."
+        bindings: "Declared provider, interface, and selectable resource references consumed by the named layer, held in the public root file under the section of that name."
       precedence:
         - "runtime_environment"
-        - "public_configuration"
+        - "configuration_files"
         - "generated_defaults"
+      precedence_note: "A layer's settings and its bindings are disjoint by contract, so the two files never override each other; precedence applies between the environment, the files, and the defaults."
       delivery:
         owner: "platform"
         method: "validated_injection"
-        scope: "Each layer receives only its own section and declared binding references."
+        scope: "Platform reads each layer's own file and that layer's bindings section, validates both, and delivers them together; a layer receives only its own settings and its declared binding references, and never reads another layer's file."
       validation: "Validate the complete public configuration and all references before application startup."
       override_boundary: "Runtime configuration may select among resolved compatible choices but never redefine architecture, package ownership, interfaces, or unsupported technologies."
 

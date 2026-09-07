@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Database Component — supported technical choices and defaults used when a Database choice is unstated."
   purpose: "Defaults and supported technical profiles for Database Instances, Engines, Database Interface, Data Logic, and Storage Adapter."
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-07"
 
 
@@ -58,6 +58,8 @@ content:
           package: null
         storage:
           kind: "file"
+          location: "<code_path>/data/<database>.db"
+          committed: false
         connection:
           url_scheme: "sqlite"
           parameters:
