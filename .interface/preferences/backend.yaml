@@ -2,8 +2,9 @@
 meta:
   path: ".interface/preferences/backend.yaml"
   path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
+  purpose: "Defaults and supported technical profiles for the Backend package, its API framework, and the API, Logic, and Data Access layers."
   standard: "Agent Project Interface"
-  version: "3.1"
+  version: "4.0"
   updated: "2026-09-07"
 
 
@@ -16,72 +17,87 @@ policy:
   consumption: "Operations resolve unstated Backend choices from these defaults and the current project definition when planning or implementing the work."
   selection: "Prefer a supported compatible entry. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Backend stack; implementation records use the resolved concrete version."
+  matching: "Match a selected key to the entry of that key in the matching options catalogue. An explicit project value takes priority over the selection recorded here."
   environment_handling: "Create and use the selected isolated environment through its resolved tool, and do not commit environment artifacts."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "defaults"
-  - "languages"
-  - "api_frameworks"
-  - "layers"
+  - "selected"
+  - "options"
+  - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "Backend-wide code path and language defaults."
-  languages: "Supported Backend languages, versions, environments, and naming conventions."
-  api_frameworks: "Supported API frameworks and their versions."
-  layers: "Technical defaults grouped by the Logic, Data Access, and API layers, including the source layout of Model Logic units."
+  selected: "The Backend code path, language, isolated environment, and API framework."
+  options: "Supported Backend languages, isolated environments, and API frameworks."
+  settings: "Configuration grouped by the API, Logic, and Data Access layers."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  defaults:
+  # <!-------------------------------------------- selected -->
+  selected:
     code_path: "backend/"
     language: "Python"
+    environment: "uv"
+    api_framework: "FastAPI"
 
-  languages:
-    Python:
-      version: "latest"
-      environment:
-        name: "uv"
+  # <!-------------------------------------------- options -->
+  options:
+
+    languages:
+      Python:
         version: "latest"
-      naming:
-        variables: "snake_case"
-        functions: "snake_case"
-        classes: "PascalCase"
-        constants: "UPPER_SNAKE_CASE"
-        files: "snake_case"
-        folders: "snake_case"
-  api_frameworks:
-    FastAPI:
-      version: "latest"
-      language: "Python"
+        compatible_environments:
+          - "uv"
+        compatible_api_frameworks:
+          - "FastAPI"
+        naming:
+          variables: "snake_case"
+          functions: "snake_case"
+          classes: "PascalCase"
+          constants: "UPPER_SNAKE_CASE"
+          files: "snake_case"
+          folders: "snake_case"
 
-  layers:
-    logic:
-      model_logic_layout:
-        unit_per_model: true
-        file_per_model: true
-        file_name: "<model>"
-        file_naming: "languages.<language>.naming.files"
-        file_extension: "language_default"
-        shared_definition_file: false
-        registry_may_import_units: true
-      standard_model_operations:
-        - "create"
-        - "get"
-        - "list"
-        - "update"
-        - "delete"
-    data_access: {}
+    environments:
+      uv:
+        version: "latest"
+        language: "Python"
+
+    api_frameworks:
+      FastAPI:
+        version: "latest"
+        language: "Python"
+
+  # <!-------------------------------------------- settings -->
+  settings:
+
     api:
-      framework: "FastAPI"
       transport:
         protocol: "HTTP"
       api_documentation:
         enabled: true
         type: "OpenAPI"
       expose_standard_model_operations: true
+
+    logic:
+      standard_model_operations:
+        - "create"
+        - "get"
+        - "list"
+        - "update"
+        - "delete"
+      model_logic_layout:
+        unit_per_model: true
+        file_per_model: true
+        file_name: "<model>"
+        file_naming: "options.languages.<language>.naming.files"
+        file_extension: "language_default"
+        shared_definition_file: false
+        registry_may_import_units: true
+
+    data_access: {}

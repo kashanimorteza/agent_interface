@@ -80,15 +80,69 @@ responsibility = Human-managed natural-language definition of the target project
 ```text
 name = Schema
 path = .interface/schema/
-responsibility = Common YAML file frame and the operational storage formats for Task and State; contains no project description or stored Understanding
+responsibility = The structure of every Interface file: the common YAML frame, the structure standards for the Principles and Preferences layers, and the operational storage formats for Task and State; contains no project description or stored Understanding
 ```
 
-### File Schema
+Schema holds two kinds of document. A **structure standard** defines the shape of a file a human authors, so that every Component writes the same kind of file the same way. An **operational format** defines the shape of a file an operation generates, and carries the initial template that operation copies. Each is listed below.
+
+<!-------------------------- YAML Schema -->
+#### YAML Schema
 
 ```text
-name = File Schema
-path = .interface/schema/file.yaml
-responsibility = Common structural frame used by Interface YAML Preferences and Config files
+name = YAML Schema
+path = .interface/schema/yaml.yaml
+kind = structure standard
+responsibility = The common structural frame every YAML Interface file follows: meta, policy, read_order, content_map, content
+applies_to = Every Interface YAML file, including Preferences and Config
+note = It defines the outer sections only. What goes inside content belongs to the schema of that kind of file, and every other YAML schema inherits this frame rather than redefining it
+```
+
+<!-------------------------- Principles Schema -->
+#### Principles Schema
+
+```text
+name = Principles Schema
+path = .interface/schema/principles.md
+kind = structure standard
+responsibility = The common Markdown structure every Principles file follows: Introduction, Terms, Relationships, Layering, Authority, the numbered Principles, and At a Glance
+applies_to = Every file under .interface/principles/
+note = Each Principle carries Rule, Why, and Boundary. A Principle number is permanent once assigned. A Principles file names no tool, version, package, file, or path, states no technical default, and refers to no Skill, operation, or usage condition
+```
+
+<!-------------------------- Preferences Schema -->
+#### Preferences Schema
+
+```text
+name = Preferences Schema
+path = .interface/schema/preferences.yaml
+kind = structure standard
+responsibility = The structure of the content section of every Preferences file, and the meta and policy expectations a Preferences file adds to the common YAML frame
+applies_to = Every file under .interface/preferences/
+note = Content is always selected, options, and settings, present even when empty. Selected holds the choices, options the supported alternatives, and settings the configuration of what was chosen, grouped by the Component's own layers
+```
+
+<!-------------------------- State Schema -->
+#### State Schema
+
+```text
+name = State Schema
+path = .interface/schema/state.yaml
+kind = operational format
+responsibility = The stored shape of the State Config file, and the initial template Configure copies to create it
+generates = .interface/config/state.yaml
+note = It records Workflow position, Blockers, and Open Questions only. Project concepts, resolved technical choices, and Task content are excluded and resolved from their own sources
+```
+
+<!-------------------------- Task Schema -->
+#### Task Schema
+
+```text
+name = Task Schema
+path = .interface/schema/task.yaml
+kind = operational format
+responsibility = The stored shape of the Task Config file, and the initial template Configure copies to create it
+generates = .interface/config/task.yaml
+note = It records which work exists, what each activity must produce, what it depends on, where it stands, and its history. Context is stored once at the highest level where it holds, no record names a file or path, and nothing derivable from the project definition, the Principles, or the Preferences is stored here
 ```
 
 
@@ -135,7 +189,7 @@ initialization = Copy the initial template from each of the two operational Sche
 
 ## Authority and Ownership
 
-Explicit project intent and applicable Principles guide each operation. Preferences supply defaults where the project leaves a choice unstated. Task and State Schemas define the shape of operational records; the general File Schema supplies their common YAML frame. Config stores those records and does not define the target project.
+Explicit project intent and applicable Principles guide each operation. Preferences supply defaults where the project leaves a choice unstated. Task and State Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored layers, and the general YAML Schema supplies the common frame every YAML file shares. Config stores those records and does not define the target project.
 
 ```text
 Project = human-defined intent
@@ -266,7 +320,7 @@ State records the active Mode. Agent Skills are external capabilities that perfo
 - **State value:** `configuring`
 - **Phase-specific:** no
 - **Responsibility:** initializes the two mutable Config files from their Schema templates.
-- **Inputs:** the Task and State Schemas, the common File Schema, and any existing operational records.
+- **Inputs:** the Task and State Schemas, the common YAML Schema, and any existing operational records.
 - **Initialization:** copy each Schema's `initial` mapping into its mapped Config file when that file is absent. Copy the template values, not the Schema definitions.
 - **Preservation:** keep existing Tasks, progress, active State, Blockers, and questions. An existing valid file needs no rewrite. A Schema mismatch requires a data-preserving update; a conflict must be surfaced rather than resolved by resetting work.
 - **Validation:** check each Config file against the common file frame and its operational Schema.

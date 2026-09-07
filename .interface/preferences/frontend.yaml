@@ -2,10 +2,10 @@
 meta:
   path: ".interface/preferences/frontend.yaml"
   path_note: "The Preferences layer of the Frontend Component — supported technical choices and defaults used when a Frontend choice is unstated."
-  purpose: "Defaults and supported technical profiles for Presentation, Interaction Logic, and API Access."
+  purpose: "Defaults and supported technical profiles for the Frontend package and the Presentation, Interaction Logic, and API Access layers."
   standard: "Agent Project Interface"
-  version: "2.0"
-  updated: "2026-09-05"
+  version: "3.0"
+  updated: "2026-09-07"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -17,36 +17,28 @@ policy:
   consumption: "Operations resolve unstated Frontend choices from these defaults and the current project definition when planning or implementing the work."
   selection: "Prefer a supported compatible entry. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Frontend stack; implementation records use the resolved concrete version."
+  matching: "Match a selected key to the entry of that key in the matching options catalogue. An explicit project value takes priority over the selection recorded here."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "defaults"
-  - "languages"
-  - "libraries"
-  - "frameworks"
-  - "package_managers"
-  - "api_clients"
-  - "themes"
-  - "layers"
+  - "selected"
+  - "options"
+  - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "Frontend-wide code path and primary technology defaults."
-  languages: "Supported Frontend languages, versions, and naming conventions."
-  libraries: "Supported user-interface libraries and Component conventions."
-  frameworks: "Supported application frameworks, routing conventions, and run commands."
-  package_managers: "Supported package managers and versions."
-  api_clients: "Supported Frontend-side clients for consuming Backend API."
-  themes: "Supported visual-system defaults."
-  layers: "Technical defaults grouped by Presentation, Interaction Logic, and API Access."
+  selected: "The Frontend code path, language, user-interface library, application framework, package manager, API client, and Theme."
+  options: "Supported languages, user-interface libraries, application frameworks, package managers, API clients, and Themes."
+  settings: "Configuration grouped by the Presentation, Interaction Logic, and API Access layers."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  defaults:
+  # <!-------------------------------------------- selected -->
+  selected:
     code_path: "frontend/"
     language: "TypeScript"
     library: "React"
@@ -55,50 +47,57 @@ content:
     api_client: "Fetch"
     theme: "Default"
 
-  languages:
-    TypeScript:
-      version: "latest"
-      naming:
-        variables: "camelCase"
-        functions: "camelCase"
-        classes: "PascalCase"
-        components: "PascalCase"
-        constants: "UPPER_SNAKE_CASE"
-        files: "kebab-case"
-        folders: "kebab-case"
+  # <!-------------------------------------------- options -->
+  options:
 
-  libraries:
-    React:
-      version: "latest"
-      component_style: "Function components"
+    languages:
+      TypeScript:
+        version: "latest"
+        naming:
+          variables: "camelCase"
+          functions: "camelCase"
+          classes: "PascalCase"
+          components: "PascalCase"
+          constants: "UPPER_SNAKE_CASE"
+          files: "kebab-case"
+          folders: "kebab-case"
 
-  frameworks:
-    Next.js:
-      version: "latest"
-      router: "App Router"
-      run: "npm run dev"
+    libraries:
+      React:
+        version: "latest"
+        component_style: "Function components"
 
-  package_managers:
-    npm:
-      version: "latest"
+    frameworks:
+      "Next.js":
+        version: "latest"
+        library: "React"
+        router: "App Router"
+        run: "npm run dev"
 
-  api_clients:
-    Fetch:
-      version: "runtime-provided"
-      package: null
+    package_managers:
+      npm:
+        version: "latest"
 
-  themes:
-    Default:
-      color_mode: "system"
-      direction: "auto"
-      token_based: true
+    api_clients:
+      Fetch:
+        version: "runtime-provided"
+        package: null
 
-  layers:
+    themes:
+      Default:
+        color_mode: "system"
+        direction: "auto"
+        token_based: true
+
+  # <!-------------------------------------------- settings -->
+  settings:
+
     presentation:
       component_architecture: "reusable_composition"
+
     interaction_logic:
       state_management: "framework-native"
+
     api_access:
-      client: "Fetch"
       contract_source: "backend_api_description"
       generated_types: true

@@ -1,6 +1,7 @@
 schema:
-  id: agent-interface-file
-  version: "1.0"
+  id: "agent-interface-yaml"
+  version: "1.1"
+  purpose: "The common structural frame every YAML Interface file follows. It defines the outer sections a file carries; what goes inside `content` belongs to the schema of that kind of file."
 
 structure:
   - meta

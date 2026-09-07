@@ -1,99 +1,112 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/preferences/model.yaml"
-  path_note: "The Preferences layer of the Model Component — implementation and logical-field defaults used when Model choices are unstated."
+  path_note: "The Preferences layer of the Model Component — supported technical choices and defaults used when a Model choice is unstated."
   purpose: "Defaults for the independent Model package, supported modeling technologies, and properties of existing Model fields whose attributes are unstated."
   standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-07"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Operations read it without writing resolved Model fields back into it."
-  changed_by: "The human, directly."
+  rule: "This file is human-owned. Operations read it without writing resolved Model choices back into it."
+  changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
   consumption: "Resolve unstated Model-package technology from this file. Apply field defaults property by property only to fields present in the project Model definition. Preserve every explicit property, including false and null, and never add a field merely because it appears in these defaults. Implement the resulting definitions in the shared Model package."
-  matching: "Match normalized field names. An explicit Model property takes priority, followed by an exact-name default in common_fields, then a matching field_patterns default. A name pattern alone does not establish a relationship or its target."
-  selection: "Resolve the modeling library through the selected language profile. For an unlisted language or incompatible explicit combination, select a well-supported compatible modeling library and record the consequential choice; ask only when no safe compatible option can be established."
+  selection: "Prefer a supported compatible entry. For an unlisted language or incompatible explicit combination, select a well-supported compatible modeling library and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the selected Model stack; implementation records use the resolved concrete version."
+  matching: "Match normalized field names. An explicit Model property takes priority, followed by an exact-name default in field_defaults.common_fields, then a matching field_defaults.field_patterns default. A name pattern alone does not establish a relationship or its target."
   environment_handling: "Create and use the selected isolated environment through its resolved tool, and do not commit environment artifacts."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "defaults"
-  - "languages"
-  - "modeling_libraries"
-  - "common_fields"
-  - "field_patterns"
+  - "selected"
+  - "options"
+  - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "Default Model-package code path and language."
-  languages: "Supported Model implementation languages, versions, environments, naming conventions, and language-compatible modeling-library defaults."
-  modeling_libraries: "Supported modeling and validation libraries."
-  common_fields: "Exact-name defaults for missing properties of existing fields; these are not a list of fields to add."
-  field_patterns: "Defaults for missing properties of existing fields whose names match a pattern."
+  selected: "The Model package's code path, implementation language, isolated environment, and modeling library."
+  options: "Supported implementation languages and modeling and validation libraries."
+  settings: "Defaults for missing properties of fields already present in a Model definition."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  defaults:
+  # <!-------------------------------------------- selected -->
+  selected:
     code_path: "model/"
     language: "Python"
+    environment: "uv"
+    modeling_library: "Pydantic"
 
-  languages:
-    Python:
-      version: "latest"
-      environment:
-        name: "uv"
+  # <!-------------------------------------------- options -->
+  options:
+
+    languages:
+      Python:
         version: "latest"
-      modeling_library: "Pydantic"
-      naming:
-        variables: "snake_case"
-        classes: "PascalCase"
-        files: "snake_case"
-        folders: "snake_case"
+        compatible_environments:
+          - "uv"
+        compatible_modeling_libraries:
+          - "Pydantic"
+        naming:
+          variables: "snake_case"
+          classes: "PascalCase"
+          files: "snake_case"
+          folders: "snake_case"
 
-  modeling_libraries:
-    Pydantic:
-      version: "latest"
-      language: "Python"
-      package: "pydantic"
+    environments:
+      uv:
+        version: "latest"
+        language: "Python"
 
-  common_fields:
-    id:
-      type: "integer"
-      nullable: false
-      auto_increment: true
-      primary_key: true
-    name:
-      type: "string"
-      nullable: false
-      unique: true
-      purpose: "The entity's display name."
-    api_key:
-      type: "string"
-      nullable: false
-      credential: true
-      purpose: "The API key assigned to the entity."
-    password:
-      credential: true
-    status:
-      type: "boolean"
-      nullable: false
-      default: true
-      purpose: "Indicates whether the entity is active."
-    description:
-      type: "string"
-      nullable: true
-      purpose: "Describes the entity."
+    modeling_libraries:
+      Pydantic:
+        version: "latest"
+        language: "Python"
+        package: "pydantic"
 
-  field_patterns:
-    "*_id":
-      match: "A field name ending in _id; the exact name id is not included."
-      defaults:
-        type: "integer"
-        nullable: false
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    field_defaults:
+      purpose: "Defaults for missing properties of fields already present in a Model definition. These are not a list of fields to add."
+      common_fields:
+        id:
+          type: "integer"
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: "string"
+          nullable: false
+          unique: true
+          purpose: "The entity's display name."
+        api_key:
+          type: "string"
+          nullable: false
+          credential: true
+          purpose: "The API key assigned to the entity."
+        password:
+          credential: true
+        status:
+          type: "boolean"
+          nullable: false
+          default: true
+          purpose: "Indicates whether the entity is active."
+        description:
+          type: "string"
+          nullable: true
+          purpose: "Describes the entity."
+      field_patterns:
+        "*_id":
+          match: "A field name ending in _id; the exact name id is not included."
+          defaults:
+            type: "integer"
+            nullable: false

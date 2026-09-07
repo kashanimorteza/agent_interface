@@ -12,7 +12,7 @@ Generate the two operational Config files required by Agent Interface: Task Conf
 
 ## Workflow
 
-First establish Agent Interface Understanding by reading the canonical Interface document. Use it to understand Configure's role and locate the common File Schema, the Task and State Schemas, and their Config destinations. Target Project Understanding is not required because Configure does not interpret the project being built.
+First establish Agent Interface Understanding by reading the canonical Interface document. Use it to understand Configure's role and locate the common YAML Schema, the Task and State Schemas, and their Config destinations. Target Project Understanding is not required because Configure does not interpret the project being built.
 
 For each operational Schema:
 
@@ -21,7 +21,7 @@ For each operational Schema:
 3. When its Config file exists, validate its common file frame and operational content. Preserve existing Tasks, progress, active State, Blockers, and Open Questions, and add only structural defaults missing from the current Schema.
 4. Do not create phase Plans, Groups, Tasks, Blockers, Open Questions, project descriptions, or technical Component configuration.
 
-Validate both Config files against the common File Schema and their owning Schemas. A second run against valid current files makes no changes.
+Validate both Config files against the common YAML Schema and their owning Schemas. A second run against valid current files makes no changes.
 
 ## Boundaries
 

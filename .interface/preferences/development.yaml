@@ -4,6 +4,8 @@ meta:
   path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers, including Model."
   purpose: "Central runtime-configuration, package, and cross-cutting capability defaults used when no explicit project choice exists."
   standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-07"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,101 +15,113 @@ policy:
   changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
   consumption: "Resolve unstated runtime-configuration, package, and cross-cutting choices from this file when implementing the project. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
+  selection: "Development catalogues no alternatives; it states conventions that every layer follows. A need this file does not cover is met by the owning Component's own Preferences, and a cross-layer need it does not cover is raised through State rather than decided inside one layer."
+  version_resolution: "No entry here carries a version. Versions belong to the Preferences of the Component that owns the technology."
+  matching: "Match a settings group to its subject by name. A layer receives the runtime-configuration section named after it, and package conventions apply to every package and architectural subpackage unless that Component's own Preferences state otherwise."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "runtime_configuration"
-  - "packages"
-  - "cross_cutting"
+  - "selected"
+  - "options"
+  - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  runtime_configuration: "Default project-level public settings file, secret source, layer sections, precedence, validation, and Platform delivery."
-  packages: "Default package naming, distribution, nested-package setup, and README conventions."
-  cross_cutting: "Default enabled state and application scope for capabilities coordinated across application layers."
+  selected: "Empty. Development chooses among no catalogued alternatives and owns no code path of its own."
+  options: "Empty. Development catalogues no alternatives; each technology is offered by the Preferences of the Component that owns it."
+  settings: "Runtime-configuration, package, and cross-cutting conventions applied across the application layers."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  runtime_configuration:
-    files:
-      public:
-        path: "application.yaml"
-        location: "project_root"
-        format: "YAML"
-        committed: true
-        user_editable: true
-        content: "Non-secret runtime settings and cross-layer bindings."
-      secrets:
-        path: ".env"
-        location: "project_root"
-        format: "dotenv"
-        committed: false
-        user_editable: true
-        example_path: ".env.example"
-        content: "Secret values and environment-specific private settings."
-    sections:
-      - "model"
-      - "database"
-      - "backend"
-      - "frontend"
-      - "platform"
-    section_contract:
-      settings: "Settings owned by the named layer."
-      bindings: "Declared provider, interface, and selectable resource references consumed by the named layer."
-    precedence:
-      - "runtime_environment"
-      - "public_configuration"
-      - "generated_defaults"
-    delivery:
-      owner: "platform"
-      method: "validated_injection"
-      scope: "Each layer receives only its own section and declared binding references."
-    validation: "Validate the complete public configuration and all references before application startup."
-    override_boundary: "Runtime configuration may select among resolved compatible choices but never redefine architecture, package ownership, interfaces, or unsupported technologies."
+  # <!-------------------------------------------- selected -->
+  selected: {}
 
-  packages:
-    naming:
-      basis: "responsibility"
-      top_level_prefix: "my_"
-      top_level_name: "<prefix><role>"
-      nested_name: "<role>"
-      nested_namespace: "parent_package"
-      ecosystem_adaptation: "Adapt separators, case, import names, and distribution names to the selected language and package manager. Keep the logical role recognizable."
-      collision_handling: "Check the intended namespace for collisions. Use a distinct role-based qualifier when needed; the prefix alone does not guarantee uniqueness."
-    distribution:
-      visibility: "internal"
-      publication: "none"
-      local_dependency: "Use the selected ecosystem's local path or workspace mechanism when one package must be installed by another. Network consumers use the provider's API instead of installing its implementation."
-    nested_packages:
-      independently_installable: false
-      dependency_management: "parent"
-      runtime: "parent_when_applicable"
-    documentation:
-      filename: "README.md"
-      location: "package_root"
+  # <!-------------------------------------------- options -->
+  options: {}
+
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    runtime_configuration:
+      files:
+        public:
+          path: "application.yaml"
+          location: "project_root"
+          format: "YAML"
+          committed: true
+          user_editable: true
+          content: "Non-secret runtime settings and cross-layer bindings."
+        secrets:
+          path: ".env"
+          location: "project_root"
+          format: "dotenv"
+          committed: false
+          user_editable: true
+          example_path: ".env.example"
+          content: "Secret values and environment-specific private settings."
       sections:
-        - "purpose_and_boundaries"
-        - "public_interface"
-        - "dependencies"
-        - "configuration"
-        - "installation_and_startup_when_applicable"
-        - "usage_examples"
-      nested_setup: "Reference the parent README for shared setup and document this package's interface and usage locally."
+        - "model"
+        - "database"
+        - "backend"
+        - "frontend"
+        - "platform"
+      section_contract:
+        settings: "Settings owned by the named layer."
+        bindings: "Declared provider, interface, and selectable resource references consumed by the named layer."
+      precedence:
+        - "runtime_environment"
+        - "public_configuration"
+        - "generated_defaults"
+      delivery:
+        owner: "platform"
+        method: "validated_injection"
+        scope: "Each layer receives only its own section and declared binding references."
+      validation: "Validate the complete public configuration and all references before application startup."
+      override_boundary: "Runtime configuration may select among resolved compatible choices but never redefine architecture, package ownership, interfaces, or unsupported technologies."
 
-  cross_cutting:
-    testing:
-      enabled: false
-      applies_to: []
-    logging:
-      enabled: false
-      applies_to: []
-    error_handling:
-      enabled: false
-      applies_to: []
-    authentication:
-      enabled: false
-      applies_to: []
+    packages:
+      naming:
+        basis: "responsibility"
+        top_level_prefix: "my_"
+        top_level_name: "<prefix><role>"
+        nested_name: "<role>"
+        nested_namespace: "parent_package"
+        ecosystem_adaptation: "Adapt separators, case, import names, and distribution names to the selected language and package manager. Keep the logical role recognizable."
+        collision_handling: "Check the intended namespace for collisions. Use a distinct role-based qualifier when needed; the prefix alone does not guarantee uniqueness."
+      distribution:
+        visibility: "internal"
+        publication: "none"
+        local_dependency: "Use the selected ecosystem's local path or workspace mechanism when one package must be installed by another. Network consumers use the provider's API instead of installing its implementation."
+      nested_packages:
+        independently_installable: false
+        dependency_management: "parent"
+        runtime: "parent_when_applicable"
+      documentation:
+        filename: "README.md"
+        location: "package_root"
+        sections:
+          - "purpose_and_boundaries"
+          - "public_interface"
+          - "dependencies"
+          - "configuration"
+          - "installation_and_startup_when_applicable"
+          - "usage_examples"
+        nested_setup: "Reference the parent README for shared setup and document this package's interface and usage locally."
+
+    cross_cutting:
+      testing:
+        enabled: false
+        applies_to: []
+      logging:
+        enabled: false
+        applies_to: []
+      error_handling:
+        enabled: false
+        applies_to: []
+      authentication:
+        enabled: false
+        applies_to: []

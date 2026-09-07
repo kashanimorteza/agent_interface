@@ -2,24 +2,46 @@
 meta:
   path: ".interface/preferences/state.yaml"
   path_note: "The Preferences layer of the State Component. It currently defines no Component-specific technical choices or defaults."
+  purpose: "Where the State Component's technical choices would be recorded. The State Component currently makes none."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-07"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
   rule: "This file is human-owned and is read only when resolving State preferences."
-  changed_by: "The human, directly"
+  changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Principle take precedence over this file."
   consumption: "The empty content provides no State defaults; consumers continue with the other applicable authorities."
+  selection: "There is nothing to select. A technical need that appears to belong to State is resolved by the Component that owns the technology, or raised through State when no Component owns it."
+  version_resolution: "No entry here carries a version, because no technology is recorded."
+  matching: "There is nothing to match. An empty section is an absence of defaults, not a wildcard."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
-read_order: []
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
-content_map: {}
+content_map:
+  selected: "Empty. The State Component chooses among no catalogued alternatives and owns no code path."
+  options: "Empty. The State Component catalogues no alternatives."
+  settings: "Empty. The State Component configures nothing."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
-content: {}
+content:
+
+  # <!-------------------------------------------- selected -->
+  selected: {}
+
+  # <!-------------------------------------------- options -->
+  options: {}
+
+  # <!-------------------------------------------- settings -->
+  settings: {}

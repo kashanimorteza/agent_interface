@@ -4,6 +4,8 @@ meta:
   path_note: "The Preferences layer of the Database Component — supported technical choices and defaults used when a Database choice is unstated."
   purpose: "Defaults and supported technical profiles for Database Instances, Engines, Database Interface, Data Logic, and Storage Adapter."
   standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-07"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -15,184 +17,133 @@ policy:
   consumption: "Operations resolve unstated Database choices from these defaults and the current project definition. Implementation creates the default Instance when no explicit Instance is defined and records runtime settings in the application's configuration."
   selection: "Prefer a supported compatible entry. For an unlisted need, select a well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Database stack; implementation records use the resolved concrete version."
+  matching: "Match a selected key to the entry of that key in the matching options catalogue. For a field resolved as a credential, preserve any explicit project storage mode, then use its exact-name entry in settings.data_logic.credential_storage.field_defaults, falling back to selected.credential_storage_mode only when no field-specific default applies. These defaults neither add fields nor override an explicit non-credential classification."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "defaults"
-  - "instance_defaults"
-  - "instances"
-  - "layers"
-  - "engines"
-  - "orms"
-  - "migration_tools"
-  - "credential_storage"
+  - "selected"
+  - "options"
+  - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  defaults: "Database-wide code path and default-Instance selection."
-  instance_defaults: "Naming, configuration, and secret-reference defaults shared by Database Instances."
-  instances: "Default Instances created only when the project defines no explicit replacement."
-  layers: "Technical defaults grouped by Database Interface, Data Logic, and Storage Adapter."
-  engines: "Supported Database Engines and their physical storage, connection, and naming profiles."
-  orms: "Supported ORM implementations and capabilities."
-  migration_tools: "Supported migration tools, environments, packages, and canonical commands."
-  credential_storage: "Field-name defaults and supported at-rest modes for fields marked as credentials."
+  selected: "The Database code path, Engine, ORM, migration tool, default Instance, and default credential at-rest mode."
+  options: "Supported Database Engines, ORM implementations, migration tools, and credential at-rest modes."
+  settings: "Configuration grouped by the Database Interface, Data Logic, and Storage Adapter layers, including declared Instances."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  defaults:
+  # <!-------------------------------------------- selected -->
+  selected:
     code_path: "database/"
+    engine: "SQLite"
+    orm: "SQLAlchemy"
+    migration_tool: "Alembic"
     default_instance: "general"
+    credential_storage_mode: "plaintext"
 
-  instance_defaults:
-    naming:
-      key: "<role>"
-      name: "<project> <role>"
-      database: "<project>_<role>"
-      normalization: "lower_snake_case"
-    connection:
-      host: "localhost"
-      port: "engine_default"
-    secrets:
-      source: "environment"
-      username: "<PROJECT>_<INSTANCE>_DATABASE_USERNAME"
-      password: "<PROJECT>_<INSTANCE>_DATABASE_PASSWORD"
-      store_values_in_configuration: false
+  # <!-------------------------------------------- options -->
+  options:
 
-  instances:
-    general:
-      name: "<project> General"
-      purpose: "General application data."
-      engine: "SQLite"
-      database: "<project>_general"
-
-  layers:
-    database_interface: {}
-    data_logic:
-      relationship_defaults:
-        field_name: "<referenced_model>_id"
-        role_field_name: "<role>_<referenced_model>_id"
-        referenced_key: "primary_key"
-        nullable: false
-        index: true
-        on_delete: "RESTRICT"
-        on_update: "RESTRICT"
-      initial_data:
-        enabled_when_present: true
-    storage_adapter:
-      engine: "SQLite"
-      orm: "SQLAlchemy"
-      migration_tool: "Alembic"
-      credential_storage_mode: "plaintext"
-      backups:
-        enabled: false
-
-  engines:
-    SQLite:
-      version: "runtime-provided"
-      driver:
-        name: "sqlite3"
+    engines:
+      SQLite:
         version: "runtime-provided"
-        package: null
-      storage:
-        kind: "file"
-      connection:
-        url_scheme: "sqlite"
-        parameters:
-          - "database"
-        foreign_keys: true
-        check_same_thread: false
-      naming:
-        tables: "plural_snake_case"
-        columns: "snake_case"
-        constraints: "snake_case"
-        indexes: "ix_<table>_<column>"
+        driver:
+          name: "sqlite3"
+          version: "runtime-provided"
+          package: null
+        storage:
+          kind: "file"
+        connection:
+          url_scheme: "sqlite"
+          parameters:
+            - "database"
+          foreign_keys: true
+          check_same_thread: false
+        naming:
+          tables: "plural_snake_case"
+          columns: "snake_case"
+          constraints: "snake_case"
+          indexes: "ix_<table>_<column>"
 
-    PostgreSQL:
-      version: "latest"
-      driver:
-        name: "psycopg"
+      PostgreSQL:
         version: "latest"
-        package: "psycopg"
-      storage:
-        kind: "server"
-      connection:
-        url_scheme: "postgresql+psycopg"
-        default_port: 5432
-        parameters:
-          - "host"
-          - "port"
-          - "database"
-          - "username_secret"
-          - "password_secret"
-      naming:
-        tables: "plural_snake_case"
-        columns: "snake_case"
-        constraints: "snake_case"
-        indexes: "ix_<table>_<column>"
-
-    MySQL:
-      version: "latest"
-      driver:
-        name: "PyMySQL"
-        version: "latest"
-        package: "PyMySQL"
-      storage:
-        kind: "server"
-      connection:
-        url_scheme: "mysql+pymysql"
-        default_port: 3306
-        parameters:
-          - "host"
-          - "port"
-          - "database"
-          - "username_secret"
-          - "password_secret"
-        charset: "utf8mb4"
-      naming:
-        tables: "plural_snake_case"
-        columns: "snake_case"
-        constraints: "snake_case"
-        indexes: "ix_<table>_<column>"
-
-  orms:
-    SQLAlchemy:
-      version: "latest"
-      language: "Python"
-      package: "SQLAlchemy"
-      capabilities:
-        model_mapping: true
-        parameterized_sql: true
-
-  migration_tools:
-    Alembic:
-      version: "latest"
-      language: "Python"
-      compatible_orms:
-        - "SQLAlchemy"
-      environment:
-        name: "uv"
-        version: "latest"
-      packages:
-        migration:
-          name: "Alembic"
+        driver:
+          name: "psycopg"
           version: "latest"
-      commands:
-        upgrade: "uv run alembic upgrade head"
-        downgrade: "uv run alembic downgrade -1"
+          package: "psycopg"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "postgresql+psycopg"
+          default_port: 5432
+          parameters:
+            - "host"
+            - "port"
+            - "database"
+            - "username_secret"
+            - "password_secret"
+        naming:
+          tables: "plural_snake_case"
+          columns: "snake_case"
+          constraints: "snake_case"
+          indexes: "ix_<table>_<column>"
 
-  credential_storage:
-    resolution: "For an existing field resolved as a credential, preserve any explicit project storage mode. Otherwise use its exact-name field_defaults entry, falling back to layers.storage_adapter.credential_storage_mode only when no field-specific default applies. These defaults neither add fields nor override an explicit non-credential classification."
-    field_defaults:
-      password:
-        mode: "hash"
-      api_key:
-        mode: "hash"
-    modes:
+      MySQL:
+        version: "latest"
+        driver:
+          name: "PyMySQL"
+          version: "latest"
+          package: "PyMySQL"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "mysql+pymysql"
+          default_port: 3306
+          parameters:
+            - "host"
+            - "port"
+            - "database"
+            - "username_secret"
+            - "password_secret"
+          charset: "utf8mb4"
+        naming:
+          tables: "plural_snake_case"
+          columns: "snake_case"
+          constraints: "snake_case"
+          indexes: "ix_<table>_<column>"
+
+    orms:
+      SQLAlchemy:
+        version: "latest"
+        language: "Python"
+        package: "SQLAlchemy"
+        capabilities:
+          model_mapping: true
+          parameterized_sql: true
+
+    migration_tools:
+      Alembic:
+        version: "latest"
+        language: "Python"
+        compatible_orms:
+          - "SQLAlchemy"
+        environment:
+          name: "uv"
+          version: "latest"
+        packages:
+          migration:
+            name: "Alembic"
+            version: "latest"
+        commands:
+          upgrade: "uv run alembic upgrade head"
+          downgrade: "uv run alembic downgrade -1"
+
+    credential_storage_modes:
       plaintext:
         stored_as: "string"
         transformation: "none"
@@ -207,3 +158,51 @@ content:
         transformation: "reversible_encryption"
         recoverable: true
         key_source: "Runtime configuration outside Database and generated Interface files."
+
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    database_interface: {}
+
+    data_logic:
+      relationship_defaults:
+        field_name: "<referenced_model>_id"
+        role_field_name: "<role>_<referenced_model>_id"
+        referenced_key: "primary_key"
+        nullable: false
+        index: true
+        on_delete: "RESTRICT"
+        on_update: "RESTRICT"
+      initial_data:
+        enabled_when_present: true
+      credential_storage:
+        resolution: "For an existing field resolved as a credential, preserve any explicit project storage mode. Otherwise use its exact-name field_defaults entry, falling back to the selected credential_storage_mode only when no field-specific default applies. These defaults neither add fields nor override an explicit non-credential classification."
+        field_defaults:
+          password:
+            mode: "hash"
+          api_key:
+            mode: "hash"
+
+    storage_adapter:
+      backups:
+        enabled: false
+      instance_defaults:
+        naming:
+          key: "<role>"
+          name: "<project> <role>"
+          database: "<project>_<role>"
+          normalization: "lower_snake_case"
+        connection:
+          host: "localhost"
+          port: "engine_default"
+        secrets:
+          source: "environment"
+          username: "<PROJECT>_<INSTANCE>_DATABASE_USERNAME"
+          password: "<PROJECT>_<INSTANCE>_DATABASE_PASSWORD"
+          store_values_in_configuration: false
+      instances:
+        general:
+          name: "<project> General"
+          purpose: "General application data."
+          engine: "SQLite"
+          database: "<project>_general"

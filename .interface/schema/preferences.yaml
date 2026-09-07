@@ -1,0 +1,146 @@
+schema:
+  id: "agent-interface-preferences"
+  version: "1.0"
+  purpose: "The common structure every Preferences file follows. It defines what a Component's Preferences hold and how they are arranged, not which choices any Component makes."
+
+# <!--------------------------------------------------------------------------------- Frame -->
+frame:
+  source: ".interface/schema/yaml.yaml"
+  inherited: "A Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
+  scope: "This schema defines the structure of `content`, and states the additional expectations a Preferences file places on the inherited `meta` and `policy` sections."
+  path: ".interface/preferences/<component>.yaml — one file per Component."
+  ownership: "The file is human-owned. Operations read it and never write resolved choices back into it."
+
+# <!--------------------------------------------------------------------------------- Purpose -->
+purpose:
+  answers: "With what. A Preferences file records the technical choices available to a Component and the one it takes when the project leaves that choice unstated."
+  relation_to_principles: "Principles state what is mandatory; Preferences state what is preferred. A Preference can never override a Principle."
+  relation_to_project: "An explicit value in the human project definition always wins. This file is consulted only where the project is silent."
+  resolution: "A choice recorded here is resolved when an operation runs, from this file together with the current project definition. Nothing here is copied into an operational record."
+
+# <!--------------------------------------------------------------------------------- Scope -->
+scope:
+  contains:
+    - "Supported technologies, tools, libraries, engines, and their versions."
+    - "The selected option for each decision the Component owns."
+    - "Configuration values, naming conventions, paths, and declared resources belonging to the Component."
+  excludes:
+    - "Mandatory rules, responsibilities, and boundaries, which belong to the Component's Principles."
+    - "Project data such as Models, fields, phases, or initial data, which belong to the human project definition."
+    - "Operational records such as Plans, Tasks, progress, or Workflow position, which belong to Config."
+    - "A choice owned by another Component; that Component's own Preferences hold it."
+  empty_component: "A Component with no technical choices still has a Preferences file with the full frame and all three content sections present and empty. The absence of choices is stated, never implied by a missing file or a missing section."
+
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  required_fields:
+    path:
+      required: true
+      purpose: "The path of the file."
+    path_note:
+      required: true
+      purpose: "The location, layer, and role of the file, naming the Component and stating that this is its Preferences layer."
+    purpose:
+      required: true
+      purpose: "What this Component's Preferences cover, in one sentence."
+    standard:
+      required: true
+      purpose: "The Interface standard the file belongs to."
+    version:
+      required: true
+      purpose: "The version of this Preferences file, raised whenever its content changes meaning."
+    updated:
+      required: true
+      purpose: "The date the file last changed."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  purpose: "Every Preferences file answers the same questions about how it is read, changed, and applied. A question with no substance for a Component is answered plainly rather than omitted."
+  required_fields:
+    agent_may_edit:
+      required: true
+      value: false
+      purpose: "Preferences are human-owned; no operation writes to them."
+    rule:
+      required: true
+      purpose: "How the file is treated: read without writing resolved choices back into it."
+    changed_by:
+      required: true
+      purpose: "Who changes it, and what happens when a needed choice is missing."
+    precedence:
+      required: true
+      purpose: "That an explicit project value and every applicable Principle take precedence over this file."
+    consumption:
+      required: true
+      purpose: "How an operation uses these entries when it resolves an unstated choice."
+    selection:
+      required: true
+      purpose: "What to do when the project needs something this file does not list."
+    version_resolution:
+      required: true
+      purpose: "How an unpinned version such as `latest` becomes a concrete one, and that an explicit concrete version is preserved."
+    matching:
+      required: true
+      purpose: "How an entry here is matched to what the project states, and the order in which competing entries apply."
+  additional_fields: "A Component may add policy statements of its own after the required ones, such as how an isolated environment is created and used. It never renames or removes a required one."
+
+# <!--------------------------------------------------------------------------------- Structure -->
+structure:
+  - "selected"
+  - "options"
+  - "settings"
+
+# <!--------------------------------------------------------------------------------- Sections -->
+sections:
+
+  selected:
+    required: true
+    default: {}
+    purpose: "What this Component has chosen. One entry per decision the Component owns, used whenever the project leaves that decision unstated."
+    rules:
+      what_belongs: "Three things and nothing else: one entry for every choice among the alternatives this Component catalogues in `options`, one entry for every choice among the resources it declares in `settings`, and the Component's code path when it owns one."
+      names_an_option: "A choice is written as the key of the entry it selects, and that entry exists — in the matching `options` catalogue for a technology, or in the declaring group inside `settings` for a declared resource. A choice naming no existing entry is invalid."
+      one_per_decision: "A decision appears here exactly once, under a key naming the kind of thing chosen, such as the language, the library, or the engine."
+      not_a_choice: "A configuration value that selects nothing from a catalogue is a setting, however consequential it is, and belongs to `settings`."
+      no_configuration: "A chosen option's configuration belongs to `settings`; only the choice itself is recorded here."
+    empty: "An empty mapping when the Component chooses nothing."
+
+  options:
+    required: true
+    default: {}
+    purpose: "What this Component supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
+    shape: "One mapping per kind of alternative, named in the plural, each holding entries keyed by the option's name."
+    entry:
+      version:
+        required: true
+        purpose: "The version of the option: a concrete version, `latest` when it is resolved at implementation time, or `runtime-provided` when the environment supplies it."
+      attributes:
+        required: false
+        purpose: "The properties that belong to this option alone, such as its package, driver, conventions, or capabilities."
+      compatibility:
+        required: false
+        purpose: "Other options this one works with, named by their keys in their own catalogues."
+    rules:
+      no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
+      no_project_data: "An option entry carries no Models, fields, records, or other project data."
+      self_contained: "An entry describes only itself. A value shared by every option of a kind belongs to `settings`."
+    empty: "An empty mapping when the Component supports no alternatives."
+
+  settings:
+    required: true
+    default: {}
+    purpose: "How the selected options are configured, together with any resource this Component declares and the conventions it applies."
+    grouping: "By the Component's internal layers, using exactly the layer names its Principles define, when the Component has layers. Otherwise by domain area, one group per coherent subject."
+    rules:
+      no_repetition: "A setting never repeats a value already stated in `selected` or in an `options` entry. It refers to it instead."
+      resolved_or_stated: "A setting states a concrete value, or an explicit marker that the value is supplied elsewhere, such as by the runtime environment or by the engine's own default."
+      no_secrets: "A setting may name where a secret is read from; it never contains the secret value."
+      declared_resources: "A resource the Component declares, such as a named instance, is recorded here with its identity and configuration."
+    empty: "An empty mapping when the Component configures nothing."
+
+# <!--------------------------------------------------------------------------------- Conventions -->
+conventions:
+  placeholders: "A value that is completed at resolution time is written in angle brackets, such as `<project>` or `<role>`. A key in angle brackets describes the shape of future entries rather than one real entry."
+  unresolved: "A choice that the project must make and this file cannot supply is written as `to be defined`, and the operation that meets it raises an Open Question rather than inventing a value."
+  read_order: "`read_order` lists the three content sections in their structural order."
+  content_map: "`content_map` carries one line per content section, naming what that section holds for this Component."
