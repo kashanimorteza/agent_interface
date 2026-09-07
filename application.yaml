@@ -10,3 +10,13 @@ model:
   # The Model layer consumes no other application layer. It provides the
   # shared domain declarations through its public import interface.
   bindings: {}
+
+database:
+  # The Database layer consumes the shared Models through the Model package's
+  # public import interface. Which Engines it supports, which Instances it
+  # offers, and which is the default are settings it owns for itself, so they
+  # live in that layer's own configuration rather than here.
+  bindings:
+    model:
+      package: my_model
+      interface: import
