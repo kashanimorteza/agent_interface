@@ -50,7 +50,7 @@ Each layer receives only its own settings and the declared references needed for
 
 Secret values remain outside general configuration and source-controlled package files. Central configuration may carry a reference to a secret, while its value is resolved from the authorized runtime source and delivered only to the boundary that owns it.
 
-The concrete configuration files, formats, section names, override precedence, and delivery mechanism are technical choices resolved through Development Preferences and represented in generated Development configuration.
+The concrete configuration files, formats, section names, override precedence, and delivery mechanism are technical choices resolved from the project definition and Development Preferences, then implemented by Platform.
 
 <br>
 

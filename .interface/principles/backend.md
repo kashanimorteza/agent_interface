@@ -2,7 +2,7 @@
 
 Backend is the Component that executes application Behaviour and publishes the application's API. Its architecture is independent of any language, framework, protocol, package, database engine, or project.
 
-Technical choices and defaults belong to Backend Preferences. The exact shape of the generated Backend configuration belongs to the Backend Schema.
+Technical choices and defaults belong to Backend Preferences. Backend implementation applies those choices to the current project definition.
 
 Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -56,13 +56,13 @@ API receives external requests, validates their transport-level shape, invokes L
 
 Domain validation remains in Logic. API owns only communication concerns such as request decoding, transport-level validation, response serialization, protocol handling, and mapping logical outcomes to API responses.
 
-The existence and responsibility of API are philosophical. Its framework, version, protocol, and other technical settings are resolved through Backend Preferences and generated Backend configuration.
+The existence and responsibility of API are philosophical. Its framework, version, protocol, and other technical settings are resolved from the project definition and Backend Preferences.
 
 <br>
 
 ## 6. Model definitions are shared, never copied
 
-Backend obtains logical Model definitions from the generated Model configuration. It does not copy, redefine, or create a competing representation of Model meaning.
+Backend obtains logical Model definitions from the project definition under the Model Component's Principles and Preferences, and consumes their shared package. It does not copy, redefine, or create a competing representation of Model meaning.
 
 Logic uses Model meaning and domain rules, Data Access uses Model identity and fields when calling Database, and API derives its data-facing input and output representations from the same shared definition. HTTP-specific and storage-specific details remain outside Model.
 
@@ -72,7 +72,7 @@ Logic uses Model meaning and domain rules, Data Access uses Model identity and f
 
 Backend is not limited to Model CRUD. Logic implements Backend-targeted project Behaviour, and API exposes the Behaviour that must be available to external consumers.
 
-Model-level API intent and externally exposed Behaviour are resolved in Backend configuration without fixing endpoint paths, HTTP method mappings, file layout, or framework implementation details. Those details are implementation output.
+Model-level API intent and externally exposed Behaviour are resolved from the project definition under Backend Principles and Preferences without fixing endpoint paths, HTTP method mappings, file layout, or framework implementation details. Those details are implementation output.
 
 <br>
 
@@ -88,7 +88,7 @@ Whether documentation is enabled, its format, and the tool that produces it are 
 
 A Model field marked as a credential is write-only API input. It may be accepted when required to create or update its owning Model, but it is never exposed in an API response, response schema, error payload, diagnostic, trace, or recorded output.
 
-Backend reads the credential marker from Model configuration and never guesses credential fields from their names. Database owns the credential's at-rest storage mode; Backend does not redefine it.
+Backend reads the credential marker from the shared Model definition and never guesses credential fields from their names. Database owns the credential's at-rest storage mode; Backend does not redefine it.
 
 <br>
 

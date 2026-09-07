@@ -1,151 +1,20 @@
 schema:
-  id: agent-interface-task
+  id: "agent-interface-task"
   version: "6.0"
-  purpose: "The shape of the generated Task configuration"
-
+  purpose: "Operational Task file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Task Component."
 structure:
-  - task_schema
-  - task_states
-  - task_count
-  - plans
-
+  - "task_count"
+  - "plans"
 sections:
-
-  # <!--------------------------------------------------------------------------------- Task_Schema -->
-  task_schema:
-    required: true
-    purpose: "The resolved field frame used by every Task."
-    fields:
-      rule:
-        required: true
-        purpose: "The structural rule governing which fields every Task carries."
-      fields:
-        required: true
-        purpose: "The definitions of the fields carried by every Task."
-        fields:
-          id:
-            required: true
-            purpose: "The Task identifier, unique within its Plan and unambiguous across all Plans."
-          title:
-            required: true
-            purpose: "A concise statement of the atomic action."
-          description:
-            required: true
-            purpose: "A complete explanation of what must be done."
-          reason:
-            required: true
-            purpose: "Why the Task is necessary."
-          target:
-            required: true
-            purpose: "The Component in which the Task performs its work."
-          area:
-            required: true
-            purpose: "The specific module, subsystem, or work area inside the target Component."
-          metadata:
-            required: true
-            purpose: "Resolved descriptive metadata that identifies the Task's planning context, nature, and technical context without prescribing implementation."
-            fields:
-              phase:
-                required: true
-                purpose: "The phase context carried by the Task so its identity does not depend on nesting."
-                fields:
-                  id:
-                    required: true
-                    purpose: "The stable identifier of the phase containing the Task."
-                  title:
-                    required: true
-                    purpose: "The human-readable title of the phase containing the Task."
-                  order:
-                    required: true
-                    purpose: "The phase's one-based position in project order."
-              group:
-                required: true
-                purpose: "The Group context carried by the Task so its identity does not depend on nesting."
-                fields:
-                  id:
-                    required: true
-                    purpose: "The stable identifier of the Group containing the Task."
-                  title:
-                    required: true
-                    purpose: "The human-readable title of the Group containing the Task."
-              kind:
-                required: true
-                purpose: "The nature of the work, such as code, configuration, documentation, data, or command execution."
-              language:
-                required: true
-                purpose: "The applicable programming or configuration language, or null when no language applies."
-              technologies:
-                required: true
-                purpose: "The ordered resolved technologies relevant to the Task; empty when none apply. This is metadata, not a place to select or explain an implementation."
-          inputs:
-            required: true
-            purpose: "The information, artifacts, interfaces, or completed results consumed by the Task; empty when none apply."
-          references:
-            required: true
-            purpose: "References to the generated configuration that Development must consult for resolved technical decisions; empty when none apply."
-          expected_result:
-            required: true
-            purpose: "The concrete artifact, behaviour, state, or observable result the Task must produce."
-          depends_on:
-            required: true
-            purpose: "The identifiers of Tasks whose completed outputs are prerequisites; empty when the Task is independent."
-          constraints:
-            required: true
-            purpose: "Task-specific restrictions and invariants that the implementation must preserve; empty when none apply."
-          acceptance:
-            required: true
-            purpose: "The observable criterion that determines whether the intended result is correct."
-          verify:
-            required: true
-            purpose: "A runnable command or precise executable check that proves acceptance."
-          status:
-            required: true
-            purpose: "The current Task state, using the resolved Task-state vocabulary."
-          blocker:
-            required: false
-            purpose: "The identifier of the critical blocking condition when the Task is blocked; absent otherwise."
-          log:
-            required: false
-            purpose: "The append-only Task-local progress history; absent until the first recorded transition."
-      status_lives_here:
-        required: true
-        purpose: "Declares that the current status is stored on each Task."
-      history_lives_here_too:
-        required: true
-        purpose: "Declares that the history of an existing Task is stored in its Task-local log."
-
-  # <!--------------------------------------------------------------------------------- Task_States -->
-  task_states:
-    required: true
-    purpose: "The resolved Task-status vocabulary and derived readiness and completion conditions."
-    fields:
-      path:
-        required: true
-        purpose: "Where the current state is stored within a Task."
-      states:
-        required: true
-        purpose: "The permitted Task states and the meaning of each state."
-      derived_ready:
-        required: true
-        purpose: "The condition from which Task readiness is derived."
-      phase_ready:
-        required: true
-        purpose: "The condition from which phase readiness is derived."
-      phase_complete:
-        required: true
-        purpose: "The condition from which phase completion is derived."
-
   task_count:
     required: true
     purpose: "A non-negative integer equal to the total number of Tasks stored across all phase Plans, regardless of status. Sum the phase task_count values; use zero when no Tasks exist. Recalculate whenever Tasks are added or removed, including reconciliation and reset."
-
-  # <!--------------------------------------------------------------------------------- Plans -->
   plans:
     required: true
-    purpose: "The ordered collection of phase Plans prepared for Development."
+    purpose: "Phase Plans created by Planning, keyed by phase identifier; empty before any phase is planned."
     fields:
       "<phase>":
-        required: true
+        required: false
         purpose: "One Plan keyed by its phase identifier."
         fields:
           id:
@@ -197,8 +66,125 @@ sections:
                     purpose: "A non-negative integer equal to the number of Tasks currently contained in the Group, regardless of status, including cancelled and superseded Tasks while they remain stored. Recalculate whenever Tasks are added or removed."
                   tasks:
                     required: true
-                    purpose: "The ordered mapping of Tasks in the Group, keyed by Task identifier; empty when the Group has no Tasks. Every value conforms to task_schema, and its key equals the value's id."
+                    purpose: "Tasks keyed by identifier. Every key equals its Task id. Dependencies, not mapping order, determine execution eligibility."
                     fields:
                       "<task>":
                         required: false
-                        purpose: "One Task keyed by its id and carrying the complete field frame defined by task_schema."
+                        purpose: "One Task containing its descriptive metadata, expected result, verification, and mutable progress."
+                        fields:
+                          id:
+                            required: true
+                            purpose: "The Task identifier, unique within its Plan and unambiguous across all Plans."
+                          title:
+                            required: true
+                            purpose: "A concise statement of the atomic action."
+                          description:
+                            required: true
+                            purpose: "A complete explanation of what must be done."
+                          reason:
+                            required: true
+                            purpose: "Why the Task is necessary."
+                          target:
+                            required: true
+                            purpose: "The Component in which the Task performs its work."
+                          area:
+                            required: true
+                            purpose: "The specific module, subsystem, or work area inside the target Component."
+                          metadata:
+                            required: true
+                            purpose: "Resolved descriptive metadata that identifies the Task's planning context, nature, and technical context without prescribing implementation."
+                            fields:
+                              phase:
+                                required: true
+                                purpose: "The phase context carried by the Task so its identity does not depend on nesting."
+                                fields:
+                                  id:
+                                    required: true
+                                    purpose: "The stable identifier of the phase containing the Task."
+                                  title:
+                                    required: true
+                                    purpose: "The human-readable title of the phase containing the Task."
+                                  order:
+                                    required: true
+                                    purpose: "The phase's one-based position in project order."
+                              group:
+                                required: true
+                                purpose: "The Group context carried by the Task so its identity does not depend on nesting."
+                                fields:
+                                  id:
+                                    required: true
+                                    purpose: "The stable identifier of the Group containing the Task."
+                                  title:
+                                    required: true
+                                    purpose: "The human-readable title of the Group containing the Task."
+                              kind:
+                                required: true
+                                purpose: "The nature of the work, such as code, configuration, documentation, data, or command execution."
+                              language:
+                                required: true
+                                purpose: "The applicable programming or configuration language, or null when no language applies."
+                              technologies:
+                                required: true
+                                purpose: "The ordered resolved technologies relevant to the Task; empty when none apply. This is metadata, not a place to select or explain an implementation."
+                          inputs:
+                            required: true
+                            purpose: "The information, artifacts, interfaces, or completed results consumed by the Task; empty when none apply."
+                          references:
+                            required: true
+                            purpose: "References to applicable project sources and existing interfaces that Development should consult; empty when none apply."
+                          expected_result:
+                            required: true
+                            purpose: "The concrete artifact, behaviour, state, or observable result the Task must produce."
+                          depends_on:
+                            required: true
+                            purpose: "The identifiers of Tasks whose completed outputs are prerequisites; empty when the Task is independent."
+                          constraints:
+                            required: true
+                            purpose: "Task-specific restrictions and invariants that the implementation must preserve; empty when none apply."
+                          acceptance:
+                            required: true
+                            purpose: "The observable criterion that determines whether the intended result is correct."
+                          verify:
+                            required: true
+                            purpose: "A runnable command or precise executable check that proves acceptance."
+                          status:
+                            required: true
+                            purpose: "The current Task progress value."
+                            allowed:
+                              - "todo"
+                              - "claimed"
+                              - "blocked"
+                              - "done"
+                              - "cancelled"
+                              - "superseded"
+                            default: "todo"
+                          blocker:
+                            required: false
+                            purpose: "The identifier of the critical blocking condition when the Task is blocked; absent otherwise."
+                          log:
+                            required: false
+                            purpose: "The append-only Task-local progress history; absent until the first recorded transition."
+definitions:
+  task_status:
+    todo: "Defined and not started."
+    claimed: "Claimed by an executor before work begins."
+    blocked: "Waiting on the referenced critical Blocker."
+    done: "Acceptance proven by verification."
+    cancelled: "No longer required, with the reason recorded in its log."
+    superseded: "Replaced by another Task identified in its log."
+initial:
+  meta:
+    path: ".interface/config/task.yaml"
+    path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+  policy:
+    agent_may_edit: true
+    rule: "Apply the current Task Component and the active operation's ownership rules."
+  read_order:
+    - "task_count"
+    - "plans"
+  content_map:
+    task_count: "Total number of stored Tasks."
+    plans: "Current phase Plans and their Groups and Tasks."
+  content:
+    task_count: 0
+    plans: {}

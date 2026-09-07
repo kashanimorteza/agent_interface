@@ -2,7 +2,7 @@
 
 Frontend is the Component that presents the application to users, manages user interaction, and consumes capabilities published by Backend. Its architecture is independent of any language, library, framework, package manager, API protocol, or project.
 
-Technical choices and defaults belong to Frontend Preferences. The exact shape of the generated Frontend configuration belongs to the Frontend Schema.
+Technical choices and defaults belong to Frontend Preferences. Frontend implementation applies those choices to the current project definition.
 
 Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -48,7 +48,7 @@ The protocol, client technology, and transport settings are technical choices ra
 
 ## 5. Domain Models are shared, never copied
 
-The shared logical domain-model set comes from the Model Component. Frontend configuration and implementation may use it, but they never copy, redefine, or create a competing definition of Model meaning.
+The shared logical domain-model set comes from the Model Component. Frontend implementation may use it, but it never copies, redefines, or creates a competing definition of Model meaning.
 
 Presentation uses Models to describe what users see and edit, Interaction Logic uses their logical meaning, and API Access preserves their identity across the Backend boundary. User-interface state and display formatting may extend a view without changing the shared Model.
 
@@ -66,7 +66,7 @@ A Frontend Behaviour never becomes a second implementation of authoritative Back
 
 Frontend uses a coherent Theme and shared visual rules across its Components. Colours, typography, spacing, direction, display mode, and other visual decisions are resolved once and consumed consistently rather than being independently invented by each page or Component.
 
-The existence and responsibility of this visual system are philosophical. The selected Theme, its values, styling technology, and other appearance defaults are technical choices resolved through Frontend Preferences and generated Frontend configuration.
+The existence and responsibility of this visual system are philosophical. The selected Theme, its values, styling technology, and other appearance defaults are technical choices resolved from the project definition and Frontend Preferences.
 
 <br>
 

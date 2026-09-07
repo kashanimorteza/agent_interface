@@ -9,10 +9,10 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Generation reads it and never writes resolved Development choices back into it."
+  rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
   changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
-  consumption: "Resolve unstated runtime-configuration, package, and cross-cutting choices from this file into generated Development configuration. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
+  consumption: "Resolve unstated runtime-configuration, package, and cross-cutting choices from this file when implementing the project. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

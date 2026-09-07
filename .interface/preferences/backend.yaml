@@ -10,12 +10,12 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Generation reads it and never writes resolved Backend choices back into it."
+  rule: "This file is human-owned. Operations read it without writing resolved Backend choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit project value and every applicable Backend Principle take precedence over this file."
-  consumption: "Generation resolves each unstated Backend choice from this file and records the concrete result in generated Backend configuration. Downstream operations consume that resolved result."
+  consumption: "Operations resolve unstated Backend choices from these defaults and the current project definition when planning or implementing the work."
   selection: "Prefer a supported compatible entry. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Backend stack; latest never appears in generated configuration."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Backend stack; implementation records use the resolved concrete version."
   environment_handling: "Create and use the selected isolated environment through its resolved tool, and do not commit environment artifacts."
 
 

@@ -9,13 +9,13 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Generation reads it and never writes resolved Model fields back into it."
+  rule: "This file is human-owned. Operations read it without writing resolved Model fields back into it."
   changed_by: "The human, directly."
   precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
-  consumption: "Resolve unstated Model-package technology from this file. Apply field defaults property by property only to fields present in the Model definition. Preserve every explicit property, including false and null, and never add a field merely because it appears in these defaults. Write the resolved implementation and fields into generated Model configuration."
+  consumption: "Resolve unstated Model-package technology from this file. Apply field defaults property by property only to fields present in the project Model definition. Preserve every explicit property, including false and null, and never add a field merely because it appears in these defaults. Implement the resulting definitions in the shared Model package."
   matching: "Match normalized field names. An explicit Model property takes priority, followed by an exact-name default in common_fields, then a matching field_patterns default. A name pattern alone does not establish a relationship or its target."
   selection: "Resolve the modeling library through the selected language profile. For an unlisted language or incompatible explicit combination, select a well-supported compatible modeling library and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the selected Model stack; latest never appears in generated configuration."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the selected Model stack; implementation records use the resolved concrete version."
   environment_handling: "Create and use the selected isolated environment through its resolved tool, and do not commit environment artifacts."
 
 

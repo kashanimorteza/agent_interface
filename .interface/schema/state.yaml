@@ -1,89 +1,24 @@
 schema:
-  id: agent-interface-state
+  id: "agent-interface-state"
   version: "10.0"
-  purpose: "The shape of the generated State configuration"
-
+  purpose: "Operational State file structure. Sections describe stored content; initial is the empty configuration template. State meanings and behaviour are defined by the State Component."
 structure:
-  - modes
-  - active
-  - blockers
-  - open_questions
-
+  - "active"
+  - "blockers"
+  - "open_questions"
 sections:
-
-  # <!--------------------------------------------------------------------------------- Modes -->
-  modes:
-    required: true
-    purpose: "The resolved Workflow modes represented by State."
-    fields:
-      initial:
-        required: true
-        purpose: "The mode used before any Workflow operation has been recorded; must resolve to not set."
-      available:
-        required: true
-        purpose: "The four fixed Workflow modes and their meanings. No additional mode is permitted."
-        fields:
-          "not set":
-            required: true
-            purpose: "The initial state before any Workflow operation has been recorded."
-            fields:
-              purpose:
-                required: true
-                purpose: "What activity the mode represents."
-              phase_specific:
-                required: true
-                purpose: "Whether entering the mode requires one active phase; must resolve to false."
-              repeatable:
-                required: true
-                purpose: "Whether the mode may be entered again; must resolve to true."
-          configuring:
-            required: true
-            purpose: "The mode in which project Understanding is generated or refreshed."
-            fields:
-              purpose:
-                required: true
-                purpose: "What activity the mode represents."
-              phase_specific:
-                required: true
-                purpose: "Whether entering the mode requires one active phase; must resolve to false."
-              repeatable:
-                required: true
-                purpose: "Whether the represented operation may be invoked again after an earlier run; must resolve to true."
-          planning:
-            required: true
-            purpose: "The mode in which Plans, Groups, and Tasks are generated or reconciled."
-            fields:
-              purpose:
-                required: true
-                purpose: "What activity the mode represents."
-              phase_specific:
-                required: true
-                purpose: "Whether entering the mode requires one active phase; must resolve to true."
-              repeatable:
-                required: true
-                purpose: "Whether the represented operation may be invoked again after an earlier run; must resolve to true."
-          development:
-            required: true
-            purpose: "The mode in which eligible Tasks are implemented and verified."
-            fields:
-              purpose:
-                required: true
-                purpose: "What activity the mode represents."
-              phase_specific:
-                required: true
-                purpose: "Whether entering the mode requires one active phase; must resolve to true."
-              repeatable:
-                required: true
-                purpose: "Whether the represented operation may be invoked again after an earlier run; must resolve to true."
-
-  # <!--------------------------------------------------------------------------------- Active -->
   active:
     required: true
     purpose: "The current or most recently entered Workflow position."
     fields:
       mode:
         required: true
-        purpose: "One key from modes.available."
+        purpose: "Current or most recently recorded Workflow mode."
+        allowed:
+          - "not set"
+          - "configuring"
+          - "planning"
+          - "development"
       phase:
         required: true
         nullable: true
@@ -98,8 +33,6 @@ sections:
         required: true
         nullable: true
         purpose: "When the active values were recorded, or null before the first update."
-
-  # <!--------------------------------------------------------------------------------- Blockers -->
   blockers:
     required: true
     purpose: "The unresolved critical conditions currently preventing safe or valid continuation; empty when none exist."
@@ -129,8 +62,6 @@ sections:
           raised_at:
             required: true
             purpose: "When the Blocker was raised."
-
-  # <!--------------------------------------------------------------------------------- Open_Questions -->
   open_questions:
     required: true
     purpose: "The unresolved critical questions that require a human decision; empty when none exist."
@@ -170,3 +101,27 @@ sections:
               answered_at:
                 required: true
                 purpose: "When the answer was supplied."
+initial:
+  meta:
+    path: ".interface/config/state.yaml"
+    path_note: "Mutable Workflow position, Blockers and Open Questions."
+  policy:
+    agent_may_edit: true
+    rule: "Apply the current State Component and the active operation's ownership rules."
+  read_order:
+    - "active"
+    - "blockers"
+    - "open_questions"
+  content_map:
+    active: "Current or most recently recorded Workflow position."
+    blockers: "Unresolved critical conditions."
+    open_questions: "Unresolved critical questions for the human."
+  content:
+    active:
+      mode: "not set"
+      phase: null
+      mode_reason: "No Workflow operation has been recorded."
+      set_by: "initialization"
+      set_at: null
+    blockers: {}
+    open_questions: {}

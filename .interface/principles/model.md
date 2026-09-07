@@ -2,7 +2,7 @@
 
 Model is the Component and independent application layer that describes the domain entities and concepts from which a project is formed. It provides one shared logical meaning and one reusable implementation boundary for domain data so technical Components can consume the same concepts without redefining them.
 
-Every statement here is mandatory. Technical defaults belong to Model Preferences, and the exact shape of the generated Model configuration belongs to the Model Schema.
+Every statement here is mandatory. Technical defaults belong to Model Preferences. Model implementation applies them to the current project definition.
 
 <br>
 
@@ -16,7 +16,7 @@ Models describe the project domain rather than source-code classes, database tab
 
 ## 2. Model is an independent shared package
 
-The resolved Model set is implemented as its own package with a documented public import interface. Every resolved Model is exposed through that interface exactly once, using an ecosystem-compatible public symbol without changing its logical identity. Compatible application layers import this package rather than maintaining private copies of the same Models. A consumer that cannot import the package directly uses a representation derived from the same generated Model configuration through its declared layer interface.
+The resolved Model set is implemented as its own package with a documented public import interface. Every resolved Model is exposed through that interface exactly once, using an ecosystem-compatible public symbol without changing its logical identity. Compatible application layers import this package rather than maintaining private copies of the same Models. A consumer that cannot import the package directly uses a representation derived from the same shared Model definitions through its declared layer interface.
 
 The Model package owns domain representations and their validation. It does not own persistence mappings, business behaviour, API transport, user-interface presentation, or deployment. Its implementation language and modeling technology are resolved through Model Preferences, while its package identity and general package conventions are coordinated through Development.
 

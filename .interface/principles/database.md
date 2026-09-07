@@ -2,7 +2,7 @@
 
 Database Principles define the fixed philosophy, responsibilities, and boundaries of the Database Component, independent of any engine, tool, or project.
 
-Technical choices and defaults belong to Database Preferences. The exact shape of the generated Database configuration belongs to the Database Schema.
+Technical choices and defaults belong to Database Preferences. Database implementation applies those choices to the current project definition.
 
 Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -52,7 +52,7 @@ Application code never creates, alters, or drops database objects directly. Sile
 
 Database alone owns supported engine integration, Database Instances, physical storage, runtime connections, ORM, model-to-storage mappings, storage schema, physical constraints, indexes, migration history, and the generic data-access interface it publishes. Logical Models, fields, relationships, and domain rules remain owned by Model; Database owns only their persistence mapping and enforcement. No other Component makes or changes Database-owned decisions.
 
-Database does not own application behaviour, the HTTP API, Frontend, or deployment secrets. Its resolved boundaries remain explicit in its generated configuration.
+Database does not own application behaviour, the HTTP API, Frontend, or deployment secrets. Its boundaries remain explicit in the implementation and its public documentation.
 
 <br>
 

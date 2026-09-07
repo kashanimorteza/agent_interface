@@ -9,12 +9,12 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Generation reads it and never writes resolved Database choices back into it."
+  rule: "This file is human-owned. Operations read it without writing resolved Database choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit project value and every applicable Database Principle take precedence over this file."
-  consumption: "Generation resolves each unstated Database choice from this file, creates the default Instance when no explicit Instance is defined, and records the concrete result in generated Database configuration. Downstream operations consume that resolved result."
+  consumption: "Operations resolve unstated Database choices from these defaults and the current project definition. Implementation creates the default Instance when no explicit Instance is defined and records runtime settings in the application's configuration."
   selection: "Prefer a supported compatible entry. For an unlisted need, select a well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Database stack; latest never appears in generated configuration."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Database stack; implementation records use the resolved concrete version."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
