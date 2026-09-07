@@ -1,0 +1,19 @@
+[project]
+name = "my-database"
+version = "0.1.0"
+description = "Persistence layer of Trading Assistant: Database Interface, Data Logic and Mapping, and Storage Adapter"
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "sqlalchemy==2.0.52",
+    "alembic==1.19.2",
+    "my-model",
+    "cryptography==50.0.1",
+]
+
+[tool.uv.sources]
+my-model = { path = "../model", editable = true }
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"

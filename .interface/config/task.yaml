@@ -1791,7 +1791,19 @@ content:
                 == "2.0.52", sqlalchemy.__version__; assert alembic.__version__ == "1.19.2", alembic.__version__; src = pathlib.Path(my_model.__file__).resolve(); assert src.is_relative_to(pathlib.Path("../model").resolve()),
                 src; assert all(hasattr(my_model, s) for s in ["User", "Currency", "TradingPlatform", "Broker", "AccountGroup", "Account", "Asset", "TrailingGroup", "TrailingRule", "PartialGroup", "PartialRule",
                 "ActionGroup", "Action", "Position"]); print("ok")'
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:19:27+03:30'
+                status: claimed
+                note: Claimed by the development operation for phase 2. database/ does not exist; the project is created in the resolved form (uv project, uv_build backend, src layout, distribution my-database, import
+                  package my_database with three nested layer packages, my-model as an editable path dependency, Alembic tooling alongside).
+              - at: '2026-09-07T12:19:57+03:30'
+                status: done
+                note: 'Created database/ as a uv project: pyproject.toml (distribution my-database 0.1.0, requires-python >=3.14,<3.15, dependencies sqlalchemy==2.0.52, alembic==1.19.2, my-model resolved through tool.uv.sources
+                  to ../model as an editable path dependency, uv_build backend, src layout), .python-version 3.14.7, the my_database root package with empty database_interface, data_logic, and storage_adapter nested
+                  packages, a data/ directory for file-backed Instances (database files ignored by the repository), and a placeholder README.md that P2-G4-T1 replaces. uv sync created .venv and uv.lock; neither is committed.'
+                evidence: 'Recorded verify run from database/ exited 0 and printed ok: uv lock --check passed and the project environment imports my_database and my_model under CPython 3.14.7 with SQLAlchemy 2.0.52 and
+                  Alembic 1.19.2; my_model resolves to /Volumes/data/projects/agent_interface/model/src/my_model (editable install) and exposes the fourteen Model symbols.'
         P2-G2:
           id: P2-G2
           title: Storage schema, migrations, and seeding
@@ -1888,7 +1900,20 @@ content:
                 uv run alembic upgrade head
                 uv run alembic current | grep -q "(head)"
                 rm -f data/verify_g2t1.db
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:19:57+03:30'
+                status: claimed
+                note: Claimed. Implementing the Storage Adapter's settings boundary (DATABASE__* variables with the resolved defaults, project-root resolution of relative file paths) and Engine factory (SQLite with foreign
+                  keys enforced), then the Alembic environment at the package root that resolves the Instance through that same boundary.
+              - at: '2026-09-07T12:24:19+03:30'
+                status: done
+                note: Implemented the settings boundary in the Storage Adapter (DATABASE__DEFAULT_INSTANCE, DATABASE__INSTANCES__<KEY>__ENGINE/FILE, DATABASE__CREDENTIAL_ENCRYPTION_KEY_SECRET with the resolved defaults;
+                  relative file paths resolved against the directory containing .interface/), an Engine factory for SQLite (foreign keys enforced on every connection, check_same_thread false, data directory created on
+                  first connection), and the Alembic environment at database/ (alembic.ini plus migrations/env.py) that resolves the Instance through that boundary (or -x instance=<key>) and runs each revision in its
+                  own transaction. The history starts with revision 0001_schema, whose downgrade drops every table.
+                evidence: 'Recorded verify run from database/ exited 0: alembic heads listed one head; upgrade head created data/verify_g2t1.db with the schema (users, positions present); alembic current reported (head);
+                  downgrade base left no Model table; upgrade head rebuilt it and current reported (head) again.'
             P2-G2-T2:
               id: P2-G2-T2
               title: Derive the storage schema from the Model definitions
@@ -1996,7 +2021,20 @@ content:
                 print("ok: " + str(len(models)) + " tables match the mapping derived from the Model definitions")
                 '
                 rm -f data/verify_g2t2.db
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:24:19+03:30'
+                status: claimed
+                note: 'Claimed. The schema was derived together with the migration tooling: the Data Logic mapping builds one SQLAlchemy Table per Model from the installed Model class (field order, generic types, String(size)
+                  from the declared maximum length, NOT NULL from optionality with the primary key and credential fields never nullable) combined with the persistence facts Database owns (table name, unique and composite-unique
+                  fields, relationships, credential modes); revision 0001_schema records that derived schema as static code.'
+              - at: '2026-09-07T12:24:19+03:30'
+                status: done
+                note: Fourteen tables (users, currencies, trading_platforms, brokers, account_groups, accounts, assets, trailing_groups, trailing_rules, partial_groups, partial_rules, action_groups, actions, positions)
+                  with pk_/uq_/fk_/ix_ naming, RESTRICT foreign keys to the target primary key with an index each, the composite unique constraint uq_brokers_user_id_name for the Broker rule, and a table comment naming
+                  the source Model. Decimal fields use a NUMERIC column read back as decimal.Decimal.
+                evidence: 'Recorded verify run from database/ exited 0 and printed: ok: 14 tables match the mapping derived from the Model definitions (every column''s declared type, nullability, and primary key; every
+                  named unique, composite-unique, primary-key, and foreign-key constraint; RESTRICT actions; ix_ indexes; no extra table).'
             P2-G2-T3:
               id: P2-G2-T3
               title: Seed the initial data idempotently with credentials transformed at rest
@@ -2116,7 +2154,24 @@ content:
                 print("ok: re-seeding is idempotent on natural keys")
                 '
                 rm -f data/verify_g2t3.db data/verify_g2t3_check.py
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:24:19+03:30'
+                status: claimed
+                note: 'Claimed. Implementing credential transformations in Data Logic (hash: salted PBKDF2-HMAC-SHA256; encrypted: reversible encryption under a key derived from the configured secret), the idempotent
+                  seeding helpers matched on natural keys, and the seeding data migration 0002_initial_data that closes the history.'
+              - at: '2026-09-07T12:26:25+03:30'
+                status: done
+                note: 'Added revision 0002_initial_data (the last revision) carrying the 22 declared records in definition order, applied through Data Logic seeding helpers that match each record on its natural key (user,
+                  trading_platform, account_group, account, trailing_group, partial_group, action_group, action: name; currency: code; asset: symbol; broker: user_id + name), construct the Model instance so declared
+                  defaults apply, fulfil GENERATE values with secrets.token_urlsafe(32), and store credentials through their at-rest mode (user.password and user.api_key hashed with salted PBKDF2-HMAC-SHA256, 600000
+                  iterations; account.password encrypted). The downgrade deletes the records matching those natural keys. Consequential decisions: (1) reversible encryption is not available in the standard library, so
+                  cryptography==50.0.1 (Fernet with an HKDF-SHA256 key derived from the configured secret, so any non-empty secret is accepted) was added as a run-time dependency; (2) a generated credential is reported
+                  once on standard error at seed time — it is never stored in clear and never written to a file — so the operator can use the generated Admin credentials; (3) the key is resolved before the first insert,
+                  so a missing key fails the revision before any record is written.'
+                evidence: 'Recorded verify run from database/ exited 0 and printed: ok: no encrypted record without the key; ok: initial data seeded (22 records) with the declared values, relationship identifiers, and
+                  transformed credentials; ok: seed reverted; one USD pre-inserted; ok: initial data seeded (22 records); ok: re-seeding is idempotent on natural keys. The P2-G2-T1 verify re-run with the two-revision
+                  history also exited 0.'
         P2-G3:
           id: P2-G3
           title: Database Interface
@@ -2229,7 +2284,21 @@ content:
                     assert "missing" in str(e), str(e)
                 print("ok: misconfigured default rejected")
                 '
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:26:25+03:30'
+                status: claimed
+                note: 'Claimed. Implementing the Database Interface layer: InstanceRegistry (public identities only) and the Database gateway constructed from the settings boundary without touching the Instance file,
+                  together with the Data Logic operation pipeline it delegates to.'
+              - at: '2026-09-07T12:27:01+03:30'
+                status: done
+                note: 'Implemented the Database Interface layer: InstanceRegistry (default key plus a tuple of InstanceIdentity records with key, name, purpose, engine; rejects a default that names no configured Instance)
+                  and the Database gateway (Database() selects the default, Database(instance=<key>) a named one; construction resolves settings and binds the Engine without opening a connection; an unknown key raises
+                  UnknownInstanceError naming it). Both are exported from the my_database root together with DatabaseError and its subclasses (ConfigurationError, UnknownInstanceError, UnsupportedEngineError, CredentialKeyError,
+                  OperationError, NotFoundError, ConstraintError, StatementError).'
+                evidence: 'Recorded verify run from database/ exited 0 and printed: ok: registry and selection (default general; one Instance general — Trading Assistant General, General application data., sqlite — with
+                  no file, URL, or path exposed; Database() and Database(instance="general") created no file; Database(instance="nope") raised DatabaseError naming nope); ok: misconfigured default rejected (DATABASE__DEFAULT_INSTANCE=missing
+                  raised DatabaseError naming missing).'
             P2-G3-T2:
               id: P2-G3-T2
               title: Provide the create and read operations
@@ -2330,7 +2399,19 @@ content:
                 print("ok: create and read")
                 '
                 rm -f data/verify_g3t2.db
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:27:01+03:30'
+                status: claimed
+                note: Claimed together with the other Database Interface operations; all are served by the one Model-driven pipeline in Data Logic (Operations over the Storage Adapter), each verified independently through
+                  the package root.
+              - at: '2026-09-07T12:27:01+03:30'
+                status: done
+                note: create validates the instance's Model, transforms credential fields through their at-rest mode (a missing credential on create is an OperationError), inserts in one transaction, and returns the
+                  stored record re-read by its new primary key; read selects by primary key and returns None when absent. Returned instances are validated Model instances with credential fields set to None; decimals
+                  are read back as decimal.Decimal and datetimes as datetime.
+                evidence: 'Recorded verify run from database/ exited 0 and printed: ok: create and read (new User with primary key and None credentials; stored password and api_key transformed; read equality; None for
+                  an absent key; Position decimal and datetime round trip; Broker referencing an absent User raised DatabaseError through the enforced foreign key).'
             P2-G3-T3:
               id: P2-G3-T3
               title: Provide the list operation with criteria, ordering, and paging
@@ -2413,7 +2494,18 @@ content:
                 print("ok: list")
                 '
                 rm -f data/verify_g3t3.db
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:27:01+03:30'
+                status: claimed
+                note: Claimed together with the other Database Interface operations; all are served by the one Model-driven pipeline in Data Logic (Operations over the Storage Adapter), each verified independently through
+                  the package root.
+              - at: '2026-09-07T12:27:01+03:30'
+                status: done
+                note: list applies equality criteria on Model fields (a credential field is refused as a criterion), orders by primary key unless order_by names a Model field (primary key as tie-breaker), pages by non-negative
+                  limit and offset, and returns Model instances without credential values; an unknown field in criteria or order_by is an OperationError.
+                evidence: 'Recorded verify run from database/ exited 0 and printed: ok: list (eight seeded currencies in primary-key order; limit 3 offset 2; single and combined criteria; ordering by code with paging;
+                  empty result for an unmatched criterion; listed Users carry no credential values).'
             P2-G3-T4:
               id: P2-G3-T4
               title: Provide the update, delete, and status operations
@@ -2522,7 +2614,20 @@ content:
                 print("ok: update, delete, status")
                 '
                 rm -f data/verify_g3t4.db
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:27:01+03:30'
+                status: claimed
+                note: Claimed together with the other Database Interface operations; all are served by the one Model-driven pipeline in Data Logic (Operations over the Storage Adapter), each verified independently through
+                  the package root.
+              - at: '2026-09-07T12:27:02+03:30'
+                status: done
+                note: update requires the instance's primary key, applies every field value except credentials that the instance does not carry (None leaves the stored representation untouched; a supplied credential
+                  is transformed), reports an absent record as NotFoundError without creating it, and returns the stored record; delete removes by primary key and reports a RESTRICT-blocked deletion as ConstraintError
+                  and an absent record as NotFoundError; status accepts exactly enable or disable on a Model with a status field and rejects any other action or Model.
+                evidence: 'Recorded verify run from database/ exited 0 and printed: ok: update, delete, status (Admin description updated with stored credentials preserved until a new password was supplied and stored
+                  transformed; update of id 999999 raised DatabaseError and created nothing; deleting the referenced Admin raised DatabaseError while an unreferenced Currency deleted; disable/enable flipped status; toggle
+                  raised DatabaseError).'
             P2-G3-T5:
               id: P2-G3-T5
               title: Provide controlled parameterized SQL execution
@@ -2601,7 +2706,18 @@ content:
                 print("ok: parameterized sql")
                 '
                 rm -f data/verify_g3t5.db
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:27:01+03:30'
+                status: claimed
+                note: Claimed together with the other Database Interface operations; all are served by the one Model-driven pipeline in Data Logic (Operations over the Storage Adapter), each verified independently through
+                  the package root.
+              - at: '2026-09-07T12:27:02+03:30'
+                status: done
+                note: sql executes a text statement inside the Database boundary on the selected Instance's own connection, binding a mapping to :name placeholders, and returns a list of plain tuples (empty for a statement
+                  that returns no rows); Engine failures surface as StatementError.
+                evidence: 'Recorded verify run from database/ exited 0 and printed: ok: parameterized sql (bound parameter selected JPY; a parameter containing SQL syntax was bound rather than interpolated; a parameterless
+                  count returned 4 assets; the result carried no connection; an invalid statement raised DatabaseError).'
         P2-G4:
           id: P2-G4
           title: Documentation and distribution
@@ -2680,7 +2796,20 @@ content:
                 print("ok: " + str(len(blocks)) + " example(s) ran")
                 '
                 rm -f data/verify_g4t1.db
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:27:02+03:30'
+                status: claimed
+                note: Claimed. Writing database/README.md with the six required sections and runnable examples, and the nested READMEs of database_interface, data_logic, and storage_adapter.
+              - at: '2026-09-07T12:28:47+03:30'
+                status: done
+                note: 'Replaced the placeholder database/README.md with the six required sections (purpose and boundaries, public interface, dependencies, configuration, installation and startup, usage examples): the
+                  three layers and their direction, the call forms and error types of the contract, the DATABASE__* variables with their defaults and the key secret by name only, the migration commands and the seeding
+                  behaviour (generated credentials reported once on standard error), the consumer''s editable path dependency, and four runnable examples that leave the Instance as they found it. Added src/my_database/<layer>/README.md
+                  for database_interface, data_logic, and storage_adapter with purpose and boundaries, public interface, dependencies, configuration, and usage examples, each referencing database/README.md for shared
+                  setup.'
+                evidence: 'Recorded verify run from database/ exited 0: every required heading present in the root and nested READMEs, each nested README references database/README.md, and the five Python blocks of the
+                  root README executed against a freshly migrated Instance (printed: ok: 5 example(s) ran).'
             P2-G4-T2:
               id: P2-G4-T2
               title: Prove the package installs as a local dependency alongside the Model package
@@ -2727,4 +2856,14 @@ content:
                 and reads the default Instance from the registry.
               verify: uv lock --check && rm -rf dist && uv build && ls dist/my_database-*.whl dist/my_database-*.tar.gz && uv run --isolated --no-project --python 3.14.7 --with-editable ../model --with-editable
                 . python -c 'import my_database, my_model, sqlalchemy, alembic; from my_database import Database, InstanceRegistry, DatabaseError; assert InstanceRegistry().default == "general"; print("ok")'
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-07T12:28:47+03:30'
+                status: claimed
+                note: Claimed. Proving the lock, the build, and the editable-path install from an isolated environment.
+              - at: '2026-09-07T12:28:47+03:30'
+                status: done
+                note: 'No further change was required: the project as delivered locks, builds with uv_build, and installs alongside my_model as editable path dependencies. dist/ is ignored by the repository.'
+                evidence: 'Recorded verify run from database/ exited 0: uv lock --check passed; uv build produced dist/my_database-0.1.0-py3-none-any.whl and dist/my_database-0.1.0.tar.gz; an isolated environment (uv
+                  run --isolated --no-project --python 3.14.7 --with-editable ../model --with-editable .) imported my_database and my_model with SQLAlchemy and Alembic and read default Instance general from the registry
+                  (printed ok).'
