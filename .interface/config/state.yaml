@@ -1,0 +1,36 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable Workflow position, Blockers and Open Questions."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "blockers"
+  - "open_questions"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current or most recently recorded Workflow position."
+  blockers: "Unresolved critical conditions."
+  open_questions: "Unresolved critical questions for the human."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  blockers: {}
+  open_questions: {}
