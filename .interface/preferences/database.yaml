@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Database Component — supported technical choices and defaults used when a Database choice is unstated."
   purpose: "Defaults and supported technical profiles for Database Instances, Engines, Database Interface, Data Logic, and Storage Adapter."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "1.2"
   updated: "2026-09-07"
 
 
@@ -17,7 +17,7 @@ policy:
   consumption: "Operations resolve unstated Database choices from these defaults and the current project definition. Implementation creates the default Instance when no explicit Instance is defined and records runtime settings in the application's configuration."
   selection: "Prefer a supported compatible entry. For an unlisted need, select a well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Database stack; implementation records use the resolved concrete version."
-  matching: "Match a selected key to the entry of that key in the matching options catalogue. For a field resolved as a credential, preserve any explicit project storage mode, then use its exact-name entry in settings.data_logic.credential_storage.field_defaults, falling back to selected.credential_storage_mode only when no field-specific default applies. These defaults neither add fields nor override an explicit non-credential classification."
+  matching: "Match a selected key to the entry of that key in the matching options catalogue. An explicit Instance engine takes precedence; otherwise the Instance inherits the resolved selected.engine. The marker <selected.engine> refers to that selection and is resolved to a concrete Engine binding in application configuration. For a field resolved as a credential, preserve any explicit project storage mode, then use its exact-name entry in settings.data_logic.credential_storage.field_defaults, falling back to selected.credential_storage_mode only when no field-specific default applies. These defaults neither add fields nor override an explicit non-credential classification."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -171,7 +171,6 @@ content:
         field_name: "<referenced_model>_id"
         role_field_name: "<role>_<referenced_model>_id"
         referenced_key: "primary_key"
-        nullable: false
         index: true
         on_delete: "RESTRICT"
         on_update: "RESTRICT"
@@ -206,5 +205,5 @@ content:
         general:
           name: "<project> General"
           purpose: "General application data."
-          engine: "SQLite"
+          engine: "<selected.engine>"
           database: "<project>_general"

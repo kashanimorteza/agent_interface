@@ -12,6 +12,7 @@ Database is the Component that owns the project's complete persistence layer. It
 - **Instance Registry** — the published catalogue through which consumers discover Instance identities and the default, without receiving connections or secrets.
 - **Migration** — one recorded, ordered, reversible change to the storage structure, and the authoritative record of how that structure was reached.
 - **At-rest mode** — the resolved persistence transformation applied to a field that is a credential.
+- **Transaction** — one unit of data operations on a single Instance whose changes are committed together or rolled back together.
 
 ## Relationships
 
@@ -87,11 +88,11 @@ The dependency direction is Database Interface → Data Logic and Mapping → St
 
 The status operation accepts exactly one action: `enable` or `disable`. It is available only when the selected Model declares a `status` field and changes that field to the corresponding enabled or disabled value.
 
-The interface also supports controlled SQL-command execution for cases that cannot be expressed through standard Model operations, using explicit parameters rather than value interpolation.
+The interface also supports controlled SQL-command execution for cases that cannot be expressed through standard Model operations, using explicit parameters rather than value interpolation. This route is for data operations on the selected Instance and remains subject to Database's persistence constraints and transaction boundaries. It rejects structural changes, which belong exclusively to Migration. Engine-specific SQL must be identified as such and validated for the selected Engine; it carries no promise of portability when the Engine changes.
 
 **Why:** Differences between Models come from their resolved fields, relationships, constraints, rules, and storage mappings, so one pipeline serves them all and each new Model costs no new access implementation.
 
-**Boundary:** Consumers never receive the engine connection and never reach into tables, ORM mappings, migrations, or physical database files. Model identity and data are not passed as an untyped Model-name string and unrelated field dictionary. A Model without a `status` field rejects the status operation. SQL execution stays inside the Database boundary and never exposes the underlying connection. Model-specific application Behaviour remains in Backend Logic and never enters Database.
+**Boundary:** Consumers never receive the engine connection or access storage outside the published Database interface. Model identity and data are not passed as an untyped Model-name string and unrelated field dictionary. A Model without a `status` field rejects the status operation. The controlled SQL route is the explicit exception to Model-driven access; it stays inside the Database boundary and exposes no connection, ORM mapping, migration implementation, or physical database file. It grants no direct storage access and cannot bypass Migration or manage the transaction independently of the public transaction boundary. Model-specific application Behaviour remains in Backend Logic and never enters Database.
 
 <br>
 
@@ -105,23 +106,23 @@ The interface also supports controlled SQL-command execution for cases that cann
 
 <br>
 
-## 8. Models become tables and Model rules become constraints — traceably
+## 8. Storage mappings and persistence constraints remain traceable to Models
 
-**Rule:** Every persistent domain Model maps to a table. An explicit storage mapping takes precedence over a derived mapping, and every resolved table records the source Model it implements. Every Model rule is preserved and represented in the storage schema: a rule with one clear representation is resolved deterministically, and a rule with several possible representations is resolved in the way that best preserves its domain meaning.
+**Rule:** Every persistent domain Model maps to a table. An explicit storage mapping takes precedence over a derived mapping, and every resolved table records the source Model it implements. Database guarantees the Model rules that depend on stored state, including uniqueness across records and the existence of referenced records, and maps the resolved Model's storage-relevant field properties into persistence constraints. Enforcement remains traceable to the source Model declaration and applies when changes are committed, including under concurrent access. Database reuses shared Model validation for checks determined from Model data instead of maintaining competing definitions. A persistence rule with one clear representation is resolved deterministically; when several representations are possible, the choice preserves its declared meaning.
 
-**Why:** A rule that exists only in the domain description is a rule the stored data can violate.
+**Why:** Persistence guarantees must hold for stored data even when several consumers write concurrently, while keeping a rule's declaration separate from its enforcement prevents duplicate or conflicting ownership.
 
-**Boundary:** The resulting constraint remains traceable to its source rule; no Model rule is silently dropped.
+**Boundary:** Database does not translate application-context or operation-dependent rules into storage constraints or assume responsibility for Backend Logic. Not every Model rule belongs in the storage schema. A rule within Database's persistence responsibility is never silently dropped or weakened; if the selected Engine cannot represent it directly, Database must provide equivalent enforcement within its boundary or report the unsupported requirement.
 
 <br>
 
 ## 9. Relationships are explicit and consistently resolved
 
-**Rule:** A relationship between Models is represented explicitly by a foreign-key field. An explicit relationship field or reference always takes precedence over a default, and an existing declared relationship field is reused rather than duplicated. The foreign key references the related key and uses the same type. When one Model relates to the same target more than once, the relationship roles remain explicit, and the resolved storage schema records the foreign-key field, referenced table, and referenced column.
+**Rule:** A relationship between Models is represented explicitly by a foreign-key field. An explicit relationship field or reference always takes precedence over a default, and an existing declared relationship field is reused rather than duplicated. The foreign key references the related key and uses the same type. Its nullability preserves the resolved Model field and relationship optionality; Database does not apply a separate logical nullability default. If a physical relationship field is needed where no logical field is declared, its nullability follows the resolved relationship meaning. When one Model relates to the same target more than once, the relationship roles remain explicit, and the resolved storage schema records the foreign-key field, referenced table, and referenced column.
 
 **Why:** Explicit, recorded connections are what make stored data navigable and enforceable rather than merely conventional.
 
-**Boundary:** Unstated naming, nullability, indexing, and referential actions are resolved through Database Preferences.
+**Boundary:** Logical field properties and relationship optionality are resolved under the Model Component's rules before storage mapping. Database Preferences supply only unstated physical mapping choices, such as storage naming, indexing, and referential actions, without overriding the resolved Model meaning.
 
 <br>
 
@@ -145,6 +146,16 @@ The interface also supports controlled SQL-command execution for cases that cann
 
 <br>
 
+## 12. Related data operations share an explicit transaction boundary
+
+**Rule:** Database publishes a transaction boundary through its generic interface so a consumer can group related data operations on one Instance. Changes in the group are committed together only when the unit succeeds and all applicable persistence constraints hold; a failed or cancelled unit rolls back its changes. Operations participating in the unit do not commit independently. A standalone write outside an explicit group forms its own atomic unit. Database owns commit, rollback, and resource cleanup, and reports the outcome without exposing the underlying connection.
+
+**Why:** Related changes must not leave partially applied data when an operation fails, and the consumer needs to express that relationship without taking ownership of persistence internals.
+
+**Boundary:** The consumer determines which operations belong together as part of its application behaviour; Database provides the persistence guarantee. A transaction belongs to one resolved Instance. Atomicity across different Instances or external services is not implied, and Engine-specific transaction mechanisms remain internal to Database.
+
+<br>
+
 ## At a Glance
 
 - **Must** — Database is an independent package formed from Database Interface, Data Logic and Mapping, and Storage Adapter, in that dependency direction *(1)*
@@ -160,15 +171,22 @@ The interface also supports controlled SQL-command execution for cases that cann
 - **Must** — every consumer reaches data through one generic Model-driven interface covering create, read, list, update, delete, and status *(6)*
 - **Must** — the status operation accepts only `enable` or `disable`, and only for a Model declaring a `status` field *(6)*
 - **Must** — SQL execution uses explicit parameters and stays inside the Database boundary *(6)*
-- **Never** — a consumer receives the engine connection or reaches into tables, ORM mappings, migrations, or database files *(6)*
+- **Must** — controlled SQL follows the selected Instance's persistence constraints and transaction boundary, with Engine-specific compatibility made explicit *(6)*
+- **Never** — the public SQL route performs structural changes or bypasses Migration or transaction ownership *(6)*
+- **Never** — a consumer receives the engine connection or accesses storage outside the published Database interface *(6)*
 - **Never** — Model identity is passed as an untyped name string with an unrelated field dictionary *(6)*
 - **Must** — every Instance has a stable identifier, name, purpose, and Engine binding, and exactly one is the default *(7)*
 - **Never** — the Instance Registry exposes raw connections or secret values *(7)*
-- **Must** — every persistent Model maps to a table that records its source Model, and every Model rule is represented in the schema *(8)*
-- **Never** — a Model rule is silently dropped or left untraceable to its source *(8)*
+- **Must** — every persistent Model maps to a table that records its source Model, and persistence constraints remain traceable to their logical declarations *(8)*
+- **Must** — Database guarantees constraints requiring stored state at commit, including under concurrent access, and reuses shared Model validation *(8)*
+- **Never** — Database absorbs application-context validation or silently drops or weakens a required persistence constraint *(8)*
 - **Must** — a relationship is an explicit foreign key referencing the related key with the same type, with roles kept explicit *(9)*
+- **Must** — relationship nullability follows the resolved Model meaning; Database defaults cover only unstated physical mapping choices *(9)*
 - **Must** — connection credentials live in runtime configuration outside committed files *(10)*
 - **Must** — every credential field resolves to one at-rest mode, explicit first, otherwise the Preferences default *(10)*
 - **Never** — connection settings, credential storage representations, or encryption keys are exposed or written into generated files *(10)*
 - **Must** — declared initial data is seeded in dependency order, repeatably, preserving explicit relationship identifiers *(11)*
 - **Never** — initial data is supplied by Database Preferences *(11)*
+- **Must** — related data operations on one Instance can share a public transaction boundary that commits or rolls back their changes together *(12)*
+- **Must** — standalone writes are atomic, and Database owns commit, rollback, cleanup, and outcome reporting *(12)*
+- **Never** — an operation inside a transaction commits independently, or a transaction implies atomicity across Instances or external services *(12)*
