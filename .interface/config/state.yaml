@@ -1,0 +1,42 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/config/state.yaml
+  path_note: Mutable Workflow position, Blockers and Open Questions.
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: Apply the current State Component and the active operation's ownership rules.
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+- active
+- blockers
+- open_questions
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: Current or most recently recorded Workflow position.
+  blockers: Unresolved critical conditions.
+  open_questions: Unresolved critical questions for the human.
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- active -->
+  active:
+    mode: planning
+    phase: P2
+    mode_reason: The human invoked the planning operation for phase 2, which resolves to P2 (Database, target database) of project.md; phase 1 is complete, so the phase is ready. No Plan existed, so the operation established the Database Understanding from project.md and the Database, Model, and Development authorities, created the Plan with 4 Groups and 11 Tasks — bounded activities with expected results and verification, without implementation steps — and recorded it in task.yaml; no other Plan was touched.
+    set_by: planning operation (my-interface-tasker) — acting on the human's request to plan phase 2
+    set_at: '2026-09-07T12:15:18+03:30'
+
+  # <!-------------------------------------------- blockers -->
+  blockers: {}
+
+  # <!-------------------------------------------- open_questions -->
+  open_questions: {}
