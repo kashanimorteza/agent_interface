@@ -1,0 +1,12 @@
+# Cross-layer bindings of the Trading Assistant.
+#
+# Owned by Platform. Each section names what the layer of that name consumes:
+# the provider, the interface it is reached through, and any selectable
+# resource it uses. Settings a single layer owns live in that layer's own
+# configuration file, never here, and secret values never appear in either.
+# Sections are added as the phases deliver their layers.
+
+model:
+  # The Model layer consumes no other application layer. It provides the
+  # shared domain declarations through its public import interface.
+  bindings: {}

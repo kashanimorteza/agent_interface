@@ -63,7 +63,17 @@ content:
               constraints: []
               acceptance: "The package installs into a fresh isolated environment from its own declaration, imports by its resolved name, and declares no dependency on another application layer."
               verify: "Installing the package into a clean isolated environment succeeds, and importing it by name succeeds without reaching any other application layer."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:54:32Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed as the only eligible Task; creating the package and its isolated environment."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Created a fresh isolated environment in a temporary directory, installed the package into it from its own declaration, and from outside the package directory imported it by name, asserting that fourteen Models are exposed and that no module of another application layer was loaded; asserted that the declared dependencies contain only the modeling library. Resolved Python 3.14.7 and Pydantic 2.13.5."
+                  outcome: "Passed."
 
             phase_1.package.validation:
               id: "phase_1.package.validation"
@@ -79,7 +89,17 @@ content:
               constraints: []
               acceptance: "For a Model with a required generated field and a nullable field: a complete state whose generated field is pending validates without a placeholder being invented and reports that field as pending; a partial change omitting every field validates and changes nothing; a partial change setting the nullable field to null validates; a partial change setting a required non-nullable field to null is refused; and a complete state missing a required field with no default and no generation is refused."
               verify: "Applying the validation to a Model declared with a required generated field and a nullable field yields those five outcomes in turn, and the outcome of the pending case distinguishes the pending field from a supplied value and from an absent one."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; implementing validation of a complete state and of a partial change."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Declared an ad-hoc Model carrying a required generated field, a required field with no default and no generation, a nullable field, and a defaulted field, then applied the validation to it. Asserted a complete state whose generated field is marked pending reports exactly that field as pending, holds no value for it, is reported as not complete, and in the same result holds the supplied value for the supplied field, the default for the absent defaulted field, and null for the absent nullable field, so the pending field is distinguished from all three; asserted an absent generated field is pending too and that supplying its value completes the state while supplying none is refused; asserted a partial change with no fields is empty; asserted a partial change setting the nullable field to null is accepted as a change; asserted a partial change setting the required field, or the defaulted field, to null is refused; asserted a complete state missing the required field with no default and no generation is refused. Also asserted the marker is refused on a field that does not permit generation, that a declared type constraint still applies in a partial change, that the storage-assigned identifier cannot be changed, and that an undeclared field is refused and named."
+                  outcome: "Passed."
 
             phase_1.package.interface:
               id: "phase_1.package.interface"
@@ -110,7 +130,17 @@ content:
               constraints: []
               acceptance: "Each of the fourteen defined Models is importable from the public interface under exactly one symbol, the set of public Model symbols equals the set of defined Models, and the shared validation support is importable from the same interface."
               verify: "Importing each defined Model by its public name from the interface succeeds, enumerating the interface's public Model symbols yields exactly the fourteen defined Models with no duplicate, and the validation support is reachable from the interface."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:56:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed after every Model and the validation support were implemented; publishing the single public import interface."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Imported each of the fourteen defined Models by its public name from the package interface and asserted each is a Model subclass; enumerated the interface's declared public symbols, filtered to Model subclasses, and asserted the set equals the fourteen defined Models with no duplicate and that the ordered Model registry lists them in project order; asserted the validation entry points, their result and error types, and the generation marker are all declared and reachable from the same interface."
+                  outcome: "Passed."
 
             phase_1.package.documentation:
               id: "phase_1.package.documentation"
@@ -127,7 +157,17 @@ content:
               constraints: []
               acceptance: "The description carries every section the documentation conventions require, names every public Model exactly as the interface exposes it, explains the shared validation and its treatment of absent, null, and pending values, and records no secret value."
               verify: "Following the description's installation and usage instructions from a clean environment succeeds, and every Model named in the description is importable exactly as written."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:57:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed after the interface was published; writing the package description."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted the description carries the purpose-and-boundaries, public-interface, dependencies, configuration, installation, and usage sections, names every public symbol of the interface, explains the absent, null, and pending cases, names all fourteen Models, and contains no environment-style secret assignment with a real value; created a fresh isolated environment, ran the description's own installation command against it, imported every Model named in the description exactly as written, and executed each of its usage examples without error."
+                  outcome: "Passed."
 
         # <!-------------------- models -->
         phase_1.models:
@@ -155,7 +195,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for User is present with its declared properties, password and api_key carry their credential nature and hash-storage rule, and the Admin record is declared with its password and api_key marked as awaiting generation rather than holding a value."
               verify: "A User built from the Admin record with its pending fields left pending reads back name, username, status, and description with their declared properties and reports password and api_key as pending, and a User without a username, or with a non-boolean status, is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted the logical field properties of name (string, required, unique), username (required), password and api_key (credential, permitting generation), status (boolean, default true), and description (nullable); asserted both hash-storage rules are declared and that the Admin record marks password and api_key as awaiting generation; validated the Admin record and asserted exactly those two fields are reported pending, then supplied values for them and asserted name, username, status, and description read back as declared; asserted a refusal without username and with status given as text or as a number."
+                  outcome: "Passed."
 
             phase_1.models.currency:
               id: "phase_1.models.currency"
@@ -171,7 +221,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Currency is present with its declared properties, code is limited to three characters and declared unique, decimal_digits defaults to two, and all eight initial records are declared."
               verify: "A Currency built from the US Dollar record reads back every field as declared, decimal_digits reads two when left unstated, and a Currency whose code has four characters is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted code is a required unique string of size three, decimal_digits is an integer defaulting to two, and symbol is nullable; asserted eight initial records are declared; built a Currency from the US Dollar record and asserted every field reads back as declared; built one without decimal_digits and asserted it reads two; asserted a refusal for a four-character code."
+                  outcome: "Passed."
 
             phase_1.models.trading_platform:
               id: "phase_1.models.trading_platform"
@@ -187,7 +247,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Trading Platform is present with its declared properties, and both initial records are declared with their codes."
               verify: "A Trading Platform built from the Binance record reads back name and code as declared with status true, and a Trading Platform without a code is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted the logical name and that the two initial records carry the codes metatrader_5 and binance; built a Trading Platform from the Binance record and asserted name, code, and status true; asserted a refusal without a code."
+                  outcome: "Passed."
 
             phase_1.models.broker:
               id: "phase_1.models.broker"
@@ -207,7 +277,17 @@ content:
                 - "The Broker name is unique per user, as the composite rule states, and not unique on its own; the exact-name default that would make name unique alone does not apply to this Model."
               acceptance: "Every field the project defines for Broker is present with its declared properties, the relationships to User and Trading Platform are declared through user_id and trading_platform_id, the uniqueness of user_id together with name is declared as a rule for the storing layer, and name alone is not declared unique."
               verify: "A Broker built from the FxPro record reads back every field as declared, its relationships resolve to User and Trading Platform, and a Broker without a user_id is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once User and Trading Platform were declared; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted name is not declared unique on its own and user_id is a required integer; asserted the composite uniqueness rule over user_id and name is declared for the storing layer; asserted the relationships resolve by field to the User and Trading Platform Model classes; built a Broker from the FxPro record and asserted every field reads back as declared; asserted a refusal without user_id."
+                  outcome: "Passed."
 
             phase_1.models.account_group:
               id: "phase_1.models.account_group"
@@ -223,7 +303,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Account Group is present with its declared properties, name is declared unique, and the Default record is declared."
               verify: "An Account Group built from the Default record reads back name as declared with status true and description absent, and an Account Group without a name is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted name is declared unique; built an Account Group from the Default record and asserted name, status true, and description absent; asserted a refusal without a name."
+                  outcome: "Passed."
 
             phase_1.models.account:
               id: "phase_1.models.account"
@@ -244,7 +334,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Account is present with its declared properties, balance defaults to zero, password carries its credential nature and encrypted-storage rule, the three relationships are declared through group_id, broker_id, and base_currency_id, and the Acc-1 record is declared with its password marked as awaiting generation."
               verify: "An Account built from the Acc-1 record with its pending password left pending reads back leverage one hundred and account_type CFD with balance zero when unstated and reports password as pending, and an Account with a non-integer leverage, or without a base_currency_id, is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once Account Group, Broker, and Currency were declared; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted balance is a decimal defaulting to zero and password is a credential permitting generation with the encrypted-storage rule declared; asserted the relationships resolve by field to the Account Group, Broker, and Currency Model classes; asserted the Acc-1 record marks password as awaiting generation; validated that record and asserted password alone is pending and holds no value, then supplied it and asserted leverage one hundred, account_type CFD, and balance zero; asserted a refusal for a fractional leverage, a textual leverage, and a missing base_currency_id."
+                  outcome: "Passed."
 
             phase_1.models.asset:
               id: "phase_1.models.asset"
@@ -260,7 +360,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Asset is present with its declared properties, name and symbol are each declared unique, point_size and digits carry their zero defaults, and all four initial records are declared."
               verify: "An Asset built from the EURUSD record reads back symbol, category, point_size, and digits as declared, and an Asset without a category, or with a non-numeric point_size, is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted name and symbol are each declared unique, point_size is a float defaulting to zero, and digits an integer defaulting to zero; asserted four initial records; built an Asset from the EURUSD record and asserted symbol, category, point_size, and digits; asserted a refusal without a category and with a textual point_size."
+                  outcome: "Passed."
 
             phase_1.models.trailing_group:
               id: "phase_1.models.trailing_group"
@@ -276,7 +386,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Trailing Group is present with its declared properties, name is declared unique, and the Default record is declared."
               verify: "A Trailing Group built from the Default record reads back name as declared with status true, and a Trailing Group with a non-boolean status is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted name is declared unique; built a Trailing Group from the Default record and asserted name and status true; asserted a refusal for a textual status."
+                  outcome: "Passed."
 
             phase_1.models.trailing_rule:
               id: "phase_1.models.trailing_rule"
@@ -293,7 +413,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Trailing Rule is present with its declared properties, take_profit_adjustment and stop_loss_adjustment are optional, trigger_percentage is required, the relationship is declared through trailing_group_id, and no initial record is declared."
               verify: "A Trailing Rule built with a name, a trailing_group_id, and a trigger_percentage and no adjustments is accepted, and a Trailing Rule without a trigger_percentage is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once Trailing Group was declared; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted both adjustments are nullable and trigger_percentage is required; asserted the relationship resolves through trailing_group_id to the Trailing Group Model class and that no initial data is declared; built a Trailing Rule with only name, trailing_group_id, and trigger_percentage and asserted both adjustments read absent; asserted a refusal without trigger_percentage."
+                  outcome: "Passed."
 
             phase_1.models.partial_group:
               id: "phase_1.models.partial_group"
@@ -309,7 +439,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Partial Group is present with its declared properties, name is declared unique, and the Default record is declared."
               verify: "A Partial Group built from the Default record reads back name as declared with status true, and a Partial Group without a name is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted name is declared unique; built a Partial Group from the Default record and asserted name and status true; asserted a refusal without a name."
+                  outcome: "Passed."
 
             phase_1.models.partial_rule:
               id: "phase_1.models.partial_rule"
@@ -326,7 +466,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Partial Rule is present with its declared properties, profit_percentage and close_percentage are both required, the relationship is declared through partial_group_id, and no initial record is declared."
               verify: "A Partial Rule built with a name, a partial_group_id, a profit_percentage, and a close_percentage is accepted, and a Partial Rule without a close_percentage is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once Partial Group was declared; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted profit_percentage and close_percentage are required; asserted the relationship resolves through partial_group_id to the Partial Group Model class and that no initial data is declared; built a Partial Rule with name, partial_group_id, profit_percentage, and close_percentage; asserted a refusal without close_percentage."
+                  outcome: "Passed."
 
             phase_1.models.action_group:
               id: "phase_1.models.action_group"
@@ -342,7 +492,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Action Group is present with its declared properties, name is declared unique, and the Default record is declared."
               verify: "An Action Group built from the Default record reads back name as declared with description absent, and an Action Group with a numeric name is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted name is declared unique; built an Action Group from the Default record and asserted name and description absent; asserted a refusal for a numeric name."
+                  outcome: "Passed."
 
             phase_1.models.action:
               id: "phase_1.models.action"
@@ -367,7 +527,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Action is present with its declared properties, risk_by_reward, take_profit, and stop_loss are required decimals, the five relationships are declared through their carrying fields, and the Default record is declared."
               verify: "An Action built from the Default record reads back its five references and its three decimal values as declared, and an Action without a stop_loss, or with a non-numeric risk_by_reward, is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once Action Group, Asset, Account, Partial Group, and Trailing Group were declared; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted risk_by_reward, take_profit, and stop_loss are required decimals; asserted the five relationships resolve by field to the Action Group, Asset, Account, Partial Group, and Trailing Group Model classes; built an Action from the Default record and asserted its five references and three decimal values; asserted a refusal without stop_loss and with a textual risk_by_reward."
+                  outcome: "Passed."
 
             phase_1.models.position:
               id: "phase_1.models.position"
@@ -396,7 +566,17 @@ content:
               constraints: []
               acceptance: "Every field the project defines for Position is present with its declared properties, profit defaults to zero and is_executed to false, date is a required datetime, the seven relationships are declared through their carrying fields, and no initial record is declared."
               verify: "A Position built with every required field reads back profit zero and is_executed false when both are unstated, and a Position with a non-datetime date, or without a volume, is refused."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once its seven referenced Models were declared; declaring the Model."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Asserted profit defaults to zero, is_executed to false, date is a required datetime, and twenty fields are declared; asserted the seven relationships resolve by field to the Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action Model classes and that no initial data is declared; built a Position with every required field and asserted profit zero and is_executed false; asserted a refusal for a textual date and for a missing volume."
+                  outcome: "Passed."
 
         # <!-------------------- composition -->
         phase_1.composition:
@@ -425,4 +605,14 @@ content:
                 - "The Model layer's settings file carries no settings and its bindings section carries no bindings, because nothing in the Model layer is changeable by a user or environment and it consumes no other layer."
               acceptance: "The layer file holds only Model-owned settings and the public file holds only the Model bindings, neither holds anything the contract assigns to the other, both satisfy the contract, and neither names a secret value."
               verify: "Reading the Model layer's settings file and the public configuration's Model section yields a settings mapping and a bindings mapping that each pass validation against the section contract, and the recorded connections show Model consuming no other layer."
-              status: "todo"
+              status: "done"
+              log:
+                - at: "2026-09-07T20:55:00Z"
+                  status: "claimed"
+                  by: "my-interface-developer"
+                  note: "Claimed once the package existed; establishing the layer's own settings file and the public bindings section."
+                - at: "2026-09-07T20:59:34Z"
+                  status: "done"
+                  by: "my-interface-developer"
+                  check: "Parsed the Model layer's own configuration file inside its code path and asserted its only key is the settings mapping, that the mapping is empty because the layer owns no setting, and that it carries no bindings; parsed the public root configuration and asserted its Model section's only key is the bindings mapping, that the mapping is empty because the layer consumes no other layer, and that it carries no settings, so neither file holds what the section contract assigns to the other; asserted neither file assigns a value to a secret-named key."
+                  outcome: "Passed."
