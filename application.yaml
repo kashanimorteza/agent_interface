@@ -1,0 +1,12 @@
+# Centralized public runtime configuration of the Trading Assistant.
+#
+# Owned by Platform. Each application layer receives only its own section,
+# which carries the settings owned by that layer and the bindings it consumes.
+# Secret values never appear here; they are referenced by name and resolved
+# from the runtime environment. Layers are added as their phases deliver them.
+
+model:
+  # The Model layer is an importable library. It consumes no other layer and
+  # nothing in it is changeable by a user or environment.
+  settings: {}
+  bindings: {}

@@ -27,10 +27,10 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "not set"
-    phase: null
-    mode_reason: "No Workflow operation has been recorded."
-    set_by: "initialization"
-    set_at: null
+    mode: "development"
+    phase: "phase_1"
+    mode_reason: "Development implemented and verified all 18 Tasks of phase_1 (Model); every Task is done with its check recorded."
+    set_by: "my-interface-developer"
+    set_at: "2026-09-07T14:51:00Z"
   blockers: {}
   open_questions: {}
