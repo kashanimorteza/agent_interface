@@ -11,7 +11,7 @@ The application architecture separates Model, Database, Backend, Frontend, and P
 - **Nested Package** — a package inside another package's boundary, with its own responsibility and interface but sharing its parent's installation and runtime where applicable.
 - **Declared Interface** — the surface a provider publishes for consumers, whether an import surface, network API, command, or user interface.
 - **Connection** — a directed dependency from a consumer to a provider through exactly one declared interface.
-- **Platform** — the composition layer owning the operating environment, coordination, startup, networking, runtime configuration delivery, and deployment.
+- **Platform** — the composition layer owning the operating environment, coordination, startup, networking, runtime configuration delivery, and deployment; also the resolved place the target project runs, such as a host, a container, or a cloud.
 - **Runtime Configuration** — the settings a user or environment may change, owned centrally by Platform and delivered to each layer as its own section.
 - **Cross-cutting Capability** — a capability that may affect more than one layer, such as testing, logging, error handling, or authentication.
 
@@ -136,6 +136,16 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
+## 12. Platform is realized with every phase, not after them
+
+**Rule:** Platform has no phase of its own. Each phase that delivers a layer also delivers that layer's part of the composition: its section of the centralized runtime configuration, the process or service that runs it, and its declared connections to the layers already present. The complete system is runnable after every phase, not only after the last.
+
+**Why:** A composition assembled only at the end is assembled against layers that were never run together, and every integration problem surfaces at once at the point where it is most expensive. Composing as each layer arrives keeps the running system one step behind the plan at most.
+
+**Boundary:** This decides when composition happens, not who owns it. Platform still owns the composition and each layer still owns its own implementation; a phase contributes its layer's part under Platform's rules and does not restructure what earlier phases composed. Where the target project runs — a host, a container, a cloud — is a technical choice resolved from the project definition and Development Preferences, and a phase composes for that choice rather than deciding it.
+
+<br>
+
 ## At a Glance
 
 - **Must** — every application layer and architectural sublayer is a package owning its implementation, rules, configuration, and interfaces *(1)*
@@ -162,3 +172,5 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Never** — nesting alone exposes a package's internals to consumers of its parent *(10)*
 - **Must** — every package, including subpackages, carries a public description covering purpose, boundaries, interface, dependencies, configuration, setup, and usage *(11)*
 - **Never** — documentation records credentials or other secret values, or drifts from the implemented interface *(11)*
+- **Must** — every phase that delivers a layer also delivers that layer's part of the composition, so the system is runnable after every phase *(12)*
+- **Never** — Platform is left to a phase of its own, or a phase restructures what earlier phases composed *(12)*

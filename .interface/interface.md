@@ -9,12 +9,15 @@
 Use this document as the entry point and follow its sections in this order:
 
 1. **Introduction** — understand the purpose, operation, and boundaries of Agent Interface.
-2. **Foundational Files** — locate the Interface document, human project definition, and Schema foundation.
-3. **Layers** — understand how Principles, Preferences, and Config represent each Component.
-4. **Component** — locate every Component's Principle and Preference files, plus the Schema and Config files of the Components that keep operational records.
-5. **Modes** — understand the operating states used to configure, plan, and develop a project.
-6. **Core Interface Skills** — locate the external capabilities that perform Interface operations.
-7. **Workflow** — follow the ordered human-facing path from project definition to development.
+2. **Terms** — learn the vocabulary the rest of this document and every Component use.
+3. **Foundational Files** — locate the Interface document, human project definition, and Schema foundation.
+4. **Layers** — understand how Principles, Preferences, and Config represent each Component.
+5. **Authority and Ownership** — know which record belongs to whom, and which operation may write it.
+6. **Component** — locate every Component's Principle and Preference files, plus the Schema and Config files of the Components that keep operational records.
+7. **Modes** — understand the operating states used to configure, plan, and develop a project.
+8. **Core Interface Skills** — locate the external capabilities that perform Interface operations.
+9. **Workflow** — follow the ordered human-facing path from project definition to development.
+10. **Supporting Operations** — locate Review, Reset, and Skill Installation, which support the Workflow without adding a step.
 
 
 
@@ -27,14 +30,14 @@ Use this document as the entry point and follow its sections in this order:
 <!-------------------------- Purpose -->
 ### Purpose
 
-Agent Interface is an independent interface between **Developers** and **AI Agents** for establishing a common protocol, structure, and standard for software development.
+Agent Interface is an independent interface between **Humans** and **AI Agents** for establishing a common protocol, structure, and standard for software development.
 
-Its purpose is to let a Developer define a target project in natural language and give Agents common Principles and Preferences for understanding, planning, and developing it.
+Its purpose is to let a Human define a target project in natural language and give Agents common Principles and Preferences for understanding, planning, and developing it.
 
 <!-------------------------- Operation -->
 ### Operation
 
-The Developer supplies the human project definition. Operations that need project meaning read it and the applicable Principles and Preferences to establish their own Understanding. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical operations such as Config initialization do not interpret the project.
+The Human supplies the project definition. Operations that need project meaning read it and the applicable Principles and Preferences to establish their own Understanding. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical operations such as Config initialization do not interpret the project.
 
 Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format. Understanding is formed by each operation and is not stored in Config.
 
@@ -51,6 +54,27 @@ Human project definitions remain flexible, while the Interface gives Agents stab
 `interface.md` is the canonical introduction and navigation entry point of Agent Interface. It explains the system and locates every current resource, Component, Layer, Agent Skill, Mode, and Workflow step.
 
 Agent Interface operations and supporting Agents must not edit this file. If an operation determines that it should change, the operation reports the required change to the human and leaves the file untouched. Live Workflow position belongs to the State Component; this document only explains and locates it.
+
+
+
+<!--------------------------------------------------------------------------------- Terms --->
+<br > <br>
+
+## Terms
+
+- **Human** — the person who defines the target project and owns every authored Interface source.
+- **Target Project** — the software the Human defines and the Agents build; it is described by the project definition and never by the Interface itself.
+- **Component** — one named part of the Interface that holds a responsibility and describes itself through its own Principles and Preferences; some Components also keep an operational record.
+- **Layer** — one of the three forms a Component takes: Principles for what is mandatory, Preferences for what is chosen when the project is silent, and Config for what is currently recorded.
+- **Schema** — the structure a file follows: a structure standard for a file the Human authors, or an operational format for a file an operation generates, together with the initial template it starts from.
+- **Config** — the mutable operational records that coordinate the Workflow; they hold where things stand, never what the project means.
+- **Phase** — one stage of the target project as the Human defines it, each targeting one Component; the unit that Planning, Development, and Review act on.
+- **Workflow** — the ordered path from the Human's project definition to a developed project — Define, Configure, Plan, Develop — together with the operations that support it without adding a step.
+- **Mode** — the position the Workflow currently occupies, drawn from a fixed set of values and recorded by State.
+- **Operation** — one bounded piece of work performed on the Interface or the project. An operation may execute a Mode, or support the Workflow without one.
+- **Skill** — the external capability that performs an operation; catalogued by the Interface but not part of its structure.
+- **Supporting Agent** — a read-only external capability that reports on the Interface and performs no operation.
+- **Understanding** — what an operation establishes for itself at the moment it runs, by reading the current sources; it is never stored. *Agent Interface Understanding* is knowing how the Interface is organized and where each resource is; *Target Project Understanding* is knowing what the target project is and requires.
 
 
 
@@ -80,7 +104,7 @@ responsibility = Human-managed natural-language definition of the target project
 ```text
 name = Schema
 path = .interface/schema/
-responsibility = The structure of every Interface file: the common YAML frame, the structure standards for the Principles and Preferences layers, and the operational storage formats for Task, State, and Review; contains no project description or stored Understanding
+responsibility = The structure of every Interface file: the common YAML frame, the structure standards for the Principles and Preferences layers, and the operational storage format of every Component that keeps a record; contains no project description or stored Understanding
 ```
 
 Schema holds two kinds of document. A **structure standard** defines the shape of a file a human authors, so that every Component writes the same kind of file the same way. An **operational format** defines the shape of a file an operation generates, and carries the initial template that operation copies. Each is listed below.
@@ -163,7 +187,7 @@ note = It records which phases were reviewed, the outcome of each, and every Fin
 
 ## Layers
 
-Every Component has Principles and Preferences. The Config layer contains only the Task, State, and Review operational records; other Components have no Interface Config or dedicated Schema. An empty Preference file contributes no defaults, so consumers use the other applicable sources.
+Every Component has Principles and Preferences. The Config layer contains only the operational records of the Components that keep one, and the Component section lists them; other Components have no Interface Config or dedicated Schema. An empty Preference file contributes no defaults, so consumers use the other applicable sources.
 
 Application runtime settings, such as database connections and service configuration, remain part of the target application's implementation under Development and Platform. They are distinct from the Interface Config layer.
 
@@ -190,7 +214,7 @@ answers = With what
 ```text
 name = Config
 path = .interface/config/
-responsibility = Stores task.yaml, state.yaml and review.yaml: mutable planning records, execution progress, active Workflow position, Blockers, Open Questions, and recorded review Findings
+responsibility = Stores the operational record of every Component that keeps one: planned work and its progress, the active Workflow position, Blockers and Open Questions, and recorded review Findings
 answers = What work is recorded, where the Workflow currently stands, and what review has established
 initialization = Copy the initial template from each operational Schema; later operations update the stored values
 ```
@@ -201,26 +225,36 @@ initialization = Copy the initial template from each operational Schema; later o
 
 ## Authority and Ownership
 
-Explicit project intent and applicable Principles guide each operation. Preferences supply defaults where the project leaves a choice unstated. The Task, State, and Review Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored layers, and the general YAML Schema supplies the common frame every YAML file shares. Config stores those records and does not define the target project.
+Explicit project intent and applicable Principles guide each operation. Preferences supply defaults where the project leaves a choice unstated. The operational Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored layers, and the general YAML Schema supplies the common frame every YAML file shares. Config stores those records and does not define the target project.
 
 ```text
 Project = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
 Preferences = technical defaults for unspecified choices
-Schema = general YAML frame, authored-layer structure, and Task/State/Review storage structure
-Config = mutable Task, State and Review records
+Schema = general YAML frame, authored-layer structure, and the storage structure of every operational record
+Config = the mutable operational records
 ```
+
+Ownership answers who a record belongs to, and it belongs to the Human or to a Component:
 
 ```text
 Human = owns Interface, Project, Principles, Preferences, and Schema sources
-Configure = generates the operational Config files from their Schema defaults, preserving existing operational data
-Tasker = owns Plans, Groups, and Tasks
-Developer = owns implementation and execution progress
+Task = owns Plans, Groups, Tasks, their status, and their history
+State = owns the active Workflow position, Blockers, and Open Questions
 Review = owns recorded Findings and their state
-State = owns active Workflow position, Blockers, and Open Questions
 ```
 
-Each operation may change only the information owned by its current authority. Operational records follow their source authorities and must not redefine them.
+Write authority answers which operation may change a record, and every write happens under the rules of the Component that owns it:
+
+```text
+Configure = writes every operational Config, creating it from its Schema template or bringing it to the current structure
+Planning = writes Plans, Groups, and Tasks under Task's rules
+Development = writes implementation, and Task status and history under Task's rules
+Review = writes Findings under Review's rules
+Every operation = writes the active Workflow position and its own Blockers and Open Questions under State's rules
+```
+
+Each operation writes only the records it has authority over, and always under the rules of the Component that owns them. Operational records follow their source authorities and must not redefine them.
 
 
 <!--------------------------------------------------------------------------------- Component --->
@@ -345,7 +379,7 @@ State records the active Mode. Agent Skills are external capabilities that perfo
 - **State value:** `configuring`
 - **Phase-specific:** no
 - **Responsibility:** initializes the mutable Config files from their Schema templates.
-- **Inputs:** the Task, State, and Review Schemas, the common YAML Schema, and any existing operational records.
+- **Inputs:** every operational Schema, the common YAML Schema, and any existing operational records.
 - **Initialization:** copy each Schema's `initial` mapping into its mapped Config file when that file is absent. Copy the template values, not the Schema definitions.
 - **Preservation:** keep every operational record a Config file already holds; the owning Schema states what those are. An existing valid file needs no rewrite. A Schema mismatch requires a data-preserving update; a conflict must be surfaced rather than resolved by resetting work.
 - **Validation:** check each Config file against the common file frame and its operational Schema.
@@ -496,7 +530,7 @@ Reset resolves the implementation directories it may remove from the code path e
 ```text
 order = 1
 name = Define the Project
-actor = Developer
+actor = Human
 action = Define the target project, its Models, and its ordered phases in .interface/project.md
 ```
 <!-------------------------- Configure -->

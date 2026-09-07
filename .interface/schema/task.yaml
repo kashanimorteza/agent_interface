@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-task"
-  version: "8.0"
+  version: "8.1"
   purpose: "Operational Task file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Task Component."
 initialization:
   source: "initial"
@@ -15,11 +15,11 @@ operational_scope:
   stores: "Which work exists, what each activity must produce, what it depends on, where it stands, and what has happened to it."
   excludes: "Project concepts, resolved technical choices, technologies, languages, Component rules, and any explanation that the human project definition, the Principles, or the Preferences already state. A stored copy of those goes stale and competes with its source."
   resolution: "Anything derivable from those sources is resolved from them at the moment the work is implemented, never read back from this file."
-  constraints: "A constraint is stored only when it is specific to the work itself and derivable from no other source. This limits what the file stores, never what an implementation must respect."
+  constraints: "A constraint is stored only when it is specific to the work itself and derivable from no other source. A decision Planning makes that no source states — an interface shape, a boundary, an invariant — is such a constraint, and it is stored once at the level it binds rather than repeated in every Task beneath it. This limits what the file stores, never what an implementation must respect."
 inheritance:
   purpose: "A Plan, its Groups, and their Tasks form one nested structure, and that nesting is the context of every record beneath it."
   context: "A Task's phase is the Plan that contains it and its Group is the Group that contains it. Neither is stored inside the Task; the nesting and the Task identifier carry them."
-  placement: "Every piece of context this file holds is stored exactly once, at the highest level where it holds: the targeted Component in the Plan, the work area in the Group, and an activity-specific constraint in the Task."
+  placement: "Every piece of context this file holds is stored exactly once, at the highest level where it holds: the targeted Component in the Plan, the work area in the Group, and a constraint at whichever of the three levels it holds for — the Plan when it binds the whole phase, the Group when it binds one work area, the Task when it binds one activity."
   resolution: "A Group inherits the Plan's context and a Task inherits both. A lower level may add to inherited context or make it stricter; it never repeats it and never contradicts it. Reading a Task means reading it together with its Group and Plan."
   duplication: "The same statement never appears in more than one Task of a Plan. A statement written into several Tasks belongs to their common Group or Plan and is stored there instead."
 structure_independence:
@@ -65,6 +65,10 @@ sections:
             required: true
             default: ""
             purpose: "The intended implementation outcome of the phase, in one statement."
+          constraints:
+            required: true
+            default: []
+            purpose: "Restrictions and invariants that bind every Task of this phase, are specific to the work, and are derivable from no other source; empty when none apply, which is the normal case. Stated as observable boundaries. Inherited by every Group and Task in this Plan and never repeated in them."
           task_count:
             required: true
             default: 0
@@ -99,6 +103,10 @@ sections:
                     required: true
                     default: ""
                     purpose: "The result produced when every applicable Task in the Group is complete."
+                  constraints:
+                    required: true
+                    default: []
+                    purpose: "Restrictions and invariants that bind every Task of this work area but not the whole phase, are specific to the work, and are derivable from no other source; empty when none apply, which is the normal case. Stated as observable boundaries. Inherited by every Task in this Group and never repeated in them."
                   task_count:
                     required: true
                     default: 0
@@ -148,7 +156,7 @@ sections:
                           constraints:
                             required: true
                             default: []
-                            purpose: "Restrictions and invariants specific to this Task alone and derivable from no other source, stated as observable boundaries; empty when none apply, which is the normal case. A restriction stated by the project definition, a Principle, or a Preference is resolved from its own source and is never copied here."
+                            purpose: "Restrictions and invariants specific to this Task alone and derivable from no other source, stated as observable boundaries; empty when none apply, which is the normal case. A restriction stated by the project definition, a Principle, or a Preference is resolved from its own source and is never copied here; one shared with another Task of the same Plan belongs to their Group or Plan instead."
                           acceptance:
                             required: true
                             default: ""
