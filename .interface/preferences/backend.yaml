@@ -3,8 +3,8 @@ meta:
   path: ".interface/preferences/backend.yaml"
   path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
   standard: "Agent Project Interface"
-  version: "3.0"
-  updated: "2026-09-05"
+  version: "3.1"
+  updated: "2026-09-07"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -32,7 +32,7 @@ content_map:
   defaults: "Backend-wide code path and language defaults."
   languages: "Supported Backend languages, versions, environments, and naming conventions."
   api_frameworks: "Supported API frameworks and their versions."
-  layers: "Technical defaults grouped by the Logic, Data Access, and API layers."
+  layers: "Technical defaults grouped by the Logic, Data Access, and API layers, including the source layout of Model Logic units."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -62,6 +62,14 @@ content:
 
   layers:
     logic:
+      model_logic_layout:
+        unit_per_model: true
+        file_per_model: true
+        file_name: "<model>"
+        file_naming: "languages.<language>.naming.files"
+        file_extension: "language_default"
+        shared_definition_file: false
+        registry_may_import_units: true
       standard_model_operations:
         - "create"
         - "get"

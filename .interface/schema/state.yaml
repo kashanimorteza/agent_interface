@@ -1,7 +1,12 @@
 schema:
   id: "agent-interface-state"
-  version: "10.0"
+  version: "11.0"
   purpose: "Operational State file structure. Sections describe stored content; initial is the empty configuration template. State meanings and behaviour are defined by the State Component."
+operational_scope:
+  purpose: "This file records where the Workflow currently stands. It is an operational record, not a description of the project."
+  stores: "The active mode, the phase when the work is phase-specific, the provenance of the latest update, the unresolved Blockers, and the unresolved Open Questions."
+  excludes: "Project concepts, resolved technical choices, Component rules, implementation plans, Task content or progress, and any explanation that the human project definition, the Principles, or the Preferences already state."
+  resolution: "Anything derivable from those sources is resolved from them when an operation runs, never read back from this file."
 initialization:
   source: "initial"
   purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."
