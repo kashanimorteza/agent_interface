@@ -11,7 +11,7 @@ Use this document as the entry point and follow its sections in this order:
 1. **Introduction** — understand the purpose, operation, and boundaries of Agent Interface.
 2. **Foundational Files** — locate the Interface document, human project definition, and Schema foundation.
 3. **Layers** — understand how Principles, Preferences, and Config represent each Component.
-4. **Component** — locate every Component's Principle and Preference files, plus Task and State Schema and Config files.
+4. **Component** — locate every Component's Principle and Preference files, plus the Schema and Config files of the Components that keep operational records.
 5. **Modes** — understand the operating states used to configure, plan, and develop a project.
 6. **Core Interface Skills** — locate the external capabilities that perform Interface operations.
 7. **Workflow** — follow the ordered human-facing path from project definition to development.
@@ -36,7 +36,7 @@ Its purpose is to let a Developer define a target project in natural language an
 
 The Developer supplies the human project definition. Operations that need project meaning read it and the applicable Principles and Preferences to establish their own Understanding. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical operations such as Config initialization do not interpret the project.
 
-Config contains only the mutable Task and State files used to coordinate this work. Schemas define their storage format. Understanding is formed by each operation and is not stored in Config.
+Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format. Understanding is formed by each operation and is not stored in Config.
 
 <!-------------------------- Independence -->
 ### Independence
@@ -80,7 +80,7 @@ responsibility = Human-managed natural-language definition of the target project
 ```text
 name = Schema
 path = .interface/schema/
-responsibility = The structure of every Interface file: the common YAML frame, the structure standards for the Principles and Preferences layers, and the operational storage formats for Task and State; contains no project description or stored Understanding
+responsibility = The structure of every Interface file: the common YAML frame, the structure standards for the Principles and Preferences layers, and the operational storage formats for Task, State, and Review; contains no project description or stored Understanding
 ```
 
 Schema holds two kinds of document. A **structure standard** defines the shape of a file a human authors, so that every Component writes the same kind of file the same way. An **operational format** defines the shape of a file an operation generates, and carries the initial template that operation copies. Each is listed below.
@@ -145,13 +145,25 @@ generates = .interface/config/task.yaml
 note = It records which work exists, what each activity must produce, what it depends on, where it stands, and its history. Context is stored once at the highest level where it holds, no record names a file or path, and nothing derivable from the project definition, the Principles, or the Preferences is stored here
 ```
 
+<!-------------------------- Review Schema -->
+#### Review Schema
+
+```text
+name = Review Schema
+path = .interface/schema/review.yaml
+kind = operational format
+responsibility = The stored shape of the Review Config file, and the initial template Configure copies to create it
+generates = .interface/config/review.yaml
+note = It records which phases were reviewed, the outcome of each, and every Finding with what was expected, what was observed, the evidence for it, and where it stands. A Finding refers to what it judged and never restates it
+```
+
 
 <!--------------------------------------------------------------------------------- Layers --->
 <br > <br>
 
 ## Layers
 
-Every Component has Principles and Preferences. The Config layer contains only Task and State operational records; other Components have no Interface Config or dedicated Schema. An empty Preference file contributes no defaults, so consumers use the other applicable sources.
+Every Component has Principles and Preferences. The Config layer contains only the Task, State, and Review operational records; other Components have no Interface Config or dedicated Schema. An empty Preference file contributes no defaults, so consumers use the other applicable sources.
 
 Application runtime settings, such as database connections and service configuration, remain part of the target application's implementation under Development and Platform. They are distinct from the Interface Config layer.
 
@@ -178,9 +190,9 @@ answers = With what
 ```text
 name = Config
 path = .interface/config/
-responsibility = Stores task.yaml and state.yaml: mutable planning records, execution progress, active Workflow position, Blockers, and Open Questions
-answers = What work is recorded and where the Workflow currently stands
-initialization = Copy the initial template from each of the two operational Schemas; later operations update the stored values
+responsibility = Stores task.yaml, state.yaml and review.yaml: mutable planning records, execution progress, active Workflow position, Blockers, Open Questions, and recorded review Findings
+answers = What work is recorded, where the Workflow currently stands, and what review has established
+initialization = Copy the initial template from each operational Schema; later operations update the stored values
 ```
 
 
@@ -189,22 +201,22 @@ initialization = Copy the initial template from each of the two operational Sche
 
 ## Authority and Ownership
 
-Explicit project intent and applicable Principles guide each operation. Preferences supply defaults where the project leaves a choice unstated. Task and State Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored layers, and the general YAML Schema supplies the common frame every YAML file shares. Config stores those records and does not define the target project.
+Explicit project intent and applicable Principles guide each operation. Preferences supply defaults where the project leaves a choice unstated. The Task, State, and Review Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored layers, and the general YAML Schema supplies the common frame every YAML file shares. Config stores those records and does not define the target project.
 
 ```text
 Project = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
 Preferences = technical defaults for unspecified choices
-Schema = general YAML frame and Task/State storage structure
-Config = mutable Task and State records
+Schema = general YAML frame, authored-layer structure, and Task/State/Review storage structure
+Config = mutable Task, State and Review records
 ```
 
 ```text
 Human = owns Interface, Project, Principles, Preferences, and Schema sources
-Configure = generates the Task and State Config files from their Schema defaults, preserving existing operational data
+Configure = generates the operational Config files from their Schema defaults, preserving existing operational data
 Tasker = owns Plans, Groups, and Tasks
 Developer = owns implementation and execution progress
-Reviewer = owns verification findings and reports
+Review = owns recorded Findings and their state
 State = owns active Workflow position, Blockers, and Open Questions
 ```
 
@@ -294,6 +306,19 @@ schema = .interface/schema/task.yaml
 config = .interface/config/task.yaml
 ```
 
+<!-------------------------- Review -->
+
+### Review
+
+```text
+name = Review
+responsibility = Independent judgement of an implemented phase against what was asked, and the recorded Findings and their state
+principle = .interface/principles/review.md
+preference = .interface/preferences/review.yaml
+schema = .interface/schema/review.yaml
+config = .interface/config/review.yaml
+```
+
 
 
 
@@ -319,12 +344,12 @@ State records the active Mode. Agent Skills are external capabilities that perfo
 
 - **State value:** `configuring`
 - **Phase-specific:** no
-- **Responsibility:** initializes the two mutable Config files from their Schema templates.
-- **Inputs:** the Task and State Schemas, the common YAML Schema, and any existing operational records.
+- **Responsibility:** initializes the mutable Config files from their Schema templates.
+- **Inputs:** the Task, State, and Review Schemas, the common YAML Schema, and any existing operational records.
 - **Initialization:** copy each Schema's `initial` mapping into its mapped Config file when that file is absent. Copy the template values, not the Schema definitions.
-- **Preservation:** keep existing Tasks, progress, active State, Blockers, and questions. An existing valid file needs no rewrite. A Schema mismatch requires a data-preserving update; a conflict must be surfaced rather than resolved by resetting work.
+- **Preservation:** keep every operational record a Config file already holds; the owning Schema states what those are. An existing valid file needs no rewrite. A Schema mismatch requires a data-preserving update; a conflict must be surfaced rather than resolved by resetting work.
 - **Validation:** check each Config file against the common file frame and its operational Schema.
-- **Output:** `.interface/config/task.yaml` and `.interface/config/state.yaml`.
+- **Output:** `.interface/config/task.yaml`, `.interface/config/state.yaml`, and `.interface/config/review.yaml`.
 
 Configuring does not produce project descriptions, technical Component configurations, or phase Plan shells. Planning creates actual Plans for requested phases. State's initial template is `not set`; a running operation records its actual mode, provenance, and time according to the State Component.
 
@@ -334,7 +359,7 @@ Configuring does not produce project descriptions, technical Component configura
 - **State value:** `planning`
 - **Phase-specific:** yes
 - **Responsibility:** uses current Target Project Understanding for one requested phase to create bounded, verifiable activities without prescribing implementation.
-- **Inputs:** the requested phase in `.interface/project.md`, applicable Principles and Preferences, and current Task and State records.
+- **Inputs:** the requested phase in `.interface/project.md`, applicable Principles and Preferences, current Task and State records, and the gap Findings recorded for that phase.
 - **Scope:** the requested phase; its target selects the Component being planned.
 - **Output:** `.interface/config/task.yaml`.
 
@@ -382,7 +407,7 @@ responsibility = Defines human-owned file boundaries and the decision policy sha
 name = my-interface-configure
 path = .claude/skills/my-interface-configure/SKILL.md
 invocation = /my-interface-configure
-responsibility = Initialize Task and State Config from their Schema templates, preserving existing records
+responsibility = Initialize every operational Config from its Schema template and bring an existing one to the current structure, preserving existing records
 mode = configuring
 ```
 <!-------------------------- Tasker -->
@@ -412,7 +437,7 @@ mode = development
 name = my-interface-reviewer
 path = .claude/skills/my-interface-reviewer/SKILL.md
 invocation = /my-interface-reviewer <phase-number>
-responsibility = Review one implemented phase and report evidence-based findings without repairing it
+responsibility = Review one implemented phase, record evidence-based Findings in the Review Config, and report them without repairing the result
 mode = none
 ```
 <!-------------------------- Reset -->
@@ -436,14 +461,26 @@ responsibility = Discover and install compatible Agent Skills for technologies i
 mode = none
 ```
 
+### Supporting Agents
+
+A supporting Agent is a read-only capability invoked by another operation or by the human. It executes no Workflow Mode and writes nothing.
+
+```text
+name = interface-reader
+path = .claude/agents/interface-reader.md
+responsibility = Report where the build stands from the current operational Config records: active mode and phase, phase plans and counts, eligible work, Blockers, Open Questions, and open review Findings, each cited to its source
+mode = none
+writes = none
+```
+
 
 The reset stages are:
 
 1. **Configure:** remove root implementation directories when present and clear every entry inside `.interface/config/`.
-2. **Task:** remove root implementation directories, clear Groups and Tasks while preserving phase Plan shells, set active State to `not set`, and clear the active phase.
-3. **Develop:** remove root implementation directories, preserve Tasks and their history while returning every Task to `todo`, set active State to `planning`, and clear the active phase.
+2. **Task:** remove root implementation directories, clear Groups and Tasks while preserving phase Plan shells, clear the recorded Findings for the affected phases, set active State to `not set`, and clear the active phase.
+3. **Develop:** remove root implementation directories, preserve Tasks and their history while returning every Task to `todo`, clear the recorded Findings for the affected phases, set active State to `planning`, and clear the active phase.
 
-The fixed root implementation directories currently recognized by Reset are `model/`, `database/`, `backend/`, `frontend/`, and `developer/`.
+Reset resolves the implementation directories it may remove from the code path each Component records in its own Preferences. It removes no directory that no Component claims, and this document holds no list of its own.
 
 
 
@@ -462,14 +499,14 @@ name = Define the Project
 actor = Developer
 action = Define the target project, its Models, and its ordered phases in .interface/project.md
 ```
-<!-------------------------- Interpret the Project -->
-### Initialize Config
+<!-------------------------- Configure -->
+### Configure
 
 ```text
 order = 2
-name = Initialize Config
+name = Configure
 skill = /my-interface-configure
-action = Initialize .interface/config/task.yaml and .interface/config/state.yaml from the initial templates in their Schemas; preserve existing operational records
+action = Initialize every operational Config file under .interface/config/ from the initial template in its Schema; preserve existing operational records
 ```
 <!-------------------------- Generate Tasks -->
 ### Generate Tasks
@@ -496,14 +533,14 @@ action = Implement and verify eligible Tasks for the requested phase
 
 ## Supporting Operations
 
-These operations support the main Define → Initialize → Plan → Develop Workflow without adding a new Workflow Mode or changing the ordered path.
+These operations support the main Define → Configure → Plan → Develop Workflow without adding a new Workflow Mode or changing the ordered path.
 
 ### Review
 
 ```text
 skill = /my-interface-reviewer <phase-number>
 when = After Development, when the implemented result needs independent verification
-action = Inspect the requested phase against the current project definition, applicable Principles and Preferences, and Plan, then report evidence-based findings without repairing it
+action = Inspect the requested phase against the current project definition, applicable Principles and Preferences, and Plan, then record evidence-based Findings in .interface/config/review.yaml and report them without repairing the result
 state = Does not enter or change a Workflow Mode
 ```
 

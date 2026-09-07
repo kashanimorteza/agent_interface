@@ -1,6 +1,6 @@
 ---
 name: my-interface-skill-installer
-description: Discover and install compatible AI Agent Skills for technologies present in the current target project. Use for explicit install, synchronization, or refresh requests without changing application dependencies or code.
+description: Discover and install compatible AI Agent Skills for the technologies present in the current target project. Use for an explicit install, synchronization, or refresh request; never changes application dependencies or code.
 disable-model-invocation: true
 ---
 
@@ -8,43 +8,61 @@ disable-model-invocation: true
 
 ## Role
 
-Support the target project by discovering and, after approval, installing compatible AI Agent Skills for its technologies. Do not initialize Config, plan implementation, or develop the application. A technology's presence in the project makes it eligible; do not dismiss a compatible Skill merely because the technology is common or Claude Code can work with it without one.
+Support the target project by discovering and, after approval, installing compatible AI Agent Skills for the technologies it actually uses.
+
+A technology's presence in the project makes it eligible. Do not dismiss a compatible Skill because the technology is common, popular, or something the agent can already work with unaided: a Skill carries current practice for that technology, which general capability does not.
+
+This operation equips the environment, not the project. What it installs lives where the agent runs and does not travel with the repository, so a fresh checkout on another machine starts without any of it. Nothing here belongs in the project's own dependencies, and nothing the project needs in order to run may be introduced this way — that is Development's work.
+
+Detection reads what the project actually uses, which is not always what it chose. A technology found in the implementation but absent from the Preferences is still eligible, and the mismatch itself is worth reporting: it means the project is running on something its own choices do not describe.
 
 ## Workflow
 
 ### Detect
 
-First establish Agent Interface Understanding by reading the canonical Interface document. Use it to understand the Interface organization, Skill Installer's supporting role, and the current locations of relevant project sources.
+First establish Agent Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Skill Installer's supporting role, and the current locations of the relevant project sources.
 
-Then establish Target Project Understanding by reading the human project definition and applicable Principles and Preferences. Detect eligible technologies from those current sources and inspect dependency manifests, lockfiles, runtime-version files, framework configuration, and existing implementation as compatibility and installation evidence. Task and State Config are operational records and do not define project technologies.
+Then establish Target Project Understanding by reading the human project definition and the applicable Principles and Preferences. Detect the eligible technologies from those current sources, and inspect dependency manifests, lockfiles, runtime-version files, framework configuration, and the existing implementation as compatibility and installation evidence. The operational Config records do not define project technologies.
 
-Check project and personal Skills currently visible to Claude Code, then inspect installed plugins with `claude plugin list --json` so compatible existing capabilities are not duplicated.
+The set of technologies is derived on every run, never remembered. A project gains and loses technologies over its life, and a remembered list would keep matching the project it was written for rather than the one in front of you.
 
-Detection is read-only. A part's inactive phase does not make a technology absent and is not a reason to skip matching it.
+Detection is read-only. A Component whose phase has not started yet is still a Component whose technology is present, so an inactive phase is not a reason to skip matching it.
+
+Then determine what is already available, so that nothing compatible is duplicated: the Skills currently visible in this environment, and the capabilities already supplied by installed plugins.
 
 ### Match and install
 
+Establish the current way to discover and install a Skill in this environment before relying on any particular mechanism. Verify that the environment's own Skill and plugin management capability is present and ask it what it supports, rather than assuming a command, an option, a scope name, or a catalog name that an earlier version offered. When a documented interactive capability exists alongside the command-line one, treat it as an equally valid route.
+
 For each detected technology:
 
-1. Skip installation when a compatible Skill is already available in the current Claude Code environment.
-2. Treat the Bash-accessible Claude Code CLI as a supported discovery and installation capability; do not decide it is unavailable merely because no dedicated marketplace tool appears in the model's tool list. Verify it with `command -v claude` and `claude plugin --help`.
-3. List configured marketplaces with `claude plugin marketplace list` and query their catalogs with `claude plugin list --available --json`. This is the primary supported discovery mechanism. Plugin marketplaces are valid Skill distribution: a plugin may bundle one or more Skills.
-4. Match candidates by their declared purpose, source, and component inventory, not by name alone. Inspect the catalog metadata and the candidate's marketplace or upstream manifest at its declared source, or use the interactive `/plugin` details pane. Do not claim a candidate supplies a relevant Skill until its components confirm that; a name match or an LSP/MCP component alone is not a Skill match.
-5. Prefer a matching candidate from `claude-plugins-official`, then a technology-maintained candidate from another configured marketplace, then a trusted third-party candidate. If discovery identifies an unconfigured marketplace, adding it is a separate external change that requires approval.
-6. Verify major-version compatibility before proposing installation.
-7. Present the selected plugin and Skill, marketplace and upstream source, installation scope, all bundled components or permissions, and compatibility evidence to the Developer before any external installation or update. Recommend `local` scope for a project-specific match unless the Developer chooses `project` or `user` scope.
-8. After approval, install with `claude plugin install <plugin@marketplace> --scope <local|project|user>`. Do not pass `--yes` for a command-based source unless the Developer explicitly approved that command. Verify the result with `claude plugin list --json`; use `claude plugin details <plugin>` after installation when component verification is useful, and report when `/reload-plugins` is needed for activation.
+1. Skip installation when a compatible Skill is already available.
+2. Discover candidates through the environment's supported discovery mechanism, across every catalog it currently reports. A catalog may distribute a Skill inside a larger bundle, so a bundle is a valid candidate.
+3. Match candidates by their declared purpose, source, and component inventory, not by name alone. Inspect the candidate's own metadata and manifest at its declared source. Do not claim a candidate supplies a relevant Skill until its components confirm that; a name match, or a component of a different kind, is not a Skill match.
+4. Prefer the most authoritative source the environment reports for that candidate: an official catalog first, then a catalog maintained by the technology itself, then a trusted third party. Adding a catalog the environment does not already have is an external change and requires its own approval.
+5. Verify major-version compatibility before proposing installation.
+6. Present the candidate, its source, the installation scope, every bundled component or permission it carries, and the compatibility evidence to the human before any external installation or update. Prefer the narrowest scope that serves the project unless the human chooses a wider one.
+7. Install only after approval, using the environment's supported installation route, and never accept an unattended installation from a command-based source unless the human approved that source explicitly. Verify the result afterwards, and report any activation step the environment says is still required.
 
-Do not replace discovery with an assessment that a dedicated Skill is unnecessary. General-purpose Claude Code support, library popularity, or a technology being standard are not reasons to reject an available compatible Skill.
+Do not replace discovery with a judgment that a dedicated Skill is unnecessary. If supported discovery finds no compatible candidate, report which catalogs and candidate fields were checked and mark that technology as skipped; that is a narrower and truer claim than saying no such Skill exists.
 
-If the Claude CLI is present and `claude plugin list --available --json` succeeds, discovery is available even when there is no dedicated marketplace API tool. If supported discovery finds no compatible candidate, report the marketplaces and candidate fields checked and mark that technology as skipped; do not make a broader claim that technology-specific Skills do not exist. Mark technologies as blocked for missing discovery only after both the Claude CLI commands above and any documented interactive `/plugin` capability available in the session have been checked. Do not work around a genuine limitation by modifying project files or downloading unverified content.
+Mark a technology as blocked for missing discovery only after every discovery route the environment offers has been tried. Never work around a genuine limitation by modifying project files or downloading unverified content.
 
 ## Boundaries
 
-Do not change Interface data, application code, architecture, manifests, lockfiles, or runtime dependencies. Do not install for a technology that was not detected in current target-project sources or implementation, remove a compatible Skill, or install duplicates.
+Do not initialize Config, plan implementation, or develop the application. Do not change Interface data, application code, architecture, manifests, lockfiles, or runtime dependencies. Do not install for a technology that was not detected in the current target-project sources or implementation, remove a compatible Skill, or install duplicates.
 
-The operation must be idempotent: a second run against unchanged project sources, dependencies, and installed Skills makes no changes.
+The operation is idempotent: a second run against unchanged project sources, dependencies, and installed Skills makes no changes.
 
-## Completion
+## Report
 
-Report each detected technology as installed, updated, skipped, or blocked. Include the project file that established its presence, its detected version or `unresolved`, the selected Skill and source where applicable, and the reason for the status.
+Report one entry per detected technology, each stating:
+
+1. **Technology** — its name, and the project file that established its presence.
+2. **Version** — the detected version, or `unresolved`.
+3. **Status** — installed, updated, skipped, or blocked.
+4. **Skill and source** — the selected Skill and where it came from, when one applies.
+5. **Reason** — why that status was reached, including the catalogs checked when the status is skipped or blocked.
+6. **Not in Preferences** — mark the entry when the technology was found in the implementation but the applicable Preferences do not offer it, and say where it was found.
+
+Close with any activation step the environment reported as still required.

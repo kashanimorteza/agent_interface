@@ -40,7 +40,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 **Rule:** State recognizes these modes:
 
 - `not set` — no Workflow operation has yet been recorded;
-- `configuring` — project Understanding is being generated or refreshed;
+- `configuring` — the operational Config records are being created or brought to their current structure;
 - `planning` — Plans, Groups, and Tasks are being generated or reconciled; and
 - `development` — eligible Tasks are being implemented and verified.
 

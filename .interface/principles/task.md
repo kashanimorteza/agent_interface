@@ -17,6 +17,7 @@ Task is the Component that turns project phases into precise, bounded activities
 ## Relationships
 
 - **Consumes State** — the shared Blocker records a Task refers to when it cannot proceed.
+- **Consumes Review** — the gap Findings that name required work no planned activity yet covers.
 - **Consumed by no other Component** — Task records the work; no Component depends on its contents.
 
 Technical choices and defaults belong to Task Preferences, which currently define none. The exact shape of the generated Task configuration belongs to the Task Schema.

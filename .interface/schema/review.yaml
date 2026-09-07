@@ -1,0 +1,164 @@
+schema:
+  id: "agent-interface-review"
+  version: "1.0"
+  purpose: "Operational Review file structure. Sections describe stored content; initial is the empty configuration template. Review fills actual Reviews and Findings using the Review Component."
+initialization:
+  source: "initial"
+  purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."
+  defaults: "Every section and field declares a default. Fixed required objects expand their child defaults; empty collections stay empty."
+  collections: "Keys enclosed in angle brackets describe future records. Do not create placeholder Reviews or Findings during initialization."
+  optional_fields: "Optional fields remain absent until applicable. A null default on an optional field means no value is recorded."
+  drafts: "Empty strings and zero order values are unfilled record defaults. Before storing a usable Review, the owning operation supplies real identifiers, required descriptive content, and provenance."
+  preservation: "Initialization does not overwrite an existing Config file or reset its stored Findings."
+operational_scope:
+  purpose: "This file records what has been reviewed and what those reviews found. It is an operational record, not a description of the project."
+  stores: "Which phases were reviewed, when and by whom, the outcome of each review, and every Finding with what was expected, what was observed, the evidence for it, and where it stands."
+  excludes: "Project concepts, requirements, acceptance criteria, resolved technical choices, Component rules, Task content or progress, and the Workflow position. A Finding refers to what it judged; it never restates it."
+  resolution: "The baseline a Finding was judged against is resolved from the project definition, the Principles, the Preferences, and the phase's Plan when the review runs, never read back from this file."
+  authority: "Review owns this file alone. It records the state of its own Findings and changes nothing another Component owns."
+structure:
+  - "finding_count"
+  - "reviews"
+sections:
+  finding_count:
+    required: true
+    default: 0
+    purpose: "A non-negative integer equal to the total number of Findings stored across all Reviews, regardless of state. Sum the per-review finding_count values; use zero when none exist. Recalculate whenever Findings are added or removed."
+  reviews:
+    required: true
+    default: {}
+    purpose: "Reviews keyed by the phase identifier they examined; empty before any phase is reviewed. A later review of the same phase reconciles the stored record rather than creating a second one."
+    fields:
+      "<phase>":
+        required: false
+        default: {}
+        purpose: "The current review record for one phase."
+        fields:
+          id:
+            required: true
+            default: ""
+            purpose: "The phase identifier that was reviewed."
+          title:
+            required: true
+            default: ""
+            purpose: "The phase title that was reviewed."
+          target:
+            required: true
+            default: ""
+            purpose: "The Component the reviewed phase targets."
+          scope:
+            required: true
+            default: ""
+            purpose: "What was inspected, stated so that a reader knows what the outcome covers and what it does not."
+          outcome:
+            required: true
+            default: "inconclusive"
+            purpose: "Whether the reviewed scope satisfies what was asked of it."
+            allowed:
+              - "satisfied"
+              - "not satisfied"
+              - "inconclusive"
+          reviewed_by:
+            required: true
+            default: ""
+            purpose: "The human or operation that performed the review."
+          reviewed_at:
+            required: true
+            default: ""
+            purpose: "When the review was performed."
+          finding_count:
+            required: true
+            default: 0
+            purpose: "A non-negative integer equal to the number of Findings stored in this review, regardless of state. Recalculate whenever Findings are added or removed."
+          findings:
+            required: true
+            default: {}
+            purpose: "Findings keyed by identifier; empty when the review found nothing. Every key equals its Finding id."
+            fields:
+              "<finding>":
+                required: false
+                default: {}
+                purpose: "One specific way in which the result does not demonstrably satisfy what was asked."
+                fields:
+                  id:
+                    required: true
+                    default: ""
+                    purpose: "The Finding identifier, unique across all Reviews. It carries the identifier of the phase whose review contains it."
+                  kind:
+                    required: true
+                    default: "defect"
+                    purpose: "What sort of Finding this is."
+                    allowed:
+                      - "defect"
+                      - "missing evidence"
+                      - "gap"
+                  severity:
+                    required: true
+                    default: "minor"
+                    purpose: "How much the Finding matters to the reviewed scope."
+                    allowed:
+                      - "blocking"
+                      - "major"
+                      - "minor"
+                  task:
+                    required: true
+                    default: null
+                    nullable: true
+                    purpose: "The identifier of the Task the Finding concerns, or null when it concerns the phase rather than any one activity, which is the normal case for a gap."
+                  expected:
+                    required: true
+                    default: ""
+                    purpose: "What the baseline required, stated as the requirement rather than as a restatement of the source."
+                  observed:
+                    required: true
+                    default: ""
+                    purpose: "What was actually observed."
+                  evidence:
+                    required: true
+                    default: ""
+                    purpose: "The exact location or observable result that shows the difference, so a reader can see it without repeating the review."
+                  state:
+                    required: true
+                    default: "open"
+                    purpose: "Where the Finding currently stands."
+                    allowed:
+                      - "open"
+                      - "resolved"
+                      - "accepted"
+                  raised_at:
+                    required: true
+                    default: ""
+                    purpose: "When the Finding was first recorded."
+                  settled_at:
+                    required: false
+                    default: null
+                    purpose: "When the Finding was resolved or accepted; absent while it is open."
+                  settled_by:
+                    required: false
+                    default: null
+                    purpose: "The review that established the Finding no longer holds, or the human who accepted it; absent while it is open."
+definitions:
+  finding_kind:
+    defect: "The result does not do what the baseline required."
+    missing evidence: "An acceptance criterion has nothing observable demonstrating that it holds."
+    gap: "The phase requires work that no planned activity covers."
+  finding_state:
+    open: "Recorded and not yet settled."
+    resolved: "An authorized Review established that the Finding no longer holds."
+    accepted: "The human accepted the result as it is."
+initial:
+  meta:
+    path: ".interface/config/review.yaml"
+    path_note: "Mutable Reviews, Findings and their state."
+  policy:
+    agent_may_edit: true
+    rule: "Apply the current Review Component and the active operation's ownership rules."
+  read_order:
+    - "finding_count"
+    - "reviews"
+  content_map:
+    finding_count: "Total number of stored Findings."
+    reviews: "The current review record for each reviewed phase."
+  content:
+    finding_count: 0
+    reviews: {}

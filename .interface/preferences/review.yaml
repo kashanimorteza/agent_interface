@@ -1,0 +1,47 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/preferences/review.yaml"
+  path_note: "The Preferences layer of the Review Component. It currently defines no Component-specific technical choices or defaults."
+  purpose: "Where the Review Component's technical choices would be recorded. The Review Component currently makes none."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-07"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned and is read only when resolving Review preferences."
+  changed_by: "The human, directly."
+  precedence: "An explicit project value and every applicable Principle take precedence over this file."
+  consumption: "The empty content provides no Review defaults; consumers continue with the other applicable authorities."
+  selection: "There is nothing to select. A technology needed to observe a result is resolved from the Preferences of the Component that owns it, because Review judges a result rather than building one."
+  version_resolution: "No entry here carries a version, because no technology is recorded."
+  matching: "There is nothing to match. An empty section is an absence of defaults, not a wildcard."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Empty. The Review Component chooses among no catalogued alternatives and owns no code path."
+  options: "Empty. The Review Component catalogues no alternatives."
+  settings: "Empty. The Review Component configures nothing."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- selected -->
+  selected: {}
+
+  # <!-------------------------------------------- options -->
+  options: {}
+
+  # <!-------------------------------------------- settings -->
+  settings: {}

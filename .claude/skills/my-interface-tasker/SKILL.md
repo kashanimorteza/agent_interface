@@ -1,6 +1,6 @@
 ---
 name: my-interface-tasker
-description: Create or reconcile the Task Plan for one requested project phase from the current project definition and applicable Component authorities. Plans only; never implements.
+description: Create or reconcile the Task Plan for one requested project phase from the current project definition and the applicable Component authorities. Plans only; never implements.
 argument-hint: "[phase-number]"
 disable-model-invocation: true
 ---
@@ -9,30 +9,44 @@ disable-model-invocation: true
 
 ## Role
 
-Plan one requested project phase from current Target Project Understanding. Produce the planning output required by the current Interface for downstream Development without implementing the work. Select the phase by the number in `$ARGUMENTS`.
+Plan one requested project phase from current Target Project Understanding, and produce the planning output the current Interface requires.
+
+Tasker decides what work exists and how it is organized. It does not decide how that work is implemented, because a plan that prescribes implementation removes the judgment the implementer needs when the code turns out differently than the plan imagined.
+
+Planning is also a judgment about what the record should hold. Most of what a Task needs is already stated by the project definition, the Principles, and the Preferences, and is resolved from them at the moment the work is done; only what is true of this one activity and derivable from nowhere else belongs in the Task itself. The plan serves two readers — the operation that implements it and the operation that reviews it — so an expected result and an acceptance criterion must be observable to someone who was not present when the work was done.
 
 ## Input
 
-Accept one positive integer: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in Target Project Understanding and use that phase's existing identifier throughout planning. The number is an input convenience; it never renames a phase or changes stored identifiers or references. If the number is missing, invalid, or does not uniquely select an existing phase, request a valid phase number before changing any files.
+Accept one positive integer from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in Target Project Understanding and use that phase's existing identifier throughout planning.
+
+The number is an input convenience; it never renames a phase or changes stored identifiers or references. If the number is missing, invalid, or does not uniquely select an existing phase, request a valid phase number before changing any files.
 
 ## Workflow
 
-First establish Agent Interface Understanding by reading the canonical Interface document. Use it to understand the Interface organization, Tasker's place in the Workflow, and the current locations of the resources needed by Planning.
+First establish Agent Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Tasker's place in the Workflow, and the current locations of the resources Planning needs.
 
-Then establish Target Project Understanding by reading the human project definition and the Principles and Preferences applicable to the requested phase and its target Component. Inspect existing implementation and interfaces when they provide relevant current evidence. Task and State Config are operational records, not a stored representation of this Understanding.
+Then establish Target Project Understanding by reading the human project definition and the Principles and Preferences applicable to the requested phase and its target Component. Inspect existing implementation and interfaces when they provide relevant current evidence. Task and State Config are operational records, not a stored representation of this Understanding, so reading them back is not a substitute for reading the sources.
 
-Read the current Task and State Config files. Resolve the requested phase from the human project definition and derive planning structure, content, granularity, progress handling, validation, ownership, and write boundaries from the Task Component. Do not assume or reproduce a fixed planning structure in this Skill.
+Read the current Task and State Config files, and the Review Config for the requested phase: a Finding recorded as a gap names required work that no planned activity covers, and deciding that work is Planning's. Resolve the requested phase from the human project definition, then derive planning structure, content, granularity, progress handling, validation, ownership, and write boundaries from the Task Component. Do not assume or reproduce a fixed planning structure here: the Task Component changes independently of this Skill, and a structure remembered from an earlier run will silently disagree with it.
 
-Build a complete candidate for the requested phase that preserves its resolved identity, intent, scope, and decisions and is usable by downstream Development. Apply the current planning authorities to every part of the candidate; do not embed remembered fields, defaults, or policies when the live sources define them.
+Build a complete candidate for the requested phase that preserves its resolved identity, intent, scope, and decisions, and that is usable by downstream Development. Apply the current planning authorities to every part of the candidate rather than embedding remembered fields, defaults, or policies.
 
-Validate the complete candidate using the current authorities before writing it only to the authorized destination.
+Validate the complete candidate using the current authorities before writing it, and write only to the authorized destination.
 
-On every run, rebuild the candidate from current sources and reconcile it with existing planning output according to the current ownership and reconciliation rules. Preserve information outside Tasker's authority and surface conflicts as required by the live policies.
+On every run, rebuild the candidate from current sources and reconcile it with existing planning output according to the current ownership and reconciliation rules. Preserve information outside Tasker's authority and surface conflicts as the live policies require, because planning runs repeatedly over the life of a phase and work already recorded is the most expensive thing the file holds.
 
 The operation is idempotent with respect to unchanged sources and Tasker-owned planning information.
 
 ## Boundaries
 
-Plan only for the requested phase. Do not implement product work, perform Review or Configure, alter project intent, or write outside Planning's current authority.
+Plan only, and only for the requested phase. Do not implement product work, perform Review or Configure, alter project intent, or write outside Planning's current authority.
 
-Report the result according to the current reporting rules.
+## Report
+
+Report in this order:
+
+1. **Phase** — the resolved phase identifier, title, order, and target.
+2. **Plan result** — created, reconciled, or already current, with the counts the Task Component defines.
+3. **What changed** — work added, work reconciled, and work left untouched because it lies outside Tasker's authority.
+4. **Conflicts and unresolved decisions** — anything that could not be planned safely, and any Blocker or Open Question raised, each with what it prevents.
+5. **Next step** — the single most useful next action supported by the result.
