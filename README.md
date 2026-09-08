@@ -8,16 +8,16 @@ Use this document as the entry point and follow its sections in this order:
 1. **Introduction** — understand the purpose, operation, independence, and boundaries of Agent Interface.
 2. **Terminology** — learn the shared vocabulary used throughout the Interface.
 3. **Architecture** — see the complete conceptual hierarchy and the relationships between its parts.
-4. **Target** — understand what is being built through its non-technical and technical definitions.
-5. **Developer** — understand the engineering philosophy through Principles, Preferences, Components, State, and Mode.
-6. **Agent** — understand the executing system, its capabilities, restrictions, and Skills.
-7. **Operations** — understand Configure, Plan, Develop, Review, and Reset independently from their execution mechanisms.
-8. **Understanding** — learn how each Skill discovers the context required for its own responsibility.
-9. **Config** — understand the mutable State, Plan, and Review operational records.
-10. **Foundation Files** — locate the Interface document and the shared Schema definitions.
-11. **Workflow** — follow the path from defining a Target through configuration, planning, development, review, and reset.
-12. **Concept Relationships** — understand the boundaries between Target, Developer, Agent, Operations, and Skills.
-13. **Proposed Conceptual Structure** — see how the architecture may be represented as a repository structure.
+4. **Interface** — understand the canonical document, its responsibility, and its boundaries.
+5. **Target** — understand what is being built through its non-technical and technical definitions.
+6. **Developer** — understand the engineering philosophy through Principles, Preferences, Components, State, and Mode.
+7. **Agent** — understand the executing system, its capabilities, restrictions, and Skills.
+8. **Operations** — understand Configure, Plan, Develop, Review, and Reset independently from their execution mechanisms.
+9. **Understanding** — learn how each Skill discovers the context required for its own responsibility.
+10. **Config** — understand the mutable State, Plan, and Review operational records.
+11. **Foundation Files** — locate Config and the shared Schema definitions.
+12. **Workflow** — follow the path from defining a Target through configuration, planning, development, review, and reset.
+13. **Concept Relationships** — understand the boundaries between Target, Developer, Agent, Operations, and Skills.
 14. **Important Architectural Decisions** — review the decisions that shape the current design.
 15. **Implementation Neutrality** — understand which implementation mechanisms remain optional.
 16. **Guiding Principle** — see the central rule guiding context discovery and execution.
@@ -76,14 +76,6 @@ Config contains only the mutable operational records used to coordinate this wor
 The core Interface Structure is independent of any specific AI model, Agent, or external execution capability. Agent Skills are cataloged as integrations, not as parts of the Structure.
 
 Human project definitions remain flexible, while the Interface gives Agents stable responsibilities, rules, defaults, and operational records. Agent Interface is the communication boundary between those two forms.
-
-<!-------------------------- Document -->
-### Document
-
-`README.md` is the canonical introduction and navigation entry point of Agent Interface. It explains the system and locates every current resource, Component, Layer, Agent Skill, Mode, and Workflow step.
-
-Agent Interface operations and supporting Agents must not edit this file. If an operation determines that it should change, the operation reports the required change to the Human and leaves the file untouched. Live Workflow position belongs to the State Component; this document only explains and locates it.
-
 
 <!-------------------------- Core Idea -->
 ### Core Idea
@@ -181,10 +173,15 @@ This separation is one of the central architectural principles of the project.
 
 ## Architecture
 
+<!-------------------------- Conceptual Architecture -->
+### Conceptual Architecture
+
 The current conceptual architecture is:
 
 ```text
 Architecture
+│
+├── Interface
 │
 ├── Target
 │   ├── Non-Technical Definition
@@ -234,20 +231,11 @@ Architecture
 │       ├── Reset
 │       └── Install Skills
 │
-├── Operations
-│   ├── Configure
-│   ├── Plan
-│   ├── Develop
-│   ├── Review
-│   └── Reset
-│
-├── Config
-│   ├── State
-│   ├── Plan
-│   └── Review
-│
 ├── Foundation Files
-│   ├── Interface
+│   ├── Config
+│   │   ├── State
+│   │   ├── Plan
+│   │   └── Review
 │   └── Schema
 │       ├── YAML Schema
 │       ├── Principles Schema
@@ -256,6 +244,13 @@ Architecture
 │       ├── Plan Schema
 │       └── Review Schema
 │
+├── Operations
+│   ├── Configure
+│   ├── Plan
+│   ├── Develop
+│   ├── Review
+│   └── Reset
+│
 └── Workflow
     ├── Define Target
     ├── Configure
@@ -263,6 +258,92 @@ Architecture
     └── Develop
 ```
 
+<!-------------------------- Repository Structure -->
+### Repository Structure
+
+The repository structure maps the conceptual Interface to physical locations. This is the intended structure of the new architecture; existing files can be migrated to it separately without changing the conceptual responsibilities.
+
+```text
+project-root/
+├── README.md                         # Interface Document
+│
+├── .interface/                       # Human-owned Interface sources
+│   ├── target/
+│   │   ├── non-technical/            # Concept, purpose, behavior, and expectations
+│   │   └── technical/                # Architecture, Models, constraints, and phases
+│   │
+│   ├── developer/
+│   │   ├── principles/
+│   │   │   ├── development.md
+│   │   │   ├── model.md
+│   │   │   ├── database.md
+│   │   │   ├── backend.md
+│   │   │   ├── frontend.md
+│   │   │   ├── platform.md
+│   │   │   ├── plan.md
+│   │   │   ├── review.md
+│   │   │   └── state.md
+│   │   └── preferences/
+│   │       ├── development.yaml
+│   │       ├── model.yaml
+│   │       ├── database.yaml
+│   │       ├── backend.yaml
+│   │       ├── frontend.yaml
+│   │       ├── platform.yaml
+│   │       ├── plan.yaml
+│   │       ├── review.yaml
+│   │       └── state.yaml
+│   │
+│   └── foundation/
+│       ├── config/
+│       │   ├── state.yaml
+│       │   ├── plan.yaml
+│       │   └── review.yaml
+│       └── schema/
+│           ├── yaml.yaml
+│           ├── principles.md
+│           ├── preferences.yaml
+│           ├── state.yaml
+│           ├── plan.yaml
+│           └── review.yaml
+│
+├── .claude/                          # Current Agent integration; outside .interface
+│   ├── rules/                        # Shared Agent rules
+│   ├── agents/                       # Agent-specific supporting roles
+│   ├── skills/                       # Operation and supporting Skills
+│   └── settings.json                 # Agent-environment settings
+│
+├── model/                            # Developed Target package
+├── database/                         # Developed Target package
+├── backend/                          # Developed Target package
+├── frontend/                         # Developed Target package
+└── application.yaml                  # Target application composition
+```
+
+The tree intentionally omits generated dependencies, virtual environments, build output, caches, and version-control internals. Those files are implementation artifacts rather than Interface architecture.
+
+<!-------------------------- Structure Boundaries -->
+### Structure Boundaries
+
+- `README.md` is the Interface Document and the entry point to the architecture.
+- `.interface/` contains the Human-owned Target, Developer, and Foundation sources.
+- `.claude/` is outside `.interface/`. It is the current Agent-specific implementation of Rules, Skills, supporting Agents, and settings. Another Agent may map the same concepts to different native paths.
+- `model/`, `database/`, `backend/`, and `frontend/` are developed Target packages, not definitions of Agent Interface.
+- `application.yaml` coordinates the developed application and belongs to the Target implementation rather than Interface Config.
+- Operations and Workflow are conceptual responsibilities represented in this document and executed through Agent capabilities; they do not require matching physical directories.
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Interface --->
+
+## Interface
+
+```text
+name = Interface
+path = README.md
+responsibility = Canonical definition, navigation entry point, and complete file map of Agent Interface
+```
 
 
 <br><br>
@@ -928,7 +1009,7 @@ For example:
 
 ```text
 Need Interface context?
-    → Start from interface.md
+    → Start from the Interface Document
 
 Need Target context?
     → Read Target Definitions
@@ -1017,7 +1098,10 @@ Foundation Files provide foundational definitions and schemas required by the In
 
 ```text
 Foundation Files
-├── Interface
+├── Config
+│   ├── State
+│   ├── Plan
+│   └── Review
 └── Schema
     ├── YAML Schema
     ├── Principles Schema
@@ -1028,25 +1112,6 @@ Foundation Files
 ```
 
 Target Definitions are intentionally **not** considered Foundation Files because they belong to the Target concept itself.
-
-
-<!-------------------------- Interface Foundation File -->
-### Interface Foundation File
-
-The Interface file is the primary conceptual entry point for understanding the Interface itself.
-
-It explains:
-
-- purpose,
-- architecture,
-- terminology,
-- major concepts,
-- relationships,
-- navigation.
-
-An Agent trying to understand the Interface should begin with this file.
-
-The Interface file should direct the Agent toward more detailed sources without attempting to duplicate all of their contents.
 
 
 <!-------------------------- Schema Foundation Files -->
@@ -1470,79 +1535,6 @@ The architecture should avoid duplicating entire Component structures unnecessar
 
 <br><br>
 
-## Proposed Conceptual Structure
-<!--------------------------------------------------------------------------------- Proposed Conceptual Structure --->
-A possible conceptual repository structure is:
-
-```text
-agent-interface/
-│
-├── interface.md
-│
-├── target/
-│   ├── non-technical/
-│   └── technical/
-│
-├── developer/
-│   ├── principles/
-│   ├── preferences/
-│   └── components/
-│       ├── development/
-│       ├── model/
-│       ├── database/
-│       ├── backend/
-│       ├── frontend/
-│       ├── platform/
-│       ├── plan/
-│       ├── review/
-│       └── state/
-│
-├── agent/
-│   ├── instances/
-│   ├── rules/
-│   ├── mcp/
-│   ├── hooks/
-│   ├── plugins/
-│   ├── tools/
-│   ├── memory/
-│   ├── permissions/
-│   ├── sandbox/
-│   ├── network/
-│   ├── sessions/
-│   ├── logs/
-│   └── skills/
-│
-├── operations/
-│   ├── configure/
-│   ├── plan/
-│   ├── develop/
-│   ├── review/
-│   └── reset/
-│
-├── config/
-│   ├── state/
-│   ├── plan/
-│   └── review/
-│
-└── foundation/
-    └── schema/
-        ├── yaml/
-        ├── principles/
-        ├── preferences/
-        ├── state/
-        ├── plan/
-        └── review/
-```
-
-This is a conceptual structure.
-
-The final physical directory layout may evolve as implementation details become clearer.
-
-
-
-
-
-<br><br>
 
 ## Important Architectural Decisions
 <!--------------------------------------------------------------------------------- Important Architectural Decisions --->
