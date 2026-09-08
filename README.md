@@ -25,9 +25,9 @@ Use this document as the entry point and follow its sections in this order:
 
 
 <br><br>
+<!--------------------------------------------------------------------------------- Introduction --->
 
 ## Introduction
-<!--------------------------------------------------------------------------------- Introduction --->
 <!-------------------------- Overview -->
 ### Overview
 
@@ -151,9 +151,8 @@ This separation is one of the central architectural principles of the project.
 
 <br><br>
 
-## Terminology
 <!--------------------------------------------------------------------------------- Terminology --->
-
+## Terminology
 - **Interface** — the complete system described by this document; it connects Target, Developer, Agent, Operations, Config, Foundation Files, and Workflow, and is their container rather than a sibling entity.
 - **Human** — the person who defines the Target and owns every authored Interface source.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
@@ -177,9 +176,9 @@ This separation is one of the central architectural principles of the project.
 - **Understanding** — the context an Operation establishes for itself from current sources when it runs. *Agent Interface Understanding* concerns the Interface and resource locations; *Target Understanding* concerns what the Target is and requires.
 
 <br><br>
+<!--------------------------------------------------------------------------------- Architecture --->
 
 ## Architecture
-<!--------------------------------------------------------------------------------- Architecture --->
 The current conceptual architecture is:
 
 ```text
@@ -265,9 +264,10 @@ Architecture
 
 
 <br><br>
+<!--------------------------------------------------------------------------------- Target --->
 
 ## Target
-<!--------------------------------------------------------------------------------- Target --->
+
 The Target describes **what the Interface is working on**.
 
 The Target definition is intentionally separated into two levels.
@@ -965,11 +965,11 @@ Perform its role
 Understanding is therefore a **responsibility of execution**, not a standalone workflow stage.
 
 
-<!--------------------------------------------------------------------------------- Config --->
+
 <br><br>
 
 ## Config
-
+<!--------------------------------------------------------------------------------- Config --->
 Config contains operational information required by the Interface.
 
 Current high-level configuration concepts are:
@@ -1006,11 +1006,11 @@ Stores information related to the generated or active Plan.
 Stores operational information related to reviews.
 
 
-<!--------------------------------------------------------------------------------- Foundation Files --->
+
 <br><br>
 
 ## Foundation Files
-
+<!--------------------------------------------------------------------------------- Foundation Files --->
 Foundation Files provide foundational definitions and schemas required by the Interface.
 
 ```text
@@ -1187,11 +1187,11 @@ A Review may include:
 The schema should support both human-readable and agent-readable review output.
 
 
-<!--------------------------------------------------------------------------------- Workflow --->
+
 <br><br>
 
 ## Workflow
-
+<!--------------------------------------------------------------------------------- Workflow --->
 The high-level workflow is:
 
 ```text
@@ -1341,11 +1341,13 @@ Reset
 Reset should identify its target explicitly so that unrelated information is not unnecessarily removed.
 
 
-<!--------------------------------------------------------------------------------- Concept Relationships --->
+
+
+
 <br><br>
 
 ## Concept Relationships
-
+<!--------------------------------------------------------------------------------- Concept Relationships --->
 The primary concepts interact as follows:
 
 ```text
@@ -1461,11 +1463,13 @@ This relationship should remain flexible.
 The architecture should avoid duplicating entire Component structures unnecessarily under both Principles and Preferences when references or structured relationships can express the same information more clearly.
 
 
-<!--------------------------------------------------------------------------------- Proposed Conceptual Structure --->
+
+
+
 <br><br>
 
 ## Proposed Conceptual Structure
-
+<!--------------------------------------------------------------------------------- Proposed Conceptual Structure --->
 A possible conceptual repository structure is:
 
 ```text
@@ -1533,11 +1537,13 @@ This is a conceptual structure.
 The final physical directory layout may evolve as implementation details become clearer.
 
 
-<!--------------------------------------------------------------------------------- Important Architectural Decisions --->
+
+
+
 <br><br>
 
 ## Important Architectural Decisions
-
+<!--------------------------------------------------------------------------------- Important Architectural Decisions --->
 The current design includes the following decisions:
 
 1. **Interface is the complete container.**
@@ -1597,11 +1603,13 @@ The current design includes the following decisions:
     The goal is to model the system clearly without forcing every idea into a rigid hierarchy.
 
 
-<!--------------------------------------------------------------------------------- Implementation Neutrality --->
+
+
+
 <br><br>
 
 ## Implementation Neutrality
-
+<!--------------------------------------------------------------------------------- Implementation Neutrality --->
 This document intentionally describes the conceptual Interface rather than committing to one technical implementation.
 
 Possible implementation mechanisms include:
@@ -1623,11 +1631,13 @@ The implementation may change as agent technology evolves.
 The conceptual relationships should remain stable.
 
 
-<!--------------------------------------------------------------------------------- Guiding Principle --->
+
+
+
 <br><br>
 
 ## Guiding Principle
-
+<!--------------------------------------------------------------------------------- Guiding Principle --->
 The Interface should give an Agent enough structure to reliably discover:
 
 ```text
@@ -1641,11 +1651,13 @@ Where is the required context?
 It should guide execution without unnecessarily controlling the Agent's complete reasoning process.
 
 
-<!--------------------------------------------------------------------------------- Summary --->
+
+
+
 <br><br>
 
 ## Summary
-
+<!--------------------------------------------------------------------------------- Summary --->
 Agent Interface is a reusable conceptual environment connecting:
 
 ```text
