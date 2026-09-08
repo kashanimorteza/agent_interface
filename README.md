@@ -150,9 +150,10 @@ This separation is one of the central architectural principles of the project.
 
 
 <br><br>
-
 <!--------------------------------------------------------------------------------- Terminology --->
+
 ## Terminology
+
 - **Interface** — the complete system described by this document; it connects Target, Developer, Agent, Operations, Config, Foundation Files, and Workflow, and is their container rather than a sibling entity.
 - **Human** — the person who defines the Target and owns every authored Interface source.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
@@ -179,6 +180,7 @@ This separation is one of the central architectural principles of the project.
 <!--------------------------------------------------------------------------------- Architecture --->
 
 ## Architecture
+
 The current conceptual architecture is:
 
 ```text
