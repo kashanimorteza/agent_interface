@@ -307,20 +307,14 @@ project-root/
 │           ├── plan.yaml
 │           └── review.yaml
 │
-├── .claude/                          # Current Agent integration; outside .interface
-│   ├── rules/                        # Shared Agent rules
-│   ├── agents/                       # Agent-specific supporting roles
-│   ├── skills/                       # Operation and supporting Skills
-│   └── settings.json                 # Agent-environment settings
-│
-├── model/                            # Developed Target package
-├── database/                         # Developed Target package
-├── backend/                          # Developed Target package
-├── frontend/                         # Developed Target package
-└── application.yaml                  # Target application composition
+└── .claude/                          # Current Agent integration; outside .interface
+    ├── rules/                        # Shared Agent rules
+    ├── agents/                       # Agent-specific supporting roles
+    ├── skills/                       # Operation and supporting Skills
+    └── settings.json                 # Agent-environment settings
 ```
 
-The tree intentionally omits generated dependencies, virtual environments, build output, caches, and version-control internals. Those files are implementation artifacts rather than Interface architecture.
+The tree is intentionally limited to Agent Interface itself. Target implementation directories, generated dependencies, virtual environments, build output, caches, and version-control internals are outside this repository map.
 
 <!-------------------------- Structure Boundaries -->
 ### Structure Boundaries
@@ -328,8 +322,6 @@ The tree intentionally omits generated dependencies, virtual environments, build
 - `README.md` is the Interface Document and the entry point to the architecture.
 - `.interface/` contains the Human-owned Target, Developer, and Foundation sources.
 - `.claude/` is outside `.interface/`. It is the current Agent-specific implementation of Rules, Skills, supporting Agents, and settings. Another Agent may map the same concepts to different native paths.
-- `model/`, `database/`, `backend/`, and `frontend/` are developed Target packages, not definitions of Agent Interface.
-- `application.yaml` coordinates the developed application and belongs to the Target implementation rather than Interface Config.
 - Operations and Workflow are conceptual responsibilities represented in this document and executed through Agent capabilities; they do not require matching physical directories.
 
 
