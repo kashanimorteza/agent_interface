@@ -12,7 +12,7 @@ The application architecture separates Model, Database, Backend, Frontend, and P
 - **Declared Interface** — the surface a provider publishes for consumers, whether an import surface, network API, command, or user interface.
 - **Connection** — a directed dependency from a consumer to a provider through exactly one declared interface.
 - **Platform** — the composition layer owning the operating environment, coordination, startup, networking, runtime configuration delivery, and deployment; also the resolved place the target project runs, such as a host, a container, or a cloud.
-- **Runtime Configuration** — the settings a user or environment may change, owned centrally by Platform and delivered to each layer as its own section.
+- **Runtime Configuration** — the settings and secrets each layer owns, together with cross-layer bindings owned by Platform; Platform coordinates their delivery to the appropriate boundary.
 - **Cross-cutting Capability** — a capability that may affect more than one layer, such as testing, logging, error handling, or authentication.
 
 ## Relationships
@@ -66,11 +66,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 5. Platform owns centralized runtime configuration
+## 5. Each layer owns its settings and secrets; Platform owns composition
 
-**Rule:** Configuration that a user or operating environment may change remains outside package implementation. Platform owns the centralized configuration boundary: it loads and validates the current settings, resolves environment-specific values, and supplies each application layer with the section that belongs to it. Each layer receives only its own settings and the declared references needed for its connections. Cross-layer choices, such as the Database Instance assigned to Backend, are composition settings owned by Platform rather than constants embedded in either package. Secret values remain outside general configuration and source-controlled package files; central configuration may carry a reference to a secret, while its value is resolved from the authorized runtime source and delivered only to the boundary that owns it.
+**Rule:** Configuration that a user or operating environment may change remains separate from implementation code. Each application layer owns its settings and a private area for its own secrets within its boundary. Secret values remain separate from general configuration and excluded from source control and distributable artifacts. Platform coordinates loading, validation, environment overrides, and delivery without merging the layers' secrets into a shared store. Each layer receives only its own declared settings and secrets and the references needed for its connections. Cross-layer choices, such as the Database Instance assigned to Backend, remain composition settings owned by Platform. General configuration may reference a secret by name, but its value is resolved only for the owning boundary. Frontend secrets may be used only by trusted build or server processes; browser-delivered code and assets never contain secret values.
 
-**Why:** Settings that cross layers belong to whoever composes them, otherwise each package encodes assumptions about the others and the system can only be reconfigured by editing code.
+**Why:** Keeping settings and secrets with their owning layer preserves its independence, while explicit composition settings allow connections to change without editing implementation code.
 
 **Boundary:** A package never reads another package's configuration section, discovers another package's internals, or changes source code merely to select a different compatible provider or Instance. The concrete configuration files, formats, section names, override precedence, and delivery mechanism are technical choices resolved from the project definition and Development Preferences, then implemented by Platform.
 
@@ -157,8 +157,8 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Never** — hidden coupling, undeclared communication, or duplicated ownership exists in the architecture *(3)*
 - **Must** — Platform owns environment, coordination, startup, networking, configuration delivery, and deployment *(4)*
 - **Never** — Platform absorbs the application, presentation, or persistence responsibilities of a layer *(4)*
-- **Must** — Platform owns central runtime configuration and delivers each layer only its own section and declared references *(5)*
-- **Must** — secret values stay outside general configuration and source-controlled files, carried only as references *(5)*
+- **Must** — each layer owns its settings and private secret area within its boundary; Platform owns cross-layer bindings and coordinates validation and delivery of only that layer's declared configuration *(5)*
+- **Never** — layers' secrets are merged into a shared store or included in general configuration, source control, distributable artifacts, or browser-delivered code and assets *(5)*
 - **Never** — a package reads another package's configuration section or changes source code to select a compatible provider or Instance *(5)*
 - **Must** — Development records the layers, their responsibilities and interfaces, their connections, and the Platform configuration *(6)*
 - **Never** — Development redefines the internal technologies, source layout, or domain meaning owned by a layer *(6)*

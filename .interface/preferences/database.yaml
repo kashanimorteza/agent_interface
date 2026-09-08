@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Database Component — supported technical choices and defaults used when a Database choice is unstated."
   purpose: "Defaults and supported technical profiles for Database Instances, Engines, Database Interface, Data Logic, and Storage Adapter."
   standard: "Agent Project Interface"
-  version: "1.3"
-  updated: "2026-09-07"
+  version: "1.4"
+  updated: "2026-09-08"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -159,7 +159,7 @@ content:
         stored_as: "string"
         transformation: "reversible_encryption"
         recoverable: true
-        key_source: "Runtime configuration outside Database and generated Interface files."
+        key_source: "Database's private runtime secret source, located and delivered under Development's layer-local secrets convention; never general configuration or Interface Config."
 
   # <!-------------------------------------------- settings -->
   settings:
@@ -207,7 +207,7 @@ content:
           host: "localhost"
           port: "engine_default"
         secrets:
-          source: "environment"
+          source: "Database's layer-local secret file under Development's runtime_configuration.files.secrets convention, overridden only by declared names from the runtime environment."
           username: "<PROJECT>_<INSTANCE>_DATABASE_USERNAME"
           password: "<PROJECT>_<INSTANCE>_DATABASE_PASSWORD"
           store_values_in_configuration: false

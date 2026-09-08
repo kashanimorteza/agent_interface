@@ -134,7 +134,7 @@ Database-owned runtime configuration declares the supported Engine catalogue, th
 
 **Why:** A secret in a committed file is public, and a credential whose at-rest treatment is decided per caller is treated inconsistently.
 
-**Boundary:** Runtime connection settings are internal to Database; neither their shape nor secret values are published through the data-access interface. The storage representation of a credential is never exposed to consumers. Encryption keys and other secrets are never written into generated Interface or Database files.
+**Boundary:** Runtime connection settings are internal to Database; neither their shape nor secret values are published through the data-access interface. The storage representation of a credential is never exposed to consumers. Encryption keys and connection secrets belong in Database's private runtime area under Development's rules; they never appear in Interface records, general Database configuration, source-controlled implementation, or distributed artifacts. Platform coordinates secret provisioning and delivery without publishing these values to other layers.
 
 <br>
 
@@ -188,7 +188,8 @@ Database-owned runtime configuration declares the supported Engine catalogue, th
 - **Must** — relationship nullability follows the resolved Model meaning; Database defaults cover only unstated physical mapping choices *(9)*
 - **Must** — connection credentials live in runtime configuration outside committed files *(10)*
 - **Must** — every credential field resolves to one at-rest mode, explicit first, otherwise the Preferences default *(10)*
-- **Never** — connection settings, credential storage representations, or encryption keys are exposed or written into generated files *(10)*
+- **Must** — Database connection secrets and encryption keys reside in its private runtime area under Development's rules *(10)*
+- **Never** — connection settings or credential storage representations are exposed through the public interface, or secrets enter Interface records, general configuration, source-controlled implementation, or distributed artifacts *(10)*
 - **Must** — declared initial data is seeded in dependency order, repeatably, preserving explicit relationship identifiers *(11)*
 - **Never** — initial data is supplied by Database Preferences *(11)*
 - **Must** — related data operations on one Instance can share a public transaction boundary that commits or rolls back their changes together *(12)*

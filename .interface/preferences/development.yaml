@@ -2,10 +2,10 @@
 meta:
   path: ".interface/preferences/development.yaml"
   path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers, including Model."
-  purpose: "Central runtime-configuration, package, and cross-cutting capability defaults used when no explicit project choice exists."
+  purpose: "Layer-owned runtime settings and secrets, cross-layer bindings, package conventions, and cross-cutting capability defaults used when no explicit project choice exists."
   standard: "Agent Project Interface"
-  version: "1.2"
-  updated: "2026-09-07"
+  version: "1.3"
+  updated: "2026-09-08"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -85,12 +85,15 @@ content:
           content: "Cross-layer bindings only: which provider, interface, or selectable resource each layer consumes. No setting that a single layer owns."
         secrets:
           path: ".env"
-          location: "project_root"
+          location: "<code_path>"
           format: "dotenv"
           committed: false
           user_editable: true
           example_path: ".env.example"
-          content: "Secret values and environment-specific private settings."
+          example_location: "<code_path>"
+          content: "Only the owning layer's secret values and private environment settings. Resolve code_path from that Component: for example database/.env, backend/.env, or frontend/.env. No shared root secrets file."
+          example_content: "Declared variable names with empty values or non-secret placeholders; never copy actual secrets."
+          exclusions: "Exclude the secret file from version control, package distributions, public assets, and browser bundles. A layer with no secrets needs no populated secret file."
       sections:
         - "model"
         - "database"
@@ -99,6 +102,7 @@ content:
         - "platform"
       section_contract:
         settings: "Settings owned by the named layer, held in that layer's own file."
+        secrets: "Secrets owned by the named layer, held in its private layer-local file; resolve only the names that layer declares."
         bindings: "Declared provider, interface, and selectable resource references consumed by the named layer, held in the public root file under the section of that name."
       precedence:
         - "runtime_environment"
@@ -108,7 +112,8 @@ content:
       delivery:
         owner: "platform"
         method: "validated_injection"
-        scope: "Platform reads each layer's own file and that layer's bindings section, validates both, and delivers them together; a layer receives only its own settings and its declared binding references, and never reads another layer's file."
+        scope: "Platform coordinates reading each layer's settings, its own secret file, and its declared bindings. Apply environment overrides only for names that layer declares; deliver only those resolved values to that layer, never the full process environment or another layer's secrets. Resolve paths from the owning code_path independently of the working directory."
+        frontend_secrets: "Resolve private Frontend values only in trusted build or server processes. Never expose them through client-visible environment prefixes, generated public configuration, or browser bundles."
       validation: "Validate the complete public configuration and all references before application startup."
       override_boundary: "Runtime configuration may select among resolved compatible choices but never redefine architecture, package ownership, interfaces, or unsupported technologies."
 
