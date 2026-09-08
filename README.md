@@ -7,21 +7,19 @@ Use this document as the entry point and follow its sections in this order:
 
 1. **Introduction** — understand the purpose, operation, independence, and boundaries of Agent Interface.
 2. **Terminology** — learn the shared vocabulary used throughout the Interface.
-3. **Architecture** — see the complete conceptual hierarchy and the relationships between its parts.
-4. **Interface** — understand the canonical document, its responsibility, and its boundaries.
-5. **Target** — understand what is being built through its non-technical and technical definitions.
-6. **Developer** — understand the engineering philosophy through Principles, Preferences, Components, State, and Mode.
-7. **Agent** — understand the executing system, its capabilities, restrictions, and Skills.
-8. **Operations** — understand Configure, Plan, Develop, Review, and Reset independently from their execution mechanisms.
-9. **Understanding** — learn how each Skill discovers the context required for its own responsibility.
-10. **Config** — understand the mutable State, Plan, and Review operational records.
-11. **Foundation Files** — locate Config and the shared Schema definitions.
-12. **Workflow** — follow the path from defining a Target through configuration, planning, development, review, and reset.
-13. **Concept Relationships** — understand the boundaries between Target, Developer, Agent, Operations, and Skills.
-14. **Important Architectural Decisions** — review the decisions that shape the current design.
-15. **Implementation Neutrality** — understand which implementation mechanisms remain optional.
-16. **Guiding Principle** — see the central rule guiding context discovery and execution.
-17. **Summary** — review the complete Interface at a glance.
+3. **Architecture** — see the high-level structure and its primary sections.
+4. **Target** — understand what is being built through its non-technical and technical definitions.
+5. **Developer** — understand the engineering philosophy through Principles, Preferences, Components, State, and Mode.
+6. **Agent** — understand the executing system, its capabilities, restrictions, and Skills.
+7. **Operations** — understand Configure, Plan, Develop, Review, and Reset independently from their execution mechanisms.
+8. **Understanding** — learn how each Skill discovers the context required for its own responsibility.
+9. **Foundation Files** — locate the Interface document, Config, and shared Schema definitions.
+10. **Workflow** — follow the path from defining a Target through configuration, planning, development, review, and reset.
+11. **Concept Relationships** — understand the boundaries between Target, Developer, Agent, Operations, and Skills.
+12. **Important Architectural Decisions** — review the decisions that shape the current design.
+13. **Implementation Neutrality** — understand which implementation mechanisms remain optional.
+14. **Guiding Principle** — see the central rule guiding context discovery and execution.
+15. **Summary** — review the complete Interface at a glance.
 
 
 <br><br>
@@ -50,7 +48,7 @@ A different **Developer** can provide a different programming philosophy without
 
 A different **Agent** can execute the same Interface using its own native capabilities.
 
-The long-term implementation may eventually use technologies such as skills, MCP, hooks, plugins, memory systems, agent instances, tools, or other future agent capabilities.
+The long-term implementation may eventually use technologies such as skills, MCP, hooks, plugins, memory systems, multiple agents, tools, or other future agent capabilities.
 
 Those technologies are implementation mechanisms.
 
@@ -150,8 +148,7 @@ This separation is one of the central architectural principles of the project.
 - **Human** — the person who defines the Target and owns every authored Interface source.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
 - **Developer** — the developer's reusable programming philosophy and engineering perspective, independent of a particular Target or Agent.
-- **Agent** — the AI coding system that interacts with the Interface and maps its concepts to native capabilities.
-- **Agent Instance** — an individual execution unit, worker, sub-agent, parallel agent, or isolated runtime context created by an Agent.
+- **Agent** — an AI coding system or one of its individual execution units, workers, sub-agents, parallel agents, or isolated runtime contexts; it interacts with the Interface and maps its concepts to native capabilities.
 - **Component** — one named part of the Developer perspective that owns a responsibility and is described through its Principles and Preferences; some Components also own operational records.
 - **Principles** — mandatory philosophy, responsibilities, rules, and boundaries that describe how the Developer believes software should fundamentally be designed.
 - **Preferences** — preferred choices and defaults used when multiple valid implementations exist and the Target leaves the choice unspecified.
@@ -173,169 +170,21 @@ This separation is one of the central architectural principles of the project.
 
 ## Architecture
 
-<!-------------------------- Conceptual Architecture -->
-### Conceptual Architecture
-
 The current conceptual architecture is:
 
 ```text
 Architecture
 │
-├── Interface
-│
 ├── Target
-│   ├── Non-Technical Definition
-│   └── Technical Definition
-│
 ├── Developer
-│   ├── Principles
-│   ├── Preferences
-│   └── Components
-│       ├── Development
-│       ├── Model
-│       ├── Database
-│       ├── Backend
-│       ├── Frontend
-│       ├── Platform
-│       ├── Plan
-│       ├── Review
-│       └── State
-│           └── Mode
-│               ├── Not Set
-│               ├── Configuring
-│               ├── Planning
-│               ├── Development
-│               └── Reset
-│                   ├── Configure
-│                   ├── Plan
-│                   └── Develop
-│
 ├── Agent
-│   ├── Instances
-│   ├── Rules
-│   ├── MCP
-│   ├── Hooks
-│   ├── Plugins
-│   ├── Tools
-│   ├── Memory
-│   ├── Permissions
-│   ├── Sandbox
-│   ├── Network
-│   ├── Sessions
-│   ├── Logs
-│   └── Skills
-│       ├── Configure
-│       ├── Plan
-│       ├── Develop
-│       ├── Review
-│       ├── Reset
-│       └── Install Skills
-│
 ├── Foundation Files
-│   ├── Config
-│   │   ├── State
-│   │   ├── Plan
-│   │   └── Review
-│   └── Schema
-│       ├── YAML Schema
-│       ├── Principles Schema
-│       ├── Preferences Schema
-│       ├── State Schema
-│       ├── Plan Schema
-│       └── Review Schema
-│
 ├── Operations
-│   ├── Configure
-│   ├── Plan
-│   ├── Develop
-│   ├── Review
-│   └── Reset
-│
 └── Workflow
-    ├── Define Target
-    ├── Configure
-    ├── Plan
-    └── Develop
 ```
 
-<!-------------------------- Repository Structure -->
-### Repository Structure
+Each primary section owns its detailed Conceptual Structure and, where applicable, its Repository Structure. Operations and Workflow are conceptual responsibilities and do not require matching physical directories.
 
-The repository structure maps the conceptual Interface to physical locations. This is the intended structure of the new architecture; existing files can be migrated to it separately without changing the conceptual responsibilities.
-
-```text
-project-root/
-├── README.md                         # Interface Document
-│
-├── .interface/                       # Human-owned Interface sources
-│   ├── target/
-│   │   ├── non-technical/            # Concept, purpose, behavior, and expectations
-│   │   └── technical/                # Architecture, Models, constraints, and phases
-│   │
-│   ├── developer/
-│   │   ├── principles/
-│   │   │   ├── development.md
-│   │   │   ├── model.md
-│   │   │   ├── database.md
-│   │   │   ├── backend.md
-│   │   │   ├── frontend.md
-│   │   │   ├── platform.md
-│   │   │   ├── plan.md
-│   │   │   ├── review.md
-│   │   │   └── state.md
-│   │   └── preferences/
-│   │       ├── development.yaml
-│   │       ├── model.yaml
-│   │       ├── database.yaml
-│   │       ├── backend.yaml
-│   │       ├── frontend.yaml
-│   │       ├── platform.yaml
-│   │       ├── plan.yaml
-│   │       ├── review.yaml
-│   │       └── state.yaml
-│   │
-│   └── foundation/
-│       ├── config/
-│       │   ├── state.yaml
-│       │   ├── plan.yaml
-│       │   └── review.yaml
-│       └── schema/
-│           ├── yaml.yaml
-│           ├── principles.md
-│           ├── preferences.yaml
-│           ├── state.yaml
-│           ├── plan.yaml
-│           └── review.yaml
-│
-└── .claude/                          # Current Agent integration; outside .interface
-    ├── rules/                        # Shared Agent rules
-    ├── agents/                       # Agent-specific supporting roles
-    ├── skills/                       # Operation and supporting Skills
-    └── settings.json                 # Agent-environment settings
-```
-
-The tree is intentionally limited to Agent Interface itself. Target implementation directories, generated dependencies, virtual environments, build output, caches, and version-control internals are outside this repository map.
-
-<!-------------------------- Structure Boundaries -->
-### Structure Boundaries
-
-- `README.md` is the Interface Document and the entry point to the architecture.
-- `.interface/` contains the Human-owned Target, Developer, and Foundation sources.
-- `.claude/` is outside `.interface/`. It is the current Agent-specific implementation of Rules, Skills, supporting Agents, and settings. Another Agent may map the same concepts to different native paths.
-- Operations and Workflow are conceptual responsibilities represented in this document and executed through Agent capabilities; they do not require matching physical directories.
-
-
-
-<br><br>
-<!--------------------------------------------------------------------------------- Interface --->
-
-## Interface
-
-```text
-name = Interface
-path = README.md
-responsibility = Canonical definition, navigation entry point, and complete file map of Agent Interface
-```
 
 
 <br><br>
@@ -346,6 +195,25 @@ responsibility = Canonical definition, navigation entry point, and complete file
 The Target describes **what the Interface is working on**.
 
 The Target definition is intentionally separated into two levels.
+
+<!-------------------------- Target Conceptual Structure -->
+### Conceptual Structure
+
+```text
+Target
+├── Non-Technical Definition
+└── Technical Definition
+```
+
+
+<!-------------------------- Target Repository Structure -->
+### Repository Structure
+
+```text
+.interface/target/
+├── non-technical.md
+└── technical.md
+```
 
 <!-------------------------- Non-Technical Definition -->
 ### Non-Technical Definition
@@ -370,6 +238,8 @@ The goal is to answer:
 
 without requiring implementation decisions.
 
+The Non-Technical Definition is maintained in the single `non-technical.md` file.
+
 
 <!-------------------------- Technical Definition -->
 ### Technical Definition
@@ -392,7 +262,7 @@ It may describe concepts such as:
 - technical constraints,
 - development phases.
 
-The Technical Definition can grow into many files.
+The Technical Definition is maintained in the single `technical.md` file.
 
 There is no requirement that the complete Target understanding live in one document.
 
@@ -412,64 +282,45 @@ Two developers should be able to use the same Target while producing implementat
 
 The Developer currently contains three major concepts:
 
+<!-------------------------- Developer Conceptual Structure -->
+### Conceptual Structure
+
 ```text
 Developer
+├── Components
 ├── Principles
-├── Preferences
-└── Components
+└── Preferences
+```
+
+
+<!-------------------------- Components -->
+### Components
+
+Components divide the developer's perspective into focused software-development domains.
+
+```text
+Components
+├── Development — shared software-development architecture and boundaries
+├── Model — application and domain models
+├── Database — persistence and data access
+├── Backend — server-side behavior and interfaces
+├── Frontend — user-facing behavior and interfaces
+├── Platform — runtime, deployment, and operating environment
+├── Plan — organization of development work and Tasks
+├── Review — evaluation of implementation quality
+└── State — operational state and Mode
 ```
 
 
 <!-------------------------- Principles -->
 ### Principles
 
-**Principles** represent the developer's philosophy, engineering beliefs, structural rules, and fundamental expectations.
+Principles define the developer's mandatory engineering philosophy, responsibilities, rules, and boundaries.
 
-Principles answer questions such as:
-
-> What does this developer believe good software should look like?
-
-Examples may include ideas such as:
-
-- separation of responsibilities,
-- explicit architecture,
-- clear boundaries,
-- maintainability,
-- deterministic behavior,
-- testability,
-- modularity.
-
-Principles are stronger than Preferences.
-
-They describe how the developer believes the system **should fundamentally behave or be structured**.
-
-
-<!-------------------------- Preferences -->
-### Preferences
-
-**Preferences** describe choices where multiple valid implementations may exist.
-
-They answer:
-
-> When several solutions are acceptable, which one does this developer prefer?
-
-Examples can include:
-
-- framework choices,
-- naming preferences,
-- organizational patterns,
-- coding conventions,
-- preferred technologies,
-- implementation style.
-
-
-<!-------------------------- Components -->
-### Components
-
-Components divide the developer's programming perspective into specific domains.
+#### Conceptual Structure
 
 ```text
-Components
+Principles
 ├── Development
 ├── Model
 ├── Database
@@ -481,232 +332,104 @@ Components
 └── State
 ```
 
-A Component can participate in both Principles and Preferences.
-
-Conceptually:
+#### Repository Structure
 
 ```text
-Component × Principle
-Component × Preference
-```
-
-For example:
-
-```text
-Database
-├── Principles
-└── Preferences
-```
-
-or:
-
-```text
-Backend
-├── Principles
-└── Preferences
-```
-
-This means Components and Principles/Preferences should be treated as concepts that interact rather than unnecessarily forcing everything into artificial architectural layers.
-
-The design therefore prefers a **concept/object-oriented view** over unnecessary layer-based categorization.
-
-
-<!-------------------------- Development Component -->
-#### Development Component
-
-The Development component represents general software-development philosophy and structure.
-
-It can describe broad rules that affect multiple technical domains.
-
-For example, a developer may define that:
-
-```text
-Model
-Database
-Backend
-Frontend
-```
-
-must remain conceptually separated.
-
-The more specialized components can then provide rules for each specific area.
-
-
-<!-------------------------- Model Component -->
-#### Model Component
-
-Represents principles and preferences related to application/domain models.
-
-
-<!-------------------------- Database Component -->
-#### Database Component
-
-Represents principles and preferences related to persistence, schemas, queries, migrations, repositories, database design, and related concerns.
-
-
-<!-------------------------- Backend Component -->
-#### Backend Component
-
-Represents principles and preferences related to server-side implementation.
-
-
-<!-------------------------- Frontend Component -->
-#### Frontend Component
-
-Represents principles and preferences related to user-facing applications and UI implementation.
-
-
-<!-------------------------- Platform Component -->
-#### Platform Component
-
-Represents platform-level considerations such as operating environment, deployment target, runtime expectations, or platform-specific development decisions.
-
-
-<!-------------------------- Plan Component -->
-#### Plan Component
-
-The Plan component describes how development work should be represented and organized.
-
-Earlier versions of the Interface used the term `Task` more heavily.
-
-The current conceptual direction prefers **Plan** as the primary concept.
-
-A Plan may still contain individual tasks or execution units internally.
-
-Therefore:
-
-```text
-Plan
-└── Tasks
-```
-
-may remain a valid internal model.
-
-The decision to rename the high-level component from Task to Plan does **not necessarily eliminate the concept of an individual Task**.
-
-
-<!-------------------------- Review Component -->
-#### Review Component
-
-The Review component represents the developer's standards and preferences for evaluating implementation quality.
-
-It is different from the `Review` Operation.
-
-```text
-Developer → Review
-```
-
-defines **how the developer believes reviews should be performed**.
-
-```text
-Operations → Review
-```
-
-represents **the actual act of performing a review**.
-
-
-<!-------------------------- State Component -->
-#### State Component
-
-State describes the runtime or workflow state of the Interface.
-
-It contains the Mode concept.
-
-```text
-State
-└── Mode
+.interface/developer/principles/
+├── development.md
+├── model.md
+├── database.md
+├── backend.md
+├── frontend.md
+├── platform.md
+├── plan.md
+├── review.md
+└── state.md
 ```
 
 
-<!-------------------------- Mode -->
-##### Mode
+<!-------------------------- Preferences -->
+### Preferences
 
-Mode represents the current operational stage of the Interface.
+Preferences define the developer's preferred choices and defaults when multiple valid implementations exist.
+
+#### Conceptual Structure
 
 ```text
-Mode
-├── Not Set
-├── Configuring
-├── Planning
+Preferences
 ├── Development
-└── Reset
-    ├── Configure
-    ├── Plan
-    └── Develop
+├── Model
+├── Database
+├── Backend
+├── Frontend
+├── Platform
+├── Plan
+├── Review
+└── State
 ```
 
-<!-------------------------- Not Set -->
-###### Not Set
-
-No active operational mode has been established.
-
-<!-------------------------- Configuring -->
-###### Configuring
-
-The Interface is currently performing configuration-related work.
-
-<!-------------------------- Planning -->
-###### Planning
-
-The Interface is currently producing or modifying a Plan.
-
-<!-------------------------- Development -->
-###### Development
-
-The Interface is currently executing development work.
-
-<!-------------------------- Reset -->
-###### Reset
-
-The Interface is currently resetting part of its operational state.
-
-Reset must identify which area is being reset:
+#### Repository Structure
 
 ```text
-Reset
-├── Configure
-├── Plan
-└── Develop
+.interface/developer/preferences/
+├── development.yaml
+├── model.yaml
+├── database.yaml
+├── backend.yaml
+├── frontend.yaml
+├── platform.yaml
+├── plan.yaml
+├── review.yaml
+└── state.yaml
 ```
-
-This allows the state representation to distinguish different reset operations.
-
 
 
 <br><br>
 
 ## Agent
 <!--------------------------------------------------------------------------------- Agent --->
-The Agent section models the execution capabilities and constraints of AI coding agents.
+The Agent section models the project-level integration surfaces used by AI coding agents.
 
 The architecture should work with different agents without being redesigned for each one.
 
-Conceptually:
+<!-------------------------- Agent Conceptual Structure -->
+### Conceptual Structure
 
 ```text
 Agent
-├── Instances
+├── Agents
+├── Commands
 ├── Rules
-├── MCP
 ├── Hooks
-├── Plugins
-├── Tools
-├── Memory
-├── Permissions
-├── Sandbox
-├── Network
-├── Sessions
-├── Logs
+├── Output Styles
 └── Skills
 ```
 
 These concepts provide a common abstraction over capabilities that modern coding agents may expose differently.
 
 
-<!-------------------------- Agent Instances -->
-### Agent Instances
+<!-------------------------- Agent Repository Structure -->
+### Repository Structure
 
-Represents one or more execution instances.
+```text
+.claude/
+├── agents/
+├── commands/
+├── hooks/
+├── output-styles/
+├── rules/
+├── skills/
+├── settings.json
+└── settings.local.json
+```
+
+`.claude/` is outside `.interface/` because it is the current Agent-specific implementation. Another Agent may map the same concepts to different native paths.
+
+
+<!-------------------------- Agents -->
+### Agents
+
+Represents one or more Agent execution units.
 
 An Agent may be able to:
 
@@ -717,6 +440,12 @@ An Agent may be able to:
 - run isolated contexts.
 
 The exact implementation is agent-specific.
+
+
+<!-------------------------- Commands -->
+### Commands
+
+Represents project-level commands supported by the Agent environment.
 
 
 <!-------------------------- Agent Rules -->
@@ -731,85 +460,16 @@ Developer Principles describe the developer's engineering philosophy.
 Agent Rules govern the **behavior of the executing agent**.
 
 
-<!-------------------------- MCP -->
-### MCP
-
-Represents Model Context Protocol integrations available to the Agent.
-
-
 <!-------------------------- Hooks -->
 ### Hooks
 
 Represents lifecycle or execution hooks supported by the Agent environment.
 
 
-<!-------------------------- Plugins -->
-### Plugins
+<!-------------------------- Output Styles -->
+### Output Styles
 
-Represents extensible packaged capabilities available to the Agent.
-
-Plugins should remain conceptually independent because different agent platforms may implement plugins differently.
-
-
-<!-------------------------- Tools -->
-### Tools
-
-Represents tools that can be called directly by the Agent.
-
-Tools are not assumed to be identical to Skills, MCP servers, or Plugins.
-
-
-<!-------------------------- Memory -->
-### Memory
-
-Represents agent memory mechanisms and persistent or reusable context.
-
-The Interface does not assume one specific memory implementation.
-
-Future systems may use:
-
-- persistent memory,
-- memory graphs,
-- contextual memory,
-- project memory,
-- or other mechanisms.
-
-
-<!-------------------------- Permissions -->
-### Permissions
-
-Defines what the Agent is allowed to access or execute.
-
-It may include:
-
-- filesystem permissions,
-- execution permissions,
-- approval requirements,
-- external-service permissions.
-
-
-<!-------------------------- Sandbox -->
-### Sandbox
-
-Represents execution isolation and environmental restrictions.
-
-
-<!-------------------------- Network -->
-### Network
-
-Represents network-access capabilities and restrictions.
-
-
-<!-------------------------- Sessions -->
-### Sessions
-
-Represents Agent execution sessions or persistent interaction contexts.
-
-
-<!-------------------------- Logs -->
-### Logs
-
-Represents execution history, traceability, debugging information, or audit data generated by Agent activity.
+Represents project-level response styles supported by the Agent environment.
 
 
 <!-------------------------- Skills -->
@@ -848,6 +508,9 @@ is a supporting Agent capability rather than a primary Interface Operation.
 ## Operations
 <!--------------------------------------------------------------------------------- Operations --->
 Operations define **what actions the Interface can perform**.
+
+<!-------------------------- Operations Conceptual Structure -->
+### Conceptual Structure
 
 ```text
 Operations
@@ -1039,57 +702,18 @@ Perform its role
 
 Understanding is therefore a **responsibility of execution**, not a standalone workflow stage.
 
-
-
-<br><br>
-
-## Config
-<!--------------------------------------------------------------------------------- Config --->
-Config contains operational information required by the Interface.
-
-Current high-level configuration concepts are:
-
-```text
-Config
-├── State
-├── Plan
-└── Review
-```
-
-Config should not be confused with Developer Preferences.
-
-Developer Preferences describe how the developer prefers software to be built.
-
-Config stores operational information used while executing the Interface.
-
-
-<!-------------------------- State Config -->
-### State Config
-
-Stores current execution and workflow state.
-
-
-<!-------------------------- Plan Config -->
-### Plan Config
-
-Stores information related to the generated or active Plan.
-
-
-<!-------------------------- Review Config -->
-### Review Config
-
-Stores operational information related to reviews.
-
-
-
 <br><br>
 
 ## Foundation Files
 <!--------------------------------------------------------------------------------- Foundation Files --->
 Foundation Files provide foundational definitions and schemas required by the Interface.
 
+<!-------------------------- Foundation Conceptual Structure -->
+### Conceptual Structure
+
 ```text
 Foundation Files
+├── Interface
 ├── Config
 │   ├── State
 │   ├── Plan
@@ -1103,7 +727,70 @@ Foundation Files
     └── Review Schema
 ```
 
+
+<!-------------------------- Foundation Repository Structure -->
+### Repository Structure
+
+```text
+.interface/foundation/
+├── interface.md
+├── config/
+│   ├── state.yaml
+│   ├── plan.yaml
+│   └── review.yaml
+└── schema/
+    ├── yaml.yaml
+    ├── principles.md
+    ├── preferences.yaml
+    ├── state.yaml
+    ├── plan.yaml
+    └── review.yaml
+```
+
 Target Definitions are intentionally **not** considered Foundation Files because they belong to the Target concept itself.
+
+
+<!-------------------------- Interface Foundation File -->
+### Interface File
+
+```text
+name = Interface
+path = .interface/foundation/interface.md
+responsibility = Canonical definition, navigation entry point, and complete file map of Agent Interface
+```
+
+
+<!-------------------------- Config Foundation Files -->
+### Config Files
+
+Config contains mutable operational information required by the Interface.
+
+```text
+Config
+├── State
+├── Plan
+└── Review
+```
+
+Config should not be confused with Developer Preferences. Developer Preferences describe how the developer prefers software to be built; Config stores operational information used while executing the Interface.
+
+
+<!-------------------------- State Config -->
+#### State Config
+
+Stores current execution and workflow state.
+
+
+<!-------------------------- Plan Config -->
+#### Plan Config
+
+Stores information related to the generated or active Plan.
+
+
+<!-------------------------- Review Config -->
+#### Review Config
+
+Stores operational information related to reviews.
 
 
 <!-------------------------- Schema Foundation Files -->
@@ -1251,6 +938,9 @@ The schema should support both human-readable and agent-readable review output.
 
 ## Workflow
 <!--------------------------------------------------------------------------------- Workflow --->
+<!-------------------------- Workflow Conceptual Structure -->
+### Conceptual Structure
+
 The high-level workflow is:
 
 ```text
@@ -1364,7 +1054,7 @@ During this operation, the Mode becomes:
 Development
 ```
 
-Development may be performed sequentially or through multiple Agent Instances when supported.
+Development may be performed sequentially or through multiple Agents when supported.
 
 
 <!-------------------------- Review -->
@@ -1468,11 +1158,11 @@ For example:
 Interface Concept     Agent-Specific Mechanism
 ─────────────────     ────────────────────────
 Skill                 Native skill system
-Tool                  Native tool invocation
-Instance              Sub-agent or worker
-Memory                Agent memory mechanism
+Command               Native custom command
+Agent                 Sub-agent or worker
 Rule                  Agent instruction system
-Plugin                Native extension system
+Hook                  Native lifecycle hook
+Output Style          Native response style
 ```
 
 This mapping may differ between Codex, Claude Code, or future agents.
@@ -1582,7 +1272,7 @@ The current design includes the following decisions:
 
 13. **Agent technologies remain independent concepts.**
 
-    Skills, Tools, Plugins, MCP, Hooks, Memory, Rules, and Instances should not be treated as interchangeable.
+    Agents, Commands, Rules, Hooks, Output Styles, and Skills should not be treated as interchangeable.
 
 14. **The architecture favors concepts and relationships over artificial layers.**
 
@@ -1609,7 +1299,7 @@ Possible implementation mechanisms include:
 - hooks,
 - command-line tools,
 - local or persistent memory,
-- multiple Agent Instances,
+- multiple Agents,
 - validation tools.
 
 The implementation may change as agent technology evolves.
