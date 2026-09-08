@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers, including Model."
   purpose: "Layer-owned runtime settings and secrets, cross-layer bindings, package conventions, and cross-cutting capability defaults used when no explicit project choice exists."
   standard: "Agent Project Interface"
-  version: "1.3"
+  version: "1.4"
   updated: "2026-09-08"
 
 
@@ -15,7 +15,7 @@ policy:
   changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
   consumption: "Resolve unstated runtime-configuration, package, and cross-cutting choices from this file when implementing the project. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
-  selection: "Development catalogues one kind of alternative, the Platform the target project runs on. For an unlisted Platform need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established. Every other cross-layer need this file does not cover is raised through State rather than decided inside one layer."
+  selection: "Development catalogues one kind of alternative, the Platform the target project runs on. For an unlisted Platform or other unstated cross-layer need, resolve a compatible choice under Development's ownership while respecting explicit project decisions, applicable Principles, and declared interfaces. Record consequential implementation choices with the implementation. An absent default alone does not require a question or Blocker; use State only when the unresolved condition meets its criticality rules. A single layer does not acquire ownership of cross-layer decisions."
   version_resolution: "A Platform entry carries the version of its runtime when one applies; resolve latest to a concrete stable version and preserve an explicit one. Every other version belongs to the Preferences of the Component that owns the technology."
   matching: "Match the selected platform to the entry of that key in options.platforms; an explicit run mode in the project definition takes priority over the selection recorded here. Match a settings group to its subject by name: a layer receives the runtime-configuration section named after it, and package conventions apply to every package and architectural subpackage unless that Component's own Preferences state otherwise."
 

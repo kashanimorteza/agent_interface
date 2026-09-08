@@ -24,17 +24,19 @@ For each operational Schema:
 4. Preserve every operational record a Config file already holds — the owning Schema states what those are — throughout. Never drop operational data to satisfy a structural change: when a field the Schema no longer defines still carries information that exists nowhere else, surface it as a conflict and leave that part of the file unchanged, because a structural tidy-up that loses recorded work costs more than the untidiness it removes.
 5. Introduce only the initial values and structural changes required by the applicable Schemas. Do not invent operational work, project facts, or technical decisions.
 
-Validate every Config file against its applicable Schemas. A second run against valid current files makes no changes.
+Record this invocation's operational position and provenance according to the current owning Component's authority. This records the Configure run without advancing or resetting existing work. Resolve the required fields and values from that Component rather than defining them here.
+
+Validate every Config file against its applicable Schemas. Repeating the run against valid current files makes no structural changes and preserves existing work; recording the current invocation follows the owning Component's rules independently of structural reconciliation.
 
 ## Boundaries
 
-Configure only. Do not produce or store Target Project Understanding, create planning work, change operational progress, implement the project, review implementation, reset the workflow, or edit human-owned Interface sources.
+Configure only. Do not produce or store Target Project Understanding, create planning work, advance or reset existing work, implement the project, review implementation, reset the workflow, or edit human-owned Interface sources. Recording this invocation is limited to the authority provided by the current owning Component.
 
 ## Report
 
 Report in this order:
 
 1. **Each Config file** — every operational Config resolved from the Interface document, each reported as created, updated, or already valid, with the Schema it was validated against.
-2. **What changed** — the structural changes applied per file according to its current Schema. State "no change" explicitly when nothing changed.
+2. **What changed** — the structural changes applied per file according to its current Schema, and separately any operational update recording this invocation. State "no structural change" when the structure was already current, and "no change" only when nothing changed.
 3. **Preserved operational data** — what existing work was carried through unchanged.
 4. **Conflicts** — any structural change that could not be applied without losing information, what the information is, and where it currently lives. Report these even when everything else succeeded.

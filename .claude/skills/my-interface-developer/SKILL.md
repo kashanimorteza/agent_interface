@@ -31,7 +31,7 @@ Then establish Target Project Understanding by reading the human project definit
 
 Read the requested phase's current Task Plan and State. Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from the current Component authorities. Do not assume or reproduce their fields, statuses, or policies here, because they change independently of this Skill.
 
-Install and configure the runtimes, package managers, build tools, system software, and dependencies the authorized work requires. A missing prerequisite is work to perform, not an obstacle to report; record a Blocker only when its installation or configuration actually fails and prevents continuation.
+Install and configure the runtimes, package managers, build tools, system software, and dependencies the authorized work requires. Resolve a missing prerequisite within the current authority whenever possible. Apply the shared decision policy and the current owning Component's blocking rules when evidence establishes that installation or configuration cannot proceed; a failed installation attempt is not required to establish such a condition.
 
 Execute eligible planned work within the resolved scope and current authority. Apply the shared decision policy from those rules to unspecified implementation details while preserving project intent and existing interfaces.
 

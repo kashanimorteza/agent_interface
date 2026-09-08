@@ -86,6 +86,8 @@ The initial mode is `not set`.
 
 **Rule:** A Blocker records a condition that genuinely prevents safe or valid continuation. Every Blocker states what is blocked, what is missing, why continuation is impossible, who or what can resolve it, and which operation or human raised it. After an authorized operation verifies resolution, the Blocker is removed from the unresolved collection.
 
+Removal is coordinated with the owners of current operational references to that Blocker. Resolution evidence must be retained with affected work, and its current references reconciled under the owning Component's authority before the Blocker is removed. Historical references may remain in execution history. An operation that cannot perform the required reconciliation reports the verified resolution and the pending handoff, leaves the record unchanged until authorized reconciliation, and does not claim that the original condition remains unverified. This coordination grants no authority to change another Component's progress.
+
 **Why:** A Blocker interrupts the human, so the record is only useful while it names a stoppage that is real and currently unresolved.
 
 **Boundary:** Ordinary ambiguity, an unspecified implementation detail, or a decision that can be made through professional judgment is not a Blocker.
@@ -126,6 +128,7 @@ The initial mode is `not set`.
 - **Never** — an operation rewrites project meaning, Task content, or another Component's information through State *(5)*
 - **Must** — a Blocker states what is blocked, what is missing, why, who can resolve it, and who raised it *(6)*
 - **Must** — a Blocker is removed once an authorized operation verifies its resolution *(6)*
+- **Must** — Blocker removal follows authorized reconciliation of current references and preservation of resolution evidence with affected work; missing authority is reported as a pending handoff *(6)*
 - **Never** — ordinary ambiguity or a judgment call becomes a Blocker *(6)*
 - **Must** — an Open Question states the decision, why it matters, and any Blocker its answer would release *(7)*
 - **Must** — a recorded answer carries its value, author, and time, and the question is removed once resolved *(7)*

@@ -78,7 +78,7 @@ The dependency direction is Database Interface → Data Logic and Mapping → St
 
 **Why:** Persistence decisions interact with each other, so splitting them across Components produces storage that no single Component can reason about.
 
-**Boundary:** Logical Models, fields, relationships, and domain rules remain owned by Model; Database owns only their persistence mapping and enforcement. No other Component makes or changes Database-owned decisions. Database does not own application behaviour, the HTTP API, Frontend, or deployment secrets. Its boundaries remain explicit in the implementation and its public documentation.
+**Boundary:** Logical Models, fields, relationships, and domain rules remain owned by Model; Database owns only their persistence mapping and enforcement. No other Component makes or changes Database-owned decisions. Database does not own application behaviour, the HTTP API, Frontend, or secrets belonging to other layers. Database owns its private runtime settings and secrets under Development's rules; Platform coordinates their provisioning and delivery. Its boundaries remain explicit in the implementation and its public documentation.
 
 <br>
 
@@ -89,6 +89,8 @@ The dependency direction is Database Interface → Data Logic and Mapping → St
 The status operation accepts exactly one action: `enable` or `disable`. It is available only when the selected Model declares a `status` field and changes that field to the corresponding enabled or disabled value.
 
 The interface also supports controlled SQL-command execution for cases that cannot be expressed through standard Model operations, using explicit parameters rather than value interpolation. This route is for data operations on the selected Instance and remains subject to Database's persistence constraints and transaction boundaries. It rejects structural changes, which belong exclusively to Migration. Engine-specific SQL must be identified as such and validated for the selected Engine; it carries no promise of portability when the Engine changes.
+
+Controlled SQL preserves the same data protections as the generic operations. Before accepting a command, Database must establish which data it can read or change and how the applicable protections are enforced. Writes preserve Model validation of the resulting data, persistence constraints, and the resolved credential transformations; reads never expose credential storage representations or runtime secrets, including through derived results. Parameterization alone does not establish these guarantees. A command whose effects or results cannot be handled with these protections is rejected before execution. Validation of resulting changes occurs within the same transaction before commit, and failure rolls back the changes. This does not authorize Database to take over application-context rules owned by Backend Logic.
 
 **Why:** Differences between Models come from their resolved fields, relationships, constraints, rules, and storage mappings, so one pipeline serves them all and each new Model costs no new access implementation.
 
@@ -120,7 +122,9 @@ Database-owned runtime configuration declares the supported Engine catalogue, th
 
 ## 9. Relationships are explicit and consistently resolved
 
-**Rule:** A relationship between Models is represented explicitly by a foreign-key field. An explicit relationship field or reference always takes precedence over a default, and an existing declared relationship field is reused rather than duplicated. The foreign key references the related key and uses the same type. Its nullability preserves the resolved Model field and relationship optionality; Database does not apply a separate logical nullability default. If a physical relationship field is needed where no logical field is declared, its nullability follows the resolved relationship meaning. When one Model relates to the same target more than once, the relationship roles remain explicit, and the resolved storage schema records the foreign-key field, referenced table, and referenced column.
+**Rule:** Relationship mappings preserve the cardinality, optionality, and roles resolved by Model, including one-to-one, one-to-many, and many-to-many relationships. The physical representation uses explicit foreign keys and any association storage and constraints needed to preserve that meaning. One-to-one mappings enforce the required uniqueness; one-to-many mappings allow the declared multiplicity; many-to-many mappings represent both sides without reducing either to a single reference. Association storage reuses an explicit association Model when one is declared; a purely physical association does not introduce a new domain Model.
+
+An explicit relationship field or reference always takes precedence over a default, and an existing declared relationship field is reused rather than duplicated. Each foreign key references the related key and uses the same type. Its nullability preserves the resolved Model field and relationship optionality; Database does not apply a separate logical nullability default. If a physical relationship field is needed where no logical field is declared, its nullability follows the resolved relationship meaning. When one Model relates to the same target more than once, the relationship roles remain explicit, and the resolved storage schema records each foreign-key field, referenced table, and referenced column. A mapping must preserve the complete relationship constraint; foreign-key nullability alone is not proof that every cardinality or participation requirement is enforced.
 
 **Why:** Explicit, recorded connections are what make stored data navigable and enforceable rather than merely conventional.
 
@@ -169,11 +173,14 @@ Database-owned runtime configuration declares the supported Engine catalogue, th
 - **Must** — every storage-schema change is a recorded, ordered, reversible migration *(4)*
 - **Never** — application code creates, alters, or drops database objects directly *(4)*
 - **Must** — Database alone owns engines, Instances, storage, connections, ORM, mappings, schema, constraints, indexes, migrations, and the published interface *(5)*
-- **Never** — Database owns application behaviour, the HTTP API, Frontend, or deployment secrets *(5)*
+- **Must** — Database owns its private runtime settings and secrets under Development, while Platform coordinates provisioning and delivery *(5)*
+- **Never** — Database owns application behaviour, the HTTP API, Frontend, or another layer's secrets *(5)*
 - **Must** — every consumer reaches data through one generic Model-driven interface covering create, read, list, update, delete, and status *(6)*
 - **Must** — the status operation accepts only `enable` or `disable`, and only for a Model declaring a `status` field *(6)*
 - **Must** — SQL execution uses explicit parameters and stays inside the Database boundary *(6)*
 - **Must** — controlled SQL follows the selected Instance's persistence constraints and transaction boundary, with Engine-specific compatibility made explicit *(6)*
+- **Must** — controlled SQL preserves Model validation, persistence constraints, credential transformations, and protected output; resulting changes are validated before commit within the same transaction and rolled back on failure *(6)*
+- **Never** — a SQL command is accepted when its effects or results cannot be handled with the required data protections; parameterization alone is insufficient *(6)*
 - **Never** — the public SQL route performs structural changes or bypasses Migration or transaction ownership *(6)*
 - **Never** — a consumer receives the engine connection or accesses storage outside the published Database interface *(6)*
 - **Never** — Model identity is passed as an untyped name string with an unrelated field dictionary *(6)*
@@ -184,7 +191,10 @@ Database-owned runtime configuration declares the supported Engine catalogue, th
 - **Must** — every persistent Model maps to a table that records its source Model, and persistence constraints remain traceable to their logical declarations *(8)*
 - **Must** — Database guarantees constraints requiring stored state at commit, including under concurrent access, and reuses shared Model validation *(8)*
 - **Never** — Database absorbs application-context validation or silently drops or weakens a required persistence constraint *(8)*
-- **Must** — a relationship is an explicit foreign key referencing the related key with the same type, with roles kept explicit *(9)*
+- **Must** — relationship mappings preserve Model cardinality, optionality, and roles through explicit foreign keys and the association storage and constraints they require *(9)*
+- **Must** — one-to-one uniqueness, one-to-many multiplicity, and both sides of many-to-many relationships are preserved; an explicit association Model is reused *(9)*
+- **Never** — purely physical association storage introduces a domain Model, or foreign-key nullability alone is treated as proof of all relationship constraints *(9)*
+- **Must** — each foreign key references the related key with the same type, with roles and physical references recorded explicitly *(9)*
 - **Must** — relationship nullability follows the resolved Model meaning; Database defaults cover only unstated physical mapping choices *(9)*
 - **Must** — connection credentials live in runtime configuration outside committed files *(10)*
 - **Must** — every credential field resolves to one at-rest mode, explicit first, otherwise the Preferences default *(10)*

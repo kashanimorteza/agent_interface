@@ -31,7 +31,7 @@ Resolve the implementation directories that may be removed from the code path ea
 
 ### 1 = Configure reset
 
-Remove every operational Config file the Interface document lists and the developed implementation outputs the current Interface owns. Preserve their container directory. Do not regenerate Config, because regeneration belongs to Configure and running it here would hide whether the reset itself worked.
+Resolve the full cleanup scope from the current Interface reset definition, including whether it covers a Config container's contents or individually listed records, and include every affected entry in the preview. After confirmation, apply that cleanup and remove the developed implementation outputs the current Interface owns. Preserve the Config container itself. Do not regenerate Config, because regeneration belongs to Configure and running it here would hide whether the reset itself worked.
 
 ### 2 = Task reset
 

@@ -17,7 +17,7 @@ Backend owns application Behaviour, the route from Behaviour to persistence, and
 
 - **Consumes Model** — the shared logical Model definitions used by Logic, Data Access, and API.
 - **Consumes Database** — the generic data-access interface, reached only through Data Access.
-- **Consumes Development** — the common package standard, centralized runtime configuration, and the cross-cutting capabilities selected for the project.
+- **Consumes Development** — the common package standard, ownership of Backend's settings and private secrets, Platform-coordinated configuration delivery and cross-layer bindings, and the cross-cutting capabilities selected for the project.
 - **Consumed by Frontend** — the public API through which the user interface reaches application data and capabilities.
 
 Technical choices and defaults belong to Backend Preferences. Backend implementation applies those choices to the current project definition.

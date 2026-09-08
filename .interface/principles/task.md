@@ -18,7 +18,7 @@ Task is the Component that turns project phases into precise, bounded activities
 
 - **Consumes State** — the shared Blocker records a Task refers to when it cannot proceed.
 - **Consumes Review** — the gap Findings that name required work no planned activity yet covers.
-- **Consumed by no other Component** — Task records the work; no Component depends on its contents.
+- **Consumed by Review** — the planned outcomes, acceptance criteria, and execution evidence used to judge the implemented result.
 
 Technical choices and defaults belong to Task Preferences, which currently define none. The exact shape of the generated Task configuration belongs to the Task Schema.
 
@@ -28,7 +28,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 1. Every phase has its own Plan
 
-**Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan is also the home of everything that holds for the whole phase: the Component it targets, the resolved language and technologies, and the constraints every Task of the phase must respect.
+**Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
 **Why:** Stated once in the Plan, that context is inherited by every Group and Task beneath it, so the phase is described in one place rather than restated by everything it contains.
 
@@ -38,7 +38,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 2. Groups organize related work
 
-**Rule:** Every Task belongs to one Group. A Group collects Tasks that contribute to one coherent implementation area and explains what that area is, what it accomplishes, and where within the phase's target Component its work belongs. A Group is the home of the context its Tasks share: the work area, the constraints that apply to that area but not to the whole phase, and any technology that only that area uses.
+**Rule:** Every Task belongs to one Group. A Group collects Tasks that contribute to one coherent implementation area and explains what that area is, what it accomplishes, and where within the phase's target Component its work belongs. A Group holds the work area and work-specific constraints shared by its Tasks that apply neither to the whole phase nor through another source. Technology choices remain in their owning sources.
 
 **Why:** Grouping supplies this shared context so that an individual Task does not have to carry it.
 
@@ -89,11 +89,11 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 ## 6. A Task is independent of the implementation structure
 
-**Rule:** A Task is expressed in terms of responsibilities, behaviour, and observable results. It never states where anything lives: no file, folder, path, module, package layout, class, function, symbol, or command appears in a Task, and a Task never asserts that a particular artifact already exists at a particular location. The Task's target and work area identify a Component and a responsibility inside it, not a directory. A Task carries no list of sources to consult.
+**Rule:** Planning content in Plans, Groups, and Tasks is expressed in terms of responsibilities, behaviour, and observable results. It never states where anything lives: no file, folder, path, module, package layout, class, function, symbol, or command appears in that planning content, and it never asserts that a particular artifact already exists at a particular location. The target and work area identify a Component and a responsibility inside it, not a directory. Planning content carries no list of sources to consult. Execution history is distinct: a Task's log records the concrete check actually performed, relevant locations, and the observed outcome, with secret values excluded.
 
 **Why:** The shared understanding a Task depends on is produced by the Interface itself — the human project definition together with the applicable Principles and Preferences. That understanding is established from those current sources at the moment the Task is executed, so a Task remains valid when the implementation is rearranged and is never invalidated by a path that has moved.
 
-**Boundary:** Language and technology metadata identify what has been resolved, not how the source is arranged. When a Task must constrain the result, it constrains observable behaviour and the boundaries the result must respect, not the shape of the code that produces it.
+**Boundary:** Execution evidence describes what happened and does not prescribe future implementation. Language and technology choices remain in their authoritative sources. A work-specific constraint limits observable results or activity scope without defining the code or a new technical requirement.
 
 <br>
 
@@ -131,6 +131,8 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 **Rule:** The Task Component owns Plans, Groups, Task content, Task status, a Task's reference to any Blocker, and Task-local history. An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists.
 
+When a blocking condition is verified as resolved, an operation authorized to update Task progress records the resolution evidence and transition in the log, clears the obsolete Blocker reference, and returns unfinished blocked work to its initial pending status. Dependencies and any remaining blocking conditions are checked again before the Task can be claimed; resolving a Blocker never marks work complete. If another condition still blocks the Task, its reference identifies that current condition. Removal of the State Blocker is coordinated with these updates. A missing Blocker record alone is not evidence of resolution; the underlying condition must be verified before progress is changed.
+
 **Why:** Progress belongs with the work it describes, while the question of where the Workflow stands is shared by everything that touches the project and belongs to one small record.
 
 **Boundary:** The State Component records the active Workflow position and owns the shared records for critical Blockers and Open Questions. Each operation may change only the portions owned by its own contract; the current State mode records the operation but does not grant or deny that permission.
@@ -149,7 +151,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 ## 12. The record holds work and progress, not project meaning
 
-**Rule:** Plans, Groups, and Tasks record which work exists, what each activity must produce, what it depends on, where it stands, and what has happened to it. They do not store the project's concepts, its resolved technical choices, the rules of any Component, or an explanation of anything the human project definition, the Principles, and the Preferences already state.
+**Rule:** Plans, Groups, and Tasks record which work exists, what each activity must produce, what it depends on, where it stands, and what has happened to it. Planning content does not store the project's concepts, its resolved technical choices, the rules of any Component, or an explanation of anything the human project definition, the Principles, and the Preferences already state. Execution history may identify concrete technologies and locations when needed as evidence of an action actually performed; it does not become the authority for choosing them.
 
 **Why:** Those sources are living and authoritative, and a copy of them inside the record goes stale the moment one of them changes, leaving two answers to the same question. Keeping the record to work and progress also keeps it small enough to stay readable as a project grows.
 
@@ -171,11 +173,11 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 - **Must** — a Task carries only what is its own, and is read together with its Group and Plan *(5)*
 - **Never** — a Task repeats the identity or general description of the project, its phase, or its Group *(5)*
 - **Must** — a Task is expressed in responsibilities, behaviour, and observable results *(6)*
-- **Never** — a file, folder, path, module, layout, class, function, symbol, or command appears in a Task *(6)*
-- **Never** — a Task asserts that an artifact exists at a location, or carries a list of sources to consult *(6)*
+- **Never** — planning content names a file, folder, path, module, layout, class, function, symbol, or command, asserts an artifact's location, or carries a list of sources to consult *(6)*
+- **Must** — execution history records actual checks, relevant locations, and observed results without secret values or prescriptions for future implementation *(6)*
 - **Must** — a Task states what must be achieved, why, where the responsibility belongs, and what proves completion *(7)*
 - **Must** — the record holds which work exists, what it must produce, what it depends on, where it stands, and its history *(12)*
-- **Never** — the record stores project concepts, resolved technical choices, Component rules, or explanations its sources already hold *(12)*
+- **Never** — planning content stores project concepts, resolved technical choices, Component rules, or explanations its sources already hold, or execution history becomes the authority for technical choices *(12)*
 - **Never** — a constraint is recorded when it is derivable from the project definition, the Principles, or the Preferences *(12)*
 - **Never** — a Task prescribes implementation steps, algorithms, source layout, code, or commands, or makes a technical decision *(7)*
 - **Must** — a Task names every other Task whose completed result it requires *(8)*
@@ -184,6 +186,8 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 - **Must** — the executable check used and its outcome are recorded in the Task's log, and the Task is complete only once it passes *(9)*
 - **Never** — verification names the command, tool, path, or code that observes it, or doubles as an implementation procedure *(9)*
 - **Must** — an executor claims eligible work before modifying it and preserves an append-only Task log *(10)*
+- **Must** — authorized Task progress updates record verified Blocker resolution, reconcile its reference and pending status, and recheck dependencies and remaining conditions before claiming work *(10)*
+- **Never** — Blocker removal alone proves resolution, or resolution marks a Task complete *(10)*
 - **Never** — Task duplicates the active Workflow position or the shared Blocker and Open Question records *(10)*
 - **Must** — replanning reconciles unchanged work and adds what is newly required *(11)*
 - **Never** — completed, active, or meaningful Task content is removed without an authorized operation or a surfaced conflict *(11)*

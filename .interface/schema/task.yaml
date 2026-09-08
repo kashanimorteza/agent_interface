@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-task"
-  version: "8.1"
+  version: "8.2"
   purpose: "Operational Task file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Task Component."
 initialization:
   source: "initial"
@@ -13,9 +13,9 @@ initialization:
 operational_scope:
   purpose: "This file records the current state of the project's work. It is an operational record, not a description of the project."
   stores: "Which work exists, what each activity must produce, what it depends on, where it stands, and what has happened to it."
-  excludes: "Project concepts, resolved technical choices, technologies, languages, Component rules, and any explanation that the human project definition, the Principles, or the Preferences already state. A stored copy of those goes stale and competes with its source."
+  excludes: "Planning content excludes project concepts, resolved technical choices, technologies, languages, Component rules, and explanations already held by authoritative sources. Execution logs may name actual technologies, commands, and locations as historical evidence, never as the source of current technical choices."
   resolution: "Anything derivable from those sources is resolved from them at the moment the work is implemented, never read back from this file."
-  constraints: "A constraint is stored only when it is specific to the work itself and derivable from no other source. A decision Planning makes that no source states — an interface shape, a boundary, an invariant — is such a constraint, and it is stored once at the level it binds rather than repeated in every Task beneath it. This limits what the file stores, never what an implementation must respect."
+  constraints: "A constraint is stored only when specific to the planned work and derivable from no other source, such as a scope boundary introduced by its decomposition into activities. Store it once at the level it binds. This field does not authorize Planning to choose technologies, design interfaces, prescribe implementation, or invent domain requirements."
 inheritance:
   purpose: "A Plan, its Groups, and their Tasks form one nested structure, and that nesting is the context of every record beneath it."
   context: "A Task's phase is the Plan that contains it and its Group is the Group that contains it. Neither is stored inside the Task; the nesting and the Task identifier carry them."
@@ -23,10 +23,10 @@ inheritance:
   resolution: "A Group inherits the Plan's context and a Task inherits both. A lower level may add to inherited context or make it stricter; it never repeats it and never contradicts it. Reading a Task means reading it together with its Group and Plan."
   duplication: "The same statement never appears in more than one Task of a Plan. A statement written into several Tasks belongs to their common Group or Plan and is stored there instead."
 structure_independence:
-  purpose: "Stored records describe responsibilities, behaviour, and observable results, never the arrangement of the implementation."
-  excluded: "No file, folder, path, module, package layout, class, function, symbol, or command is stored in a Plan, Group, or Task, and no record asserts that an artifact exists at a particular location."
+  purpose: "Planning content describes responsibilities, behaviour, and observable results; execution logs retain the concrete evidence of work performed."
+  excluded: "No file, folder, path, module, package layout, class, function, symbol, or command is stored in planning content, and planning content never asserts an artifact's location. Task logs may contain actual checks, relevant locations, and observed results without secret values."
   target_and_area: "target and area identify a Component and a responsibility inside it, not a directory."
-  sources: "No record stores a list of sources to consult. The shared understanding is produced from the human project definition and the applicable Principles and Preferences, located through the Interface document, when an operation runs."
+  sources: "Planning content stores no list of sources to consult. Understanding is established from the human project definition and applicable Principles and Preferences, located through the Interface document, when an operation runs."
 structure:
   - "task_count"
   - "plans"
@@ -179,11 +179,11 @@ sections:
                           blocker:
                             required: false
                             default: null
-                            purpose: "The identifier of the critical blocking condition when the Task is blocked; absent otherwise."
+                            purpose: "The identifier of the current critical Blocker when the Task is blocked; absent otherwise. Resolution evidence and the resulting progress transition belong in the log under Task's reconciliation rules. A missing referenced State record does not itself establish resolution."
                           log:
                             required: false
                             default: []
-                            purpose: "The append-only Task-local progress history; absent until the first recorded transition. It records meaningful transitions and, for a completed Task, the executable check used to satisfy verify and the outcome it produced."
+                            purpose: "The append-only Task-local progress history; absent until the first recorded transition. Records meaningful transitions, verified Blocker resolution evidence when applicable, and, for completed work, the actual executable check and its observed outcome. Concrete commands, technologies, and locations are allowed here as historical evidence, with secret values excluded; they are not planning prescriptions."
 definitions:
   task_status:
     todo: "Defined and not started."

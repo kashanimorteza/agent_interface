@@ -18,7 +18,7 @@ The application architecture separates Model, Database, Backend, Frontend, and P
 ## Relationships
 
 - **Consumes Model, Database, Backend, and Frontend** — their declared responsibilities and public interfaces, referenced when recording composition rather than redefined.
-- **Consumed by Model, Database, Backend, and Frontend** — the common package standard, the cross-cutting capability decisions, and the centralized runtime configuration each layer receives.
+- **Consumed by Model, Database, Backend, and Frontend** — the common package standard, cross-cutting capability decisions, ownership of each layer's settings and secrets, and Platform-coordinated configuration delivery and bindings.
 
 Technical choices and defaults belong to Development Preferences. Development implementation applies those choices to the current project definition.
 
@@ -138,7 +138,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 12. Platform is realized with every phase, not after them
 
-**Rule:** Platform has no phase of its own. Each phase that delivers a layer also delivers that layer's part of the composition: its section of the centralized runtime configuration, the process or service that runs it, and its declared connections to the layers already present. The complete system is runnable after every phase, not only after the last.
+**Rule:** Platform has no phase of its own. Each phase that delivers a layer also delivers that layer's part of the composition: its own runtime settings and private secret area as needed, its declared cross-layer bindings, the process or service that runs it when applicable, and its declared connections to the layers already present. The layers delivered so far are usable together after every phase. An importable layer demonstrates use through its public interface and does not require a separate service merely to satisfy this rule.
 
 **Why:** A composition assembled only at the end is assembled against layers that were never run together, and every integration problem surfaces at once at the point where it is most expensive. Composing as each layer arrives keeps the running system one step behind the plan at most.
 

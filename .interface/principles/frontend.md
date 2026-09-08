@@ -63,6 +63,8 @@ The dependency direction is Presentation → Interaction Logic → API Access �
 
 **Rule:** Frontend reaches application data and application capabilities only through the public API implemented by Backend. API Access owns the Frontend-side client boundary, request and response transport, and translation between API representations and the data used by Interaction Logic. It consumes the resolved Backend API and its machine-readable description when one is available.
 
+When a machine-readable description is unavailable, API Access derives its client representations from the current public API definitions and documentation that Backend owns. Missing documentation does not authorize Frontend to invent endpoints, fields, or response behaviour. Any ambiguity that prevents a correct client is reported for the affected integration, while independently defined work may continue.
+
 **Why:** A single door means the application's rules are enforced in one place, and the transport can change without touching how the interface behaves.
 
 **Boundary:** Frontend never connects to Database, imports Backend implementation code, or bypasses Backend Logic. Presentation never performs API communication directly. The protocol, client technology, and transport settings are technical choices rather than Frontend philosophy.
@@ -72,6 +74,8 @@ The dependency direction is Presentation → Interaction Logic → API Access �
 ## 5. Domain Models are shared, never copied
 
 **Rule:** The shared logical domain-model set comes from the Model Component. Frontend implementation may use it, but it never copies, redefines, or creates a competing definition of Model meaning. Presentation uses Models to describe what users see and edit, Interaction Logic uses their logical meaning, and API Access preserves their identity across the Backend boundary.
+
+Frontend derives operation-specific input and output representations from the public Backend API, preserving their traceability to the shared Model. Deriving client representations is not a second definition of domain meaning. Credential fields may be present in permitted write-only inputs but are excluded from output representations and are never expected in responses. Omitted input and explicit null remain distinct: a partial update does not send an untouched field, and sends null only as an explicit change permitted by the API. A field that Backend supplies through an allowed default or generation is not filled with a fabricated value merely to make the client representation appear complete.
 
 **Why:** A copied definition drifts, and the interface then shows the user something the rest of the system no longer means.
 
@@ -118,9 +122,13 @@ The dependency direction is Presentation → Interaction Logic → API Access �
 - **Must** — Interaction Logic owns user-interface state, input, flows, and coordination between Components *(3)*
 - **Never** — Interaction Logic implements authoritative application rules or persistence decisions *(3)*
 - **Must** — application data and capabilities are reached only through the public Backend API, through API Access *(4)*
+- **Must** — when a machine-readable API description is unavailable, client representations derive from Backend-owned public definitions and documentation; unresolved integration ambiguities are reported without inventing API behaviour *(4)*
 - **Never** — Frontend connects to Database, imports Backend implementation code, or bypasses Backend Logic *(4)*
 - **Never** — Presentation performs API communication directly *(4)*
 - **Must** — every Frontend representation preserves the identity and meaning of the shared Models *(5)*
+- **Must** — operation-specific input and output representations derive from the public API; credentials remain write-only inputs and are excluded from outputs *(5)*
+- **Must** — partial input preserves the distinction between omission and explicit null and respects Backend-owned defaults and generation *(5)*
+- **Never** — a client invents a field value to substitute for permitted omission, a default, or generation *(5)*
 - **Never** — Frontend copies, redefines, or creates a competing definition of Model meaning *(5)*
 - **Must** — an outcome that depends on application rules is requested from Backend and presented as returned *(6)*
 - **Never** — a Frontend Behaviour becomes a second implementation of authoritative Backend Behaviour *(6)*

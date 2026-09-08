@@ -68,7 +68,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 5. Relationships express domain connections
 
-**Rule:** Relationships describe how Models are conceptually connected and, when needed, identify the logical field that carries that connection.
+**Rule:** Relationships describe how Models are conceptually connected, including the cardinality, optional participation, and role of each side, and, when needed, identify the logical field that carries that connection. One-to-one, one-to-many, and many-to-many express domain meaning independent of their physical realization. An association with its own domain meaning may itself be declared as a Model.
 
 **Why:** A connection between entities is part of what the domain means, so it is stated once with the Models rather than rediscovered by each Component that traverses it.
 
@@ -110,7 +110,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Must** — a required field omitted under the operation's rules is supplied by an applicable default or declared generation before the resulting state is treated as complete *(4)*
 - **Never** — a placeholder value substitutes for a required value or its declared generation *(4)*
 - **Never** — a field definition depends on a programming language, storage engine, API framework, or user-interface technology *(4)*
-- **Must** — a relationship states how Models are connected and, when needed, the logical field that carries it *(5)*
+- **Must** — a relationship states how Models are connected, the cardinality, optional participation, and roles of its sides, and, when needed, the logical field that carries it *(5)*
 - **Never** — Model resolves the physical realization of a relationship *(5)*
 - **Must** — domain rules and initial data remain part of the Model as logical declarations *(6)*
 - **Must** — Model validates its own data, Backend Logic enforces context-dependent rules, and Database guarantees constraints requiring stored state *(6)*
