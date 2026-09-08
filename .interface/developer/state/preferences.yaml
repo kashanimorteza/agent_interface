@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/preferences/state.yaml"
+  path: ".interface/developer/state/preferences.yaml"
   path_note: "The Preferences layer of the State Component. It currently defines no Component-specific technical choices or defaults."
   purpose: "Where the State Component's technical choices would be recorded. The State Component currently makes none."
   standard: "Agent Project Interface"

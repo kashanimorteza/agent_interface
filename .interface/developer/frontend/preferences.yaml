@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/preferences/frontend.yaml"
+  path: ".interface/developer/frontend/preferences.yaml"
   path_note: "The Preferences layer of the Frontend Component — supported technical choices and defaults used when a Frontend choice is unstated."
   purpose: "Defaults and supported technical profiles for the Frontend package and the Presentation, Interaction Logic, and API Access layers."
   standard: "Agent Project Interface"

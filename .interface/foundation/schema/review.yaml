@@ -148,7 +148,7 @@ definitions:
     accepted: "The human accepted the result as it is."
 initial:
   meta:
-    path: ".interface/config/review.yaml"
+    path: ".interface/foundation/config/review.yaml"
     path_note: "Mutable Reviews, Findings and their state."
   policy:
     agent_may_edit: true

@@ -4,7 +4,7 @@ Agent Interface Skills and the Interface structure are independent. Changing eit
 
 ## Entry points
 
-- `.interface/interface.md` is the canonical Interface document and file map, and the single entry point every Skill and supporting Agent starts from. Everything else — including these rules — is located through it.
+- `.interface/foundation/interface.md` is the canonical Interface document and file map, and the single entry point every Skill and supporting Agent starts from. Everything else — including these rules — is located through it.
 
 Use the Interface document to locate the current resources required by the active role. Do not assume that a resource exists merely because it existed in an earlier version of the Interface.
 

@@ -1,0 +1,90 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/developer/development/preferences.yaml"
+  path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers."
+  purpose: "Package conventions and cross-cutting capability defaults used when no explicit project choice exists."
+  standard: "Agent Project Interface"
+  version: "2.0"
+  updated: "2026-09-08"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
+  changed_by: "The human, directly."
+  precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
+  consumption: "Resolve unstated package and cross-cutting choices from this file when implementing the project. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
+  selection: "Development catalogues no alternatives; it states conventions that every layer follows. For an unstated cross-layer need, resolve a compatible choice under Development's ownership while respecting explicit project decisions, applicable Principles, and declared interfaces. Record consequential implementation choices with the implementation. An absent default alone does not require a question or Blocker; use State only when the unresolved condition meets its criticality rules. A single layer does not acquire ownership of cross-layer decisions."
+  version_resolution: "No entry here carries a version. Versions belong to the Preferences of the Component that owns the technology."
+  matching: "Match a settings group to its subject by name. Package conventions apply to every package and architectural subpackage unless that Component's own Preferences state otherwise."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Empty. Development chooses among no catalogued alternatives and owns no code path of its own."
+  options: "Empty. Development catalogues no alternatives; each technology is offered by the Preferences of the Component that owns it."
+  settings: "Package and cross-cutting conventions applied across the application layers."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- selected -->
+  selected: {}
+
+  # <!-------------------------------------------- options -->
+  options: {}
+
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    packages:
+      naming:
+        basis: "responsibility"
+        top_level_prefix: "my_"
+        top_level_name: "<prefix><role>"
+        nested_name: "<role>"
+        nested_namespace: "parent_package"
+        ecosystem_adaptation: "Adapt separators, case, import names, and distribution names to the selected language and package manager. Keep the logical role recognizable."
+        collision_handling: "Check the intended namespace for collisions. Use a distinct role-based qualifier when needed; the prefix alone does not guarantee uniqueness."
+      distribution:
+        visibility: "internal"
+        publication: "none"
+        local_dependency: "Use the selected ecosystem's local path or workspace mechanism when one package must be installed by another. Network consumers use the provider's API instead of installing its implementation."
+      nested_packages:
+        independently_installable: false
+        dependency_management: "parent"
+        runtime: "parent_when_applicable"
+      documentation:
+        filename: "README.md"
+        location: "package_root"
+        sections:
+          - "purpose_and_boundaries"
+          - "public_interface"
+          - "dependencies"
+          - "configuration"
+          - "installation_and_startup_when_applicable"
+          - "usage_examples"
+        nested_setup: "Reference the parent README for shared setup and document this package's interface and usage locally."
+
+    cross_cutting:
+      testing:
+        enabled: false
+        applies_to: []
+      logging:
+        enabled: false
+        applies_to: []
+      error_handling:
+        enabled: false
+        applies_to: []
+      authentication:
+        enabled: false
+        applies_to: []

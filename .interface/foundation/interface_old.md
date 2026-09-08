@@ -87,7 +87,7 @@ Agent Interface operations and supporting Agents must not edit this file. If an 
 
 ```text
 name = Interface
-path = .interface/interface.md
+path = .interface/foundation/interface.md
 responsibility = Canonical definition, navigation entry point, and complete file map of Agent Project Interface
 ```
 
@@ -95,7 +95,7 @@ responsibility = Canonical definition, navigation entry point, and complete file
 
 ```text
 name = Project
-path = .interface/project.md
+path = .interface/target/non-technical.md
 responsibility = Human-managed natural-language definition of the target project being built
 ```
 
@@ -103,7 +103,7 @@ responsibility = Human-managed natural-language definition of the target project
 
 ```text
 name = Schema
-path = .interface/schema/
+path = .interface/foundation/schema/
 responsibility = The structure of every Interface file: the common YAML frame, the structure standards for the Principles and Preferences layers, and the operational storage format of every Component that keeps a record; contains no project description or stored Understanding
 ```
 
@@ -114,7 +114,7 @@ Schema holds two kinds of document. A **structure standard** defines the shape o
 
 ```text
 name = YAML Schema
-path = .interface/schema/yaml.yaml
+path = .interface/foundation/schema/yaml.yaml
 kind = structure standard
 responsibility = The common structural frame every YAML Interface file follows: meta, policy, read_order, content_map, content
 applies_to = Every Interface YAML file, including Preferences and Config
@@ -126,10 +126,10 @@ note = It defines the outer sections only. What goes inside content belongs to t
 
 ```text
 name = Principles Schema
-path = .interface/schema/principles.md
+path = .interface/foundation/schema/principles.md
 kind = structure standard
 responsibility = The common Markdown structure every Principles file follows: Introduction, Terms, Relationships, Layering, Authority, the numbered Principles, and At a Glance
-applies_to = Every file under .interface/principles/
+applies_to = Every file under .interface/developer/
 note = Each Principle carries Rule, Why, and Boundary. A Principle number is permanent once assigned. A Principles file names no tool, version, package, file, or path, states no technical default, and refers to no Skill, operation, or usage condition
 ```
 
@@ -138,10 +138,10 @@ note = Each Principle carries Rule, Why, and Boundary. A Principle number is per
 
 ```text
 name = Preferences Schema
-path = .interface/schema/preferences.yaml
+path = .interface/foundation/schema/preferences.yaml
 kind = structure standard
 responsibility = The structure of the content section of every Preferences file, and the meta and policy expectations a Preferences file adds to the common YAML frame
-applies_to = Every file under .interface/preferences/
+applies_to = Every file under .interface/developer/
 note = Content is always selected, options, and settings, present even when empty. Selected holds the choices, options the supported alternatives, and settings the configuration of what was chosen, grouped by the Component's own layers
 ```
 
@@ -150,10 +150,10 @@ note = Content is always selected, options, and settings, present even when empt
 
 ```text
 name = State Schema
-path = .interface/schema/state.yaml
+path = .interface/foundation/schema/state.yaml
 kind = operational format
 responsibility = The stored shape of the State Config file, and the initial template Configure copies to create it
-generates = .interface/config/state.yaml
+generates = .interface/foundation/config/state.yaml
 note = It records Workflow position, Blockers, and Open Questions only. Project concepts, resolved technical choices, and Task content are excluded and resolved from their own sources
 ```
 
@@ -162,10 +162,10 @@ note = It records Workflow position, Blockers, and Open Questions only. Project 
 
 ```text
 name = Task Schema
-path = .interface/schema/task.yaml
+path = .interface/foundation/schema/plan.yaml
 kind = operational format
 responsibility = The stored shape of the Task Config file, and the initial template Configure copies to create it
-generates = .interface/config/task.yaml
+generates = .interface/foundation/config/plan.yaml
 note = It records which work exists, what each activity must produce, what it depends on, where it stands, and its history. Context is stored once at the highest level where it holds, no record names a file or path, and nothing derivable from the project definition, the Principles, or the Preferences is stored here
 ```
 
@@ -174,10 +174,10 @@ note = It records which work exists, what each activity must produce, what it de
 
 ```text
 name = Review Schema
-path = .interface/schema/review.yaml
+path = .interface/foundation/schema/review.yaml
 kind = operational format
 responsibility = The stored shape of the Review Config file, and the initial template Configure copies to create it
-generates = .interface/config/review.yaml
+generates = .interface/foundation/config/review.yaml
 note = It records which phases were reviewed, the outcome of each, and every Finding with what was expected, what was observed, the evidence for it, and where it stands. A Finding refers to what it judged and never restates it
 ```
 
@@ -195,7 +195,7 @@ Application runtime settings, such as database connections and service configura
 
 ```text
 name = Principles
-path = .interface/principles/
+path = .interface/developer/
 responsibility = Mandatory philosophy, responsibilities, and boundaries, independent of tools and versions
 answers = Why and under what rules
 ```
@@ -204,7 +204,7 @@ answers = Why and under what rules
 
 ```text
 name = Preferences
-path = .interface/preferences/
+path = .interface/developer/
 responsibility = Supported technical choices and defaults used when the target project leaves a choice unstated; an explicit project choice wins
 answers = With what
 ```
@@ -213,7 +213,7 @@ answers = With what
 
 ```text
 name = Config
-path = .interface/config/
+path = .interface/foundation/config/
 responsibility = Stores the operational record of every Component that keeps one: planned work and its progress, the active Workflow position, Blockers and Open Questions, and recorded review Findings
 answers = What work is recorded, where the Workflow currently stands, and what review has established
 initialization = Copy the initial template from each operational Schema; later operations update the stored values
@@ -268,8 +268,8 @@ Each operation writes only the records it has authority over, and always under t
 ```text
 name = Development
 responsibility = Independent Model, Database, Backend, and Frontend layers; centralized runtime configuration; declared-interface connections; cross-cutting capabilities; and Platform composition
-principle = .interface/principles/development.md
-preference = .interface/preferences/development.yaml
+principle = .interface/developer/development/principles.md
+preference = .interface/developer/development/preferences.yaml
 ```
 
 <!-------------------------- Model -->
@@ -278,8 +278,8 @@ preference = .interface/preferences/development.yaml
 ```text
 name = Model
 responsibility = Independent shared Model package and logical domain Models, including fields, relationships, rules, validation, and initial data
-principle = .interface/principles/model.md
-preference = .interface/preferences/model.yaml
+principle = .interface/developer/model/principles.md
+preference = .interface/developer/model/preferences.yaml
 ```
 
 <!-------------------------- Database -->
@@ -289,8 +289,8 @@ preference = .interface/preferences/model.yaml
 ```text
 name = Database
 responsibility = Independent package with typed Model operations, supported Engines, selectable Instances, Model-driven mapping, and Storage Adapters
-principle = .interface/principles/database.md
-preference = .interface/preferences/database.yaml
+principle = .interface/developer/database/principles.md
+preference = .interface/developer/database/preferences.yaml
 ```
 <!-------------------------- Backend -->
 
@@ -299,8 +299,8 @@ preference = .interface/preferences/database.yaml
 ```text
 name = Backend
 responsibility = Application and Model Logic, Database communication through Data Access, and the external API
-principle = .interface/principles/backend.md
-preference = .interface/preferences/backend.yaml
+principle = .interface/developer/backend/principles.md
+preference = .interface/developer/backend/preferences.yaml
 ```
 
 <!-------------------------- Frontend -->
@@ -310,8 +310,8 @@ preference = .interface/preferences/backend.yaml
 ```text
 name = Frontend
 responsibility = Component-based Presentation, user Interaction Logic, and application access through the Backend API
-principle = .interface/principles/frontend.md
-preference = .interface/preferences/frontend.yaml
+principle = .interface/developer/frontend/principles.md
+preference = .interface/developer/frontend/preferences.yaml
 ```
 
 <!-------------------------- State -->
@@ -321,10 +321,10 @@ preference = .interface/preferences/frontend.yaml
 ```text
 name = State
 responsibility = Current Workflow position, repeatable Modes, critical Blockers, and Open Questions
-principle = .interface/principles/state.md
-preference = .interface/preferences/state.yaml
-schema = .interface/schema/state.yaml
-config = .interface/config/state.yaml
+principle = .interface/developer/state/principles.md
+preference = .interface/developer/state/preferences.yaml
+schema = .interface/foundation/schema/state.yaml
+config = .interface/foundation/config/state.yaml
 ```
 
 <!-------------------------- Task -->
@@ -334,10 +334,10 @@ config = .interface/config/state.yaml
 ```text
 name = Task
 responsibility = Phase Plans, coherent Groups, atomic Tasks, progress, and Task-local history
-principle = .interface/principles/task.md
-preference = .interface/preferences/task.yaml
-schema = .interface/schema/task.yaml
-config = .interface/config/task.yaml
+principle = .interface/developer/plan/principles.md
+preference = .interface/developer/plan/preferences.yaml
+schema = .interface/foundation/schema/plan.yaml
+config = .interface/foundation/config/plan.yaml
 ```
 
 <!-------------------------- Review -->
@@ -347,10 +347,10 @@ config = .interface/config/task.yaml
 ```text
 name = Review
 responsibility = Independent judgement of an implemented phase against what was asked, and the recorded Findings and their state
-principle = .interface/principles/review.md
-preference = .interface/preferences/review.yaml
-schema = .interface/schema/review.yaml
-config = .interface/config/review.yaml
+principle = .interface/developer/review/principles.md
+preference = .interface/developer/review/preferences.yaml
+schema = .interface/foundation/schema/review.yaml
+config = .interface/foundation/config/review.yaml
 ```
 
 
@@ -383,7 +383,7 @@ State records the active Mode. Agent Skills are external capabilities that perfo
 - **Initialization:** copy each Schema's `initial` mapping into its mapped Config file when that file is absent. Copy the template values, not the Schema definitions.
 - **Preservation:** keep every operational record a Config file already holds; the owning Schema states what those are. An existing valid file needs no rewrite. A Schema mismatch requires a data-preserving update; a conflict must be surfaced rather than resolved by resetting work.
 - **Validation:** check each Config file against the common file frame and its operational Schema.
-- **Output:** `.interface/config/task.yaml`, `.interface/config/state.yaml`, and `.interface/config/review.yaml`.
+- **Output:** `.interface/foundation/config/plan.yaml`, `.interface/foundation/config/state.yaml`, and `.interface/foundation/config/review.yaml`.
 
 Configuring does not produce project descriptions, technical Component configurations, or phase Plan shells. Planning creates actual Plans for requested phases. State's initial template is `not set`; a running operation records its actual mode, provenance, and time according to the State Component.
 
@@ -393,9 +393,9 @@ Configuring does not produce project descriptions, technical Component configura
 - **State value:** `planning`
 - **Phase-specific:** yes
 - **Responsibility:** uses current Target Project Understanding for one requested phase to create bounded, verifiable activities without prescribing implementation.
-- **Inputs:** the requested phase in `.interface/project.md`, applicable Principles and Preferences, current Task and State records, and the gap Findings recorded for that phase.
+- **Inputs:** the requested phase in `.interface/target/non-technical.md`, applicable Principles and Preferences, current Task and State records, and the gap Findings recorded for that phase.
 - **Scope:** the requested phase; its target selects the Component being planned.
-- **Output:** `.interface/config/task.yaml`.
+- **Output:** `.interface/foundation/config/plan.yaml`.
 
 <!-------------------------- Development -->
 ### Development
@@ -403,7 +403,7 @@ Configuring does not produce project descriptions, technical Component configura
 - **State value:** `development`
 - **Phase-specific:** yes
 - **Responsibility:** executes and verifies eligible planned Tasks to produce project implementation.
-- **Inputs:** `.interface/project.md`, applicable Principles and Preferences, the current implementation, and Task and State records.
+- **Inputs:** `.interface/target/non-technical.md`, applicable Principles and Preferences, the current implementation, and Task and State records.
 - **Scope:** the requested phase; its target selects the Component being developed.
 - **Output:** implementation inside the selected Component's resolved code boundary.
 
@@ -510,7 +510,7 @@ writes = none
 
 The reset stages are:
 
-1. **Configure:** remove root implementation directories when present and clear every entry inside `.interface/config/`.
+1. **Configure:** remove root implementation directories when present and clear every entry inside `.interface/foundation/config/`.
 2. **Task:** remove root implementation directories, clear Groups and Tasks while preserving phase Plan shells, clear the recorded Findings for the affected phases, set active State to `not set`, and clear the active phase.
 3. **Develop:** remove root implementation directories, preserve Tasks and their history while returning every Task to `todo`, clear the recorded Findings for the affected phases, set active State to `planning`, and clear the active phase.
 
@@ -531,7 +531,7 @@ Reset resolves the implementation directories it may remove from the code path e
 order = 1
 name = Define the Project
 actor = Human
-action = Define the target project, its Models, and its ordered phases in .interface/project.md
+action = Define the target project, its Models, and its ordered phases in .interface/target/non-technical.md
 ```
 <!-------------------------- Configure -->
 ### Configure
@@ -540,7 +540,7 @@ action = Define the target project, its Models, and its ordered phases in .inter
 order = 2
 name = Configure
 skill = /my-interface-configure
-action = Initialize every operational Config file under .interface/config/ from the initial template in its Schema; preserve existing operational records
+action = Initialize every operational Config file under .interface/foundation/config/ from the initial template in its Schema; preserve existing operational records
 ```
 <!-------------------------- Generate Tasks -->
 ### Generate Tasks
@@ -574,7 +574,7 @@ These operations support the main Define → Configure → Plan → Develop Work
 ```text
 skill = /my-interface-reviewer <phase-number>
 when = After Development, when the implemented result needs independent verification
-action = Inspect the requested phase against the current project definition, applicable Principles and Preferences, and Plan, then record evidence-based Findings in .interface/config/review.yaml and report them without repairing the result
+action = Inspect the requested phase against the current project definition, applicable Principles and Preferences, and Plan, then record evidence-based Findings in .interface/foundation/config/review.yaml and report them without repairing the result
 state = Does not enter or change a Workflow Mode
 ```
 

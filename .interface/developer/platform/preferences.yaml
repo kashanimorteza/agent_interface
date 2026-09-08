@@ -1,23 +1,23 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/preferences/development.yaml"
-  path_note: "The Preferences layer of the Development Component — package conventions and defaults for capabilities that may apply across application layers, including Model."
-  purpose: "Layer-owned runtime settings and secrets, cross-layer bindings, package conventions, and cross-cutting capability defaults used when no explicit project choice exists."
+  path: ".interface/developer/platform/preferences.yaml"
+  path_note: "The Preferences layer of the Platform Component — supported technical choices and defaults used when a Platform choice is unstated."
+  purpose: "Supported Platforms the target runs on, and the runtime-configuration conventions Platform coordinates across the application layers."
   standard: "Agent Project Interface"
-  version: "1.4"
+  version: "1.0"
   updated: "2026-09-08"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
-  changed_by: "The human, directly."
-  precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
-  consumption: "Resolve unstated runtime-configuration, package, and cross-cutting choices from this file when implementing the project. Apply package conventions to each layer and architectural sublayer, using the owning Component definitions for responsibilities and technologies. Preserve explicit compatible choices and do not rename existing implementation as a side effect of reading these defaults."
-  selection: "Development catalogues one kind of alternative, the Platform the target project runs on. For an unlisted Platform or other unstated cross-layer need, resolve a compatible choice under Development's ownership while respecting explicit project decisions, applicable Principles, and declared interfaces. Record consequential implementation choices with the implementation. An absent default alone does not require a question or Blocker; use State only when the unresolved condition meets its criticality rules. A single layer does not acquire ownership of cross-layer decisions."
-  version_resolution: "A Platform entry carries the version of its runtime when one applies; resolve latest to a concrete stable version and preserve an explicit one. Every other version belongs to the Preferences of the Component that owns the technology."
-  matching: "Match the selected platform to the entry of that key in options.platforms; an explicit run mode in the project definition takes priority over the selection recorded here. Match a settings group to its subject by name: a layer receives the runtime-configuration section named after it, and package conventions apply to every package and architectural subpackage unless that Component's own Preferences state otherwise."
+  rule: "This file is human-owned. Operations read it without writing resolved Platform choices back into it."
+  changed_by: "The human, directly. A missing critical technical choice is raised through State."
+  precedence: "An explicit project value and every applicable Platform Principle take precedence over this file."
+  consumption: "Operations resolve unstated Platform choices from these defaults and the current project definition when planning or implementing the work. Each phase composes for the resolved Platform rather than deciding it."
+  selection: "Prefer a supported compatible entry. For an unlisted Platform need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "A Platform entry carries the version of its runtime when one applies; resolve latest to a concrete stable version compatible with the composed system, and preserve an explicit concrete version."
+  matching: "Match the selected platform to the entry of that key in options.platforms. An explicit run mode in the project definition takes priority over the selection recorded here."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -29,9 +29,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Platform the target project runs on when the project definition does not say."
-  options: "Supported Platforms. Every other technology is offered by the Preferences of the Component that owns it."
-  settings: "Runtime-configuration, package, and cross-cutting conventions applied across the application layers."
+  selected: "The Platform the target runs on when the project definition does not say."
+  options: "Supported Platforms."
+  settings: "Where each layer's settings and secrets live, where cross-layer bindings live, and how Platform validates and delivers them."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -63,6 +63,7 @@ content:
         operating_system: "Linux"
         isolation: "container"
         purpose: "Running each layer in its own container, composed together on one host."
+
 
   # <!-------------------------------------------- settings -->
   settings:
@@ -116,46 +117,3 @@ content:
         frontend_secrets: "Resolve private Frontend values only in trusted build or server processes. Never expose them through client-visible environment prefixes, generated public configuration, or browser bundles."
       validation: "Validate the complete public configuration and all references before application startup."
       override_boundary: "Runtime configuration may select among resolved compatible choices but never redefine architecture, package ownership, interfaces, or unsupported technologies."
-
-    packages:
-      naming:
-        basis: "responsibility"
-        top_level_prefix: "my_"
-        top_level_name: "<prefix><role>"
-        nested_name: "<role>"
-        nested_namespace: "parent_package"
-        ecosystem_adaptation: "Adapt separators, case, import names, and distribution names to the selected language and package manager. Keep the logical role recognizable."
-        collision_handling: "Check the intended namespace for collisions. Use a distinct role-based qualifier when needed; the prefix alone does not guarantee uniqueness."
-      distribution:
-        visibility: "internal"
-        publication: "none"
-        local_dependency: "Use the selected ecosystem's local path or workspace mechanism when one package must be installed by another. Network consumers use the provider's API instead of installing its implementation."
-      nested_packages:
-        independently_installable: false
-        dependency_management: "parent"
-        runtime: "parent_when_applicable"
-      documentation:
-        filename: "README.md"
-        location: "package_root"
-        sections:
-          - "purpose_and_boundaries"
-          - "public_interface"
-          - "dependencies"
-          - "configuration"
-          - "installation_and_startup_when_applicable"
-          - "usage_examples"
-        nested_setup: "Reference the parent README for shared setup and document this package's interface and usage locally."
-
-    cross_cutting:
-      testing:
-        enabled: false
-        applies_to: []
-      logging:
-        enabled: false
-        applies_to: []
-      error_handling:
-        enabled: false
-        applies_to: []
-      authentication:
-        enabled: false
-        applies_to: []

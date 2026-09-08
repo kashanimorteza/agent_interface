@@ -194,7 +194,7 @@ definitions:
     superseded: "Replaced by another Task identified in its log."
 initial:
   meta:
-    path: ".interface/config/task.yaml"
+    path: ".interface/foundation/config/plan.yaml"
     path_note: "Mutable Plans, Groups, Tasks, counts and progress."
   policy:
     agent_may_edit: true

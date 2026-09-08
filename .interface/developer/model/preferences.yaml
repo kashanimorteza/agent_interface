@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/preferences/model.yaml"
+  path: ".interface/developer/model/preferences.yaml"
   path_note: "The Preferences layer of the Model Component — supported technical choices and defaults used when a Model choice is unstated."
   purpose: "Defaults for the independent Model package, supported modeling technologies, and properties of existing Model fields whose attributes are unstated."
   standard: "Agent Project Interface"

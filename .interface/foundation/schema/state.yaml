@@ -143,7 +143,7 @@ sections:
                 purpose: "When the answer was supplied."
 initial:
   meta:
-    path: ".interface/config/state.yaml"
+    path: ".interface/foundation/config/state.yaml"
     path_note: "Mutable Workflow position, Blockers and Open Questions."
   policy:
     agent_may_edit: true

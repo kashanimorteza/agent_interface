@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/preferences/backend.yaml"
+  path: ".interface/developer/backend/preferences.yaml"
   path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
   purpose: "Defaults and supported technical profiles for the Backend package, its API framework, and the API, Logic, and Data Access layers."
   standard: "Agent Project Interface"

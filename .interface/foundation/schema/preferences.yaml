@@ -5,10 +5,10 @@ schema:
 
 # <!--------------------------------------------------------------------------------- Frame -->
 frame:
-  source: ".interface/schema/yaml.yaml"
+  source: ".interface/foundation/schema/yaml.yaml"
   inherited: "A Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
   scope: "This schema defines the structure of `content`, and states the additional expectations a Preferences file places on the inherited `meta` and `policy` sections."
-  path: ".interface/preferences/<component>.yaml — one file per Component."
+  path: ".interface/developer/<component>/preferences.yaml — one file per Component."
   ownership: "The file is human-owned. Operations read it and never write resolved choices back into it."
 
 # <!--------------------------------------------------------------------------------- Purpose -->

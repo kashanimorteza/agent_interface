@@ -2,7 +2,7 @@
 
 This document is the common structure every Principles file follows. It defines the shape of a Principles file, not the content of any Component. Each Component describes itself inside this shape so that every Principles file is written, read, and reasoned about the same way.
 
-One Principles file exists per Component, at `.interface/principles/<component>.md`. The file is human-owned: Interface operations read it and never write to it.
+One Principles file exists per Component, at `.interface/developer/<component>/principles.md`. The file is human-owned: Interface operations read it and never write to it.
 
 
 <!--------------------------------------------------------------------------------- Purpose --->
