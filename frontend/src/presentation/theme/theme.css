@@ -1,0 +1,178 @@
+/*
+ * The appearance of the interface, decided once.
+ *
+ * Every value the interface uses is named here. Nothing rendered picks a colour,
+ * a size or a spacing of its own — it consumes one of these, so changing one
+ * changes the interface everywhere it applies.
+ *
+ * Light and dark are the same set of names with different values behind them,
+ * which is why following the reader's preference costs nothing anywhere else.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Ink and ground */
+  --ground: #fbfbfa;
+  --ground-raised: #ffffff;
+  --ground-sunken: #f2f2f0;
+  --ink: #1b1b1a;
+  --ink-quiet: #63635f;
+  --ink-faint: #93938d;
+  --edge: #e0e0dc;
+  --edge-strong: #c9c9c3;
+
+  /* Meaning */
+  --accent: #3a5f8a;
+  --accent-ink: #ffffff;
+  --accent-quiet: #eaf0f7;
+  --refused: #a3372f;
+  --refused-quiet: #fbeceb;
+  --settled: #2f6b44;
+  --settled-quiet: #ebf5ee;
+  --waiting: #8a6d1f;
+  --waiting-quiet: #faf3e2;
+
+  /* Type */
+  --type-face: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --type-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  --type-small: 0.8125rem;
+  --type-body: 0.9375rem;
+  --type-large: 1.125rem;
+  --type-title: 1.5rem;
+  --type-tight: 1.25;
+  --type-loose: 1.6;
+
+  /* Spacing, on one scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* Shape */
+  --corner: 6px;
+  --corner-small: 4px;
+  --border: 1px solid var(--edge);
+  --lift: 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 12px rgb(0 0 0 / 0.04);
+
+  /* Layout */
+  --aside-width: 15rem;
+  --reading-width: 52rem;
+  --asking-width: 28rem;
+}
+
+/*
+ * Where the layout stops being wide enough for two columns.
+ *
+ * A media query cannot read one of the names above, so this decision is made
+ * here with the rest of them rather than inside a piece of the interface. The
+ * frame marks its parts, and the visual system says how they behave.
+ */
+@media (max-width: 52rem) {
+  [data-frame="frame"] {
+    grid-template-columns: 1fr;
+  }
+
+  [data-frame="aside"] {
+    border-inline-end: none;
+    border-block-end: var(--border);
+  }
+
+  [data-frame="nav"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  [data-frame="main"] {
+    padding: var(--space-4);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #17171a;
+    --ground-raised: #1f1f23;
+    --ground-sunken: #121215;
+    --ink: #eceaf0;
+    --ink-quiet: #a5a2ad;
+    --ink-faint: #6f6d78;
+    --edge: #32323a;
+    --edge-strong: #46464f;
+
+    --accent: #7aa2d4;
+    --accent-ink: #10131a;
+    --accent-quiet: #1e2733;
+    --refused: #e08a83;
+    --refused-quiet: #2c1c1b;
+    --settled: #7cc596;
+    --settled-quiet: #17251c;
+    --waiting: #d8bd76;
+    --waiting-quiet: #26210f;
+
+    --lift: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.3);
+  }
+}
+
+/* A choice made explicitly wins over the reader's preference. */
+:root[data-appearance="light"] {
+  color-scheme: light;
+}
+
+:root[data-appearance="dark"] {
+  color-scheme: dark;
+  --ground: #17171a;
+  --ground-raised: #1f1f23;
+  --ground-sunken: #121215;
+  --ink: #eceaf0;
+  --ink-quiet: #a5a2ad;
+  --ink-faint: #6f6d78;
+  --edge: #32323a;
+  --edge-strong: #46464f;
+  --accent: #7aa2d4;
+  --accent-ink: #10131a;
+  --accent-quiet: #1e2733;
+  --refused: #e08a83;
+  --refused-quiet: #2c1c1b;
+  --settled: #7cc596;
+  --settled-quiet: #17251c;
+  --waiting: #d8bd76;
+  --waiting-quiet: #26210f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--type-face);
+  font-size: var(--type-body);
+  line-height: var(--type-loose);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3 {
+  line-height: var(--type-tight);
+  margin: 0;
+}

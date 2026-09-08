@@ -1,0 +1,38 @@
+[project]
+name = "my-backend"
+version = "0.1.0"
+description = "Application layer of Trading Assistant: what the application does, and the contract it publishes."
+requires-python = ">=3.14"
+dependencies = [
+    "my-model",
+    "my-database",
+    "fastapi[standard]==0.141.1",
+    "pyyaml==6.0.3",
+]
+
+# Each consumed layer is taken from where it lives, so it keeps its own
+# location, its own settings and its own data rather than a copy of them.
+[tool.uv.sources]
+# The persistence layer is taken from where it lives, so it keeps its own
+# settings and its own stored data rather than a copy of them. The definitions
+# layer holds neither, and is taken the same way the layer beneath takes it.
+my-model = { path = "../model" }
+my-database = { path = "../database", editable = true }
+
+[project.scripts]
+my-backend = "my_backend.service:serve"
+
+[tool.fastapi]
+entrypoint = "my_backend.api.app:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["my_backend"]
+
+# The settings this layer owns travel with it, so an installed copy is as
+# complete as the source tree.
+[tool.hatch.build.targets.wheel.force-include]
+"backend.yaml" = "my_backend/backend.yaml"

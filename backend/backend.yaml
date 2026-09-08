@@ -1,0 +1,32 @@
+# Settings owned by the Backend layer.
+#
+# Only what this layer owns belongs here: how it serves its contract. What it
+# consumes from another layer is a binding and lives in the project's public
+# configuration, and no secret value appears in either.
+
+layer: "backend"
+
+settings:
+
+  # Where the running layer answers. A deployment changes these without any
+  # part of the application being edited.
+  service:
+    host: "127.0.0.1"
+    port: 8000
+
+  # The machine-readable description of the contract, produced by the layer
+  # that defines the contract.
+  contract_description:
+    enabled: true
+    path: "/openapi.json"
+    human_readable_path: "/docs"
+
+  # How many records a listing returns when a caller asks for no limit, and the
+  # most it will return however many are asked for.
+  listing:
+    default_limit: 50
+    maximum_limit: 500
+
+# This layer requires no secret: it holds no credential of its own, and the
+# credentials it accepts belong to domain records held by the layer beneath it.
+secrets: []

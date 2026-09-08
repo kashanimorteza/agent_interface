@@ -1,0 +1,29 @@
+# Settings owned by the Frontend layer.
+#
+# Only what this layer owns belongs here: where it serves the interface, how
+# much of a list it shows at once, and the appearance decisions that are made
+# once for the whole interface. Where it reaches the application is a binding
+# and lives in the project's public configuration.
+
+layer: "frontend"
+
+settings:
+
+  # Where the interface itself is served.
+  service:
+    host: "127.0.0.1"
+    port: 3000
+
+  # How much of a list a person is shown before asking for more.
+  listing:
+    page_size: 25
+
+  # The appearance decided once for the whole interface. Everything rendered
+  # consumes these rather than choosing for itself.
+  appearance:
+    color_mode: "system"
+    direction: "auto"
+
+# This layer requires no secret. Anything it were ever given would have to stay
+# in a trusted process and never reach a person's browser.
+secrets: []

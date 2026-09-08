@@ -233,5 +233,14 @@ log
 
 *.db
 database.db
-# Trading Assistant: file-based Database Instance storage
-data/
+# Trading Assistant: file-based Database Instance storage.
+# Scoped to that layer: a bare `data/` also swallowed the Frontend's
+# /data route, whose source must be committed.
+database/data/
+
+# Trading Assistant: Frontend environment artifacts
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+.next-check/
