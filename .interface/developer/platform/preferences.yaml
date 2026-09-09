@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/developer/platform/preferences.yaml"
-  path_note: "The Preferences layer of the Platform Component — supported technical choices and defaults used when a Platform choice is unstated."
-  purpose: "Technical choices for how and where the complete Target is composed and brought online."
+  path_note: "The Preferences layer of the Platform Component — supported Instance and Launch choices and their defaults."
+  purpose: "Technical choices for preparing a runtime Instance and bringing the completed Target online through a Launch."
   standard: "Agent Project Interface"
   version: "1.0"
   updated: "2026-09-09"
@@ -15,9 +15,9 @@ policy:
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit Target value and every applicable Platform Principle take precedence over this file."
   consumption: "Operations use these Preferences only when the Target leaves a Platform choice unstated."
-  selection: "When no preference is defined, choose the smallest compatible option under the shared decision policy."
+  selection: "Use the selected default definition unless the Target explicitly selects another compatible option."
   version_resolution: "Resolve an unpinned version to a concrete compatible stable version and preserve an explicit concrete version."
-  matching: "Match a Platform choice to the applicable entry when one exists."
+  matching: "Match Instance and Launch choices to their applicable named definitions."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -29,13 +29,33 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The default Platform choices, currently empty."
-  options: "Supported Platform alternatives, currently empty."
-  settings: "Platform configuration and composition defaults, currently empty."
+  selected: "The default Instance and Launch definitions."
+  options: "The supported named Instance and Launch definitions."
+  settings: "Shared rules for applying Platform definitions."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  selected: {}
-  options: {}
-  settings: {}
+  selected:
+    instance: "linux"
+    launch: null
+
+  options:
+    instances:
+      linux:
+        environment: "linux"
+        system_packages:
+          ensure_installed:
+            - "net-tools"
+            - "iptables"
+          ensure_removed:
+            - "ufw"
+          install_additional_target_requirements: true
+    launches: {}
+
+  settings:
+    instance:
+      inspect_before_preparation: true
+      preserve_satisfied_requirements: true
+      install_only_missing_requirements: true
+    launch: {}
