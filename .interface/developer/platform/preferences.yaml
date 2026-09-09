@@ -2,10 +2,10 @@
 meta:
   path: ".interface/developer/platform/preferences.yaml"
   path_note: "The Preferences layer of the Platform Component — supported technical choices and defaults used when a Platform choice is unstated."
-  purpose: "Supported Platforms the target runs on, and the runtime-configuration conventions Platform coordinates across the application layers."
+  purpose: "Technical choices for how and where the complete Target is composed and brought online."
   standard: "Agent Project Interface"
   version: "1.0"
-  updated: "2026-09-08"
+  updated: "2026-09-09"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,11 +13,11 @@ policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Platform choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
-  precedence: "An explicit project value and every applicable Platform Principle take precedence over this file."
-  consumption: "Operations resolve unstated Platform choices from these defaults and the current project definition when planning or implementing the work. Each phase composes for the resolved Platform rather than deciding it."
-  selection: "Prefer a supported compatible entry. For an unlisted Platform need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "A Platform entry carries the version of its runtime when one applies; resolve latest to a concrete stable version compatible with the composed system, and preserve an explicit concrete version."
-  matching: "Match the selected platform to the entry of that key in options.platforms. An explicit run mode in the project definition takes priority over the selection recorded here."
+  precedence: "An explicit Target value and every applicable Platform Principle take precedence over this file."
+  consumption: "Operations use these Preferences only when the Target leaves a Platform choice unstated."
+  selection: "When no preference is defined, choose the smallest compatible option under the shared decision policy."
+  version_resolution: "Resolve an unpinned version to a concrete compatible stable version and preserve an explicit concrete version."
+  matching: "Match a Platform choice to the applicable entry when one exists."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -29,91 +29,13 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Platform the target runs on when the project definition does not say."
-  options: "Supported Platforms."
-  settings: "Where each layer's settings and secrets live, where cross-layer bindings live, and how Platform validates and delivers them."
+  selected: "The default Platform choices, currently empty."
+  options: "Supported Platform alternatives, currently empty."
+  settings: "Platform configuration and composition defaults, currently empty."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-
-  # <!-------------------------------------------- selected -->
-  selected:
-    platform: "linux_host"
-
-  # <!-------------------------------------------- options -->
-  options:
-
-    platforms:
-      local:
-        version: "runtime-provided"
-        kind: "development machine"
-        operating_system: "any"
-        isolation: "none"
-        purpose: "Running the complete system on the machine it is developed on."
-      linux_host:
-        version: "runtime-provided"
-        kind: "server"
-        operating_system: "Linux"
-        isolation: "process"
-        purpose: "Running the complete system directly on a Linux server or virtual private server."
-      docker:
-        version: "latest"
-        kind: "container"
-        operating_system: "Linux"
-        isolation: "container"
-        purpose: "Running each layer in its own container, composed together on one host."
-
-
-  # <!-------------------------------------------- settings -->
-  settings:
-
-    runtime_configuration:
-      files:
-        layer:
-          path: "<layer>.yaml"
-          location: "<code_path>"
-          format: "YAML"
-          committed: true
-          user_editable: true
-          content: "The non-secret settings owned by that layer, and nothing owned by another. Lives inside the layer's own code path so the layer is complete within its own directory."
-        public:
-          path: "application.yaml"
-          location: "project_root"
-          format: "YAML"
-          committed: true
-          user_editable: true
-          content: "Cross-layer bindings only: which provider, interface, or selectable resource each layer consumes. No setting that a single layer owns."
-        secrets:
-          path: ".env"
-          location: "<code_path>"
-          format: "dotenv"
-          committed: false
-          user_editable: true
-          example_path: ".env.example"
-          example_location: "<code_path>"
-          content: "Only the owning layer's secret values and private environment settings. Resolve code_path from that Component: for example database/.env, backend/.env, or frontend/.env. No shared root secrets file."
-          example_content: "Declared variable names with empty values or non-secret placeholders; never copy actual secrets."
-          exclusions: "Exclude the secret file from version control, package distributions, public assets, and browser bundles. A layer with no secrets needs no populated secret file."
-      sections:
-        - "model"
-        - "database"
-        - "backend"
-        - "frontend"
-        - "platform"
-      section_contract:
-        settings: "Settings owned by the named layer, held in that layer's own file."
-        secrets: "Secrets owned by the named layer, held in its private layer-local file; resolve only the names that layer declares."
-        bindings: "Declared provider, interface, and selectable resource references consumed by the named layer, held in the public root file under the section of that name."
-      precedence:
-        - "runtime_environment"
-        - "configuration_files"
-        - "generated_defaults"
-      precedence_note: "A layer's settings and its bindings are disjoint by contract, so the two files never override each other; precedence applies between the environment, the files, and the defaults."
-      delivery:
-        owner: "platform"
-        method: "validated_injection"
-        scope: "Platform coordinates reading each layer's settings, its own secret file, and its declared bindings. Apply environment overrides only for names that layer declares; deliver only those resolved values to that layer, never the full process environment or another layer's secrets. Resolve paths from the owning code_path independently of the working directory."
-        frontend_secrets: "Resolve private Frontend values only in trusted build or server processes. Never expose them through client-visible environment prefixes, generated public configuration, or browser bundles."
-      validation: "Validate the complete public configuration and all references before application startup."
-      override_boundary: "Runtime configuration may select among resolved compatible choices but never redefine architecture, package ownership, interfaces, or unsupported technologies."
+  selected: {}
+  options: {}
+  settings: {}
