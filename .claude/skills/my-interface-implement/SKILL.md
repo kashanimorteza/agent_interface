@@ -1,6 +1,6 @@
 ---
 name: my-interface-implement
-description: Execute the complete Agent Interface Workflow for the current Target by coordinating its currently declared executable operations in order.
+description: "Implement the current Target through a fixed sequence: Configure, then Plan and Develop every active ready phase, then Launch."
 disable-model-invocation: true
 ---
 
@@ -8,23 +8,28 @@ disable-model-invocation: true
 
 ## Role
 
-Coordinate the complete executable Workflow for an already defined Target. Implement is an orchestrator: each operation keeps its own role, authority, validation, and reporting rules.
+Implement an already defined Target end to end through a fixed orchestration sequence. Implement coordinates other operation Skills, while each operation keeps its own role, authority, validation, and reporting rules.
 
 ## Workflow
 
-Establish Interface Understanding and Target Understanding from the current authoritative sources located through the Interface document. Read the shared Skill rules and resolve the current Workflow, phase eligibility, operation Skills, operational records, and stopping conditions from their owners.
+Establish Interface Understanding and Target Understanding from the current authoritative sources located through the Interface document. Read the shared Skill rules and resolve phase eligibility, the current Skills for Configure, Planning, Development, and Launch, their operational records, and their stopping conditions.
 
 A phase is implementable only when Target marks it both enabled and ready for implementation. Preserve disabled, designing, and not-designed phases unchanged and report them as outside the current run.
 
-Coordinate only the executable Agent steps in the ordered Workflow declared by the Interface. A Human-owned step is a prerequisite rather than work for Implement, and the Implement orchestration entry is excluded so the Skill never invokes itself.
+Implement does not read, derive, or follow the Interface Workflow. Its sequence is fixed:
 
-For each executable step, locate its current operation Skill through the Interface, read that Skill's instructions, and execute its Workflow directly; do not depend on nested Slash Command invocation. Execute any Config initialization step first. At the first point State Config is available, record Implementation State as `in progress`, set this run's start provenance, and append its State History Event. Execute each later non-phase step once at its declared position. When consecutive steps operate on individual phases, process them in their declared order for one implementable phase before moving to the next. Preserve every operation's current authority boundaries.
+1. Execute Configure once.
+2. Resolve implementable phases in Target order.
+3. For each implementable phase, execute Planning and then Development for that phase before moving to the next phase.
+4. Execute Launch once after every implementable phase completes.
 
-Do not continue into an operation whose prerequisites or progression gates are incomplete. Record Implementation State as `blocked`, append the outcome, and report the stopping condition through the authority that owns it. Do not automatically retry a failed Review.
+Locate each operation's current Skill through the Interface, read its instructions, and execute them directly; do not depend on nested Slash Command invocation. After Configure makes State available, record Implementation State as `in progress`, set this run's start provenance, and append its State History Event.
 
-After every implementable phase and the final executable Workflow step complete, record Implementation State as `completed`, its completion time, and the outcome History Event.
+Do not continue when the current operation's prerequisites or progression gates are incomplete. Record Implementation State as `blocked`, append the outcome, and report the stopping condition through its owner.
 
-Repeated invocation reconciles the current Target with existing operational records and implementation according to the individual operation rules; it does not discard completed work merely to repeat the Workflow.
+After every implementable phase and Launch complete, record Implementation State as `completed`, its completion time, and the outcome History Event.
+
+Repeated invocation reconciles the current Target with existing operational records and implementation according to the individual operation rules; it does not discard completed work merely to repeat the sequence.
 
 ## Boundaries
 
@@ -32,4 +37,4 @@ Implement coordinates operation roles and performs no product operation of its o
 
 ## Report
 
-Report eligible and skipped phases, each operation outcome in Workflow order, the stopping point when incomplete, all Blockers and Open Questions, and the final Implementation and Launch result.
+Report eligible and skipped phases, each operation outcome in implementation-sequence order, the stopping point when incomplete, all Blockers and Open Questions, and the final Implementation and Launch result.

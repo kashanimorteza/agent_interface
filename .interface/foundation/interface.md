@@ -147,7 +147,7 @@ This separation is one of the central architectural principles of the project.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
 - **Understanding** — the current context an Agent establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
 - **Operation** — one defined action performed through an Agent Skill to configure, plan, develop, review, launch, implement, or reset work.
-- **Workflow** — the ordered path from the Human's Target definition to running software: Define Target, Configure, Plan, Develop, Review, and Launch, together with supporting actions.
+- **Workflow** — the ordered path from the Human's Target definition to running software: Define Target, Configure, Plan, Develop, Review, and Launch.
 - **Mode** — an operational position in the Workflow, recorded by State.
 - **Skill** — an Agent capability that performs a Workflow action or provides a supporting utility; it is part of the Agent Module's integration surface, while its implementation remains outside `.interface/`.
 
@@ -324,7 +324,7 @@ Each line names a Component so that a phase target can be resolved to its owner.
 
 <!-------------------------- Agent -->
 ### Agent
-The Agent module defines the execution side of Agent Interface through Agents, Commands, Rules, Hooks, Output Styles, and Skills. An Agent establishes the Understanding required by its active Skill, follows the applicable Rules and Workflow, and uses its capabilities to apply the Developer perspective to the Target.
+The Agent module defines the execution side of Agent Interface through Agents, Commands, Rules, Hooks, Output Styles, and Skills. An Agent establishes the Understanding required by its active Skill, follows the applicable Rules and that Skill's own instructions, and uses its capabilities to apply the Developer perspective to the Target.
 
 The Agent is replaceable: a different Agent may execute the same Interface through its own native capabilities without requiring the Target or Developer modules to be redesigned.
 
@@ -338,6 +338,8 @@ Agent
 ├── Hooks
 ├── Output Styles
 └── Skills
+    ├── Core Workflow Skills
+    └── Supporting Skills
 ```
 
 These concepts provide a common abstraction over capabilities that modern coding agents may expose differently.
@@ -387,7 +389,9 @@ responsibility = Defines human-owned boundaries, project-scoped Agent capabiliti
 
 #### Skills
 
-Interface Skills are the fixed external capabilities that perform the Workflow and its supporting actions. Technology-specific or third-party Skills are discovered dynamically and are not part of this catalog.
+Interface Skills are divided by responsibility. Core Workflow Skills perform one primary Workflow operation. Supporting Skills run fixed orchestration, reset outputs, or extend Agent capability without becoming steps of the Interface Workflow or replacing core-operation authority. Technology-specific or third-party Skills are discovered dynamically and are not part of this catalog.
+
+##### Core Workflow Skills
 
 Configure
 
@@ -430,6 +434,30 @@ mode = none
 when = When implemented work needs independent verification
 ```
 
+Launch
+
+```text
+name = my-interface-launch
+path = .claude/skills/my-interface-launch/SKILL.md
+invocation = /my-interface-launch
+responsibility = Verify the prepared Environment, bring the developed Target online, and report verified access points
+mode = none
+when = After required development is complete
+```
+
+##### Supporting Skills
+
+Implement
+
+```text
+name = my-interface-implement
+path = .claude/skills/my-interface-implement/SKILL.md
+invocation = /my-interface-implement
+responsibility = Run the fixed Configure, phase Planning and Development, then Launch sequence without replacing each operation's authority
+mode = none
+when = When the Human wants the current Target implemented end to end
+```
+
 Reset
 
 ```text
@@ -450,28 +478,6 @@ invocation = /my-interface-skill-installer
 responsibility = Discover compatible Skills, plugins, MCP integrations, and other Agent capabilities, preview the findings, and install approved candidates at project scope
 mode = none
 when = When the Target may benefit from an additional Agent capability
-```
-
-Launch
-
-```text
-name = my-interface-launch
-path = .claude/skills/my-interface-launch/SKILL.md
-invocation = /my-interface-launch
-responsibility = Verify the prepared Environment, bring the developed Target online, and report verified access points
-mode = none
-when = After required development and review are complete
-```
-
-Implement
-
-```text
-name = my-interface-implement
-path = .claude/skills/my-interface-implement/SKILL.md
-invocation = /my-interface-implement
-responsibility = Coordinate the complete executable Workflow for the current Target without replacing the authority of its individual operations
-mode = none
-when = When the Human wants the current Target implemented end to end
 ```
 
 <br><br>
@@ -566,7 +572,7 @@ Verifies the selected Environment prepared by Configure, starts the developed pa
 
 **Agent Skill:** `my-interface-implement`
 
-Coordinates the current executable Workflow for every enabled and ready phase while preserving each operation's separate role and authority.
+Runs Configure, then Planning and Development for every enabled and ready phase, then Launch, independently of the Interface Workflow.
 
 <!-------------------------- Reset Operation -->
 ### Reset
@@ -877,14 +883,4 @@ order = 6
 name = Launch the Target
 skill = /my-interface-launch
 action = Verify the prepared Environment, start the completed parts through the selected Launch, verify readiness, and report access points
-```
-
-<!-------------------------- Implement the Workflow -->
-### Implement the Workflow
-
-```text
-order = supporting
-name = Implement the Workflow
-skill = /my-interface-implement
-action = Coordinate Configure, Planning, Developing, Reviewing, and Launch for every enabled and ready phase in their current declared order
 ```

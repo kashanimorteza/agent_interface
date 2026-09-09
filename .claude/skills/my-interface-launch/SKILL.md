@@ -16,7 +16,7 @@ Establish Interface Understanding and Target Understanding from the current auth
 
 Resolve the selected Environment and Launch from explicit Target decisions first and Platform defaults second. If either selection has no valid definition, record the unresolved condition under State instead of inventing a runtime method.
 
-Resolve the phases currently both enabled and ready for implementation, and confirm from State that their Development is complete and Review is satisfied. Treat an incomplete prerequisite as a truthful launch stoppage rather than bypassing it.
+Resolve the phases currently both enabled and ready for implementation, and confirm from State that their Development is complete. Treat incomplete Development as a truthful launch stoppage rather than bypassing it. Use recorded Review outcomes as evidence when available, but do not make Review a prerequisite unless the current Target or Platform explicitly requires it.
 
 Apply the selected Launch definition:
 

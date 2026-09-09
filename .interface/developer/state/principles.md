@@ -78,7 +78,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 6. Implementation State represents end-to-end orchestration
 
-**Rule:** Implement records `not started`, `in progress`, `completed`, or `blocked`, with start, completion, and update provenance. `completed` means the executable Workflow succeeded for every phase implementable at that invocation and reached its final executable step.
+**Rule:** Implement records `not started`, `in progress`, `completed`, or `blocked`, with start, completion, and update provenance. `completed` means Configure succeeded, every phase implementable at that invocation was planned and developed, and Launch succeeded.
 
 **Why:** End-to-end orchestration needs one truthful overall result in addition to per-phase progress.
 
