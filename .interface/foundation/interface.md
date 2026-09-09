@@ -347,7 +347,7 @@ responsibility = Defines the shared entry point and the separation between Agent
 ```text
 name = Interface Skill Policy
 path = .claude/rules/interface-skill-policy.md
-responsibility = Defines human-owned boundaries and the decision policy shared by every Interface Skill
+responsibility = Defines human-owned boundaries, project-scoped Agent capabilities, and the decision policy shared by every Interface Skill
 ```
 
 
@@ -413,9 +413,9 @@ Skill Installer
 name = my-interface-skill-installer
 path = .claude/skills/my-interface-skill-installer/SKILL.md
 invocation = /my-interface-skill-installer
-responsibility = Discover and install compatible Agent Skills for technologies used by the Target
+responsibility = Discover compatible Skills, plugins, MCP integrations, and other Agent capabilities, preview the findings, and install approved candidates at project scope
 mode = none
-when = When the Target uses a technology for which a compatible Agent Skill may be available
+when = When the Target may benefit from an additional Agent capability
 ```
 
 <br><br>

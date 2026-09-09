@@ -8,6 +8,10 @@ Skills and supporting agents must never edit or delete a human-owned Interface s
 
 Only a human edits these sources. When a change appears necessary, report it and leave the source unchanged.
 
+## Project-scoped capabilities
+
+Install or configure every Skill, plugin, MCP integration, agent, or other project-specific Agent capability at project scope, with its required files stored in or declared by the repository so it travels with the project. Never use user scope for a project capability. If the current environment cannot provide a project-scoped installation, report that limitation and do not substitute a machine-local or user-scoped installation.
+
 ## Related capabilities
 
 Check the Skills and capabilities already available in the environment for relevance to the current work. When applicable, read their instructions and use them within the active role and requested scope, respecting the project's resolved decisions and the current write boundaries.

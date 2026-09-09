@@ -1,6 +1,28 @@
 # Trading Assistant
 
-Defines what the project is and the main parts that make up the system.
+<br><br>
+
+<!--------------------------------------------------------------------------------- Navigation --->
+## Navigation
+
+Use this document in the following order:
+
+1. **[Introduction](#introduction)** — understand the Target and its purpose.
+2. **[Architecture](#architecture)** — see the Target's primary structural areas.
+3. **[Models](#models)** — review the models, fields, relationships, rules, and initial data.
+4. **[Trading Platforms](#trading-platforms)** — review how the Target connects to supported trading platforms.
+5. **[Trading Operations](#trading-operations)** — review the operations the Target performs for trading.
+6. **[Behaviour](#behaviour)** — review what the Target must enable users to do.
+7. **[Phases](#phases)** — follow the intended implementation order.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Introduction --->
+## Introduction
+<!-------------------------- Overview -->
+### Overview
+
+Defines what the Target is and the main parts that make up the system.
 
 **Name:** Trading Assistant  
 **Description:**  A platform for defining and managing trading information, strategies, actions, and related data.  
@@ -8,12 +30,24 @@ Defines what the project is and the main parts that make up the system.
 
 <br><br>
 
-## Behaviour
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
 
-- Enable users to enter and manage all defined project data.
+```text
+Architecture
+├── Modules
+│   └── Models
+├── Trading Platforms
+│   ├── Binance
+│   └── MetaTrader 5
+├── Trading Operations
+├── Behaviour
+└── Phases
+```
 
 <br><br>
 
+<!--------------------------------------------------------------------------------- Models --->
 ## Models
 
 Defines the project's models.
@@ -423,16 +457,56 @@ Models
 
 <br><br>
 
+<!--------------------------------------------------------------------------------- Trading Platforms --->
+## Trading Platforms
+
+```text
+Trading Platforms
+├── Binance
+└── MetaTrader 5
+```
+
+### Binance
+
+Connects the Target to Binance through the Binance API.
+
+### MetaTrader 5
+
+Connects the Target to MetaTrader 5 through the applicable MetaTrader 5 libraries and packages.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Trading Operations --->
+## Trading Operations
+
+```text
+Trading Operations
+├── Open Position
+└── Close Position
+```
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Behaviour --->
+## Behaviour
+
+- Enable users to enter and manage all defined project data.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Phases --->
 ## Phases
 
 Defines the project's implementation phases. Phases are executed step by step in their defined order, with each phase representing the next intended stage of project development.
 
 ```text
-Phases (4)
+Phases (6)
 ├── Phase 1
 ├── Phase 2
 ├── Phase 3
-└── Phase 4
+├── Phase 4
+├── Phase 5
+└── Phase 6
 ```
 
 ### Phase 1
@@ -466,3 +540,19 @@ Phases (4)
 **Target:** Frontend
 
 **Goal:** Implement the frontend based on the backend API.
+
+### Phase 5
+
+**Title:** MetaTrader 5 Platform Module
+
+**Target:** Backend
+
+**Goal:** Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
+
+### Phase 6
+
+**Title:** Trading Operations
+
+**Target:** Backend
+
+**Goal:** Implement the execution of the defined trading operations through the selected Trading Platform and Instance.
