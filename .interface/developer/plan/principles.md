@@ -1,6 +1,6 @@
-# Task Principles
+# Plan Principles
 
-Task is the Component that turns project phases into precise, bounded activities and organizes them as Plans, Groups, and Tasks. It is the standard by which work is broken down: it decides what an activity must contain to be understood and executed, how activities are organized so that shared context is stated once, and what counts as proof that one is finished. Every Plan, Group, and Task in the project is produced and read under this standard.
+Plan is the Component that turns project phases into precise, bounded activities and organizes them as Plans, Groups, and Tasks. It is the standard by which work is broken down: it decides what an activity must contain to be understood and executed, how activities are organized so that shared context is stated once, and what counts as proof that one is finished. Every Plan, Group, and Task in the project is produced and read under this standard.
 
 ## Terms
 
@@ -20,7 +20,7 @@ Task is the Component that turns project phases into precise, bounded activities
 - **Consumes Review** — the gap Findings that name required work no planned activity yet covers.
 - **Consumed by Review** — the planned outcomes, acceptance criteria, and execution evidence used to judge the implemented result.
 
-Technical choices and defaults belong to Task Preferences, which currently define none. The exact shape of the generated Task configuration belongs to the Task Schema.
+Technical choices and defaults belong to Plan Preferences, which currently define none. The exact shape of the generated Plan configuration belongs to the Plan Schema.
 
 Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -129,7 +129,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 ## 10. Task progress and Workflow State remain separate
 
-**Rule:** The Task Component owns Plans, Groups, Task content, Task status, a Task's reference to any Blocker, and Task-local history. An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists.
+**Rule:** The Plan Component owns Plans, Groups, Task content, Task status, a Task's reference to any Blocker, and Task-local history. An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists.
 
 When a blocking condition is verified as resolved, an operation authorized to update Task progress records the resolution evidence and transition in the log, clears the obsolete Blocker reference, and returns unfinished blocked work to its initial pending status. Dependencies and any remaining blocking conditions are checked again before the Task can be claimed; resolving a Blocker never marks work complete. If another condition still blocks the Task, its reference identifies that current condition. Removal of the State Blocker is coordinated with these updates. A missing Blocker record alone is not evidence of resolution; the underlying condition must be verified before progress is changed.
 

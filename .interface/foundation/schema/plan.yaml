@@ -1,7 +1,7 @@
 schema:
-  id: "agent-interface-task"
+  id: "agent-interface-plan"
   version: "8.2"
-  purpose: "Operational Task file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Task Component."
+  purpose: "Operational Plan file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Task Component."
 initialization:
   source: "initial"
   purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."
@@ -198,7 +198,7 @@ initial:
     path_note: "Mutable Plans, Groups, Tasks, counts and progress."
   policy:
     agent_may_edit: true
-    rule: "Apply the current Task Component and the active operation's ownership rules."
+    rule: "Apply the current Plan Component and the active operation's ownership rules."
   read_order:
     - "task_count"
     - "plans"

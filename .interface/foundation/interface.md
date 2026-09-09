@@ -211,6 +211,28 @@ Target
 ```
 
 
+<!-------------------------- Target Definitions -->
+### Definitions
+
+<!-------------------------- Non-Technical Definition -->
+#### Non-Technical Definition
+
+```text
+name = Non-Technical Definition
+path = .interface/target/non-technical.md
+responsibility = What the Target is and what it must do, in the language of its domain
+```
+
+<!-------------------------- Technical Definition -->
+#### Technical Definition
+
+```text
+name = Technical Definition
+path = .interface/target/technical.md
+responsibility = to be defined
+```
+
+
 
 <br><br>
 
@@ -286,6 +308,102 @@ Developer
 └── state/
     ├── principles.md
     └── preferences.yaml
+```
+
+
+<!-------------------------- Developer Components -->
+### Components
+
+Each Component describes one part of the engineering perspective through its own Principles and Preferences.
+
+<!-------------------------- Development -->
+#### Development
+
+```text
+name = Development
+responsibility = Defines the project's layered software architecture and the way its independent application layers are composed into one runnable system
+principles = .interface/developer/development/principles.md
+preferences = .interface/developer/development/preferences.yaml
+```
+
+<!-------------------------- Model -->
+#### Model
+
+```text
+name = Model
+responsibility = Describes the domain entities and concepts from which a project is formed, as one shared logical meaning and one reusable implementation boundary
+principles = .interface/developer/model/principles.md
+preferences = .interface/developer/model/preferences.yaml
+```
+
+<!-------------------------- Database -->
+#### Database
+
+```text
+name = Database
+responsibility = Owns the project's complete persistence layer and publishes one generic interface through which every consumer reads and writes
+principles = .interface/developer/database/principles.md
+preferences = .interface/developer/database/preferences.yaml
+```
+
+<!-------------------------- Backend -->
+#### Backend
+
+```text
+name = Backend
+responsibility = Executes application Behaviour and publishes the application's API as the one contract every external consumer depends on
+principles = .interface/developer/backend/principles.md
+preferences = .interface/developer/backend/preferences.yaml
+```
+
+<!-------------------------- Frontend -->
+#### Frontend
+
+```text
+name = Frontend
+responsibility = Presents the application to users, manages user interaction, and consumes the capabilities published by Backend
+principles = .interface/developer/frontend/principles.md
+preferences = .interface/developer/frontend/preferences.yaml
+```
+
+<!-------------------------- Platform -->
+#### Platform
+
+```text
+name = Platform
+responsibility = Composes the independent application layers into one runnable system and keeps it runnable wherever it is meant to run
+principles = .interface/developer/platform/principles.md
+preferences = .interface/developer/platform/preferences.yaml
+```
+
+<!-------------------------- Plan -->
+#### Plan
+
+```text
+name = Plan
+responsibility = Turns phases into precise, bounded activities and organizes them as Plans, Groups, and Tasks
+principles = .interface/developer/plan/principles.md
+preferences = .interface/developer/plan/preferences.yaml
+```
+
+<!-------------------------- Review -->
+#### Review
+
+```text
+name = Review
+responsibility = Establishes whether an implemented result satisfies what was asked, and records what it found
+principles = .interface/developer/review/principles.md
+preferences = .interface/developer/review/preferences.yaml
+```
+
+<!-------------------------- State -->
+#### State
+
+```text
+name = State
+responsibility = Records where the Interface Workflow currently stands, together with critical Blockers and Open Questions
+principles = .interface/developer/state/principles.md
+preferences = .interface/developer/state/preferences.yaml
 ```
 
 

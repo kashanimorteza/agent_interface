@@ -31,7 +31,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 **Why:** One small shared record answers "where does the Workflow stand" for everyone at once, without any of them reconstructing it.
 
-**Boundary:** State describes what is happening rather than what the project contains. Task progress belongs to the Task Component: State may reference the active phase or a blocking condition, but it never duplicates the status or history of individual Tasks.
+**Boundary:** State describes what is happening rather than what the project contains. Task progress belongs to the Plan Component: State may reference the active phase or a blocking condition, but it never duplicates the status or history of individual Tasks.
 
 <br>
 
@@ -110,7 +110,7 @@ Removal is coordinated with the owners of current operational references to that
 
 **Why:** State must remain understandable without reconstructing its latest transition from logs elsewhere.
 
-**Boundary:** Provenance explains the latest update only. The record of individual Task transitions belongs to the Task Component.
+**Boundary:** Provenance explains the latest update only. The record of individual Task transitions belongs to the Plan Component.
 
 <br>
 
