@@ -502,16 +502,6 @@ Trading Operations
 
 Defines the project's implementation phases. Phases are executed step by step in their defined order, with each phase representing the next intended stage of project development.
 
-```text
-Phases (6)
-├── Phase 1
-├── Phase 2
-├── Phase 3
-├── Phase 4
-├── Phase 5
-└── Phase 6
-```
-
 ### Phase 1
 
 ```text
