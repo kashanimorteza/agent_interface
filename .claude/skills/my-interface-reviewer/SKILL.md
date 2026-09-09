@@ -23,9 +23,9 @@ The number is an input convenience; it never renames a phase or changes stored i
 
 ## Workflow
 
-First establish Agent Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Reviewer's supporting role, and the current locations of the resources Review needs.
+First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Reviewer's supporting role, and the current locations of the resources Review needs.
 
-Then establish Target Project Understanding by reading the human project definition, the applicable Principles and Preferences, the requested phase's Task Plan, and the current implementation and public interfaces. Task, State, and Review Config are operational records, not a stored representation of this Understanding.
+Then establish Target Project Understanding by reading the human project definition, the applicable Principles and Preferences, the requested phase's Task Plan, and the current implementation and public interfaces. Plan, State, and Review Config are operational records, not a stored representation of this Understanding.
 
 Resolve the requested phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Review is a supporting operation and does not enter or change a Workflow mode, so it leaves the recorded position exactly as it found it.
 

@@ -1,25 +1,29 @@
 # Agent Interface
 
+<br><br>
+
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 Use this document as the entry point and follow its sections in this order:
 
-1. **Introduction** — understand the purpose, workflow, independence, and boundaries of Agent Interface.
-2. **Terminology** — learn the shared vocabulary used throughout the Interface.
-3. **Architecture** — see the high-level structure and its primary sections.
-4. **Target** — understand what is being built through its non-technical and technical definitions.
-5. **Developer** — understand the engineering philosophy through Components and their Principles and Preferences.
-6. **Agent** — understand the executing system, its capabilities, restrictions, and Skills.
-7. **Modes** — understand the operational positions recorded by State.
-8. **Authority and Ownership** — understand who owns each record and which Skill may change it.
-9. **Foundation Files** — locate the Interface document, Config, and shared Schema definitions.
-10. **Workflow** — follow the path from defining a Target through configuration, planning, and development.
+1. **[Introduction](#introduction)** — understand the purpose, workflow, independence, and boundaries of Agent Interface.
+2. **[Terminology](#terminology)** — learn the shared vocabulary used throughout the Interface.
+3. **[Architecture](#architecture)** — see the high-level structure and its primary sections.
+4. **[Modules](#modules)** — locate the three primary conceptual boundaries of the Interface.
+   - **[Target](#target)** — understand what is being built through its non-technical and technical definitions.
+   - **[Developer](#developer)** — understand the engineering philosophy through Components and their Principles and Preferences.
+   - **[Agent](#agent)** — understand the executing system, its capabilities, restrictions, and Skills.
+5. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
+6. **[Modes](#modes)** — understand the operational positions recorded by State.
+7. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
+8. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
+9. **[Workflow](#workflow)** — follow the path from defining a Target through configuration, planning, and development.
 
 
 <br><br>
-<!--------------------------------------------------------------------------------- Introduction --->
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 <!-------------------------- Overview -->
 ### Overview
@@ -134,12 +138,14 @@ This separation is one of the central architectural principles of the project.
 
 
 
-<br><br>
-<!--------------------------------------------------------------------------------- Terminology --->
 
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Terminology --->
 ## Terminology
 
-- **Interface** — the complete system described by this document; it contains the Target, Developer, and Agent Modules together with Foundation Files, Modes, Authority, and Workflow.
+- **Interface** — the complete system described by this document; it contains the Target, Developer, and Agent Modules together with Understanding, Foundation Files, Modes, Authority, and Workflow.
 - **Human** — the person who defines the Target and owns every authored Interface source.
 - **Module** — a primary conceptual boundary with a distinct responsibility inside the Interface. Target, Developer, and Agent are the Interface Modules.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
@@ -152,13 +158,18 @@ This separation is one of the central architectural principles of the project.
 - **Config** — mutable operational records that coordinate the Workflow and record where work stands; Config does not store what the Target means.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
+- **Understanding** — the current context an Agent establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
 - **Workflow** — the ordered path from the Human's Target definition to developed software: Define Target, Configure, Plan, and Develop, together with supporting actions.
 - **Mode** — an operational position in the Workflow, recorded by State.
 - **Skill** — an external Agent capability that performs a Workflow action or provides a supporting utility; it is cataloged by the Interface but is not part of its architecture.
 
-<br><br>
-<!--------------------------------------------------------------------------------- Architecture --->
 
+
+
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 The current conceptual architecture is:
@@ -170,20 +181,26 @@ Architecture
 │   ├── Target
 │   ├── Developer
 │   └── Agent
+├── Understanding
 ├── Modes
 ├── Authority and Ownership
 ├── Foundation Files
 └── Workflow
 ```
 
-Each Module owns its detailed Conceptual Structure and Repository Structure. Foundation Files remain shared resources, Modes record operational position, Authority and Ownership control writes, and Workflow defines execution order.
+Each Module owns its detailed Conceptual Structure and Repository Structure. Understanding establishes the context used by a Skill, Foundation Files remain shared resources, Modes record operational position, Authority and Ownership control writes, and Workflow defines execution order.
 
 
 
 <br><br>
-<!--------------------------------------------------------------------------------- Target --->
 
-## Target
+<!--------------------------------------------------------------------------------- Modules --->
+## Modules
+
+Target, Developer, and Agent are the three primary Modules of Agent Interface. Each Module owns a distinct responsibility and documents its own Conceptual Structure and Repository Structure.
+
+<!-------------------------- Target -->
+### Target
 
 The Target describes **what the Interface is working on**.
 
@@ -191,8 +208,7 @@ The Human defines the Target through its non-technical and technical files.
 
 The two files complement each other. The technical definition is the primary authority and always takes precedence wherever they conflict; the non-technical definition supplies additional context and requirements where the technical definition is silent. An empty file contributes no information.
 
-<!-------------------------- Target Conceptual Structure -->
-### Conceptual Structure
+#### Conceptual Structure
 
 ```text
 Target
@@ -200,9 +216,7 @@ Target
 └── Technical Definition
 ```
 
-
-<!-------------------------- Target Repository Structure -->
-### Repository Structure
+#### Repository Structure
 
 ```text
 .interface/target/
@@ -210,15 +224,12 @@ Target
 └── technical.md
 ```
 
+<!-------------------------- Developer -->
+### Developer
 
-<br><br>
-
-## Developer
-<!--------------------------------------------------------------------------------- Developer --->
 The Developer module locates the reusable engineering perspective applied to a Target. It is organized around Components, each with its own Principles and Preferences.
 
-<!-------------------------- Developer Conceptual Structure -->
-### Conceptual Structure
+#### Conceptual Structure
 
 ```text
 Developer
@@ -253,8 +264,7 @@ Developer
 ```
 
 
-<!-------------------------- Developer Repository Structure -->
-### Repository Structure
+#### Repository Structure
 
 ```text
 .interface/developer/
@@ -288,16 +298,13 @@ Developer
 ```
 
 
-<br><br>
-
-## Agent
-<!--------------------------------------------------------------------------------- Agent --->
+<!-------------------------- Agent -->
+### Agent
 The Agent section models the project-level integration surfaces used by AI coding agents.
 
 The architecture should work with different agents without being redesigned for each one.
 
-<!-------------------------- Agent Conceptual Structure -->
-### Conceptual Structure
+#### Conceptual Structure
 
 ```text
 Agent
@@ -312,8 +319,7 @@ Agent
 These concepts provide a common abstraction over capabilities that modern coding agents may expose differently.
 
 
-<!-------------------------- Agent Repository Structure -->
-### Repository Structure
+#### Repository Structure
 
 ```text
 .claude/
@@ -330,10 +336,7 @@ These concepts provide a common abstraction over capabilities that modern coding
 `.claude/` is outside `.interface/` because it is the current Agent-specific implementation. Another Agent may map the same concepts to different native paths.
 
 
-<!-------------------------- Agents -->
-### Agents
-
-#### Supporting Agent
+#### Agents
 
 ```text
 name = interface-reader
@@ -344,8 +347,7 @@ writes = none
 ```
 
 
-<!-------------------------- Rules -->
-### Rules
+#### Rules
 
 ```text
 name = Interface Bootstrap
@@ -360,12 +362,11 @@ responsibility = Defines human-owned boundaries and the decision policy shared b
 ```
 
 
-<!-------------------------- Skills -->
-### Skills
+#### Skills
 
 Interface Skills are the fixed external capabilities that perform the Workflow and its supporting actions. Technology-specific or third-party Skills are discovered dynamically and are not part of this catalog.
 
-#### Configure
+Configure
 
 ```text
 name = my-interface-configure
@@ -375,7 +376,7 @@ responsibility = Initialize every operational Config from its Schema and reconci
 mode = configuring
 ```
 
-#### Tasker
+Tasker
 
 ```text
 name = my-interface-tasker
@@ -385,7 +386,7 @@ responsibility = Create or reconcile a Task Plan without prescribing implementat
 mode = planning
 ```
 
-#### Developer
+Developer
 
 ```text
 name = my-interface-developer
@@ -395,7 +396,7 @@ responsibility = Implement and verify eligible planned Tasks
 mode = development
 ```
 
-#### Reviewer
+Reviewer
 
 ```text
 name = my-interface-reviewer
@@ -406,7 +407,7 @@ mode = none
 when = When implemented work needs independent verification
 ```
 
-#### Reset
+Reset
 
 ```text
 name = my-interface-reset
@@ -417,7 +418,7 @@ mode = none
 when = When the Human explicitly requests that selected output be reset
 ```
 
-#### Skill Installer
+Skill Installer
 
 ```text
 name = my-interface-skill-installer
@@ -430,11 +431,46 @@ when = When the Target uses a technology for which a compatible Agent Skill may 
 
 <br><br>
 
-## Modes
+<!--------------------------------------------------------------------------------- Understanding --->
+## Understanding
+
+Understanding is the current context an Agent establishes from authoritative sources before performing a Skill's role. It has two distinct scopes; a Skill's own Workflow determines which scope it needs and how it uses it.
+
+- **Interface Understanding:** Understand Agent Interface, locate its current resources, and place the active Skill within the Interface.
+- **Target Understanding:** Understand what is being built and the Target's current intent, scope, and project-specific decisions.
+
+<!-------------------------- Understanding Conceptual Structure -->
+### Conceptual Structure
+
+```text
+Understanding
+├── Interface Understanding
+└── Target Understanding
+```
+
+<!-------------------------- Understanding Repository Structure -->
+### Repository Structure
+
+```text
+Understanding
+├── Interface Understanding
+│   └── .interface/foundation/interface.md
+└── Target Understanding
+    └── .interface/target/
+        ├── non-technical.md
+        └── technical.md
+```
+
+These sources remain authoritative. Understanding is reconstructed from their current content when a Skill needs it; it is not copied into Config as a second project definition.
+
+<br><br>
+
 <!--------------------------------------------------------------------------------- Modes --->
+## Modes
 
 State records the active Mode. Modes describe the current operational position and remain distinct from the behaviour required from the Target.
 
+<!-------------------------- Not Set -->
 ### Not Set
 
 ```text
@@ -444,6 +480,7 @@ inputs = none
 output = Active State with no selected work scope
 ```
 
+<!-------------------------- Configuring -->
 ### Configuring
 
 ```text
@@ -453,6 +490,7 @@ inputs = Operational Schemas and existing Config records
 output = Current and valid operational Config files
 ```
 
+<!-------------------------- Planning -->
 ### Planning
 
 ```text
@@ -462,6 +500,7 @@ inputs = Current Target, applicable Principles and Preferences, and operational 
 output = Updated Plan Config
 ```
 
+<!-------------------------- Development -->
 ### Development
 
 ```text
@@ -474,8 +513,8 @@ output = Verified implementation and updated operational records
 
 <br><br>
 
-## Authority and Ownership
 <!--------------------------------------------------------------------------------- Authority and Ownership --->
+## Authority and Ownership
 
 Explicit Target intent and applicable Principles guide each Skill. Preferences supply defaults where the Target leaves a choice unstated. The operational Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored sources, and the general YAML Schema supplies the common frame for Preferences and Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
 
@@ -513,8 +552,8 @@ Each Skill writes only the records it has authority over, and always under the r
 
 <br><br>
 
-## Foundation Files
 <!--------------------------------------------------------------------------------- Foundation Files --->
+## Foundation Files
 Foundation Files provide foundational definitions and schemas required by the Interface.
 
 <!-------------------------- Foundation Repository Structure -->
@@ -553,7 +592,6 @@ Config stores mutable operational information used while executing the Interface
 ```
 
 
-<!-------------------------- State Config -->
 #### State Config
 
 ```text
@@ -563,7 +601,6 @@ responsibility = Stores the current Workflow position, active phase, Blockers, a
 ```
 
 
-<!-------------------------- Plan Config -->
 #### Plan Config
 
 ```text
@@ -573,7 +610,6 @@ responsibility = Stores Plans, Groups, Tasks, their dependencies, status, and hi
 ```
 
 
-<!-------------------------- Review Config -->
 #### Review Config
 
 ```text
@@ -599,7 +635,6 @@ Schemas define the structure followed by authored Interface files and generated 
 ```
 
 
-<!-------------------------- YAML Schema -->
 #### YAML Schema
 
 ```text
@@ -611,7 +646,6 @@ scope = Schema definition files use their own formats and do not follow this out
 ```
 
 
-<!-------------------------- Principles Schema -->
 #### Principles Schema
 
 ```text
@@ -622,7 +656,6 @@ responsibility = Defines the common Markdown structure followed by every Compone
 ```
 
 
-<!-------------------------- Preferences Schema -->
 #### Preferences Schema
 
 ```text
@@ -633,7 +666,6 @@ responsibility = Defines the common structure followed by every Component's pref
 ```
 
 
-<!-------------------------- State Schema -->
 #### State Schema
 
 ```text
@@ -645,7 +677,6 @@ generates = .interface/foundation/config/state.yaml
 ```
 
 
-<!-------------------------- Plan Schema -->
 #### Plan Schema
 
 ```text
@@ -657,7 +688,6 @@ generates = .interface/foundation/config/plan.yaml
 ```
 
 
-<!-------------------------- Review Schema -->
 #### Review Schema
 
 ```text
@@ -672,8 +702,8 @@ generates = .interface/foundation/config/review.yaml
 
 <br><br>
 
-## Workflow
 <!--------------------------------------------------------------------------------- Workflow --->
+## Workflow
 <!-------------------------- Define the Target -->
 ### Define the Target
 

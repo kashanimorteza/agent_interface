@@ -20,7 +20,7 @@ Detection reads what the project actually uses, which is not always what it chos
 
 ### Detect
 
-First establish Agent Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Skill Installer's supporting role, and the current locations of the relevant project sources.
+First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Skill Installer's supporting role, and the current locations of the relevant project sources.
 
 Then establish Target Project Understanding by reading the human project definition and the applicable Principles and Preferences. Detect the eligible technologies from those current sources, and inspect dependency manifests, lockfiles, runtime-version files, framework configuration, and the existing implementation as compatibility and installation evidence. The operational Config records do not define project technologies.
 
