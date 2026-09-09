@@ -1,6 +1,6 @@
 ---
 name: my-interface-launch
-description: Prepare the selected runtime Environment and bring the completed Target online through its selected Platform Launch. Use after required development and review are complete.
+description: Bring the developed Target online through the selected Platform Launch, verify readiness, and report access points.
 disable-model-invocation: true
 ---
 
@@ -8,23 +8,26 @@ disable-model-invocation: true
 
 ## Role
 
-Bring the completed Target online according to the current Platform authorities. Launch owns runtime preparation, startup, connection, and readiness verification; it does not redefine or repair the developed parts.
+Bring the developed Target online according to the current Platform authorities. Configure owns Environment preparation; Launch verifies that preparation, then owns runtime startup, connection, readiness verification, and access reporting.
 
 ## Workflow
 
 Establish Interface Understanding and Target Understanding from the current authoritative sources located through the Interface document. Read the shared Skill rules, the Platform Principles and Preferences, the operational records, and the public boundaries of the developed parts.
 
-Resolve the selected Environment and Launch from explicit Target decisions first and Platform defaults second. If either required selection has no valid definition, report and record the unresolved condition under the current State authority instead of inventing a runtime method.
+Resolve the selected Environment and Launch from explicit Target decisions first and Platform defaults second. If either selection has no valid definition, record the unresolved condition under State instead of inventing a runtime method.
+
+Resolve the phases currently both enabled and ready for implementation, and confirm from State that their Development is complete and Review is satisfied. Treat an incomplete prerequisite as a truthful launch stoppage rather than bypassing it.
 
 Apply the selected Launch definition:
 
-1. Inspect the Environment and the developed parts before changing runtime state.
-2. Prepare only missing Environment requirements and preserve requirements already satisfied.
+1. Mark Launch as `launching` and append the corresponding State History Event.
+2. Verify that Configure prepared the selected Environment and inspect the developed parts before changing runtime state. Do not perform Environment preparation here.
 3. Perform the selected Launch stages and dependency order through each part's public boundary.
-4. Preserve a part that is already running when it satisfies the required readiness check.
-5. Verify the complete launched result using the readiness conditions resolved from the current sources.
+4. Preserve a part already running when it satisfies the required readiness check.
+5. Verify the complete result and collect every verified Access Point.
+6. Record `launched` and its selections and Access Points on success, or `failed` on failure, and append the outcome to State History.
 
-Stop dependent startup after a failed prerequisite or readiness check. Preserve truthful runtime and operational state, and record Blockers or Open Questions when the current authorities allow it.
+Stop dependent startup after a failed prerequisite or readiness check. Preserve truthful runtime and State, and record Blockers or Open Questions when applicable.
 
 ## Boundaries
 
@@ -32,4 +35,4 @@ Perform only Launch's role. Do not perform another Interface Operation, define o
 
 ## Report
 
-Report the selected Environment and Launch, preflight result, preparation performed, startup result for each part, readiness evidence, and any unresolved Blockers or Open Questions.
+Report the selected Environment and Launch, environment verification, startup result for each part, readiness evidence, verified Access Points, and unresolved Blockers or Open Questions.

@@ -2,7 +2,7 @@
 
 Review is the Component that establishes whether an implemented result satisfies what the project asked for, and records what it found. It exists because the operation that produces a result is the worst judge of it: the implementer knows what it meant to build, and that knowledge quietly fills the gaps that an independent reader would notice.
 
-Review owns its findings and the record of what was reviewed. It does not own the implementation, the Plan, the project definition, or the Workflow position, and it never enters or changes a Workflow Mode.
+Review owns its Findings and the record of what was reviewed. It does not own implementation, Plan, Target, or the active Workflow position, and it never enters or changes a Workflow Mode. It records only aggregate Review progress and its History outcome under State.
 
 ## Terms
 
@@ -17,6 +17,7 @@ Review owns its findings and the record of what was reviewed. It does not own th
 
 - **Consumes Plan** — the Plans, acceptance criteria, verification conditions, and recorded execution evidence a result is judged against.
 - **Consumed by Plan** — a Finding recorded as a gap names required work that no planned activity covers, and Planning is where that work is decided.
+- **Updates State** — records the phase's aggregate Review outcome and a concise History event without copying Findings.
 
 Technical choices and defaults belong to Review Preferences, which currently define none. The exact shape of the generated Review configuration belongs to the Review Schema.
 
@@ -90,7 +91,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 **Why:** A finding reported only in conversation is gone when the session ends, and the next run has no way to know it was ever raised. A stored finding is the only thing that makes the second review of a phase worth more than the first.
 
-**Boundary:** Review records the state of its own Findings and nothing else. It does not reopen Tasks, raise Blockers on another Component's behalf, or change the Workflow position to reflect what it found.
+**Boundary:** Review records its Findings and its own aggregate outcome under State. It does not reopen Tasks, raise Blockers on another Component's behalf, or change the active Workflow mode to reflect what it found.
 
 <br>
 
@@ -109,4 +110,4 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Must** — required work that no planned activity covers is recorded as a Finding of the phase *(6)*
 - **Never** — Review plans the work that would fill a gap it found *(6)*
 - **Must** — every Finding is stored with its Review and keeps its state until resolved or accepted *(7)*
-- **Never** — Review reopens Tasks, raises Blockers for another Component, or changes the Workflow position *(7)*
+- **Never** — Review reopens Tasks, raises Blockers for another Component, or changes the active Workflow mode *(7)*

@@ -27,6 +27,8 @@ Then establish Target Understanding by reading the human project definition and 
 
 Read the current Plan and State Config files, and the Review Config for the requested phase. Derive the meaning of review Findings and how Planning handles them from the current Review and Plan Component authorities. Resolve the requested phase from the human project definition, then derive planning structure, content, granularity, progress handling, validation, ownership, and write boundaries from the current owning Components. Do not assume or reproduce a fixed planning structure here: the Plan Component changes independently of this Skill, and a structure remembered from an earlier run will silently disagree with it.
 
+When planning begins, record the active planning mode and this phase's Planning progress as `in progress`. After reconciliation, record it as `completed` only when the complete phase Plan is valid; otherwise preserve the truthful incomplete value. Append each outcome to State History under the current State rules.
+
 Build a complete candidate for the requested phase that preserves its resolved identity, intent, scope, and decisions, and that is usable by downstream Development. Apply the current planning authorities to every part of the candidate rather than embedding remembered fields, defaults, or policies.
 
 Validate the complete candidate using the current authorities before writing it, and write only to the authorized destination.
@@ -47,4 +49,5 @@ Report in this order:
 2. **Plan result** — created, reconciled, or already current, with the counts the Plan Component defines.
 3. **What changed** — work added, work reconciled, and work left untouched because it lies outside Tasker's authority.
 4. **Conflicts and unresolved decisions** — anything that could not be planned safely, and any Blocker or Open Question raised, each with what it prevents.
-5. **Next step** — the single most useful next action supported by the result.
+5. **State** — the aggregate phase progress and History outcome recorded for this run.
+6. **Next step** — the single most useful next action supported by the result.

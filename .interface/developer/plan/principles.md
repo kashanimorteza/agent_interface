@@ -7,7 +7,7 @@ Plan is the Component that turns project phases into precise, bounded activities
 - **Plan** — the work required by one project phase, holding the context that applies to the whole phase and decomposing its outcome into Groups.
 - **Group** — one coherent implementation area within a Plan, holding the context its Tasks share.
 - **Task** — one small, concrete activity with one independently observable result.
-- **Phase** — the project stage a Plan represents, identified by its order and target.
+- **Phase** — the project stage a Plan represents, identified by its stable identifier and carrying its order and target.
 - **Dependency** — another Task whose completed result this Task requires before it can begin.
 - **Acceptance** — the observable criterion that determines whether a Task's result is correct.
 - **Verification** — the condition that must be observed to prove acceptance, stated as behaviour rather than as a command.
@@ -16,7 +16,7 @@ Plan is the Component that turns project phases into precise, bounded activities
 
 ## Relationships
 
-- **Consumes State** — the shared Blocker records a Task refers to when it cannot proceed.
+- **Consumes State** — shared Blockers and the aggregate phase progress Planning updates without duplicating Task records.
 - **Consumes Review** — the gap Findings that name required work no planned activity yet covers.
 - **Consumed by Review** — the planned outcomes, acceptance criteria, and execution evidence used to judge the implemented result.
 
@@ -135,7 +135,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 **Why:** Progress belongs with the work it describes, while the question of where the Workflow stands is shared by everything that touches the project and belongs to one small record.
 
-**Boundary:** The State Component records the active Workflow position and owns the shared records for critical Blockers and Open Questions. Each operation may change only the portions owned by its own contract; the current State mode records the operation but does not grant or deny that permission.
+**Boundary:** State owns active Workflow position, aggregate phase progress, and shared Blockers and Open Questions. Aggregate Planning progress summarizes the phase and never replaces or duplicates Task status and history. Each operation changes only the portions its contract grants it.
 
 <br>
 

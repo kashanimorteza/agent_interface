@@ -1,136 +1,159 @@
 # State Principles
 
-State is the Component that records where the Interface Workflow currently stands. It provides one small shared view of the active working mode, the active phase when one applies, the critical conditions that have stopped progress, and the questions still waiting on a human, so that anyone joining the project can see its current position without reconstructing it.
+State records the operational condition of the Interface Workflow: the active mode, aggregate progress for each Target phase, end-to-end implementation, runtime launch, critical stoppages, and Workflow history.
 
-State does not contain the project definition, implementation plan, application configuration, or product code.
+State never contains Target meaning, implementation instructions, application configuration, product code, or the status and history of individual Tasks.
 
 ## Terms
 
-- **Workflow** — the ordered path the project follows, from defining the project through planning and implementing its phases.
-- **Mode** — the working position the Workflow currently occupies, drawn from a fixed set of values.
-- **Active State** — the record of the current mode, its phase when one applies, and the reason, author, and time of the latest update.
-- **Phase** — the project stage being acted on, present only when the current work is specific to one stage.
-- **Blocker** — a condition that genuinely prevents safe or valid continuation, recorded until it is verified as resolved.
-- **Open Question** — a critical decision that cannot safely be made without a human, recorded until the human's answer resolves it.
-- **Provenance** — the reason, author, and time recorded with every change to the Active State.
+- **Active State** — the current or most recently entered Workflow mode, its phase when applicable, and update provenance.
+- **Phase State** — aggregate Planning, Development, and Review progress for one stable Target phase identifier.
+- **Implementation State** — progress of the current end-to-end Implement run across phases that are presently implementable.
+- **Launch State** — runtime condition, selected Environment and Launch method, and verified access points.
+- **History Event** — one append-only record of a Workflow operation and its outcome.
+- **Blocker** — a condition that genuinely prevents safe or valid continuation.
+- **Open Question** — a critical decision that cannot safely be made without a human.
 
 ## Relationships
 
-- **Consumed by Plan** — a Task references the Blocker records that State owns when it cannot proceed.
-- **Consumes no other Component** — State records only its own position, Blockers, and Open Questions.
+- **Consumes Target phase identity** — uses stable phase identifiers without copying phase goals or Target meaning.
+- **Consumes operation outcomes** — each operation records only the aggregate State and history its role owns.
+- **Consumed by operations and reporting** — enables work to resume without reconstructing operational progress.
 
-Technical choices and defaults belong to State Preferences, which currently define none. The exact shape of the generated State configuration belongs to the State Schema.
+Technical choices and defaults belong to State Preferences, which currently define none. The exact shape and initial values of State Config belong to the State Schema.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Preference can never override a Principle, and a Target may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. State records Workflow position
+## 1. State records the active Workflow position
 
 **Rule:** State records the current or most recently entered Workflow mode and the phase being acted on when the operation is phase-specific.
 
-**Why:** One small shared record answers "where does the Workflow stand" for everyone at once, without any of them reconstructing it.
+**Why:** Anyone joining the work can immediately see its current operational position.
 
-**Boundary:** State describes what is happening rather than what the project contains. Task progress belongs to the Plan Component: State may reference the active phase or a blocking condition, but it never duplicates the status or history of individual Tasks.
+**Boundary:** Active State is descriptive, not an authorization gate, and never prevents an operation merely because it ran before.
 
 <br>
 
 ## 2. The Workflow has four modes
 
-**Rule:** State recognizes these modes:
+**Rule:** State recognizes `not set`, `configuring`, `planning`, and `development`. The initial mode is `not set`; the active phase is null when work is not phase-specific.
 
-- `not set` — no Workflow operation has yet been recorded;
-- `configuring` — the operational Config records are being created or brought to their current structure;
-- `planning` — Plans, Groups, and Tasks are being generated or reconciled; and
-- `development` — eligible Tasks are being implemented and verified.
+**Why:** A stable vocabulary aligns every operation without imposing a one-way lifecycle.
 
-The initial mode is `not set`.
-
-**Why:** A fixed, small vocabulary lets every operation and every human name the same situation the same way.
-
-**Boundary:** A phase is absent when the active operation does not act on one specific phase.
+**Boundary:** Review, Launch, Implement, and Reset update their own State records and History without inventing additional active modes.
 
 <br>
 
-## 3. Modes never make an operation one-time-only
+## 3. Every Target phase has aggregate operational State
 
-**Rule:** Every Workflow operation is repeatable. Configuring may run after configuring, planning, or development. Planning may run again for an already planned phase. Development may run again for an already developed or partially developed phase. State never rejects an invocation merely because that operation ran before or because the same mode is already active.
+**Rule:** State keeps one Phase State for every stable Target phase identifier. Planning and Development use `not started`, `in progress`, or `completed`. Review uses `not started`, `in progress`, `satisfied`, `not satisfied`, or `inconclusive`.
 
-**Why:** Real work revisits earlier stages, and each operation is responsible for reconciling its own existing output, preserving information it does not own, and skipping work that is already complete.
+**Why:** Target stays human-owned while operations can record where every phase stands.
 
-**Boundary:** An operation may still reject invalid input or stop for a genuine critical blocker. That decision comes from the operation's own contract and current project Understanding, never from a one-way State lifecycle.
-
-<br>
-
-## 4. Active State is descriptive, not an authorization gate
-
-**Rule:** The active State records the mode, optional phase, reason, provenance, and time of the latest State update. Entering a mode replaces those active values with the current operation's values.
-
-**Why:** State exists to describe the situation, not to police it; permission comes from each operation's own contract.
-
-**Boundary:** No fixed transition graph restricts which mode may follow another. The human may request any applicable Workflow operation from any current mode, including re-entering the same mode.
+**Boundary:** Phase State never copies a phase title, goal, target, readiness, or enabled status. It never duplicates individual Task status, evidence, or history.
 
 <br>
 
-## 5. Operations update only the State they own
+## 4. Phase records reconcile without erasing progress
 
-**Rule:** An operation may record its own active mode and may raise, update, or release blockers and questions encountered during its work.
+**Rule:** Configure creates missing Phase State records from stable Target phase identifiers and preserves existing records. New records begin with every operation at `not started`. A removed Target phase is not silently deleted when its State carries meaningful progress or provenance; the conflict is reported. A record that still contains only initialization defaults may be removed during synchronization.
 
-**Why:** State is shared by everything that touches the project, so a narrow write boundary is what keeps it trustworthy.
+**Why:** Target phases can evolve without making recorded work disappear.
 
-**Boundary:** An operation does not rewrite project meaning, Task content, or another Component's owned information through State. A reset may restore active State as part of its explicit reset behaviour, but State does not duplicate the reset algorithm or the files affected by it.
-
-<br>
-
-## 6. Blockers are reserved for critical stoppages
-
-**Rule:** A Blocker records a condition that genuinely prevents safe or valid continuation. Every Blocker states what is blocked, what is missing, why continuation is impossible, who or what can resolve it, and which operation or human raised it. After an authorized operation verifies resolution, the Blocker is removed from the unresolved collection.
-
-Removal is coordinated with the owners of current operational references to that Blocker. Resolution evidence must be retained with affected work, and its current references reconciled under the owning Component's authority before the Blocker is removed. Historical references may remain in execution history. An operation that cannot perform the required reconciliation reports the verified resolution and the pending handoff, leaves the record unchanged until authorized reconciliation, and does not claim that the original condition remains unverified. This coordination grants no authority to change another Component's progress.
-
-**Why:** A Blocker interrupts the human, so the record is only useful while it names a stoppage that is real and currently unresolved.
-
-**Boundary:** Ordinary ambiguity, an unspecified implementation detail, or a decision that can be made through professional judgment is not a Blocker.
+**Boundary:** Synchronization establishes identity only; it does not interpret phase meaning or decide implementability.
 
 <br>
 
-## 7. Open Questions belong to the human
+## 5. Operations update only their aggregate phase field
 
-**Rule:** An Open Question records a critical decision that cannot safely be resolved without human input. It explains the decision required, why it matters, and any Blocker it would release. An operation may raise the question and record an answer supplied by the human. The question records who raised it and when; a supplied answer records its value, author, and time. After the answer fully resolves the question, the question is removed from the unresolved collection.
+**Rule:** Planning updates Planning progress, Development updates Development progress, and Review updates Review progress for the active phase. Each records provenance and appends a History Event.
 
-**Why:** Some decisions change project intent, and guessing one produces work the human never asked for.
+**Why:** Narrow ownership prevents one operation from overstating another's work.
 
-**Boundary:** An operation never invents the human's answer. Non-critical uncertainty is resolved through professional judgment and does not become an Open Question.
+**Boundary:** One operation's completion never implies another operation's completion.
 
 <br>
 
-## 8. State changes retain provenance
+## 6. Implementation State represents end-to-end orchestration
 
-**Rule:** Every active-State update records why it occurred, who or which operation recorded it, and when it was recorded.
+**Rule:** Implement records `not started`, `in progress`, `completed`, or `blocked`, with start, completion, and update provenance. `completed` means the executable Workflow succeeded for every phase implementable at that invocation and reached its final executable step.
 
-**Why:** State must remain understandable without reconstructing its latest transition from logs elsewhere.
+**Why:** End-to-end orchestration needs one truthful overall result in addition to per-phase progress.
 
-**Boundary:** Provenance explains the latest update only. The record of individual Task transitions belongs to the Plan Component.
+**Boundary:** Disabled, unready, and future phases are never marked complete. A later Target change can make additional phases implementable.
+
+<br>
+
+## 7. Launch State records the observable runtime result
+
+**Rule:** Launch State records `not launched`, `launching`, `launched`, `failed`, or `stopped`, together with the Environment, Launch method, provenance, and verified access points. Each access point has a name, kind, and address.
+
+**Why:** A successful launch is useful only when people and systems know how to reach it.
+
+**Boundary:** State stores no credentials, shared secrets, or private configuration values.
+
+<br>
+
+## 8. History is append-only operational evidence
+
+**Rule:** Every operation that changes State appends a History Event containing a stable identifier, operation, optional phase, event, outcome, recorder, and time.
+
+**Why:** Active records show the present while History explains how the Workflow reached it.
+
+**Boundary:** History never copies Task histories, review Findings, command transcripts, secrets, or Target content.
+
+<br>
+
+## 9. Workflow operations remain repeatable
+
+**Rule:** Configure, Planning, Development, Review, Launch, Implement, and Reset may run again. Each reconciles records it owns, preserves information outside its authority, and records the new outcome truthfully.
+
+**Why:** Real projects revisit earlier work.
+
+**Boundary:** An operation may stop for invalid input, an unmet prerequisite, or a genuine Blocker, but never solely because it ran before.
+
+<br>
+
+## 10. Reset reconciles State with what it removes
+
+**Rule:** A confirmed Reset returns affected phase fields, Implementation State, and Launch State to values consistent with outputs that remain, and appends a reset History Event whenever State itself is preserved.
+
+**Why:** State must not claim removed plans, implementation, review evidence, or runtime still exists.
+
+**Boundary:** A Configure reset removes State Config itself and cannot append to that removed record.
+
+<br>
+
+## 11. Blockers are critical stoppages
+
+**Rule:** A Blocker records what cannot continue, what is missing, why continuation is impossible, who can resolve it, and who raised it. It is removed only after verified resolution and authorized reconciliation of current references.
+
+**Why:** A Blocker must identify a real, current stoppage.
+
+**Boundary:** Ordinary ambiguity or a choice professional judgment can safely resolve is not a Blocker.
+
+<br>
+
+## 12. Open Questions belong to the human
+
+**Rule:** An Open Question records the decision, why it matters, any Blocker it releases, and provenance. A human answer records its value, author, and time; the question is removed when fully resolved.
+
+**Why:** Some choices materially change intent and cannot safely be guessed.
+
+**Boundary:** An operation never invents a human answer or raises non-critical uncertainty as an Open Question.
 
 <br>
 
 ## At a Glance
 
-- **Must** — State records the current or most recent mode, and the phase when the work is phase-specific *(1)*
-- **Never** — State duplicates the status or history of individual Tasks *(1)*
-- **Must** — the mode is one of `not set`, `configuring`, `planning`, or `development`, starting at `not set` *(2)*
-- **Must** — the phase is absent when the current work is not specific to one phase *(2)*
-- **Must** — every Workflow operation stays repeatable, and each reconciles its own existing output *(3)*
-- **Never** — State rejects an invocation because that operation ran before or its mode is already active *(3)*
-- **Must** — entering a mode replaces the active values with the current operation's values *(4)*
-- **Never** — a fixed transition graph restricts which mode may follow another *(4)*
-- **Must** — an operation records only its own active mode and the blockers and questions it encounters *(5)*
-- **Never** — an operation rewrites project meaning, Task content, or another Component's information through State *(5)*
-- **Must** — a Blocker states what is blocked, what is missing, why, who can resolve it, and who raised it *(6)*
-- **Must** — a Blocker is removed once an authorized operation verifies its resolution *(6)*
-- **Must** — Blocker removal follows authorized reconciliation of current references and preservation of resolution evidence with affected work; missing authority is reported as a pending handoff *(6)*
-- **Never** — ordinary ambiguity or a judgment call becomes a Blocker *(6)*
-- **Must** — an Open Question states the decision, why it matters, and any Blocker its answer would release *(7)*
-- **Must** — a recorded answer carries its value, author, and time, and the question is removed once resolved *(7)*
-- **Never** — an operation invents the human's answer, or raises non-critical uncertainty as an Open Question *(7)*
-- **Must** — every active-State update records why, by whom, and when *(8)*
+- **Must** — record the active Workflow position without making it an authorization gate *(1–2)*
+- **Must** — keep aggregate Planning, Development, and Review progress by stable phase identifier *(3–5)*
+- **Never** — copy Target meaning or individual Task status, evidence, or history into State *(3–4)*
+- **Must** — preserve existing progress while reconciling phase identity *(4)*
+- **Must** — record truthful Implement progress and exclude disabled or unready phases from completion *(6)*
+- **Must** — record Launch status and verified access points without secrets *(7)*
+- **Must** — append concise operational History for every State-changing operation *(8)*
+- **Must** — keep operations repeatable and make confirmed Reset outcomes agree with State *(9–10)*
+- **Must** — reserve Blockers and Open Questions for genuine critical conditions *(11–12)*

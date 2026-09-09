@@ -214,17 +214,20 @@ Target
 └── technical.md
 ```
 
-#### Phase Status
+#### Phase Control
 
-The Technical Definition divides the Target into ordered phases, and each phase declares a `status`:
+The Technical Definition divides the Target into ordered phases. Every phase has a stable `id`, a `status` controlling scope, and a `readiness` controlling whether its design is ready to implement:
 
 ```text
 Enabled  = the phase is in scope; it is planned, developed, and reviewed in its defined order
-Disabled = the phase is out of scope; no Plan, Task, Finding, or other operational record is
-           created for it, and an existing record is preserved rather than removed
+Disabled = the phase is out of scope; no Plan, Task, or Finding is created for it, while its
+           aggregate State identity may remain available without implying progress
+Ready = the phase may be implemented
+Designing = the phase is still being designed and is not yet implementable
+Not Designed = the phase has not entered design and is not implementable
 ```
 
-`status` states scope, never progress. Where a phase stands is held in the operational Config that owns it, and is never recorded in the Target.
+A phase is implementable only when it is both `Enabled` and `Ready`. These values express human intent, never operational progress. Planning, Development, and Review progress is recorded in State and never written into Target.
 
 <!-------------------------- Developer -->
 ### Developer
@@ -313,7 +316,7 @@ Frontend    = Presents the application to users and consumes the capabilities Ba
 Platform    = Prepares a completed Target for operation and brings it online
 Plan        = Turns phases into bounded, verifiable activities organized as Plans, Groups, and Tasks
 Review      = Establishes whether implemented work satisfies what was asked, and records what it found
-State       = Records where the Workflow stands, together with Blockers and Open Questions
+State       = Records active position, aggregate phase progress, implementation, launch, History, Blockers, and Open Questions
 ```
 
 Each line names a Component so that a phase target can be resolved to its owner. The Component's own Principles remain the authority: when this summary and a Component's Principles disagree, the Principles are correct.
@@ -392,7 +395,7 @@ Configure
 name = my-interface-configure
 path = .claude/skills/my-interface-configure/SKILL.md
 invocation = /my-interface-configure
-responsibility = Initialize every operational Config from its Schema and reconcile existing records with the current structure
+responsibility = Reconcile operational Config, synchronize phase State, and prepare the selected Platform Environment
 mode = configuring
 ```
 
@@ -455,7 +458,7 @@ Launch
 name = my-interface-launch
 path = .claude/skills/my-interface-launch/SKILL.md
 invocation = /my-interface-launch
-responsibility = Prepare the selected Environment and bring the completed Target online through the selected Launch
+responsibility = Verify the prepared Environment, bring the developed Target online, and report verified access points
 mode = none
 when = After required development and review are complete
 ```
@@ -476,7 +479,7 @@ when = When the Human wants the current Target implemented end to end
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent establishes from authoritative sources before performing a Skill's role. Interface Understanding is required by every Skill. Target Understanding is required by roles that interpret or act on the Target; a mechanical Workflow such as Configure or Reset may omit it because it does not interpret project intent.
+Understanding is the current context an Agent establishes from authoritative sources before performing a Skill's role. Interface Understanding is required by every Skill. Target Understanding is required by roles that interpret or act on the Target. Configure uses only the Target phase identities and Platform selections required for its role; Reset may omit Target Understanding when its fixed scope does not require it.
 
 - **Interface Understanding:** Understand Agent Interface, locate its current resources, and place the active Skill within the Interface.
 - **Target Understanding:** Understand what is being built and the Target's current intent, scope, and project-specific decisions.
@@ -528,7 +531,7 @@ Operations
 
 **Agent Skill:** `my-interface-configure`
 
-Initializes operational Config files from their Schemas and reconciles existing records with the current structure.
+Initializes and reconciles operational Config, synchronizes phase State, and prepares the selected Platform Environment.
 
 <!-------------------------- Planning Operation -->
 ### Planning
@@ -556,14 +559,14 @@ Evaluates implemented work independently and records evidence-based Findings wit
 
 **Agent Skill:** `my-interface-launch`
 
-Prepares the selected Environment, starts the developed parts through the selected Launch, and verifies that the composed Target is ready.
+Verifies the selected Environment prepared by Configure, starts the developed parts through the selected Launch, verifies readiness, and reports access points.
 
 <!-------------------------- Implement Operation -->
 ### Implement
 
 **Agent Skill:** `my-interface-implement`
 
-Coordinates the current executable Workflow end to end while preserving the separate role and authority of every operation it runs.
+Coordinates the current executable Workflow for every enabled and ready phase while preserving each operation's separate role and authority.
 
 <!-------------------------- Reset Operation -->
 ### Reset
@@ -594,9 +597,9 @@ output = Active State with no selected work scope
 
 ```text
 state = configuring
-responsibility = Initialize operational Config files from their Schema templates and reconcile existing records
-inputs = Operational Schemas and existing Config records
-output = Current and valid operational Config files
+responsibility = Reconcile operational Config, synchronize phase State, and prepare the selected Environment
+inputs = Operational Schemas, existing Config, Target phase identities and Platform selections, and Platform authorities
+output = Current operational Config and a prepared selected Environment
 ```
 
 <!-------------------------- Planning -->
@@ -640,22 +643,22 @@ Ownership answers who a record belongs to, and it belongs to the Human or to a C
 ```text
 Human = owns Interface, Target, Principles, Preferences, and Schema sources
 Plan = owns Plans, Groups, Tasks, their status, and their history
-State = owns the active Workflow position, Blockers, and Open Questions
+State = owns active Workflow position, aggregate phase progress, Implement and Launch results, operational History, Blockers, and Open Questions
 Review = owns recorded Findings and their state
 ```
 
 Write authority answers which Skill may change a record, and every write happens under the rules of the Component that owns it:
 
 ```text
-Configure = writes every operational Config, creating it from its Schema template or bringing it to the current structure
-Tasker = writes Plans, Groups, and Tasks under Plan's rules
-Developer = writes implementation, and Task status and history under Plan's rules
-Reviewer = writes Findings under Review's rules
-Configure, Tasker, and Developer = write the active Workflow position under State's rules
-Launch = changes runtime state through Platform's authority and may record its Blockers and Open Questions under State's rules
-Implement = coordinates operation Skills and has no independent write authority
+Configure = writes every operational Config, synchronizes phase records, records its State outcome, and prepares the selected Environment
+Tasker = writes Plans, Groups, and Tasks under Plan, and Planning progress and History under State
+Developer = writes implementation and Task status and history under Plan, and Development progress and History under State
+Reviewer = writes Findings under Review, and Review progress and History under State
+Configure, Tasker, and Developer = write the active Workflow position under State
+Launch = changes runtime state through Platform and writes Launch State, access points, and History under State
+Implement = coordinates operation Skills and writes only Implementation State and its History under State
 Reset = after human confirmation of the preview, removes or resets the outputs and operational records covered by the selected reset stage, including the Workflow position, under the owning Components' rules
-Reviewer, Launch, Implement, and Skill Installer = do not directly change the active Workflow position
+Reviewer, Launch, Implement, and Skill Installer = do not directly change the active Workflow mode
 Every Skill = may record its own Blockers and Open Questions under State's rules when applicable
 ```
 
@@ -708,7 +711,7 @@ Config stores mutable operational information used while executing the Interface
 ```text
 name = State Config
 path = .interface/foundation/config/state.yaml
-responsibility = Stores the current Workflow position, active phase, Blockers, and Open Questions
+responsibility = Stores active Workflow position, aggregate phase progress, Implement and Launch results, access points, History, Blockers, and Open Questions
 ```
 
 
@@ -833,7 +836,7 @@ action = State the Target in .interface/target/non-technical.md, then translate 
 order = 2
 name = Configure
 skill = /my-interface-configure
-action = Initialize every operational Config file from the initial values in its Schema while preserving existing operational records
+action = Reconcile operational Config, synchronize Target phase identities in State, and prepare the selected Platform Environment
 ```
 
 <!-------------------------- Generate Tasks -->
@@ -863,7 +866,7 @@ action = Implement and verify eligible Tasks for the requested phase
 order = 5
 name = Review the Result
 skill = /my-interface-reviewer <phase-number>
-action = Evaluate the implemented result for each enabled phase and record evidence-based Findings
+action = Evaluate the implemented result for the requested phase and record evidence-based Findings
 ```
 
 <!-------------------------- Launch the Target -->
@@ -873,7 +876,7 @@ action = Evaluate the implemented result for each enabled phase and record evide
 order = 6
 name = Launch the Target
 skill = /my-interface-launch
-action = Prepare the selected Environment, start the completed parts through the selected Launch, and verify readiness
+action = Verify the prepared Environment, start the completed parts through the selected Launch, verify readiness, and report access points
 ```
 
 <!-------------------------- Implement the Workflow -->
@@ -883,5 +886,5 @@ action = Prepare the selected Environment, start the completed parts through the
 order = supporting
 name = Implement the Workflow
 skill = /my-interface-implement
-action = Coordinate Configure, Planning, Developing, Reviewing, and Launch in their current declared order
+action = Coordinate Configure, Planning, Developing, Reviewing, and Launch for every enabled and ready phase in their current declared order
 ```

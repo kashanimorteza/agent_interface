@@ -37,11 +37,11 @@ Remove every operational Config file currently catalogued by the Interface and i
 
 ### 2 = Task reset
 
-Clear planned Groups and Tasks according to the current Plan structure. Return State to its pre-planning position and clear the active phase. Remove the developed implementation outputs. Clear the recorded Findings for the affected phases, because a Finding about work that no longer exists misleads whoever reads it next. Preserve shared operational records according to current ownership.
+Clear planned Groups and Tasks according to the current Plan structure. Return every affected phase's Planning, Development, and Review progress to their initial values; return Implementation State to `not started`; reconcile Launch State with any stopped runtime; return active State to its pre-planning position and clear the active phase. Remove developed implementation outputs and recorded Findings for the affected phases. Preserve State History and append the reset outcome.
 
 ### 3 = Develop reset
 
-Return State to its pre-development position and clear the active phase. Return every existing Task to the current initial Task status, remove the transient blocking association where required, and preserve each Task's content and history. Remove the developed implementation outputs and clear the recorded Findings for the affected phases, since both describe an implementation that is being discarded. Preserve Plans, Groups, and shared operational records according to current ownership.
+Return every affected phase's Development and Review progress to their initial values while preserving truthful Planning progress; return Implementation State to `not started`; reconcile Launch State with any stopped runtime; return active State to its pre-development position and clear the active phase. Return every existing Task to the current initial Task status, remove transient blocking associations where required, and preserve each Task's content and history. Remove developed outputs and Findings for affected phases. Preserve State History and append the reset outcome.
 
 ### Confirmation
 

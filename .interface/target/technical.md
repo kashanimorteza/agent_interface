@@ -524,53 +524,65 @@ Defines the project's implementation phases. Phases are executed step by step in
 ### Phase 1
 
 ```text
+id = P1
 title = Model
 target = Model
 status = Enabled
+readiness = Ready
 goal = Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
 ```
 
 ### Phase 2
 
 ```text
+id = P2
 title = Database
 target = Database
 status = Enabled
+readiness = Ready
 goal = Implement the database using the shared Model package and insert the defined initial data.
 ```
 
 ### Phase 3
 
 ```text
+id = P3
 title = Backend
 target = Backend
 status = Enabled
+readiness = Ready
 goal = Implement the backend layer, including its application logic and API for operating on the defined models.
 ```
 
 ### Phase 4
 
 ```text
+id = P4
 title = Frontend
 target = Frontend
 status = Enabled
+readiness = Ready
 goal = Implement the frontend based on the backend API.
 ```
 
 ### Phase 5
 
 ```text
+id = P5
 title = MetaTrader 5 Platform Module
 target = Backend
 status = Disabled
+readiness = Not Designed
 goal = Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
 ```
 
 ### Phase 6
 
 ```text
+id = P6
 title = Trading Operations
 target = Backend
 status = Disabled
+readiness = Not Designed
 goal = Implement the execution of the defined trading operations through the selected Trading Platform and Instance.
 ```

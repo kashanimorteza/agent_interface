@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/foundation/config/state.yaml"
-  path_note: "Mutable Workflow position, Blockers and Open Questions."
+  path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -11,23 +11,22 @@ policy:
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
-read_order:
-  - "active"
-  - "blockers"
-  - "open_questions"
+read_order: ["active", "phases", "implementation", "launch", "history", "blockers", "open_questions"]
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   active: "Current or most recently recorded Workflow position."
+  phases: "Aggregate Planning, Development, and Review progress by phase identifier."
+  implementation: "Latest end-to-end Implement result."
+  launch: "Current runtime result and verified access points."
+  history: "Append-only State-changing Workflow events."
   blockers: "Unresolved critical conditions."
-  open_questions: "Unresolved critical questions for the human."
+  open_questions: "Unresolved critical questions."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-
-  # <!-------------------------------------------- active -->
   active:
     mode: "configuring"
     phase: null
@@ -35,8 +34,29 @@ content:
     set_by: "my-interface-configure"
     set_at: "2026-09-09"
 
-  # <!-------------------------------------------- blockers -->
-  blockers: {}
+  phases:
+    P1: {id: "P1", planning: "not started", development: "not started", review: "not started", updated_by: "initialization", updated_at: null}
+    P2: {id: "P2", planning: "not started", development: "not started", review: "not started", updated_by: "initialization", updated_at: null}
+    P3: {id: "P3", planning: "not started", development: "not started", review: "not started", updated_by: "initialization", updated_at: null}
+    P4: {id: "P4", planning: "not started", development: "not started", review: "not started", updated_by: "initialization", updated_at: null}
+    P5: {id: "P5", planning: "not started", development: "not started", review: "not started", updated_by: "initialization", updated_at: null}
+    P6: {id: "P6", planning: "not started", development: "not started", review: "not started", updated_by: "initialization", updated_at: null}
 
-  # <!-------------------------------------------- open_questions -->
+  implementation:
+    status: "not started"
+    started_at: null
+    completed_at: null
+    updated_by: "initialization"
+    updated_at: null
+
+  launch:
+    status: "not launched"
+    environment: null
+    method: null
+    access_points: []
+    updated_by: "initialization"
+    updated_at: null
+
+  history: []
+  blockers: {}
   open_questions: {}

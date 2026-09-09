@@ -31,6 +31,8 @@ Then establish Target Understanding by reading the human project definition, the
 
 Read the requested phase's current Task Plan and State. Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from the current Component authorities. Do not assume or reproduce their fields, statuses, or policies here, because they change independently of this Skill.
 
+When development begins, record the active development mode and this phase's Development progress as `in progress`. Record it as `completed` only when every required Task is complete under Plan's current rules; otherwise keep the truthful incomplete value. Append each run outcome to State History without duplicating Task history.
+
 Install and configure the runtimes, package managers, build tools, system software, and dependencies the authorized work requires. Resolve a missing prerequisite within the current authority whenever possible. Apply the shared decision policy and the current owning Component's blocking rules when evidence establishes that installation or configuration cannot proceed; a failed installation attempt is not required to establish such a condition.
 
 Execute eligible planned work within the resolved scope and current authority. Apply the shared decision policy from those rules to unspecified implementation details while preserving project intent and existing interfaces.
@@ -54,4 +56,5 @@ Report in this order:
 3. **Work not executed** — each eligible Task left undone and why, and each ineligible Task with the condition that held it back.
 4. **Prerequisites handled** — runtimes, tools, or dependencies installed or configured during the run.
 5. **Blockers and questions** — anything raised during the run, with what it prevents.
-6. **Next step** — the single most useful next action supported by the result.
+6. **State** — the aggregate phase progress and History outcome recorded for this run.
+7. **Next step** — the single most useful next action supported by the result.

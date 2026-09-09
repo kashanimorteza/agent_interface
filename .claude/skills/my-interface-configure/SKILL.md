@@ -1,6 +1,6 @@
 ---
 name: my-interface-configure
-description: Generate or refresh the operational Config files from their Schema templates. Use when Interface Config must be created, or brought to the current operational structure after a Schema change.
+description: Generate or refresh operational Config, synchronize phase State, and prepare the selected Platform Environment.
 disable-model-invocation: true
 ---
 
@@ -8,13 +8,13 @@ disable-model-invocation: true
 
 ## Role
 
-Generate and maintain the operational Config files required by Agent Interface. Resolve which they are from the Interface document rather than counting on a fixed set, because a Component that gains a Config record adds one without this Skill changing.
+Generate and maintain the operational Config files required by Agent Interface, synchronize aggregate State with current Target phase identifiers, and prepare the selected Platform Environment.
 
-Configure is mechanical. It brings the stored files to the shape their Schemas currently define and changes nothing about what the project means, because interpreting the project is another operation's work and a Config file that carries interpretation would compete with the sources that own it.
+Configure never stores Target interpretation in Config. Its Target Understanding is limited to resolving stable phase identities and any explicit Platform selection or Environment requirement that overrides the Platform defaults.
 
 ## Workflow
 
-First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand Configure's role and locate the applicable Schemas and their Config destinations. Target Understanding is not required, because Configure does not interpret the project being built.
+First establish Interface Understanding and the limited Target Understanding required by this role. Use the Interface to locate operational Schemas, Config destinations, Target phase identities, and current Platform authorities. Resolve the selected Environment from explicit Target choices first and Platform defaults second.
 
 For each operational Schema:
 
@@ -24,19 +24,24 @@ For each operational Schema:
 4. Preserve every operational record a Config file already holds — the owning Schema states what those are — throughout. Never drop operational data to satisfy a structural change: when a field the Schema no longer defines still carries information that exists nowhere else, surface it as a conflict and leave that part of the file unchanged, because a structural tidy-up that loses recorded work costs more than the untidiness it removes.
 5. Introduce only the initial values and structural changes required by the applicable Schemas. Do not invent operational work, project facts, or technical decisions.
 
-Record this invocation's operational position and provenance according to the current owning Component's authority. This records the Configure run without advancing or resetting existing work. Resolve the required fields and values from that Component rather than defining them here.
+Synchronize State phase records with the stable phase identifiers currently defined by Target. Create missing records at their Schema defaults and preserve existing progress. Never copy phase titles, goals, targets, status, readiness, or other Target meaning into State. Remove a stale phase record only while it still contains initialization defaults; preserve and report any removed phase carrying meaningful progress or provenance.
+
+Inspect the selected Environment before changing the system. Apply only missing Environment requirements, preserve requirements already satisfied, and use the Environment definition and any compatible explicit Target requirements as the complete authority for system preparation. Record a genuine unresolved preparation condition through State.
+
+Record this invocation's active position and append its operational outcome according to State.
 
 Validate every Config file against its applicable Schemas. Repeating the run against valid current files makes no structural changes and preserves existing work; recording the current invocation follows the owning Component's rules independently of structural reconciliation.
 
 ## Boundaries
 
-Perform only Configure's role and write only the records the current Interface grants it. Do not perform another Interface Operation, produce or store Target Understanding, or edit human-owned Interface sources. Recording this invocation is limited to the authority provided by the current owning Component.
+Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or edit human-owned Interface sources. System preparation is limited to the selected Environment; it grants no authority over product implementation.
 
 ## Report
 
 Report in this order:
 
-1. **Each Config file** — every operational Config resolved from the Interface document, each reported as created, updated, or already valid, with the Schema it was validated against.
-2. **What changed** — the structural changes applied per file according to its current Schema, and separately any operational update recording this invocation. State "no structural change" when the structure was already current, and "no change" only when nothing changed.
-3. **Preserved operational data** — what existing work was carried through unchanged.
-4. **Conflicts** — any structural change that could not be applied without losing information, what the information is, and where it currently lives. Report these even when everything else succeeded.
+1. **Config** — each resolved Config file and whether it was created, updated, or already valid.
+2. **Phase synchronization** — phase records added, preserved, or left as conflicts.
+3. **Environment** — the selected Environment, requirements already satisfied, and preparation performed.
+4. **Preserved records** — existing operational information carried through unchanged.
+5. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.

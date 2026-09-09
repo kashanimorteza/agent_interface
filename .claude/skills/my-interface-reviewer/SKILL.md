@@ -27,13 +27,15 @@ First establish Interface Understanding by reading the canonical Interface docum
 
 Then establish Target Understanding by reading the human project definition, the applicable Principles and Preferences, the requested phase's Task Plan, and the current implementation and public interfaces. Plan, State, and Review Config are operational records, not a stored representation of this Understanding.
 
-Resolve the requested phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Review is a Workflow operation that does not enter or change a Workflow mode, so it leaves the recorded position exactly as it found it.
+Resolve the requested phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Review does not enter or change an active Workflow mode, but it records this phase's aggregate Review progress and appends its outcome to State History.
 
 Inspect the implementation and the recorded evidence. For each verification condition, observe the condition for yourself in its applicable context, and judge whether the check the implementer recorded actually establishes it; a passing check is evidence about the check, not about the condition. Ground every finding in an exact location or an observable result. Use current project intent, the Component authorities, and the Task acceptance criteria as the review baseline.
 
 Missing evidence remains missing evidence. Do not reconstruct it, infer it from the code, or treat a plausible implementation as proof that a check once passed.
 
 Record Findings and reconcile them with previous review results for the same phase according to the current Review Component's structure, recording rules, and update rules. Handle any additional operational updates under the shared rules and the current authority of the Component that owns the record.
+
+Set this phase's Review progress to `in progress` when observation begins, then to the exact final Review outcome: `satisfied`, `not satisfied`, or `inconclusive`. Never infer another operation's progress from that outcome.
 
 ## Boundaries
 
@@ -48,4 +50,4 @@ Report in this order, evidence first:
 3. **Verification** — for each condition, what was observed, whether the implementer's recorded check establishes it, and any condition that could not be observed and why.
 4. **Missing evidence** — every acceptance criterion with no observable proof, named as missing rather than assumed.
 5. **Result for the requested scope** — whether the phase satisfies its requirements, and only the follow-up the current policy requires.
-6. **Recorded** — the Findings recorded and the changes to previous review results under the current Review Component rules, plus any other operational records updated under the current authority.
+6. **Recorded** — the Findings recorded, the aggregate Review State, the History outcome, and changes to previous review results under their owning rules.

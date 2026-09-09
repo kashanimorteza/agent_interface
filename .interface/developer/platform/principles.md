@@ -1,6 +1,6 @@
 # Platform Principles
 
-Platform defines how a completed Target is prepared for operation and brought online. It begins after the required parts have been designed and developed, and it does not redefine their internal responsibilities.
+Platform defines the operational Environment in which a Target runs and the Launch method that brings its developed parts online. Platform is separate from Development: Development builds the parts, while Platform describes runtime preparation and operation without redefining their internal responsibilities.
 
 Platform has two primary concepts: Environment and Launch. Each concept may provide multiple named definitions and one selected default.
 
@@ -10,12 +10,13 @@ Platform has two primary concepts: Environment and Launch. Each concept may prov
 - **Environment** — a named runtime destination and the requirements needed to prepare it for the Target.
 - **Launch** — a named method for starting, connecting, and operating the completed parts of the Target on an Environment.
 - **Binding** — a runtime value one part needs in order to reach another, such as an address, port, credential, or shared secret.
+- **Access Point** — a verified address through which a human or another system can reach the launched Target, such as its website, API, or API documentation.
 
 ## Relationships
 
-- **Consumes Development** — receives the independently developed parts and their public boundaries.
-- **Prepares an Environment** — establishes the runtime destination required to run the Target.
-- **Applies a Launch** — starts and connects the completed parts through a selected launch method.
+- **Consumes developed parts** — uses independently developed parts only through their public boundaries.
+- **Consumed by Configure** — Configure resolves and prepares the selected Environment.
+- **Consumed by Launch** — Launch applies the selected Launch method and reports its observable result.
 
 Technical choices and defaults for Platform belong to Platform Preferences. Platform implementation applies those choices to the current Target.
 
@@ -23,13 +24,13 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 1. Platform operationalizes the completed Target
+## 1. Platform is separate from Development
 
-**Rule:** Platform prepares the runtime destination and brings the completed Target online through the public boundaries of its completed parts.
+**Rule:** Platform owns Environment and Launch definitions; Development owns the design and implementation of application parts.
 
-**Why:** Development defines and builds the parts, while Platform turns those parts into an operable system.
+**Why:** Runtime preparation and application construction change for different reasons and must remain independently replaceable.
 
-**Boundary:** Platform does not own or redefine the internal logic, data, or presentation responsibilities of the parts it operates.
+**Boundary:** Platform operates developed parts only through their public boundaries and never owns or redefines their internal logic, data, presentation, or source arrangement.
 
 <br>
 
@@ -73,11 +74,23 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
+## 6. Launch reports verified access
+
+**Rule:** A Launch verifies the composed Target and reports every usable Access Point that the running result exposes.
+
+**Why:** Starting processes is not a complete operational result unless the Target is reachable and its entry points are known.
+
+**Boundary:** Only verified addresses are reported as available. Credentials and secret values are never included in Access Points.
+
+<br>
+
 ## At a Glance
 
-- **Must** — prepare the selected Environment and apply the selected Launch *(1–3)*
+- **Must** — keep Platform separate from Development and operate parts through public boundaries *(1)*
+- **Must** — prepare the selected Environment and apply the selected Launch *(2–3)*
 - **Must** — support named alternatives and explicit defaults *(2–3)*
 - **Must** — keep Environment and Launch independently selectable and compatible *(4)*
 - **Never** — redefine the internal responsibilities of developed parts *(1, 3)*
 - **Must** — the selected Launch delivers every Binding to the boundary that consumes it *(5)*
 - **Never** — a secret value is recorded in the Target definition or in any Config *(5)*
+- **Must** — verify and report every usable Access Point without exposing secrets *(6)*

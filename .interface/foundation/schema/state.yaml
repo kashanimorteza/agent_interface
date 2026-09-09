@@ -1,161 +1,150 @@
 schema:
   id: "agent-interface-state"
-  version: "11.0"
-  purpose: "Operational State file structure. Sections describe stored content; initial is the empty configuration template. State meanings and behaviour are defined by the State Component."
+  version: "12.0"
+  purpose: "Operational State format; State Principles define record meaning and ownership."
 operational_scope:
-  purpose: "This file records where the Workflow currently stands. It is an operational record, not a description of the project."
-  stores: "The active mode, the phase when the work is phase-specific, the provenance of the latest update, the unresolved Blockers, and the unresolved Open Questions."
-  excludes: "Project concepts, resolved technical choices, Component rules, implementation plans, Task content or progress, and any explanation that the human project definition, the Principles, or the Preferences already state."
-  resolution: "Anything derivable from those sources is resolved from them when an operation runs, never read back from this file."
+  stores: "Active Workflow position, aggregate phase progress, Implement and Launch results, operational history, Blockers, and Open Questions."
+  excludes: "Target meaning, technical decisions, individual Task status or history, Finding details, product code, secrets, and command transcripts."
 initialization:
   source: "initial"
-  purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."
-  defaults: "Every section and field declares a default. Fixed required objects expand their child defaults; empty collections stay empty."
-  collections: "Keys enclosed in angle brackets describe future records. Do not create placeholder Plans, Groups, Tasks, Blockers, or questions during initialization."
-  optional_fields: "Optional fields remain absent until applicable. A null default on an optional field means no value is recorded, not an invented identifier or answer."
-  drafts: "Empty strings and zero order values are unfilled record defaults. Before storing usable planning work or an active issue, the owning operation supplies real identifiers, required descriptive content, valid phase order, and provenance."
-  preservation: "Initialization does not overwrite an existing Config file or reset its operational data."
-structure:
-  - "active"
-  - "blockers"
-  - "open_questions"
+  purpose: "Create State Config from this template, then synchronize phase identities from Target without interpreting phase content."
+  preservation: "Reconciliation preserves existing operational records and never replaces them with defaults."
+structure: ["active", "phases", "implementation", "launch", "history", "blockers", "open_questions"]
 sections:
   active:
     required: true
     default: {}
-    purpose: "The current or most recently entered Workflow position."
     fields:
       mode:
         required: true
         default: "not set"
-        purpose: "Current or most recently recorded Workflow mode."
-        allowed:
-          - "not set"
-          - "configuring"
-          - "planning"
-          - "development"
-      phase:
+        allowed: ["not set", "configuring", "planning", "development"]
+      phase: {required: true, default: null, nullable: true}
+      mode_reason: {required: true, default: "No Workflow operation has been recorded."}
+      set_by: {required: true, default: "initialization"}
+      set_at: {required: true, default: null, nullable: true}
+  phases:
+    required: true
+    default: {}
+    purpose: "Aggregate operation progress keyed by stable Target phase identifier."
+    fields:
+      "<phase>":
+        required: false
+        default: {}
+        fields:
+          id: {required: true, default: ""}
+          planning:
+            required: true
+            default: "not started"
+            allowed: ["not started", "in progress", "completed"]
+          development:
+            required: true
+            default: "not started"
+            allowed: ["not started", "in progress", "completed"]
+          review:
+            required: true
+            default: "not started"
+            allowed: ["not started", "in progress", "satisfied", "not satisfied", "inconclusive"]
+          updated_by: {required: true, default: "initialization"}
+          updated_at: {required: true, default: null, nullable: true}
+  implementation:
+    required: true
+    default: {}
+    fields:
+      status:
         required: true
-        default: null
-        nullable: true
-        purpose: "The active phase identifier, or null when the mode is not acting on one phase."
-      mode_reason:
+        default: "not started"
+        allowed: ["not started", "in progress", "completed", "blocked"]
+      started_at: {required: true, default: null, nullable: true}
+      completed_at: {required: true, default: null, nullable: true}
+      updated_by: {required: true, default: "initialization"}
+      updated_at: {required: true, default: null, nullable: true}
+  launch:
+    required: true
+    default: {}
+    fields:
+      status:
         required: true
-        default: "No Workflow operation has been recorded."
-        purpose: "Why the active values were recorded and what operation they represent."
-      set_by:
+        default: "not launched"
+        allowed: ["not launched", "launching", "launched", "failed", "stopped"]
+      environment: {required: true, default: null, nullable: true}
+      method: {required: true, default: null, nullable: true}
+      access_points:
         required: true
-        default: "initialization"
-        purpose: "The human or operation that recorded the active values."
-      set_at:
-        required: true
-        default: null
-        nullable: true
-        purpose: "When the active values were recorded, or null before the first update."
+        default: []
+        item:
+          fields:
+            name: {required: true, default: ""}
+            kind: {required: true, default: ""}
+            address: {required: true, default: ""}
+      updated_by: {required: true, default: "initialization"}
+      updated_at: {required: true, default: null, nullable: true}
+  history:
+    required: true
+    default: []
+    purpose: "Append-only concise records of State-changing Workflow events."
+    item:
+      fields:
+        id: {required: true, default: ""}
+        operation: {required: true, default: ""}
+        phase: {required: true, default: null, nullable: true}
+        event: {required: true, default: ""}
+        outcome: {required: true, default: ""}
+        recorded_by: {required: true, default: ""}
+        recorded_at: {required: true, default: ""}
   blockers:
     required: true
     default: {}
-    purpose: "The unresolved critical conditions currently preventing safe or valid continuation; empty when none exist."
     fields:
       "<blocker>":
         required: false
         default: {}
-        purpose: "One critical Blocker, keyed by its identifier."
         fields:
-          id:
-            required: true
-            default: ""
-            purpose: "The stable Blocker identifier."
-          blocks:
-            required: true
-            default: ""
-            purpose: "The work that cannot continue."
-          what_is_missing:
-            required: true
-            default: ""
-            purpose: "The concrete unresolved condition."
-          consequence:
-            required: true
-            default: ""
-            purpose: "Why the blocked work cannot safely or validly continue."
-          resolution_owner:
-            required: true
-            default: ""
-            purpose: "The human, operation, or external condition capable of resolving the Blocker."
-          raised_by:
-            required: true
-            default: ""
-            purpose: "The human or operation that raised the Blocker."
-          raised_at:
-            required: true
-            default: ""
-            purpose: "When the Blocker was raised."
+          id: {required: true, default: ""}
+          blocks: {required: true, default: ""}
+          what_is_missing: {required: true, default: ""}
+          consequence: {required: true, default: ""}
+          resolution_owner: {required: true, default: ""}
+          raised_by: {required: true, default: ""}
+          raised_at: {required: true, default: ""}
   open_questions:
     required: true
     default: {}
-    purpose: "The unresolved critical questions that require a human decision; empty when none exist."
     fields:
       "<question>":
         required: false
         default: {}
-        purpose: "One Open Question, keyed by its identifier."
         fields:
-          id:
-            required: true
-            default: ""
-            purpose: "The stable question identifier."
-          question:
-            required: true
-            default: ""
-            purpose: "The decision the human is being asked to make."
-          why_it_matters:
-            required: true
-            default: ""
-            purpose: "What materially depends on the answer."
-          blocks:
-            required: false
-            default: null
-            purpose: "The Blocker identifier released by the answer, omitted when the question blocks no current work."
-          raised_by:
-            required: true
-            default: ""
-            purpose: "The human or operation that raised the Open Question."
-          raised_at:
-            required: true
-            default: ""
-            purpose: "When the Open Question was raised."
+          id: {required: true, default: ""}
+          question: {required: true, default: ""}
+          why_it_matters: {required: true, default: ""}
+          blocks: {required: false, default: null, nullable: true}
+          raised_by: {required: true, default: ""}
+          raised_at: {required: true, default: ""}
           answered_so_far:
             required: false
             default: null
-            purpose: "The answer or partial answer already supplied by the human, together with its provenance; omitted until the human supplies one."
+            nullable: true
             fields:
-              answer:
-                required: true
-                default: ""
-                purpose: "The answer or partial answer supplied by the human."
-              answered_by:
-                required: true
-                default: ""
-                purpose: "The human who supplied the answer."
-              answered_at:
-                required: true
-                default: ""
-                purpose: "When the answer was supplied."
+              answer: {required: true, default: ""}
+              answered_by: {required: true, default: ""}
+              answered_at: {required: true, default: ""}
 initial:
   meta:
     path: ".interface/foundation/config/state.yaml"
-    path_note: "Mutable Workflow position, Blockers and Open Questions."
+    path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
   policy:
     agent_may_edit: true
     rule: "Apply the current State Component and the active operation's ownership rules."
-  read_order:
-    - "active"
-    - "blockers"
-    - "open_questions"
+  read_order: ["active", "phases", "implementation", "launch", "history", "blockers", "open_questions"]
   content_map:
     active: "Current or most recently recorded Workflow position."
+    phases: "Aggregate Planning, Development, and Review progress by phase identifier."
+    implementation: "Latest end-to-end Implement result."
+    launch: "Current runtime result and verified access points."
+    history: "Append-only State-changing Workflow events."
     blockers: "Unresolved critical conditions."
-    open_questions: "Unresolved critical questions for the human."
+    open_questions: "Unresolved critical questions."
   content:
     active:
       mode: "not set"
@@ -163,5 +152,20 @@ initial:
       mode_reason: "No Workflow operation has been recorded."
       set_by: "initialization"
       set_at: null
+    phases: {}
+    implementation:
+      status: "not started"
+      started_at: null
+      completed_at: null
+      updated_by: "initialization"
+      updated_at: null
+    launch:
+      status: "not launched"
+      environment: null
+      method: null
+      access_points: []
+      updated_by: "initialization"
+      updated_at: null
+    history: []
     blockers: {}
     open_questions: {}
