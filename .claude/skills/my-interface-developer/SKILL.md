@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 ## Role
 
-Implement and verify eligible planned work for one requested project phase, using current Target Project Understanding and the Task Plan as the specification.
+Implement and verify eligible planned work for one requested project phase, using current Target Understanding and the Task Plan as the specification.
 
 Developer owns the implementation method and the arrangement of the source. The Plan says what must be achieved and what proves it; deciding how is this operation's work, and a Plan that already decided it would be describing code that does not exist yet.
 
@@ -19,7 +19,7 @@ Developer may write implementation and install and configure the prerequisites r
 
 ## Input
 
-Accept one positive integer from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in Target Project Understanding and use that phase's existing identifier to locate its current planning output and throughout development.
+Accept one positive integer from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in Target Understanding and use that phase's existing identifier to locate its current planning output and throughout development.
 
 The number is an input convenience; it never renames a phase or changes stored identifiers or references. If the number is missing, invalid, or does not uniquely select an existing phase, request a valid phase number before changing any files.
 
@@ -27,7 +27,7 @@ The number is an input convenience; it never renames a phase or changes stored i
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Developer's place in the Workflow, and the current locations of the resources Development needs.
 
-Then establish Target Project Understanding by reading the human project definition, the Principles and Preferences applicable to the requested phase and its target Component, and the existing implementation and public interfaces. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and the technical context it needs is resolved from the Preferences at this moment rather than read back from the record.
+Then establish Target Understanding by reading the human project definition, the Principles and Preferences applicable to the requested phase and its target Component, and the existing implementation and public interfaces. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and the technical context it needs is resolved from the Preferences at this moment rather than read back from the record.
 
 Read the requested phase's current Task Plan and State. Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from the current Component authorities. Do not assume or reproduce their fields, statuses, or policies here, because they change independently of this Skill.
 

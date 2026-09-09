@@ -22,7 +22,7 @@ Detection reads what the project actually uses, which is not always what it chos
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Skill Installer's supporting role, and the current locations of the relevant project sources.
 
-Then establish Target Project Understanding by reading the human project definition and the applicable Principles and Preferences. Detect the eligible technologies from those current sources, and inspect dependency manifests, lockfiles, runtime-version files, framework configuration, and the existing implementation as compatibility and installation evidence. The operational Config records do not define project technologies.
+Then establish Target Understanding by reading the human project definition and the applicable Principles and Preferences. Detect the eligible technologies from those current sources, and inspect dependency manifests, lockfiles, runtime-version files, framework configuration, and the existing implementation as compatibility and installation evidence. The operational Config records do not define project technologies.
 
 The set of technologies is derived on every run, never remembered. A project gains and loses technologies over its life, and a remembered list would keep matching the project it was written for rather than the one in front of you.
 

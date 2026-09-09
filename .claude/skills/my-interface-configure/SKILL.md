@@ -14,7 +14,7 @@ Configure is mechanical. It brings the stored files to the shape their Schemas c
 
 ## Workflow
 
-First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand Configure's role and locate the applicable Schemas and their Config destinations. Target Project Understanding is not required, because Configure does not interpret the project being built.
+First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand Configure's role and locate the applicable Schemas and their Config destinations. Target Understanding is not required, because Configure does not interpret the project being built.
 
 For each operational Schema:
 
@@ -30,7 +30,7 @@ Validate every Config file against its applicable Schemas. Repeating the run aga
 
 ## Boundaries
 
-Configure only. Do not produce or store Target Project Understanding, create planning work, advance or reset existing work, implement the project, review implementation, reset the workflow, or edit human-owned Interface sources. Recording this invocation is limited to the authority provided by the current owning Component.
+Configure only. Do not produce or store Target Understanding, create planning work, advance or reset existing work, implement the project, review implementation, reset the workflow, or edit human-owned Interface sources. Recording this invocation is limited to the authority provided by the current owning Component.
 
 ## Report
 

@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 ## Role
 
-Review the implemented result for one requested phase against current Target Project Understanding, its Task Plan, and its acceptance criteria, and establish whether the implementation and its verification evidence satisfy those requirements.
+Review the implemented result for one requested phase against current Target Understanding, its Task Plan, and its acceptance criteria, and establish whether the implementation and its verification evidence satisfy those requirements.
 
 Reviewer reports and does not repair. An operation that fixes what it finds stops being able to tell the difference between what was already correct and what it corrected, and the human loses the finding.
 
@@ -17,7 +17,7 @@ Review is independent of how the work was done. A Task states a verification con
 
 ## Input
 
-Accept one positive integer from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in Target Project Understanding and use that phase's existing identifier to locate its Plan and throughout review.
+Accept one positive integer from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in Target Understanding and use that phase's existing identifier to locate its Plan and throughout review.
 
 The number is an input convenience; it never renames a phase or changes stored identifiers or references. If the number is missing, invalid, or does not uniquely select an existing phase, request a valid phase number before changing any files or running verification.
 
@@ -25,7 +25,7 @@ The number is an input convenience; it never renames a phase or changes stored i
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Reviewer's supporting role, and the current locations of the resources Review needs.
 
-Then establish Target Project Understanding by reading the human project definition, the applicable Principles and Preferences, the requested phase's Task Plan, and the current implementation and public interfaces. Plan, State, and Review Config are operational records, not a stored representation of this Understanding.
+Then establish Target Understanding by reading the human project definition, the applicable Principles and Preferences, the requested phase's Task Plan, and the current implementation and public interfaces. Plan, State, and Review Config are operational records, not a stored representation of this Understanding.
 
 Resolve the requested phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Review is a supporting operation and does not enter or change a Workflow mode, so it leaves the recorded position exactly as it found it.
 

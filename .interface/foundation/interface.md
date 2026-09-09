@@ -63,14 +63,14 @@ Its purpose is to let a Human define a Target in natural language and give Agent
 <!-------------------------- How It Works -->
 ### How It Works
 
-The Human supplies the Target definition. Skills read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical actions such as Config initialization do not interpret the Target.
+The Human states the Target in the Non-Technical Definition. Acting as the developer, the Human translates that intent into the Technical Definition without changing its meaning. Skills then read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical actions such as Config initialization do not interpret the Target.
 
 Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format.
 
 <!-------------------------- Independence -->
 ### Independence
 
-The core Interface Structure is independent of any specific AI model, Agent, or external execution capability. Agent Skills are cataloged as integrations, not as parts of the Structure.
+The core Interface Structure is independent of any specific AI model, Agent, or external execution capability. Agent Skills are integrations within the Agent Module, while their implementations remain outside `.interface/` and independent of its internal structure.
 
 Human project definitions remain flexible, while the Interface gives Agents stable responsibilities, rules, defaults, and operational records. Agent Interface is the communication boundary between those two forms.
 
@@ -89,23 +89,9 @@ Agent Interface gives these concerns explicit structure.
 Conceptually:
 
 ```text
-Target
-   │
-   │  What should be built?
-   │
-Developer
-   │
-   │  How should it be built?
-   │
-Agent
-   │
-   │  Who/what performs the work?
-   │
-Modes
-   │
-   │  What should be done now?
-   ▼
-Implementation
+Target ─────┐
+Developer ──┼── together with Understanding, Modes, and Workflow ──> Implementation
+Agent ──────┘
 ```
 
 The resulting software is therefore influenced by all three primary entities:
@@ -161,7 +147,7 @@ This separation is one of the central architectural principles of the project.
 - **Understanding** — the current context an Agent establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
 - **Workflow** — the ordered path from the Human's Target definition to developed software: Define Target, Configure, Plan, and Develop, together with supporting actions.
 - **Mode** — an operational position in the Workflow, recorded by State.
-- **Skill** — an external Agent capability that performs a Workflow action or provides a supporting utility; it is cataloged by the Interface but is not part of its architecture.
+- **Skill** — an Agent capability that performs a Workflow action or provides a supporting utility; it is part of the Agent Module's integration surface, while its implementation remains outside `.interface/`.
 
 
 
@@ -204,10 +190,10 @@ Target, Developer, and Agent are the three primary Modules of Agent Interface. E
 
 The Target describes **what the Interface is working on**.
 
-The Human defines it through two complementary sources:
+The Target is defined through two complementary, human-owned sources:
 
-- **Technical Definition:** The primary authority for the Target; it takes precedence wherever the two definitions conflict.
-- **Non-Technical Definition:** Additional context and requirements where the Technical Definition is silent; an empty file contributes no information.
+- **Non-Technical Definition:** The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information.
+- **Technical Definition:** The Human, acting as the developer, translates the Non-Technical Definition into this technical form. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
 
 #### Conceptual Structure
 
@@ -228,9 +214,9 @@ Target
 <!-------------------------- Developer -->
 ### Developer
 
-The Developer module locates the reusable engineering perspective applied to a Target. It is organized around Components, each with its own Principles and Preferences.
+The Developer module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Backend, Frontend, Platform, Plan, Review, and State Components.
 
-The Developer module is expressed through the Development, Model, Database, Backend, Frontend, Platform, Plan, Review, and State Components.
+Each Component states its mandatory philosophy, responsibilities, and boundaries through Principles, and its preferred technical choices and defaults through Preferences.
 
 #### Conceptual Structure
 
@@ -303,9 +289,9 @@ Developer
 
 <!-------------------------- Agent -->
 ### Agent
-The Agent section models the project-level integration surfaces used by AI coding agents.
+The Agent module defines the execution side of Agent Interface through Agents, Commands, Rules, Hooks, Output Styles, and Skills. An Agent establishes the Understanding required by its active Skill, follows the applicable Rules and Workflow, and uses its capabilities to apply the Developer perspective to the Target.
 
-The architecture should work with different agents without being redesigned for each one.
+The Agent is replaceable: a different Agent may execute the same Interface through its own native capabilities without requiring the Target or Developer modules to be redesigned.
 
 #### Conceptual Structure
 
@@ -437,7 +423,7 @@ when = When the Target uses a technology for which a compatible Agent Skill may 
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent establishes from authoritative sources before performing a Skill's role. It has two distinct scopes; a Skill's own Workflow determines which scope it needs and how it uses it.
+Understanding is the current context an Agent establishes from authoritative sources before performing a Skill's role. Interface Understanding is required by every Skill. Target Understanding is required by roles that interpret or act on the Target; a mechanical Workflow such as Configure or Reset may omit it because it does not interpret project intent.
 
 - **Interface Understanding:** Understand Agent Interface, locate its current resources, and place the active Skill within the Interface.
 - **Target Understanding:** Understand what is being built and the Target's current intent, scope, and project-specific decisions.
@@ -714,7 +700,7 @@ generates = .interface/foundation/config/review.yaml
 order = 1
 name = Define the Target
 actor = Human
-action = Define the Target in .interface/target/non-technical.md and .interface/target/technical.md
+action = State the Target in .interface/target/non-technical.md, then translate it as the Human developer into .interface/target/technical.md without changing its intent
 ```
 
 

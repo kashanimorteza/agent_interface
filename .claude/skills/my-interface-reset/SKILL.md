@@ -25,7 +25,7 @@ These numbers select a stage; they do not rename the existing State modes, which
 
 ## Workflow
 
-First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to locate the current Config records, the reset definitions, the ownership boundaries, and the implementation directories Reset affects. Target Project Understanding is not required for this mechanical operation.
+First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to locate the current Config records, the reset definitions, the ownership boundaries, and the implementation directories Reset affects. Target Understanding is not required for this mechanical operation.
 
 Resolve the implementation directories that may be removed from the code path each Component records in its own Preferences. Remove no directory that no Component claims, and hold no list of directories here.
 
