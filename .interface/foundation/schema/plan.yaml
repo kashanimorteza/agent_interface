@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-plan"
   version: "8.2"
-  purpose: "Operational Plan file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Task Component."
+  purpose: "Operational Plan file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Plan Component."
 initialization:
   source: "initial"
   purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."

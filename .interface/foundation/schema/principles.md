@@ -12,7 +12,7 @@ One Principles file exists per Component, at `.interface/developer/<component>/p
 
 A Principles file exists to raise understanding of the project. It answers what a Component is, what responsibility it holds, and under which mandatory rules it operates, so that any reader — human or Agent — can reason about the Component without inspecting an implementation.
 
-A Component describes itself and nothing else. It does not describe who uses it, when it should be used, which operation reads it, or what capability it is suited to. Those are decisions of the layer that consumes these files, and that layer reads the self-description here in order to make them.
+A Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. It does not assign roles to Skills or Agents, prescribe their Workflows, or decide which Skill reads it and when. Those decisions belong to the Agent layer that consumes these files.
 
 
 <!--------------------------------------------------------------------------------- Scope --->
@@ -20,14 +20,16 @@ A Component describes itself and nothing else. It does not describe who uses it,
 
 ## Scope
 
-A Principles file contains only mandatory philosophy, responsibilities, and boundaries. It is independent of tools, versions, packages, providers, and any particular project.
+A Principles file contains only mandatory philosophy, responsibilities, and boundaries. It is independent of specific tools, versions, third-party packages, providers, and any particular project. Architectural concepts such as packages, modules, layers, and their ownership and public interfaces are permitted.
 
 A Principles file never contains:
 
-- a tool, library, framework, engine, version, package, file, folder, or path;
+- a specific tool, library, framework, engine, third-party package, or version selection, or a concrete filename, folder name, path, or implementation layout; these choices belong to Preferences;
 - a technical default or a resolved technical choice, which belong to the Component's Preferences;
 - the shape of a generated file, which belongs to the Component's Schema when one exists; or
-- a Skill, an operation, a usage condition, or any statement about when and by whom the Component should be used.
+- instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.
+
+Relationships between Components are permitted and belong in Relationships. They describe what each Component consumes or provides without directing a Skill's execution.
 
 A Principle is portable: the same file can be handed unchanged to another project or another Agent.
 
@@ -72,7 +74,7 @@ No other first-level heading appears in the file.
 
 One or two paragraphs in which the Component introduces itself: what it is, the responsibility it holds, what it contributes to the project, and what it is independent of.
 
-It is written about the Component, never about the document: it begins by defining the Component, not by describing what the file contains. It states what the Component *is* and *does*, never when it should be used or which capability it serves.
+It is written about the Component, never about the document: it begins by defining the Component, not by describing what the file contains. It states what the Component *is* and *does*. Relationships with other Components belong in Relationships; instructions about Skill roles, execution order, or when a Skill should read the Component do not belong in this file.
 
 The Component's own boundary — what it does not own — is stated explicitly, either as the closing sentences of Introduction or as one dedicated Principle. It is never left implicit and never stated in both places.
 

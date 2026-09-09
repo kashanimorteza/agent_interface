@@ -189,6 +189,8 @@ The Target describes **what the Interface is working on**.
 
 The Human defines the Target through its non-technical and technical files.
 
+The two files complement each other. The technical definition is the primary authority and always takes precedence wherever they conflict; the non-technical definition supplies additional context and requirements where the technical definition is silent. An empty file contributes no information.
+
 <!-------------------------- Target Conceptual Structure -->
 ### Conceptual Structure
 
@@ -475,13 +477,13 @@ output = Verified implementation and updated operational records
 ## Authority and Ownership
 <!--------------------------------------------------------------------------------- Authority and Ownership --->
 
-Explicit Target intent and applicable Principles guide each Skill. Preferences supply defaults where the Target leaves a choice unstated. The operational Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored sources, and the general YAML Schema supplies the common frame every YAML file shares. Config stores those records and does not define the Target.
+Explicit Target intent and applicable Principles guide each Skill. Preferences supply defaults where the Target leaves a choice unstated. The operational Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored sources, and the general YAML Schema supplies the common frame for Preferences and Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
 
 ```text
 Target = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
 Preferences = technical defaults for unspecified choices
-Schema = general YAML frame, authored-source structure, and the storage structure of every operational record
+Schema = common YAML frame for Preferences and Config, authored-source structure, and the storage structure of every operational record
 Config = the mutable operational records
 ```
 
@@ -489,7 +491,7 @@ Ownership answers who a record belongs to, and it belongs to the Human or to a C
 
 ```text
 Human = owns Interface, Target, Principles, Preferences, and Schema sources
-Task = owns Plans, Groups, Tasks, their status, and their history
+Plan = owns Plans, Groups, Tasks, their status, and their history
 State = owns the active Workflow position, Blockers, and Open Questions
 Review = owns recorded Findings and their state
 ```
@@ -498,11 +500,11 @@ Write authority answers which Skill may change a record, and every write happens
 
 ```text
 Configure = writes every operational Config, creating it from its Schema template or bringing it to the current structure
-Tasker = writes Plans, Groups, and Tasks under Task's rules
-Developer = writes implementation, and Task status and history under Task's rules
+Tasker = writes Plans, Groups, and Tasks under Plan's rules
+Developer = writes implementation, and Task status and history under Plan's rules
 Reviewer = writes Findings under Review's rules
 Configure, Tasker, and Developer = write the active Workflow position under State's rules
-Reset = restores the Workflow position according to the selected reset stage
+Reset = after human confirmation of the preview, removes or resets the outputs and operational records covered by the selected reset stage, including the Workflow position, under the owning Components' rules
 Reviewer and Skill Installer = do not change the active Workflow position
 Every Skill = may record its own Blockers and Open Questions under State's rules when applicable
 ```
@@ -604,7 +606,8 @@ Schemas define the structure followed by authored Interface files and generated 
 name = YAML Schema
 path = .interface/foundation/schema/yaml.yaml
 kind = Structure standard
-responsibility = Defines the common outer structure followed by every YAML Interface file
+responsibility = Defines the common outer structure followed by Interface Preferences and Config files
+scope = Schema definition files use their own formats and do not follow this outer structure
 ```
 
 
