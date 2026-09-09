@@ -30,7 +30,7 @@ Validate every Config file against its applicable Schemas. Repeating the run aga
 
 ## Boundaries
 
-Configure only. Do not produce or store Target Understanding, create planning work, advance or reset existing work, implement the project, review implementation, reset the workflow, or edit human-owned Interface sources. Recording this invocation is limited to the authority provided by the current owning Component.
+Perform only Configure's role and write only the records the current Interface grants it. Do not perform another Interface Operation, produce or store Target Understanding, or edit human-owned Interface sources. Recording this invocation is limited to the authority provided by the current owning Component.
 
 ## Report
 

@@ -27,7 +27,7 @@ First establish Interface Understanding by reading the canonical Interface docum
 
 Then establish Target Understanding by reading the human project definition, the applicable Principles and Preferences, the requested phase's Task Plan, and the current implementation and public interfaces. Plan, State, and Review Config are operational records, not a stored representation of this Understanding.
 
-Resolve the requested phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Review is a supporting operation and does not enter or change a Workflow mode, so it leaves the recorded position exactly as it found it.
+Resolve the requested phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Review is a Workflow operation that does not enter or change a Workflow mode, so it leaves the recorded position exactly as it found it.
 
 Inspect the implementation and the recorded evidence. For each verification condition, observe the condition for yourself in its applicable context, and judge whether the check the implementer recorded actually establishes it; a passing check is evidence about the check, not about the condition. Ground every finding in an exact location or an observable result. Use current project intent, the Component authorities, and the Task acceptance criteria as the review baseline.
 
@@ -37,7 +37,7 @@ Record Findings and reconcile them with previous review results for the same pha
 
 ## Boundaries
 
-Review only. Do not repair code, plan work, develop, define new requirements, or reinterpret project intent. Follow the shared rules and the current Component write boundaries.
+Perform only Review's role. Do not perform another Interface Operation, repair the result, define new requirements, reinterpret Target intent, or write outside Review's current authority.
 
 ## Report
 

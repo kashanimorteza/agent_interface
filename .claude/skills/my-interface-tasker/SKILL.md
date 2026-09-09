@@ -37,7 +37,7 @@ The operation is idempotent with respect to unchanged sources and Tasker-owned p
 
 ## Boundaries
 
-Plan only, and only for the requested phase. Do not implement product work, perform Review or Configure, alter project intent, or write outside Planning's current authority.
+Perform only Planning's role, and only for the requested phase. Do not perform another Interface Operation, alter Target intent, or write outside Planning's current authority.
 
 ## Report
 

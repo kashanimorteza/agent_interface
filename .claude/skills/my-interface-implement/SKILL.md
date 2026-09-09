@@ -1,6 +1,6 @@
 ---
 name: my-interface-implement
-description: Execute the complete Agent Interface Workflow for the current Target by coordinating its current Configure, Planning, Developing, Reviewing, and Launch operations.
+description: Execute the complete Agent Interface Workflow for the current Target by coordinating its currently declared executable operations in order.
 disable-model-invocation: true
 ---
 
@@ -14,16 +14,18 @@ Coordinate the complete executable Workflow for an already defined Target. Imple
 
 Establish Interface Understanding and Target Understanding from the current authoritative sources located through the Interface document. Read the shared Skill rules and resolve the current Workflow, enabled phases, operation Skills, operational records, and stopping conditions from their owners.
 
-Execute the current Workflow in its declared order. For each operation, follow that operation Skill's current instructions rather than copying or approximating its work here. Process enabled phases in their declared order and preserve every operation's existing authority boundaries.
+Coordinate only the executable Agent steps in the ordered Workflow declared by the Interface. A Human-owned step is a prerequisite rather than work for Implement, and the Implement orchestration entry is excluded so the Skill never invokes itself.
 
-Do not continue into an operation whose prerequisites are incomplete. Do not Launch while a required phase remains incomplete or its current Review result prevents release. Record and report the stopping condition through the authority that owns it.
+For each executable step, locate its current operation Skill through the Interface, read that Skill's instructions, and execute its Workflow directly; do not depend on nested Slash Command invocation. Execute a non-phase step once at its declared position. When consecutive steps operate on individual phases, process them in their declared order for one enabled phase before moving to the next enabled phase. Preserve every operation's current authority boundaries.
+
+Do not continue into an operation whose prerequisites or progression gates are incomplete. Record and report the stopping condition through the authority that owns it.
 
 Repeated invocation reconciles the current Target with existing operational records and implementation according to the individual operation rules; it does not discard completed work merely to repeat the Workflow.
 
 ## Boundaries
 
-Implement does not define the Target, replace an operation's judgment, combine ownership boundaries, or gain independent write authority. It performs changes only through the authority of the operation currently being coordinated and never bypasses required human approval.
+Implement coordinates other operation roles and performs no independent operation of its own. It does not define the Target, replace an operation's judgment, combine ownership boundaries, or gain independent write authority. It performs changes only through the authority of the operation currently being coordinated and never bypasses required human approval.
 
 ## Report
 
-Report the outcome of each operation and phase in Workflow order, the point at which execution stopped when incomplete, all Blockers and Open Questions, and whether the Target was successfully launched.
+Report the outcome of each operation and phase in Workflow order, the point at which execution stopped when incomplete, all Blockers and Open Questions, and whether the Workflow reached and completed its final executable step.

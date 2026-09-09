@@ -64,6 +64,10 @@ content:
             - "database"
             - "backend"
             - "frontend"
+          shutdown_order:
+            - "frontend"
+            - "backend"
+            - "database"
           verification:
             - "database"
             - "backend"

@@ -63,7 +63,7 @@ Verify the installed capability, its project location or declaration, its includ
 
 ## Boundaries
 
-Do not initialize Config, plan implementation, develop the application, or change Interface sources, application code, architecture, manifests, lockfiles, or runtime dependencies. Do not remove a compatible capability or install a duplicate.
+Perform only Agent-capability discovery and approved project-scoped installation. Do not perform an Interface Operation or change Interface sources, Target application code, architecture, manifests, lockfiles, or runtime dependencies. Do not remove a compatible capability or install a duplicate.
 
 The operation is idempotent: repeating it against unchanged Target evidence, installed capabilities, and available releases makes no changes.
 

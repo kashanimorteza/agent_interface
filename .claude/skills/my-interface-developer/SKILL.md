@@ -43,7 +43,7 @@ After each outcome, reconcile Development-owned information and continue accordi
 
 ## Boundaries
 
-Develop only eligible planned work in the requested phase. Do not perform Planning, Review, or Configure, alter project intent, bypass resolved interfaces, or write outside Development's current authority.
+Perform only Development's role for eligible planned work in the requested phase. Do not perform another Interface Operation, alter Target intent, bypass resolved interfaces, or write outside Development's current authority.
 
 ## Report
 

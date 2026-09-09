@@ -1,6 +1,6 @@
 ---
 name: my-interface-reset
-description: Preview and, after explicit confirmation, reset Interface Config, Tasks, or developed code. Choose 1 for configure, 2 for task, or 3 for develop.
+description: Preview and, after explicit confirmation, reset Interface Config, Tasks, developed code, and any active project runtime covered by the selected stage. Choose 1 for configure, 2 for task, or 3 for develop.
 argument-hint: "[1=configure | 2=task | 3=develop]"
 disable-model-invocation: true
 ---
@@ -25,13 +25,15 @@ These numbers select a stage; they do not rename the existing State modes, which
 
 ## Workflow
 
-First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to locate the current Config records, the reset definitions, the ownership boundaries, and the implementation directories Reset affects. Target Understanding is not required for this mechanical operation.
+First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to locate the current Config records, ownership boundaries, and the implementation directories Reset affects. The three stage definitions below are Reset's fixed scope. Target Understanding is not required to decide that scope.
 
 Resolve the implementation directories that may be removed from the code path each Component records in its own Preferences. Remove no directory that no Component claims, and hold no list of directories here.
 
+When a selected stage removes developed output, resolve the active runtime and its shutdown order from the current Platform and Launch authorities and observable runtime evidence. Include every proposed stop action in the preview. After confirmation, stop the runtime in that declared order before removing its files. Preserve Environment preparation, system packages, and system-level settings unless the human separately requests their removal.
+
 ### 1 = Configure reset
 
-Resolve the full cleanup scope from the current Interface reset definition, including whether it covers a Config container's contents or individually listed records, and include every affected entry in the preview. After confirmation, apply that cleanup and remove the developed implementation outputs the current Interface owns. Preserve the Config container itself. Do not regenerate Config, because regeneration belongs to Configure and running it here would hide whether the reset itself worked.
+Remove every operational Config file currently catalogued by the Interface and include every affected entry in the preview. After confirmation, remove those files and the developed implementation outputs the current Interface owns. Preserve the Config container itself. Do not regenerate Config, because regeneration belongs to Configure and running it here would hide whether the reset itself worked.
 
 ### 2 = Task reset
 
@@ -51,7 +53,7 @@ Do not invoke another workflow operation after resetting.
 
 ## Boundaries
 
-Reset one selected stage only. Do not interpret project intent, generate configuration, create Tasks, develop, review, or remove anything outside the resolved targets shown in the preview.
+Perform only the selected Reset stage. Do not perform another Interface Operation, interpret Target intent, reverse Environment preparation, or remove anything outside the resolved targets shown in the preview.
 
 ## Report
 

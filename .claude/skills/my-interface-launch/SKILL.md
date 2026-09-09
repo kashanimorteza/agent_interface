@@ -28,7 +28,7 @@ Stop dependent startup after a failed prerequisite or readiness check. Preserve 
 
 ## Boundaries
 
-Launch only. Do not define or modify Target intent, plan work, implement or repair product code, perform Review, reset work, or edit human-owned Interface sources. Runtime preparation does not grant authority over another Component's internal implementation.
+Perform only Launch's role. Do not perform another Interface Operation, define or modify Target intent, repair product code, edit human-owned Interface sources, or exercise authority over another Component's internal implementation.
 
 ## Report
 
