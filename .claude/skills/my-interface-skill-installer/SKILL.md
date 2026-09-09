@@ -59,7 +59,15 @@ After the table, state exactly which candidates are proposed for installation or
 
 Install or update only the candidates explicitly approved by the human and only through a project-scoped mechanism allowed by the shared rules. Preserve rejected and already adequate capabilities unchanged.
 
-Verify the installed capability, its project location or declaration, its included components and permissions, and any activation step. If project-scoped installation is unavailable, report the candidate as blocked instead of installing it at user or machine scope.
+Verify the installed capability, its project location or declaration, its included components and permissions, and its activation state. A capability is not `installed` for reporting purposes until the active Agent can discover and use it in this project:
+
+- verify that an installed Skill is discoverable;
+- verify that an installed plugin is project-enabled and its contributed capabilities are loaded; and
+- verify that an installed MCP integration is project-declared, trusted, connected, and exposes its expected capabilities.
+
+Complete a supported activation or reload during the installation when possible. When human trust, authentication, restart, or another external activation step remains, report `activation required` and the exact remaining action instead of reporting `installed`. Never place credentials or tokens in a repository-tracked declaration.
+
+If project-scoped installation is unavailable, report the candidate as blocked instead of installing it at user or machine scope.
 
 ## Boundaries
 
@@ -69,4 +77,4 @@ The operation is idempotent: repeating it against unchanged Target evidence, ins
 
 ## Report
 
-Report the final status of every identified item as **installed**, **updated**, **already available**, **not found**, **rejected**, or **blocked**. Include its evidence, capability type, selected candidate and source, compatibility evidence, verified project scope and repository location or declaration, included components and permissions, and any remaining activation step.
+Report the final status of every identified item as **installed**, **updated**, **already available**, **activation required**, **not found**, **rejected**, or **blocked**. Include its evidence, capability type, selected candidate and source, compatibility evidence, verified project scope and repository location or declaration, included components and permissions, discovery and usability check, and any remaining activation step.

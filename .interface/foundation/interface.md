@@ -475,7 +475,7 @@ Skill Installer
 name = my-interface-skill-installer
 path = .claude/skills/my-interface-skill-installer/SKILL.md
 invocation = /my-interface-skill-installer
-responsibility = Discover compatible Skills, plugins, MCP integrations, and other Agent capabilities, preview the findings, and install approved candidates at project scope
+responsibility = Discover and preview Agent capabilities, then install approved candidates at project scope and verify they are discoverable and usable
 mode = none
 when = When the Target may benefit from an additional Agent capability
 ```
