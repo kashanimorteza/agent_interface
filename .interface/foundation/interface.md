@@ -5,14 +5,14 @@
 
 Use this document as the entry point and follow its sections in this order:
 
-1. **Introduction** — understand the purpose, operation, independence, and boundaries of Agent Interface.
+1. **Introduction** — understand the purpose, workflow, independence, and boundaries of Agent Interface.
 2. **Terminology** — learn the shared vocabulary used throughout the Interface.
 3. **Architecture** — see the high-level structure and its primary sections.
 4. **Target** — understand what is being built through its non-technical and technical definitions.
 5. **Developer** — understand the engineering philosophy through Components and their Principles and Preferences.
 6. **Agent** — understand the executing system, its capabilities, restrictions, and Skills.
-7. **Operations** — understand Configure, Plan, Develop, Review, and Reset independently from their execution mechanisms.
-8. **Authority and Ownership** — understand who owns each record and which Operation may change it.
+7. **Modes** — understand the operational positions recorded by State.
+8. **Authority and Ownership** — understand who owns each record and which Skill may change it.
 9. **Foundation Files** — locate the Interface document, Config, and shared Schema definitions.
 10. **Workflow** — follow the path from defining a Target through configuration, planning, and development.
 
@@ -54,14 +54,14 @@ The primary concern of the Interface is the **conceptual contract** between the 
 
 Agent Interface is an independent interface between **Humans** and **AI Agents** for establishing a common protocol, structure, and standard for software development.
 
-Its purpose is to let a Human define a target project in natural language and give Agents common Principles and Preferences for understanding, planning, and developing it.
+Its purpose is to let a Human define a Target in natural language and give Agents common Principles and Preferences for planning and developing it.
 
-<!-------------------------- Operation -->
-### Operation
+<!-------------------------- How It Works -->
+### How It Works
 
-The Human supplies the project definition. Operations that need project meaning read it and the applicable Principles and Preferences to establish their own Understanding. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical operations such as Config initialization do not interpret the project.
+The Human supplies the Target definition. Skills read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical actions such as Config initialization do not interpret the Target.
 
-Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format. Understanding is formed by each operation and is not stored in Config.
+Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format.
 
 <!-------------------------- Independence -->
 ### Independence
@@ -78,7 +78,7 @@ Modern AI coding agents can generate and modify software, but an agent still nee
 1. **What is being built?**
 2. **How does the developer want software to be built?**
 3. **What agent is performing the work and what capabilities or restrictions does it have?**
-4. **What operation is currently being performed?**
+4. **What Mode or supporting action is currently active?**
 
 Agent Interface gives these concerns explicit structure.
 
@@ -97,7 +97,7 @@ Agent
    │
    │  Who/what performs the work?
    │
-Operations
+Modes
    │
    │  What should be done now?
    ▼
@@ -139,7 +139,7 @@ This separation is one of the central architectural principles of the project.
 
 ## Terminology
 
-- **Interface** — the complete system described by this document; it contains the Target, Developer, and Agent Modules together with Foundation Files, Operations, and Workflow.
+- **Interface** — the complete system described by this document; it contains the Target, Developer, and Agent Modules together with Foundation Files, Modes, Authority, and Workflow.
 - **Human** — the person who defines the Target and owns every authored Interface source.
 - **Module** — a primary conceptual boundary with a distinct responsibility inside the Interface. Target, Developer, and Agent are the Interface Modules.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
@@ -150,14 +150,11 @@ This separation is one of the central architectural principles of the project.
 - **Preferences** — preferred choices and defaults used when multiple valid implementations exist and the Target leaves the choice unspecified.
 - **Schema** — the structure a file follows: either a standard for a Human-authored file or an operational format and initial template for a generated record.
 - **Config** — mutable operational records that coordinate the Workflow and record where work stands; Config does not store what the Target means.
-- **Phase** — an ordered stage of the Target that Planning, Development, and Review can act on.
-- **Plan** — the high-level organization of work for a phase, containing Groups, activities, dependencies, and individual Tasks.
+- **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
-- **Workflow** — the ordered path from the Human's Target definition to developed software: Define Target, Configure, Plan, and Develop, together with supporting operations.
-- **Mode** — the current operational position of the Workflow, recorded by State.
-- **Operation** — one bounded action performed on the Interface or Target. An Operation may have a Mode or may support the Workflow without one.
-- **Skill** — an external Agent capability that performs an Operation or provides a supporting utility; it is cataloged by the Interface but is not part of its architecture.
-- **Understanding** — the context an Operation establishes for itself from current sources when it runs. *Agent Interface Understanding* concerns the Interface and resource locations; *Target Understanding* concerns what the Target is and requires.
+- **Workflow** — the ordered path from the Human's Target definition to developed software: Define Target, Configure, Plan, and Develop, together with supporting actions.
+- **Mode** — an operational position in the Workflow, recorded by State.
+- **Skill** — an external Agent capability that performs a Workflow action or provides a supporting utility; it is cataloged by the Interface but is not part of its architecture.
 
 <br><br>
 <!--------------------------------------------------------------------------------- Architecture --->
@@ -173,12 +170,13 @@ Architecture
 │   ├── Target
 │   ├── Developer
 │   └── Agent
+├── Modes
 ├── Foundation Files
-├── Operations
+├── Authority and Ownership
 └── Workflow
 ```
 
-Each Module owns its detailed Conceptual Structure and Repository Structure. Foundation Files remain shared resources, Operations define actions, and Workflow defines their execution order.
+Each Module owns its detailed Conceptual Structure and Repository Structure. Foundation Files remain shared resources, Modes record operational position, Authority and Ownership control writes, and Workflow defines execution order.
 
 
 
@@ -209,29 +207,6 @@ Target
 ├── non-technical.md
 └── technical.md
 ```
-
-
-<!-------------------------- Target Definitions -->
-### Definitions
-
-<!-------------------------- Non-Technical Definition -->
-#### Non-Technical Definition
-
-```text
-name = Non-Technical Definition
-path = .interface/target/non-technical.md
-responsibility = What the Target is and what it must do, in the language of its domain
-```
-
-<!-------------------------- Technical Definition -->
-#### Technical Definition
-
-```text
-name = Technical Definition
-path = .interface/target/technical.md
-responsibility = to be defined
-```
-
 
 
 <br><br>
@@ -311,102 +286,6 @@ Developer
 ```
 
 
-<!-------------------------- Developer Components -->
-### Components
-
-Each Component describes one part of the engineering perspective through its own Principles and Preferences.
-
-<!-------------------------- Development -->
-#### Development
-
-```text
-name = Development
-responsibility = Defines the project's layered software architecture and the way its independent application layers are composed into one runnable system
-principles = .interface/developer/development/principles.md
-preferences = .interface/developer/development/preferences.yaml
-```
-
-<!-------------------------- Model -->
-#### Model
-
-```text
-name = Model
-responsibility = Describes the domain entities and concepts from which a project is formed, as one shared logical meaning and one reusable implementation boundary
-principles = .interface/developer/model/principles.md
-preferences = .interface/developer/model/preferences.yaml
-```
-
-<!-------------------------- Database -->
-#### Database
-
-```text
-name = Database
-responsibility = Owns the project's complete persistence layer and publishes one generic interface through which every consumer reads and writes
-principles = .interface/developer/database/principles.md
-preferences = .interface/developer/database/preferences.yaml
-```
-
-<!-------------------------- Backend -->
-#### Backend
-
-```text
-name = Backend
-responsibility = Executes application Behaviour and publishes the application's API as the one contract every external consumer depends on
-principles = .interface/developer/backend/principles.md
-preferences = .interface/developer/backend/preferences.yaml
-```
-
-<!-------------------------- Frontend -->
-#### Frontend
-
-```text
-name = Frontend
-responsibility = Presents the application to users, manages user interaction, and consumes the capabilities published by Backend
-principles = .interface/developer/frontend/principles.md
-preferences = .interface/developer/frontend/preferences.yaml
-```
-
-<!-------------------------- Platform -->
-#### Platform
-
-```text
-name = Platform
-responsibility = Composes the independent application layers into one runnable system and keeps it runnable wherever it is meant to run
-principles = .interface/developer/platform/principles.md
-preferences = .interface/developer/platform/preferences.yaml
-```
-
-<!-------------------------- Plan -->
-#### Plan
-
-```text
-name = Plan
-responsibility = Turns phases into precise, bounded activities and organizes them as Plans, Groups, and Tasks
-principles = .interface/developer/plan/principles.md
-preferences = .interface/developer/plan/preferences.yaml
-```
-
-<!-------------------------- Review -->
-#### Review
-
-```text
-name = Review
-responsibility = Establishes whether an implemented result satisfies what was asked, and records what it found
-principles = .interface/developer/review/principles.md
-preferences = .interface/developer/review/preferences.yaml
-```
-
-<!-------------------------- State -->
-#### State
-
-```text
-name = State
-responsibility = Records where the Interface Workflow currently stands, together with critical Blockers and Open Questions
-principles = .interface/developer/state/principles.md
-preferences = .interface/developer/state/preferences.yaml
-```
-
-
 <br><br>
 
 ## Agent
@@ -449,8 +328,26 @@ These concepts provide a common abstraction over capabilities that modern coding
 `.claude/` is outside `.interface/` because it is the current Agent-specific implementation. Another Agent may map the same concepts to different native paths.
 
 
+<!-------------------------- Rules -->
+### Rules
+
+```text
+name = Interface Bootstrap
+path = .claude/rules/interface-bootstrap.md
+responsibility = Defines the shared entry point and the separation between Agent Skills and the Interface
+```
+
+```text
+name = Interface Skill Policy
+path = .claude/rules/interface-skill-policy.md
+responsibility = Defines human-owned boundaries and the decision policy shared by every Interface Skill
+```
+
+
 <!-------------------------- Skills -->
 ### Skills
+
+Interface Skills are the fixed external capabilities that perform the Workflow and its supporting actions. Technology-specific or third-party Skills are discovered dynamically and are not part of this catalog.
 
 #### Configure
 
@@ -458,7 +355,8 @@ These concepts provide a common abstraction over capabilities that modern coding
 name = my-interface-configure
 path = .claude/skills/my-interface-configure/SKILL.md
 invocation = /my-interface-configure
-responsibility = Initialize and reconcile operational Config files
+responsibility = Initialize every operational Config from its Schema and reconcile existing records with the current structure
+mode = configuring
 ```
 
 #### Tasker
@@ -467,7 +365,8 @@ responsibility = Initialize and reconcile operational Config files
 name = my-interface-tasker
 path = .claude/skills/my-interface-tasker/SKILL.md
 invocation = /my-interface-tasker <phase-number>
-responsibility = Create or reconcile the Plan for one phase
+responsibility = Create or reconcile a Task Plan without prescribing implementation
+mode = planning
 ```
 
 #### Developer
@@ -476,7 +375,8 @@ responsibility = Create or reconcile the Plan for one phase
 name = my-interface-developer
 path = .claude/skills/my-interface-developer/SKILL.md
 invocation = /my-interface-developer <phase-number>
-responsibility = Implement and verify eligible Tasks for one phase
+responsibility = Implement and verify eligible planned Tasks
+mode = development
 ```
 
 #### Reviewer
@@ -485,7 +385,9 @@ responsibility = Implement and verify eligible Tasks for one phase
 name = my-interface-reviewer
 path = .claude/skills/my-interface-reviewer/SKILL.md
 invocation = /my-interface-reviewer <phase-number>
-responsibility = Review one implemented phase and record Findings
+responsibility = Review implemented work, record evidence-based Findings, and report them without repairing the result
+mode = none
+when = When implemented work needs independent verification
 ```
 
 #### Reset
@@ -494,7 +396,9 @@ responsibility = Review one implemented phase and record Findings
 name = my-interface-reset
 path = .claude/skills/my-interface-reset/SKILL.md
 invocation = /my-interface-reset <1|2|3>
-responsibility = Reset Configure, Task, or Development output after confirmation
+responsibility = Preview and, after human confirmation, reset Configure, Task, or Development output
+mode = none
+when = When the Human explicitly requests that selected output be reset
 ```
 
 #### Skill Installer
@@ -503,27 +407,62 @@ responsibility = Reset Configure, Task, or Development output after confirmation
 name = my-interface-skill-installer
 path = .claude/skills/my-interface-skill-installer/SKILL.md
 invocation = /my-interface-skill-installer
-responsibility = Discover and install compatible Agent Skills
+responsibility = Discover and install compatible Agent Skills for technologies used by the Target
+mode = none
+when = When the Target uses a technology for which a compatible Agent Skill may be available
 ```
 
+#### Supporting Agent
 
+```text
+name = interface-reader
+path = .claude/agents/interface-reader.md
+responsibility = Report the current operational position, planned work, blockers, questions, and review findings without writing changes
+mode = none
+writes = none
+```
 
 <br><br>
 
-## Operations
-<!--------------------------------------------------------------------------------- Operations --->
-Operations define **what actions the Interface can perform**.
+## Modes
+<!--------------------------------------------------------------------------------- Modes --->
 
-<!-------------------------- Operations Conceptual Structure -->
-### Conceptual Structure
+State records the active Mode. Modes describe the current operational position and remain distinct from the behaviour required from the Target.
+
+### Not Set
 
 ```text
-Operations
-├── Configure
-├── Plan
-├── Develop
-├── Review
-└── Reset
+state = not set
+responsibility = Represents the initial Workflow position before a Skill action is recorded, or the position restored by Reset
+inputs = none
+output = Active State with no selected work scope
+```
+
+### Configuring
+
+```text
+state = configuring
+responsibility = Initialize operational Config files from their Schema templates and reconcile existing records
+inputs = Operational Schemas and existing Config records
+output = Current and valid operational Config files
+```
+
+### Planning
+
+```text
+state = planning
+responsibility = Create bounded and verifiable Tasks without prescribing implementation
+inputs = Current Target, applicable Principles and Preferences, and operational records
+output = Updated Plan Config
+```
+
+### Development
+
+```text
+state = development
+responsibility = Implement and verify eligible planned Tasks
+inputs = Current Target, applicable Principles and Preferences, Plan, State, and existing implementation
+output = Verified implementation and updated operational records
 ```
 
 
@@ -532,36 +471,36 @@ Operations
 ## Authority and Ownership
 <!--------------------------------------------------------------------------------- Authority and Ownership --->
 
-Explicit project intent and applicable Principles guide each operation. Preferences supply defaults where the project leaves a choice unstated. The operational Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored layers, and the general YAML Schema supplies the common frame every YAML file shares. Config stores those records and does not define the target project.
+Explicit Target intent and applicable Principles guide each Skill. Preferences supply defaults where the Target leaves a choice unstated. The operational Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored sources, and the general YAML Schema supplies the common frame every YAML file shares. Config stores those records and does not define the Target.
 
 ```text
-Project = human-defined intent
+Target = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
 Preferences = technical defaults for unspecified choices
-Schema = general YAML frame, authored-layer structure, and the storage structure of every operational record
+Schema = general YAML frame, authored-source structure, and the storage structure of every operational record
 Config = the mutable operational records
 ```
 
 Ownership answers who a record belongs to, and it belongs to the Human or to a Component:
 
 ```text
-Human = owns Interface, Project, Principles, Preferences, and Schema sources
+Human = owns Interface, Target, Principles, Preferences, and Schema sources
 Task = owns Plans, Groups, Tasks, their status, and their history
 State = owns the active Workflow position, Blockers, and Open Questions
 Review = owns recorded Findings and their state
 ```
 
-Write authority answers which operation may change a record, and every write happens under the rules of the Component that owns it:
+Write authority answers which Skill may change a record, and every write happens under the rules of the Component that owns it:
 
 ```text
 Configure = writes every operational Config, creating it from its Schema template or bringing it to the current structure
-Planning = writes Plans, Groups, and Tasks under Task's rules
-Development = writes implementation, and Task status and history under Task's rules
-Review = writes Findings under Review's rules
-Every operation = writes the active Workflow position and its own Blockers and Open Questions under State's rules
+Tasker = writes Plans, Groups, and Tasks under Task's rules
+Developer = writes implementation, and Task status and history under Task's rules
+Reviewer = writes Findings under Review's rules
+Every active Skill = writes the active Workflow position and its own Blockers and Open Questions under State's rules
 ```
 
-Each operation writes only the records it has authority over, and always under the rules of the Component that owns them. Operational records follow their source authorities and must not redefine them.
+Each Skill writes only the records it has authority over, and always under the rules of the Component that owns them. Operational records follow their source authorities and must not redefine them.
 
 <br><br>
 
