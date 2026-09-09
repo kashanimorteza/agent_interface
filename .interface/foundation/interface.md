@@ -171,8 +171,8 @@ Architecture
 │   ├── Developer
 │   └── Agent
 ├── Modes
-├── Foundation Files
 ├── Authority and Ownership
+├── Foundation Files
 └── Workflow
 ```
 
@@ -328,6 +328,20 @@ These concepts provide a common abstraction over capabilities that modern coding
 `.claude/` is outside `.interface/` because it is the current Agent-specific implementation. Another Agent may map the same concepts to different native paths.
 
 
+<!-------------------------- Agents -->
+### Agents
+
+#### Supporting Agent
+
+```text
+name = interface-reader
+path = .claude/agents/interface-reader.md
+responsibility = Report the current operational position, planned work, blockers, questions, and review findings without writing changes
+mode = none
+writes = none
+```
+
+
 <!-------------------------- Rules -->
 ### Rules
 
@@ -412,16 +426,6 @@ mode = none
 when = When the Target uses a technology for which a compatible Agent Skill may be available
 ```
 
-#### Supporting Agent
-
-```text
-name = interface-reader
-path = .claude/agents/interface-reader.md
-responsibility = Report the current operational position, planned work, blockers, questions, and review findings without writing changes
-mode = none
-writes = none
-```
-
 <br><br>
 
 ## Modes
@@ -497,7 +501,10 @@ Configure = writes every operational Config, creating it from its Schema templat
 Tasker = writes Plans, Groups, and Tasks under Task's rules
 Developer = writes implementation, and Task status and history under Task's rules
 Reviewer = writes Findings under Review's rules
-Every active Skill = writes the active Workflow position and its own Blockers and Open Questions under State's rules
+Configure, Tasker, and Developer = write the active Workflow position under State's rules
+Reset = restores the Workflow position according to the selected reset stage
+Reviewer and Skill Installer = do not change the active Workflow position
+Every Skill = may record its own Blockers and Open Questions under State's rules when applicable
 ```
 
 Each Skill writes only the records it has authority over, and always under the rules of the Component that owns them. Operational records follow their source authorities and must not redefine them.
