@@ -38,8 +38,8 @@ Architecture
 ├── Modules
 │   └── Models
 ├── Trading Platforms
-│   ├── Binance
-│   └── MetaTrader 5
+│   ├── MetaTrader 5
+│   └── Binance
 ├── Trading Operations
 ├── Behaviour
 └── Phases
@@ -462,17 +462,17 @@ Models
 
 ```text
 Trading Platforms
-├── Binance
-└── MetaTrader 5
+├── MetaTrader 5
+└── Binance
 ```
-
-### Binance
-
-Connects the Target to Binance through the Binance API.
 
 ### MetaTrader 5
 
 Connects the Target to MetaTrader 5 through the applicable MetaTrader 5 libraries and packages.
+
+### Binance
+
+Connects the Target to Binance through the Binance API.
 
 <br><br>
 
@@ -490,7 +490,10 @@ Trading Operations
 <!--------------------------------------------------------------------------------- Behaviour --->
 ## Behaviour
 
-- Enable users to enter and manage all defined project data.
+- Enable users to add data for every defined Model.
+- Enable users to edit and update data for every defined Model.
+- Enable users to list data for every defined Model.
+- Enable users to retrieve an individual item by its ID for every defined Model.
 
 <br><br>
 
@@ -515,6 +518,10 @@ Phases (6)
 
 **Target:** Model
 
+**Status:** Enabled
+
+**State:** In Design
+
 **Goal:** Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
 
 ### Phase 2
@@ -522,6 +529,10 @@ Phases (6)
 **Title:** Database
 
 **Target:** Database
+
+**Status:** Enabled
+
+**State:** In Design
 
 **Goal:** Implement the database using the shared Model package and insert the defined initial data.
 
@@ -531,6 +542,10 @@ Phases (6)
 
 **Target:** Backend
 
+**Status:** Enabled
+
+**State:** In Design
+
 **Goal:** Implement the backend layer, including its application logic and API for operating on the defined models.
 
 ### Phase 4
@@ -538,6 +553,10 @@ Phases (6)
 **Title:** Frontend
 
 **Target:** Frontend
+
+**Status:** Enabled
+
+**State:** In Design
 
 **Goal:** Implement the frontend based on the backend API.
 
@@ -547,6 +566,10 @@ Phases (6)
 
 **Target:** Backend
 
+**Status:** Disabled
+
+**State:** Not Started
+
 **Goal:** Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
 
 ### Phase 6
@@ -554,5 +577,9 @@ Phases (6)
 **Title:** Trading Operations
 
 **Target:** Backend
+
+**Status:** Disabled
+
+**State:** Not Started
 
 **Goal:** Implement the execution of the defined trading operations through the selected Trading Platform and Instance.

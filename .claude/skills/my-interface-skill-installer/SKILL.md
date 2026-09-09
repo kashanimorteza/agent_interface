@@ -18,13 +18,22 @@ Follow the shared Agent Interface rules throughout the operation, including thei
 
 ### Understand
 
-Establish Interface Understanding and Target Understanding. Use the current Target, applicable Developer sources, dependency manifests, lockfiles, runtime-version files, existing implementation, and installed Agent capabilities as evidence.
+Establish Interface Understanding and Target Understanding. Read the current Target together with every applicable Principle and Preference, including selected defaults and applicable alternatives. Use dependency manifests, lockfiles, runtime-version files, existing implementation, and installed Agent capabilities as supporting evidence.
 
-Derive capability needs from current evidence on every run. Do not keep a hardcoded technology or capability list in this Skill.
+Derive capability needs from current evidence on every run. A technology, framework, platform, protocol, service, data source, development activity, or preferred default may indicate that a relevant Agent capability exists. Do not keep a hardcoded technology or capability list in this Skill.
+
+### Identify
+
+Before searching, turn the current Understanding into a visible inventory of items that may have a useful Skill, plugin, MCP integration, agent, or equivalent extension:
+
+| Item | Evidence | Why an Agent capability may exist | Capability types to search |
+| --- | --- | --- | --- |
+
+Every row must cite the Target, Principle, Preference, selected default, dependency, configuration, or implementation evidence that produced it. Keep distinct needs separate even when one candidate may later satisfy several of them. This inventory defines what Discovery searches; it does not authorize installation.
 
 ### Discover
 
-For each detected need:
+For each identified item:
 
 1. Check whether an adequate capability is already available to the Agent.
 2. Search every relevant discovery route supported by the current environment for Skills, plugins, MCP integrations, agents, or equivalent extensions.
@@ -37,10 +46,10 @@ Discovery is read-only. Adding a catalog, connecting an external service, or cha
 
 ### Preview
 
-Before installing or updating anything, present one row for every detected need:
+After Discovery and before installing or updating anything, present one result row for every identified item:
 
-| Need | Capability type | Candidate | Source | Compatibility | Project scope | Included components and permissions | Search result |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| Item | Evidence | Capability type | Candidate | Source | Compatibility | Project scope | Included components and permissions | Search result |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 Use **not found** for a need with no verified candidate and identify the discovery routes checked. Use **already available** when the current Agent already has an adequate capability.
 
@@ -60,4 +69,4 @@ The operation is idempotent: repeating it against unchanged Target evidence, ins
 
 ## Report
 
-Report the final status of every detected need as **installed**, **updated**, **already available**, **not found**, **rejected**, or **blocked**. Include the capability type, selected candidate and source, compatibility evidence, verified project scope and repository location or declaration, included components and permissions, and any remaining activation step.
+Report the final status of every identified item as **installed**, **updated**, **already available**, **not found**, **rejected**, or **blocked**. Include its evidence, capability type, selected candidate and source, compatibility evidence, verified project scope and repository location or declaration, included components and permissions, and any remaining activation step.

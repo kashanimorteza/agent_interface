@@ -15,10 +15,11 @@ Use this document as the entry point and follow its sections in this order:
    - **[Developer](#developer)** — understand the engineering philosophy through Components and their Principles and Preferences.
    - **[Agent](#agent)** — understand the executing system, its capabilities, restrictions, and Skills.
 5. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
-6. **[Modes](#modes)** — understand the operational positions recorded by State.
-7. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
-8. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
-9. **[Workflow](#workflow)** — follow the path from defining a Target through configuration, planning, and development.
+6. **[Operations](#operations)** — understand the actions performed through Configure, Planning, Developing, Reviewing, and Reset.
+7. **[Modes](#modes)** — understand the operational positions recorded by State.
+8. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
+9. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
+10. **[Workflow](#workflow)** — follow the path from defining a Target through configuration, planning, and development.
 
 
 <br><br>
@@ -131,7 +132,7 @@ This separation is one of the central architectural principles of the project.
 <!--------------------------------------------------------------------------------- Terminology --->
 ## Terminology
 
-- **Interface** — the complete system described by this document; it contains the Target, Developer, and Agent Modules together with Understanding, Foundation Files, Modes, Authority, and Workflow.
+- **Interface** — the complete system described by this document; it contains the Target, Developer, and Agent Modules together with Understanding, Operations, Foundation Files, Modes, Authority, and Workflow.
 - **Human** — the person who defines the Target and owns every authored Interface source.
 - **Module** — a primary conceptual boundary with a distinct responsibility inside the Interface. Target, Developer, and Agent are the Interface Modules.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
@@ -145,6 +146,7 @@ This separation is one of the central architectural principles of the project.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
 - **Understanding** — the current context an Agent establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
+- **Operation** — one defined action performed through an Agent Skill to configure, plan, develop, review, or reset work.
 - **Workflow** — the ordered path from the Human's Target definition to developed software: Define Target, Configure, Plan, and Develop, together with supporting actions.
 - **Mode** — an operational position in the Workflow, recorded by State.
 - **Skill** — an Agent capability that performs a Workflow action or provides a supporting utility; it is part of the Agent Module's integration surface, while its implementation remains outside `.interface/`.
@@ -168,13 +170,14 @@ Architecture
 │   ├── Developer
 │   └── Agent
 ├── Understanding
+├── Operations
 ├── Modes
 ├── Authority and Ownership
 ├── Foundation Files
 └── Workflow
 ```
 
-Each Module owns its detailed Conceptual Structure and Repository Structure. Understanding establishes the context used by a Skill, Foundation Files remain shared resources, Modes record operational position, Authority and Ownership control writes, and Workflow defines execution order.
+Each Module owns its detailed Conceptual Structure and Repository Structure. Understanding establishes the context used by a Skill, Operations define the actions Skills perform, Foundation Files remain shared resources, Modes record operational position, Authority and Ownership control writes, and Workflow defines execution order.
 
 
 
@@ -451,6 +454,57 @@ Understanding
 ```
 
 These sources remain authoritative. Understanding is reconstructed from their current content when a Skill needs it; it is not copied into Config as a second project definition.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Operations --->
+## Operations
+
+Operations are the defined actions that Skills perform through Agent Interface. Each Operation has a distinct responsibility and remains separate from the Mode recorded while work is in progress.
+
+```text
+Operations
+├── Configure
+├── Planning
+├── Developing
+├── Reviewing
+└── Reset
+```
+
+<!-------------------------- Configure Operation -->
+### Configure
+
+**Agent Skill:** `my-interface-configure`
+
+Initializes operational Config files from their Schemas and reconciles existing records with the current structure.
+
+<!-------------------------- Planning Operation -->
+### Planning
+
+**Agent Skill:** `my-interface-tasker`
+
+Converts the current Target and applicable Developer guidance into bounded, understandable, and verifiable Tasks.
+
+<!-------------------------- Developing Operation -->
+### Developing
+
+**Agent Skill:** `my-interface-developer`
+
+Implements and verifies eligible planned Tasks through the applicable Target and Developer context.
+
+<!-------------------------- Reviewing Operation -->
+### Reviewing
+
+**Agent Skill:** `my-interface-reviewer`
+
+Evaluates implemented work independently and records evidence-based Findings without repairing the result.
+
+<!-------------------------- Reset Operation -->
+### Reset
+
+**Agent Skill:** `my-interface-reset`
+
+Previews and, after human confirmation, resets the outputs and operational records covered by the selected reset stage.
 
 <br><br>
 
