@@ -204,9 +204,10 @@ Target, Developer, and Agent are the three primary Modules of Agent Interface. E
 
 The Target describes **what the Interface is working on**.
 
-The Human defines the Target through its non-technical and technical files.
+The Human defines it through two complementary sources:
 
-The two files complement each other. The technical definition is the primary authority and always takes precedence wherever they conflict; the non-technical definition supplies additional context and requirements where the technical definition is silent. An empty file contributes no information.
+- **Technical Definition:** The primary authority for the Target; it takes precedence wherever the two definitions conflict.
+- **Non-Technical Definition:** Additional context and requirements where the Technical Definition is silent; an empty file contributes no information.
 
 #### Conceptual Structure
 
@@ -228,6 +229,8 @@ Target
 ### Developer
 
 The Developer module locates the reusable engineering perspective applied to a Target. It is organized around Components, each with its own Principles and Preferences.
+
+The Developer module is expressed through the Development, Model, Database, Backend, Frontend, Platform, Plan, Review, and State Components.
 
 #### Conceptual Structure
 
