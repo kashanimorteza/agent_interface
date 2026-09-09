@@ -514,72 +514,60 @@ Phases (6)
 
 ### Phase 1
 
-**Title:** Model
-
-**Target:** Model
-
-**Status:** Enabled
-
-**State:** In Design
-
-**Goal:** Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
+```text
+title = Model
+target = Model
+status = Enabled
+state = In Design
+goal = Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
+```
 
 ### Phase 2
 
-**Title:** Database
-
-**Target:** Database
-
-**Status:** Enabled
-
-**State:** In Design
-
-**Goal:** Implement the database using the shared Model package and insert the defined initial data.
+```text
+title = Database
+target = Database
+status = Enabled
+state = In Design
+goal = Implement the database using the shared Model package and insert the defined initial data.
+```
 
 ### Phase 3
 
-**Title:** Backend
-
-**Target:** Backend
-
-**Status:** Enabled
-
-**State:** In Design
-
-**Goal:** Implement the backend layer, including its application logic and API for operating on the defined models.
+```text
+title = Backend
+target = Backend
+status = Enabled
+state = In Design
+goal = Implement the backend layer, including its application logic and API for operating on the defined models.
+```
 
 ### Phase 4
 
-**Title:** Frontend
-
-**Target:** Frontend
-
-**Status:** Enabled
-
-**State:** In Design
-
-**Goal:** Implement the frontend based on the backend API.
+```text
+title = Frontend
+target = Frontend
+status = Enabled
+state = In Design
+goal = Implement the frontend based on the backend API.
+```
 
 ### Phase 5
 
-**Title:** MetaTrader 5 Platform Module
-
-**Target:** Backend
-
-**Status:** Disabled
-
-**State:** Not Started
-
-**Goal:** Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
+```text
+title = MetaTrader 5 Platform Module
+target = Backend
+status = Disabled
+state = Not Started
+goal = Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
+```
 
 ### Phase 6
 
-**Title:** Trading Operations
-
-**Target:** Backend
-
-**Status:** Disabled
-
-**State:** Not Started
-
-**Goal:** Implement the execution of the defined trading operations through the selected Trading Platform and Instance.
+```text
+title = Trading Operations
+target = Backend
+status = Disabled
+state = Not Started
+goal = Implement the execution of the defined trading operations through the selected Trading Platform and Instance.
+```
