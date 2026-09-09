@@ -112,8 +112,8 @@ sections:
     shape: "One mapping per kind of alternative, named in the plural, each holding entries keyed by the option's name."
     entry:
       version:
-        required: true
-        purpose: "The version of the option: a concrete version, `latest` when it is resolved at implementation time, or `runtime-provided` when the environment supplies it."
+        required: "Only for a versioned technology or definition."
+        purpose: "The version of a versioned option: a concrete version, `latest` when it is resolved at implementation time, or `runtime-provided` when the environment supplies it. A conceptual option with no meaningful version omits this field."
       attributes:
         required: false
         purpose: "The properties that belong to this option alone, such as its package, driver, conventions, or capabilities."

@@ -55,7 +55,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 6. Development records composition, not internal implementation
+## 4. Development records composition, not internal implementation
 
 **Rule:** Development identifies the participating application layers, their public responsibilities and interfaces, and the connections between them. It also defines the common package standard and records package identities, parent relationships, ownership, and integration boundaries.
 
@@ -65,7 +65,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 7. The architecture remains project-independent
+## 5. The architecture remains project-independent
 
 **Rule:** Development defines a reusable layered standard.
 
@@ -75,7 +75,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 8. Cross-cutting capabilities are coordinated by Development
+## 6. Cross-cutting capabilities are coordinated by Development
 
 **Rule:** Capabilities that may affect more than one application layer are coordinated by Development rather than owned as an isolated default by Model, Backend, Frontend, or Database. Examples include testing, logging, error handling, and authentication. Development records whether each capability is enabled, which layers it applies to, and the shared integration expectations that keep those layers compatible.
 
@@ -85,7 +85,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 9. A package is an encapsulated implementation boundary
+## 7. A package is an encapsulated implementation boundary
 
 **Rule:** A package is an identifiable collection of implementation resources with a cohesive responsibility, explicit dependencies, owned configuration, and a documented public interface. This definition is independent of a programming language or package manager. A package may be an importable library, a runnable application, or a nested module supported by its implementation technology. Package identity follows responsibility.
 
@@ -95,7 +95,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 10. Package interfaces define how consumers use a boundary
+## 8. Package interfaces define how consumers use a boundary
 
 **Rule:** Each package explicitly identifies what it exposes and what it consumes. Its public interface may be an import surface, network API, command, user interface, or another appropriate mechanism. A package with no external consumer records that fact instead of inventing an interface.
 
@@ -105,7 +105,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 11. Every package documents its use
+## 9. Every package documents its use
 
 **Rule:** Each package, including architectural subpackages, carries its own public description: what the package is for, where its boundaries lie, what its public interface offers, what it depends on, how it is configured, how it is installed and started when that applies, and how it is used in practice. A nested package may rely on its parent's description for shared setup rather than duplicating it.
 
@@ -124,15 +124,15 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Never** — a consumer reads or modifies another layer's internal storage, implementation, configuration, or private resources *(2)*
 - **Must** — every dependency between layers is an explicit directed connection through one declared interface *(3)*
 - **Never** — hidden coupling, undeclared communication, or duplicated ownership exists in the architecture *(3)*
-- **Must** — Development records the layers, their responsibilities and interfaces, and their connections *(6)*
-- **Never** — Development redefines the internal technologies, source layout, or domain meaning owned by a layer *(6)*
-- **Must** — the layered standard stays reusable across projects *(7)*
-- **Never** — project-specific choices change ownership separation, interface-only communication, or explicit connections *(7)*
-- **Must** — Development records each cross-cutting capability's enabled state, applicable layers, and shared integration expectations *(8)*
-- **Never** — a layer decides a cross-cutting capability alone *(8)*
-- **Must** — every package has a cohesive responsibility, explicit dependencies, owned configuration, and a documented public interface *(9)*
-- **Never** — being a package requires registry publication, a separate process, or an independently installable distribution *(9)*
-- **Must** — every package states what it exposes and what it consumes, or records that it has no external consumer *(10)*
-- **Never** — nesting alone exposes a package's internals to consumers of its parent *(10)*
-- **Must** — every package, including subpackages, carries a public description covering purpose, boundaries, interface, dependencies, configuration, setup, and usage *(11)*
-- **Never** — documentation records credentials or other secret values, or drifts from the implemented interface *(11)*
+- **Must** — Development records the layers, their responsibilities and interfaces, and their connections *(4)*
+- **Never** — Development redefines the internal technologies, source layout, or domain meaning owned by a layer *(4)*
+- **Must** — the layered standard stays reusable across projects *(5)*
+- **Never** — project-specific choices change ownership separation, interface-only communication, or explicit connections *(5)*
+- **Must** — Development records each cross-cutting capability's enabled state, applicable layers, and shared integration expectations *(6)*
+- **Never** — a layer decides a cross-cutting capability alone *(6)*
+- **Must** — every package has a cohesive responsibility, explicit dependencies, owned configuration, and a documented public interface *(7)*
+- **Never** — being a package requires registry publication, a separate process, or an independently installable distribution *(7)*
+- **Must** — every package states what it exposes and what it consumes, or records that it has no external consumer *(8)*
+- **Never** — nesting alone exposes a package's internals to consumers of its parent *(8)*
+- **Must** — every package, including subpackages, carries a public description covering purpose, boundaries, interface, dependencies, configuration, setup, and usage *(9)*
+- **Never** — documentation records credentials or other secret values, or drifts from the implemented interface *(9)*

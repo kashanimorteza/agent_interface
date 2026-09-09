@@ -15,11 +15,11 @@ Use this document as the entry point and follow its sections in this order:
    - **[Developer](#developer)** — understand the engineering philosophy through Components and their Principles and Preferences.
    - **[Agent](#agent)** — understand the executing system, its capabilities, restrictions, and Skills.
 5. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
-6. **[Operations](#operations)** — understand the actions performed through Configure, Planning, Developing, Reviewing, and Reset.
+6. **[Operations](#operations)** — understand the actions performed through Configure, Planning, Developing, Reviewing, Launch, Implement, and Reset.
 7. **[Modes](#modes)** — understand the operational positions recorded by State.
 8. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
 9. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
-10. **[Workflow](#workflow)** — follow the path from defining a Target through configuration, planning, and development.
+10. **[Workflow](#workflow)** — follow the path from defining a Target through configuration, planning, development, review, and launch.
 
 
 <br><br>
@@ -64,7 +64,7 @@ Its purpose is to let a Human define a Target in natural language and give Agent
 <!-------------------------- How It Works -->
 ### How It Works
 
-The Human states the Target in the Non-Technical Definition. Acting as the developer, the Human translates that intent into the Technical Definition without changing its meaning. Skills then read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks. Mechanical actions such as Config initialization do not interpret the Target.
+The Human states the Target in the Non-Technical Definition. Acting as the developer, the Human translates that intent into the Technical Definition without changing its meaning. Skills then read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks; Review evaluates the result; and Launch brings the completed Target online. Mechanical actions such as Config initialization do not interpret the Target.
 
 Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format.
 
@@ -146,8 +146,8 @@ This separation is one of the central architectural principles of the project.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
 - **Understanding** — the current context an Agent establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
-- **Operation** — one defined action performed through an Agent Skill to configure, plan, develop, review, or reset work.
-- **Workflow** — the ordered path from the Human's Target definition to developed software: Define Target, Configure, Plan, and Develop, together with supporting actions.
+- **Operation** — one defined action performed through an Agent Skill to configure, plan, develop, review, launch, implement, or reset work.
+- **Workflow** — the ordered path from the Human's Target definition to running software: Define Target, Configure, Plan, Develop, Review, and Launch, together with supporting actions.
 - **Mode** — an operational position in the Workflow, recorded by State.
 - **Skill** — an Agent capability that performs a Workflow action or provides a supporting utility; it is part of the Agent Module's integration surface, while its implementation remains outside `.interface/`.
 
@@ -350,8 +350,7 @@ These concepts provide a common abstraction over capabilities that modern coding
 ├── output-styles/
 ├── rules/
 ├── skills/
-├── settings.json
-└── settings.local.json
+└── settings.json
 ```
 
 `.claude/` is outside `.interface/` because it is the current Agent-specific implementation. Another Agent may map the same concepts to different native paths.
@@ -450,6 +449,28 @@ mode = none
 when = When the Target may benefit from an additional Agent capability
 ```
 
+Launch
+
+```text
+name = my-interface-launch
+path = .claude/skills/my-interface-launch/SKILL.md
+invocation = /my-interface-launch
+responsibility = Prepare the selected Environment and bring the completed Target online through the selected Launch
+mode = none
+when = After required development and review are complete
+```
+
+Implement
+
+```text
+name = my-interface-implement
+path = .claude/skills/my-interface-implement/SKILL.md
+invocation = /my-interface-implement
+responsibility = Coordinate the complete executable Workflow for the current Target without replacing the authority of its individual operations
+mode = none
+when = When the Human wants the current Target implemented end to end
+```
+
 <br><br>
 
 <!--------------------------------------------------------------------------------- Understanding --->
@@ -497,6 +518,8 @@ Operations
 ├── Planning
 ├── Developing
 ├── Reviewing
+├── Launch
+├── Implement
 └── Reset
 ```
 
@@ -527,6 +550,20 @@ Implements and verifies eligible planned Tasks through the applicable Target and
 **Agent Skill:** `my-interface-reviewer`
 
 Evaluates implemented work independently and records evidence-based Findings without repairing the result.
+
+<!-------------------------- Launch Operation -->
+### Launch
+
+**Agent Skill:** `my-interface-launch`
+
+Prepares the selected Environment, starts the developed parts through the selected Launch, and verifies that the composed Target is ready.
+
+<!-------------------------- Implement Operation -->
+### Implement
+
+**Agent Skill:** `my-interface-implement`
+
+Coordinates the current executable Workflow end to end while preserving the separate role and authority of every operation it runs.
 
 <!-------------------------- Reset Operation -->
 ### Reset
@@ -615,8 +652,10 @@ Tasker = writes Plans, Groups, and Tasks under Plan's rules
 Developer = writes implementation, and Task status and history under Plan's rules
 Reviewer = writes Findings under Review's rules
 Configure, Tasker, and Developer = write the active Workflow position under State's rules
+Launch = changes runtime state through Platform's authority and may record its Blockers and Open Questions under State's rules
+Implement = coordinates operation Skills and has no independent write authority
 Reset = after human confirmation of the preview, removes or resets the outputs and operational records covered by the selected reset stage, including the Workflow position, under the owning Components' rules
-Reviewer and Skill Installer = do not change the active Workflow position
+Reviewer, Launch, Implement, and Skill Installer = do not directly change the active Workflow position
 Every Skill = may record its own Blockers and Open Questions under State's rules when applicable
 ```
 
@@ -815,4 +854,34 @@ order = 4
 name = Develop the Tasks
 skill = /my-interface-developer <phase-number>
 action = Implement and verify eligible Tasks for the requested phase
+```
+
+<!-------------------------- Review the Result -->
+### Review the Result
+
+```text
+order = 5
+name = Review the Result
+skill = /my-interface-reviewer <phase-number>
+action = Evaluate the implemented result for each enabled phase and record evidence-based Findings
+```
+
+<!-------------------------- Launch the Target -->
+### Launch the Target
+
+```text
+order = 6
+name = Launch the Target
+skill = /my-interface-launch
+action = Prepare the selected Environment, start the completed parts through the selected Launch, and verify readiness
+```
+
+<!-------------------------- Implement the Workflow -->
+### Implement the Workflow
+
+```text
+order = supporting
+name = Implement the Workflow
+skill = /my-interface-implement
+action = Coordinate Configure, Planning, Developing, Reviewing, and Launch in their current declared order
 ```

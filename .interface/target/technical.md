@@ -148,7 +148,7 @@ Models
 
 ### Broker
 
-**Purpose:** Defines a broker that the system can work with through its selected trading platform. Multiple brokers can be added so the system is not limited to a specific broker and can operate with any configured broker.
+**Purpose:** Defines a broker supported by the system. A Broker connects to one or more Trading Platforms through its own Instances, allowing the system to support multiple brokers without coupling the Broker definition to one selected platform.
 
 **Fields:**
 
@@ -178,8 +178,8 @@ Models
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker that provides this asset.
-- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The asset's display name.
-- `symbol` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: Identifies the tradable asset, such as `EUR/USD`, `XAU/USD`, or `USOil`.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The asset's display name.
+- `symbol` — Type: `string`; Nullable: `false`; Purpose: Identifies the tradable asset, such as `EUR/USD`, `XAU/USD`, or `USOil`.
 - `category` — Type: `string`; Nullable: `false`; Purpose: Identifies the asset category, such as `Currency`, `Commodity`, or `Cryptocurrency`.
 - `point_size` — Type: `float`; Nullable: `false`; Default: `0.0`; Purpose: Stores the size of one point for the asset.
 - `digits` — Type: `integer`; Nullable: `false`; Default: `0`; Purpose: Stores the number of decimal digits used for the asset's price.
@@ -189,6 +189,11 @@ Models
 **Relationships:**
 
 - Belongs to one Broker through `broker_id`.
+
+**Rules:**
+
+- The combination of `broker_id` and `name` must be unique.
+- The combination of `broker_id` and `symbol` must be unique.
 
 **Initial Data:**
 
@@ -207,10 +212,10 @@ Models
 - `name` — Type: `string`; Nullable: `false`; Purpose: The instance's display name.
 - `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker connected through this instance.
 - `trading_platform_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the trading platform used by this instance.
-- `ip` — Type: `string`; Nullable: `false`; Purpose: Identifies the instance network address.
-- `username` — Type: `string`; Nullable: `false`; Purpose: Defines the username used to connect through the instance.
-- `password` — Type: `string`; Nullable: `false`; Purpose: Defines the password used to connect through the instance.
-- `api_key` — Type: `string`; Nullable: `false`; Purpose: Defines the API key used to connect through the instance.
+- `ip` — Type: `string`; Nullable: `true`; Purpose: Identifies the technical network address used to reach the Platform or Broker when required.
+- `username` — Type: `string`; Nullable: `true`; Purpose: Defines the technical username used to establish the Instance connection when required.
+- `password` — Type: `string`; Nullable: `true`; Purpose: Defines the technical password used to establish the Instance connection when required.
+- `api_key` — Type: `string`; Nullable: `true`; Purpose: Defines the technical API credential used to establish the Instance connection when required.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the instance is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the instance.
 
@@ -222,6 +227,7 @@ Models
 **Rules:**
 
 - `password` and `api_key` are credentials and must use `encrypted` storage at rest.
+- The Trading Platform selected through `trading_platform_id` defines which connection fields are required; every field it requires must be present before the Instance can be used.
 - The combination of `broker_id` and `name` must be unique.
 
 **Initial Data:**
@@ -254,7 +260,7 @@ Models
 
 ### Account
 
-**Purpose:** Defines a funded trading account through which the system executes trades and launches positions. Each account identifies its broker, account model, and login credentials so the system knows where the trade must be sent, how it must connect, and which account must be used for the operation.
+**Purpose:** Defines a funded trading account through which the system executes trades and launches positions. Each Account identifies the trading account and its account-level login credentials, while its selected Instance owns the separate technical connection to the Broker and Trading Platform.
 
 **Fields:**
 
@@ -282,6 +288,7 @@ Models
 **Rules:**
 
 - `password` is a credential and must use `encrypted` storage at rest.
+- Instance credentials authenticate the technical Platform or Broker connection; Account credentials authenticate this specific trading account. The same credential must not be duplicated across both Models unless the selected Trading Platform explicitly requires it in both roles.
 - The Instance selected through `instance_id` must belong to the Account's Broker.
 
 **Initial Data:**
@@ -296,13 +303,17 @@ Models
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the trailing group.
-- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The trailing group's display name.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The trailing group's display name.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the trailing group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the trailing group.
 
 **Relationships:**
 
 - Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `name` must be unique.
 
 **Initial Data:**
 
@@ -335,13 +346,17 @@ Models
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the partial group.
-- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The partial group's display name.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The partial group's display name.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the partial group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the partial group.
 
 **Relationships:**
 
 - Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `name` must be unique.
 
 **Initial Data:**
 
@@ -373,13 +388,17 @@ Models
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the action group.
-- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The action group's display name.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The action group's display name.
 - `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the action group.
 
 **Relationships:**
 
 - Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `name` must be unique.
 
 **Initial Data:**
 

@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Platform Component — supported Environment and Launch choices and their defaults."
   purpose: "Technical choices for preparing a runtime Environment and bringing the completed Target online through a Launch."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "1.2"
   updated: "2026-09-09"
 
 
@@ -38,11 +38,12 @@ content_map:
 content:
   selected:
     environment: "linux"
-    launch: null
+    launch: "default"
 
   options:
     environments:
       linux:
+        version: "runtime-provided"
         type: "linux"
         system_packages:
           ensure_installed:
@@ -51,7 +52,24 @@ content:
           ensure_removed:
             - "ufw"
           install_additional_target_requirements: true
-    launches: {}
+    launches:
+      default:
+        version: "1.0"
+        stages:
+          preflight:
+            - "database"
+            - "backend"
+            - "frontend"
+          startup_order:
+            - "database"
+            - "backend"
+            - "frontend"
+          verification:
+            - "database"
+            - "backend"
+            - "frontend"
+        already_running: "verify_and_preserve"
+        failure: "stop_dependents_and_report"
 
   settings:
     environment:
