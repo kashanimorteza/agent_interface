@@ -508,7 +508,6 @@ Defines the project's implementation phases. Phases are executed step by step in
 title = Model
 target = Model
 status = Enabled
-state = In Design
 goal = Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
 ```
 
@@ -518,7 +517,6 @@ goal = Implement the independent Model layer and its reusable package from the d
 title = Database
 target = Database
 status = Enabled
-state = In Design
 goal = Implement the database using the shared Model package and insert the defined initial data.
 ```
 
@@ -528,7 +526,6 @@ goal = Implement the database using the shared Model package and insert the defi
 title = Backend
 target = Backend
 status = Enabled
-state = In Design
 goal = Implement the backend layer, including its application logic and API for operating on the defined models.
 ```
 
@@ -538,7 +535,6 @@ goal = Implement the backend layer, including its application logic and API for 
 title = Frontend
 target = Frontend
 status = Enabled
-state = In Design
 goal = Implement the frontend based on the backend API.
 ```
 
@@ -548,7 +544,6 @@ goal = Implement the frontend based on the backend API.
 title = MetaTrader 5 Platform Module
 target = Backend
 status = Disabled
-state = Not Started
 goal = Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
 ```
 
@@ -558,6 +553,5 @@ goal = Implement the MetaTrader 5 platform module through the common Trading Pla
 title = Trading Operations
 target = Backend
 status = Disabled
-state = Not Started
 goal = Implement the execution of the defined trading operations through the selected Trading Platform and Instance.
 ```

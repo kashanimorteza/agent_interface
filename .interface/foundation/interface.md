@@ -214,6 +214,18 @@ Target
 └── technical.md
 ```
 
+#### Phase Status
+
+The Technical Definition divides the Target into ordered phases, and each phase declares a `status`:
+
+```text
+Enabled  = the phase is in scope; it is planned, developed, and reviewed in its defined order
+Disabled = the phase is out of scope; no Plan, Task, Finding, or other operational record is
+           created for it, and an existing record is preserved rather than removed
+```
+
+`status` states scope, never progress. Where a phase stands is held in the operational Config that owns it, and is never recorded in the Target.
+
 <!-------------------------- Developer -->
 ### Developer
 
@@ -288,6 +300,23 @@ Developer
     ├── principles.md
     └── preferences.yaml
 ```
+
+<!-------------------------- Developer Components -->
+#### Components
+
+```text
+Development = Defines the layered architecture and how independent layers are composed into one system
+Model       = Describes the domain entities and provides one shared logical meaning for domain data
+Database    = Owns the persistence layer and publishes one generic interface for reading and writing
+Backend     = Executes application Behaviour and publishes the application's API
+Frontend    = Presents the application to users and consumes the capabilities Backend publishes
+Platform    = Prepares a completed Target for operation and brings it online
+Plan        = Turns phases into bounded, verifiable activities organized as Plans, Groups, and Tasks
+Review      = Establishes whether implemented work satisfies what was asked, and records what it found
+State       = Records where the Workflow stands, together with Blockers and Open Questions
+```
+
+Each line names a Component so that a phase target can be resolved to its owner. The Component's own Principles remain the authority: when this summary and a Component's Principles disagree, the Principles are correct.
 
 
 <!-------------------------- Agent -->

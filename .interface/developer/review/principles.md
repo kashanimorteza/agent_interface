@@ -15,8 +15,8 @@ Review owns its findings and the record of what was reviewed. It does not own th
 
 ## Relationships
 
-- **Consumes Task** — the Plans, acceptance criteria, verification conditions, and recorded execution evidence a result is judged against.
-- **Consumed by Task** — a Finding recorded as a gap names required work that no planned activity covers, and Planning is where that work is decided.
+- **Consumes Plan** — the Plans, acceptance criteria, verification conditions, and recorded execution evidence a result is judged against.
+- **Consumed by Plan** — a Finding recorded as a gap names required work that no planned activity covers, and Planning is where that work is decided.
 
 Technical choices and defaults belong to Review Preferences, which currently define none. The exact shape of the generated Review configuration belongs to the Review Schema.
 

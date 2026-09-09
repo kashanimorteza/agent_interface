@@ -17,7 +17,8 @@ Database is the Component that owns the project's complete persistence layer. It
 ## Relationships
 
 - **Consumes Model** — the logical Models, fields, relationships, rules, and initial data that Database maps and enforces.
-- **Consumes Development** — the common package standard and runtime configuration delivery through which Platform supplies Database-owned settings and declared bindings without taking ownership of them.
+- **Consumes Development** — the common package standard and the ownership rules under which Database keeps its own settings and secrets.
+- **Consumes Platform** — the Bindings the selected Launch delivers to Database's boundary, without Platform taking ownership of them.
 - **Consumed by Backend** — the generic data-access interface and Instance Registry, reached only through Backend's Data Access layer.
 
 Technical choices and defaults belong to Database Preferences. Database implementation applies those choices to the current project definition.
@@ -78,7 +79,7 @@ The dependency direction is Database Interface → Data Logic and Mapping → St
 
 **Why:** Persistence decisions interact with each other, so splitting them across Components produces storage that no single Component can reason about.
 
-**Boundary:** Logical Models, fields, relationships, and domain rules remain owned by Model; Database owns only their persistence mapping and enforcement. No other Component makes or changes Database-owned decisions. Database does not own application behaviour, the HTTP API, Frontend, or secrets belonging to other layers. Database owns its private runtime settings and secrets under Development's rules; Platform coordinates their provisioning and delivery. Its boundaries remain explicit in the implementation and its public documentation.
+**Boundary:** Logical Models, fields, relationships, and domain rules remain owned by Model; Database owns only their persistence mapping and enforcement. No other Component makes or changes Database-owned decisions. Database does not own application behaviour, the HTTP API, Frontend, or secrets belonging to other layers. Database owns its private runtime settings and secrets under Development's rules; Platform delivers the Bindings it needs through the selected Launch. Its boundaries remain explicit in the implementation and its public documentation.
 
 <br>
 
@@ -106,7 +107,7 @@ Database-owned runtime configuration declares the supported Engine catalogue, th
 
 **Why:** A project outgrows one database, and naming each Instance by purpose lets a consumer choose the right one without learning how any of them connect.
 
-**Boundary:** The registry exposes no raw connection objects and no secret values. Database owns Instance definitions and connection handling; Platform may select or bind an Instance for another layer without taking ownership of it.
+**Boundary:** The registry exposes no raw connection objects and no secret values. Database owns Instance definitions and connection handling; Platform may deliver the Binding that selects an Instance for another layer without taking ownership of it.
 
 <br>
 
@@ -138,7 +139,7 @@ An explicit relationship field or reference always takes precedence over a defau
 
 **Why:** A secret in a committed file is public, and a credential whose at-rest treatment is decided per caller is treated inconsistently.
 
-**Boundary:** Runtime connection settings are internal to Database; neither their shape nor secret values are published through the data-access interface. The storage representation of a credential is never exposed to consumers. Encryption keys and connection secrets belong in Database's private runtime area under Development's rules; they never appear in Interface records, general Database configuration, source-controlled implementation, or distributed artifacts. Platform coordinates secret provisioning and delivery without publishing these values to other layers.
+**Boundary:** Runtime connection settings are internal to Database; neither their shape nor secret values are published through the data-access interface. The storage representation of a credential is never exposed to consumers. Encryption keys and connection secrets belong in Database's private runtime area under Development's rules; they never appear in Interface records, general Database configuration, source-controlled implementation, or distributed artifacts. Platform delivers them as Bindings through the selected Launch, without publishing these values to other layers.
 
 <br>
 
@@ -173,7 +174,7 @@ An explicit relationship field or reference always takes precedence over a defau
 - **Must** — every storage-schema change is a recorded, ordered, reversible migration *(4)*
 - **Never** — application code creates, alters, or drops database objects directly *(4)*
 - **Must** — Database alone owns engines, Instances, storage, connections, ORM, mappings, schema, constraints, indexes, migrations, and the published interface *(5)*
-- **Must** — Database owns its private runtime settings and secrets under Development, while Platform coordinates provisioning and delivery *(5)*
+- **Must** — Database owns its private runtime settings and secrets under Development, while Platform delivers the Bindings it needs *(5)*
 - **Never** — Database owns application behaviour, the HTTP API, Frontend, or another layer's secrets *(5)*
 - **Must** — every consumer reaches data through one generic Model-driven interface covering create, read, list, update, delete, and status *(6)*
 - **Must** — the status operation accepts only `enable` or `disable`, and only for a Model declaring a `status` field *(6)*

@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/developer/platform/preferences.yaml"
-  path_note: "The Preferences layer of the Platform Component — supported Instance and Launch choices and their defaults."
-  purpose: "Technical choices for preparing a runtime Instance and bringing the completed Target online through a Launch."
+  path_note: "The Preferences layer of the Platform Component — supported Environment and Launch choices and their defaults."
+  purpose: "Technical choices for preparing a runtime Environment and bringing the completed Target online through a Launch."
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-09"
 
 
@@ -17,7 +17,7 @@ policy:
   consumption: "Operations use these Preferences only when the Target leaves a Platform choice unstated."
   selection: "Use the selected default definition unless the Target explicitly selects another compatible option."
   version_resolution: "Resolve an unpinned version to a concrete compatible stable version and preserve an explicit concrete version."
-  matching: "Match Instance and Launch choices to their applicable named definitions."
+  matching: "Match Environment and Launch choices to their applicable named definitions."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -29,21 +29,21 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The default Instance and Launch definitions."
-  options: "The supported named Instance and Launch definitions."
+  selected: "The default Environment and Launch definitions."
+  options: "The supported named Environment and Launch definitions."
   settings: "Shared rules for applying Platform definitions."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    instance: "linux"
+    environment: "linux"
     launch: null
 
   options:
-    instances:
+    environments:
       linux:
-        environment: "linux"
+        type: "linux"
         system_packages:
           ensure_installed:
             - "net-tools"
@@ -54,7 +54,7 @@ content:
     launches: {}
 
   settings:
-    instance:
+    environment:
       inspect_before_preparation: true
       preserve_satisfied_requirements: true
       install_only_missing_requirements: true

@@ -1,8 +1,8 @@
 # Development Principles
 
-Development is the Component that defines the project's layered software architecture and the way its independent application layers are composed into one runnable system. It is what makes a set of separate layers into a project: it fixes how boundaries are drawn, how they may talk to each other, how shared capabilities are agreed on, and how the whole thing is configured and brought online. It is an implementation-independent standard and contains no project-specific technology, provider, topology, or execution capability.
+Development is the Component that defines the project's layered software architecture and the way its independent application layers are composed into one system. It is what makes a set of separate layers into a project: it fixes how boundaries are drawn, how they may talk to each other, and how shared capabilities are agreed on. It is an implementation-independent standard and contains no project-specific technology, provider, topology, or execution capability.
 
-The application architecture separates Model, Database, Backend, Frontend, and Platform responsibilities: Model supplies the shared domain representation as an independent package, and Platform is the composition layer that connects the application layers, supplies their operating environment, brings the complete system online, and delivers it to its destination.
+The application architecture separates Model, Database, Backend, and Frontend responsibilities: Model supplies the shared domain representation as an independent package, and the remaining layers own persistence, application behaviour, and presentation behind their declared interfaces.
 
 ## Terms
 
@@ -11,15 +11,13 @@ The application architecture separates Model, Database, Backend, Frontend, and P
 - **Nested Package** — a package inside another package's boundary, with its own responsibility and interface but sharing its parent's installation and runtime where applicable.
 - **Declared Interface** — the surface a provider publishes for consumers, whether an import surface, network API, command, or user interface.
 - **Connection** — a directed dependency from a consumer to a provider through exactly one declared interface.
-- **Platform** — the composition layer owning the operating environment, coordination, startup, networking, runtime configuration delivery, and deployment; also the resolved place the target project runs, such as a host, a container, or a cloud.
-- **Runtime Configuration** — the settings and secrets each layer owns, together with cross-layer bindings owned by Platform; Platform coordinates their delivery to the appropriate boundary.
+- **Runtime Configuration** — the settings and secrets each layer owns within its own boundary.
 - **Cross-cutting Capability** — a capability that may affect more than one layer, such as testing, logging, error handling, or authentication.
 
 ## Relationships
 
 - **Consumes Model, Database, Backend, and Frontend** — their declared responsibilities and public interfaces, referenced when recording composition rather than redefined.
 - **Consumed by Model, Database, Backend, and Frontend** — the common package standard and the cross-cutting capability decisions.
-- **Consumed by Platform** — the layered architecture, the declared interfaces, and the connections Platform composes.
 
 Technical choices and defaults belong to Development Preferences. Development implementation applies those choices to the current project definition.
 
@@ -59,7 +57,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 6. Development records composition, not internal implementation
 
-**Rule:** Development identifies the participating application layers, their public responsibilities and interfaces, the connections between them, and the Platform configuration that makes the complete project runnable. It also defines the common package standard and records package identities, parent relationships, ownership, and integration boundaries.
+**Rule:** Development identifies the participating application layers, their public responsibilities and interfaces, and the connections between them. It also defines the common package standard and records package identities, parent relationships, ownership, and integration boundaries.
 
 **Why:** Composition is the one view no single layer can hold, and it is the only thing Development needs to own in order to make the layers work as one system.
 
@@ -73,7 +71,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 **Why:** A standard that survives its first project is what makes the same architecture usable for the next one.
 
-**Boundary:** Project-specific choices populate that standard but never change its separation of ownership, interface-only communication, explicit connections, or Platform responsibility.
+**Boundary:** Project-specific choices populate that standard but never change its separation of ownership, interface-only communication, or explicit connections.
 
 <br>
 
@@ -126,10 +124,10 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Never** — a consumer reads or modifies another layer's internal storage, implementation, configuration, or private resources *(2)*
 - **Must** — every dependency between layers is an explicit directed connection through one declared interface *(3)*
 - **Never** — hidden coupling, undeclared communication, or duplicated ownership exists in the architecture *(3)*
-- **Must** — Development records the layers, their responsibilities and interfaces, their connections, and the Platform configuration *(6)*
+- **Must** — Development records the layers, their responsibilities and interfaces, and their connections *(6)*
 - **Never** — Development redefines the internal technologies, source layout, or domain meaning owned by a layer *(6)*
 - **Must** — the layered standard stays reusable across projects *(7)*
-- **Never** — project-specific choices change ownership separation, interface-only communication, explicit connections, or Platform responsibility *(7)*
+- **Never** — project-specific choices change ownership separation, interface-only communication, or explicit connections *(7)*
 - **Must** — Development records each cross-cutting capability's enabled state, applicable layers, and shared integration expectations *(8)*
 - **Never** — a layer decides a cross-cutting capability alone *(8)*
 - **Must** — every package has a cohesive responsibility, explicit dependencies, owned configuration, and a documented public interface *(9)*

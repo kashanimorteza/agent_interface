@@ -16,7 +16,7 @@ State does not contain the project definition, implementation plan, application 
 
 ## Relationships
 
-- **Consumed by Task** — a Task references the Blocker records that State owns when it cannot proceed.
+- **Consumed by Plan** — a Task references the Blocker records that State owns when it cannot proceed.
 - **Consumes no other Component** — State records only its own position, Blockers, and Open Questions.
 
 Technical choices and defaults belong to State Preferences, which currently define none. The exact shape of the generated State configuration belongs to the State Schema.
