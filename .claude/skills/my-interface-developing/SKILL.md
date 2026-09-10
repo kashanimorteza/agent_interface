@@ -1,7 +1,7 @@
 ---
-name: my-interface-developer
+name: my-interface-developing
 description: Execute and verify eligible planned work for one requested project phase, using the current project definition, the applicable Component authorities, and the phase's Task Plan. Never plans or reviews.
-argument-hint: "[phase-number]"
+argument-hint: "[phase-id]"
 disable-model-invocation: true
 ---
 
@@ -11,21 +11,21 @@ disable-model-invocation: true
 
 Implement and verify eligible planned work for one requested project phase, using current Target Understanding and the Task Plan as the specification.
 
-Developer owns the implementation method and the arrangement of the source. The Plan says what must be achieved and what proves it; deciding how is this operation's work, and a Plan that already decided it would be describing code that does not exist yet.
+Developing owns the implementation method and the arrangement of the source. The Plan says what must be achieved and what proves it; deciding how is this operation's work, and a Plan that already decided it would be describing code that does not exist yet.
 
-Developer also builds the check that proves each result, because only the operation that made the result knows how to observe it. Build that check from the verification condition the Task states, not from the implementation just written: a check shaped around the code will pass whatever the code happens to do, and prove nothing about what was asked for.
+Developing also builds the check that proves each result, because only the operation that made the result knows how to observe it. Build that check from the verification condition the Task states, not from the implementation just written: a check shaped around the code will pass whatever the code happens to do, and prove nothing about what was asked for.
 
-Developer may write implementation and install and configure the prerequisites required by the authorized work, within the scope and write boundaries established by the Plan and the current Component authorities.
+Developing may write implementation and install and configure the prerequisites required by the authorized work, within the scope and write boundaries established by the Plan and the current Component authorities.
 
 ## Input
 
-Accept one positive integer from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve the number against the phase order in Target Understanding and use that phase's existing identifier to locate its current planning output and throughout development.
+Accept one phase identifier from `$ARGUMENTS`, such as `P1`. Resolve it directly against the stable phase identifiers in Target Understanding and use that identifier to locate its current planning output and throughout development.
 
-The number is an input convenience; it never renames a phase or changes stored identifiers or references. If the number is missing, invalid, or does not uniquely select an existing phase, request a valid phase number before changing any files.
+The identifier is matched exactly and never interpreted as an ordinal position. If it is missing, invalid, or does not uniquely select an existing phase, request a valid phase identifier before changing any files.
 
 ## Workflow
 
-First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Developer's place in the Workflow, and the current locations of the resources Development needs.
+First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Developing's place in the Workflow, and the current locations of the resources Development needs.
 
 Then establish Target Understanding by reading the human project definition, the Principles and Preferences applicable to the requested phase and its target Component, and the existing implementation and public interfaces. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and the technical context it needs is resolved from the Preferences at this moment rather than read back from the record.
 

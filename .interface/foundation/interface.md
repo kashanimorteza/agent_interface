@@ -403,22 +403,22 @@ responsibility = Reconcile operational Config, synchronize phase State, and prep
 mode = configuring
 ```
 
-Tasker
+Planning
 
 ```text
-name = my-interface-tasker
-path = .claude/skills/my-interface-tasker/SKILL.md
-invocation = /my-interface-tasker <phase-number>
+name = my-interface-planning
+path = .claude/skills/my-interface-planning/SKILL.md
+invocation = /my-interface-planning <phase-id>
 responsibility = Create or reconcile a Task Plan without prescribing implementation
 mode = planning
 ```
 
-Developer
+Developing
 
 ```text
-name = my-interface-developer
-path = .claude/skills/my-interface-developer/SKILL.md
-invocation = /my-interface-developer <phase-number>
+name = my-interface-developing
+path = .claude/skills/my-interface-developing/SKILL.md
+invocation = /my-interface-developing <phase-id>
 responsibility = Implement and verify eligible planned Tasks
 mode = development
 ```
@@ -542,14 +542,14 @@ Initializes and reconciles operational Config, synchronizes phase State, and pre
 <!-------------------------- Planning Operation -->
 ### Planning
 
-**Agent Skill:** `my-interface-tasker`
+**Agent Skill:** `my-interface-planning`
 
 Converts the current Target and applicable Developer guidance into bounded, understandable, and verifiable Tasks.
 
 <!-------------------------- Developing Operation -->
 ### Developing
 
-**Agent Skill:** `my-interface-developer`
+**Agent Skill:** `my-interface-developing`
 
 Implements and verifies eligible planned Tasks through the applicable Target and Developer context.
 
@@ -657,10 +657,10 @@ Write authority answers which Skill may change a record, and every write happens
 
 ```text
 Configure = writes every operational Config, synchronizes phase records, records its State outcome, and prepares the selected Environment
-Tasker = writes Plans, Groups, and Tasks under Plan, and Planning progress and History under State
-Developer = writes implementation and Task status and history under Plan, and Development progress and History under State
+Planning = writes Plans, Groups, and Tasks under Plan, and Planning progress and History under State
+Developing = writes implementation and Task status and history under Plan, and Development progress and History under State
 Reviewer = writes Findings under Review, and Review progress and History under State
-Configure, Tasker, and Developer = write the active Workflow position under State
+Configure, Planning, and Developing = write the active Workflow position under State
 Launch = changes runtime state through Platform and writes Launch State, access points, and History under State
 Implement = coordinates operation Skills and writes only Implementation State and its History under State
 Reset = after human confirmation of the preview, removes or resets the outputs and operational records covered by the selected reset stage, including the Workflow position, under the owning Components' rules
@@ -851,7 +851,7 @@ action = Reconcile operational Config, synchronize Target phase identities in St
 ```text
 order = 3
 name = Generate Tasks
-skill = /my-interface-tasker <phase-number>
+skill = /my-interface-planning <phase-id>
 action = Create or reconcile the Plan for the requested phase
 ```
 
@@ -861,7 +861,7 @@ action = Create or reconcile the Plan for the requested phase
 ```text
 order = 4
 name = Develop the Tasks
-skill = /my-interface-developer <phase-number>
+skill = /my-interface-developing <phase-id>
 action = Implement and verify eligible Tasks for the requested phase
 ```
 
