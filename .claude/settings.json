@@ -32,7 +32,10 @@
     "plugin-dev@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "example-skills@anthropic-agent-skills": true,
-    "pydantic-ai@claude-plugins-official": true
+    "pydantic-ai@claude-plugins-official": true,
+    "document-skills@anthropic-agent-skills": true,
+    "adhd-output-style@claude-settings": true,
+    "claude-md-management@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -45,6 +48,12 @@
       "source": {
         "source": "github",
         "repo": "anthropics/skills"
+      }
+    },
+    "claude-settings": {
+      "source": {
+        "source": "github",
+        "repo": "fcakyon/claude-codex-settings"
       }
     }
   }
