@@ -1,7 +1,7 @@
 ---
 name: my-interface-developing
 description: Execute and verify eligible planned work for one requested project phase, using the current project definition, the applicable Component authorities, and the phase's Task Plan. Never plans or reviews.
-argument-hint: "[phase-id]"
+argument-hint: "[phase-number]"
 disable-model-invocation: true
 ---
 
@@ -19,9 +19,11 @@ Developing may write implementation and install and configure the prerequisites 
 
 ## Input
 
-Accept one phase identifier from `$ARGUMENTS`, such as `P1`. Resolve it directly against the stable phase identifiers in Target Understanding and use that identifier to locate its current planning output and throughout development.
+Accept one positive integer from `$ARGUMENTS`: `1` selects the first phase, `2` selects the second phase, and so on. Resolve the number against the current phase order in Target Understanding and use that phase's stable identifier to locate its current planning output and throughout development.
 
-The identifier is matched exactly and never interpreted as an ordinal position. If it is missing, invalid, or does not uniquely select an existing phase, request a valid phase identifier before changing any files.
+The number is an input convenience; the Human does not need to type the phase identifier's `P` prefix, and the number never renames a phase or changes stored identifiers or references.
+
+If the number is missing or invalid, read enough of the current Interface and Target sources to enumerate the available phases without changing any files. Present one choice for every phase in Target order, labeled with its input number, stable identifier, title, status, and readiness, then ask the Human to select the number. Continue only after the reply uniquely selects a phase.
 
 ## Workflow
 

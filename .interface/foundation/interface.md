@@ -408,7 +408,7 @@ Planning
 ```text
 name = my-interface-planning
 path = .claude/skills/my-interface-planning/SKILL.md
-invocation = /my-interface-planning <phase-id>
+invocation = /my-interface-planning <phase-number>
 responsibility = Create or reconcile a Task Plan without prescribing implementation
 mode = planning
 ```
@@ -418,7 +418,7 @@ Developing
 ```text
 name = my-interface-developing
 path = .claude/skills/my-interface-developing/SKILL.md
-invocation = /my-interface-developing <phase-id>
+invocation = /my-interface-developing <phase-number>
 responsibility = Implement and verify eligible planned Tasks
 mode = development
 ```
@@ -851,7 +851,7 @@ action = Reconcile operational Config, synchronize Target phase identities in St
 ```text
 order = 3
 name = Generate Tasks
-skill = /my-interface-planning <phase-id>
+skill = /my-interface-planning <phase-number>
 action = Create or reconcile the Plan for the requested phase
 ```
 
@@ -861,7 +861,7 @@ action = Create or reconcile the Plan for the requested phase
 ```text
 order = 4
 name = Develop the Tasks
-skill = /my-interface-developing <phase-id>
+skill = /my-interface-developing <phase-number>
 action = Implement and verify eligible Tasks for the requested phase
 ```
 
