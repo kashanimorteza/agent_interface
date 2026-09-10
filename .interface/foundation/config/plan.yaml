@@ -26,7 +26,907 @@ content_map:
 content:
 
   # <!-------------------------------------------- task_count -->
-  task_count: 0
+  task_count: 35
 
   # <!-------------------------------------------- plans -->
-  plans: {}
+  plans:
+
+    # <!-------------------------- P1 -->
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      target: "Model"
+      does: "Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data."
+      constraints: []
+      task_count: 35
+      groups:
+
+        # <!-------------- P1-G1 -->
+        P1-G1:
+          id: "P1-G1"
+          title: "Package Boundary and Publication"
+          description: "Establishes the independent package every Model is implemented in, then completes and describes the public import interface through which other layers consume the resolved Model set. The Tasks are related because together they turn the Model definitions into a package another layer can install and use."
+          area: "Package identity, installation, public import interface, and public description of the Model layer"
+          does: "The Model layer is an independently installable package whose public import interface exposes the complete resolved Model set and its declared initial records, and whose public description lets a consumer use it without inspecting its implementation."
+          constraints: []
+          task_count: 3
+          tasks:
+
+            P1-G1-T1:
+              id: "P1-G1-T1"
+              title: "Establish the Model package boundary"
+              description: "Create the Model layer as its own package with its resolved identity, its own isolated environment and declared dependencies, and a public import interface that later Tasks fill with the Models."
+              reason: "Every Model in this phase is implemented inside this boundary, and later layers consume the Model set only by installing and importing this package."
+              kind: "configuration"
+              inputs: ["Resolved Model package identity and naming", "Resolved Model implementation technology and environment"]
+              expected_result: "An installable Model package with its own environment and a public import interface that a separate consumer can install as a local dependency and import."
+              depends_on: []
+              constraints: []
+              acceptance: "The package installs into an environment other than its own, and its public import interface imports without error and without the consumer reaching any internal part of the package."
+              verify: "From a separate, clean consumer environment, installing the package as a local dependency and importing its public interface succeeds, and the package's own environment resolves its declared dependencies without manual steps."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; no dependencies."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g1_t1.sh (session scratchpad): in model/, removed .venv, ran 'uv sync --locked' and imported my_model and pydantic in the package's own environment; then created a fresh consumer project with 'uv init --bare --no-workspace --python 3.14', ran 'uv add --no-editable /root/agent_interface/model', and imported my_model, asserting it loaded from the consumer's site-packages rather than the source tree and that it declares __all__."
+                  outcome: "Passed. Own environment resolved from uv.lock without manual steps (pydantic 2.13.5, pydantic-core 2.46.5, Python 3.14.4); consumer installed my-model 0.1.0 as a non-editable path dependency and imported its public interface from its own site-packages. Package: distribution my-model, import name my_model, source under model/src/my_model, build backend uv_build."
+
+            P1-G1-T2:
+              id: "P1-G1-T2"
+              title: "Complete the public import interface"
+              description: "Expose the complete resolved Model set and every declared initial record through the package's public import interface, so that a consumer needs nothing beyond that interface to use any Model or its initial records."
+              reason: "Database, Backend, and Frontend consume Models only through this interface; a Model or initial record that is defined but not published cannot be consumed without reaching into the package's internals."
+              kind: "code"
+              inputs: ["Every defined Model", "Every declared initial record"]
+              expected_result: "A public import interface through which every Model in the project definition and its declared initial records are reachable."
+              depends_on: ["P1-G1-T1", "P1-G3-T1", "P1-G3-T2", "P1-G3-T3", "P1-G3-T4", "P1-G3-T5", "P1-G3-T6", "P1-G3-T7", "P1-G3-T8", "P1-G3-T9", "P1-G3-T10", "P1-G3-T11", "P1-G3-T12", "P1-G3-T13", "P1-G3-T14", "P1-G3-T15", "P1-G4-T1", "P1-G4-T2", "P1-G4-T3", "P1-G4-T4", "P1-G4-T5", "P1-G4-T6", "P1-G4-T7", "P1-G4-T8", "P1-G4-T9", "P1-G4-T10", "P1-G4-T11", "P1-G4-T12"]
+              constraints: []
+              acceptance: "Every Model in the project definition is reachable from the public import interface exactly once under a name that preserves its logical identity, each Model's declared initial records are reachable from the same interface, and no consumer-facing capability requires importing an internal part of the package."
+              verify: "From a separate consumer environment with the package installed, enumerating the public import interface yields each Model of the project definition once and no duplicate, and each Model's declared initial records and declarations can be read through that interface alone."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g1_t2.sh with checks/g1_t2_consumer.py (session scratchpad): created a fresh consumer project with 'uv init --bare --no-workspace --python 3.14', ran 'uv add --no-editable /root/agent_interface/model', then with 'uv run --with pyyaml' imported my_model from the consumer's site-packages and, using only its public names: asserted __all__ has no private or duplicate names; the exported DomainModel subclasses are exactly the 15 Models of technical.md, each once, under a class name equal to its logical name without spaces; MODELS lists them in definition order; every relationship target is an exported Model; initial_records() for each Model matches the Initial Data of technical.md (checks/initial_spec.py); returned records are independent copies; a non-Model is refused. Also re-ran all 32 previously passing P1 checks."
+                  outcome: "Passed. 15 Models exported once each; initial records readable through the interface: User 1, Trading Platform 2, Currency 8, Broker 1, Asset 4, Instance 1, Account Group 1, Account 1, Trailing Group 1, Partial Group 1, Action Group 1, Action 1, none for Trailing Rule, Partial Rule, and Position. Regression 32 of 32 passed. Interface in model/src/my_model/__init__.py backed by model/src/my_model/_catalog.py."
+
+            P1-G1-T3:
+              id: "P1-G1-T3"
+              title: "Write the Model package's public description"
+              description: "Write the package's public description so that a consumer can install the Model package and use its Models, declarations, and initial records without inspecting its implementation."
+              reason: "The description is what lets the Database, Backend, and Frontend phases consume the package through its interface rather than its internals."
+              kind: "documentation"
+              inputs: ["The completed public import interface"]
+              expected_result: "A public description of the Model package that is consistent with its implemented interface."
+              depends_on: ["P1-G1-T2"]
+              constraints: []
+              acceptance: "The description covers every aspect the Development authorities require of a package description, matches the implemented public interface, and contains no secret value."
+              verify: "Following only the public description, a reader can install the package in a separate environment and run each of its usage examples against the public interface, and every example behaves as described."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; dependency P1-G1-T2 is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g1_t3.sh (session scratchpad): created a fresh consumer project, installed the package with 'uv add --no-editable /root/agent_interface/model' as the README's installation section instructs, then in that environment asserted the README has purpose, boundaries, public interface, dependencies, configuration, installation, and usage example sections; that every name in my_model.__all__ appears in it; that every member it names with call parentheses exists on the public interface; and that it contains no literal credential value. It then extracted each python example block and ran it with 'uv run python' in the consumer environment; every example asserts the behaviour it describes. Also re-ran the P1-G1-T1 and P1-G1-T2 consumer checks after adding the readme to pyproject.toml, and confirmed 'uv lock --check'."
+                  outcome: "Passed on the second run. The first run found initial_records named only with call parentheses; the README was reworded to name it directly. All 5 README examples ran and their assertions held; P1-G1-T1 and P1-G1-T2 checks passed again; lock current. Description in model/README.md, referenced as the distribution readme in model/pyproject.toml."
+
+        # <!-------------- P1-G2 -->
+        P1-G2:
+          id: "P1-G2"
+          title: "Declaration Semantics"
+          description: "The shared capabilities through which every Model declares its field properties, credential fields, values awaiting generation, relationships, and rules. The Tasks are related because consuming Components handle every Model through one generic path, which works only if every Model publishes these declarations in the same discoverable form."
+          area: "Shared declaration capabilities of the Model layer"
+          does: "Any Model defined in the package can state its field properties, credentials, values awaiting generation, relationships, and rules in one consistent form that a consumer can read back from the published Model."
+          constraints: []
+          task_count: 5
+          tasks:
+
+            P1-G2-T1:
+              id: "P1-G2-T1"
+              title: "Make field properties discoverable"
+              description: "Provide the means for a Model to declare, for each field, its logical type, identity, uniqueness, optionality, default, and meaning, and for a consumer to read those resolved properties back from the published Model."
+              reason: "Database maps and Backend derives representations from these properties; without a discoverable declaration each would re-derive them and drift from the shared meaning."
+              kind: "code"
+              inputs: ["The established Model package"]
+              expected_result: "A field declared on any Model exposes its resolved logical type, identity, uniqueness, optionality, default, and meaning to a consumer of that Model."
+              depends_on: ["P1-G1-T1"]
+              constraints: []
+              acceptance: "For a field declared with each of these properties, a consumer reading the published Model obtains exactly the resolved values, and a property that is neither declared nor defaulted is reported as absent rather than invented."
+              verify: "Reading the field declarations of a Model through its published interface returns the resolved logical type, identity, uniqueness, optionality, default, and meaning of each field, and reports an unresolved property as absent."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; dependency P1-G1-T1 is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g2_t1.py (session scratchpad), run with 'uv run --locked python' in model/: declared a probe Model with the internal field helper covering every logical type, identity, unique true/false/unstated, nullable, declared and undeclared defaults, purpose, and size; read DomainModel.field_declarations() and asserted exact resolved values with unstated properties reported as NOT_DECLARED; asserted defaults and validation agree with the declarations (missing required, wrong type, oversize and null values rejected) and that a declaration contradicting its annotation is refused at class definition. Separately confirmed model_json_schema() publishes each declaration under x-declaration."
+                  outcome: "Passed. field_declarations() returned the resolved properties of all 8 probe fields; NOT_DECLARED distinguished absent from False and None; inconsistent declaration raised TypeError."
+
+            P1-G2-T2:
+              id: "P1-G2-T2"
+              title: "Make credential fields identifiable with their at-rest mode"
+              description: "Provide the means for a Model to mark a field as a credential together with the at-rest mode the project definition states for it, so that consumers identify credential fields and their required storage treatment from the Model itself."
+              reason: "Database applies the at-rest transformation and other layers keep credentials out of what they expose; both need to identify credential fields from the shared Model rather than guess them from field names."
+              kind: "code"
+              inputs: ["Field property declaration capability"]
+              expected_result: "A consumer can list a Model's credential fields and, for each, the declared at-rest mode or the fact that none is declared."
+              depends_on: ["P1-G2-T1"]
+              constraints: []
+              acceptance: "Every field declared as a credential is reported as one with its declared at-rest mode, no other field is reported as a credential, and a credential without a declared mode is reported without a mode rather than given one."
+              verify: "Querying a Model that has credential fields for its credentials returns exactly those fields with their declared at-rest modes, and querying a Model without credentials returns none."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; dependency P1-G2-T1 is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g2_t2.py (session scratchpad), run with 'uv run --locked python' in model/: declared probe Models with hash, encrypted, and mode-less credential fields plus non-credential fields; read DomainModel.credential_fields() and field_declarations(); asserted exactly the credential fields are returned with their modes, a mode-less credential reports NOT_DECLARED, a Model without credentials returns none, credential values are absent from repr, and an at-rest mode on a non-credential field is refused."
+                  outcome: "Passed. credential_fields() returned secret=hash, token=encrypted, key=NOT_DECLARED; empty mapping for the credential-free Model."
+
+            P1-G2-T3:
+              id: "P1-G2-T3"
+              title: "Distinguish values awaiting declared generation"
+              description: "Provide the means to represent a field value as awaiting declared generation, distinct from an absent value and from an explicit null, and to recognize data holding such a value as incomplete until the value is supplied."
+              reason: "Some declared initial records leave values to be generated by the Component that inserts them; representing those as absent, null, or placeholder values would lose that meaning or falsely satisfy a required field."
+              kind: "code"
+              inputs: ["Field property declaration capability"]
+              expected_result: "Model data can carry a value awaiting generation that consumers can recognize, and such a value never counts as satisfying a required field."
+              depends_on: ["P1-G2-T1"]
+              constraints: []
+              acceptance: "Absent, explicit null, and awaiting-generation values remain distinguishable for the same field; a required field holding an awaiting-generation value is recognized as pending rather than satisfied; no placeholder value is produced."
+              verify: "Validating the same Model data with a field absent, explicitly null, and awaiting generation yields three distinguishable outcomes, and a consumer can identify which fields of a record await generation."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; dependency P1-G2-T1 is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g2_t3.py (session scratchpad), run with 'uv run --locked python' in model/: validated one probe Model with a nullable generated field absent, explicitly null, and AwaitingGeneration; with a required generated field absent, null, and AwaitingGeneration; asserted pending_fields(), is_complete(), model_fields_set and value identity; asserted omitted auto-increment identity awaits generation; asserted misplaced or mismatched AwaitingGeneration values are rejected and JSON dumps keep the marker as {awaiting_generation: method}."
+                  outcome: "Passed. Nullable field yielded three distinct outcomes (absent, explicit null, pending); required field rejected absent and null and held AwaitingGeneration as pending with is_complete() False; supplying values completed the record."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  event: "Defect found by the P1-G4-T1 check and corrected: a Python-mode dump turned an AwaitingGeneration value into a plain mapping, so a pending record could not be validated back. AwaitingGeneration is now an immutable plain class (Pydantic converts a dataclass returned by a Python-mode serializer into a mapping); it dumps as itself in Python mode and as {awaiting_generation: method} in JSON, and that serialized form validates back into the value."
+                  check: "checks/g2_t3.py (session scratchpad) extended with Python-dump and JSON round-trip assertions on a pending record; re-run after the change together with every previously passing P1 check."
+                  outcome: "Passed; all 13 previously passing checks still pass."
+
+            P1-G2-T4:
+              id: "P1-G2-T4"
+              title: "Make relationship declarations discoverable"
+              description: "Provide the means for a Model to declare each of its relationships, with the related Model, the cardinality, optional participation, and role of each side, and the logical field that carries it, and for a consumer to read them back."
+              reason: "Database realizes relationships physically and Backend traverses them; both must read a connection's meaning from the Model rather than infer it from field names."
+              kind: "code"
+              inputs: ["Field property declaration capability"]
+              expected_result: "Each declared relationship on a Model is discoverable with its related Model, cardinality, participation, roles, and carrying field."
+              depends_on: ["P1-G2-T1"]
+              constraints: []
+              acceptance: "A consumer reading a Model's relationships obtains every declared relationship with its related Model, cardinality, optional participation, roles, and carrying field, and no field is reported as a relationship merely because of its name."
+              verify: "Reading the relationships of a Model that relates to another Model through a carrying field returns that relationship with its declared related Model, cardinality, participation, roles, and field, and a similarly named field without a declared relationship is not returned."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; dependency P1-G2-T1 is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g2_t4.py (session scratchpad), run with 'uv run --locked python' in model/: declared Parent and Child probe Models where Child has two declared relationships and one undeclared *_id field; read relationship_declarations() and relationship_for(); asserted target, role, kind, cardinality, both participations, and carrying field; asserted the undeclared *_id field is not reported; asserted relationships over missing fields or with participation contradicting nullability are refused."
+                  outcome: "Passed. Two declared relationships returned with their properties; other_id not reported; invalid declarations raised TypeError."
+
+            P1-G2-T5:
+              id: "P1-G2-T5"
+              title: "Declare rules enforced beyond the Model's own data"
+              description: "Provide the means for a Model to declare rules whose evaluation needs stored state or application context, such as uniqueness across a combination of fields or consistency with a related record, so that each remains traceable to its Model while another Component enforces it."
+              reason: "Such rules cannot be evaluated from one Model's data alone, yet they belong to the Model; without a discoverable declaration the enforcing Component would have to restate them."
+              kind: "code"
+              inputs: ["Field property declaration capability"]
+              expected_result: "A consumer can read from a Model each rule it declares that its own validation does not evaluate, identified clearly enough to trace enforcement back to the declaration."
+              depends_on: ["P1-G2-T1"]
+              constraints: []
+              acceptance: "Every such rule declared on a Model is discoverable with the fields it constrains and its meaning, and the Model's own validation neither consults anything beyond the supplied data nor claims to have enforced the rule."
+              verify: "Reading the declared rules of a Model that has a combined-uniqueness rule returns that rule with the fields it covers, and validating that Model's data completes using only the data supplied."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; dependency P1-G2-T1 is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g2_t5.py (session scratchpad), run with 'uv run --locked python' in model/: declared a probe Model with a combined-uniqueness rule and an application-context rule; read rule_declarations(); asserted kind, fields, requirement, statement, and name; validated duplicate-combination data with builtins.open and socket.socket replaced by functions that fail if called; asserted a rule over an undeclared field is refused."
+                  outcome: "Passed. unique_user_id_code (unique_together, stored_state) and other_matches_owner (general, application_context) returned; validation used only supplied data and did not claim the rule."
+
+        # <!-------------- P1-G3 -->
+        P1-G3:
+          id: "P1-G3"
+          title: "Domain Models"
+          description: "One Task per Model in the project definition. The Tasks are related because each applies the shared declaration capabilities to one domain entity, and the relationships between Models determine the order in which they can be completed."
+          area: "Domain Model definitions"
+          does: "Every Model in the project definition exists in the package, accepts data consistent with its declaration, rejects data its own validation can refute, and publishes its resolved field properties, relationships, and rules through the shared declaration capabilities."
+          constraints: []
+          task_count: 15
+          tasks:
+
+            P1-G3-T1:
+              id: "P1-G3-T1"
+              title: "Define the User Model"
+              description: "Define User with the fields and rules the project definition declares for it, identifying its credential fields and their stated at-rest mode."
+              reason: "User owns every per-user configuration, so the ownership relationships of the other Models refer to it."
+              kind: "code"
+              inputs: ["User's declared fields and rules", "Field property and credential declaration capabilities"]
+              expected_result: "A User Model whose credential fields are identifiable and whose resolved uniqueness and defaults are published."
+              depends_on: ["P1-G2-T1", "P1-G2-T2"]
+              constraints: []
+              acceptance: "User's credential fields are identified with the at-rest mode stated for each, its uniqueness and default properties match their resolved values, and User data that violates a field property is rejected."
+              verify: "Reading User's declarations shows its credential fields with their at-rest modes and its resolved uniqueness and defaults; constructing User without a required field fails, and constructing it without its defaulted field yields the default."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; dependencies P1-G2-T1 and P1-G2-T2 are done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_t1.py with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: target_spec derives each expected resolved field declaration from technical.md and the Model field defaults in model Preferences (explicit, then common_fields, then *_id pattern), plus credential and at-rest modes from the rules, secure generation from initial data, relationships, and rules; the check compares every declaration property, relationship, and rule of the Model to that expectation, then exercises behaviour: valid data accepted, each required field omitted or null rejected, nullable omission kept distinct from explicit null, defaults applied, wrong logical types and oversize values rejected, undeclared fields rejected, credential values absent from repr."
+                  outcome: "Passed. User declarations matched the definition: password and api_key are credentials at rest mode hash awaiting secure generation, name unique, status default true; omitting username failed; omitting status yielded true. Implemented in model/src/my_model/_models/user.py."
+
+            P1-G3-T2:
+              id: "P1-G3-T2"
+              title: "Define the Trading Platform Model"
+              description: "Define Trading Platform with the fields the project definition declares for it, including the code that identifies which platform implementation applies."
+              reason: "Instances and Positions refer to Trading Platform, and its code is how the application later selects a platform implementation."
+              kind: "code"
+              inputs: ["Trading Platform's declared fields", "Field property declaration capability"]
+              expected_result: "A Trading Platform Model whose fields and resolved properties are published."
+              depends_on: ["P1-G2-T1"]
+              constraints: []
+              acceptance: "Trading Platform data with every required field is accepted, data missing its name or code is rejected, and its resolved field properties are published."
+              verify: "Constructing Trading Platform with all required fields succeeds and without its name or code fails, and reading its declarations returns the resolved field properties."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; dependency P1-G2-T1 is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_t2.py with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: target_spec derives each expected resolved field declaration from technical.md and the Model field defaults in model Preferences (explicit, then common_fields, then *_id pattern), plus credential and at-rest modes from the rules, secure generation from initial data, relationships, and rules; the check compares every declaration property, relationship, and rule of the Model to that expectation, then exercises behaviour: valid data accepted, each required field omitted or null rejected, nullable omission kept distinct from explicit null, defaults applied, wrong logical types and oversize values rejected, undeclared fields rejected, credential values absent from repr."
+                  outcome: "Passed. Trading Platform declarations matched; name unique resolved from the Model name-field default (see open question Q1); construction without name or code failed. Implemented in model/src/my_model/_models/trading_platform.py."
+
+            P1-G3-T3:
+              id: "P1-G3-T3"
+              title: "Define the Currency Model"
+              description: "Define Currency with its declared fields, its ownership relationship to User, and its declared rules."
+              reason: "Accounts use a Currency as their base currency, and each user keeps its own currency set."
+              kind: "code"
+              inputs: ["Currency's declared fields, relationship, and rules", "User Model", "Field, relationship, and rule declaration capabilities"]
+              expected_result: "A Currency Model that enforces its field-level limits, publishes its relationship to User, and declares its combined-uniqueness rule."
+              depends_on: ["P1-G3-T1", "P1-G2-T1", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Currency rejects a code that violates its declared size, publishes its relationship to User with the carrying field, and declares its combined-uniqueness rule as enforced beyond its own data."
+              verify: "Constructing Currency with a code that violates its declared size fails; reading its declarations returns the relationship to User and the combined-uniqueness rule with the fields it covers."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; all dependencies are done, including P1-G3-T1."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_t3.py with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Currency declarations matched: belongs to User through user_id, unique_together (user_id, code), code size 3 enforced as a maximum length (USDX rejected), decimal_digits default 2, name unique resolved from the Model name-field default (see Q1). Implemented in model/src/my_model/_models/currency.py."
+
+            P1-G3-T4:
+              id: "P1-G3-T4"
+              title: "Define the Broker Model"
+              description: "Define Broker with its declared fields, its ownership relationship to User, and its declared rules."
+              reason: "Assets, Instances, Accounts, and Positions all refer to the Broker that provides them."
+              kind: "code"
+              inputs: ["Broker's declared fields, relationship, and rules", "User Model", "Field, relationship, and rule declaration capabilities"]
+              expected_result: "A Broker Model that publishes its relationship to User and declares its combined-uniqueness rule."
+              depends_on: ["P1-G3-T1", "P1-G2-T1", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Broker publishes its relationship to User with the carrying field and declares its combined-uniqueness rule as enforced beyond its own data, and Broker data missing a required field is rejected."
+              verify: "Reading Broker's declarations returns the relationship to User and the combined-uniqueness rule with the fields it covers; constructing Broker without its owner fails."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; all dependencies are done, including P1-G3-T1."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_owned.py P1-G3-T4 broker Broker with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Broker declarations matched the definition: belongs to User through user_id (many-to-one, required), unique_together (user_id, name) requiring stored state, name unique resolved from the Model name-field default (see open question Q1); construction without user_id failed. Implemented in model/src/my_model/_models/broker.py."
+
+            P1-G3-T5:
+              id: "P1-G3-T5"
+              title: "Define the Asset Model"
+              description: "Define Asset with its declared fields, its relationship to the providing Broker, and its declared rules."
+              reason: "Actions select the Asset they trade, and an Asset's price precision is what gives trading values their meaning."
+              kind: "code"
+              inputs: ["Asset's declared fields, relationship, and rules", "Broker Model", "Field, relationship, and rule declaration capabilities"]
+              expected_result: "An Asset Model that publishes its relationship to Broker, its field defaults, and both of its combined-uniqueness rules."
+              depends_on: ["P1-G3-T4", "P1-G2-T1", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Asset publishes its relationship to Broker, applies its declared defaults when those values are not supplied, and declares each of its combined-uniqueness rules separately."
+              verify: "Constructing Asset without its defaulted values yields the declared defaults; reading its declarations returns the relationship to Broker and two distinct combined-uniqueness rules with the fields each covers."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_t5.py with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Asset declarations matched: belongs to Broker through broker_id, unique_together (broker_id, name) and (broker_id, symbol), point_size default 0.0, digits default 0, name unique resolved from the Model name-field default (see Q1). Implemented in model/src/my_model/_models/asset.py."
+
+            P1-G3-T6:
+              id: "P1-G3-T6"
+              title: "Define the Instance Model"
+              description: "Define Instance with its declared fields, its relationships to Broker and Trading Platform, its optional credential fields with their stated at-rest mode, and its declared rules."
+              reason: "An Instance is the connection through which an Account reaches its Broker on a Trading Platform."
+              kind: "code"
+              inputs: ["Instance's declared fields, relationships, and rules", "Broker Model", "Trading Platform Model", "Field, credential, relationship, and rule declaration capabilities"]
+              expected_result: "An Instance Model that publishes both relationships, identifies its optional credential fields, and declares its rules that depend on the selected Trading Platform or on other records."
+              depends_on: ["P1-G3-T4", "P1-G3-T2", "P1-G2-T1", "P1-G2-T2", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Instance data without its optional connection values is accepted, its credential fields are identified with their stated at-rest mode, and its platform-dependent requirement and combined-uniqueness rule are declared as enforced beyond its own data."
+              verify: "Constructing Instance with its optional connection values omitted succeeds; reading its declarations returns its relationships to Broker and Trading Platform, its credential fields with their at-rest mode, and both declared rules."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_t6.py with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Instance declarations matched: belongs to Broker, uses Trading Platform; password and api_key are nullable credentials at rest mode encrypted that accept secure generation; platform_required_connection_fields declared as an application-context rule; unique_together (broker_id, name); name unique from the default (see Q1). Implemented in model/src/my_model/_models/instance.py."
+
+            P1-G3-T7:
+              id: "P1-G3-T7"
+              title: "Define the Account Group Model"
+              description: "Define Account Group with its declared fields, its ownership relationship to User, and its declared rules."
+              reason: "Every Account belongs to an Account Group."
+              kind: "code"
+              inputs: ["Account Group's declared fields, relationship, and rules", "User Model", "Field, relationship, and rule declaration capabilities"]
+              expected_result: "An Account Group Model that publishes its relationship to User and declares its combined-uniqueness rule."
+              depends_on: ["P1-G3-T1", "P1-G2-T1", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Account Group publishes its relationship to User with the carrying field and declares its combined-uniqueness rule as enforced beyond its own data."
+              verify: "Reading Account Group's declarations returns the relationship to User and the combined-uniqueness rule with the fields it covers; constructing it without its owner fails."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; all dependencies are done, including P1-G3-T1."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_owned.py P1-G3-T7 account_group AccountGroup with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Account Group declarations matched the definition: belongs to User through user_id (many-to-one, required), unique_together (user_id, name) requiring stored state, name unique resolved from the Model name-field default (see open question Q1); construction without user_id failed. Implemented in model/src/my_model/_models/account_group.py."
+
+            P1-G3-T8:
+              id: "P1-G3-T8"
+              title: "Define the Account Model"
+              description: "Define Account with its declared fields, its relationships to Account Group, Broker, Instance, and its base Currency, its credential field with its stated at-rest mode, and its declared rules."
+              reason: "An Account is the funded trading account through which Actions execute and Positions are opened."
+              kind: "code"
+              inputs: ["Account's declared fields, relationships, and rules", "Account Group, Broker, Instance, and Currency Models", "Field, credential, relationship, and rule declaration capabilities"]
+              expected_result: "An Account Model that publishes its four relationships with their roles, identifies its credential field, and declares its rules that involve related records."
+              depends_on: ["P1-G3-T7", "P1-G3-T4", "P1-G3-T6", "P1-G3-T3", "P1-G2-T1", "P1-G2-T2", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Account publishes each relationship with its role, including the base-currency role, identifies its credential field with the stated at-rest mode, and declares the Instance-to-Broker consistency rule and the credential non-duplication rule as enforced beyond its own data."
+              verify: "Reading Account's declarations returns its four relationships with roles, its credential field with its at-rest mode, and both cross-record rules; constructing Account without a supplied balance yields the declared default."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_t8.py with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Account declarations matched: belongs to Account Group (group_id) and Broker, uses Instance and Currency in the base currency role; password is a credential at rest mode encrypted accepting secure generation; name explicitly unique; balance default 0; credentials_not_duplicated_with_instance declared as application-context and instance_belongs_to_account_broker as stored-state rules. Implemented in model/src/my_model/_models/account.py."
+
+            P1-G3-T9:
+              id: "P1-G3-T9"
+              title: "Define the Trailing Group Model"
+              description: "Define Trailing Group with its declared fields, its ownership relationship to User, and its declared rules."
+              reason: "Trailing Rules are organized into Trailing Groups, which Actions and Positions select."
+              kind: "code"
+              inputs: ["Trailing Group's declared fields, relationship, and rules", "User Model", "Field, relationship, and rule declaration capabilities"]
+              expected_result: "A Trailing Group Model that publishes its relationship to User and declares its combined-uniqueness rule."
+              depends_on: ["P1-G3-T1", "P1-G2-T1", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Trailing Group publishes its relationship to User with the carrying field and declares its combined-uniqueness rule as enforced beyond its own data."
+              verify: "Reading Trailing Group's declarations returns the relationship to User and the combined-uniqueness rule with the fields it covers; constructing it without its owner fails."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; all dependencies are done, including P1-G3-T1."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_owned.py P1-G3-T9 trailing_group TrailingGroup with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Trailing Group declarations matched the definition: belongs to User through user_id (many-to-one, required), unique_together (user_id, name) requiring stored state, name unique resolved from the Model name-field default (see open question Q1); construction without user_id failed. Implemented in model/src/my_model/_models/trailing_group.py."
+
+            P1-G3-T10:
+              id: "P1-G3-T10"
+              title: "Define the Trailing Rule Model"
+              description: "Define Trailing Rule with its declared fields and its relationship to the containing Trailing Group."
+              reason: "Trailing Rules state when and how Take Profit and Stop Loss are adjusted during a trade."
+              kind: "code"
+              inputs: ["Trailing Rule's declared fields and relationship", "Trailing Group Model", "Field and relationship declaration capabilities"]
+              expected_result: "A Trailing Rule Model that publishes its relationship to Trailing Group and distinguishes its optional adjustments from its required trigger."
+              depends_on: ["P1-G3-T9", "P1-G2-T1", "P1-G2-T4"]
+              constraints: []
+              acceptance: "Trailing Rule data without either adjustment is accepted, data without its trigger is rejected, and its relationship to Trailing Group is published."
+              verify: "Constructing Trailing Rule with its adjustments omitted succeeds and with its trigger omitted fails; reading its declarations returns the relationship to Trailing Group."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_rules.py P1-G3-T10 with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Trailing Rule declarations matched: belongs to Trailing Group; both adjustments optional, trigger required, name explicitly unique. Implemented in model/src/my_model/_models/trailing_rule.py."
+
+            P1-G3-T11:
+              id: "P1-G3-T11"
+              title: "Define the Partial Group Model"
+              description: "Define Partial Group with its declared fields, its ownership relationship to User, and its declared rules."
+              reason: "Partial Rules are organized into Partial Groups, which Actions and Positions select."
+              kind: "code"
+              inputs: ["Partial Group's declared fields, relationship, and rules", "User Model", "Field, relationship, and rule declaration capabilities"]
+              expected_result: "A Partial Group Model that publishes its relationship to User and declares its combined-uniqueness rule."
+              depends_on: ["P1-G3-T1", "P1-G2-T1", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Partial Group publishes its relationship to User with the carrying field and declares its combined-uniqueness rule as enforced beyond its own data."
+              verify: "Reading Partial Group's declarations returns the relationship to User and the combined-uniqueness rule with the fields it covers; constructing it without its owner fails."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; all dependencies are done, including P1-G3-T1."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_owned.py P1-G3-T11 partial_group PartialGroup with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Partial Group declarations matched the definition: belongs to User through user_id (many-to-one, required), unique_together (user_id, name) requiring stored state, name unique resolved from the Model name-field default (see open question Q1); construction without user_id failed. Implemented in model/src/my_model/_models/partial_group.py."
+
+            P1-G3-T12:
+              id: "P1-G3-T12"
+              title: "Define the Partial Rule Model"
+              description: "Define Partial Rule with its declared fields and its relationship to the containing Partial Group."
+              reason: "Partial Rules state when part of an open position is closed and how much of its volume."
+              kind: "code"
+              inputs: ["Partial Rule's declared fields and relationship", "Partial Group Model", "Field and relationship declaration capabilities"]
+              expected_result: "A Partial Rule Model that publishes its relationship to Partial Group and requires both of its percentages."
+              depends_on: ["P1-G3-T11", "P1-G2-T1", "P1-G2-T4"]
+              constraints: []
+              acceptance: "Partial Rule data with both percentages is accepted, data missing either percentage is rejected, and its relationship to Partial Group is published."
+              verify: "Constructing Partial Rule without either percentage fails and with both succeeds; reading its declarations returns the relationship to Partial Group."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_rules.py P1-G3-T12 with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Partial Rule declarations matched: belongs to Partial Group; profit and close percentages both required, name explicitly unique. Implemented in model/src/my_model/_models/partial_rule.py."
+
+            P1-G3-T13:
+              id: "P1-G3-T13"
+              title: "Define the Action Group Model"
+              description: "Define Action Group with its declared fields, its ownership relationship to User, and its declared rules."
+              reason: "Actions are organized by risk profile into Action Groups."
+              kind: "code"
+              inputs: ["Action Group's declared fields, relationship, and rules", "User Model", "Field, relationship, and rule declaration capabilities"]
+              expected_result: "An Action Group Model that publishes its relationship to User and declares its combined-uniqueness rule."
+              depends_on: ["P1-G3-T1", "P1-G2-T1", "P1-G2-T4", "P1-G2-T5"]
+              constraints: []
+              acceptance: "Action Group publishes its relationship to User with the carrying field and declares its combined-uniqueness rule as enforced beyond its own data."
+              verify: "Reading Action Group's declarations returns the relationship to User and the combined-uniqueness rule with the fields it covers; constructing it without its owner fails."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; all dependencies are done, including P1-G3-T1."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_owned.py P1-G3-T13 action_group ActionGroup with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Action Group declarations matched the definition: belongs to User through user_id (many-to-one, required), unique_together (user_id, name) requiring stored state, name unique resolved from the Model name-field default (see open question Q1); construction without user_id failed. Implemented in model/src/my_model/_models/action_group.py."
+
+            P1-G3-T14:
+              id: "P1-G3-T14"
+              title: "Define the Action Model"
+              description: "Define Action with its declared fields and its relationships to Action Group, Asset, Account, Partial Group, and Trailing Group."
+              reason: "An Action defines how a position is opened and is the source every Position is created from."
+              kind: "code"
+              inputs: ["Action's declared fields and relationships", "Action Group, Asset, Account, Partial Group, and Trailing Group Models", "Field and relationship declaration capabilities"]
+              expected_result: "An Action Model that publishes its five relationships and requires its risk and target values."
+              depends_on: ["P1-G3-T13", "P1-G3-T5", "P1-G3-T8", "P1-G3-T11", "P1-G3-T9", "P1-G2-T1", "P1-G2-T4"]
+              constraints: []
+              acceptance: "Action publishes each of its five relationships with its carrying field, and Action data missing its risk-to-reward, Take Profit, or Stop Loss value is rejected."
+              verify: "Reading Action's declarations returns its relationships to Action Group, Asset, Account, Partial Group, and Trailing Group; constructing Action without any one of its required trading values fails."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_t14.py with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Action declarations matched: belongs to Action Group, uses Asset, Account, Partial Group, and Trailing Group; risk_by_reward, take_profit, and stop_loss each required; name explicitly unique. Implemented in model/src/my_model/_models/action.py."
+
+            P1-G3-T15:
+              id: "P1-G3-T15"
+              title: "Define the Position Model"
+              description: "Define Position with its declared fields and its relationships to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action."
+              reason: "Position records every position the system creates, whether executed or still pending."
+              kind: "code"
+              inputs: ["Position's declared fields and relationships", "User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action Models", "Field and relationship declaration capabilities"]
+              expected_result: "A Position Model that publishes all of its relationships, carries its date-time and trading values with their declared types, and applies its declared defaults."
+              depends_on: ["P1-G3-T1", "P1-G3-T2", "P1-G3-T4", "P1-G3-T8", "P1-G3-T9", "P1-G3-T11", "P1-G3-T13", "P1-G3-T14", "P1-G2-T1", "P1-G2-T4"]
+              constraints: []
+              acceptance: "Position publishes each of its eight relationships with its carrying field, rejects a date that is not a date-time, and yields its declared defaults for profit and execution state when they are not supplied."
+              verify: "Reading Position's declarations returns its eight relationships; constructing Position with an invalid date fails, and constructing it without profit or execution state yields their declared defaults."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g3_t15.py with checks/target_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares every field declaration property, relationship, and rule of the Model to expectations derived from technical.md and the Model Preferences field defaults, then exercises behaviour (valid data accepted; required fields omitted or null rejected; nullable omission distinct from null; defaults applied; wrong types, oversize values, and undeclared fields rejected; credential values absent from repr) plus the Task's own verify condition."
+                  outcome: "Passed. Position declarations matched: belongs to User and Action, uses Trading Platform, Broker, Account, Trailing Group, Partial Group, and Action Group; date is a date-time and an invalid date is rejected; profit default 0 and is_executed default false apply when omitted; name explicitly unique. Implemented in model/src/my_model/_models/position.py."
+
+        # <!-------------- P1-G4 -->
+        P1-G4:
+          id: "P1-G4"
+          title: "Initial Records"
+          description: "The initial records the project definition declares, one Task per Model that has them. The Tasks are related because each is a logical declaration bound to and validated by its Model, which the Database phase later inserts, supplying any value left to generation."
+          area: "Declared initial records of the domain Models"
+          does: "Every initial record in the project definition is declared against its Model and is valid under that Model's own validation; each reference to another record keeps the identifier the definition states, and each value the definition leaves to secure generation is declared as awaiting generation rather than given a value."
+          constraints: []
+          task_count: 12
+          tasks:
+
+            P1-G4-T1:
+              id: "P1-G4-T1"
+              title: "Declare the User initial records"
+              description: "Declare the initial User records the project definition states, bound to the User Model."
+              reason: "The system begins with the administrator user that every other initial record belongs to."
+              kind: "data"
+              inputs: ["User's declared initial data", "User Model", "Awaiting-generation capability"]
+              expected_result: "The declared administrator record, bound to User, with its generated credentials awaiting generation."
+              depends_on: ["P1-G3-T1", "P1-G2-T3"]
+              constraints: []
+              acceptance: "The declared User record validates against User in every supplied value, and its credentials are recognized as pending rather than satisfied."
+              verify: "Reading the User initial records through the Model package returns the declared record, which passes User validation for its supplied values and reports its credential fields as awaiting generation."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; all dependencies are done, including P1-G3-T1."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_t1.py with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed on the second run, after the AwaitingGeneration round-trip correction recorded on P1-G2-T3. One Admin record with password and api_key awaiting secure generation and identity awaiting auto-increment; status took its default. Declared in model/src/my_model/_initial_data/user.py."
+
+            P1-G4-T2:
+              id: "P1-G4-T2"
+              title: "Declare the Trading Platform initial records"
+              description: "Declare the initial Trading Platform records the project definition states, bound to the Trading Platform Model."
+              reason: "The supported platforms must exist from the start so Instances can refer to them."
+              kind: "data"
+              inputs: ["Trading Platform's declared initial data", "Trading Platform Model"]
+              expected_result: "The declared platform records, bound to Trading Platform."
+              depends_on: ["P1-G3-T2"]
+              constraints: []
+              acceptance: "Each declared platform record validates against Trading Platform, and each record's code is exactly the one the definition states."
+              verify: "Reading the Trading Platform initial records through the Model package returns the declared records, each passing Trading Platform validation with its stated name and code."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; all dependencies are done, including P1-G3-T2."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_t2.py with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed on the second run, after the AwaitingGeneration round-trip correction recorded on P1-G2-T3. MetaTrader 5 (metatrader_5) and Binance (binance) declared in the stated order; only identity pending. Declared in model/src/my_model/_initial_data/trading_platform.py."
+
+            P1-G4-T3:
+              id: "P1-G4-T3"
+              title: "Declare the Currency initial records"
+              description: "Declare the initial Currency records the project definition states, bound to the Currency Model."
+              reason: "Accounts need their base currency to exist from the start."
+              kind: "data"
+              inputs: ["Currency's declared initial data", "Currency Model"]
+              expected_result: "The declared currency records, bound to Currency."
+              depends_on: ["P1-G3-T3"]
+              constraints: []
+              acceptance: "Each declared currency record validates against Currency, including records whose decimal precision differs from the default."
+              verify: "Reading the Currency initial records through the Model package returns every declared record, each passing Currency validation with its stated values."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T3 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. Eight currency records in the stated order, including JPY with decimal_digits 0; user_id 1 kept as stated. Declared in model/src/my_model/_initial_data/currency.py."
+
+            P1-G4-T4:
+              id: "P1-G4-T4"
+              title: "Declare the Broker initial records"
+              description: "Declare the initial Broker records the project definition states, bound to the Broker Model."
+              reason: "Assets, Instances, and Accounts in the initial data refer to the declared broker."
+              kind: "data"
+              inputs: ["Broker's declared initial data", "Broker Model"]
+              expected_result: "The declared broker record, bound to Broker."
+              depends_on: ["P1-G3-T4"]
+              constraints: []
+              acceptance: "The declared broker record validates against Broker and takes its declared default status because none is stated."
+              verify: "Reading the Broker initial records through the Model package returns the declared record, passing Broker validation with its stated values and default status."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T4 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. FxPro record with user_id 1; status took its default. Declared in model/src/my_model/_initial_data/broker.py."
+
+            P1-G4-T5:
+              id: "P1-G4-T5"
+              title: "Declare the Asset initial records"
+              description: "Declare the initial Asset records the project definition states, bound to the Asset Model."
+              reason: "The initial Action trades one of the declared assets."
+              kind: "data"
+              inputs: ["Asset's declared initial data", "Asset Model"]
+              expected_result: "The declared asset records, bound to Asset."
+              depends_on: ["P1-G3-T5"]
+              constraints: []
+              acceptance: "Each declared asset record validates against Asset with its point size and digits as stated rather than defaulted."
+              verify: "Reading the Asset initial records through the Model package returns every declared record, each passing Asset validation with its stated point size and digits."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T5 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. Four asset records in the stated order with their stated point_size and digits supplied, not defaulted; broker_id 1 kept as stated. Declared in model/src/my_model/_initial_data/asset.py."
+
+            P1-G4-T6:
+              id: "P1-G4-T6"
+              title: "Declare the Instance initial records"
+              description: "Declare the initial Instance records the project definition states, bound to the Instance Model."
+              reason: "The initial Account connects through the declared instance."
+              kind: "data"
+              inputs: ["Instance's declared initial data", "Instance Model", "Awaiting-generation capability"]
+              expected_result: "The declared instance record, bound to Instance, with its generated credentials awaiting generation."
+              depends_on: ["P1-G3-T6", "P1-G2-T3"]
+              constraints: []
+              acceptance: "The declared instance record validates against Instance in every supplied value, and its optional credential fields are recognized as awaiting generation rather than absent or null."
+              verify: "Reading the Instance initial records through the Model package returns the declared record, which passes Instance validation for its supplied values and reports its credential fields as awaiting generation."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T6 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. FxPro MetaTrader record with broker_id 1 and trading_platform_id 1 as stated; password and api_key awaiting secure generation rather than absent or null. Declared in model/src/my_model/_initial_data/instance.py."
+
+            P1-G4-T7:
+              id: "P1-G4-T7"
+              title: "Declare the Account Group initial records"
+              description: "Declare the initial Account Group records the project definition states, bound to the Account Group Model."
+              reason: "The initial Account belongs to the declared account group."
+              kind: "data"
+              inputs: ["Account Group's declared initial data", "Account Group Model"]
+              expected_result: "The declared account group record, bound to Account Group."
+              depends_on: ["P1-G3-T7"]
+              constraints: []
+              acceptance: "The declared account group record validates against Account Group."
+              verify: "Reading the Account Group initial records through the Model package returns the declared record, passing Account Group validation with its stated values."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T7 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. One Default record with user_id 1. Declared in model/src/my_model/_initial_data/account_group.py."
+
+            P1-G4-T8:
+              id: "P1-G4-T8"
+              title: "Declare the Account initial records"
+              description: "Declare the initial Account records the project definition states, bound to the Account Model."
+              reason: "The initial Action executes through the declared account."
+              kind: "data"
+              inputs: ["Account's declared initial data", "Account Model", "Awaiting-generation capability"]
+              expected_result: "The declared account record, bound to Account, with its generated credential awaiting generation."
+              depends_on: ["P1-G3-T8", "P1-G2-T3"]
+              constraints: []
+              acceptance: "The declared account record validates against Account in every supplied value, its credential is recognized as pending, and its balance takes the declared default because none is stated."
+              verify: "Reading the Account initial records through the Model package returns the declared record, which passes Account validation for its supplied values, reports its credential as awaiting generation, and carries the default balance."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T8 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. Acc-1 record with group_id, broker_id, instance_id, and base_currency_id 1, leverage 100, and account_type CFD as stated; password awaiting secure generation; balance took its default 0. Declared in model/src/my_model/_initial_data/account.py."
+
+            P1-G4-T9:
+              id: "P1-G4-T9"
+              title: "Declare the Trailing Group initial records"
+              description: "Declare the initial Trailing Group records the project definition states, bound to the Trailing Group Model."
+              reason: "The initial Action uses the declared trailing group."
+              kind: "data"
+              inputs: ["Trailing Group's declared initial data", "Trailing Group Model"]
+              expected_result: "The declared trailing group record, bound to Trailing Group."
+              depends_on: ["P1-G3-T9"]
+              constraints: []
+              acceptance: "The declared trailing group record validates against Trailing Group."
+              verify: "Reading the Trailing Group initial records through the Model package returns the declared record, passing Trailing Group validation with its stated values."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T9 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. One Default record with user_id 1. Declared in model/src/my_model/_initial_data/trailing_group.py."
+
+            P1-G4-T10:
+              id: "P1-G4-T10"
+              title: "Declare the Partial Group initial records"
+              description: "Declare the initial Partial Group records the project definition states, bound to the Partial Group Model."
+              reason: "The initial Action uses the declared partial group."
+              kind: "data"
+              inputs: ["Partial Group's declared initial data", "Partial Group Model"]
+              expected_result: "The declared partial group record, bound to Partial Group."
+              depends_on: ["P1-G3-T11"]
+              constraints: []
+              acceptance: "The declared partial group record validates against Partial Group."
+              verify: "Reading the Partial Group initial records through the Model package returns the declared record, passing Partial Group validation with its stated values."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T10 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. One Default record with user_id 1. Declared in model/src/my_model/_initial_data/partial_group.py."
+
+            P1-G4-T11:
+              id: "P1-G4-T11"
+              title: "Declare the Action Group initial records"
+              description: "Declare the initial Action Group records the project definition states, bound to the Action Group Model."
+              reason: "The initial Action belongs to the declared action group."
+              kind: "data"
+              inputs: ["Action Group's declared initial data", "Action Group Model"]
+              expected_result: "The declared action group record, bound to Action Group."
+              depends_on: ["P1-G3-T13"]
+              constraints: []
+              acceptance: "The declared action group record validates against Action Group."
+              verify: "Reading the Action Group initial records through the Model package returns the declared record, passing Action Group validation with its stated values."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T11 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. One Default record with user_id 1. Declared in model/src/my_model/_initial_data/action_group.py."
+
+            P1-G4-T12:
+              id: "P1-G4-T12"
+              title: "Declare the Action initial records"
+              description: "Declare the initial Action records the project definition states, bound to the Action Model."
+              reason: "The system begins with a default Action that ties the other initial records together."
+              kind: "data"
+              inputs: ["Action's declared initial data", "Action Model"]
+              expected_result: "The declared action record, bound to Action."
+              depends_on: ["P1-G3-T14"]
+              constraints: []
+              acceptance: "The declared action record validates against Action with each of its five references as stated."
+              verify: "Reading the Action initial records through the Model package returns the declared record, passing Action validation with its stated references and trading values."
+              status: "done"
+              log:
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "todo -> claimed"
+                  note: "Claimed for P1 development; every dependency is done."
+                - at: "2026-09-10"
+                  by: "my-interface-developing"
+                  transition: "claimed -> done"
+                  check: "checks/g4_generic.py P1-G4-T12 with checks/initial_spec.py (session scratchpad), run with uv run --locked --with pyyaml in model/: compares each declared record with the Initial Data parsed from technical.md -- count and order, every stated value equal in value and type and present in model_fields_set, unstated fields taking their default or null without being supplied, 'Generate securely' values held as AwaitingGeneration(secure), identity awaiting auto-increment, pending_fields exactly identity plus generated values, and each record re-validated by its Model from its dump."
+                  outcome: "Passed. Default action record with action_group_id, asset_id, account_id, partial_group_id, and trailing_group_id 1 as stated and risk_by_reward, take_profit, and stop_loss Decimal 1. Declared in model/src/my_model/_initial_data/action.py."
