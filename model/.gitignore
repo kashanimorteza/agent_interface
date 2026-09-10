@@ -1,7 +1,0 @@
-# Isolated environment and build artifacts are never committed.
-.venv/
-__pycache__/
-*.py[cod]
-build/
-dist/
-*.egg-info/
