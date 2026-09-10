@@ -12,7 +12,7 @@ Identify where the current Target could benefit from an additional Agent capabil
 
 This operation may consider Skills, plugins, MCP integrations, agents, or another extension type supported by the active Agent environment. It equips the Agent; it does not install application runtime dependencies or develop the Target.
 
-Follow the shared Agent Interface rules throughout the operation, including their project-scope requirement.
+Read the shared Agent Interface rules at the start of the operation and follow them throughout, including their project-scope requirement.
 
 ## Workflow
 

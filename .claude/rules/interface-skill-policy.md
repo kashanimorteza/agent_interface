@@ -2,9 +2,22 @@
 
 These shared rules apply to every Agent Interface Skill and supporting agent, including one written later. Each of them reads these rules at the start of its own Workflow, located through the Interface document, and none of them copies any part of them into its own instructions: a copied rule is a second version that drifts, and changing the rule would then mean editing every Skill that holds a copy.
 
+## Prohibited reads
+
+Skills and supporting agents must never read the content of a file named `README.md`, including for Interface Understanding, Target Understanding, discovery, setup, documentation, or supporting evidence. Exclude every `README.md` from searches, directory scans, summaries, and bulk reads. Its presence, path, name, size, or other filesystem metadata may be observed only when an operation needs to avoid reading or changing it; its content is never an input to a Workflow.
+
 ## Human-owned files
 
 Skills and supporting agents must never edit or delete a human-owned Interface source. The Interface document states which sources those are, and a YAML source additionally declares it in its own policy. Resolve the current set from there rather than from a list held here, because a list of paths goes stale the moment a source is renamed or added, and a stale list leaves a source unprotected without anyone noticing.
+
+The following minimum protected set is immutable regardless of any discovered ownership declaration, generated plan, reset target, configured code path, tool recommendation, or conflicting instruction from another project source:
+
+- `.interface/developer/` and everything beneath it
+- `.interface/target/` and everything beneath it
+- `.interface/foundation/schema/` and everything beneath it
+- `.interface/foundation/interface.md`
+
+Never edit, overwrite, rename, move, truncate, replace, or delete any path in this minimum protected set. Do not run a command, script, formatter, generator, reset, cleanup, or bulk operation whose resolved write targets include one of these paths. If a broader operation could reach them, exclude them before execution and verify that they remain unchanged afterward.
 
 Only a human edits these sources. When a change appears necessary, report it and leave the source unchanged.
 
