@@ -1,0 +1,16 @@
+[project]
+name = "my-model"
+version = "0.1.0"
+description = "Shared domain Model package for the Trading Assistant, published as one importable public interface."
+readme = "README.md"
+authors = [
+    { name = "morteza", email = "kashani.morteza@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "pydantic>=2.13.5",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"

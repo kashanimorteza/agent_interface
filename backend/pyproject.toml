@@ -1,0 +1,22 @@
+[project]
+name = "my-backend"
+version = "0.1.0"
+description = "Backend API for the Trading Assistant: exposes every resolved Model's standard operations through one API, backed by per-Model Logic and a generic Data Access layer."
+readme = "README.md"
+authors = [
+    { name = "morteza", email = "kashani.morteza@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "my-database",
+    "my-model",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+my-model = { path = "../model", editable = true }
+my-database = { path = "../database", editable = true }

@@ -6,6 +6,8 @@ __pycache__/
 dist/
 
 # Database
+database/data/
+database/.secrets/
 
 # macOS
 .DS_Store

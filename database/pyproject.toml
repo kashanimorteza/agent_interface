@@ -1,0 +1,23 @@
+[project]
+name = "my-database"
+version = "0.1.0"
+description = "Database persistence package for the Trading Assistant: maps the shared Model package to storage and publishes one generic data-access interface."
+readme = "README.md"
+authors = [
+    { name = "morteza", email = "kashani.morteza@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.19.2",
+    "cryptography>=50.0.1",
+    "my-model",
+    "pyyaml>=6.0.3",
+    "sqlalchemy>=2.0.52",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+my-model = { path = "../model", editable = true }

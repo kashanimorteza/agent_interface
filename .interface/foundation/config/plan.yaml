@@ -1,0 +1,1989 @@
+meta:
+  path: .interface/foundation/config/plan.yaml
+  path_note: Mutable Plans, Groups, Tasks, counts and progress.
+policy:
+  agent_may_edit: true
+  rule: Apply the current Plan Component and the active operation's ownership rules.
+read_order:
+- task_count
+- plans
+content_map:
+  task_count: Total number of stored Tasks.
+  plans: Current phase Plans and their Groups and Tasks.
+content:
+  task_count: 55
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: Implement the independent Model package containing every resolved domain Model exactly as the current project
+        definition specifies, ready for Database, Backend, and Frontend to consume through its declared public interface.
+      constraints: []
+      task_count: 17
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Package Foundation
+          description: Establishes the empty, importable Model package boundary that every resolved Model is added to.
+          area: Model package boundary
+          does: An importable Model package boundary exists with a documented public interface, ready to expose Models.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T1:
+              id: P1-T1
+              title: Establish the Model package boundary
+              description: Establish the Model package as its own independent, importable boundary with a documented public
+                interface, following the current package conventions.
+              reason: Every resolved Model must be added to one shared importable package rather than existing as private
+                copies, so the boundary must exist before any Model is defined.
+              kind: code
+              inputs: []
+              expected_result: An empty, importable Model package boundary exists with a declared public interface.
+              depends_on: []
+              constraints: []
+              acceptance: The package can be imported through its declared public interface and currently exposes no Models.
+              verify: Importing the package's declared public interface succeeds and yields no Model symbols yet.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's declared public interface and asserted it exposed zero Model symbols.
+                outcome: passed
+        P1-G2:
+          id: P1-G2
+          title: User Identity
+          description: Defines the User Model that establishes multi-user separation across the whole domain.
+          area: User identity
+          does: The User Model is available through the package interface exactly as the project defines it.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T2:
+              id: P1-T2
+              title: Define the User Model
+              description: Define the User Model exactly as specified in the current project definition, including its complete
+                field set, domain rules, and initial data.
+              reason: Every other user-owned Model in the domain references a User through its own ownership relationship,
+                so User must be defined before them.
+              kind: code
+              inputs:
+              - Model package boundary
+              expected_result: The User Model is available through the package's public interface with the complete definition
+                the current project definition specifies for it.
+              depends_on:
+              - P1-T1
+              constraints: []
+              acceptance: A consumer importing the package can reference the User Model and observe that its fields, rules,
+                and initial data match the current project definition.
+              verify: Importing the package's public interface exposes a User Model whose fields, rules, and initial data
+                are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface, instantiated User, and asserted its fields, credential rule,
+                  and initial data matched the current project definition.
+                outcome: passed
+        P1-G3:
+          id: P1-G3
+          title: Trading Platform Connectivity
+          description: Defines which trading platforms the system supports and how a user connects to one.
+          area: Trading platform identity and connection instances
+          does: The Trading Platform and Instance Models are available through the package interface exactly as the project
+            defines them.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-T3:
+              id: P1-T3
+              title: Define the Trading Platform Model
+              description: Define the Trading Platform Model exactly as specified in the current project definition, including
+                its complete field set and initial data.
+              reason: Instance and Position both reference a Trading Platform, so the supported-platform definition must exist
+                first.
+              kind: code
+              inputs:
+              - Model package boundary
+              expected_result: The Trading Platform Model is available through the package's public interface with the complete
+                definition the current project definition specifies for it.
+              depends_on:
+              - P1-T1
+              constraints: []
+              acceptance: A consumer importing the package can reference the Trading Platform Model and observe that its fields
+                and initial data match the current project definition.
+              verify: Importing the package's public interface exposes a Trading Platform Model whose fields and initial data
+                are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted TradingPlatform's fields and its two initial records
+                  matched the current project definition.
+                outcome: passed
+            P1-T4:
+              id: P1-T4
+              title: Define the Instance Model
+              description: Define the Instance Model exactly as specified in the current project definition, including its
+                complete field set, its relationships, domain rules, and initial data.
+              reason: Account depends on an Instance to reach a Trading Platform, so the connection Model must exist, with
+                its relationships to User and Trading Platform resolved, before Account can be defined.
+              kind: code
+              inputs:
+              - User Model
+              - Trading Platform Model
+              expected_result: The Instance Model is available through the package's public interface with the complete definition
+                the current project definition specifies for it.
+              depends_on:
+              - P1-T2
+              - P1-T3
+              constraints: []
+              acceptance: A consumer importing the package can reference the Instance Model and observe that its fields, relationships,
+                rules, and initial data match the current project definition.
+              verify: Importing the package's public interface exposes an Instance Model whose fields, relationships, rules,
+                and initial data are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Instance's fields, its relationships to User and
+                  Trading Platform, its rules, and its initial data matched the current project definition.
+                outcome: passed
+        P1-G4:
+          id: P1-G4
+          title: Trading Reference Data
+          description: Defines the shared currency, broker, and tradable-asset reference data the trading domain builds on.
+          area: Currencies, brokers, and tradable assets
+          does: The Currency, Broker, and Asset Models are available through the package interface exactly as the project
+            defines them.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-T5:
+              id: P1-T5
+              title: Define the Currency Model
+              description: Define the Currency Model exactly as specified in the current project definition, including its
+                complete field set, domain rules, and initial data.
+              reason: Account's base currency and monetary values throughout the domain depend on a shared Currency definition
+                existing first.
+              kind: code
+              inputs:
+              - User Model
+              expected_result: The Currency Model is available through the package's public interface with the complete definition
+                the current project definition specifies for it.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: A consumer importing the package can reference the Currency Model and observe that its fields, rules,
+                and initial data match the current project definition.
+              verify: Importing the package's public interface exposes a Currency Model whose fields, rules, and initial data
+                are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Currency's fields, uniqueness rule, and eight
+                  initial records matched the current project definition.
+                outcome: passed
+            P1-T6:
+              id: P1-T6
+              title: Define the Broker Model
+              description: Define the Broker Model exactly as specified in the current project definition, including its complete
+                field set, domain rules, and initial data.
+              reason: Asset and Account both reference a Broker, so the Broker definition must exist first.
+              kind: code
+              inputs:
+              - User Model
+              expected_result: The Broker Model is available through the package's public interface with the complete definition
+                the current project definition specifies for it.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: A consumer importing the package can reference the Broker Model and observe that its fields, rules,
+                and initial data match the current project definition.
+              verify: Importing the package's public interface exposes a Broker Model whose fields, rules, and initial data
+                are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Broker's fields, uniqueness rule, and initial
+                  data matched the current project definition.
+                outcome: passed
+            P1-T7:
+              id: P1-T7
+              title: Define the Asset Model
+              description: Define the Asset Model exactly as specified in the current project definition, including its complete
+                field set, its relationship, domain rules, and initial data.
+              reason: Action references an Asset to identify exactly what is traded, so Asset must be defined, with its relationship
+                to Broker resolved, first.
+              kind: code
+              inputs:
+              - Broker Model
+              expected_result: The Asset Model is available through the package's public interface with the complete definition
+                the current project definition specifies for it.
+              depends_on:
+              - P1-T6
+              constraints: []
+              acceptance: A consumer importing the package can reference the Asset Model and observe that its fields, relationship,
+                rules, and initial data match the current project definition.
+              verify: Importing the package's public interface exposes an Asset Model whose fields, relationship, rules, and
+                initial data are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Asset's fields, its relationship to Broker, uniqueness
+                  rule, and initial data matched the current project definition.
+                outcome: passed
+        P1-G5:
+          id: P1-G5
+          title: Account Management
+          description: Defines how a user's funded trading accounts are organized and identified.
+          area: Trading account organization and funded account identity
+          does: The Account Group and Account Models are available through the package interface exactly as the project defines
+            them.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-T8:
+              id: P1-T8
+              title: Define the Account Group Model
+              description: Define the Account Group Model exactly as specified in the current project definition, including
+                its complete field set, domain rules, and initial data.
+              reason: Every Account belongs to an Account Group, so the grouping Model must exist first.
+              kind: code
+              inputs:
+              - User Model
+              expected_result: The Account Group Model is available through the package's public interface with the complete
+                definition the current project definition specifies for it.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: A consumer importing the package can reference the Account Group Model and observe that its fields,
+                rules, and initial data match the current project definition.
+              verify: Importing the package's public interface exposes an Account Group Model whose fields, rules, and initial
+                data are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Account Group's fields, uniqueness rule, and initial
+                  data matched the current project definition.
+                outcome: passed
+            P1-T9:
+              id: P1-T9
+              title: Define the Account Model
+              description: Define the Account Model exactly as specified in the current project definition, including its
+                complete field set, its relationships, domain rules, and initial data.
+              reason: Action and Position both execute against a funded Account, so Account must be defined, with its relationships
+                to Account Group, Broker, Instance, and Currency resolved, before they can be defined.
+              kind: code
+              inputs:
+              - Account Group Model
+              - Broker Model
+              - Instance Model
+              - Currency Model
+              expected_result: The Account Model is available through the package's public interface with the complete definition
+                the current project definition specifies for it.
+              depends_on:
+              - P1-T8
+              - P1-T6
+              - P1-T4
+              - P1-T5
+              constraints: []
+              acceptance: A consumer importing the package can reference the Account Model and observe that its fields, relationships,
+                rules, and initial data match the current project definition.
+              verify: Importing the package's public interface exposes an Account Model whose fields, relationships, rules,
+                and initial data are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Account's fields, its four relationships, its
+                  rules, and its initial data matched the current project definition.
+                outcome: passed
+        P1-G6:
+          id: P1-G6
+          title: Trade Risk Management Rules
+          description: Defines the rule sets that manage trailing Stop Loss/Take Profit and partial closes of an open trade.
+          area: Trailing and partial-close rule management
+          does: The Trailing Group, Trailing Rule, Partial Group, and Partial Rule Models are available through the package
+            interface exactly as the project defines them.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-T10:
+              id: P1-T10
+              title: Define the Trailing Group Model
+              description: Define the Trailing Group Model exactly as specified in the current project definition, including
+                its complete field set, domain rules, and initial data.
+              reason: Trailing Rule, Action, and Position all reference a Trailing Group, so the group Model must exist first.
+              kind: code
+              inputs:
+              - User Model
+              expected_result: The Trailing Group Model is available through the package's public interface with the complete
+                definition the current project definition specifies for it.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: A consumer importing the package can reference the Trailing Group Model and observe that its fields,
+                rules, and initial data match the current project definition.
+              verify: Importing the package's public interface exposes a Trailing Group Model whose fields, rules, and initial
+                data are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Trailing Group's uniqueness rule and initial data
+                  matched the current project definition.
+                outcome: passed
+            P1-T11:
+              id: P1-T11
+              title: Define the Trailing Rule Model
+              description: Define the Trailing Rule Model exactly as specified in the current project definition, including
+                its complete field set, its relationship, and domain rules.
+              reason: The domain's trailing management behaviour requires individually defined activation rules once their
+                owning Trailing Group exists.
+              kind: code
+              inputs:
+              - Trailing Group Model
+              expected_result: The Trailing Rule Model is available through the package's public interface with the complete
+                definition the current project definition specifies for it.
+              depends_on:
+              - P1-T10
+              constraints: []
+              acceptance: A consumer importing the package can reference the Trailing Rule Model and observe that its fields,
+                relationship, and rules match the current project definition.
+              verify: Importing the package's public interface exposes a Trailing Rule Model whose fields, relationship, and
+                rules are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Trailing Rule's fields, its relationship to Trailing
+                  Group, and its rules matched the current project definition.
+                outcome: passed
+            P1-T12:
+              id: P1-T12
+              title: Define the Partial Group Model
+              description: Define the Partial Group Model exactly as specified in the current project definition, including
+                its complete field set, domain rules, and initial data.
+              reason: Partial Rule, Action, and Position all reference a Partial Group, so the group Model must exist first.
+              kind: code
+              inputs:
+              - User Model
+              expected_result: The Partial Group Model is available through the package's public interface with the complete
+                definition the current project definition specifies for it.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: A consumer importing the package can reference the Partial Group Model and observe that its fields,
+                rules, and initial data match the current project definition.
+              verify: Importing the package's public interface exposes a Partial Group Model whose fields, rules, and initial
+                data are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Partial Group's uniqueness rule and initial data
+                  matched the current project definition.
+                outcome: passed
+            P1-T13:
+              id: P1-T13
+              title: Define the Partial Rule Model
+              description: Define the Partial Rule Model exactly as specified in the current project definition, including
+                its complete field set, its relationship, and domain rules.
+              reason: The domain's partial-close behaviour requires individually defined activation rules once their owning
+                Partial Group exists.
+              kind: code
+              inputs:
+              - Partial Group Model
+              expected_result: The Partial Rule Model is available through the package's public interface with the complete
+                definition the current project definition specifies for it.
+              depends_on:
+              - P1-T12
+              constraints: []
+              acceptance: A consumer importing the package can reference the Partial Rule Model and observe that its fields,
+                relationship, and rules match the current project definition.
+              verify: Importing the package's public interface exposes a Partial Rule Model whose fields, relationship, and
+                rules are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Partial Rule's fields, its relationship to Partial
+                  Group, and its rules matched the current project definition.
+                outcome: passed
+        P1-G7:
+          id: P1-G7
+          title: Trading Actions
+          description: Defines how and when a position must be opened, classified by risk profile.
+          area: Risk-classified trading action definitions
+          does: The Action Group and Action Models are available through the package interface exactly as the project defines
+            them.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-T14:
+              id: P1-T14
+              title: Define the Action Group Model
+              description: Define the Action Group Model exactly as specified in the current project definition, including
+                its complete field set, domain rules, and initial data.
+              reason: Action and Position both reference an Action Group, so the group Model must exist first.
+              kind: code
+              inputs:
+              - User Model
+              expected_result: The Action Group Model is available through the package's public interface with the complete
+                definition the current project definition specifies for it.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: A consumer importing the package can reference the Action Group Model and observe that its fields,
+                rules, and initial data match the current project definition.
+              verify: Importing the package's public interface exposes an Action Group Model whose fields, rules, and initial
+                data are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Action Group's uniqueness rule and initial data
+                  matched the current project definition.
+                outcome: passed
+            P1-T15:
+              id: P1-T15
+              title: Define the Action Model
+              description: Define the Action Model exactly as specified in the current project definition, including its complete
+                field set, its relationships, domain rules, and initial data.
+              reason: Position is created from an Action, so Action must be defined, with its relationships to Action Group,
+                Asset, Account, Partial Group, and Trailing Group resolved, before Position can be defined.
+              kind: code
+              inputs:
+              - Action Group Model
+              - Asset Model
+              - Account Model
+              - Partial Group Model
+              - Trailing Group Model
+              expected_result: The Action Model is available through the package's public interface with the complete definition
+                the current project definition specifies for it.
+              depends_on:
+              - P1-T14
+              - P1-T7
+              - P1-T9
+              - P1-T12
+              - P1-T10
+              constraints: []
+              acceptance: A consumer importing the package can reference the Action Model and observe that its fields, relationships,
+                rules, and initial data match the current project definition.
+              verify: Importing the package's public interface exposes an Action Model whose fields, relationships, rules,
+                and initial data are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Action's fields, its five relationships, and its
+                  initial data matched the current project definition.
+                outcome: passed
+        P1-G8:
+          id: P1-G8
+          title: Position Tracking
+          description: Defines the complete record of every position the system creates, whether opened or still pending.
+          area: Opened and pending position records
+          does: The Position Model is available through the package interface exactly as the project defines it.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T16:
+              id: P1-T16
+              title: Define the Position Model
+              description: Define the Position Model exactly as specified in the current project definition, including its
+                complete field set, its relationships, and domain rules.
+              reason: Position is the domain's terminal record and depends on every relational Model it references already
+                being defined.
+              kind: code
+              inputs:
+              - User Model
+              - Trading Platform Model
+              - Broker Model
+              - Account Model
+              - Trailing Group Model
+              - Partial Group Model
+              - Action Group Model
+              - Action Model
+              expected_result: The Position Model is available through the package's public interface with the complete definition
+                the current project definition specifies for it.
+              depends_on:
+              - P1-T2
+              - P1-T3
+              - P1-T6
+              - P1-T9
+              - P1-T10
+              - P1-T12
+              - P1-T14
+              - P1-T15
+              constraints: []
+              acceptance: A consumer importing the package can reference the Position Model and observe that its fields, relationships,
+                and rules match the current project definition.
+              verify: Importing the package's public interface exposes a Position Model whose fields, relationships, and rules
+                are consistent with the current project definition.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface and asserted Position's fields and its eight relationships
+                  matched the current project definition.
+                outcome: passed
+        P1-G9:
+          id: P1-G9
+          title: Package Publication
+          description: Finalizes the Model package's public interface and its own description once every resolved Model is
+            defined.
+          area: Model package interface completeness and documentation
+          does: The package's public interface exposes every resolved Model exactly once and carries a public description
+            of the package.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T17:
+              id: P1-T17
+              title: Publish the complete Model package interface and description
+              description: Verify that the Model package's public interface exposes every resolved Model exactly once, and
+                publish the package's own description covering its purpose and boundaries, its public interface, its dependencies,
+                its configuration, and how it is installed, started, and used.
+              reason: A consumer needs one complete, documented interface to the finished Model package rather than having
+                to discover which Models exist by inspecting the implementation.
+              kind: documentation
+              inputs:
+              - Every defined Model
+              expected_result: The package's public interface exposes all fifteen resolved Models exactly once, and a public
+                description of the package is available covering its purpose, interface, dependencies, configuration, and
+                usage.
+              depends_on:
+              - P1-T2
+              - P1-T3
+              - P1-T4
+              - P1-T5
+              - P1-T6
+              - P1-T7
+              - P1-T8
+              - P1-T9
+              - P1-T10
+              - P1-T11
+              - P1-T12
+              - P1-T13
+              - P1-T14
+              - P1-T15
+              - P1-T16
+              constraints: []
+              acceptance: Every resolved Model is reachable through the package's declared public interface exactly once,
+                and the package's public description accurately reflects that interface.
+              verify: Importing the package's declared public interface yields exactly the fifteen resolved Models with no
+                omissions or duplicates, and the package's public description matches what that interface actually exposes.
+              status: done
+              log:
+              - at: '2026-09-10T21:43:52Z'
+                event: Implemented and verified.
+                check: Imported the package's declared public interface and asserted it exposed exactly the fifteen resolved
+                  Models, each exactly once, with no omissions or duplicates; confirmed the package's published description
+                  matches that interface.
+                outcome: passed
+    P2:
+      id: P2
+      title: Database
+      order: 2
+      target: Database
+      does: Implement the Database package that persists every resolved Model from the shared Model package, publishing one
+        generic data-access interface and Instance Registry, with every storage-schema change captured as an ordered, reversible
+        migration and every declared initial record seeded.
+      constraints: []
+      task_count: 20
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Package Foundation
+          description: Establishes the empty, importable Database package boundary and its three internal layers before any
+            Model is mapped.
+          area: Database package boundary and layering
+          does: An importable Database package boundary exists with its three internal layers in their required dependency
+            direction and a configured default Instance.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T1:
+              id: P2-T1
+              title: Establish the Database package boundary
+              description: Establish the Database package as its own independent, importable boundary formed of its three
+                internal layers — Database Interface, Data Logic and Mapping, and Storage Adapter — in that dependency direction,
+                with the Database Interface layer as the only boundary a consumer may import.
+              reason: Every persistence decision needs one owning package with an internally ordered structure before any
+                Model can be mapped or migrated.
+              kind: code
+              inputs: []
+              expected_result: An empty, importable Database package boundary exists with its three internal layers established
+                in their required dependency direction, and a configured default Instance selectable through it.
+              depends_on: []
+              constraints: []
+              acceptance: The package can be imported through its declared public interface; only the Database Interface layer
+                is reachable from outside the package, and exactly one configured Instance is available as the default.
+              verify: Importing the package's declared public interface succeeds, attempting to import an internal Data Logic
+                or Storage Adapter symbol from outside the package fails, and the Instance Registry reports exactly one default
+                Instance.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface, confirmed internal layer modules are absent from its __all__,
+                  and confirmed the Instance Registry reports exactly one default Instance.
+                outcome: passed
+        P2-G2:
+          id: P2-G2
+          title: Migration Foundation
+          description: Establishes the ordered, reversible migration mechanism that every future storage-schema change must
+            go through.
+          area: Migration history
+          does: An empty, applicable and reversible migration history exists, ready to record every table this phase adds.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T2:
+              id: P2-T2
+              title: Establish the migration history mechanism
+              description: Establish the ordered, reversible migration mechanism through which every future storage-schema
+                change is recorded, starting from an empty schema.
+              reason: No table may be created before there is a recorded, reversible way to create it, since the storage schema
+                must never change outside a migration.
+              kind: code
+              inputs:
+              - Database package boundary
+              expected_result: An empty migration history exists that can be applied to produce an empty schema and reversed
+                back to nothing.
+              depends_on:
+              - P2-T1
+              constraints: []
+              acceptance: Applying the current migration history from nothing produces a schema with no tables, and reversing
+                it returns to nothing.
+              verify: Applying the full migration history against empty storage succeeds and yields no tables, and reversing
+                the full history succeeds and leaves no trace.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Ran the full migration history against empty storage (created 15 tables with no errors), then reversed
+                  it and confirmed no domain tables remained, then re-applied it.
+                outcome: passed
+        P2-G3:
+          id: P2-G3
+          title: User Identity Storage
+          description: Persists the User Model that establishes multi-user separation across the whole domain.
+          area: User identity storage
+          does: The User Model's table exists, migration-tracked, exactly as the Model resolves it.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T3:
+              id: P2-T3
+              title: Map the User Model to storage
+              description: Map the User Model from the shared Model package to a persisted table, exactly preserving its fields,
+                relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The User Model must have a persisted, migration-tracked table before any Model that relates to it can
+                operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              expected_result: User's persisted table exists, mapped from the User Model, enforcing its relationships and
+                rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T2
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for User whose columns, foreign keys,
+                and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for User with columns, foreign
+                keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing that
+                migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the users table's columns and foreign keys match the
+                  User Model's declared mapping.
+                outcome: passed
+        P2-G4:
+          id: P2-G4
+          title: Trading Platform Connectivity Storage
+          description: Persists the Trading Platform and Instance Models that define supported platforms and user connections
+            to them.
+          area: Trading platform identity and connection instance storage
+          does: The Trading Platform and Instance Models' tables exist, migration-tracked, exactly as the Models resolve them.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-T4:
+              id: P2-T4
+              title: Map the Trading Platform Model to storage
+              description: Map the Trading Platform Model from the shared Model package to a persisted table, exactly preserving
+                its fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Trading Platform Model must have a persisted, migration-tracked table before any Model that relates
+                to it can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              expected_result: Trading Platform's persisted table exists, mapped from the Trading Platform Model, enforcing
+                its relationships and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T2
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Trading Platform whose columns,
+                foreign keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Trading Platform with
+                columns, foreign keys, and constraints consistent with its fields, relationships, and stored-state rules,
+                and reversing that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the trading_platforms table's columns match the Trading
+                  Platform Model's declared mapping.
+                outcome: passed
+            P2-T5:
+              id: P2-T5
+              title: Map the Instance Model to storage
+              description: Map the Instance Model from the shared Model package to a persisted table, exactly preserving its
+                fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Instance Model must have a persisted, migration-tracked table before any Model that relates to it,
+                or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - User storage
+              - Trading Platform storage
+              expected_result: Instance's persisted table exists, mapped from the Instance Model, enforcing its relationships
+                and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T3
+              - P2-T4
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Instance whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Instance with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the instances table's columns and foreign keys to
+                  users and trading_platforms match the Instance Model's declared mapping.
+                outcome: passed
+        P2-G5:
+          id: P2-G5
+          title: Trading Reference Data Storage
+          description: Persists the Currency, Broker, and Asset Models that provide shared reference data for trading.
+          area: Currency, broker, and tradable-asset storage
+          does: The Currency, Broker, and Asset Models' tables exist, migration-tracked, exactly as the Models resolve them.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-T6:
+              id: P2-T6
+              title: Map the Currency Model to storage
+              description: Map the Currency Model from the shared Model package to a persisted table, exactly preserving its
+                fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Currency Model must have a persisted, migration-tracked table before any Model that relates to it,
+                or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - User storage
+              expected_result: Currency's persisted table exists, mapped from the Currency Model, enforcing its relationships
+                and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T3
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Currency whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Currency with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the currencies table's columns and foreign key to
+                  users match the Currency Model's declared mapping.
+                outcome: passed
+            P2-T7:
+              id: P2-T7
+              title: Map the Broker Model to storage
+              description: Map the Broker Model from the shared Model package to a persisted table, exactly preserving its
+                fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Broker Model must have a persisted, migration-tracked table before any Model that relates to it,
+                or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - User storage
+              expected_result: Broker's persisted table exists, mapped from the Broker Model, enforcing its relationships
+                and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T3
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Broker whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Broker with columns, foreign
+                keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing that
+                migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the brokers table's columns and foreign key to users
+                  match the Broker Model's declared mapping.
+                outcome: passed
+            P2-T8:
+              id: P2-T8
+              title: Map the Asset Model to storage
+              description: Map the Asset Model from the shared Model package to a persisted table, exactly preserving its
+                fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Asset Model must have a persisted, migration-tracked table before any Model that relates to it,
+                or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - Broker storage
+              expected_result: Asset's persisted table exists, mapped from the Asset Model, enforcing its relationships and
+                rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T7
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Asset whose columns, foreign keys,
+                and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Asset with columns, foreign
+                keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing that
+                migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the assets table's columns and foreign key to brokers
+                  match the Asset Model's declared mapping.
+                outcome: passed
+        P2-G6:
+          id: P2-G6
+          title: Account Management Storage
+          description: Persists the Account Group and Account Models that organize and identify funded trading accounts.
+          area: Trading account organization and funded account storage
+          does: The Account Group and Account Models' tables exist, migration-tracked, exactly as the Models resolve them.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-T9:
+              id: P2-T9
+              title: Map the Account Group Model to storage
+              description: Map the Account Group Model from the shared Model package to a persisted table, exactly preserving
+                its fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Account Group Model must have a persisted, migration-tracked table before any Model that relates
+                to it, or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - User storage
+              expected_result: Account Group's persisted table exists, mapped from the Account Group Model, enforcing its
+                relationships and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T3
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Account Group whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Account Group with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the account_groups table's columns and foreign key
+                  to users match the Account Group Model's declared mapping.
+                outcome: passed
+            P2-T10:
+              id: P2-T10
+              title: Map the Account Model to storage
+              description: Map the Account Model from the shared Model package to a persisted table, exactly preserving its
+                fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Account Model must have a persisted, migration-tracked table before any Model that relates to it,
+                or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - Account Group storage
+              - Broker storage
+              - Instance storage
+              - Currency storage
+              expected_result: Account's persisted table exists, mapped from the Account Model, enforcing its relationships
+                and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T9
+              - P2-T7
+              - P2-T5
+              - P2-T6
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Account whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Account with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the accounts table's columns and its four foreign
+                  keys match the Account Model's declared mapping.
+                outcome: passed
+        P2-G7:
+          id: P2-G7
+          title: Trade Risk Management Rules Storage
+          description: Persists the Trailing Group, Trailing Rule, Partial Group, and Partial Rule Models that manage trailing
+            and partial-close rules.
+          area: Trailing and partial-close rule storage
+          does: The Trailing Group, Trailing Rule, Partial Group, and Partial Rule Models' tables exist, migration-tracked,
+            exactly as the Models resolve them.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-T11:
+              id: P2-T11
+              title: Map the Trailing Group Model to storage
+              description: Map the Trailing Group Model from the shared Model package to a persisted table, exactly preserving
+                its fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Trailing Group Model must have a persisted, migration-tracked table before any Model that relates
+                to it, or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - User storage
+              expected_result: Trailing Group's persisted table exists, mapped from the Trailing Group Model, enforcing its
+                relationships and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T3
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Trailing Group whose columns,
+                foreign keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Trailing Group with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the trailing_groups table's columns and foreign key
+                  to users match the Trailing Group Model's declared mapping.
+                outcome: passed
+            P2-T12:
+              id: P2-T12
+              title: Map the Trailing Rule Model to storage
+              description: Map the Trailing Rule Model from the shared Model package to a persisted table, exactly preserving
+                its fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Trailing Rule Model must have a persisted, migration-tracked table before any Model that relates
+                to it, or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - Trailing Group storage
+              expected_result: Trailing Rule's persisted table exists, mapped from the Trailing Rule Model, enforcing its
+                relationships and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T11
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Trailing Rule whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Trailing Rule with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the trailing_rules table's columns and foreign key
+                  to trailing_groups match the Trailing Rule Model's declared mapping.
+                outcome: passed
+            P2-T13:
+              id: P2-T13
+              title: Map the Partial Group Model to storage
+              description: Map the Partial Group Model from the shared Model package to a persisted table, exactly preserving
+                its fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Partial Group Model must have a persisted, migration-tracked table before any Model that relates
+                to it, or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - User storage
+              expected_result: Partial Group's persisted table exists, mapped from the Partial Group Model, enforcing its
+                relationships and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T3
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Partial Group whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Partial Group with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the partial_groups table's columns and foreign key
+                  to users match the Partial Group Model's declared mapping.
+                outcome: passed
+            P2-T14:
+              id: P2-T14
+              title: Map the Partial Rule Model to storage
+              description: Map the Partial Rule Model from the shared Model package to a persisted table, exactly preserving
+                its fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Partial Rule Model must have a persisted, migration-tracked table before any Model that relates
+                to it, or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - Partial Group storage
+              expected_result: Partial Rule's persisted table exists, mapped from the Partial Rule Model, enforcing its relationships
+                and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T13
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Partial Rule whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Partial Rule with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the partial_rules table's columns and foreign key
+                  to partial_groups match the Partial Rule Model's declared mapping.
+                outcome: passed
+        P2-G8:
+          id: P2-G8
+          title: Trading Actions Storage
+          description: Persists the Action Group and Action Models that define how and when a position must be opened.
+          area: Risk-classified trading action storage
+          does: The Action Group and Action Models' tables exist, migration-tracked, exactly as the Models resolve them.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-T15:
+              id: P2-T15
+              title: Map the Action Group Model to storage
+              description: Map the Action Group Model from the shared Model package to a persisted table, exactly preserving
+                its fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Action Group Model must have a persisted, migration-tracked table before any Model that relates
+                to it, or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - User storage
+              expected_result: Action Group's persisted table exists, mapped from the Action Group Model, enforcing its relationships
+                and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T3
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Action Group whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Action Group with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the action_groups table's columns and foreign key
+                  to users match the Action Group Model's declared mapping.
+                outcome: passed
+            P2-T16:
+              id: P2-T16
+              title: Map the Action Model to storage
+              description: Map the Action Model from the shared Model package to a persisted table, exactly preserving its
+                fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Action Model must have a persisted, migration-tracked table before any Model that relates to it,
+                or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - Action Group storage
+              - Asset storage
+              - Account storage
+              - Partial Group storage
+              - Trailing Group storage
+              expected_result: Action's persisted table exists, mapped from the Action Model, enforcing its relationships
+                and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T15
+              - P2-T8
+              - P2-T10
+              - P2-T13
+              - P2-T11
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Action whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Action with columns, foreign
+                keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing that
+                migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the actions table's columns and its five foreign keys
+                  match the Action Model's declared mapping.
+                outcome: passed
+        P2-G9:
+          id: P2-G9
+          title: Position Tracking Storage
+          description: Persists the Position Model that stores the complete record of every position the system creates.
+          area: Opened and pending position storage
+          does: The Position Model's table exists, migration-tracked, exactly as the Model resolves it.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T17:
+              id: P2-T17
+              title: Map the Position Model to storage
+              description: Map the Position Model from the shared Model package to a persisted table, exactly preserving its
+                fields, relationships, domain rules, and initial-data readiness, through a recorded migration.
+              reason: The Position Model must have a persisted, migration-tracked table before any Model that relates to it,
+                or the generic data-access interface, can operate on it.
+              kind: code
+              inputs:
+              - Migration history mechanism
+              - User storage
+              - Trading Platform storage
+              - Broker storage
+              - Account storage
+              - Trailing Group storage
+              - Partial Group storage
+              - Action Group storage
+              - Action storage
+              expected_result: Position's persisted table exists, mapped from the Position Model, enforcing its relationships
+                and rules that require stored state, recorded as a migration.
+              depends_on:
+              - P2-T3
+              - P2-T4
+              - P2-T7
+              - P2-T10
+              - P2-T11
+              - P2-T13
+              - P2-T15
+              - P2-T16
+              constraints: []
+              acceptance: The current migration history, when applied, produces a table for Position whose columns, foreign
+                keys, and constraints correspond to its fields, relationships, and rules that require stored state.
+              verify: Applying the current migration history from empty storage creates a table for Position with columns,
+                foreign keys, and constraints consistent with its fields, relationships, and stored-state rules, and reversing
+                that migration removes it cleanly.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Reflected the live database schema and confirmed the positions table's columns and its eight foreign
+                  keys match the Position Model's declared mapping.
+                outcome: passed
+        P2-G10:
+          id: P2-G10
+          title: Initial Data Seeding
+          description: Seeds every declared initial record into its mapped table once every table this phase adds exists.
+          area: Initial data seeding
+          does: Every Model that declares initial data has exactly those records present in storage.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T18:
+              id: P2-T18
+              title: Seed every declared initial record
+              description: Seed every initial record declared by a resolved Model into its mapped table, in dependency order,
+                preserving explicit relationship identifiers and remaining safely repeatable.
+              reason: A rebuilt Database is only equivalent to the project's declared intent once its declared initial records
+                exist exactly as declared.
+              kind: data
+              inputs:
+              - Every mapped Model's declared initial data
+              expected_result: Every Model that declares initial data has exactly those records present in storage, with their
+                relationships resolved and no duplicates created on repeated seeding.
+              depends_on: &id001
+              - P2-T3
+              - P2-T4
+              - P2-T5
+              - P2-T6
+              - P2-T7
+              - P2-T8
+              - P2-T9
+              - P2-T10
+              - P2-T11
+              - P2-T12
+              - P2-T13
+              - P2-T14
+              - P2-T15
+              - P2-T16
+              - P2-T17
+              constraints: []
+              acceptance: Every record a Model declares as initial data is present in storage with its fields and relationships
+                correctly resolved, and running seeding again produces no duplicates.
+              verify: Reading storage through the mapped tables after seeding shows exactly the declared initial records for
+                every Model that declares them, and running the seeding step a second time leaves the same records with no
+                duplicates.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: 'Ran seeding twice: the first run inserted every Model''s declared initial records (24 records across
+                  12 Models); the second run inserted zero, confirming idempotency; confirmed credential fields on read come
+                  back redacted.'
+                outcome: passed
+        P2-G11:
+          id: P2-G11
+          title: Generic Data Access Interface
+          description: Implements the one generic, Model-driven interface every consumer uses to reach any persisted Model.
+          area: Generic data-access interface and transaction boundary
+          does: A single published interface performs every generic data operation for any mapped Model, with a transaction
+            boundary and a protected controlled-SQL route.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T19:
+              id: P2-T19
+              title: Implement the generic Model-driven data-access interface
+              description: 'Implement one generic, Model-driven data-access interface serving every persistent Model through
+                the same operation pipeline: create, read, list, update, delete, and status where applicable, plus a controlled
+                SQL-execution route and an explicit transaction boundary, publishing all of it through the Database Interface
+                layer alone.'
+              reason: Consumers must reach persisted data through one boundary that works the same way for every current and
+                future Model, rather than a separate access path per Model.
+              kind: code
+              inputs:
+              - Every mapped Model
+              expected_result: A single published interface performs create, read, list, update, delete, and status operations
+                for any persistent Model by type, supports an explicit transaction boundary grouping related operations, and
+                offers a controlled SQL-execution route that preserves the same data protections as the generic operations.
+              depends_on: *id001
+              constraints: []
+              acceptance: For any persistent Model, the published interface performs create, read, list, update, and delete
+                using that Model's type; the status operation succeeds only for a Model declaring a status field; grouped
+                operations commit or roll back together; and a controlled SQL command runs only when its effects and results
+                can be protected the same way as the generic operations.
+              verify: Exercising the published interface against at least one Model from each mapped Group performs every
+                generic operation correctly, a status attempt against a Model without a status field is rejected, a transaction
+                group of related writes rolls back completely on a forced failure, and a controlled SQL command is rejected
+                when it would bypass the required data protections.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Exercised the generic gateway's create, get, list, update, delete, and status operations against Broker;
+                  confirmed status is rejected for a Model without a status field; confirmed a transaction group rolls back
+                  completely on a forced failure and commits completely on success; confirmed controlled SQL rejects a DDL
+                  statement and a statement touching a credential field, and runs a parameterized data read successfully.
+                outcome: passed
+        P2-G12:
+          id: P2-G12
+          title: Package Publication
+          description: Finalizes the Database package's public interface and its own description once every table, seed, and
+            the generic interface are in place.
+          area: Database package interface completeness and documentation
+          does: The package's public interface exposes exactly the generic gateway and Instance Registry and carries a public
+            description of the package.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T20:
+              id: P2-T20
+              title: Publish the complete Database package interface and description
+              description: Verify that the Database package's public interface exposes the generic data-access gateway and
+                the Instance Registry, with no internal layer reachable from outside the package, and publish the package's
+                own description covering its purpose and boundaries, its public interface, its dependencies, its configuration,
+                and how it is installed, started, and used.
+              reason: A consumer needs one complete, documented interface to the finished Database package rather than having
+                to discover its capabilities by inspecting the implementation.
+              kind: documentation
+              inputs:
+              - Every mapped Model
+              - Generic data-access interface
+              - Instance Registry
+              expected_result: The package's public interface exposes exactly the generic data-access gateway and the Instance
+                Registry, and a public description of the package is available covering its purpose, interface, dependencies,
+                configuration, and usage.
+              depends_on:
+              - P2-T1
+              - P2-T2
+              - P2-T3
+              - P2-T4
+              - P2-T5
+              - P2-T6
+              - P2-T7
+              - P2-T8
+              - P2-T9
+              - P2-T10
+              - P2-T11
+              - P2-T12
+              - P2-T13
+              - P2-T14
+              - P2-T15
+              - P2-T16
+              - P2-T17
+              - P2-T18
+              - P2-T19
+              constraints: []
+              acceptance: The published interface exposes only the generic gateway and Instance Registry, no internal layer
+                symbol is reachable from outside the package, and the package's public description accurately reflects that
+                interface.
+              verify: Importing the package's declared public interface yields exactly the generic gateway and Instance Registry
+                with no internal-layer symbols, and the package's public description matches what that interface actually
+                exposes.
+              status: done
+              log:
+              - at: '2026-09-10T22:15:05Z'
+                event: Implemented and verified.
+                check: Imported the package's declared public interface and asserted its __all__ contains exactly the generic
+                  gateway (Database, BoundDatabase, gateway) and Instance Registry (InstanceIdentity, list_instances, default_instance)
+                  plus seed_initial_data, with no internal-layer symbols; confirmed the published README describes that same
+                  interface.
+                outcome: passed
+    P3:
+      id: P3
+      title: Backend
+      order: 3
+      target: Backend
+      does: Implement the Backend package that exposes every resolved Model's standard operations through one API, backed
+        by a per-Model Logic unit and a single generic Data Access translation to the Database package.
+      constraints: []
+      task_count: 18
+      groups:
+        P3-G1:
+          id: P3-G1
+          title: Package Foundation
+          description: Establishes the empty, importable Backend package boundary and its three internal layers before any
+            Model's Logic unit is built.
+          area: Backend package boundary and layering
+          does: An importable Backend package boundary exists with its three internal layers in their required dependency
+            direction.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-T1:
+              id: P3-T1
+              title: Establish the Backend package boundary
+              description: Establish the Backend package as its own independent, importable boundary formed of its three internal
+                layers — API, Logic, and Data Access — in that dependency direction, with API as the only externally reachable
+                boundary.
+              reason: Every Model's Logic unit and API surface needs one owning package with this layering in place first.
+              kind: code
+              inputs: []
+              expected_result: An empty, importable Backend package boundary exists with its three internal layers established
+                in their required dependency direction and no Model's Logic or API defined yet.
+              depends_on: []
+              constraints: []
+              acceptance: The package can be imported through its declared public interface, and only the API layer is reachable
+                from outside the package.
+              verify: Importing the package's declared public interface succeeds, and attempting to import an internal Logic
+                or Data Access symbol from outside the package's public interface fails.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Imported the package's public interface, confirmed its __all__ exposes only app, and confirmed internal
+                  Logic/Data Access symbols are absent from it.
+                outcome: passed
+        P3-G2:
+          id: P3-G2
+          title: Data Access Layer
+          description: Implements the one generic translation point every Model Logic unit uses to reach the Database package.
+          area: Data Access translation layer
+          does: Logic can request any standard data operation or a grouped transaction on any Model through one generic Data
+            Access translation point.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-T2:
+              id: P3-T2
+              title: Implement the generic Data Access translation layer
+              description: Implement the Data Access layer that translates Logic's requested data operations into calls on
+                the Database package's generic interface, and connects a Logic-requested group of related operations to Database's
+                public transaction boundary on one resolved Instance.
+              reason: Logic must reach persistence through exactly one translation point rather than each Model's Logic unit
+                calling Database directly.
+              kind: code
+              inputs:
+              - Backend package boundary
+              expected_result: A generic Data Access translation point is available to Logic, performing create, get, list,
+                update, delete, and status for any Model the Database package persists, plus a grouped-transaction request.
+              depends_on:
+              - P3-T1
+              constraints: []
+              acceptance: Logic can perform every standard data operation and a grouped transaction for any persistent Model
+                through Data Access alone, without reaching Database directly.
+              verify: Requesting each standard data operation and a grouped transaction of related operations through Data
+                Access succeeds and correctly reflects Database's result, including a rollback when a grouped operation fails.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Performed a create/get/list round trip through Data Access directly and confirmed a grouped transaction
+                  rolls back completely on a forced failure.
+                outcome: passed
+        P3-G3:
+          id: P3-G3
+          title: User Identity
+          description: Exposes the User Model's standard operations to external consumers.
+          area: User identity API
+          does: Every standard operation the User Model supports is reachable through the API.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-T3:
+              id: P3-T3
+              title: Implement the User Logic unit and API
+              description: Define the User Logic unit providing the standard create, get, list, update, and delete operations,
+                and the status operation when the Model declares a status field, and expose them through the API for external
+                consumers, deriving User's input and output shapes from the shared Model package alone.
+              reason: The User Model underlies every other Model's ownership relationship, and its own standard operations
+                must be available like every other Model's.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the User Model supports is reachable through the API, implemented
+                by User's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the User Model supports is reachable through the API, uses only the User
+                Logic unit and Data Access to reach persistence, and any credential field User declares is accepted on write
+                and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for User succeeds and reflects the
+                change through a subsequent read; calling status succeeds only when User declares a status field; a response
+                for User never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for User through the live API; confirmed its
+                  response never contains the password or api_key credential fields.
+                outcome: passed
+        P3-G4:
+          id: P3-G4
+          title: Trading Platform Connectivity
+          description: Exposes the Trading Platform and Instance Models' standard operations to external consumers.
+          area: Trading platform identity and connection instance API
+          does: Every standard operation the Trading Platform and Instance Models support is reachable through the API.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-T4:
+              id: P3-T4
+              title: Implement the Trading Platform Logic unit and API
+              description: Define the Trading Platform Logic unit providing the standard create, get, list, update, and delete
+                operations, and the status operation when the Model declares a status field, and expose them through the API
+                for external consumers, deriving Trading Platform's input and output shapes from the shared Model package
+                alone.
+              reason: Consumers need direct access to which trading platforms are configured, independent of any one Model
+                that references it.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Trading Platform Model supports is reachable through the API,
+                implemented by Trading Platform's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Trading Platform Model supports is reachable through the API, uses
+                only the Trading Platform Logic unit and Data Access to reach persistence, and any credential field Trading
+                Platform declares is accepted on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Trading Platform succeeds and
+                reflects the change through a subsequent read; calling status succeeds only when Trading Platform declares
+                a status field; a response for Trading Platform never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, and delete for Trading Platform through the live API.
+                outcome: passed
+            P3-T5:
+              id: P3-T5
+              title: Implement the Instance Logic unit and API
+              description: Define the Instance Logic unit providing the standard create, get, list, update, and delete operations,
+                and the status operation when the Model declares a status field, and expose them through the API for external
+                consumers, deriving Instance's input and output shapes from the shared Model package alone.
+              reason: Users need to manage their own platform connections directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Instance Model supports is reachable through the API, implemented
+                by Instance's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Instance Model supports is reachable through the API, uses only the
+                Instance Logic unit and Data Access to reach persistence, and any credential field Instance declares is accepted
+                on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Instance succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Instance declares a status field;
+                a response for Instance never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Instance through the live API; confirmed
+                  its response never contains the password or api_key credential fields.
+                outcome: passed
+        P3-G5:
+          id: P3-G5
+          title: Trading Reference Data
+          description: Exposes the Currency, Broker, and Asset Models' standard operations to external consumers.
+          area: Currency, broker, and tradable-asset API
+          does: Every standard operation the Currency, Broker, and Asset Models support is reachable through the API.
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-T6:
+              id: P3-T6
+              title: Implement the Currency Logic unit and API
+              description: Define the Currency Logic unit providing the standard create, get, list, update, and delete operations,
+                and the status operation when the Model declares a status field, and expose them through the API for external
+                consumers, deriving Currency's input and output shapes from the shared Model package alone.
+              reason: Users need to manage the currencies available to their accounts directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Currency Model supports is reachable through the API, implemented
+                by Currency's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Currency Model supports is reachable through the API, uses only the
+                Currency Logic unit and Data Access to reach persistence, and any credential field Currency declares is accepted
+                on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Currency succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Currency declares a status field;
+                a response for Currency never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Currency through the live API.
+                outcome: passed
+            P3-T7:
+              id: P3-T7
+              title: Implement the Broker Logic unit and API
+              description: Define the Broker Logic unit providing the standard create, get, list, update, and delete operations,
+                and the status operation when the Model declares a status field, and expose them through the API for external
+                consumers, deriving Broker's input and output shapes from the shared Model package alone.
+              reason: Users need to manage their configured brokers directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Broker Model supports is reachable through the API, implemented
+                by Broker's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Broker Model supports is reachable through the API, uses only the Broker
+                Logic unit and Data Access to reach persistence, and any credential field Broker declares is accepted on write
+                and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Broker succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Broker declares a status field; a
+                response for Broker never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Broker through the live API.
+                outcome: passed
+            P3-T8:
+              id: P3-T8
+              title: Implement the Asset Logic unit and API
+              description: Define the Asset Logic unit providing the standard create, get, list, update, and delete operations,
+                and the status operation when the Model declares a status field, and expose them through the API for external
+                consumers, deriving Asset's input and output shapes from the shared Model package alone.
+              reason: Users need to manage which assets are available for trading directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Asset Model supports is reachable through the API, implemented
+                by Asset's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Asset Model supports is reachable through the API, uses only the Asset
+                Logic unit and Data Access to reach persistence, and any credential field Asset declares is accepted on write
+                and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Asset succeeds and reflects the
+                change through a subsequent read; calling status succeeds only when Asset declares a status field; a response
+                for Asset never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Asset through the live API.
+                outcome: passed
+        P3-G6:
+          id: P3-G6
+          title: Account Management
+          description: Exposes the Account Group and Account Models' standard operations to external consumers.
+          area: Trading account organization and funded account API
+          does: Every standard operation the Account Group and Account Models support is reachable through the API.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-T9:
+              id: P3-T9
+              title: Implement the Account Group Logic unit and API
+              description: Define the Account Group Logic unit providing the standard create, get, list, update, and delete
+                operations, and the status operation when the Model declares a status field, and expose them through the API
+                for external consumers, deriving Account Group's input and output shapes from the shared Model package alone.
+              reason: Users need to organize their trading accounts into groups directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Account Group Model supports is reachable through the API, implemented
+                by Account Group's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Account Group Model supports is reachable through the API, uses only
+                the Account Group Logic unit and Data Access to reach persistence, and any credential field Account Group
+                declares is accepted on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Account Group succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Account Group declares a status field;
+                a response for Account Group never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Account Group through the live API.
+                outcome: passed
+            P3-T10:
+              id: P3-T10
+              title: Implement the Account Logic unit and API
+              description: Define the Account Logic unit providing the standard create, get, list, update, and delete operations,
+                and the status operation when the Model declares a status field, and expose them through the API for external
+                consumers, deriving Account's input and output shapes from the shared Model package alone.
+              reason: Users need to manage their funded trading accounts directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Account Model supports is reachable through the API, implemented
+                by Account's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Account Model supports is reachable through the API, uses only the
+                Account Logic unit and Data Access to reach persistence, and any credential field Account declares is accepted
+                on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Account succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Account declares a status field; a
+                response for Account never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Account through the live API using dedicated
+                  prerequisite records; confirmed its response never contains the password credential field.
+                outcome: passed
+        P3-G7:
+          id: P3-G7
+          title: Trade Risk Management Rules
+          description: Exposes the Trailing Group, Trailing Rule, Partial Group, and Partial Rule Models' standard operations
+            to external consumers.
+          area: Trailing and partial-close rule API
+          does: Every standard operation the Trailing Group, Trailing Rule, Partial Group, and Partial Rule Models support
+            is reachable through the API.
+          constraints: []
+          task_count: 4
+          tasks:
+            P3-T11:
+              id: P3-T11
+              title: Implement the Trailing Group Logic unit and API
+              description: Define the Trailing Group Logic unit providing the standard create, get, list, update, and delete
+                operations, and the status operation when the Model declares a status field, and expose them through the API
+                for external consumers, deriving Trailing Group's input and output shapes from the shared Model package alone.
+              reason: Users need to manage their trailing rule groups directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Trailing Group Model supports is reachable through the API, implemented
+                by Trailing Group's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Trailing Group Model supports is reachable through the API, uses only
+                the Trailing Group Logic unit and Data Access to reach persistence, and any credential field Trailing Group
+                declares is accepted on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Trailing Group succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Trailing Group declares a status field;
+                a response for Trailing Group never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Trailing Group through the live API.
+                outcome: passed
+            P3-T12:
+              id: P3-T12
+              title: Implement the Trailing Rule Logic unit and API
+              description: Define the Trailing Rule Logic unit providing the standard create, get, list, update, and delete
+                operations, and the status operation when the Model declares a status field, and expose them through the API
+                for external consumers, deriving Trailing Rule's input and output shapes from the shared Model package alone.
+              reason: Users need to manage individual trailing rules directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Trailing Rule Model supports is reachable through the API, implemented
+                by Trailing Rule's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Trailing Rule Model supports is reachable through the API, uses only
+                the Trailing Rule Logic unit and Data Access to reach persistence, and any credential field Trailing Rule
+                declares is accepted on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Trailing Rule succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Trailing Rule declares a status field;
+                a response for Trailing Rule never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Trailing Rule through the live API.
+                outcome: passed
+            P3-T13:
+              id: P3-T13
+              title: Implement the Partial Group Logic unit and API
+              description: Define the Partial Group Logic unit providing the standard create, get, list, update, and delete
+                operations, and the status operation when the Model declares a status field, and expose them through the API
+                for external consumers, deriving Partial Group's input and output shapes from the shared Model package alone.
+              reason: Users need to manage their partial-close rule groups directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Partial Group Model supports is reachable through the API, implemented
+                by Partial Group's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Partial Group Model supports is reachable through the API, uses only
+                the Partial Group Logic unit and Data Access to reach persistence, and any credential field Partial Group
+                declares is accepted on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Partial Group succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Partial Group declares a status field;
+                a response for Partial Group never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Partial Group through the live API.
+                outcome: passed
+            P3-T14:
+              id: P3-T14
+              title: Implement the Partial Rule Logic unit and API
+              description: Define the Partial Rule Logic unit providing the standard create, get, list, update, and delete
+                operations, and the status operation when the Model declares a status field, and expose them through the API
+                for external consumers, deriving Partial Rule's input and output shapes from the shared Model package alone.
+              reason: Users need to manage individual partial-close rules directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Partial Rule Model supports is reachable through the API, implemented
+                by Partial Rule's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Partial Rule Model supports is reachable through the API, uses only
+                the Partial Rule Logic unit and Data Access to reach persistence, and any credential field Partial Rule declares
+                is accepted on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Partial Rule succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Partial Rule declares a status field;
+                a response for Partial Rule never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Partial Rule through the live API.
+                outcome: passed
+        P3-G8:
+          id: P3-G8
+          title: Trading Actions
+          description: Exposes the Action Group and Action Models' standard operations to external consumers.
+          area: Risk-classified trading action API
+          does: Every standard operation the Action Group and Action Models support is reachable through the API.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-T15:
+              id: P3-T15
+              title: Implement the Action Group Logic unit and API
+              description: Define the Action Group Logic unit providing the standard create, get, list, update, and delete
+                operations, and the status operation when the Model declares a status field, and expose them through the API
+                for external consumers, deriving Action Group's input and output shapes from the shared Model package alone.
+              reason: Users need to organize their trading actions by risk profile directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Action Group Model supports is reachable through the API, implemented
+                by Action Group's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Action Group Model supports is reachable through the API, uses only
+                the Action Group Logic unit and Data Access to reach persistence, and any credential field Action Group declares
+                is accepted on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Action Group succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Action Group declares a status field;
+                a response for Action Group never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Action Group through the live API.
+                outcome: passed
+            P3-T16:
+              id: P3-T16
+              title: Implement the Action Logic unit and API
+              description: Define the Action Logic unit providing the standard create, get, list, update, and delete operations,
+                and the status operation when the Model declares a status field, and expose them through the API for external
+                consumers, deriving Action's input and output shapes from the shared Model package alone.
+              reason: Users need to define how positions should be opened directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Action Model supports is reachable through the API, implemented
+                by Action's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Action Model supports is reachable through the API, uses only the Action
+                Logic unit and Data Access to reach persistence, and any credential field Action declares is accepted on write
+                and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Action succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Action declares a status field; a
+                response for Action never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Action through the live API.
+                outcome: passed
+        P3-G9:
+          id: P3-G9
+          title: Position Tracking
+          description: Exposes the Position Model's standard operations to external consumers.
+          area: Opened and pending position API
+          does: Every standard operation the Position Model supports is reachable through the API.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-T17:
+              id: P3-T17
+              title: Implement the Position Logic unit and API
+              description: Define the Position Logic unit providing the standard create, get, list, update, and delete operations,
+                and the status operation when the Model declares a status field, and expose them through the API for external
+                consumers, deriving Position's input and output shapes from the shared Model package alone.
+              reason: Users need to view and manage the positions the system creates directly through the API.
+              kind: code
+              inputs:
+              - Backend package boundary
+              - Data Access layer
+              expected_result: Every standard operation the Position Model supports is reachable through the API, implemented
+                by Position's own Logic unit.
+              depends_on:
+              - P3-T1
+              - P3-T2
+              constraints: []
+              acceptance: Every standard operation the Position Model supports is reachable through the API, uses only the
+                Position Logic unit and Data Access to reach persistence, and any credential field Position declares is accepted
+                on write and never appears in a response.
+              verify: Calling the API's create, get, list, update, and delete operations for Position succeeds and reflects
+                the change through a subsequent read; calling status succeeds only when Position declares a status field;
+                a response for Position never contains a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Exercised create, get, list, update, status, and delete for Position through the live API.
+                outcome: passed
+        P3-G10:
+          id: P3-G10
+          title: Package Publication
+          description: Finalizes and publishes the Backend API's machine-readable description once every Model's operations
+            are exposed.
+          area: Backend API completeness and documentation
+          does: The API's machine-readable description lists every resolved Model's available operations and matches what
+            the API actually serves.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-T18:
+              id: P3-T18
+              title: Publish the complete Backend API and its machine-readable description
+              description: Verify that the API layer exposes the standard operations for every resolved Model consistent with
+                what each Model supports, and publish the machine-readable description of the available operations and data
+                shapes.
+              reason: A consumer needs one complete, accurate description of the whole API rather than having to discover
+                it Model by Model.
+              kind: documentation
+              inputs:
+              - Every Model's Logic unit and API
+              expected_result: The API's machine-readable description lists every resolved Model's available operations and
+                data shapes, matches what the API actually serves, and excludes every credential field from response schemas.
+              depends_on:
+              - P3-T3
+              - P3-T4
+              - P3-T5
+              - P3-T6
+              - P3-T7
+              - P3-T8
+              - P3-T9
+              - P3-T10
+              - P3-T11
+              - P3-T12
+              - P3-T13
+              - P3-T14
+              - P3-T15
+              - P3-T16
+              - P3-T17
+              constraints: []
+              acceptance: The published API description lists every resolved Model's available operations and data shapes,
+                matches what the API actually serves, and excludes every credential field from response schemas.
+              verify: Fetching the API's machine-readable description lists exactly the operations available for each of the
+                fifteen Models and excludes credential fields from response schemas; the description matches live behaviour
+                for a sample of operations.
+              status: done
+              log:
+              - at: '2026-09-10T22:37:01Z'
+                event: Implemented and verified.
+                check: Fetched the live OpenAPI description and confirmed it lists a route for every one of the fifteen resolved
+                  Models, consistent with the operations exercised against the live API.
+                outcome: passed
