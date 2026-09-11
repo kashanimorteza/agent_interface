@@ -1,6 +1,6 @@
 ---
 name: my-interface-implement
-description: "Implement the current Target through a fixed sequence: Configure, then Plan, Develop, and independently Review every active ready phase, then Launch."
+description: "Implement the current Target through a fixed sequence: Configure, baseline-review existing work, then Plan, Develop, and independently Review every active ready phase, then Launch."
 disable-model-invocation: true
 ---
 
@@ -20,9 +20,11 @@ Implement does not read, derive, or follow the Interface Workflow. Its sequence 
 
 1. Execute Configure once.
 2. Resolve implementable phases in Target order.
-3. For each implementable phase, execute Planning, Development, and then independent Review for that phase before moving to the next phase.
-4. When Review is `not satisfied`, run another Planning and Development reconciliation for that phase using the recorded Findings, then review it again. Continue only while each cycle makes observable progress. Stop with a truthful blocked result when a cycle repeats an unresolved Finding, produces no progress, or requires a Human decision.
-5. Execute Launch once after every implementable phase has completed Development and reached a `satisfied` Review outcome.
+3. For each implementable phase that already has a Plan, implementation output, Development progress, or Review evidence, execute an independent baseline Review before Planning. Use its Findings to describe the actual gap between current sources and current output. If that Review is `satisfied` and the phase is already truthfully complete, preserve the current Plan and implementation and move to the next phase without regenerating them.
+4. For a phase with no existing work, skip the empty baseline Review. Execute Planning, Development, and then independent Review for that phase.
+5. For existing work that is not yet satisfied, execute Planning and Development using the baseline Findings, then review the phase again.
+6. When the final Review is `not satisfied`, run another Planning and Development reconciliation for that phase using the recorded Findings, then review it again. Continue only while each cycle makes observable progress. Stop with a truthful blocked result when a cycle repeats an unresolved Finding, produces no progress, or requires a Human decision.
+7. Execute Launch once after every implementable phase has completed Development and reached a `satisfied` Review outcome.
 
 Locate each operation's current Skill through the Interface, read its instructions, and execute them directly; do not depend on nested Slash Command invocation. After Configure makes State available, record Implementation State as `in progress`, set this run's start provenance, and append its State History Event.
 
