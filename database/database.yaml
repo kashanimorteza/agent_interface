@@ -1,0 +1,24 @@
+# Database-owned non-secret runtime configuration.
+# Resolved Engine catalogue, Instance catalogue, and default Instance selection.
+# Secret values are never recorded here; they are sourced from the runtime
+# environment under Development's layer-local secrets convention.
+
+engines:
+  SQLite:
+    driver: sqlite3
+    storage:
+      kind: file
+      location: "data/{database}.db"
+      committed: false
+    connection:
+      foreign_keys: true
+      check_same_thread: false
+
+instances:
+  general:
+    name: "Trading Assistant General"
+    purpose: "General application data."
+    engine: SQLite
+    database: trading_assistant_general
+
+default_instance: general

@@ -1,0 +1,1062 @@
+meta:
+  path: .interface/foundation/config/plan.yaml
+  path_note: Mutable Plans, Groups, Tasks, counts and progress.
+policy:
+  agent_may_edit: true
+  rule: Apply the current Plan Component and the active operation's ownership rules.
+read_order:
+- task_count
+- plans
+content_map:
+  task_count: Total number of stored Tasks.
+  plans: Current phase Plans and their Groups and Tasks.
+content:
+  task_count: 27
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: The complete set of domain Models defined by the project exists as one independently importable
+        package, each Model expressing its own fields, relationships, same-record domain rules, and logical
+        initial data.
+      constraints: []
+      task_count: 16
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Identity and Access
+          description: Covers the Model that represents an independent user of the system and keeps one
+            user's configuration distinct from another's.
+          area: User identity and access
+          does: The User Model exists, expressing its identity, credential, and status fields and its
+            initial administrative record.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              title: Define the User Model
+              description: Define the Model representing an independent user of the system, expressing
+                its identity fields, its username and credential fields, its active-status field, and
+                its descriptive field, together with the credential nature of its password and API key.
+              reason: Every other owned Model and every multi-user configuration in the project depends
+                on a shared definition of who a user is.
+              kind: code
+              inputs: []
+              expected_result: A User Model that expresses its declared fields with their logical type,
+                required-ness, uniqueness intent, default behaviour, and credential nature, together with
+                its declared initial administrative record as a logical declaration.
+              depends_on: []
+              constraints: []
+              acceptance: The User Model's fields, their declared properties, and its initial record are
+                each traceable to the project's User definition, and a value that violates a declared
+                field's own type or required-ness is rejected by the Model.
+              verify: Constructing a User from values that satisfy every declared field's type, required-ness,
+                and default behaviour succeeds; a value that violates one of those declared properties
+                is rejected; and the declared initial administrative record is present as a logical declaration.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a User with valid required fields, confirming password and api_key
+                  are declared credential fields, and that a missing required field and an unknown field
+                  are both rejected; confirmed the declared initial Admin record carries the credential-generation
+                  sentinel for password and api_key.
+                outcome: passed
+        P1-G2:
+          id: P1-G2
+          title: Platform Connectivity
+          description: Covers the Models that describe the supported trading API standards and a user's
+            own connection instances to them.
+          area: Trading platform identity and connection
+          does: The Trading Platform and Instance Models exist, together expressing which trading APIs
+            the system supports and how a user's own connection to one is represented.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              title: Define the Trading Platform Model
+              description: Define the Model representing a supported trading API standard, expressing
+                its display identity, the code identifying its implementation, its active-status field,
+                and its descriptive field, together with its declared initial supported platforms.
+              reason: Every Instance and every position-executing Model needs a shared definition of which
+                trading API standards the system supports.
+              kind: code
+              inputs: []
+              expected_result: A Trading Platform Model expressing its declared fields with their logical
+                type and required-ness, and its declared initial records for the supported platforms as
+                logical declarations.
+              depends_on: []
+              constraints: []
+              acceptance: The Trading Platform Model's fields and its initial records are each traceable
+                to the project's Trading Platform definition, and a value that violates a declared field's
+                own type or required-ness is rejected by the Model.
+              verify: Constructing a Trading Platform from values that satisfy every declared field's
+                type and required-ness succeeds; a value that violates one of those declared properties
+                is rejected; and the declared initial records for the supported platforms are present
+                as logical declarations.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a Trading Platform with valid required fields, confirming a missing
+                  required field is rejected and both declared initial platform records (MetaTrader 5,
+                  Binance) are present.
+                outcome: passed
+            P1-G2-T2:
+              id: P1-G2-T2
+              title: Define the Instance Model
+              description: Define the Model representing a user-owned connection instance to a supported
+                Trading Platform, expressing its display identity, its relationship to the owning User
+                and to the used Trading Platform, its technical connection fields, its active-status field,
+                and its descriptive field, together with the credential nature of its technical password
+                and API key and its declared initial record.
+              reason: An Account needs a defined technical connection to reach its Trading Platform, and
+                that connection is owned by one user.
+              kind: code
+              inputs: []
+              expected_result: An Instance Model expressing its declared fields and its relationships
+                to User and Trading Platform with their logical cardinality, and its declared initial
+                record as a logical declaration.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Instance Model's fields, its relationships, and its initial record are each
+                traceable to the project's Instance definition, and a value that violates a declared field's
+                own type, required-ness, or the same-record connection-field requirement is rejected by
+                the Model.
+              verify: Constructing an Instance from values that satisfy every declared field's type and
+                required-ness and that supply the connection fields required by its referenced Trading
+                Platform succeeds; a value that omits one of those required connection fields or violates
+                a declared field's own type is rejected; and the declared initial record is present as
+                a logical declaration.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed an Instance with and without its optional technical connection fields,
+                  confirming a missing required relationship field is rejected and password/api_key are
+                  declared credential fields.
+                outcome: passed
+        P1-G3:
+          id: P1-G3
+          title: Currency and Broker Catalog
+          description: Covers the Models that describe the currencies, brokers, and tradable assets available
+            to a user's trading.
+          area: Currency, broker, and asset catalog
+          does: The Currency, Broker, and Asset Models exist, together expressing the catalog of currencies,
+            brokers, and tradable assets a user's trading draws on.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              title: Define the Currency Model
+              description: Define the Model representing a currency usable by the trading system, expressing
+                its owning user, its standard code, its display symbol, its associated country or region,
+                its monetary decimal precision, its active-status field, and its descriptive field, together
+                with its declared initial set of supported currencies.
+              reason: Account balances and every other monetary value in the project need a shared definition
+                of the currency they are expressed in.
+              kind: code
+              inputs: []
+              expected_result: A Currency Model expressing its declared fields with their logical type,
+                required-ness, and default behaviour, and its declared initial currency records as logical
+                declarations.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The Currency Model's fields and its initial records are each traceable to the
+                project's Currency definition, and a value that violates a declared field's own type,
+                required-ness, or default behaviour is rejected by the Model.
+              verify: Constructing a Currency from values that satisfy every declared field's type, required-ness,
+                and default behaviour succeeds; a value that violates one of those declared properties
+                is rejected; and the declared initial currency records are present as logical declarations.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a Currency confirming its default decimal-digit precision applies when
+                  unspecified, a missing required code is rejected, and all 8 declared initial currency
+                  records are present.
+                outcome: passed
+            P1-G3-T2:
+              id: P1-G3-T2
+              title: Define the Broker Model
+              description: Define the Model representing a broker supported by the system, expressing
+                its display identity, its owning user, its active-status field, and its descriptive field,
+                together with its declared initial record, independent of any one Trading Platform.
+              reason: Assets and Accounts need a shared definition of the broker that provides or hosts
+                them, without that definition depending on which Trading Platform is used to reach it.
+              kind: code
+              inputs: []
+              expected_result: A Broker Model expressing its declared fields with their logical type and
+                required-ness, and its declared initial record as a logical declaration.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The Broker Model's fields and its initial record are each traceable to the project's
+                Broker definition, and a value that violates a declared field's own type or required-ness
+                is rejected by the Model.
+              verify: Constructing a Broker from values that satisfy every declared field's type and required-ness
+                succeeds; a value that violates one of those declared properties is rejected; and the
+                declared initial record is present as a logical declaration.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a Broker confirming its default active status applies and a missing
+                  required name is rejected.
+                outcome: passed
+            P1-G3-T3:
+              id: P1-G3-T3
+              title: Define the Asset Model
+              description: Define the Model representing an asset that can be selected for trading, expressing
+                its providing broker, its trading symbol, its category, its point size, its price-decimal
+                precision, its active-status field, and its descriptive field, together with its declared
+                initial set of tradable assets.
+              reason: A trading Action needs a shared definition of which assets exist, which broker provides
+                each, and what category and price precision each uses.
+              kind: code
+              inputs: []
+              expected_result: An Asset Model expressing its declared fields and its relationship to Broker
+                with its logical cardinality, and its declared initial asset records as logical declarations.
+              depends_on:
+              - P1-G3-T2
+              constraints: []
+              acceptance: The Asset Model's fields, its relationship to Broker, and its initial records
+                are each traceable to the project's Asset definition, and a value that violates a declared
+                field's own type or required-ness is rejected by the Model.
+              verify: Constructing an Asset from values that satisfy every declared field's type and required-ness
+                and that reference a Broker succeeds; a value that violates one of those declared properties
+                is rejected; and the declared initial asset records are present as logical declarations.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed an Asset referencing a Broker, confirming a missing required broker
+                  reference is rejected.
+                outcome: passed
+        P1-G4:
+          id: P1-G4
+          title: Account Management
+          description: Covers the Models that let a user organize and hold funded trading accounts.
+          area: Trading account organization
+          does: The Account Group and Account Models exist, together expressing how a user organizes and
+            holds funded trading accounts.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              title: Define the Account Group Model
+              description: Define the Model representing an independent group for organizing a user's
+                trading accounts, expressing its owning user, its display identity, its active-status
+                field, and its descriptive field, together with its declared initial default group.
+              reason: An Account needs a shared definition of the group that organizes it.
+              kind: code
+              inputs: []
+              expected_result: An Account Group Model expressing its declared fields with their logical
+                type and required-ness, and its declared initial default record as a logical declaration.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The Account Group Model's fields and its initial record are each traceable to
+                the project's Account Group definition, and a value that violates a declared field's own
+                type or required-ness is rejected by the Model.
+              verify: Constructing an Account Group from values that satisfy every declared field's type
+                and required-ness succeeds; a value that violates one of those declared properties is
+                rejected; and the declared initial default record is present as a logical declaration.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed an Account Group confirming its default active status applies and a
+                  missing required user reference is rejected.
+                outcome: passed
+            P1-G4-T2:
+              id: P1-G4-T2
+              title: Define the Account Model
+              description: Define the Model representing a funded trading account, expressing its display
+                identity, its relationships to its owning Account Group, its Broker, its connecting Instance,
+                and its base Currency, its account-level login and credential fields, its leverage, balance,
+                and account-model fields, its active-status field, and its descriptive field, together
+                with the credential nature of its account password, the same-record distinction between
+                its own login credentials and its Instance's technical connection credentials, and its
+                declared initial record.
+              reason: Positions and trading Actions are executed through a specific funded account, so
+                the project needs one shared definition of what that account is, which broker and instance
+                it connects through, and what currency it is based in.
+              kind: code
+              inputs: []
+              expected_result: An Account Model expressing its declared fields, its relationships to Account
+                Group, Broker, Instance, and Currency with their logical cardinality, its same-record
+                credential-separation rule against its own Instance, and its declared initial record as
+                a logical declaration.
+              depends_on:
+              - P1-G4-T1
+              - P1-G3-T2
+              - P1-G2-T2
+              - P1-G3-T1
+              constraints: []
+              acceptance: The Account Model's fields, its relationships, its same-record credential-separation
+                rule, and its initial record are each traceable to the project's Account definition, and
+                a value that violates a declared field's own type, required-ness, or that rule is rejected
+                by the Model.
+              verify: Constructing an Account from values that satisfy every declared field's type and
+                required-ness, its relationships, and its same-record credential-separation rule succeeds;
+                a value that violates one of those declared properties is rejected; and the declared initial
+                record is present as a logical declaration.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed an Account confirming its default balance applies, its password is
+                  declared a credential field, and a missing required password is rejected. The rule separating
+                  an Account's own credentials from its Instance's technical credentials requires both
+                  records' stored values and the selected Trading Platform's requirements, which this
+                  Model cannot reach on its own; per Model Principle 6 that check is deferred to Backend
+                  Logic (phase P3) rather than implemented here.
+                outcome: passed for what Model owns; cross-record credential-separation rule intentionally
+                  deferred to Backend Logic
+        P1-G5:
+          id: P1-G5
+          title: Trade Risk Rules
+          description: Covers the Models that describe how open trades are trailed and partially closed.
+          area: Trailing and partial-close rule sets
+          does: The Trailing Group, Trailing Rule, Partial Group, and Partial Rule Models exist, together
+            expressing how the system trails Stop Loss and Take Profit and partially closes an open trade.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G5-T1:
+              id: P1-G5-T1
+              title: Define the Trailing Group Model
+              description: Define the Model representing an independent group of rules for managing Stop
+                Loss and Take Profit during a trade, expressing its owning user, its display identity,
+                its active-status field, and its descriptive field, together with its declared initial
+                default group.
+              reason: Trailing Rules and every Model that applies trailing behaviour need a shared definition
+                of the group that contains and identifies the rule set.
+              kind: code
+              inputs: []
+              expected_result: A Trailing Group Model expressing its declared fields with their logical
+                type and required-ness, and its declared initial default record as a logical declaration.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The Trailing Group Model's fields and its initial record are each traceable
+                to the project's Trailing Group definition, and a value that violates a declared field's
+                own type or required-ness is rejected by the Model.
+              verify: Constructing a Trailing Group from values that satisfy every declared field's type
+                and required-ness succeeds; a value that violates one of those declared properties is
+                rejected; and the declared initial default record is present as a logical declaration.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a Trailing Group confirming its default active status applies and a
+                  missing required user reference is rejected.
+                outcome: passed
+            P1-G5-T2:
+              id: P1-G5-T2
+              title: Define the Trailing Rule Model
+              description: Define the Model representing an individual rule within a Trailing Group, expressing
+                its display identity, its containing Trailing Group, its activation trigger percentage,
+                its Take Profit and Stop Loss adjustment values, its active-status field, and its descriptive
+                field.
+              reason: The system needs a shared definition of when and how to adjust Take Profit and Stop
+                Loss as a trade's profit progresses.
+              kind: code
+              inputs: []
+              expected_result: A Trailing Rule Model expressing its declared fields and its relationship
+                to Trailing Group with its logical cardinality, and its same-record uniqueness intent
+                between its group and trigger percentage.
+              depends_on:
+              - P1-G5-T1
+              constraints: []
+              acceptance: The Trailing Rule Model's fields, its relationship to Trailing Group, and its
+                uniqueness intent are each traceable to the project's Trailing Rule definition, and a
+                value that violates a declared field's own type or required-ness is rejected by the Model.
+              verify: Constructing a Trailing Rule from values that satisfy every declared field's type
+                and required-ness and that reference a Trailing Group succeeds; a value that violates
+                one of those declared properties is rejected.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a Trailing Rule referencing a Trailing Group, confirming a missing
+                  required field is rejected.
+                outcome: passed
+            P1-G5-T3:
+              id: P1-G5-T3
+              title: Define the Partial Group Model
+              description: Define the Model representing an independent group of rules for managing partial
+                closes of an open trade, expressing its owning user, its display identity, its active-status
+                field, and its descriptive field, together with its declared initial default group.
+              reason: Partial Rules and every Model that applies partial-close behaviour need a shared
+                definition of the group that contains and identifies the rule set.
+              kind: code
+              inputs: []
+              expected_result: A Partial Group Model expressing its declared fields with their logical
+                type and required-ness, and its declared initial default record as a logical declaration.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The Partial Group Model's fields and its initial record are each traceable to
+                the project's Partial Group definition, and a value that violates a declared field's own
+                type or required-ness is rejected by the Model.
+              verify: Constructing a Partial Group from values that satisfy every declared field's type
+                and required-ness succeeds; a value that violates one of those declared properties is
+                rejected; and the declared initial default record is present as a logical declaration.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a Partial Group confirming its default active status applies and a
+                  missing required user reference is rejected.
+                outcome: passed
+            P1-G5-T4:
+              id: P1-G5-T4
+              title: Define the Partial Rule Model
+              description: Define the Model representing an individual partial-close rule within a Partial
+                Group, expressing its display identity, its containing Partial Group, its activation profit
+                percentage, the percentage of the position it closes, its active-status field, and its
+                descriptive field.
+              reason: The system needs a shared definition of under which profit condition part of an
+                open position closes and how much of it closes.
+              kind: code
+              inputs: []
+              expected_result: A Partial Rule Model expressing its declared fields and its relationship
+                to Partial Group with its logical cardinality, and its same-record uniqueness intent between
+                its group and profit percentage.
+              depends_on:
+              - P1-G5-T3
+              constraints: []
+              acceptance: The Partial Rule Model's fields, its relationship to Partial Group, and its
+                uniqueness intent are each traceable to the project's Partial Rule definition, and a value
+                that violates a declared field's own type or required-ness is rejected by the Model.
+              verify: Constructing a Partial Rule from values that satisfy every declared field's type
+                and required-ness and that reference a Partial Group succeeds; a value that violates one
+                of those declared properties is rejected.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a Partial Rule referencing a Partial Group, confirming a missing required
+                  field is rejected.
+                outcome: passed
+        P1-G6:
+          id: P1-G6
+          title: Trading Actions and Positions
+          description: Covers the Models that describe how a position is opened and the record kept of
+            every position the system creates.
+          area: Trading action definition and position record
+          does: The Action Group, Action, and Position Models exist, together expressing how a position
+            is opened and the complete record kept of every position the system creates.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G6-T1:
+              id: P1-G6-T1
+              title: Define the Action Group Model
+              description: Define the Model representing an independent grouping of trading actions by
+                risk profile, expressing its owning user, its display identity, its active-status field,
+                and its descriptive field, together with its declared initial default group.
+              reason: Actions need a shared definition of the risk-profile group they belong to, so trades
+                can be organized and selected by intended risk level.
+              kind: code
+              inputs: []
+              expected_result: An Action Group Model expressing its declared fields with their logical
+                type and required-ness, and its declared initial default record as a logical declaration.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The Action Group Model's fields and its initial record are each traceable to
+                the project's Action Group definition, and a value that violates a declared field's own
+                type or required-ness is rejected by the Model.
+              verify: Constructing an Action Group from values that satisfy every declared field's type
+                and required-ness succeeds; a value that violates one of those declared properties is
+                rejected; and the declared initial default record is present as a logical declaration.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed an Action Group confirming its default active status applies and a
+                  missing required user reference is rejected.
+                outcome: passed
+            P1-G6-T2:
+              id: P1-G6-T2
+              title: Define the Action Model
+              description: Define the Model representing how a position must be opened, expressing its
+                display identity, its containing Action Group, the Asset it trades and the Account it
+                executes through, the Partial Group and Trailing Group it applies, its risk-to-reward,
+                Take Profit, and Stop Loss values, its active-status field, and its descriptive field.
+              reason: Positions are created from a defined Action, so the project needs one shared definition
+                of the asset, account, risk parameters, and rule groups that determine how a position
+                is opened.
+              kind: code
+              inputs: []
+              expected_result: An Action Model expressing its declared fields and its relationships to
+                Action Group, Asset, Account, Partial Group, and Trailing Group with their logical cardinality,
+                and its same-record uniqueness intent between its group and display identity.
+              depends_on:
+              - P1-G6-T1
+              - P1-G3-T3
+              - P1-G4-T2
+              - P1-G5-T3
+              - P1-G5-T1
+              constraints: []
+              acceptance: The Action Model's fields, its relationships, and its uniqueness intent are
+                each traceable to the project's Action definition, and a value that violates a declared
+                field's own type or required-ness is rejected by the Model.
+              verify: Constructing an Action from values that satisfy every declared field's type and
+                required-ness and that reference its Action Group, Asset, Account, Partial Group, and
+                Trailing Group succeeds; a value that violates one of those declared properties is rejected.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed an Action referencing its Action Group, Asset, Account, Partial Group,
+                  and Trailing Group, confirming a missing required relationship field is rejected.
+                outcome: passed
+            P1-G6-T3:
+              id: P1-G6-T3
+              title: Define the Position Model
+              description: Define the Model that stores the complete information for every position the
+                system creates, expressing its owning user, its display identity, its Trading Platform,
+                Broker, Account, Trailing Group, Partial Group, Action Group, and originating Action,
+                its date, volume, profit, execution-status, and order-type fields, its initial and current
+                Take Profit and Stop Loss values, its active-status field, and its descriptive field.
+              reason: The project needs one shared, complete record of every position it creates, whether
+                pending or already executed, and of every Model it was created from and now relates to.
+              kind: code
+              inputs: []
+              expected_result: A Position Model expressing its declared fields and its relationships to
+                User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group,
+                and Action with their logical cardinality.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              - P1-G3-T2
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T3
+              - P1-G6-T1
+              - P1-G6-T2
+              constraints: []
+              acceptance: The Position Model's fields and its relationships are each traceable to the
+                project's Position definition, and a value that violates a declared field's own type or
+                required-ness is rejected by the Model.
+              verify: Constructing a Position from values that satisfy every declared field's type and
+                required-ness and that reference its related Models succeeds; a value that violates one
+                of those declared properties is rejected.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Constructed a Position confirming its default execution-status and profit apply,
+                  and a missing required date field is rejected.
+                outcome: passed
+        P1-G7:
+          id: P1-G7
+          title: Package Publication
+          description: Covers publishing the complete resolved set of Models as one independently importable
+            package.
+          area: Model package public interface
+          does: The resolved Model set is available to every consuming Component through one documented
+            public import interface, with each Model exposed exactly once.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G7-T1:
+              id: P1-G7-T1
+              title: Publish the Model package's public interface
+              description: Publish the complete resolved set of Models as one independently importable
+                package, exposing every Model exactly once through one documented public import interface
+                without changing any Model's logical identity.
+              reason: Every technical Component needs one shared, importable definition of the project's
+                Models instead of maintaining private copies.
+              kind: code
+              inputs:
+              - The complete set of implemented Models
+              expected_result: One package whose public import interface exposes every resolved Model
+                exactly once, each retaining the logical identity, fields, relationships, and rules declared
+                in its own definition.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G5-T3
+              - P1-G5-T4
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              constraints: []
+              acceptance: Every resolved Model is reachable through the package's public import interface
+                exactly once, under an ecosystem-compatible public symbol, without its logical identity,
+                fields, relationships, or rules differing from its own declaration.
+              verify: Importing the package's public interface exposes every resolved Model exactly once;
+                importing any one Model through that interface yields a definition whose fields, relationships,
+                and rules match its own declaration; and no Model is reachable through more than one public
+                symbol.
+              status: done
+              log:
+              - at: '2026-09-11T08:24:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Imported the package's public interface and confirmed all 15 resolved Models are
+                  reachable exactly once, each defined in its own module.
+                outcome: passed
+    P2:
+      id: P2
+      title: Database
+      order: 2
+      target: Database
+      does: 'The project''s persistence layer exists as one independent Database package: every persistent
+        Model is mapped to storage and reproducible through migration history, its declared initial data
+        is seeded, and consumers reach it only through Database''s one generic published interface.'
+      constraints: []
+      task_count: 11
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Engine Connectivity and Instances
+          description: Covers the Storage Adapter's ownership of the physical connection to the selected
+            Database Engine and the declared catalogue of selectable Instances it connects on behalf of.
+          area: Storage Adapter connection and Instance identity
+          does: The Storage Adapter manages physical connections to the selected Engine for a chosen Instance,
+            and the Instance catalogue and default are declared and resolvable.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G1-T1:
+              id: P2-G1-T1
+              title: Implement Storage Adapter connection management
+              description: Implement the Storage Adapter layer that owns the connection to the selected
+                Database Engine for a chosen Instance and performs physical persistence operations, resolving
+                its private runtime connection settings and secrets under Development's ownership rules
+                without exposing them beyond Database's boundary.
+              reason: Every higher Database layer performs physical persistence only through a managed
+                connection to the selected Engine, so that connection lifecycle must exist and be owned
+                in one place before mapping, migration, or the public interface can operate.
+              kind: code
+              inputs: []
+              expected_result: A Storage Adapter that opens, uses, and releases a connection to the selected
+                Instance's Engine using its resolved private runtime settings, exposing nothing about
+                that connection outside the Database package.
+              depends_on: []
+              constraints: []
+              acceptance: A data operation on a configured Instance completes using the Storage Adapter's
+                managed connection, and no connection object, credential, or engine-specific detail is
+                observable outside the Database package.
+              verify: Performing a persistence operation against a configured Instance succeeds through
+                the Storage Adapter without the caller supplying or receiving a connection object; the
+                private connection settings and secrets used are not present in the operation's result
+                or in any public Database output.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Performed a create operation on a configured Instance and confirmed it completed
+                  through the Storage Adapter's managed connection, with no connection object, credential,
+                  or engine-specific detail observable through the public interface.
+                outcome: passed
+            P2-G1-T2:
+              id: P2-G1-T2
+              title: Define the Instance catalogue and default Instance
+              description: Define Database's own runtime configuration declaring the catalogue of selectable
+                Instances, each with a stable identifier, human-readable name, stated purpose, and one
+                supported Engine binding, together with the selection of exactly one Instance as the default.
+              reason: Every Database operation resolves an Instance to act on, so the set of selectable
+                Instances and which one applies by default must be declared before any operation can select
+                or default to one.
+              kind: code
+              inputs: []
+              expected_result: A configured Instance catalogue in which every Instance has a stable identifier,
+                name, purpose, and Engine binding, with exactly one Instance marked as the default and
+                the default naming an existing Instance.
+              depends_on: []
+              constraints: []
+              acceptance: Every declared Instance resolves to a distinct identity with the required properties,
+                the default resolves to one of the declared Instances, and the number of Instances is
+                derived from the catalogue rather than tracked separately.
+              verify: Enumerating the configured Instance catalogue yields every declared Instance with
+                its identifier, name, purpose, and Engine binding, exactly one of them marked default,
+                and that default identifier appears among the enumerated Instances.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Enumerated the configured Instance catalogue via the public Registry and confirmed
+                  the declared 'general' Instance is present with its identifier, name, and purpose, and
+                  that the configured default resolves to it.
+                outcome: passed
+        P2-G2:
+          id: P2-G2
+          title: Persistence Mapping
+          description: Covers the Data Logic and Mapping layer's generic derivation of physical storage
+            structure and credential at-rest treatment from the logical Model.
+          area: Data Logic and Mapping
+          does: Every persistent Model is mapped to a table preserving its fields, relationships, and
+            stored-state rules, with every credential field's at-rest transformation applied.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G2-T1:
+              id: P2-G2-T1
+              title: Implement the generic Model-to-table persistence mapping
+              description: Implement the Data Logic and Mapping layer's generic mechanism that maps every
+                persistent domain Model to a physical table, deriving columns, foreign keys, uniqueness,
+                required-ness, and referenced-record constraints from that Model's own declared fields
+                and relationships rather than from a separate per-Model implementation, with every resulting
+                table traceable to the Model it implements.
+              reason: One generic mapping mechanism driven by each Model's own declaration is what lets
+                Database support every current and future Model through the same pipeline instead of a
+                duplicated implementation per Model.
+              kind: code
+              inputs:
+              - The published Model package
+              expected_result: Every persistent Model from the Model package maps to a table recording
+                its source Model, with foreign keys, single-field and composite uniqueness, required-ness,
+                and relationship cardinality and optionality all preserved from the Model's own declaration,
+                enforced when changes are committed including under concurrent access.
+              depends_on:
+              - P1-G7-T1
+              constraints: []
+              acceptance: For every persistent Model, its mapped table's constraints match that Model's
+                own declared fields and relationships, and committing a change that violates one of those
+                constraints is rejected while a compliant change succeeds, including when attempted concurrently.
+              verify: For a sample of Models covering a required field, a declared single-field and composite
+                uniqueness rule, and a required relationship, committing a value that violates the rule
+                is rejected and a compliant value is committed and retrievable; a table exists for every
+                persistent Model and records which Model it implements.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: For sample Models, committed a value violating a declared foreign-key reference
+                  (rejected), a value violating a declared uniqueness rule (rejected), and a compliant
+                  value (committed and retrievable); confirmed a table exists for every one of the 15
+                  persistent Models via successful migration of all of them.
+                outcome: passed
+            P2-G2-T2:
+              id: P2-G2-T2
+              title: Apply the resolved at-rest transformation to every credential field
+              description: Resolve, for every Model field declared as a credential, its at-rest persistence
+                transformation and apply it within the persistence mapping so that the field's stored
+                representation reflects that transformation.
+              reason: A credential must never be stored in a form that exposes its usable value, so its
+                persistence transformation must be applied wherever the mapping stores it.
+              kind: code
+              inputs: []
+              expected_result: Every credential field's stored representation reflects its resolved at-rest
+                transformation, distinct from the value originally supplied wherever that transformation
+                changes the stored form.
+              depends_on:
+              - P2-G2-T1
+              constraints: []
+              acceptance: Writing a value to a declared credential field and reading back its stored representation
+                never yields the originally supplied value in a directly usable form when the resolved
+                transformation is not the identity transformation.
+              verify: Storing a record containing a declared credential field and inspecting its stored
+                representation shows a transformed value consistent with the field's resolved at-rest
+                mode, and no public Database operation returns that stored representation in credential-usable
+                form.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: 'Stored a User with a password and inspected its raw table representation directly:
+                  the stored value differs from the supplied plaintext and verifies against it through
+                  the one-way hash check. Repeated for an Instance''s password using the reversible encryption
+                  mode and confirmed decryption recovers the original value. Confirmed the public get()
+                  operation never includes credential fields in its output.'
+                outcome: passed
+        P2-G3:
+          id: P2-G3
+          title: Migration History
+          description: Covers the recorded, ordered, reversible history of storage-schema changes that
+            is the authoritative record of how the schema was reached.
+          area: Migration
+          does: The storage schema is reproducible from an ordered, reversible migration history rather
+            than from any manual or runtime step.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G3-T1:
+              id: P2-G3-T1
+              title: Establish the migration history producing the current schema
+              description: Establish the ordered, reversible migration history that recreates Database's
+                storage schema from nothing, recording the resolved persistence mapping — including every
+                table, constraint, and index it requires — as the current structure and the authoritative
+                record of how it was reached.
+              reason: The storage schema must never exist only inside a running server or a manual step;
+                an ordered, reversible migration history is what makes the schema reproducible and explainable.
+              kind: code
+              inputs: []
+              expected_result: A migration history whose ordered application against nothing produces
+                a storage structure matching the current persistence mapping, and whose most recent step
+                can be reversed.
+              depends_on:
+              - P2-G2-T1
+              - P2-G2-T2
+              constraints: []
+              acceptance: Applying the complete migration history to an empty storage destination produces
+                every table and constraint the current persistence mapping requires, and reversing the
+                most recently applied migration removes exactly the structure it introduced.
+              verify: Applying the migration history from nothing succeeds and the resulting structure
+                matches the current persistence mapping; reversing the last migration succeeds and leaves
+                the structure consistent with the history one step earlier.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Applied the migration history from an empty database (uv run alembic upgrade head),
+                  reversed the most recent migration (alembic downgrade -1), and reapplied it (alembic
+                  upgrade head); all three commands completed without error and left the schema matching
+                  the current persistence mapping.
+                outcome: passed
+        P2-G4:
+          id: P2-G4
+          title: Initial Data Seeding
+          description: Covers seeding the physical tables with the initial records the project's Models
+            declare.
+          area: Initial data
+          does: Every Model's declared initial data exists in storage exactly once, satisfying its required
+            relationships and fields.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G4-T1:
+              id: P2-G4-T1
+              title: Seed every Model's declared initial data
+              description: Seed every persistent Model's declared initial data into its mapped table,
+                in dependency order, satisfying every record's required relationships and non-nullable
+                fields through its supplied value, a resolved default, or permitted generated behaviour,
+                repeatably and without duplicating records or breaking uniqueness rules.
+              reason: The project's initial records are part of what was declared and are only equivalent
+                to what was intended if a rebuilt database contains them with the same meaning.
+              kind: code
+              inputs:
+              - The published Model package's declared initial data
+              expected_result: Every table whose Model declares initial data contains exactly those records,
+                each satisfying its required relationships and non-nullable fields, reachable by their
+                explicit relationship identifiers.
+              depends_on:
+              - P2-G3-T1
+              - P1-G7-T1
+              constraints: []
+              acceptance: After seeding, every declared initial record is present exactly once in its
+                mapped table with its required relationships and non-nullable fields satisfied, and running
+                seeding again does not duplicate a record or violate a uniqueness rule.
+              verify: Seeding an empty, migrated storage destination produces exactly the declared initial
+                records for every Model that declares them, with pending generated fields resolved to
+                a value; running seeding again on the same destination leaves the same records without
+                duplication or a uniqueness violation.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: 'Ran seed_initial_data() against an empty, migrated database: every Model with
+                  declared initial data (12 of the 15 persistent Models) received exactly its declared
+                  records. Ran it again immediately after: zero new records were inserted, confirming
+                  repeatable seeding without duplication or a uniqueness violation.'
+                outcome: passed
+        P2-G5:
+          id: P2-G5
+          title: Database Interface
+          description: 'Covers the only boundary Database publishes to consumers: generic Model-driven
+            data operations, the status operation, the Instance Registry, the transaction boundary, and
+            the controlled SQL route.'
+          area: Database Interface (public boundary)
+          does: Consumers reach every persistence capability — generic CRUD, status, Instance discovery,
+            transactions, and controlled SQL — through Database's one published interface.
+          constraints: []
+          task_count: 5
+          tasks:
+            P2-G5-T1:
+              id: P2-G5-T1
+              title: Publish the generic Model-driven data-access interface
+              description: Publish Database's one public interface through which a consumer performs create,
+                read, list, update, and delete operations for any persistent Model, driven by a supplied
+                Model type or instance from the Model package and any criteria the operation requires,
+                using one operation pipeline rather than a separate implementation per Model.
+              reason: Consumers must reach persisted data only through one generic, Model-driven boundary
+                rather than by depending on Database's internal mapping or connection.
+              kind: code
+              inputs: []
+              expected_result: A public interface on which every persistent Model supports create, read,
+                list, update, and delete through the same operation pipeline, accepting a genuine Model
+                type or instance rather than an untyped name and field dictionary.
+              depends_on:
+              - P2-G1-T1
+              - P2-G1-T2
+              - P2-G2-T1
+              - P2-G2-T2
+              constraints: []
+              acceptance: For any persistent Model, each of create, read, list, update, and delete succeeds
+                through the published interface using that Model's own type, and the same pipeline handles
+                a second, differently-shaped Model without additional per-Model implementation.
+              verify: Performing create, read, list, update, and delete through the published interface
+                for two differently-shaped persistent Models each succeeds and reflects the expected change,
+                using the same interface operations for both.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Performed create, read (get), list, update, and delete through the public interface
+                  for two differently-shaped Models (Broker and Trading Platform) using the same five
+                  interface functions for both, with each operation's result reflecting the expected change.
+                outcome: passed
+            P2-G5-T2:
+              id: P2-G5-T2
+              title: Publish the status operation
+              description: Publish the status operation on Database's public interface, accepting exactly
+                enable or disable, available only when the selected Model declares a status field, and
+                changing that field to the corresponding value.
+              reason: Activating and deactivating a record is a common operation across every Model that
+                declares a status field, and belongs in the generic interface rather than a per-Model
+                implementation.
+              kind: code
+              inputs: []
+              expected_result: The status operation changes a status-declaring Model's status field to
+                enabled or disabled as requested, and is rejected for a Model that declares no status
+                field.
+              depends_on:
+              - P2-G5-T1
+              constraints: []
+              acceptance: Requesting the status operation on a record of a Model that declares a status
+                field changes that field to the requested value, and requesting it on a Model without
+                a status field is rejected.
+              verify: Requesting enable and then disable on a record of a status-declaring Model changes
+                its status field to each requested value in turn; requesting the status operation on a
+                Model without a status field is rejected without changing any field.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Requested enable then disable on a status-declaring Model's record and confirmed
+                  its status field changed to each requested value in turn; requested the status operation
+                  on a Model without a status field (rejected) and with an invalid action name (rejected).
+                outcome: passed
+            P2-G5-T3:
+              id: P2-G5-T3
+              title: Publish the Instance Registry
+              description: Publish the Instance Registry through Database's public interface, derived
+                from the configured Instance catalogue, exposing every selectable Instance identity, its
+                name and purpose, and the default identity, without exposing a raw connection or secret
+                value.
+              reason: A consumer needs to discover and select an Instance by identity without learning
+                how any Instance connects.
+              kind: code
+              inputs: []
+              expected_result: A published Registry listing every configured Instance's identity, name,
+                and purpose, and identifying the default, with no connection object or secret value reachable
+                through it.
+              depends_on:
+              - P2-G1-T2
+              constraints: []
+              acceptance: The published Registry's entries match the configured Instance catalogue exactly,
+                its identified default is one of those entries, and none of its entries expose a connection
+                or secret value.
+              verify: Reading the published Registry returns every configured Instance's identity, name,
+                and purpose and the default identity, matching the configured catalogue, and inspecting
+                an entry exposes no connection object or secret value.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Read the published Registry and confirmed it returns the configured Instance's
+                  identifier, name, and purpose and identifies it as the default, matching the configured
+                  catalogue, with no connection object or secret value present in any entry.
+                outcome: passed
+            P2-G5-T4:
+              id: P2-G5-T4
+              title: Publish the transaction boundary
+              description: Publish a transaction boundary on Database's public interface that lets a consumer
+                group related data operations on one Instance so they commit together only when the whole
+                group succeeds, or roll back together on failure or cancellation, while a standalone operation
+                outside such a group remains its own atomic unit.
+              reason: Related changes must not leave partially applied data when part of a related group
+                fails, and a consumer needs to express that relationship without owning persistence internals.
+              kind: code
+              inputs: []
+              expected_result: A transaction boundary in which every operation of a successful group is
+                committed together, every operation of a failed or cancelled group is rolled back together,
+                and a standalone operation outside any group commits or fails independently of any other
+                operation.
+              depends_on:
+              - P2-G1-T1
+              - P2-G5-T1
+              constraints: []
+              acceptance: A group of related operations that all succeed is committed together and observable
+                afterward; a group in which one operation fails leaves none of the group's changes observable
+                afterward; a standalone operation outside a group is unaffected by an unrelated failing
+                group.
+              verify: Running a group of operations that all succeed leaves every one of their changes
+                observable afterward; running a group in which one operation fails leaves none of that
+                group's changes observable; a standalone operation performed outside any group remains
+                observable regardless of an unrelated group's failure.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Ran a group of two operations that both succeeded (both committed and observable
+                  afterward); ran a group where the second operation's context raised, and confirmed none
+                  of that group's changes were observable afterward; performed a standalone operation
+                  outside any group and confirmed it remained observable regardless of the unrelated failed
+                  group.
+                outcome: passed
+            P2-G5-T5:
+              id: P2-G5-T5
+              title: Publish the controlled SQL-command route
+              description: Publish the controlled SQL-command route on Database's public interface for
+                data operations that cannot be expressed through the standard Model operations, using
+                explicit parameters rather than value interpolation, scoped to the selected Instance's
+                persistence constraints and transaction boundary, rejecting structural changes, and preserving
+                Model validation, persistence constraints, credential transformations, and protected read
+                output on every accepted command.
+              reason: Some data operations cannot be expressed through the standard Model-driven operations,
+                and this route lets a consumer reach them without weakening Database's data protections
+                or bypassing Migration.
+              kind: code
+              inputs: []
+              expected_result: A controlled SQL route that executes a parameterized data command within
+                the selected Instance's transaction boundary, validating its resulting changes before
+                commit and rolling back on failure, rejecting a command whose effects or results cannot
+                be protected, and rejecting a structural change outright.
+              depends_on:
+              - P2-G5-T1
+              - P2-G2-T2
+              - P2-G5-T4
+              constraints: []
+              acceptance: A parameterized data command whose effects and results can be protected is executed
+                and its resulting changes satisfy Model validation and persistence constraints; a command
+                that cannot be protected, or that attempts a structural change, is rejected before execution;
+                no result exposes a credential's stored representation.
+              verify: Executing a parameterized data command that satisfies Model validation and persistence
+                constraints succeeds and its changes are validated within the same transaction before
+                commit; executing a command whose effects or results cannot be protected, and separately
+                a command attempting a structural change, are each rejected before execution; a result
+                containing a credential field never shows its stored representation.
+              status: done
+              log:
+              - at: '2026-09-11T08:45:00Z'
+                event: Implemented and verified by my-interface-developing.
+                check: Confirmed a DDL statement (DROP TABLE) is rejected before execution; confirmed
+                  a write statement without a RETURNING clause is rejected (its resulting row cannot be
+                  established for validation); executed a parameterized read and a parameterized write
+                  with RETURNING, both succeeding and reflecting the expected data; confirmed a read of
+                  a credential-bearing row never includes the credential's stored representation.
+                outcome: passed
