@@ -35,7 +35,8 @@
     "pydantic-ai@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true,
     "adhd-output-style@claude-settings": true,
-    "claude-md-management@claude-plugins-official": true
+    "claude-md-management@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
