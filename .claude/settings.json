@@ -25,6 +25,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
+  "outputStyle": "ADHD",
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
