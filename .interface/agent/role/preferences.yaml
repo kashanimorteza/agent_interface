@@ -1,0 +1,63 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/role/preferences.yaml"
+  path_note: "The Preferences layer of the Agent Role Component."
+  purpose: "Primary, specialized, built-in, user, project, and extension-provided Agent Role declarations."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-11"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; runtime-discovered roles are not adopted as required roles automatically."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Select the declared primary role and use specialized roles only within their contracts."
+  selection: "An undeclared role may be used only as optional runtime capability when compatible with current authority."
+  version_resolution: "Runtime-provided role implementations resolve from the selected runtime."
+  matching: "Match roles by stable profile key and native name."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The current Primary Role."
+  options: "Selectable primary roles."
+  settings: "Complete role catalogs and role defaults, with unused sources explicit."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    primary_role: "default"
+  options:
+    primary_roles:
+      default:
+        source: "runtime-provided"
+  settings:
+    project_roles:
+      interface-reader:
+        path: ".claude/agents/interface-reader.md"
+        architecture_contract: "Agent Role Principle 5"
+        tools: ["Read", "Grep", "Glob"]
+        writes: "none"
+        required: true
+    runtime_roles:
+      default:
+        architecture_contract: "Agent Role Principle 4"
+        required: true
+    user_roles: {}
+    managed_roles: {}
+    extension_roles: {}
+    built_in_roles: {}
+    role_defaults:
+      model: null
+      effort: null
+      max_turns: null
+      background: false
+      isolation: null
+      memory: null
+      skills: []
+      allowed_tools: []
+      disallowed_tools: []

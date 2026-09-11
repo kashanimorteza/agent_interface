@@ -25,7 +25,7 @@ If the resolved selection contains no implementable phase, make no changes and r
 
 ## Workflow
 
-Establish Interface Understanding and Target Understanding from the current authoritative sources located through the Interface document. Read the shared Skill rules and resolve phase eligibility, the current Skills for Configure, Planning, Development, Review, and Launch, their operational records, and their stopping conditions.
+Establish Interface Understanding from the canonical Interface document. Follow its routes to the shared Skill rules, then establish Target Understanding from the Target Technical Definition it locates. Resolve phase eligibility, the current Skills for Configure, Planning, Development, Review, and Launch, their operational records, and their stopping conditions.
 
 A phase is implementable only when Target marks it both enabled and ready for implementation. Preserve disabled, designing, and not-designed phases unchanged and report them as outside the current run.
 

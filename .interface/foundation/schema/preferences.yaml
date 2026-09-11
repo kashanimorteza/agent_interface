@@ -1,14 +1,14 @@
 schema:
   id: "agent-interface-preferences"
   version: "1.0"
-  purpose: "The common structure every Preferences file follows. It defines what a Component's Preferences hold and how they are arranged, not which choices any Component makes."
+  purpose: "The common structure every Preferences file follows. It defines what a Developer or Agent Component's Preferences hold and how they are arranged, not which choices any owner makes."
 
 # <!--------------------------------------------------------------------------------- Frame -->
 frame:
   source: ".interface/foundation/schema/yaml.yaml"
   inherited: "A Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
   scope: "This schema defines the structure of `content`, and states the additional expectations a Preferences file places on the inherited `meta` and `policy` sections."
-  path: ".interface/developer/<component>/preferences.yaml — one file per Component."
+  path: ".interface/developer/<component>/preferences.yaml for each Developer Component, and .interface/agent/<component>/preferences.yaml for each Agent Component."
   ownership: "The file is human-owned. Operations read it and never write resolved choices back into it."
 
 # <!--------------------------------------------------------------------------------- Purpose -->
@@ -42,7 +42,7 @@ meta:
       purpose: "The location, layer, and role of the file, naming the Component and stating that this is its Preferences layer."
     purpose:
       required: true
-      purpose: "What this Component's Preferences cover, in one sentence."
+      purpose: "What this Preferences owner's choices cover, in one sentence."
     standard:
       required: true
       purpose: "The Interface standard the file belongs to."
@@ -96,9 +96,9 @@ sections:
   selected:
     required: true
     default: {}
-    purpose: "What this Component has chosen. One entry per decision the Component owns, used whenever the project leaves that decision unstated."
+    purpose: "What this Preferences owner has chosen. One entry per decision the owner controls, used whenever the project leaves that decision unstated."
     rules:
-      what_belongs: "Three things and nothing else: one entry for every choice among the alternatives this Component catalogues in `options`, one entry for every choice among the resources it declares in `settings`, and the Component's code path when it owns one."
+      what_belongs: "Three things and nothing else: one entry for every choice among the alternatives this Preferences owner catalogues in `options`, one entry for every choice among the resources it declares in `settings`, and the owner's code path when it owns one."
       names_an_option: "A choice is written as the key of the entry it selects, and that entry exists — in the matching `options` catalogue for a technology, or in the declaring group inside `settings` for a declared resource. A choice naming no existing entry is invalid."
       one_per_decision: "A decision appears here exactly once, under a key naming the kind of thing chosen, such as the language, the library, or the engine."
       not_a_choice: "A configuration value that selects nothing from a catalogue is a setting, however consequential it is, and belongs to `settings`."
@@ -108,7 +108,7 @@ sections:
   options:
     required: true
     default: {}
-    purpose: "What this Component supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
+    purpose: "What this Preferences owner supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
     shape: "One mapping per kind of alternative, named in the plural, each holding entries keyed by the option's name."
     entry:
       version:
@@ -129,8 +129,8 @@ sections:
   settings:
     required: true
     default: {}
-    purpose: "How the selected options are configured, together with any resource this Component declares and the conventions it applies."
-    grouping: "By the Component's internal layers, using exactly the layer names its Principles define, when the Component has layers. Otherwise by domain area, one group per coherent subject."
+    purpose: "How the selected options are configured, together with any resource this Preferences owner declares and the conventions it applies."
+    grouping: "By the owner's internal layers, using exactly the layer names its Principles define, when the owner has layers. Otherwise by domain area, one group per coherent subject."
     rules:
       no_repetition: "A setting never repeats a value already stated in `selected` or in an `options` entry. It refers to it instead."
       resolved_or_stated: "A setting states a concrete value, or an explicit marker that the value is supplied elsewhere, such as by the runtime environment or by the engine's own default."
@@ -143,4 +143,4 @@ conventions:
   placeholders: "A value that is completed at resolution time is written in angle brackets, such as `<project>` or `<role>`. A key in angle brackets describes the shape of future entries rather than one real entry."
   unresolved: "A choice that the project must make and this file cannot supply is written as `to be defined`, and the operation that meets it raises an Open Question rather than inventing a value."
   read_order: "`read_order` lists the three content sections in their structural order."
-  content_map: "`content_map` carries one line per content section, naming what that section holds for this Component."
+  content_map: "`content_map` carries one line per content section, naming what that section holds for this Preferences owner."

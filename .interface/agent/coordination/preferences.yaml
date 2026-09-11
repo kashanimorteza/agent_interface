@@ -1,0 +1,56 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/coordination/preferences.yaml"
+  path_note: "The Preferences layer of the Agent Coordination Component."
+  purpose: "Delegation, teams, tasks, messaging, concurrency, worktree isolation, and conflict handling."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-11"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; generated team and task runtime state is never written into it."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Use the smallest coordination mechanism sufficient for the authorized work."
+  selection: "Prefer a single role for sequential work, delegation for focused isolation, and teams only for genuine peer coordination."
+  version_resolution: "Experimental runtime mechanisms resolve against the active compatible runtime."
+  matching: "Match coordination mechanisms and reusable roles by exact declared keys."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Default coordination and isolation strategy."
+  options: "Supported coordination mechanisms."
+  settings: "Delegation, teams, tasks, messaging, concurrency, worktrees, and conflict policy."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    default_coordination: "single_role"
+    mutation_isolation: "scope_partition"
+  options:
+    default_coordinations:
+      single_role: {meaning: "One accountable role executes the work."}
+      delegated_roles: {meaning: "Focused subagents return results to one accountable parent."}
+      agent_team: {meaning: "Independent teammates coordinate through shared tasks and messaging."}
+    mutation_isolations:
+      scope_partition: {meaning: "Concurrent writers receive non-overlapping owned scopes."}
+      worktree: {meaning: "Concurrent writers operate in isolated worktrees."}
+  settings:
+    delegation:
+      required_contract_fields: ["objective", "scope", "context", "authority", "expected_output", "evidence", "stopping_condition"]
+    teams: {}
+    teammates: {}
+    shared_tasks: {}
+    messaging: {}
+    mailboxes: {}
+    concurrency: {}
+    worktrees: {}
+    batch_execution: {}
+    conflict_resolution:
+      accountable_owner: "parent role"
+      integrate_only_after_reconciliation: true

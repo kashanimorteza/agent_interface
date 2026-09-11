@@ -1,0 +1,53 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/integration/preferences.yaml"
+  path_note: "The Preferences layer of the Agent Integration Component."
+  purpose: "MCP, LSP, channel, application, transport, trust, and external-service connection declarations."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-11"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned and contains references only, never credential values."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Validate declaration, trust, compatibility, authentication, connection, and usability before dependence."
+  selection: "Do not connect, trust, authenticate, or mutate an external system without applicable authorization."
+  version_resolution: "Protocol and provider versions resolve from compatible declared entries."
+  matching: "Match provider-qualified integration identities and exact server or channel keys."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Empty; no external Integration is selected."
+  options: "Supported Integration protocols."
+  settings: "Complete connection categories; all are currently explicitly empty."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected: {}
+  options:
+    protocols:
+      MCP: {version: "runtime-provided"}
+      LSP: {version: "runtime-provided"}
+      channel: {version: "runtime-provided"}
+      application_connector: {version: "runtime-provided"}
+  settings:
+    mcp_servers: {}
+    mcp_resources: {}
+    mcp_prompts: {}
+    lsp_servers: {}
+    channels: {}
+    application_connectors: {}
+    http_services: {}
+    external_data_sources: {}
+    transports: {}
+    authentication_references: {}
+    trust_decisions: {}
+    connection_health: {}
+    allowed_servers: {}
+    denied_servers: {}

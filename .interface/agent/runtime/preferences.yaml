@@ -1,0 +1,62 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/runtime/preferences.yaml"
+  path_note: "The Preferences layer of the Agent Runtime Component."
+  purpose: "The selected runtime and its provider, model, effort, compatibility, and native capability mapping."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-11"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; runtime resolution is observed without being written back as a project choice."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Consumers use the selected runtime and map portable Agent capabilities to its declared native mechanisms."
+  selection: "Use a listed compatible runtime; report a missing mapping rather than inventing equivalent behavior."
+  version_resolution: "Runtime-provided values resolve from the active installation without changing this file."
+  matching: "Runtime identities and capability keys match exactly."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The current Agent Runtime."
+  options: "Supported runtime alternatives."
+  settings: "Provider, model, effort, compatibility, and native mappings; unused categories remain explicit."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    agent_runtime: "Claude Code"
+  options:
+    agent_runtimes:
+      Claude Code:
+        version: "runtime-provided"
+        implementation_root: ".claude/"
+        settings_file: ".claude/settings.json"
+  settings:
+    providers: {}
+    models: {}
+    effort_levels: {}
+    fallback_models: {}
+    compatibility:
+      required_profile_version: "1.0"
+      status: "compatible"
+    native_capability_mapping:
+      roles: ".claude/agents/"
+      skills: ".claude/skills/"
+      legacy_commands: ".claude/commands/"
+      rules: ".claude/rules/"
+      output_styles: ".claude/output-styles/"
+      settings: ".claude/settings.json"
+      hooks: ".claude/settings.json"
+      plugins: ".claude/settings.json"
+      mcp: ".mcp.json"
+    client_surfaces:
+      terminal: {}
+      ide: {}
+      desktop: {}
+      web: {}

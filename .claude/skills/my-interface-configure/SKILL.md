@@ -14,7 +14,7 @@ Configure never stores Target interpretation in Config. Its Target Understanding
 
 ## Workflow
 
-First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues, then establish the limited Target Understanding required by this role. Use the Interface to locate operational Schemas, Config destinations, Target phase identities, and current Platform authorities. Resolve the selected Environment from explicit Target choices first and Platform defaults second.
+First establish Interface Understanding from the canonical Interface document and follow its routes to the shared Skill rules. Then establish the limited Target Understanding required by this role from the Target Technical Definition located by the Interface. Use the Interface to locate operational Schemas, Config destinations, Target phase identities, and current Platform authorities. Resolve the selected Environment from explicit Target choices first and Platform defaults second.
 
 For each operational Schema:
 

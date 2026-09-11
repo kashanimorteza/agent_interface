@@ -31,7 +31,7 @@ If arguments are present, validate the complete selection before changing any fi
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Developing's place in the Workflow, and the current locations of the resources Development needs.
 
-Then establish Target Understanding by reading the human project definition, the Principles and Preferences applicable to the selected phases and their target Components, and the existing implementation and public interfaces. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and the technical context it needs is resolved from the Preferences at this moment rather than read back from the record.
+Then establish Target Understanding from the Target Technical Definition located by the Interface, and read the Principles and Preferences applicable to the selected phases and their target Components together with the existing implementation and public interfaces. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and the technical context it needs is resolved from the Preferences at this moment rather than read back from the record.
 
 Read every selected phase's current Task Plan and State. Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from the current Component authorities. Do not assume or reproduce their fields, statuses, or policies here, because they change independently of this Skill.
 

@@ -13,7 +13,9 @@
       "WebFetch",
       "WebSearch"
     ],
-    "deny": [],
+    "deny": [
+      "Read(./README.md)"
+    ],
     "ask": [
       "Bash(git commit:*)",
       "Bash(git push:*)",
@@ -24,6 +26,19 @@
       "Bash(git clean:*)"
     ],
     "defaultMode": "acceptEdits"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-boundary-guard.py\""
+          }
+        ]
+      }
+    ]
   },
   "outputStyle": "ADHD",
   "enabledPlugins": {

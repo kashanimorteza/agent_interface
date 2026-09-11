@@ -1,0 +1,111 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/skill/preferences.yaml"
+  path_note: "The Preferences layer of the Agent Skill Component."
+  purpose: "Core, supporting, contextual, built-in, user, managed, and extension Skill declarations."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-11"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; Skill execution and activation state are observed without writing here."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Discover required Skills by stable key and verify they are usable before invocation."
+  selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
+  version_resolution: "Runtime and extension Skills resolve from their active providers."
+  matching: "Match Skills by stable profile key, declared name, and invocation where present."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Selected coordinating implementation Skill."
+  options: "Selectable implementation coordinators."
+  settings: "Complete Skill implementation map grouped by source and architectural contract."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    implementation_skill: "implement"
+  options:
+    implementation_skills:
+      implement:
+        resource: "project_skills.supporting.implement"
+  settings:
+    project_skills:
+      core_workflow:
+        configure:
+          name: "my-interface-configure"
+          path: ".claude/skills/my-interface-configure/SKILL.md"
+          architecture_contract: "Agent Skill Principle 4"
+          required: true
+        planning:
+          name: "my-interface-planning"
+          path: ".claude/skills/my-interface-planning/SKILL.md"
+          architecture_contract: "Agent Skill Principle 5"
+          required: true
+        developing:
+          name: "my-interface-developing"
+          path: ".claude/skills/my-interface-developing/SKILL.md"
+          architecture_contract: "Agent Skill Principle 6"
+          required: true
+        reviewing:
+          name: "my-interface-reviewer"
+          path: ".claude/skills/my-interface-reviewer/SKILL.md"
+          architecture_contract: "Agent Skill Principle 7"
+          required: true
+        launch:
+          name: "my-interface-launch"
+          path: ".claude/skills/my-interface-launch/SKILL.md"
+          architecture_contract: "Agent Skill Principle 8"
+          required: true
+      supporting:
+        implement:
+          name: "my-interface-implement"
+          path: ".claude/skills/my-interface-implement/SKILL.md"
+          architecture_contract: "Agent Skill Principle 9"
+          required: true
+        reset:
+          name: "my-interface-reset"
+          path: ".claude/skills/my-interface-reset/SKILL.md"
+          architecture_contract: "Agent Skill Principle 10"
+          required: true
+        skill-installer:
+          name: "my-interface-skill-installer"
+          path: ".claude/skills/my-interface-skill-installer/SKILL.md"
+          architecture_contract: "Agent Skill Principle 11"
+          required: true
+        agent-sync:
+          name: "my-interface-agent-sync"
+          path: ".claude/skills/my-interface-agent-sync/SKILL.md"
+          architecture_contract: "Agent Skill Principle 15"
+          required: true
+      contextual:
+        fastapi:
+          name: "fastapi"
+          path: ".claude/skills/fastapi/SKILL.md"
+          architecture_contract: "Agent Skill Principle 12"
+          activation: "implicit when relevant"
+          required: false
+        typer:
+          name: "typer"
+          path: ".claude/skills/typer/SKILL.md"
+          architecture_contract: "Agent Skill Principle 13"
+          activation: "implicit when relevant"
+          required: false
+        library-skills:
+          name: "library-skills"
+          path: ".claude/skills/library-skills/SKILL.md"
+          architecture_contract: "Agent Skill Principle 14"
+          activation: "implicit when package capability discovery is relevant"
+          required: false
+    user_skills: {}
+    managed_skills: {}
+    runtime_skills: {}
+    extension_skills: {}
+    disabled_skills: {}
+    overrides: {}

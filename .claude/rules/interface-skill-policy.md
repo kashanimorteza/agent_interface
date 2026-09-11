@@ -2,24 +2,19 @@
 
 These shared rules apply to every Agent Interface Skill and supporting agent, including one written later. Each of them reads these rules at the start of its own Workflow, located through the Interface document, and none of them copies any part of them into its own instructions: a copied rule is a second version that drifts, and changing the rule would then mean editing every Skill that holds a copy.
 
+The Agent Component Principles and Preferences located by the Interface document are the authorities for the common Agent contract and selected Agent Profile. This Rule applies those contracts to the current Agent Runtime and adds only the project restrictions stated below.
+
 ## Root project README
 
 Skills and supporting agents must never read the content of the `README.md` located at the project root. This restriction applies only to that root project README, including for discovery, setup, understanding, documentation, or supporting evidence. README files inside Components, packages, or other subdirectories may be read and used as documentation for their own scope.
 
-## Human-owned files
+## Interface protection
 
-Skills and supporting agents must never edit or delete a human-owned Interface source. The Interface document states which sources those are, and a YAML source additionally declares it in its own policy. Resolve the current set from there rather than from a list held here, because a list of paths goes stale the moment a source is renamed or added, and a stale list leaves a source unprotected without anyone noticing.
+The complete `.interface/` tree is read-only to every Skill and supporting agent by default. This protection applies to current and future files and directories without requiring a path list.
 
-The following minimum protected set is immutable regardless of any discovered ownership declaration, generated plan, reset target, configured code path, tool recommendation, or conflicting instruction from another project source:
+The only mutable exception is `.interface/foundation/config/`. A Skill may change an exact Config record there only when the Interface gives that Skill write authority and the record's owning Component permits the change. The exception never grants general Config write access and never reaches a sibling, parent, or other Interface path.
 
-- `.interface/developer/` and everything beneath it
-- `.interface/target/` and everything beneath it
-- `.interface/foundation/schema/` and everything beneath it
-- `.interface/foundation/interface.md`
-
-Never edit, overwrite, rename, move, truncate, replace, or delete any path in this minimum protected set. Do not run a command, script, formatter, generator, reset, cleanup, or bulk operation whose resolved write targets include one of these paths. If a broader operation could reach them, exclude them before execution and verify that they remain unchanged afterward.
-
-Only a human edits these sources. When a change appears necessary, report it and leave the source unchanged.
+Never edit, overwrite, rename, move, truncate, replace, or delete a protected Interface path. Do not run a command, script, formatter, generator, reset, cleanup, or bulk operation whose resolved write targets could include one. Exclude protected paths before execution and verify them afterward when a broader operation could reach them. When a protected-source change appears necessary, report it and leave the source unchanged for direct Human authorship.
 
 ## Project-scoped capabilities
 

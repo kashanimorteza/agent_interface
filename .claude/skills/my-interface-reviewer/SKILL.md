@@ -29,7 +29,7 @@ If arguments are present, validate the complete selection before changing files 
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Reviewer's supporting role, and the current locations of the resources Review needs.
 
-Then establish Target Understanding by reading the human project definition, the applicable Principles and Preferences, each selected phase's Task Plan, and the current implementation and public interfaces. Plan, State, and Review Config are operational records, not a stored representation of this Understanding.
+Then establish Target Understanding from the Target Technical Definition located by the Interface, and read the applicable Principles and Preferences, each selected phase's Task Plan, and the current implementation and public interfaces. Plan, State, and Review Config are operational records, not a stored representation of this Understanding.
 
 Resolve every selected phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Process phases in Target order. Review does not enter or change an active Workflow mode, but it records each phase's aggregate Review progress and appends each outcome to State History.
 

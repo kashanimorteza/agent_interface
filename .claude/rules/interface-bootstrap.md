@@ -6,6 +6,8 @@ Agent Interface Skills and the Interface structure are independent. Changing eit
 
 - `.interface/foundation/interface.md` is the canonical Interface document and file map, and the single entry point every Skill and supporting Agent starts from. Everything else — including these rules — is located through it.
 
+Establish Interface Understanding from the Interface document alone. Then follow the routes and Agent Component read order it defines for the active role. Read every routed Principles and Preferences source required to apply the Agent Profile; empty categories are declarations and must not be treated as missing. Use that Profile to locate the current native Rules, role instructions, and capabilities applicable to the work.
+
 Use the Interface document to locate the current resources required by the active role. Do not assume that a resource exists merely because it existed in an earlier version of the Interface.
 
 Read a located resource before relying on it. A resource that still exists may have changed its content, its fields, or its meaning since it was last read, and what an earlier run knew about it is not evidence about the current version.

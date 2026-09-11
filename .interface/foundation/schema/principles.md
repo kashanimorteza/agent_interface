@@ -1,8 +1,8 @@
 # Principles File Structure
 
-This document is the common structure every Principles file follows. It defines the shape of a Principles file, not the content of any Component. Each Component describes itself inside this shape so that every Principles file is written, read, and reasoned about the same way.
+This document is the common structure every Principles file follows. It defines the shape of a Principles file, not the content of any Developer or Agent Component. Each owner describes itself inside this shape so that every Principles file is written, read, and reasoned about the same way.
 
-One Principles file exists per Component, at `.interface/developer/<component>/principles.md`. The file is human-owned: Interface operations read it and never write to it.
+One Principles file exists per Developer Component at `.interface/developer/<component>/principles.md` and per Agent Component at `.interface/agent/<component>/principles.md`. Each file is human-owned: Interface operations read it and never write to it.
 
 
 <!--------------------------------------------------------------------------------- Purpose --->
@@ -10,9 +10,9 @@ One Principles file exists per Component, at `.interface/developer/<component>/p
 
 ## Purpose
 
-A Principles file exists to raise understanding of the project. It answers what a Component is, what responsibility it holds, and under which mandatory rules it operates, so that any reader — human or Agent — can reason about the Component without inspecting an implementation.
+A Principles file exists to raise understanding of the project. It answers what its owning Component or Module is, what responsibility it holds, and under which mandatory rules it operates, so that any reader — human or Agent — can reason about that owner without inspecting an implementation.
 
-A Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. It does not assign roles to Skills or Agents, prescribe their Workflows, or decide which Skill reads it and when. Those decisions belong to the Agent layer that consumes these files.
+A Developer or Agent Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. A Principles file does not prescribe a concrete Skill workflow, name current runtime resources, or decide which Skill reads it and when.
 
 
 <!--------------------------------------------------------------------------------- Scope --->
@@ -20,11 +20,11 @@ A Component describes its own responsibilities, boundaries, and relationships wi
 
 ## Scope
 
-A Principles file contains only mandatory philosophy, responsibilities, and boundaries. It is independent of specific tools, versions, third-party packages, providers, and any particular project. Architectural concepts such as packages, modules, layers, and their ownership and public interfaces are permitted.
+A Principles file contains only mandatory philosophy, responsibilities, and boundaries. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Principles additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary. A conditional contextual Skill may name the technology it serves without selecting that technology for a Target.
 
 A Principles file never contains:
 
-- a specific tool, library, framework, engine, third-party package, or version selection, or a concrete filename, folder name, path, or implementation layout; these choices belong to Preferences;
+- a specific tool, library, framework, engine, third-party package, or version selection, or a concrete filename, folder name, path, or implementation layout; these choices belong to Preferences, except that Agent Skill Principles may name a required or conditional Skill and the technology category that activates it without making the technology selection;
 - a technical default or a resolved technical choice, which belong to the Component's Preferences;
 - the shape of a generated file, which belongs to the Component's Schema when one exists; or
 - instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.
@@ -84,15 +84,15 @@ The Component's own boundary — what it does not own — is stated explicitly, 
 
 ## Terms
 
-A short definition list of the terms this Component owns — the capitalized concepts its Principles use and that a reader would otherwise have to infer from the prose.
+A short definition list of the terms the Principles owner owns — the capitalized concepts its Principles use and that a reader would otherwise have to infer from the prose.
 
 ```markdown
 ## Terms
 
-- **<Term>** — <one sentence defining it within this Component>
+- **<Term>** — <one sentence defining it within this Principles owner>
 ```
 
-A term is listed only when this Component owns it. A term owned by another Component is used as that Component defines it and is not redefined here. Terms defined by the Interface itself, such as Component, Principle, and Preference, are not repeated in any Component's list.
+A term is listed only when this Principles owner owns it. A term owned by another Component or Module is used as that owner defines it and is not redefined here. Terms defined by the Interface itself, such as Component, Principle, and Preference, are not repeated in an owner's list.
 
 
 <!--------------------------------------------------------------------------------- Relationships --->
@@ -100,7 +100,7 @@ A term is listed only when this Component owns it. A term owned by another Compo
 
 ## Relationships
 
-A short list naming the other Components this Component consumes and the other Components that consume it, each with the reason for the connection.
+A short list naming the Components or Modules this Principles owner consumes and the Components or Modules that consume it, each with the reason for the connection.
 
 ```markdown
 ## Relationships
@@ -109,7 +109,7 @@ A short list naming the other Components this Component consumes and the other C
 - **Consumed by <Component>** — <what it provides and why>
 ```
 
-Relationships are stated between Components only. No Skill, operation, Mode, or Workflow step appears here. A Component that consumes nothing, or that nothing consumes, records that fact rather than inventing a connection.
+Relationships are stated between Components and Modules only. No Skill, operation, Mode, or Workflow step appears here. An owner that consumes nothing, or that nothing consumes, records that fact rather than inventing a connection.
 
 
 <!--------------------------------------------------------------------------------- Layering --->
@@ -219,7 +219,7 @@ what it is independent of, and what it does not own.>
 
 ## Terms
 
-- **<Term>** — <definition within this Component>
+- **<Term>** — <definition within this Principles owner>
 
 ## Relationships
 
