@@ -36,7 +36,8 @@
     "document-skills@anthropic-agent-skills": true,
     "adhd-output-style@claude-settings": true,
     "claude-md-management@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true
+    "superpowers@claude-plugins-official": true,
+    "andrej-karpathy-skills@karpathy-skills": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -55,6 +56,12 @@
       "source": {
         "source": "github",
         "repo": "fcakyon/claude-codex-settings"
+      }
+    },
+    "karpathy-skills": {
+      "source": {
+        "source": "github",
+        "repo": "forrestchang/andrej-karpathy-skills"
       }
     }
   }
