@@ -29,7 +29,9 @@ Then establish Target Understanding by reading the human project definition, the
 
 Resolve the requested phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Review does not enter or change an active Workflow mode, but it records this phase's aggregate Review progress and appends its outcome to State History.
 
-Inspect the implementation and the recorded evidence. For each verification condition, observe the condition for yourself in its applicable context, and judge whether the check the implementer recorded actually establishes it; a passing check is evidence about the check, not about the condition. Ground every finding in an exact location or an observable result. Use current project intent, the Component authorities, and the Task acceptance criteria as the review baseline.
+Build a transient review ledger that enumerates every requirement in the phase's Target definition, every applicable Component-authority obligation, every Plan acceptance clause, and every recorded verification condition. Use it to establish complete review coverage without storing a duplicate source of requirements. A missing Plan mapping is a Gap; a mapped condition without observable proof is missing evidence.
+
+Inspect the implementation and the recorded evidence. For every item in the transient review ledger, observe the condition for yourself in its applicable context, and judge whether the check the implementer recorded actually establishes it. Use an independent observation or adversarial case where practical instead of relying only on the implementer's happy path; a passing check is evidence about the check, not about the condition. Ground every finding in an exact location or an observable result. Use current project intent, the Component authorities, and the Task acceptance criteria as the review baseline.
 
 Missing evidence remains missing evidence. Do not reconstruct it, infer it from the code, or treat a plausible implementation as proof that a check once passed.
 

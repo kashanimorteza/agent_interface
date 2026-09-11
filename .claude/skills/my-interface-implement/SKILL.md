@@ -1,6 +1,6 @@
 ---
 name: my-interface-implement
-description: "Implement the current Target through a fixed sequence: Configure, then Plan and Develop every active ready phase, then Launch."
+description: "Implement the current Target through a fixed sequence: Configure, then Plan, Develop, and independently Review every active ready phase, then Launch."
 disable-model-invocation: true
 ---
 
@@ -12,7 +12,7 @@ Implement an already defined Target end to end through a fixed orchestration seq
 
 ## Workflow
 
-Establish Interface Understanding and Target Understanding from the current authoritative sources located through the Interface document. Read the shared Skill rules and resolve phase eligibility, the current Skills for Configure, Planning, Development, and Launch, their operational records, and their stopping conditions.
+Establish Interface Understanding and Target Understanding from the current authoritative sources located through the Interface document. Read the shared Skill rules and resolve phase eligibility, the current Skills for Configure, Planning, Development, Review, and Launch, their operational records, and their stopping conditions.
 
 A phase is implementable only when Target marks it both enabled and ready for implementation. Preserve disabled, designing, and not-designed phases unchanged and report them as outside the current run.
 
@@ -20,14 +20,15 @@ Implement does not read, derive, or follow the Interface Workflow. Its sequence 
 
 1. Execute Configure once.
 2. Resolve implementable phases in Target order.
-3. For each implementable phase, execute Planning and then Development for that phase before moving to the next phase.
-4. Execute Launch once after every implementable phase completes.
+3. For each implementable phase, execute Planning, Development, and then independent Review for that phase before moving to the next phase.
+4. When Review is `not satisfied`, run another Planning and Development reconciliation for that phase using the recorded Findings, then review it again. Continue only while each cycle makes observable progress. Stop with a truthful blocked result when a cycle repeats an unresolved Finding, produces no progress, or requires a Human decision.
+5. Execute Launch once after every implementable phase has completed Development and reached a `satisfied` Review outcome.
 
 Locate each operation's current Skill through the Interface, read its instructions, and execute them directly; do not depend on nested Slash Command invocation. After Configure makes State available, record Implementation State as `in progress`, set this run's start provenance, and append its State History Event.
 
-Do not continue when the current operation's prerequisites or progression gates are incomplete. Record Implementation State as `blocked`, append the outcome, and report the stopping condition through its owner.
+Do not continue when the current operation's prerequisites or progression gates are incomplete. A missing, inconclusive, or not-satisfied Review outcome is an incomplete phase gate. Record Implementation State as `blocked`, append the outcome, and report the stopping condition through its owner.
 
-After every implementable phase and Launch complete, record Implementation State as `completed`, its completion time, and the outcome History Event.
+After every implementable phase is independently satisfied and Launch completes, record Implementation State as `completed`, its completion time, and the outcome History Event.
 
 Repeated invocation reconciles the current Target with existing operational records and implementation according to the individual operation rules; it does not discard completed work merely to repeat the sequence.
 
