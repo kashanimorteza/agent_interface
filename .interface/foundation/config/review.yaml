@@ -1,4 +1,4 @@
-finding_count: 6
+finding_count: 8
 reviews:
   P1:
     id: "P1"
@@ -78,14 +78,14 @@ reviews:
     id: "P3"
     title: "Backend"
     target: "Backend"
-    scope: "Plan Assurance re-checked against unchanged revision 2; Implementation Assurance performed against the completed my_backend package by independently auditing every layer's actual imports and re-exercising the HTTP API, in addition to Development's own recorded evidence."
-    outcome: "satisfied"
+    scope: "Independent re-review triggered by a post-satisfaction change to Backend Principles and Preferences: a new completion-gate Principle and a Preference change marking the FastAPI Agent Skill 'required' instead of 'optional'. Plan Assurance rebuilt its ledger from current authorities, found the revision-2 Plan did not cover the new obligation, invoked Planning, and independently re-checked the reconciled revision-3 Plan. Implementation Assurance then re-ran the full existing test suite fresh (still 21/21, no regression) and independently searched the complete my_backend package and Task history for evidence of the newly required Skill's invocation."
+    outcome: "not satisfied"
     plan_outcome: "satisfied"
-    plan_revision: 2
-    implementation_outcome: "satisfied"
+    plan_revision: 3
+    implementation_outcome: "not satisfied"
     reviewed_by: "reviewing"
-    reviewed_at: "2026-09-12T21:20:00Z"
-    finding_count: 2
+    reviewed_at: "2026-09-12T22:45:00Z"
+    finding_count: 4
     findings:
       P3-F1:
         id: "P3-F1"
@@ -111,3 +111,27 @@ reviews:
         raised_at: "2026-09-12T21:15:00Z"
         settled_at: "2026-09-12T21:20:00Z"
         settled_by: "reviewing, same pass; Development corrected every affected file to import Model types only through Model Interface, re-ran the full suite (21 passed) and re-confirmed zero direct my_model imports outside _model_interface.py"
+      P3-F3:
+        id: "P3-F3"
+        kind: "gap"
+        severity: "major"
+        task: null
+        expected: "Backend Principle 14, added after P3's prior satisfied review, makes a required Agent Skill a Backend completion gate; the Backend Preferences change in the same update marked the FastAPI Agent Skill association 'required' (previously 'optional'). The P3 Plan must name this obligation and give it a verifiable acceptance and verification condition."
+        observed: "The revision-2 P3 Plan contained no reference to the required Agent Skill, its invocation, or Review's independent compliance verification across any of its 18 Tasks, even though every Task implements or depends on the FastAPI-based API Interface."
+        evidence: "Backend Principles principles.md section 14 and Backend Preferences preferences.yaml content.options.languages.Python.api_framework.agent_skills[0].requirement = 'required' (changed from 'optional' in the same commit, after P3's 2026-09-12T21:20:00Z satisfied review); Plan Config P3, revision 2, Tasks P3-T1 through P3-T18."
+        state: "resolved"
+        raised_at: "2026-09-12T22:38:00Z"
+        settled_at: "2026-09-12T22:40:00Z"
+        settled_by: "reviewing after planning reconciliation to revision 3, adding the Skill-invocation requirement to P3-T1 and a new whole-surface compliance Task P3-T19"
+      P3-F4:
+        id: "P3-F4"
+        kind: "missing evidence"
+        severity: "major"
+        task: null
+        expected: "P3-T1's foundation decisions and the new P3-T19 whole-surface check both require observable evidence that the Agent Skill required by the resolved Backend Preferences for the selected API technology was invoked, its complete applicable guidance was read, and every applicable instruction was checked as applied or explicitly not applicable with a reason."
+        observed: "The existing my_backend implementation and its recorded Task history, produced before this obligation existed, contain no reference anywhere to the required Agent Skill's invocation or guidance; P3-T19 has no implementation at all, and P3-T1's original completion evidence predates and does not address the newly reconciled clause."
+        evidence: "Independent search of the complete my_backend package and its documented Task history found zero references to the required Agent Skill; P3-T1's log entry is dated 2026-09-12T21:10:00Z, before the Backend Principle 14 change (2026-09-12T22:33:30Z); P3-T19 status is 'todo' with no log. A fresh re-run of the full existing suite (21 tests) still passed, confirming no regression elsewhere."
+        state: "open"
+        raised_at: "2026-09-12T22:45:00Z"
+        settled_at: null
+        settled_by: null

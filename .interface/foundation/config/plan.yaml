@@ -1,4 +1,4 @@
-task_count: 57
+task_count: 58
 plans:
   P1:
     id: P1
@@ -1639,12 +1639,12 @@ plans:
     id: P3
     title: Backend
     order: 3
-    revision: 2
+    revision: 3
     target: Backend
     does: Implement the backend layer, including its application logic and API for operating on the defined
       models.
     constraints: []
-    task_count: 18
+    task_count: 19
     groups:
       P3-G1:
         id: P3-G1
@@ -1664,7 +1664,9 @@ plans:
             description: Create the independent Backend package with its isolated development environment,
               its HTTP API application, a Model Interface through which Logic obtains shared Model types
               and validation, and a Database Interface through which Logic requests persistence operations
-              and transaction groups from the public Database interface.
+              and transaction groups from the public Database interface. When the resolved Backend Preferences
+              declare a required Agent Skill for the selected technology, invoke that Skill and read its
+              complete applicable guidance before deciding how to realize this foundation.
             reason: Every Model Logic unit and every API operation depends on one Model Interface and
               one Database Interface rather than each importing Model or Database directly.
             kind: code
@@ -1676,17 +1678,26 @@ plans:
               API application starts and publishes a machine-readable API description; Model Interface
               exposes shared Model types and Model-declared Credential markers without redefining them;
               Database Interface translates a requested persistence operation or transaction group into
-              the public Database interface without containing application Behaviour.
+              the public Database interface without containing application Behaviour. When the resolved
+              Backend Preferences declare a required Agent Skill for the selected technology, that Skill
+              was invoked and its complete applicable guidance was read before the foundation's technology
+              decisions were made.
             depends_on: []
             constraints: []
             acceptance: The HTTP API application starts and its published API description is reachable;
               a Model obtained through Model Interface is the same type the Model package publishes; a
               persistence operation requested through Database Interface reaches the Database package's
-              public interface without Logic importing Database directly.
+              public interface without Logic importing Database directly. When the resolved Backend Preferences
+              declare a required Agent Skill for the selected technology, that Skill was invoked and its
+              complete applicable guidance was read before this foundation's technology decisions were
+              made.
             verify: Start the API application and fetch its published API description; import a Model
               type through Model Interface and confirm it is identical to the Model package's own public
               type; request one persistence operation through Database Interface and confirm it is reflected
               in the database, then confirm Logic's source contains no direct import of the Database package.
+              When the resolved Backend Preferences declare a required Agent Skill for the selected technology,
+              confirm it was invoked and its complete applicable guidance was read before the foundation's
+              technology decisions were made, with that check recorded as evidence in the Task's log.
             status: done
             log:
             - at: '2026-09-12T21:10:00Z'
@@ -2279,14 +2290,16 @@ plans:
       P3-G3:
         id: P3-G3
         title: API Contract Assurance
-        description: A whole-surface audit that the published API description and credential handling
-          are correct across every operation, not just individually per Model.
+        description: A whole-surface audit that the published API description, credential handling, and
+          required-technology guidance compliance are correct across every operation, not just individually
+          per Model.
         area: 'Backend: cross-cutting API Interface contract'
         does: The published machine-readable API description matches the implemented external contract
-          for every operation, and no credential field is reachable through any response anywhere in the
-          API surface.
+          for every operation, no credential field is reachable through any response anywhere in the API
+          surface, and every applicable instruction from a required Agent Skill associated with the selected
+          API technology is confirmed applied or explicitly recorded as not applicable with a reason.
         constraints: []
-        task_count: 1
+        task_count: 2
         tasks:
           P3-T17:
             id: P3-T17
@@ -2337,6 +2350,41 @@ plans:
                 marks as a credential across all 15 Models and confirmed none appear in any Read schema
                 while each appears in its Create schema as write-only input; confirmed via test_api_contract.py.
               outcome: passed
+          P3-T19:
+            id: P3-T19
+            title: Confirm required Agent Skill guidance compliance across the Backend API
+            description: Confirm, across the whole implemented Backend API surface rather than one operation,
+              that any Agent Skill the resolved Backend Preferences require for the selected API technology
+              was invoked, that its complete applicable guidance was read, and that every applicable instruction
+              is recorded as either applied by the current implementation or explicitly marked not applicable
+              with a stated reason.
+            reason: Backend Principle 14 makes a required Agent Skill a completion gate for the technology
+              it is associated with, so the affected work is complete, and independently reviewable as
+              such, only when every applicable instruction of that Skill's current guidance is satisfied
+              by observable evidence covering the whole surface it touches.
+            kind: code
+            inputs:
+            - Resolved Backend Preferences and their required Agent Skill association for the selected
+              API technology
+            - The complete established Backend package and its API Interface
+            depends_on:
+            - P3-T1
+            - P3-T17
+            constraints: []
+            expected_result: A complete, checkable record exists showing the required Agent Skill's current
+              guidance was read and that every one of its applicable instructions is confirmed either satisfied
+              by the implemented Backend API or explicitly marked not applicable with a stated reason,
+              with no applicable instruction left unaddressed.
+            acceptance: Every applicable instruction from the required Agent Skill's current guidance is
+              checked against the actual implemented Backend API and recorded as applied or explicitly
+              not applicable with a reason; no applicable instruction is left unchecked, and each recorded
+              outcome is independently confirmable against the implementation it describes.
+            verify: Obtain the required Agent Skill's complete current guidance and every referenced source
+              applicable to the selected technology, check each instruction against the actual implemented
+              Backend package and API Interface, and confirm every applicable instruction is either satisfied
+              with observable evidence or recorded as not applicable with a stated reason, with none left
+              unchecked.
+            status: todo
       P3-G4:
         id: P3-G4
         title: Package Documentation
