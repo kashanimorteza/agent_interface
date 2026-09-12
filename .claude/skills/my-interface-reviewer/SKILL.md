@@ -7,7 +7,7 @@ disable-model-invocation: false
 
 # Review Target phases
 
-This file is the Claude Code adapter for the portable `reviewing` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the self-contained Claude Code realization of the portable `reviewing` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
 
 ## Role
 
@@ -28,7 +28,7 @@ If arguments are present, validate the complete selection before changing record
 
 ## Understanding
 
-On every invocation, establish Interface Understanding from the canonical Interface document and follow its routes to the shared Skill rules and current Component authorities. Then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence.
+On every invocation, establish Interface Understanding from the canonical Interface document and follow its authorized routes to synchronized Runtime rules and current Developer Component authorities. Never enter or inspect the Agent Module. Then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence.
 
 Never introduce a third `Project Understanding`. Plan, State, Review Config, implementation, and earlier conversation are evidence to assess; none substitutes for current Interface Understanding or Target Understanding.
 

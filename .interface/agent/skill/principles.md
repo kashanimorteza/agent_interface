@@ -25,11 +25,11 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 1. Every Skill has one complete contract
 
-**Rule:** Every Interface-owned Skill has exactly one portable Skill Contract, conforming to the Skill Contract Schema, that declares its purpose, responsibility, trigger, inputs, outputs, required Understanding, authority, workflow invariants, verification, idempotency expectation, stopping conditions, and runtime-realization requirements. Principles own rules shared by Skills, the Skill Contract owns Skill-specific behavior independent of a runtime, and a native Skill implementation owns only runtime-specific execution details and never overrides or becomes a second authority for its Contract.
+**Rule:** Every Interface-owned Skill has exactly one portable Skill Contract, conforming to the Skill Contract Schema, that declares its purpose, responsibility, trigger, inputs, outputs, required Understanding, authority, workflow invariants, verification, idempotency expectation, stopping conditions, and runtime-realization requirements. Principles own rules shared by Skills, the Skill Contract owns Skill-specific behavior independent of a runtime, and a native Skill implementation is a synchronized, self-contained realization that owns only runtime-specific execution details and never overrides or becomes a second authority for its Contract.
 
 **Why:** A Skill must remain focused and current when project definitions change.
 
-**Boundary:** A coordinating Skill Contract may require an exact orchestration sequence when orchestration is its single declared responsibility. An external Skill, including framework and package-provided Skills, remains governed by its provider resource, Profile declaration, applicable Agent Principles, and the active Role; it does not receive an Interface-owned Skill Contract.
+**Boundary:** Only `agent-sync` reads the portable Contract inside the Agent Module. Every other Interface-owned Skill consumes its synchronized native realization without reading or resolving any Agent Module source. A coordinating Skill Contract may require an exact orchestration sequence when orchestration is its single declared responsibility. An external Skill, including framework and package-provided Skills, remains governed by its synchronized runtime realization and the active Role; it does not receive an Interface-owned Skill Contract.
 
 <br>
 
@@ -165,11 +165,11 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 15. `agent-sync` realizes the declared Agent Profile
 
-**Rule:** The architecture requires the `agent-sync` Skill. Its purpose is portable Agent Profile realization; its responsibility is to dynamically discover every current Agent Component from the canonical Interface, compare its Human-owned declarations with the selected Runtime, reconcile authorized project-scoped native artifacts and selected capabilities, and verify actual availability through a complete post-change pass; its task coverage is the complete current Agent Profile, including new mechanisms and explicit empty categories. Overall synchronization is claimed only when every required declaration passes that verification.
+**Rule:** The architecture requires the explicit-Human `agent-sync` Skill. It is the sole Agent Role or Skill permitted to enter, read, resolve, or use any source inside the Agent Module. Its purpose is portable Agent Profile realization; its responsibility is to dynamically discover every current Agent Component from the canonical Interface, understand its Human-owned declarations, reconcile authorized project-scoped native artifacts and selected capabilities, and verify actual availability through a complete post-change pass. It materializes self-contained Runtime Rules, Skills, Agents, Commands, Settings, Hooks, permissions, integrations, and every other declared realization so ordinary Runtime operations never need the Agent Module. Its task coverage is the complete current Agent Profile, including new mechanisms and explicit empty categories. Overall synchronization is claimed only when every required declaration passes that verification.
 
 **Why:** A portable Agent definition is useful only when a compatible Runtime can reconstruct and prove the same operational Agent without repeated manual setup.
 
-**Boundary:** `agent-sync` never changes Interface sources, Target code, application dependencies, user- or machine-scoped state, credentials, or Human choices; it never discovers or adopts undeclared capabilities, removes compatible unmanaged capabilities, or treats declaration or file presence as proof of Activation.
+**Boundary:** No other Skill, supporting Agent, coordinator, startup routine, Understanding workflow, or implicit invocation may read the Agent Module or invoke `agent-sync`. They consume only the last synchronized Runtime realization. A changed Agent declaration has no operational effect until the Human explicitly invokes `agent-sync`. `agent-sync` never changes Interface sources, Target code, application dependencies, user- or machine-scoped state, credentials, or Human choices; it never discovers or adopts undeclared capabilities, removes compatible unmanaged capabilities, or treats declaration or file presence as proof of Activation.
 
 <br>
 
@@ -177,6 +177,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 - **Must** — give every Interface-owned Skill exactly one complete portable Contract conforming to the Skill Contract Schema *(1)*
 - **Must** — keep shared rules in Principles, Skill-specific behavior in its Contract, and runtime execution details in the native implementation *(1)*
+- **Must** — make every non-Sync native Skill self-contained so it never resolves a Contract or capability through the Agent Module *(1, 15)*
 - **Never** — let a native Skill implementation override or become a second authority for its Contract *(1)*
 - **Must** — prove Skill availability through discovery and invocation *(2)*
 - **Must** — make every delegated Skill invocable by its declared coordinator and verify the complete invocation chain before orchestration mutates state *(2)*
@@ -209,4 +210,6 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Must** — activate `library-skills` only for package-provided Skill management *(14)*
 - **Never** — let `library-skills` overwrite hand-authored Skills or replace general capability management *(14)*
 - **Must** — provide `agent-sync` to dynamically reconcile every current Agent Component and verify the complete declared Agent Profile at project scope before claiming synchronization *(15)*
+- **Must** — reserve all Agent Module reads exclusively for explicit Human invocation of `agent-sync`; every other operation consumes only synchronized Runtime artifacts *(15)*
+- **Never** — invoke `agent-sync` implicitly, at startup, or through another Skill, or let an unsynchronized Agent Module change affect Runtime behavior *(15)*
 - **Never** — let `agent-sync` change Human-owned declarations, Target code, broader-scope state, or adopt undeclared capabilities *(15)*

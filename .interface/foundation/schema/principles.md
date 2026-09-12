@@ -2,7 +2,7 @@
 
 This document is the common structure every Principles file follows. It defines the shape of a Principles file, not the content of any Developer or Agent Component. Each owner describes itself inside this shape so that every Principles file is written, read, and reasoned about the same way.
 
-One Principles file exists per Developer Component at `.interface/developer/<component>/principles.md` and per Agent Component at `.interface/agent/<component>/principles.md`. Each file is human-owned: Interface operations read it and never write to it.
+One Principles file exists per Developer Component at `.interface/developer/<component>/principles.md` and per Agent Component at `.interface/agent/<component>/principles.md`. Each file is human-owned and never written by an Interface operation. Operational Skills read applicable Developer Principles; only explicitly Human-invoked Agent Sync reads Agent Principles, then realizes them as Runtime artifacts consumed by every other Skill.
 
 
 <!--------------------------------------------------------------------------------- Purpose --->

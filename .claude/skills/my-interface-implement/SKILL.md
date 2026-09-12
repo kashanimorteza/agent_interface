@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Implement the Target
 
-This file is the Claude Code adapter for the portable `implement` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the self-contained Claude Code realization of the portable `implement` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
 
 ## Role
 
@@ -27,13 +27,13 @@ If no implementable phase remains, make no changes and report why.
 
 ## Understanding
 
-Establish Interface Understanding from the canonical Interface document, then Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Resolve phase eligibility and the current implementations, Contracts, records, and stopping conditions for Configure, Planning, Developing, Reviewing, and Launch.
+Establish Interface Understanding from the canonical Interface document, then Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Without entering the Agent Module, resolve phase eligibility and the synchronized Runtime implementations, records, and stopping conditions for Configure, Planning, Developing, Reviewing, and Launch.
 
 ## Workflow
 
 Execute this fixed sequence; do not derive it from a mutable Target workflow:
 
-1. Resolve Configure, Planning, Reviewing, Developing, and Launch through current Skill Profile. Before mutation, prove that each is discoverable and that its Invocation Policy and native frontmatter permit model invocation by Implement. If any Child Skill is unavailable or explicit-Human only, stop before Configure and report adapter drift.
+1. Resolve Configure, Planning, Reviewing, Developing, and Launch from synchronized Runtime Skills. Before mutation, prove that each is discoverable and that its native invocation controls permit model invocation by Implement. If any Child Skill is unavailable or explicit-Human only, stop before Configure and report Runtime drift; never inspect Agent Module sources or invoke Agent Sync automatically.
 2. Execute Configure exactly once. Continue only when its required operational records and Environment preparation pass their gates.
 3. Record Implementation State as `in progress` under its owner.
 4. Process selected implementable phases strictly in Target order, completing the entire sequence for one phase before touching the next.

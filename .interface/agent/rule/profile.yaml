@@ -36,12 +36,17 @@ content:
       interface-bootstrap:
         path: ".claude/rules/interface-bootstrap.md"
         scope: "global"
-        responsibility: "Enter through the canonical Interface and locate applicable Agent Component authorities."
+        responsibility: "Enter through the canonical Interface while reserving Agent Module sources exclusively for explicit Agent Sync."
         required: true
       interface-skill-policy:
         path: ".claude/rules/interface-skill-policy.md"
         scope: "global"
         responsibility: "Apply shared human-owned boundaries and capability policy."
+        required: true
+      interface-agent-capabilities:
+        path: ".claude/rules/interface-agent-capabilities.md"
+        scope: "global"
+        responsibility: "Expose the synchronized Runtime capability identifiers and native mappings without requiring Agent Module reads."
         required: true
     path_scoped_rules: {}
     user_rules: {}

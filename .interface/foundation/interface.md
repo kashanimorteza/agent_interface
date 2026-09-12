@@ -59,7 +59,7 @@ The primary concern of the Interface is the **conceptual contract** between the 
 
 Agent Interface is an independent interface between **Humans** and **AI Agents** for establishing a common protocol, structure, and standard for software development.
 
-Its purpose is to let a Human define a Target in natural language and give Agents common Developer Principles and Preferences together with an explicit Agent Profile for planning and developing it.
+Its purpose is to let a Human define a Target in natural language, provide common Developer Principles and Preferences for planning and developing it, and define a portable Agent Module that explicit Agent Sync realizes in the active Runtime.
 
 <!-------------------------- How It Works -->
 ### How It Works
@@ -71,7 +71,7 @@ Config contains only the mutable operational records used to coordinate this wor
 <!-------------------------- Independence -->
 ### Independence
 
-The core Interface Structure is independent of any specific AI model, Agent, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their native implementations remain outside `.interface/` as runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Profile.
+The core Interface Structure is independent of any specific AI model, Agent, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their self-contained native implementations remain outside `.interface/` as synchronized Runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Profile. Only explicit Agent Sync reads Agent Module sources; every other Runtime operation consumes their last synchronized realization.
 
 Human project definitions remain flexible, while the Interface gives Agents stable responsibilities, rules, defaults, and operational records. Agent Interface is the communication boundary between those two forms.
 
@@ -275,7 +275,7 @@ Each line names a Component so that a phase target can be resolved to its owner.
 ### Agent
 The Agent module defines the execution side of Agent Interface through Components. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, native mappings, and explicit empty categories.
 
-Together, these Components form the Agent Profile. A different Agent Runtime reads the same Profile and maps it to native capabilities without requiring the Target or Developer modules to be redesigned.
+Together, these Components form the Agent Profile. Explicit Agent Sync reads the Profile and maps it to native capabilities in a compatible Runtime without requiring the Target or Developer modules to be redesigned.
 
 #### Structure
 
@@ -336,7 +336,7 @@ Agent
         └── Profile     → .interface/agent/observability/profile.yaml
 ```
 
-The Agent Components are read in the order shown. When the active role uses an Interface-owned Skill, its portable Contract is read after Skill Principles and Profile. An external Skill is read from its declared provider resource under the active Role and applicable Agent Principles. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. Runtime-specific implementation remains outside the Interface and is only an adapter and evidence that the Profile has been realized.
+The Agent Components are read in the order shown exclusively during an explicit Agent Sync invocation. Agent Sync then reads every Interface-owned Skill Contract after Skill Principles and Profile and realizes each required Rule, Skill, Agent, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. Every other Skill, supporting Agent, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
 
 
 #### Components
@@ -368,9 +368,9 @@ Every Agent Component's Principles and Profile are authoritative for that Compon
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. The Interface then routes the Skill to the Component authorities required by its role; the Agent never needs prior knowledge of the Interface's internal directory structure. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope.
+Understanding is the current context an Agent establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. For every operation except Agent Sync, the Interface routes the Skill only to applicable Target, Developer, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope. Agent Sync alone may follow the Agent Structure into Agent Module sources and does so only after explicit Human invocation.
 
-- **Interface Understanding:** Read `.interface/foundation/interface.md` as the sole Foundation Source, then follow only the routes it provides for the active role.
+- **Interface Understanding:** Read `.interface/foundation/interface.md` as the sole Foundation Source, then follow only the non-Agent-Module routes it provides for the active role. Agent Sync is the sole explicit exception.
 - **Target Understanding:** When required, read both Target definitions located by the Interface. Human Definition provides the Human's stated intent and context; Technical Definition is the primary Target authority and takes precedence wherever they conflict.
 
 <!-------------------------- Understanding Structure -->
@@ -468,7 +468,7 @@ This Operation is performed through `/my-interface-skill-installer` to derive Ag
 
 **Agent Skill:** `/my-interface-agent-sync`
 
-This Operation is performed through `/my-interface-agent-sync` to dynamically inspect every current Agent Component, reconcile its complete declared Profile with the selected Runtime, and certify synchronization only after all required capabilities pass post-change verification.
+This Operation is performed only through explicit Human invocation of `/my-interface-agent-sync`. It is the sole operation permitted to inspect Agent Module sources, dynamically reconciles every current Agent Component with the selected Runtime, and certifies synchronization only after all required capabilities pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
 
 <br><br>
 
@@ -503,7 +503,7 @@ output = Current operational Config and a prepared selected Environment
 ```text
 state = planning
 responsibility = Create bounded and verifiable Tasks without prescribing implementation
-inputs = Current Target, applicable Developer Principles and Preferences, Agent Profile, and operational records
+inputs = Current Target, applicable Developer Principles and Preferences, synchronized Runtime rules, and operational records
 output = Updated Plan Config
 ```
 
@@ -513,7 +513,7 @@ output = Updated Plan Config
 ```text
 state = development
 responsibility = Implement and verify eligible planned Tasks
-inputs = Current Target, applicable Developer Principles and Preferences, Agent Profile, Plan, State, and existing implementation
+inputs = Current Target, applicable Developer Principles and Preferences, synchronized Runtime rules, Plan, State, and existing implementation
 output = Verified implementation and updated operational records
 ```
 
@@ -523,7 +523,7 @@ output = Verified implementation and updated operational records
 <!--------------------------------------------------------------------------------- Authority and Ownership --->
 ## Authority and Ownership
 
-Explicit Target intent and applicable Principles guide each Skill. Developer Preferences supply engineering defaults where the Target leaves a choice unstated, while Agent Profiles declare the current execution capabilities and mappings. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Developer Preferences, and Agent Profiles, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
+Explicit Target intent and applicable Developer Principles guide operational Skills. Developer Preferences supply engineering defaults where the Target leaves a choice unstated. Agent Profiles declare desired execution capabilities and mappings solely for Agent Sync, which materializes the synchronized Runtime rules and capabilities consumed by every other Skill. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Developer Preferences, and Agent Profiles, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
 
 ```text
 Target = human-defined intent
@@ -555,7 +555,7 @@ Launch = changes runtime state through Platform and writes Launch State, access 
 Implement = coordinates operation Skills and writes only Implementation State and its History under State
 Reset = after human confirmation of the preview, removes or resets explicit-phase outputs, every generated phase when no phase is supplied, Config only, or the complete set of Config and all-phase implementation outputs, including reconciliation of the Workflow position, under the owning Components' rules
 Skill Installer = discovers Agent capabilities and, after approval, provisions only approved project-scoped capabilities outside Interface sources
-Agent Sync = reconciles declared Agent Profile choices with project-scoped native Runtime artifacts outside Interface sources
+Agent Sync = on explicit Human invocation, exclusively reads the Agent Module and reconciles its declarations with self-contained project-scoped native Runtime artifacts outside Interface sources
 Reviewing, Launch, Implement, Skill Installer, and Agent Sync = do not directly change the active Workflow mode
 Every Skill = may record its own Blockers and Open Questions under State's rules when applicable
 ```

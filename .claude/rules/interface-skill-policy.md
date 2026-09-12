@@ -1,8 +1,8 @@
 # Agent Interface Skill policy
 
-These shared rules apply to every Agent Interface Skill and supporting agent, including one written later. Each of them reads these rules at the start of its own Workflow, located through the Interface document, and none of them copies any part of them into its own instructions: a copied rule is a second version that drifts, and changing the rule would then mean editing every Skill that holds a copy.
+These synchronized Runtime rules apply to every Agent Interface Skill and supporting agent, including one written later. Each reads them at the start of its own Workflow. Agent Sync owns reconciliation with the Human-owned Agent Module; ordinary operations treat these Runtime rules as their Agent-side contract.
 
-The Agent Component Principles and Profiles located by the Interface document are the authorities for the common Agent contract and selected Agent Profile. This Rule applies those contracts to the current Agent Runtime and adds only the project restrictions stated below.
+Never read, search, resolve, or use `.interface/agent/` or another Agent Module source while performing an ordinary operation or Understanding workflow. Only explicit Human invocation of `/my-interface-agent-sync` may enter that module. Do not invoke Agent Sync automatically. If a required Runtime Rule, Skill, Agent, mapping, or capability is missing or unusable, report Runtime drift and ask the Human to run Agent Sync; do not consult its source declaration.
 
 ## README authority
 

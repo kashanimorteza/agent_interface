@@ -22,7 +22,7 @@ Produce the integrated ordered outcomes of Configure and every per-phase Plannin
 
 ## Required Understanding
 
-Establish Interface Understanding and current Target Understanding. Resolve the current Contracts and active implementations for Configure, Planning, Developing, Reviewing, and Launch, their owned records, and their gates.
+Establish Interface Understanding and current Target Understanding. Resolve the synchronized active Runtime implementations for Configure, Planning, Developing, Reviewing, and Launch, their owned records, and their gates. Never enter the Agent Module to resolve them or their Contracts.
 
 ## Authority
 
@@ -31,7 +31,7 @@ Coordinate operation Skills directly and write only Implementation State and its
 ## Workflow Invariants
 
 1. Resolve and validate the complete phase selection before any mutation. Invalid input runs no operation.
-2. Resolve Configure, Planning, Reviewing, Developing, and Launch through current Skill Profile and prove that the selected Runtime permits Implement to invoke each one. An unavailable or explicit-Human Child Skill blocks the run before mutation.
+2. Resolve Configure, Planning, Reviewing, Developing, and Launch through the synchronized Runtime capability catalog and prove that the Runtime permits Implement to invoke each one. Never read Agent Module sources. An unavailable or explicit-Human Child Skill blocks the run before mutation.
 3. Execute Configure exactly once, then confirm its required readiness before phase work.
 4. Process selected implementable phases strictly in Target order, one complete phase at a time.
 5. Execute Planning for the current phase even when a Plan exists; Planning's reconciliation and idempotency preserve valid current work.
@@ -58,4 +58,4 @@ Stop before all mutation on invalid input or an empty implementable selection. S
 
 ## Runtime Realization
 
-A native adapter exposes optional multi-phase input, resolves operation implementations through Skill Profile, invokes Configure once and then the four per-phase gates directly in fixed Contract order, and reports every operation and reconciliation outcome in execution order.
+A native adapter exposes optional multi-phase input, resolves operation implementations through synchronized Runtime capabilities, invokes Configure once and then the four per-phase gates directly in fixed Contract order, and reports every operation and reconciliation outcome in execution order without reading Agent Module sources.

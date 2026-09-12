@@ -6,7 +6,7 @@ disable-model-invocation: false
 
 # Launch the Target
 
-This file is the Claude Code adapter for the portable `launch` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the self-contained Claude Code realization of the portable `launch` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
 
 ## Role
 

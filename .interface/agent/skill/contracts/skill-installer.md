@@ -6,7 +6,7 @@ Discover and provision additional Agent capabilities through an explicit, audita
 
 ## Responsibility
 
-Derive capability needs from current Target and Agent evidence, discover compatible project-scoped candidates, preview provenance and impact, provision only approved candidates, and verify Activation. It manages Agent capabilities, never application dependencies or Target implementation.
+Derive capability needs from current Target and synchronized Runtime evidence, discover compatible project-scoped candidates, preview provenance and impact, provision only approved candidates, and verify Activation. It manages Runtime capabilities, never application dependencies, Target implementation, or Agent Module declarations.
 
 ## Trigger
 
@@ -22,7 +22,7 @@ Produce an evidence-backed need inventory, candidate comparison, exact provision
 
 ## Required Understanding
 
-Establish Interface Understanding and Target Understanding. Read applicable Agent and Developer Components, selected defaults, manifests, lockfiles, runtime versions, implementation evidence, and current capability status.
+Establish Interface Understanding and Target Understanding. Read applicable Developer Components, synchronized Runtime capability state, selected defaults, manifests, lockfiles, runtime versions, implementation evidence, and current capability status. Never read Agent Module sources; a candidate that should become part of the portable Agent definition is reported for Human declaration and later explicit Agent Sync.
 
 ## Authority
 

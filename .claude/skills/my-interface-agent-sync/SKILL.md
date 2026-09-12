@@ -6,13 +6,13 @@ disable-model-invocation: true
 
 # Synchronize the Agent Profile
 
-This file is the Claude Code adapter for the portable `agent-sync` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the Claude Code adapter for the portable `agent-sync` Skill Contract and the sole Runtime exception permitted to read Agent Module sources. Resolve and read that Contract through Agent Skill Profile only after explicit Human invocation; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
 
 ## Role
 
 Make the active Agent runtime conform to the complete Agent Profile declared by the Interface. Materialize missing native resources, reconcile drift where ownership is unambiguous, provision already-selected project Extensions and Integrations, and prove that every required capability is usable.
 
-This Skill applies existing Human-owned decisions. It does not discover or select new capabilities; use the capability-installation Skill when the Agent Profile does not already declare the needed choice.
+This Skill applies existing Human-owned decisions. It never runs implicitly, at startup, or through another Skill. It does not discover or select new capabilities; use the capability-installation Skill when the Agent Profile does not already declare the needed choice.
 
 ## Understanding
 

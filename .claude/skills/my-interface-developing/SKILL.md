@@ -7,7 +7,7 @@ disable-model-invocation: false
 
 # Develop project phases
 
-This file is the Claude Code adapter for the portable `developing` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the self-contained Claude Code realization of the portable `developing` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
 
 ## Role
 
@@ -33,7 +33,7 @@ If arguments are present, validate the complete selection before changing any fi
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Developing's place in the Workflow, and the current locations of the resources Development needs.
 
-Then establish Target Understanding from the Human and Technical Definitions located by the Interface under their declared precedence, and read the applicable Developer Principles and Preferences together with Agent Principles and Profiles, existing implementation, and public interfaces. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and its technical context is resolved from the current Developer Preferences rather than read back from the record.
+Then establish Target Understanding from the Human and Technical Definitions located by the Interface under their declared precedence, and read the applicable Developer Principles and Preferences under synchronized Runtime rules, together with existing implementation and public interfaces. Never enter or inspect the Agent Module. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and its technical context is resolved from the current Developer Preferences rather than read back from the record.
 
 Read every selected phase's current Task Plan and State. Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from the current Component authorities. Do not assume or reproduce their fields, statuses, or policies here, because they change independently of this Skill.
 

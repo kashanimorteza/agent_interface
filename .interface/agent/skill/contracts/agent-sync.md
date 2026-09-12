@@ -10,7 +10,7 @@ Discover every current Agent Component from the canonical Interface, compare eac
 
 ## Trigger
 
-Activate explicitly when setting up, repairing, migrating, or auditing an Agent Runtime, and when startup reconciliation is selected by Agent Settings.
+Activate only through an explicit Human invocation when setting up, repairing, migrating, updating, or auditing an Agent Runtime. Never activate implicitly, at startup, or through another Skill or Agent.
 
 ## Inputs
 
@@ -22,7 +22,7 @@ Produce one result for every dynamically discovered Agent Component, project-sco
 
 ## Required Understanding
 
-Establish Interface Understanding, derive the current Component inventory from the Agent Structure it exposes, and read every discovered Component's Principles, Profile, and declared supporting resources. Read each Interface-owned Skill Contract. Never rely on a Component list remembered by this Contract, a native adapter, or an earlier run. Target Understanding is required only when an Agent declaration explicitly depends on Target-selected context.
+Establish Interface Understanding and exercise the sole exception that permits entry into the Agent Module. Derive the current Component inventory from the Agent Structure it exposes, and read every discovered Component's Principles, Profile, and declared supporting resources. Read each Interface-owned Skill Contract. No other Skill, supporting Agent, coordinator, or Understanding workflow may read, resolve, or use these Agent Module sources. Never rely on a Component list remembered by this Contract, a native adapter, or an earlier run. Target Understanding is required only when an Agent declaration explicitly depends on Target-selected context.
 
 ## Authority
 
@@ -38,13 +38,15 @@ Modify only project-scoped native Agent artifacts selected by Runtime mapping. P
 - Preserve compatible native values left unspecified and report undeclared capabilities as unmanaged unless they conflict; never remove them automatically.
 - Verify Runtime compatibility first, derive dependency-safe reconciliation order from current Component Relationships and Runtime mappings, and preserve each Component's ownership throughout execution.
 - Treat a selected desired state as standing authorization only for exact additive project-scoped reconciliation. Credentials, external trust, broader scope, destructive replacement, irreversible action, or missing authority still requires Human action.
-- Materialize the smallest native adapter that realizes its portable Contract. Never invent content for an empty category or copy authoritative Interface text where a reference is supported.
+- Materialize the smallest self-contained native adapter that completely realizes its portable Contract without requiring any later Agent Module read. Runtime references may point to other synchronized Runtime artifacts, but never to Agent Module sources. Never invent content for an empty category.
+- Treat Agent Module changes as dormant desired state until this explicit synchronization completes. Never trigger synchronization from another Skill, startup routine, or ordinary Interface Understanding.
+- Reconcile every Runtime instruction that could route a non-Sync consumer into the Agent Module. Replace such routing with the corresponding synchronized Runtime rule, capability, Agent, or Skill realization.
 - Write only to an exact `write_target` declared by the affected Component's Realization record and otherwise authorized by its owning declarations. A runtime-provided or explicitly unused record with no write target is observation-only. Explicitly unused means no capability is required; it never authorizes removal of an observed undeclared capability.
 - Preserve meaningful Human-authored runtime content when ownership is ambiguous and report the exact conflict.
 
 ## Verification
 
-After reconciliation, discard the pre-change observations and perform a second complete pass from the canonical Agent Structure. Revalidate complete one-to-one Component Realization coverage, re-read every discovered Component source and native artifact, and query current runtime state. Apply each Realization record's verification obligation and prove every required declaration and mechanism is realized and usable, including instantiable Agent Definitions, correct Role and capability assignments, discoverable Skills whose native invocation controls match their declared Human and coordinator Invocation Policies, resolvable Commands, matching effective settings and enforcement, active selected Extensions, usable selected Integrations, and absence of secrets in project artifacts.
+After reconciliation, discard the pre-change observations and perform a second complete pass from the canonical Agent Structure. Revalidate complete one-to-one Component Realization coverage, re-read every discovered Component source and native artifact, and query current runtime state. Apply each Realization record's verification obligation and prove every required declaration and mechanism is realized and usable, including instantiable Agent Definitions, correct Role and capability assignments, discoverable self-contained Skills whose native invocation controls match their declared Human and coordinator Invocation Policies, resolvable Commands, matching effective settings and enforcement, active selected Extensions, usable selected Integrations, and absence of secrets in project artifacts. Audit all synchronized non-Sync instructions and mappings and fail verification if any of them directs its consumer to read, resolve, or use an Agent Module source.
 
 The overall result is `synchronized` only when this second pass covers every current Agent Component and every required item passes its own verification gate. Any blocked, missing, conflicting, inactive, unsupported, or unverified required item prevents the success claim, even when all other Components pass.
 
@@ -58,4 +60,4 @@ Block an affected item on incompatible Runtime, ambiguous ownership, unsupported
 
 ## Runtime Realization
 
-A native adapter uses only mappings declared by Agent Runtime and Settings, dynamically traverses the Agent Structure, and contains no exhaustive Component or mechanism list. It must be bootstrappable from this Contract and the Agent Profile and cannot depend on the previous presence of another vendor's adapter.
+The native `agent-sync` adapter is the only Runtime artifact that may bootstrap from this Contract and the Agent Profile. It uses only mappings declared by Agent Runtime and Settings, dynamically traverses the Agent Structure, and contains no exhaustive Component or mechanism list. Every other native Skill and Agent must be self-contained or depend only on synchronized Runtime artifacts and must never resolve its behavior through an Agent Module source. The adapter cannot depend on the previous presence of another vendor's adapter.

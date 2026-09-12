@@ -133,13 +133,13 @@ sections:
           recursion: "The agent_skills rules defined for an option entry apply identically to every embedded subordinate profile."
       agent_skills:
         required: false
-        purpose: "Agent Skills associated with work on this option, resolved from the Agent Skill Profile rather than defined or installed here."
+        purpose: "Agent Skills associated with work on this option, resolved by ordinary operations from the synchronized Runtime capability catalog rather than defined or installed here. Only Agent Sync reads their Agent Module declarations."
         shape:
           type: "list"
           item:
             resource:
               required: true
-              purpose: "Stable dotted reference to one Skill declared under Agent Skill Profile content.settings."
+              purpose: "Stable dotted capability identifier projected by Agent Sync into the Runtime capability catalog."
             requirement:
               required: true
               values:
@@ -154,7 +154,7 @@ sections:
               required: true
               purpose: "The bounded guidance this Skill contributes while work on the selected option is performed."
         rules:
-          association_only: "An association neither defines nor installs a Skill and never proves Activation. Agent Skill Profile remains authoritative for the Skill declaration, and current Runtime evidence proves whether it is usable."
+          association_only: "An association neither defines nor installs a Skill and never proves Activation. Agent Sync owns translation from the Human-owned declaration to the Runtime catalog, and current Runtime evidence proves whether it is usable."
           authority: "An associated Skill supplies guidance only. It never selects this option, expands Target scope, or overrides Target, Principles, Preferences, Plan, Role, Permission, or another owning authority."
           optional: "Use an optional associated Skill when it is declared, discoverable, and usable. If it is unavailable, continue without it and report the unavailable aid when consequential."
           required: "A required associated Skill that is not usable blocks the affected work and is handled through the Agent capability lifecycle rather than silently approximated."
