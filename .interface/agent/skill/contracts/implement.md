@@ -31,15 +31,16 @@ Coordinate operation Skills directly and write only Implementation State and its
 ## Workflow Invariants
 
 1. Resolve and validate the complete phase selection before any mutation. Invalid input runs no operation.
-2. Execute Configure exactly once, then confirm its required readiness before phase work.
-3. Process selected implementable phases strictly in Target order, one complete phase at a time.
-4. Execute Planning for the current phase even when a Plan exists; Planning's reconciliation and idempotency preserve valid current work.
-5. Execute Reviewing as the Plan gate. Reviewing may coordinate Planning and independently recheck its result. Do not invoke Development until Plan Assurance is `satisfied`.
-6. Execute Development for the current phase, including durable checks and its completion gate, then execute Reviewing again for final Plan and Implementation Assurance.
-7. When final Review is not satisfied, route Plan Findings through Reviewing's Planning reconciliation and implementation Findings through Development, then run final Review again. Continue only while a cycle closes or materially advances at least one Finding.
-8. Stop on a repeated unresolved Finding, no observable progress, inconclusive assurance, unmet dependency, failed operation gate, or required Human decision.
-9. Advance to the next selected phase only after the current phase has satisfied Plan and Implementation Assurance. An incomplete phase withholds every later phase in this invocation.
-10. Launch only when every currently enabled and ready phase—not merely the selected subset—has completed Planning and Development and has satisfied both Review assurances.
+2. Resolve Configure, Planning, Reviewing, Developing, and Launch through current Skill Preferences and prove that the selected Runtime permits Implement to invoke each one. An unavailable or explicit-Human Child Skill blocks the run before mutation.
+3. Execute Configure exactly once, then confirm its required readiness before phase work.
+4. Process selected implementable phases strictly in Target order, one complete phase at a time.
+5. Execute Planning for the current phase even when a Plan exists; Planning's reconciliation and idempotency preserve valid current work.
+6. Execute Reviewing as the Plan gate. Reviewing may coordinate Planning and independently recheck its result. Do not invoke Development until Plan Assurance is `satisfied`.
+7. Execute Development for the current phase, including durable checks and its completion gate, then execute Reviewing again for final Plan and Implementation Assurance.
+8. When final Review is not satisfied, route Plan Findings through Reviewing's Planning reconciliation and implementation Findings through Development, then run final Review again. Continue only while a cycle closes or materially advances at least one Finding.
+9. Stop on a repeated unresolved Finding, no observable progress, inconclusive assurance, unmet dependency, failed operation gate, or required Human decision.
+10. Advance to the next selected phase only after the current phase has satisfied Plan and Implementation Assurance. An incomplete phase withholds every later phase in this invocation.
+11. Launch only when every currently enabled and ready phase—not merely the selected subset—has completed Planning and Development and has satisfied both Review assurances.
 
 Implementation never derives its sequence from a mutable Target workflow. It locates and executes operation Skills directly rather than depending on nested command invocation. No incomplete or missing gate is passed.
 

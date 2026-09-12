@@ -9,6 +9,7 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 - **Skill** — reusable instructions or knowledge activated explicitly or by relevance.
 - **Skill Contract** — the portable definition of an Interface-owned Skill's responsibility, inputs, outputs, authority, checks, and stopping conditions.
 - **Activation** — the state in which a Skill is discoverable and usable by its intended role.
+- **Invocation Policy** — whether a Skill may be invoked by the Human, by a declared coordinating Skill, or by both in the selected Runtime.
 
 ## Relationships
 
@@ -34,11 +35,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 2. Skill availability is proven
 
-**Rule:** A Skill is available only when its intended Agent Role can discover and invoke it in the current project. A file, installation record, or declaration alone does not prove Activation.
+**Rule:** A Skill is available only when its intended Agent Role can discover and invoke it in the current project. A Skill delegated by another Skill is available only when the selected Runtime permits that declared coordinator to invoke it. Core Workflow Skills used by Implement are invocable both directly by the Human and by declared coordinators; top-level or sensitive coordinating Skills remain explicit-Human entry points unless their Preferences state otherwise. A file, installation record, or declaration alone does not prove Activation.
 
 **Why:** Planning around nominal Skills fails when the runtime cannot actually load them.
 
-**Boundary:** Validation may report the unmet activation condition without changing it.
+**Boundary:** Coordinator invocation never expands the delegated Skill's scope, authority, permission requirements, or stopping conditions. Being coordinator-invocable does not authorize unrelated automatic execution. Validation reports an unmet invocation condition before a coordinating workflow mutates state.
 
 <br>
 
@@ -178,6 +179,8 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Must** — keep shared rules in Principles, Skill-specific behavior in its Contract, and runtime execution details in the native implementation *(1)*
 - **Never** — let a native Skill implementation override or become a second authority for its Contract *(1)*
 - **Must** — prove Skill availability through discovery and invocation *(2)*
+- **Must** — make every delegated Skill invocable by its declared coordinator and verify the complete invocation chain before orchestration mutates state *(2)*
+- **Never** — let coordinator invocation expand a delegated Skill's authority or permit unrelated automatic execution *(2)*
 - **Must** — make repeated execution preserve valid work *(3)*
 - **Never** — use repeatability to justify destructive regeneration *(3)*
 - **Must** — provide `configure` for Config reconciliation, phase synchronization, and Environment preparation *(4)*

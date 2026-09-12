@@ -1,8 +1,8 @@
 ---
 name: my-interface-developing
-description: Execute and verify eligible planned work for selected project phases, or for every enabled phase when none is specified, using the current project definition, applicable Component authorities, and phase Task Plans. Never plans or reviews.
+description: Execute and verify eligible planned work for selected Target phases, or every enabled phase when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Never plans or reviews.
 argument-hint: "[phase-number ...]"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Develop project phases

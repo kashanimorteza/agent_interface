@@ -33,17 +33,18 @@ Establish Interface Understanding from the canonical Interface document, then Ta
 
 Execute this fixed sequence; do not derive it from a mutable Target workflow:
 
-1. Execute Configure exactly once. Continue only when its required operational records and Environment preparation pass their gates.
-2. Record Implementation State as `in progress` under its owner.
-3. Process selected implementable phases strictly in Target order, completing the entire sequence for one phase before touching the next.
-4. Invoke Planning for the current phase. An existing valid Plan is reconciled idempotently rather than regenerated for style.
-5. Invoke Reviewing for the same phase as the Plan gate. Use its `plan_outcome`; do not invoke Development unless Plan Assurance is `satisfied`. Reviewing may coordinate Planning and recheck its result under its own Contract.
-6. Invoke Developing for the phase, including its durable verification and completion gate.
-7. Invoke Reviewing again. This final pass re-assures the current Plan and performs Implementation Assurance against current Source and evidence.
-8. If Plan Findings remain, let Reviewing route them through Planning. If implementation Findings remain, invoke Developing with those recorded Findings, then invoke Reviewing again.
-9. Repeat step 8 only while the cycle closes or materially advances at least one Finding. Stop on repetition, no observable progress, an inconclusive assurance, failed dependency or gate, or required Human decision.
-10. Advance to the next selected phase only when the current Review proves both `plan_outcome: satisfied` and `implementation_outcome: satisfied`. Otherwise withhold every later phase in this invocation.
-11. After all selected phases pass, invoke Launch only if every currently enabled and ready Target phase—not merely the requested subset—has completed Planning and Development and satisfied both Review assurances.
+1. Resolve Configure, Planning, Reviewing, Developing, and Launch through current Skill Preferences. Before mutation, prove that each is discoverable and that its Invocation Policy and native frontmatter permit model invocation by Implement. If any Child Skill is unavailable or explicit-Human only, stop before Configure and report adapter drift.
+2. Execute Configure exactly once. Continue only when its required operational records and Environment preparation pass their gates.
+3. Record Implementation State as `in progress` under its owner.
+4. Process selected implementable phases strictly in Target order, completing the entire sequence for one phase before touching the next.
+5. Invoke Planning for the current phase. An existing valid Plan is reconciled idempotently rather than regenerated for style.
+6. Invoke Reviewing for the same phase as the Plan gate. Use its `plan_outcome`; do not invoke Development unless Plan Assurance is `satisfied`. Reviewing may coordinate Planning and recheck its result under its own Contract.
+7. Invoke Developing for the phase, including its durable verification and completion gate.
+8. Invoke Reviewing again. This final pass re-assures the current Plan and performs Implementation Assurance against current Source and evidence.
+9. If Plan Findings remain, let Reviewing route them through Planning. If implementation Findings remain, invoke Developing with those recorded Findings, then invoke Reviewing again.
+10. Repeat step 9 only while the cycle closes or materially advances at least one Finding. Stop on repetition, no observable progress, an inconclusive assurance, failed dependency or gate, or required Human decision.
+11. Advance to the next selected phase only when the current Review proves both `plan_outcome: satisfied` and `implementation_outcome: satisfied`. Otherwise withhold every later phase in this invocation.
+12. After all selected phases pass, invoke Launch only if every currently enabled and ready Target phase—not merely the requested subset—has completed Planning and Development and satisfied both Review assurances.
 
 Locate each operation through the current Interface and invoke its implementation directly; do not depend on nested Slash Command invocation. Every operation retains its own write authority. Implement writes only its Implementation State and History.
 

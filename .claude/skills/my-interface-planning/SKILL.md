@@ -1,8 +1,8 @@
 ---
 name: my-interface-planning
-description: Create or reconcile Task Plans for selected project phases, or for every enabled phase when none is specified, from the current project definition and applicable Component authorities. Plans only; never implements.
+description: Create or reconcile Task Plans for selected Target phases, or every enabled phase when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Plans only; never implements.
 argument-hint: "[phase-number ...]"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Plan project phases

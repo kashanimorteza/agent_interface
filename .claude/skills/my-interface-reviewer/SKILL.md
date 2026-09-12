@@ -1,8 +1,8 @@
 ---
 name: my-interface-reviewer
-description: Assure selected Target phase Plans and any existing implementation, or every enabled phase when none is specified, against current Interface and Target Understanding. Coordinates Planning for Plan reconciliation, records Findings, and never repairs implementation.
+description: Assure selected Target phase Plans and any existing implementation, or every enabled phase when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Coordinates Planning for Plan reconciliation and never repairs implementation.
 argument-hint: "[phase-number ...]"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Review Target phases

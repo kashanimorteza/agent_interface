@@ -1,7 +1,7 @@
 ---
 name: my-interface-launch
-description: Bring the developed Target online through the selected Platform Launch, verify readiness, and report access points.
-disable-model-invocation: true
+description: Bring the developed Target online through the selected Platform Launch only when explicitly requested by the Human or delegated by a declared Interface coordinator; verify readiness and report access points.
+disable-model-invocation: false
 ---
 
 # Launch the Target

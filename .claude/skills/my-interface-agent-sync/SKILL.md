@@ -53,7 +53,7 @@ After reconciliation, discard pre-change observations, rediscover the complete A
 
 Verify at least that:
 
-- every required Role and Skill is discoverable by its intended Role;
+- every required Role and Skill is discoverable by its intended Role, and each native Skill invocation control matches its declared Human and coordinator Invocation Policy;
 - every Custom Command resolves to its declared owner and argument contract;
 - effective settings, permissions, rules, and hooks match their owners;
 - each selected Extension is installed, project-enabled, and exposes its expected capabilities;
