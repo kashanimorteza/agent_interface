@@ -63,6 +63,7 @@ The architecture separates domain access, persistence access, Behaviour, and ext
 | Target-specific application Behaviour and externally required capabilities | Current Target definition |
 | Backend layers, interface boundaries, Behaviour ownership, dependency direction, and transaction coordination | This Backend Standard |
 | Language, environment, API framework, standard operations, and technical defaults | Backend Preferences |
+| Rules for realizing the selected API framework | The framework implementation standard referenced by the selected Backend Preference |
 | Persistence operations, transaction mechanism, constraints over stored state, and credential storage mode | Database Standard and Database public interface |
 | Package conventions, cross-cutting capabilities, and supporting-service scope | Development Standard and Development Preferences |
 | Runtime Bindings delivered to Backend | Platform and the selected Launch definition |
@@ -91,7 +92,7 @@ Backend MUST apply each source only within its authority. It MUST NOT invent dom
 - **Consumes Platform** — the Bindings the selected Launch delivers to Backend's boundary.
 - **Consumed by Frontend** — the public API Interface through which the user interface reaches application data and capabilities.
 
-Technical choices and defaults belong to Backend Preferences. Backend implementation applies those choices to the current Target definition.
+Technical choices and defaults belong to Backend Preferences. Backend implementation applies those choices to the current Target definition. When the selected API framework references an implementation standard, that standard is mandatory only for realizing that framework and remains subordinate to these Backend Principles.
 
 ## 2.3 Backend has Logic and three boundary interfaces
 
@@ -205,9 +206,9 @@ Actual credential values are never exposed in documentation, examples, error pay
 
 # 3. Documentation Standard
 
-The Backend package MUST include a public `DOCUMENTATION.md` at its package boundary, as required by the Development Standard.
+The Backend package MUST include a public `README.md` at its package boundary, as required by the Development Standard.
 
-The `DOCUMENTATION.md` MUST explain:
+The `README.md` MUST explain:
 
 - Backend's purpose and its Model Interface, Database Interface, Logic, and API Interface boundaries;
 - the public API Interface and how external consumers use it;
@@ -256,7 +257,7 @@ When multiple Backend implementations are possible, prefer in this order:
 - Let API Interface own and produce the machine-readable description of its contract.
 - Accept Credential fields as input only, preserve their write-only definition, and derive their marker from Model.
 - Consume supporting services through explicit interfaces only in the Model Logic that needs them.
-- Provide and verify Backend `DOCUMENTATION.md` and, when enabled, consistent machine-readable API Interface documentation.
+- Provide and verify Backend `README.md` and, when enabled, consistent machine-readable API Interface documentation.
 
 ## SHOULD
 

@@ -217,7 +217,7 @@ Target
 
 The Developer module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Backend, Frontend, Platform, Plan, Review, and State Components.
 
-Each Component states its mandatory philosophy, responsibilities, and boundaries through Principles, and its preferred technical choices and defaults through Preferences.
+Each Component states its mandatory philosophy, responsibilities, and boundaries through Principles, and its preferred technical choices and defaults through Preferences. A selected technology may reference a conditional implementation standard for its own realization; that standard applies only when selected and remains subordinate to the Component Principles.
 
 #### Structure
 
@@ -235,7 +235,8 @@ Developer
     │   └── Preferences → .interface/developer/database/preferences.yaml
     ├── Backend
     │   ├── Principles  → .interface/developer/backend/principles.md
-    │   └── Preferences → .interface/developer/backend/preferences.yaml
+    │   ├── Preferences → .interface/developer/backend/preferences.yaml
+    │   └── FastAPI     → .interface/developer/backend/fastapi.md
     ├── Frontend
     │   ├── Principles  → .interface/developer/frontend/principles.md
     │   └── Preferences → .interface/developer/frontend/preferences.yaml

@@ -22,7 +22,7 @@ Produce authorized implementation and durable checks, Development-owned Task pro
 
 ## Required Understanding
 
-Establish Interface Understanding and current Target Understanding. Read every applicable Developer Component, the selected phases' Plans and State, current public interfaces, and existing implementation.
+Establish Interface Understanding and current Target Understanding. Read every applicable Developer Component, the selected phases' Plans and State, current public interfaces, and existing implementation. For every applicable technical option resolved as selected, resolve and read its declared `implementation_standard` before judging eligibility or changing implementation.
 
 ## Authority
 
@@ -33,8 +33,9 @@ Write implementation, tests, executable documentation, dependencies, and configu
 - Validate the complete phase input before mutation; an invalid token prevents the whole run.
 - Before mutating a phase, require a Review record whose `plan_outcome` is `satisfied` and whose `plan_revision` exactly equals the current positive Plan `revision`. Also establish from observable repository evidence that no applicable Interface or Target authority changed after that Review. If any condition is absent, mismatched, or cannot be proven current, do not develop that phase; report Reviewer as the required next operation.
 - Execute only work eligible under current Plan rules and dependency evidence.
+- Apply every selected option's declared `implementation_standard` within its bounded concern and declared precedence. An unselected option contributes no implementation standard. Do not mutate affected implementation or claim completion when a referenced standard is missing, unreadable, ambiguous, or conflicts with a higher authority.
 - For every resolved technical option involved in the work, resolve its declared `agent_skills` associations through Agent Skill Profile. Activate an associated Skill only when the option is selected and the Skill is currently discoverable and usable. Use optional Skills when available and continue without them when unavailable; stop the affected work when a required Skill is unavailable. An associated Skill supplies guidance without changing scope or authority.
-- Build a transient verification ledger that splits every acceptance and verification statement into observable conditions and associates each with proof.
+- Build a transient verification ledger that splits every acceptance and verification statement, including applicable selected-option implementation-standard obligations, into observable conditions and associates each with proof.
 - Derive checks from required conditions, never from the implementation just produced. One passing example proves only that example.
 - Prefer durable checks committed with regressible behavior; one-off probes only supplement them.
 - Install or configure only prerequisites required by authorized work and within current authority.

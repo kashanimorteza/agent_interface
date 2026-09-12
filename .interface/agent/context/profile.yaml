@@ -51,7 +51,9 @@ content:
       required_sources_reload: true
       custom_instructions: {}
     context_budget: {}
-    exclusions:
-      project_root_readme:
-        access: "never read"
-        scope: "Only README.md at the project root; scoped Component and package README files remain readable."
+    derived_sources:
+      readme:
+        access: "read"
+        scope: "README.md at the project root and every Component or package boundary."
+        authority: "non-authoritative"
+        use: "Orientation, public usage, and consistency verification only; current Interface and Target owning sources take precedence."

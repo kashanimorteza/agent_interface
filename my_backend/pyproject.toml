@@ -1,0 +1,32 @@
+[project]
+name = "my-backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "morteza", email = "kashani.morteza@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "my-database",
+    "my-model",
+    "pydantic>=2,<3",
+    "pydantic-settings>=2.15.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+my-model = { path = "/root/agent_interface/my_model", editable = true }
+my-database = { path = "/root/agent_interface/my_database", editable = true }
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pyright>=1.1.414",
+    "pytest>=9.1.1",
+    "ruff>=0.16.7",
+]

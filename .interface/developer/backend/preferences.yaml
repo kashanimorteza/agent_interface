@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
   purpose: "Defaults and supported technical profiles for the independent Backend package, its Model Interface, Database Interface, Logic, API Interface, and API framework."
   standard: "Agent Project Interface"
-  version: "5.0"
+  version: "6.0"
   updated: "2026-09-12"
 
 
@@ -14,10 +14,10 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Backend choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit project value and every applicable Backend Principle take precedence over this file."
-  consumption: "Operations resolve unstated Backend choices from these defaults and the current project definition when planning or implementing the work. After resolving an option, they also resolve its agent_skills associations through Agent Skill Profile and use each applicable Skill according to its requirement and current verified availability."
+  consumption: "Operations resolve unstated Backend choices from these defaults and the current project definition. For every selected option involved in the work, they read and apply its implementation_standard when declared, then resolve its agent_skills associations through Agent Skill Profile and use each applicable Skill according to its requirement and current verified availability."
   selection: "Prefer a supported compatible entry. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Backend stack; implementation records use the resolved concrete version."
-  matching: "Match a selected key to the entry of that key in the matching options catalogue. An explicit project value takes priority over the selection recorded here. Match each agent_skills resource exactly to its dotted declaration under Agent Skill Profile content.settings; the association never defines the Skill or proves that it is usable."
+  matching: "Match the selected language to its exact entry under options.languages. Resolve that entry as one coherent language profile, including its version, environment, API framework, implementation_standard, and agent_skills associations. An explicit project value takes priority over the corresponding profile value. Resolve implementation_standard as one repository-root-relative Interface path that applies only while its language profile is selected. Match each agent_skills resource exactly to its dotted declaration under Agent Skill Profile content.settings; the association never defines the Skill or proves that it is usable."
   environment_handling: "Create and use the selected isolated environment through its resolved tool, and do not commit environment artifacts."
 
 
@@ -31,8 +31,8 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Backend package name, code path, architectural role, package style, language and version, isolated environment, and API framework."
-  options: "Supported Backend languages, isolated environments, and API frameworks, including associated Agent Skills that can guide work on a selected option."
+  selected: "The Backend package identity, code path, architectural role, package style, and selected language profile."
+  options: "Supported Backend language profiles. Each language contains its version, environment, API framework, conditional implementation standard, and associated Agent Skills."
   settings: "Configuration grouped by Model Interface, Database Interface, Logic, and API Interface."
   implementation: "Empty. Concrete Backend implementation decisions are resolved from the Target, this Standard, and the selected compatible technical profile."
 
@@ -45,9 +45,6 @@ content:
     package_name: "my_backend"
     code_path: "my_backend/"
     language: "Python"
-    language_version: "latest"
-    environment: "uv"
-    api_framework: "FastAPI"
     architectural_role: "application Behaviour with Model, Database, and external API interfaces"
     package_style: "one independent package with Model Interface, Database Interface, Logic, and API Interface layers"
 
@@ -57,10 +54,6 @@ content:
     languages:
       Python:
         version: "latest"
-        compatible_environments:
-          - "uv"
-        compatible_api_frameworks:
-          - "FastAPI"
         naming:
           variables: "snake_case"
           functions: "snake_case"
@@ -68,16 +61,17 @@ content:
           constants: "UPPER_SNAKE_CASE"
           files: "snake_case"
           folders: "snake_case"
-
-    environments:
-      uv:
-        version: "latest"
-        language: "Python"
-
-    api_frameworks:
-      FastAPI:
-        version: "latest"
-        language: "Python"
+        environment:
+          name: "uv"
+          version: "latest"
+        api_framework:
+          name: "FastAPI"
+          version: "latest"
+          packages:
+            framework: "fastapi[standard]"
+            validation: "pydantic>=2,<3"
+            settings: "pydantic-settings"
+            http_testing: "httpx"
         agent_skills:
           - resource: "project_skills.contextual.fastapi"
             requirement: "optional"

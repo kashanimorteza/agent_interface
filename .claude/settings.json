@@ -13,9 +13,7 @@
       "WebFetch",
       "WebSearch"
     ],
-    "deny": [
-      "Read(./README.md)"
-    ],
+    "deny": [],
     "ask": [
       "Bash(git commit:*)",
       "Bash(git push:*)",
@@ -30,7 +28,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Read|Edit|Write|NotebookEdit|Bash",
+        "matcher": "Edit|Write|NotebookEdit|Bash",
         "hooks": [
           {
             "type": "command",

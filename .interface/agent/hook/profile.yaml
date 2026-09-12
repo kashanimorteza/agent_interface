@@ -64,8 +64,8 @@ content:
       interface-boundary-guard:
         path: ".claude/hooks/interface-boundary-guard.py"
         event: "PreToolUse"
-        matcher: "Read|Edit|Write|NotebookEdit|Bash"
-        responsibility: "Block Root README reads and direct Interface mutations outside the authorized Config boundary."
+        matcher: "Edit|Write|NotebookEdit|Bash"
+        responsibility: "Block direct Interface mutations outside the authorized Config boundary."
         failure_policy: "fail_closed"
         required: true
     user_hooks: {}

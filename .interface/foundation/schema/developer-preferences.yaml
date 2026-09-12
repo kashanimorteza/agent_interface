@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-developer-preferences"
-  version: "2.0"
-  purpose: "The common structure every Developer Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, and optional Agent Skill associations without deciding Target-specific meaning."
+  version: "2.1"
+  purpose: "The common structure every Developer Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, conditional implementation-standard references, and optional Agent Skill associations without deciding Target-specific meaning."
 
 # <!--------------------------------------------------------------------------------- Frame -->
 frame:
@@ -24,6 +24,7 @@ scope:
     - "Supported technologies, tools, libraries, engines, and their versions."
     - "The selected option for each decision the Component owns."
     - "Configuration values, naming conventions, paths, and declared resources belonging to the Component."
+    - "Optional references from a technical option to a conditional implementation standard that becomes applicable when that option is selected."
     - "Optional references from a technical option to Agent Skills that can guide work for that option."
   excludes:
     - "Mandatory rules, responsibilities, and boundaries, which belong to the Component's Principles."
@@ -123,6 +124,15 @@ sections:
       compatibility:
         required: false
         purpose: "Other options this one works with, named by their keys in their own catalogues."
+      implementation_standard:
+        required: false
+        type: "path"
+        purpose: "The Interface-owned implementation standard that becomes applicable only when this exact technical option is selected."
+        rules:
+          conditional: "The reference does not select its option. Selection of the option activates the referenced standard for work involving that option."
+          resolution: "Resolve the path from the repository root, require it to identify one readable Interface source, and read it before planning, implementing, or reviewing affected work."
+          authority: "The referenced standard governs only realization of its selected option. It remains subordinate to explicit Target intent and applicable Component Principles and never expands Component ownership or operation authority."
+          failure: "A missing, unreadable, ambiguous, or conflicting referenced standard is reported and prevents the affected operation from claiming complete coverage or satisfaction."
       agent_skills:
         required: false
         purpose: "Agent Skills associated with work on this option, resolved from the Agent Skill Profile rather than defined or installed here."
@@ -154,6 +164,7 @@ sections:
       no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
       no_project_data: "An option entry carries no Models, fields, records, or other project data."
       self_contained: "An entry describes only itself. A value shared by every option of a kind belongs to `settings`."
+      conditional_sources: "An implementation_standard and agent_skills associations apply only after their owning option is resolved as selected; an unselected option contributes neither authority nor guidance."
     empty: "An empty mapping when the Component supports no alternatives."
 
   settings:

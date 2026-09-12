@@ -4,9 +4,9 @@ These shared rules apply to every Agent Interface Skill and supporting agent, in
 
 The Agent Component Principles and Profiles located by the Interface document are the authorities for the common Agent contract and selected Agent Profile. This Rule applies those contracts to the current Agent Runtime and adds only the project restrictions stated below.
 
-## Root project README
+## README authority
 
-Skills and supporting agents must never read the content of the `README.md` located at the project root. This restriction applies only to that root project README, including for discovery, setup, understanding, documentation, or supporting evidence. README files inside Components, packages, or other subdirectories may be read and used as documentation for their own scope.
+Skills and supporting agents may read a `README.md`, including the file at the project root, for orientation, usage, and consistency verification. A README is derived, non-authoritative documentation: it never replaces current Interface Understanding or Target Understanding, never overrides an owning Principle, Preference, Profile, Schema, or Target source, and never serves as the sole evidence for an implementation claim. When it conflicts with an owning source or the implemented public interface, use the owning source and reconcile the README within the active role's write authority.
 
 ## Interface protection
 

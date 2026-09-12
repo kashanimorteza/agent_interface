@@ -159,9 +159,9 @@ Technical choices and defaults belong to Development Preferences. Development im
 
 # 3. Documentation Standard
 
-Every package, including every architectural subpackage, MUST carry its own public `DOCUMENTATION.md` at the package boundary.
+Every package, including every architectural subpackage, MUST carry its own public `README.md` at the package boundary.
 
-The `DOCUMENTATION.md` MUST explain:
+The `README.md` MUST explain:
 
 - the package's purpose and boundaries;
 - the public interface it offers;
@@ -170,11 +170,11 @@ The `DOCUMENTATION.md` MUST explain:
 - installation and startup when applicable; and
 - practical usage examples.
 
-A nested package MAY reference its parent's `DOCUMENTATION.md` for shared setup instead of duplicating that material, but it MUST document its own interface and usage locally.
+A nested package MAY reference its parent's `README.md` for shared setup instead of duplicating that material, but it MUST document its own interface and usage locally.
 
 Documentation MUST distinguish supported public operations from internal details and explain how to reach the package's interface documentation. Configuration MUST be documented by name and non-secret example; credentials and other secret values MUST NOT be recorded.
 
-The documentation MUST remain consistent with the implemented interface and MUST let a consumer use the package without inspecting its implementation. Component documentation never substitutes for, reads, rewrites, or derives from a repository-root README. Its location and required sections are resolved through Development Preferences.
+The documentation MUST remain consistent with the implemented interface and MUST let a consumer use the package without inspecting its implementation. Every `README.md`, including one at the repository root, is readable but derived, non-authoritative documentation: it may support orientation, usage, and consistency verification, but it never defines or overrides Interface Principles, Preferences, Profiles, Schemas, the current Target, or the implemented public interface. When a README conflicts with an owning source, the owning source wins and the README is updated. Its location and required sections are resolved through Development Preferences.
 
 ---
 
@@ -205,7 +205,7 @@ When more than one composition or package design is possible, prefer in this ord
 - Record each cross-cutting capability's enabled state, applicable layers, and shared integration expectations.
 - Give every package a cohesive responsibility, explicit dependencies, owned configuration, and a documented public interface.
 - State what every package exposes and consumes, or record that it has no external consumer.
-- Provide `DOCUMENTATION.md` at every package boundary with purpose, boundaries, interface, dependencies, configuration, applicable setup, and usage.
+- Provide `README.md` at every package boundary with purpose, boundaries, interface, dependencies, configuration, applicable setup, and usage.
 
 ## SHOULD
 
@@ -224,7 +224,7 @@ When more than one composition or package design is possible, prefer in this ord
 - Let one layer decide a cross-cutting capability alone.
 - Require registry publication, a separate process, or an independently installable distribution merely because a boundary is a package.
 - Assume nesting exposes a package's internals to consumers of its parent.
-- Record credentials or other secret values in documentation, allow documentation to drift from the interface, or use a repository-root README as its source or substitute.
+- Record credentials or other secret values in documentation, allow documentation to drift from its owning sources, or treat any README as authoritative project intent.
 
 ---
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Block Root README reads and direct writes outside Interface Config."""
+"""Block direct writes outside Interface Config."""
 
 from __future__ import annotations
 
@@ -29,14 +29,6 @@ tool_input = payload.get("tool_input") or {}
 project = Path(os.environ.get("CLAUDE_PROJECT_DIR") or payload.get("cwd") or os.getcwd()).resolve()
 interface = (project / ".interface").resolve()
 config = (interface / "foundation" / "config").resolve()
-root_readme = (project / "README.md").resolve()
-
-if tool == "Read":
-    raw = tool_input.get("file_path") or tool_input.get("path")
-    if raw and Path(raw).expanduser().resolve() == root_readme:
-        block("Root README.md is not an Agent Understanding or Context source.")
-    raise SystemExit(0)
-
 if tool in {"Edit", "Write", "NotebookEdit"}:
     raw = tool_input.get("file_path") or tool_input.get("notebook_path") or tool_input.get("path")
     if not raw:
@@ -51,12 +43,6 @@ if tool in {"Edit", "Write", "NotebookEdit"}:
 
 if tool == "Bash":
     command = str(tool_input.get("command") or "")
-    root_readme_reference = re.search(
-        rf"(?:^|[\s'\"])(?:\./)?README\.md(?:$|[\s'\"])|{re.escape(str(root_readme))}",
-        command,
-    )
-    if root_readme_reference:
-        block("Root README.md cannot be read through shell execution.")
     mutation = re.search(
         r"(?:^|[;&|]\s*)(?:rm|mv|cp|install|mkdir|rmdir|touch|truncate|chmod|chown|ln|tee|patch|rsync)\b"
         r"|\bsed\s+-i\b|\bperl\s+-pi\b|\bgit\s+(?:checkout|restore|clean|reset)\b|(?:^|[^<])>{1,2}",
