@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every enabled phase. Re
 
 ## Outputs
 
-Produce or reconcile only Planning-owned Plan content, Planning aggregate State and History outcomes, conflicts, Blockers or Open Questions permitted by their owners, and a phase-by-phase report.
+Produce or reconcile only Planning-owned Plan content and Plan Revision, Planning aggregate State and History outcomes, conflicts, Blockers or Open Questions permitted by their owners, and a phase-by-phase report.
 
 ## Required Understanding
 
@@ -34,6 +34,7 @@ Write only Planning-owned Plan fields and Planning-owned aggregate State and His
 - Build a transient coverage ledger mapping every selected phase requirement, applicable Principle obligation, and unresolved Review Finding to exactly one owning Task or inherited phase context.
 - A Plan is incomplete while coverage is missing, duplicated, contradictory, or represented only by a narrower example.
 - Preserve valid identities, boundaries, dependencies, wording, progress, and history; prefer stable decomposition over stylistic regeneration.
+- Set a new Plan's revision to `1`. Increment an existing Plan's revision exactly once when any Planning-owned semantic content changes during the run; preserve it when only Development-owned progress or logs changed or when reconciliation is semantically idempotent.
 - Derive new Task boundaries from responsibilities and real dependencies, never document layout or arbitrary batch size.
 - Keep planning content implementation-independent and require verification conditions to cover every acceptance clause.
 - Process phases independently in Target order unless an owned dependency or Blocker prevents continuation.

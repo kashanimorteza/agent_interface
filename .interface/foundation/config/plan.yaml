@@ -1,0 +1,365 @@
+meta:
+  path: ".interface/foundation/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+read_order:
+  - "task_count"
+  - "plans"
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+content:
+  task_count: 20
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      target: "Model"
+      does: "Implement the independent Model layer as one reusable package that logically represents every domain entity, relationship, rule, and required initial data defined by the Target, and expose it through one stable public interface."
+      constraints: []
+      task_count: 20
+      groups:
+        P1-G1:
+          id: "P1-G1"
+          title: "Package Foundation"
+          description: "Establishes the independent Model package as an installable unit with an isolated environment and the shared base representation every concrete Model builds on, before any domain Model is added."
+          area: "Package Foundation"
+          does: "A reproducible, independently installable Model package exists with a shared base Model representation ready to host concrete domain Models."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T01:
+              id: "P1-T01"
+              title: "Establish the Model package foundation"
+              description: "Create the independent Model package as one reusable unit with its own isolated environment, and define the shared base representation that every concrete domain Model will inherit from, so later Model work has a stable foundation to build on."
+              reason: "Every concrete Model depends on a common package identity, an isolated reproducible environment, and one shared base representation; establishing this first avoids each Model reinventing its own foundation inconsistently."
+              kind: "code"
+              inputs: []
+              expected_result: "The Model package exists as one independently installable unit with an isolated, reproducible environment and a shared base representation available for concrete Models to inherit from."
+              depends_on: []
+              constraints: []
+              acceptance: "The package can be installed into a clean isolated environment and its shared base representation can be imported successfully."
+              verify: "Installing the package into a freshly created isolated environment succeeds, and importing its shared base representation from that environment succeeds without error."
+              status: "todo"
+        P1-G2:
+          id: "P1-G2"
+          title: "Identity and Platform Models"
+          description: "Covers the two independent root domain concepts that other Models reference but that reference nothing else: the system's Users and the supported Trading Platforms."
+          area: "Identity and Platform Models"
+          does: "The User and Trading Platform domain concepts are fully represented, validated, and seeded with their required initial records."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-T02:
+              id: "P1-T02"
+              title: "Implement the User Model"
+              description: "Represent an independent system user as a domain Model with its declared identity, credential, and status fields, enforce its domain rules including the uniqueness of its display name, mark its credential fields, and declare its required initial administrator record."
+              reason: "Every user-owned Model in this phase and later phases identifies its owner through the User Model, so its domain definition must exist and be correct first."
+              kind: "code"
+              inputs: ["Target User Model definition"]
+              expected_result: "A validated User domain representation exists with its declared fields, enforced name uniqueness, credential markings, and its required initial administrator record declared."
+              depends_on: ["P1-T01"]
+              constraints: []
+              acceptance: "A User can be constructed with valid data and is rejected when required fields are missing, its name duplicates another User's name, or domain rules are violated; its credential fields are marked as sensitive; its required initial record is declared."
+              verify: "Constructing a User with valid data succeeds and exposes the declared fields; constructing one with invalid or missing required data, or a name duplicating another User's name, is rejected; the credential fields are observably marked sensitive; the declared initial administrator record is present in the Model's initial-data declaration."
+              status: "todo"
+            P1-T03:
+              id: "P1-T03"
+              title: "Implement the Trading Platform Model"
+              description: "Represent a supported trading API standard as a domain Model with its declared identity and implementation-selector fields, and declare its two required initial records."
+              reason: "Instances and Positions identify which trading platform they use through this Model, so it must exist before those Models can reference it."
+              kind: "code"
+              inputs: ["Target Trading Platform Model definition"]
+              expected_result: "A validated Trading Platform domain representation exists with its declared fields and its two required initial records declared."
+              depends_on: ["P1-T01"]
+              constraints: []
+              acceptance: "A Trading Platform can be constructed with valid data and is rejected when required fields are missing; both required initial records are declared."
+              verify: "Constructing a Trading Platform with valid data succeeds and exposes the declared fields; constructing one with missing required data is rejected; both declared initial records are present in the Model's initial-data declaration."
+              status: "todo"
+        P1-G3:
+          id: "P1-G3"
+          title: "Connection and Reference Models"
+          description: "Covers the technical connection a user establishes to a Trading Platform and the reference data - currencies, brokers, and tradable assets - that later trading Models rely on."
+          area: "Connection and Reference Models"
+          does: "The Instance, Currency, Broker, and Asset domain concepts are fully represented, validated, and seeded with their required initial records."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-T04:
+              id: "P1-T04"
+              title: "Implement the Instance Model"
+              description: "Represent a user-owned connection instance to a Trading Platform as a domain Model with its declared identity, connection, and credential fields, enforce that the fields its selected Trading Platform requires are present before it is usable, mark its credential fields, and declare its required initial record."
+              reason: "Accounts identify the technical connection they use through this Model, so it must be correct before Account can depend on it."
+              kind: "code"
+              inputs: ["Target Instance Model definition", "User Model", "Trading Platform Model"]
+              expected_result: "A validated Instance domain representation exists that references its owning User and selected Trading Platform, enforces the selected platform's required connection fields, marks its credential fields, and declares its required initial record."
+              depends_on: ["P1-T02", "P1-T03"]
+              constraints: []
+              acceptance: "An Instance can be constructed with valid data referencing an existing User and Trading Platform and is rejected when a field its selected Trading Platform requires is missing, when the user/name combination is not unique, or when required fields are otherwise missing; its credential fields are marked sensitive; its required initial record is declared."
+              verify: "Constructing an Instance with valid data succeeds and exposes its declared fields and references; constructing one missing a Trading-Platform-required connection field, violating the user/name uniqueness rule, or missing another required field is rejected; the credential fields are observably marked sensitive; the declared initial record is present in the Model's initial-data declaration."
+              status: "todo"
+            P1-T05:
+              id: "P1-T05"
+              title: "Implement the Currency Model"
+              description: "Represent a currency usable by the trading system as a domain Model owned by a User, with its declared identity, size-constrained code, and monetary precision fields and its uniqueness rule, and declare its required initial records."
+              reason: "Accounts identify their base currency through this Model, so it must exist and be correct before Account can depend on it."
+              kind: "code"
+              inputs: ["Target Currency Model definition", "User Model"]
+              expected_result: "A validated Currency domain representation exists that references its owning User, enforces the user/code uniqueness rule and the code's declared length, and declares its required initial records."
+              depends_on: ["P1-T02"]
+              constraints: []
+              acceptance: "A Currency can be constructed with valid data referencing an existing User and is rejected when the user/code combination is not unique, the code does not have its declared length, or a required field is missing; its required initial records are declared."
+              verify: "Constructing a Currency with valid data succeeds and exposes its declared fields; constructing one violating the user/code uniqueness rule, supplying a code without its declared length, or missing a required field is rejected; the declared initial records are present in the Model's initial-data declaration."
+              status: "todo"
+            P1-T06:
+              id: "P1-T06"
+              title: "Implement the Broker Model"
+              description: "Represent a broker supported by the system as a domain Model owned by a User, independent of any one Trading Platform, with its declared identity fields and its uniqueness rule, and declare its required initial record."
+              reason: "Assets, Accounts, and Positions identify the broker they use through this Model, so it must exist before those Models can depend on it."
+              kind: "code"
+              inputs: ["Target Broker Model definition", "User Model"]
+              expected_result: "A validated Broker domain representation exists that references its owning User, enforces the user/name uniqueness rule, and declares its required initial record."
+              depends_on: ["P1-T02"]
+              constraints: []
+              acceptance: "A Broker can be constructed with valid data referencing an existing User and is rejected when the user/name combination is not unique or a required field is missing; its required initial record is declared."
+              verify: "Constructing a Broker with valid data succeeds and exposes its declared fields; constructing one violating the user/name uniqueness rule or missing a required field is rejected; the declared initial record is present in the Model's initial-data declaration."
+              status: "todo"
+            P1-T07:
+              id: "P1-T07"
+              title: "Implement the Asset Model"
+              description: "Represent a tradable asset provided by a Broker as a domain Model with its declared identity, categorization, and pricing-precision fields and its uniqueness rule, and declare its required initial records."
+              reason: "Actions identify the asset they trade through this Model, so it must exist and be correct before Action can depend on it."
+              kind: "code"
+              inputs: ["Target Asset Model definition", "Broker Model"]
+              expected_result: "A validated Asset domain representation exists that references its providing Broker, enforces the broker/symbol uniqueness rule, and declares its required initial records."
+              depends_on: ["P1-T06"]
+              constraints: []
+              acceptance: "An Asset can be constructed with valid data referencing an existing Broker and is rejected when the broker/symbol combination is not unique or a required field is missing; its required initial records are declared."
+              verify: "Constructing an Asset with valid data succeeds and exposes its declared fields; constructing one violating the broker/symbol uniqueness rule or missing a required field is rejected; the declared initial records are present in the Model's initial-data declaration."
+              status: "todo"
+        P1-G4:
+          id: "P1-G4"
+          title: "Organizational Group Models"
+          description: "Covers the four independent user-owned grouping concepts that organize trading accounts and the rules that govern trailing management, partial closes, and risk-based actions."
+          area: "Organizational Group Models"
+          does: "The Account Group, Trailing Group, Partial Group, and Action Group domain concepts are each fully represented, validated, and seeded with their required initial record."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-T08:
+              id: "P1-T08"
+              title: "Implement the Account Group Model"
+              description: "Represent an independent grouping of a User's trading accounts as a domain Model with its declared identity fields and its uniqueness rule, and declare its required initial record."
+              reason: "Accounts identify the group that contains them through this Model, so it must exist before Account can depend on it."
+              kind: "code"
+              inputs: ["Target Account Group Model definition", "User Model"]
+              expected_result: "A validated Account Group domain representation exists that references its owning User, enforces the user/name uniqueness rule, and declares its required initial record."
+              depends_on: ["P1-T02"]
+              constraints: []
+              acceptance: "An Account Group can be constructed with valid data referencing an existing User and is rejected when the user/name combination is not unique or a required field is missing; its required initial record is declared."
+              verify: "Constructing an Account Group with valid data succeeds and exposes its declared fields; constructing one violating the user/name uniqueness rule or missing a required field is rejected; the declared initial record is present in the Model's initial-data declaration."
+              status: "todo"
+            P1-T09:
+              id: "P1-T09"
+              title: "Implement the Trailing Group Model"
+              description: "Represent an independent grouping of a User's Stop Loss and Take Profit management rules as a domain Model with its declared identity fields and its uniqueness rule, and declare its required initial record."
+              reason: "Trailing Rule, Action, and Position identify the trailing group they use through this Model, so it must exist before those Models can depend on it."
+              kind: "code"
+              inputs: ["Target Trailing Group Model definition", "User Model"]
+              expected_result: "A validated Trailing Group domain representation exists that references its owning User, enforces the user/name uniqueness rule, and declares its required initial record."
+              depends_on: ["P1-T02"]
+              constraints: []
+              acceptance: "A Trailing Group can be constructed with valid data referencing an existing User and is rejected when the user/name combination is not unique or a required field is missing; its required initial record is declared."
+              verify: "Constructing a Trailing Group with valid data succeeds and exposes its declared fields; constructing one violating the user/name uniqueness rule or missing a required field is rejected; the declared initial record is present in the Model's initial-data declaration."
+              status: "todo"
+            P1-T10:
+              id: "P1-T10"
+              title: "Implement the Partial Group Model"
+              description: "Represent an independent grouping of a User's partial-close management rules as a domain Model with its declared identity fields and its uniqueness rule, and declare its required initial record."
+              reason: "Partial Rule, Action, and Position identify the partial group they use through this Model, so it must exist before those Models can depend on it."
+              kind: "code"
+              inputs: ["Target Partial Group Model definition", "User Model"]
+              expected_result: "A validated Partial Group domain representation exists that references its owning User, enforces the user/name uniqueness rule, and declares its required initial record."
+              depends_on: ["P1-T02"]
+              constraints: []
+              acceptance: "A Partial Group can be constructed with valid data referencing an existing User and is rejected when the user/name combination is not unique or a required field is missing; its required initial record is declared."
+              verify: "Constructing a Partial Group with valid data succeeds and exposes its declared fields; constructing one violating the user/name uniqueness rule or missing a required field is rejected; the declared initial record is present in the Model's initial-data declaration."
+              status: "todo"
+            P1-T11:
+              id: "P1-T11"
+              title: "Implement the Action Group Model"
+              description: "Represent an independent grouping of a User's trading actions by risk profile as a domain Model with its declared identity fields and its uniqueness rule, and declare its required initial record."
+              reason: "Action and Position identify the action group they belong to through this Model, so it must exist before those Models can depend on it."
+              kind: "code"
+              inputs: ["Target Action Group Model definition", "User Model"]
+              expected_result: "A validated Action Group domain representation exists that references its owning User, enforces the user/name uniqueness rule, and declares its required initial record."
+              depends_on: ["P1-T02"]
+              constraints: []
+              acceptance: "An Action Group can be constructed with valid data referencing an existing User and is rejected when the user/name combination is not unique or a required field is missing; its required initial record is declared."
+              verify: "Constructing an Action Group with valid data succeeds and exposes its declared fields; constructing one violating the user/name uniqueness rule or missing a required field is rejected; the declared initial record is present in the Model's initial-data declaration."
+              status: "todo"
+        P1-G5:
+          id: "P1-G5"
+          title: "Management Rule Models"
+          description: "Covers the individual rules that belong to a Trailing Group or Partial Group and define exactly when and how much of a trade they act on."
+          area: "Management Rule Models"
+          does: "The Trailing Rule and Partial Rule domain concepts are each fully represented, validated, and enforce their uniqueness rule."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-T12:
+              id: "P1-T12"
+              title: "Implement the Trailing Rule Model"
+              description: "Represent an individual Stop-Loss/Take-Profit management rule belonging to a Trailing Group as a domain Model with its declared identity, activation, and adjustment fields and its uniqueness rules."
+              reason: "A Trailing Group's behavior is fully defined only once its individual rules are represented, and later phases need this domain rule available."
+              kind: "code"
+              inputs: ["Target Trailing Rule Model definition", "Trailing Group Model"]
+              expected_result: "A validated Trailing Rule domain representation exists that references its containing Trailing Group and enforces both its name uniqueness and the trailing-group/trigger-percentage uniqueness rule."
+              depends_on: ["P1-T09"]
+              constraints: []
+              acceptance: "A Trailing Rule can be constructed with valid data referencing an existing Trailing Group and is rejected when the trailing-group/trigger-percentage combination is not unique, its name duplicates another Trailing Rule's name, or a required field is missing."
+              verify: "Constructing a Trailing Rule with valid data succeeds and exposes its declared fields; constructing one violating the trailing-group/trigger-percentage uniqueness rule, duplicating another Trailing Rule's name, or missing a required field is rejected."
+              status: "todo"
+            P1-T13:
+              id: "P1-T13"
+              title: "Implement the Partial Rule Model"
+              description: "Represent an individual partial-close rule belonging to a Partial Group as a domain Model with its declared identity and threshold fields and its uniqueness rules."
+              reason: "A Partial Group's behavior is fully defined only once its individual rules are represented, and later phases need this domain rule available."
+              kind: "code"
+              inputs: ["Target Partial Rule Model definition", "Partial Group Model"]
+              expected_result: "A validated Partial Rule domain representation exists that references its containing Partial Group and enforces both its name uniqueness and the partial-group/profit-percentage uniqueness rule."
+              depends_on: ["P1-T10"]
+              constraints: []
+              acceptance: "A Partial Rule can be constructed with valid data referencing an existing Partial Group and is rejected when the partial-group/profit-percentage combination is not unique, its name duplicates another Partial Rule's name, or a required field is missing."
+              verify: "Constructing a Partial Rule with valid data succeeds and exposes its declared fields; constructing one violating the partial-group/profit-percentage uniqueness rule, duplicating another Partial Rule's name, or missing a required field is rejected."
+              status: "todo"
+        P1-G6:
+          id: "P1-G6"
+          title: "Trading Account Model"
+          description: "Covers the funded trading account through which the system executes trades, combining an Account Group, Broker, Instance, and base Currency into one fundable account concept."
+          area: "Trading Account Model"
+          does: "The Account domain concept is fully represented, validated, and enforces its credential and uniqueness rules."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T14:
+              id: "P1-T14"
+              title: "Implement the Account Model"
+              description: "Represent a funded trading account as a domain Model referencing its Account Group, Broker, Instance, and base Currency, with its declared identity, credential, and financial fields, mark its credential field, enforce its name uniqueness and its group/broker/instance uniqueness rule, and declare its required initial record."
+              reason: "Actions and Positions identify the account they use through this Model, so it must exist and be correct before those Models can depend on it."
+              kind: "code"
+              inputs: ["Target Account Model definition", "Account Group Model", "Broker Model", "Instance Model", "Currency Model"]
+              expected_result: "A validated Account domain representation exists that references its Account Group, Broker, Instance, and base Currency, marks its credential field, enforces both its name uniqueness and the group/broker/instance uniqueness rule, and declares its required initial record."
+              depends_on: ["P1-T08", "P1-T06", "P1-T04", "P1-T05"]
+              constraints: []
+              acceptance: "An Account can be constructed with valid data referencing its existing Account Group, Broker, Instance, and Currency and is rejected when the group/broker/instance combination is not unique, its name duplicates another Account's name, or a required field is missing; its credential field is marked sensitive; its required initial record is declared."
+              verify: "Constructing an Account with valid data succeeds and exposes its declared fields and references; constructing one violating the group/broker/instance uniqueness rule, duplicating another Account's name, or missing a required field is rejected; the credential field is observably marked sensitive; the declared initial record is present in the Model's initial-data declaration."
+              status: "todo"
+        P1-G7:
+          id: "P1-G7"
+          title: "Trading Action Model"
+          description: "Covers the definition of how a position must be opened: the asset, account, risk, and management-rule selections that determine a position's parameters."
+          area: "Trading Action Model"
+          does: "The Action domain concept is fully represented, validated, and enforces its uniqueness rule."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T15:
+              id: "P1-T15"
+              title: "Implement the Action Model"
+              description: "Represent how a position must be opened as a domain Model referencing its Action Group, Asset, Account, Partial Group, and Trailing Group, with its declared identity, risk, and target fields, enforce its uniqueness rule, and declare its required initial record."
+              reason: "Positions identify the action from which they were created through this Model, so it must exist and be correct before Position can depend on it."
+              kind: "code"
+              inputs: ["Target Action Model definition", "Action Group Model", "Asset Model", "Account Model", "Partial Group Model", "Trailing Group Model"]
+              expected_result: "A validated Action domain representation exists that references its Action Group, Asset, Account, Partial Group, and Trailing Group, enforces the action-group/name uniqueness rule, and declares its required initial record."
+              depends_on: ["P1-T11", "P1-T07", "P1-T14", "P1-T10", "P1-T09"]
+              constraints: []
+              acceptance: "An Action can be constructed with valid data referencing its existing Action Group, Asset, Account, Partial Group, and Trailing Group, and is rejected when the action-group/name combination is not unique or a required field is missing; its required initial record is declared."
+              verify: "Constructing an Action with valid data succeeds and exposes its declared fields and references; constructing one violating the action-group/name uniqueness rule or missing a required field is rejected; the declared initial record is present in the Model's initial-data declaration."
+              status: "todo"
+        P1-G8:
+          id: "P1-G8"
+          title: "Position Model"
+          description: "Covers the complete record of every position the system creates, whether already opened or still pending execution, aggregating the User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action it depends on."
+          area: "Position Model"
+          does: "The Position domain concept is fully represented and validated, aggregating every Model it references."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T16:
+              id: "P1-T16"
+              title: "Implement the Position Model"
+              description: "Represent the complete information for a system-created position as a domain Model referencing its owning User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and originating Action, with its declared identity, execution, and financial fields, and enforce its name uniqueness rule."
+              reason: "Position is the final aggregate domain record the Target requires and depends on every other Model in this phase, so it can only be completed once they exist."
+              kind: "code"
+              inputs: ["Target Position Model definition", "User Model", "Trading Platform Model", "Broker Model", "Account Model", "Trailing Group Model", "Partial Group Model", "Action Group Model", "Action Model"]
+              expected_result: "A validated Position domain representation exists that references its owning User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and originating Action, with all its declared fields, and enforces its name uniqueness."
+              depends_on: ["P1-T02", "P1-T03", "P1-T06", "P1-T14", "P1-T09", "P1-T10", "P1-T11", "P1-T15"]
+              constraints: []
+              acceptance: "A Position can be constructed with valid data referencing all of its existing related Models and is rejected when a required field is missing or its name duplicates another Position's name."
+              verify: "Constructing a Position with valid data succeeds and exposes its declared fields and references; constructing one missing a required field or duplicating another Position's name is rejected."
+              status: "todo"
+        P1-G9:
+          id: "P1-G9"
+          title: "Package Assurance"
+          description: "Finalizes the Model package once every domain Model exists: its public interface, developer documentation, test coverage, and quality verification."
+          area: "Package Assurance"
+          does: "The completed Model package exposes every Model through one stable public interface, is documented for developers, is covered by its required test categories, and passes its quality checks in a clean environment."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-T17:
+              id: "P1-T17"
+              title: "Finalize the Model package's public interface"
+              description: "Expose every completed domain Model exactly once through the package's one stable, documented public interface, addressable by imported module or Model type rather than by string identity."
+              reason: "Other Components must consume the shared Model definitions through one stable interface instead of maintaining private copies, so the complete set of Models must be reachable through it before the package is considered finished."
+              kind: "code"
+              inputs: ["Every Model implemented in this phase"]
+              expected_result: "Every domain Model implemented in this phase is reachable exactly once through the package's public interface by imported module or type."
+              depends_on: ["P1-T02", "P1-T03", "P1-T04", "P1-T05", "P1-T06", "P1-T07", "P1-T08", "P1-T09", "P1-T10", "P1-T11", "P1-T12", "P1-T13", "P1-T14", "P1-T15", "P1-T16"]
+              constraints: []
+              acceptance: "Every Model implemented in this phase can be reached through the package's public interface by an imported module or type, with no Model reachable only by an internal module or a string-based lookup."
+              verify: "Importing the package's public interface and addressing each implemented Model by its documented module-qualified or type-qualified form succeeds for every Model, and no Model requires an internal module path or string identity to be reached."
+              status: "todo"
+            P1-T18:
+              id: "P1-T18"
+              title: "Document the completed Model package"
+              description: "Produce the package's required developer-facing documentation explaining its responsibility and boundaries, installation and import pattern, public interface and Model categories, applicable validation and credential rules, and complete domain-neutral usage examples covering construction, validation failure, serialization, schema generation, the omitted/null/supplied/generated value distinction, partial update, and sensitive-field handling."
+              reason: "A completed Model package is not usable by another Component or developer without documentation of its responsibility, boundaries, and usage."
+              kind: "documentation"
+              inputs: ["Finalized public Model package interface"]
+              expected_result: "The Model package's required developer-facing documentation exists, is complete, and is consistent with the finalized public interface."
+              depends_on: ["P1-T17"]
+              constraints: []
+              acceptance: "The documentation explains the package's responsibility and boundaries, its installation and import pattern, its public interface and Model categories, its applicable validation and credential rules, and includes complete, runnable, domain-neutral examples covering every required usage listed by the Model Standard, consistent with the finalized interface."
+              verify: "Following the documentation's own installation, import, and usage examples against the finalized package succeeds exactly as documented, and the documentation contains no ORM, Database, API, or project-specific Target detail and no internal-module or string-based Model identification."
+              status: "todo"
+            P1-T19:
+              id: "P1-T19"
+              title: "Establish the Model package's test coverage"
+              description: "Cover every implemented Model with tests demonstrating valid and invalid state, boundary values, nullability, defaults, the omitted-versus-explicit-null distinction, enum and reusable-type behavior, value objects, cross-field validation, serialization, schema generation, computed fields, immutability, and deterministic behavior, for every case that applies to that Model."
+              reason: "Construction and validation logic is not demonstrated correct until it is exercised by tests, and this evidence is required before the phase's implementation can be assured."
+              kind: "code"
+              inputs: ["Every Model implemented in this phase"]
+              expected_result: "A test suite exists and passes, exercising every applicable required test category, including schema generation, against every Model implemented in this phase."
+              depends_on: ["P1-T17"]
+              constraints: []
+              acceptance: "Running the package's test suite passes, and every implemented Model is exercised by every required test category applicable to it, including at least one demonstrated construction failure for invalid data per Model and successful schema generation for every Model."
+              verify: "Running the package's test suite completes with every test passing, and the suite's coverage demonstrably includes every required test category applicable to each implemented Model, including a passing schema-generation check for every Model."
+              status: "todo"
+            P1-T20:
+              id: "P1-T20"
+              title: "Verify the Model package's quality gates"
+              description: "Verify that the completed package passes its selected formatting, linting, and type-checking tools, and that it installs and imports successfully into a freshly created clean isolated environment."
+              reason: "A completed package must be demonstrably clean and reproducibly installable before the phase can be considered finished, independent of the developer's own working environment."
+              kind: "command execution"
+              inputs: ["Completed, documented, and tested Model package"]
+              expected_result: "The package passes its selected formatting, linting, and type-checking tools, and installs and imports successfully into a freshly created clean isolated environment."
+              depends_on: ["P1-T18", "P1-T19"]
+              constraints: []
+              acceptance: "The package's selected formatter, linter, and type checker report no violations, and a fresh clean-environment install followed by importing the public interface succeeds."
+              verify: "Running the selected formatter, linter, and type checker against the package reports no violations, and installing the package into a newly created clean isolated environment followed by importing its public interface succeeds."
+              status: "todo"

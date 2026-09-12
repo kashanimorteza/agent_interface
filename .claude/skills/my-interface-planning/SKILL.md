@@ -39,6 +39,8 @@ Process selected phases in Target order. For each phase, when its planning begin
 
 Build a complete candidate for each selected phase that preserves its resolved identity, intent, scope, and decisions, and that is usable by downstream Development. Apply the current planning authorities to every part of each candidate rather than embedding remembered fields, defaults, or policies.
 
+Set a newly created phase Plan's `revision` to `1`. When reconciliation changes any Planning-owned semantic content—including Plan, Group, or Task definition, boundary, dependency, acceptance, or verification meaning—increment the existing revision exactly once for that run. Preserve the revision when Planning-owned meaning is unchanged; Task status, blocker references, and execution logs belong to Development progress and never increment it.
+
 Prefer stable decomposition over stylistic regeneration. Preserve an existing valid Group and Task boundary, identifier, dependency, and wording when its meaning and coverage remain current. When no Plan exists, derive boundaries from distinct responsibilities and real dependencies rather than document layout or arbitrary batch size.
 
 Validate the complete candidate against the transient coverage ledger and the current authorities before writing it. Every clause of a Task's expected result and acceptance must be covered by its verification condition; one representative example does not prove a compound requirement. Write only to the authorized destination.
@@ -56,7 +58,7 @@ Perform only Planning's role, and only for the selected phases. Do not perform a
 Report in this order:
 
 1. **Phases** — every resolved phase identifier, title, order, and target, in Target order.
-2. **Plan results** — for each phase, created, reconciled, or already current, with the counts the Plan Component defines.
+2. **Plan results** — for each phase, created, reconciled, or already current, with its resulting Plan Revision and the counts the Plan Component defines.
 3. **What changed** — by phase, work added, work reconciled, and work left untouched because it lies outside Planning's authority.
 4. **Conflicts and unresolved decisions** — by phase, anything that could not be planned safely, and any Blocker or Open Question raised, each with what it prevents.
 5. **State** — each phase's aggregate progress and the History outcomes recorded for this run.

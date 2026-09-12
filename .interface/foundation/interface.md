@@ -426,7 +426,7 @@ This Operation is performed through `/my-interface-planning` to convert the curr
 
 **Agent Skill:** `/my-interface-developing`
 
-This Operation is performed through `/my-interface-developing` to implement and verify eligible planned Tasks through the applicable Target and Developer context.
+This Operation is performed through `/my-interface-developing [phase-number ...]` to implement and verify eligible planned Tasks only after current Review proves Plan Assurance for the exact current Plan Revision.
 
 <!-------------------------- Reviewing Operation -->
 ### Reviewing
@@ -793,10 +793,11 @@ For direct control over every operation:
 ```text
 /my-interface-configure
 /my-interface-planning 1
+/my-interface-reviewer 1
 /my-interface-developing 1
 /my-interface-reviewer 1
-Repeat Planning, Developing, and Reviewing for each remaining phase
+Repeat Planning, Plan Review, Developing, and final Review for each remaining phase
 /my-interface-launch
 ```
 
-Reviewing checks both the current Plan and any existing implementation. A phase is reconciled before advancing, and Launch runs only after all required phases satisfy their gates.
+The first Reviewing pass assures the current Plan Revision before Development. The second re-assures that Plan and judges the existing implementation. A phase is reconciled before advancing, and Launch runs only after all required phases satisfy both gates.

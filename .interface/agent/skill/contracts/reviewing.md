@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every enabled phase. Re
 
 ## Outputs
 
-Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase, reconciled Review Findings, aggregate Review State and History, missing-evidence records, delegated Planning outcomes, and an evidence-first phase report. When no implementation exists, record Implementation Assurance as `not reviewed` and aggregate Review State as `plan satisfied` only when Plan Assurance passes. Do not update Task progress or active Workflow mode.
+Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, missing-evidence records, delegated Planning outcomes, and an evidence-first phase report. When no implementation exists, record Implementation Assurance as `not reviewed` and aggregate Review State as `plan satisfied` only when Plan Assurance passes. Do not update Task progress or active Workflow mode.
 
 ## Required Understanding
 
@@ -33,6 +33,7 @@ Observe and execute non-repairing verification; invoke the current Planning Skil
 - Validate all phase input before changing records, invoking Planning, or running verification.
 - For each selected phase, rebuild a transient Plan Assurance ledger directly from current Target Understanding and applicable Developer Principles and Preferences together with Agent Principles and Profiles, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness.
 - If the Plan is absent or Plan Assurance is not satisfied, record the exact Plan Findings, invoke Planning for that phase, then discard prior Plan observations and independently rebuild and apply the Plan Assurance ledger to Planning's result.
+- Record the current positive Plan Revision with every Plan Assurance outcome. Never carry an outcome forward to a different revision; after Planning changes the revision, perform a new independent Plan Assurance pass and bind its result to that new revision.
 - Repeat Plan reconciliation only while a pass closes or materially advances a Plan Finding. Stop the affected phase on a repeated unresolved Finding, no observable progress, inconclusive Plan Assurance, or required Human decision.
 - Do not begin Implementation Assurance until Plan Assurance is satisfied.
 - When no implementation or Development evidence exists, record Implementation Assurance as `not reviewed`; never manufacture a defect or proof for work that has not begun.

@@ -42,12 +42,13 @@ Process each selected phase as follows:
 2. Compare the current Plan with the ledger for complete and current coverage, coherent Task boundaries, dependencies, acceptance clauses, verification conditions, and absence of contradiction or duplication.
 3. If the Plan is missing or not satisfied, record exact Plan Findings and invoke the current Planning Skill directly for this phase. Do not depend on nested Slash Command invocation.
 4. After Planning, discard the previous Plan observations, rebuild the ledger from current authorities, and independently Review the reconciled Plan. Repeat only while a cycle closes or materially advances a Finding; stop on repetition, no progress, an inconclusive result, or a required Human decision.
-5. Do not begin Implementation Assurance until Plan Assurance is `satisfied`.
-6. Detect whether implementation or Development evidence exists. If neither exists, record Implementation Assurance as `not reviewed`, aggregate Review State as `plan satisfied`, and report that the phase is ready for Development.
-7. If implementation exists, build a separate transient Implementation Assurance ledger from the assured Plan, current Target, applicable Component obligations, acceptance clauses, verification conditions, and recorded evidence.
-8. Inspect Source, public interfaces, durable checks, and evidence. Observe each condition independently and judge whether the implementer's check establishes it; use adversarial or independent cases where practical.
-9. Record Findings with expected condition, actual observation, and exact evidence. Missing Plan coverage is a Gap; missing proof is missing evidence. Reconcile previous Findings only through current observation.
-10. Record aggregate Review State as `satisfied` only when both Plan Assurance and applicable Implementation Assurance are satisfied. Otherwise record the exact `plan satisfied`, `not satisfied`, or `inconclusive` result.
+5. Record the exact positive `revision` of the Plan examined with the Plan Assurance outcome. Never reuse Plan Assurance after Planning changes that revision.
+6. Do not begin Implementation Assurance until Plan Assurance is `satisfied` for that exact revision.
+7. Detect whether implementation or Development evidence exists. If neither exists, record Implementation Assurance as `not reviewed`, aggregate Review State as `plan satisfied`, and report that the phase is ready for Development.
+8. If implementation exists, build a separate transient Implementation Assurance ledger from the assured Plan, current Target, applicable Component obligations, acceptance clauses, verification conditions, and recorded evidence.
+9. Inspect Source, public interfaces, durable checks, and evidence. Observe each condition independently and judge whether the implementer's check establishes it; use adversarial or independent cases where practical.
+10. Record Findings with expected condition, actual observation, and exact evidence. Missing Plan coverage is a Gap; missing proof is missing evidence. Reconcile previous Findings only through current observation.
+11. Record aggregate Review State as `satisfied` only when both Plan Assurance and applicable Implementation Assurance are satisfied. Otherwise record the exact `plan satisfied`, `not satisfied`, or `inconclusive` result.
 
 Complete one selected phase before moving to the next. In a standalone invocation, an unsatisfied phase does not prevent reviewing a later phase whose evidence is independent. A coordinator such as Implement may require the current phase to pass before advancing.
 
@@ -60,7 +61,7 @@ Review writes only Review-owned Findings, assurance results, aggregate Review St
 Report in this order:
 
 1. **Phases** — resolved phase identifiers, titles, targets, and order.
-2. **Plan Assurance** — original result, Findings, any delegated Planning outcome, and independent post-Planning result.
+2. **Plan Assurance** — original result and assured Plan Revision, Findings, any delegated Planning outcome, and independent post-Planning result with its revision.
 3. **Implementation Assurance** — `not reviewed` when absent; otherwise conditions observed, independent evidence, and result.
 4. **Findings and missing evidence** — grouped by phase and assurance stage, ordered by severity.
 5. **Recorded outcomes** — Plan outcome, Implementation outcome, aggregate Review State, reconciled Findings, and History.

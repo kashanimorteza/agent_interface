@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-plan"
-  version: "8.2"
+  version: "8.3"
   purpose: "Operational Plan file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Plan Component."
 initialization:
   source: "initial"
@@ -57,6 +57,10 @@ sections:
             required: true
             default: 0
             purpose: "The phase's one-based position in project order."
+          revision:
+            required: true
+            default: 0
+            purpose: "The positive Planning-owned revision of this phase Plan. Planning sets 1 when the Plan is first made and increments it exactly once whenever Planning-owned semantic content changes. Task status, blocker references, and execution logs do not change it."
           target:
             required: true
             default: ""

@@ -8,6 +8,7 @@ Plan is the Component that turns project phases into precise, bounded activities
 - **Group** — one coherent implementation area within a Plan, holding the context its Tasks share.
 - **Task** — one small, concrete activity with one independently observable result.
 - **Phase** — the project stage a Plan represents, identified by its stable identifier and carrying its order and target.
+- **Plan Revision** — the positive Planning-owned version of a phase Plan's semantic planning content.
 - **Dependency** — another Task whose completed result this Task requires before it can begin.
 - **Acceptance** — the observable criterion that determines whether a Task's result is correct.
 - **Verification** — the condition that must be observed to prove acceptance, stated as behaviour rather than as a command.
@@ -28,11 +29,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 1. Every phase has its own Plan
 
-**Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
+**Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, intended outcome, and Plan Revision, then decomposes that outcome into Groups and Tasks. Planning sets revision `1` when it first creates the Plan and increments it exactly once whenever Planning-owned semantic content changes. Development-owned Task status, blocker references, and logs never change the Plan Revision. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
 **Why:** Stated once in the Plan, that context is inherited by every Group and Task beneath it, so the phase is described in one place rather than restated by everything it contains.
 
-**Boundary:** Planning does not invent a new project phase or silently change the meaning of an existing one. The phase remains the unit selected for planning and development.
+**Boundary:** Planning does not invent a new project phase or silently change the meaning of an existing one. A reconciliation that changes no Planning-owned meaning preserves the revision; a semantic change never preserves it. The phase remains the unit selected for planning and development.
 
 <br>
 
@@ -162,6 +163,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 ## At a Glance
 
 - **Must** — every phase has one Plan holding its identity, order, target, outcome, and phase-wide context *(1)*
+- **Must** — every Plan has a Planning-owned revision that changes exactly when its semantic planning content changes *(1)*
 - **Never** — planning invents a new phase or silently changes the meaning of an existing one *(1)*
 - **Must** — every Task belongs to one Group that holds the context its Tasks share *(2)*
 - **Never** — a Group absorbs the activity, expected result, or verification of one Task *(2)*

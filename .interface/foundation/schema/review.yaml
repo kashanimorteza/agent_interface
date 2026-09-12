@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-review"
-  version: "1.1"
+  version: "1.2"
   purpose: "Operational Review file structure. Sections describe stored Plan Assurance, Implementation Assurance, and Findings; initial is the empty configuration template."
 initialization:
   source: "initial"
@@ -67,6 +67,10 @@ sections:
               - "satisfied"
               - "not satisfied"
               - "inconclusive"
+          plan_revision:
+            required: true
+            default: 0
+            purpose: "The exact positive Plan revision examined by Plan Assurance. A Review outcome does not authorize Development when this value differs from the current phase Plan revision."
           implementation_outcome:
             required: false
             default: "not reviewed"

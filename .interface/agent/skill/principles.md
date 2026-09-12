@@ -75,11 +75,11 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 6. `developing` owns implementation and its checks
 
-**Rule:** The architecture requires the `developing` Skill. Its purpose is verified implementation; its responsibility is to execute eligible planned work, resolve implementation details within current authorities, build durable checks from Task verification conditions, and record truthful evidence; its task coverage is selected or all eligible planned phase work.
+**Rule:** The architecture requires the `developing` Skill. Its purpose is verified implementation; its responsibility is to execute eligible planned work only after current Review proves Plan Assurance for the exact current Plan Revision, resolve implementation details within current authorities, build durable checks from Task verification conditions, and record truthful evidence; its task coverage is selected or all eligible assured phase work.
 
 **Why:** Planned outcomes become trustworthy only through implementation and observable verification.
 
-**Boundary:** `developing` never creates the Plan, performs independent Review, changes Target intent, or writes outside Development authority.
+**Boundary:** `developing` never creates the Plan, substitutes its own judgment for Plan Assurance, develops against a missing, stale, or differently revised Review, performs independent Review, changes Target intent, or writes outside Development authority.
 
 <br>
 

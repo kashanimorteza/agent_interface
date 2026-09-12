@@ -8,6 +8,7 @@ Review owns its Findings and the record of what was reviewed. It does not own im
 
 - **Review** — one independent examination of one phase's Plan and, when present, implemented result against the current Interface and Target.
 - **Plan Assurance** — the mandatory Review judgment that a phase Plan completely and correctly covers current Target Understanding and applicable Component authorities.
+- **Assured Plan Revision** — the exact Plan Revision examined by Plan Assurance and stored with its outcome.
 - **Implementation Assurance** — the conditional Review judgment that existing implementation and evidence satisfy the assured Plan and its current authorities.
 - **Finding** — one specific way in which the result does not demonstrably satisfy what was asked, recorded with what was expected, what was observed, and where.
 - **Evidence** — the exact location or observable result that supports a finding, so that a reader can see it without repeating the review.
@@ -30,11 +31,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 1. Review always assures the Plan before available implementation
 
-**Rule:** A Review reconstructs current Interface Understanding and Target Understanding, then independently judges one phase's Plan against the current Target and every applicable Principle and Preference. Only after Plan Assurance is satisfied does it judge existing implementation and evidence against that assured Plan and the same current authorities. When no implementation exists, Implementation Assurance is explicitly `not reviewed` rather than inferred.
+**Rule:** A Review reconstructs current Interface Understanding and Target Understanding, then independently judges one phase's Plan against the current Target and every applicable Principle and Preference. It records the exact Assured Plan Revision with the Plan Assurance outcome. Only after Plan Assurance is satisfied does it judge existing implementation and evidence against that assured Plan and the same current authorities. When no implementation exists, Implementation Assurance is explicitly `not reviewed` rather than inferred.
 
 **Why:** A result can only be wrong relative to something. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
 
-**Boundary:** Review does not define new requirements. When the authoritative baseline is silent about something, that silence is a fact about the baseline, not a licence to supply the missing requirement and then find the Plan or result wanting.
+**Boundary:** Review does not define new requirements. A Plan Assurance outcome applies only to its recorded revision and becomes stale when the current Plan Revision differs. When the authoritative baseline is silent about something, that silence is a fact about the baseline, not a licence to supply the missing requirement and then find the Plan or result wanting.
 
 <br>
 
@@ -102,6 +103,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 - **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging available implementation *(1)*
 - **Must** — record Plan Assurance and Implementation Assurance separately, using `not reviewed` when implementation does not exist *(1)*
+- **Must** — bind every Plan Assurance outcome to the exact Plan Revision it examined *(1)*
 - **Never** — Review defines a new requirement, or treats silence in the baseline as one *(1)*
 - **Must** — a Review pass changes nothing it judges; Plan reconciliation is delegated to Planning and followed by a new independent pass *(2)*
 - **Never** — Review writes Plan content, repairs implementation, changes Target, or changes Task progress *(2)*

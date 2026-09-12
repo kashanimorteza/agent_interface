@@ -10,11 +10,11 @@ Execute eligible Tasks, choose implementation details within current authority, 
 
 ## Trigger
 
-Activate explicitly for zero or more phase selections, or after a coordinator confirms a current valid Plan.
+Activate explicitly for zero or more phase selections, or after a coordinator confirms current Plan Assurance.
 
 ## Inputs
 
-Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Target Understanding, Component authorities, public interfaces, implementation, Plan, State, and Review Findings relevant to reconciliation.
+Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Target Understanding, Component authorities, public interfaces, implementation, Plan, State, current Plan Assurance, and Review Findings relevant to reconciliation.
 
 ## Outputs
 
@@ -31,6 +31,7 @@ Write implementation, tests, executable documentation, dependencies, and configu
 ## Workflow Invariants
 
 - Validate the complete phase input before mutation; an invalid token prevents the whole run.
+- Before mutating a phase, require a Review record whose `plan_outcome` is `satisfied` and whose `plan_revision` exactly equals the current positive Plan `revision`. Also establish from observable repository evidence that no applicable Interface or Target authority changed after that Review. If any condition is absent, mismatched, or cannot be proven current, do not develop that phase; report Reviewer as the required next operation.
 - Execute only work eligible under current Plan rules and dependency evidence.
 - For every resolved technical option involved in the work, resolve its declared `agent_skills` associations through Agent Skill Profile. Activate an associated Skill only when the option is selected and the Skill is currently discoverable and usable. Use optional Skills when available and continue without them when unavailable; stop the affected work when a required Skill is unavailable. An associated Skill supplies guidance without changing scope or authority.
 - Build a transient verification ledger that splits every acceptance and verification statement into observable conditions and associates each with proof.
@@ -51,7 +52,7 @@ Preserve valid implementation and completed evidence, reconcile changed requirem
 
 ## Stopping Conditions
 
-Stop before mutation on invalid input. Do not execute ineligible work or work without a valid Plan. Leave progress truthful when authority, prerequisites, required decisions, dependency gates, or verification cannot be satisfied; continue only independent work.
+Stop before mutation on invalid input. Do not execute ineligible work, work without a valid Plan, or work lacking current Plan Assurance for the exact Plan Revision. Leave progress truthful when authority, prerequisites, required decisions, dependency gates, or verification cannot be satisfied; continue only independent work.
 
 ## Runtime Realization
 
