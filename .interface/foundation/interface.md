@@ -211,21 +211,6 @@ Target
     └── .interface/target/technical.md
 ```
 
-#### Phase Control
-
-The Technical Definition divides the Target into ordered phases. Every phase has a stable `id`, a `status` controlling scope, and a `readiness` controlling whether its design is ready to implement:
-
-```text
-Enabled  = the phase is in scope; it is planned, developed, and reviewed in its defined order
-Disabled = the phase is out of scope; no Plan, Task, or Finding is created for it, while its
-           aggregate State identity may remain available without implying progress
-Ready = the phase may be implemented
-Designing = the phase is still being designed and is not yet implementable
-Not Designed = the phase has not entered design and is not implementable
-```
-
-A phase is implementable only when it is both `Enabled` and `Ready`. These values express human intent, never operational progress. Planning, Development, and Review progress is recorded in State and never written into Target.
-
 <!-------------------------- Developer -->
 ### Developer
 
@@ -295,61 +280,62 @@ Together, these Components form the Agent Profile. A different Agent Runtime rea
 
 ```text
 Agent
-├── Runtime
-│   ├── Principles  → .interface/agent/runtime/principles.md
-│   └── Preferences → .interface/agent/runtime/preferences.yaml
-├── Settings
-│   ├── Principles  → .interface/agent/settings/principles.md
-│   └── Preferences → .interface/agent/settings/preferences.yaml
-├── Context
-│   ├── Principles  → .interface/agent/context/principles.md
-│   └── Preferences → .interface/agent/context/preferences.yaml
-├── Role
-│   ├── Principles  → .interface/agent/role/principles.md
-│   └── Preferences → .interface/agent/role/preferences.yaml
-├── Coordination
-│   ├── Principles  → .interface/agent/coordination/principles.md
-│   └── Preferences → .interface/agent/coordination/preferences.yaml
-├── Skill
-│   ├── Principles  → .interface/agent/skill/principles.md
-│   ├── Preferences → .interface/agent/skill/preferences.yaml
-│   └── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
-├── Command
-│   ├── Principles  → .interface/agent/command/principles.md
-│   └── Preferences → .interface/agent/command/preferences.yaml
-├── Rule
-│   ├── Principles  → .interface/agent/rule/principles.md
-│   └── Preferences → .interface/agent/rule/preferences.yaml
-├── Tool
-│   ├── Principles  → .interface/agent/tool/principles.md
-│   └── Preferences → .interface/agent/tool/preferences.yaml
-├── Hook
-│   ├── Principles  → .interface/agent/hook/principles.md
-│   └── Preferences → .interface/agent/hook/preferences.yaml
-├── Integration
-│   ├── Principles  → .interface/agent/integration/principles.md
-│   └── Preferences → .interface/agent/integration/preferences.yaml
-├── Extension
-│   ├── Principles  → .interface/agent/extension/principles.md
-│   └── Preferences → .interface/agent/extension/preferences.yaml
-├── Interaction
-│   ├── Principles  → .interface/agent/interaction/principles.md
-│   └── Preferences → .interface/agent/interaction/preferences.yaml
-├── Permission
-│   ├── Principles  → .interface/agent/permission/principles.md
-│   └── Preferences → .interface/agent/permission/preferences.yaml
-├── Session
-│   ├── Principles  → .interface/agent/session/principles.md
-│   └── Preferences → .interface/agent/session/preferences.yaml
-└── Observability
-    ├── Principles  → .interface/agent/observability/principles.md
-    └── Preferences → .interface/agent/observability/preferences.yaml
+└── Components
+    ├── Runtime
+    │   ├── Principles  → .interface/agent/runtime/principles.md
+    │   └── Preferences → .interface/agent/runtime/preferences.yaml
+    ├── Settings
+    │   ├── Principles  → .interface/agent/settings/principles.md
+    │   └── Preferences → .interface/agent/settings/preferences.yaml
+    ├── Context
+    │   ├── Principles  → .interface/agent/context/principles.md
+    │   └── Preferences → .interface/agent/context/preferences.yaml
+    ├── Role
+    │   ├── Principles  → .interface/agent/role/principles.md
+    │   └── Preferences → .interface/agent/role/preferences.yaml
+    ├── Coordination
+    │   ├── Principles  → .interface/agent/coordination/principles.md
+    │   └── Preferences → .interface/agent/coordination/preferences.yaml
+    ├── Skill
+    │   ├── Principles  → .interface/agent/skill/principles.md
+    │   ├── Preferences → .interface/agent/skill/preferences.yaml
+    │   └── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
+    ├── Command
+    │   ├── Principles  → .interface/agent/command/principles.md
+    │   └── Preferences → .interface/agent/command/preferences.yaml
+    ├── Rule
+    │   ├── Principles  → .interface/agent/rule/principles.md
+    │   └── Preferences → .interface/agent/rule/preferences.yaml
+    ├── Tool
+    │   ├── Principles  → .interface/agent/tool/principles.md
+    │   └── Preferences → .interface/agent/tool/preferences.yaml
+    ├── Hook
+    │   ├── Principles  → .interface/agent/hook/principles.md
+    │   └── Preferences → .interface/agent/hook/preferences.yaml
+    ├── Integration
+    │   ├── Principles  → .interface/agent/integration/principles.md
+    │   └── Preferences → .interface/agent/integration/preferences.yaml
+    ├── Extension
+    │   ├── Principles  → .interface/agent/extension/principles.md
+    │   └── Preferences → .interface/agent/extension/preferences.yaml
+    ├── Interaction
+    │   ├── Principles  → .interface/agent/interaction/principles.md
+    │   └── Preferences → .interface/agent/interaction/preferences.yaml
+    ├── Permission
+    │   ├── Principles  → .interface/agent/permission/principles.md
+    │   └── Preferences → .interface/agent/permission/preferences.yaml
+    ├── Session
+    │   ├── Principles  → .interface/agent/session/principles.md
+    │   └── Preferences → .interface/agent/session/preferences.yaml
+    └── Observability
+        ├── Principles  → .interface/agent/observability/principles.md
+        └── Preferences → .interface/agent/observability/preferences.yaml
 ```
 
 The Agent Components are read in the order shown. When the active role uses an Interface-owned Skill, its portable Contract is read after Skill Principles and Preferences. An external Skill is read from its declared provider resource under the active Role and applicable Agent Principles. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Preferences entries are empty, so absence is explicit rather than indistinguishable from omission. Runtime-specific implementation remains outside the Interface and is only an adapter and evidence that the Profile has been realized.
 
 
-#### Agent Components
+#### Components
 
 ```text
 Runtime        = Runtime identity, provider, model, compatibility, and native capability mapping
@@ -377,10 +363,10 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. The Interface then routes the Skill to the Component authorities required by its role; the Agent never needs prior knowledge of the Interface's internal directory structure. Target Understanding is separate and is established from the Target Technical Definition only when the role needs Target meaning. Configure uses only the phase identities and Platform selections required for its role; Reset may omit Target Understanding when its fixed scope does not require it.
+Understanding is the current context an Agent establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. The Interface then routes the Skill to the Component authorities required by its role; the Agent never needs prior knowledge of the Interface's internal directory structure. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset may omit Target Understanding when its fixed scope does not require it.
 
 - **Interface Understanding:** Read `.interface/foundation/interface.md` as the sole Foundation Source, then follow only the routes it provides for the active role.
-- **Target Understanding:** When required, read the Technical Definition located by the Interface to understand the Target's current intent, scope, phases, and project-specific decisions.
+- **Target Understanding:** When required, read both Target definitions located by the Interface. Human Definition provides the Human's stated intent and context; Technical Definition is the primary Target authority and takes precedence wherever they conflict.
 
 <!-------------------------- Understanding Structure -->
 ### Structure
@@ -390,10 +376,11 @@ Understanding
 ├── Interface Understanding
 │   └── Interface Foundation Source → .interface/foundation/interface.md
 └── Target Understanding
-    └── Target Technical Definition → .interface/target/technical.md
+    ├── Human Definition    → .interface/target/non-technical.md
+    └── Technical Definition → .interface/target/technical.md
 ```
 
-The Non-Technical Definition is the Human's input to defining the Technical Definition; it is not a direct operational Understanding source for Skills. Understanding is reconstructed from current sources when required and is never copied into Config as a second project definition.
+An empty Human Definition contributes no information. Understanding is reconstructed from both current sources under their declared precedence when required and is never copied into Config as a second project definition.
 
 <br><br>
 
@@ -418,65 +405,65 @@ Operations
 <!-------------------------- Configure Operation -->
 ### Configure
 
-**Agent Skill:** `configure`
+**Agent Skill:** `/my-interface-configure`
 
-This Operation is performed through the `configure` Skill to initialize and reconcile operational Config, synchronize phase State, and prepare the selected Platform Environment.
+This Operation is performed through `/my-interface-configure` to initialize and reconcile operational Config, synchronize phase State, and prepare the selected Platform Environment.
 
 <!-------------------------- Planning Operation -->
 ### Planning
 
-**Agent Skill:** `planning`
+**Agent Skill:** `/my-interface-planning`
 
-This Operation is performed through the `planning` Skill to convert the current Target and applicable Developer guidance into bounded, understandable, and verifiable Tasks.
+This Operation is performed through `/my-interface-planning` to convert the current Target and applicable Developer guidance into bounded, understandable, and verifiable Tasks.
 
 <!-------------------------- Developing Operation -->
 ### Developing
 
-**Agent Skill:** `developing`
+**Agent Skill:** `/my-interface-developing`
 
-This Operation is performed through the `developing` Skill to implement and verify eligible planned Tasks through the applicable Target and Developer context.
+This Operation is performed through `/my-interface-developing` to implement and verify eligible planned Tasks through the applicable Target and Developer context.
 
 <!-------------------------- Reviewing Operation -->
 ### Reviewing
 
-**Agent Skill:** `reviewing`
+**Agent Skill:** `/my-interface-reviewer`
 
-This Operation is performed through the `reviewing` Skill to evaluate implemented work independently and record evidence-based Findings without repairing the result.
+This Operation is performed through `/my-interface-reviewer` to evaluate implemented work independently and record evidence-based Findings without repairing the result.
 
 <!-------------------------- Launch Operation -->
 ### Launch
 
-**Agent Skill:** `launch`
+**Agent Skill:** `/my-interface-launch`
 
-This Operation is performed through the `launch` Skill to verify the selected Environment prepared by Configure, start the developed parts through the selected Launch, verify readiness, and report access points.
+This Operation is performed through `/my-interface-launch` to verify the selected Environment prepared by Configure, start the developed parts through the selected Launch, verify readiness, and report access points.
 
 <!-------------------------- Implement Operation -->
 ### Implement
 
-**Agent Skill:** `implement`
+**Agent Skill:** `/my-interface-implement`
 
-This Operation is performed through the `implement` Skill to coordinate Configure, baseline Review of existing work, Planning, Development, independent final Review, Finding reconciliation, and eligible Launch for selected phases or every enabled and ready phase.
+This Operation is performed through `/my-interface-implement` to coordinate Configure, baseline Review of existing work, Planning, Development, independent final Review, Finding reconciliation, and eligible Launch for selected phases or every enabled and ready phase.
 
 <!-------------------------- Reset Operation -->
 ### Reset
 
-**Agent Skill:** `reset`
+**Agent Skill:** `/my-interface-reset`
 
-This Operation is performed through the `reset` Skill to preview and, after Human confirmation, reset only the outputs and operational records covered by the selected reset stage.
+This Operation is performed through `/my-interface-reset` to preview and, after Human confirmation, reset only the outputs and operational records covered by the selected reset stage.
 
 <!-------------------------- Skill Installer Operation -->
 ### Skill Installer
 
-**Agent Skill:** `skill-installer`
+**Agent Skill:** `/my-interface-skill-installer`
 
-This Operation is performed through the `skill-installer` Skill to derive Agent capability needs, discover compatible project-scoped candidates, obtain Human approval, provision only approved capabilities, and verify their activation.
+This Operation is performed through `/my-interface-skill-installer` to derive Agent capability needs, discover compatible project-scoped candidates, obtain Human approval, provision only approved capabilities, and verify their activation.
 
 <!-------------------------- Agent Sync Operation -->
 ### Agent Sync
 
-**Agent Skill:** `agent-sync`
+**Agent Skill:** `/my-interface-agent-sync`
 
-This Operation is performed through the `agent-sync` Skill to compare the complete declared Agent Profile with the selected Runtime, reconcile authorized project-scoped native resources and selected capabilities, and verify actual availability.
+This Operation is performed through `/my-interface-agent-sync` to compare the complete declared Agent Profile with the selected Runtime, reconcile authorized project-scoped native resources and selected capabilities, and verify actual availability.
 
 <br><br>
 
@@ -577,8 +564,8 @@ The complete `.interface/` tree is read-only to every Agent Role and Skill by de
 ## Foundation Files
 Foundation Files provide foundational definitions and schemas required by the Interface.
 
-<!-------------------------- Foundation Repository Structure -->
-### Repository Structure
+<!-------------------------- Foundation Structure -->
+### Structure
 
 ```text
 .interface/foundation/

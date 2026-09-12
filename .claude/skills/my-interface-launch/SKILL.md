@@ -14,7 +14,7 @@ Bring the developed Target online according to the current Platform authorities.
 
 ## Workflow
 
-Establish Interface Understanding from the canonical Interface document. Follow its routes to the shared Skill rules, then establish Target Understanding from the Target Technical Definition it locates. Read the Platform Principles and Preferences, the operational records, and the public boundaries of the developed parts.
+Establish Interface Understanding from the canonical Interface document. Follow its routes to the shared Skill rules, then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Read the Platform Principles and Preferences, the operational records, and the public boundaries of the developed parts.
 
 Resolve the selected Environment and Launch from explicit Target decisions first and Platform defaults second. If either selection has no valid definition, record the unresolved condition under State instead of inventing a runtime method.
 
