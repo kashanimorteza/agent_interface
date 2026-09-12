@@ -45,6 +45,8 @@ A selected desired state is standing project authorization for additive, project
 
 When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
+For each declared Skill, resolve the exact optional prepared Markdown file under the Skill Profile's declared file convention (directory plus `<declared-skill-stable-key>.md`). When a file matches exactly one declared Skill, create the selected Runtime's required Skill folder and entrypoint, preserve that file's instruction content and meaning verbatim, and add or adapt only the minimum native metadata needed for discovery and invocation (for Claude Code, YAML frontmatter `name` and `description`). When no matching file exists, realize the Skill exactly as before from its portable Contract or provider declaration. Report a file that does not match exactly one declared Skill instead of installing it by inference, and never rewrite or reinterpret the Human-owned prepared source.
+
 Write only to an exact `write_target` in the affected Component's Realization record and only when its owning declarations otherwise authorize the change. When actual state conflicts with multiple authorities or meaningful Human-authored runtime content would be overwritten, make no write to that resource. Report the conflict and the exact decision needed.
 
 ## Verification
@@ -54,6 +56,7 @@ After reconciliation, discard pre-change observations, rediscover the complete A
 Verify at least that:
 
 - the selected Agent Native is active, every required Agent Instance is invocable, every required Role and Skill is discoverable by its intended Role, and each native Skill invocation control matches its declared Human and coordinator Invocation Policy;
+- every Skill materialized from a matched prepared Markdown file exactly preserves that file's instruction content and meaning;
 - every Custom Command resolves to its declared owner and argument contract;
 - effective settings, permissions, rules, and hooks match their owners;
 - each selected Extension is installed, project-enabled, and exposes its expected capabilities;

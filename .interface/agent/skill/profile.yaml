@@ -2,9 +2,9 @@
 meta:
   path: ".interface/agent/skill/profile.yaml"
   path_note: "The Profile layer of the Agent Skill Component."
-  purpose: "Interface-owned Skill Contracts and native mappings, plus contextual, built-in, user, managed, and extension provider Skill declarations."
+  purpose: "Interface-owned Skill Contracts, optional prepared Markdown Skill files, and native mappings, plus contextual, built-in, user, managed, and extension provider Skill declarations."
   standard: "Agent Project Interface"
-  version: "1.2"
+  version: "1.3"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,7 +16,7 @@ policy:
   consumption: "Only explicit Agent Sync reads this Profile to resolve portable Contracts and provider declarations, then materializes self-contained native Skills and a Runtime capability catalog for every other consumer."
   selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
   version_resolution: "Runtime and extension Skills resolve from their active providers."
-  matching: "During explicit Agent Sync, match Interface-owned Skills by stable key, portable Contract, and native name; match external Skills by stable key and provider declaration, then project stable identifiers and native mappings into the Runtime."
+  matching: "During explicit Agent Sync, match a prepared Markdown Skill file by the declared Skill's exact stable key, match Interface-owned Skills by portable Contract and native name, and match external Skills by stable key and provider declaration; then project stable identifiers and native mappings into the Runtime."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]
@@ -25,7 +25,7 @@ read_order: ["selected", "options", "settings"]
 content_map:
   selected: "Selected coordinating implementation Skill."
   options: "Selectable implementation coordinators."
-  settings: "Complete Skill map grouped by ownership, with Contracts for Interface-owned Skills and provider mappings for external Skills."
+  settings: "Prepared Markdown Skill-file convention and the complete Skill map grouped by ownership, with Contracts for Interface-owned Skills and provider mappings for external Skills."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -36,6 +36,13 @@ content:
       implement:
         resource: "project_skills.supporting.implement"
   settings:
+    skill_files:
+      directory: ".interface/agent/skill/files/"
+      naming: "<declared-skill-stable-key>.md"
+      presence: "optional per declared Skill"
+      present: "Create the selected Runtime's native Skill directory and entrypoint, preserve the prepared Markdown instructions as their content, and add or adapt only metadata required by that Runtime without changing meaning."
+      absent: "Realize the Skill exactly as before from its portable Contract, provider declaration, and Runtime mapping; absence is never an error by itself."
+      unmatched: "A Markdown file that does not match exactly one declared Skill is reported and never installed by inference."
     project_skills:
       core_workflow:
         configure:

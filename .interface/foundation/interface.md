@@ -306,7 +306,8 @@ Agent
     ├── Skill
     │   ├── Principles  → .interface/agent/skill/principles.md
     │   ├── Profile     → .interface/agent/skill/profile.yaml
-    │   └── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
+    │   ├── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
+    │   └── Files       → .interface/agent/skill/files/<declared-skill-stable-key>.md
     ├── Command
     │   ├── Principles  → .interface/agent/command/principles.md
     │   └── Profile     → .interface/agent/command/profile.yaml
@@ -339,7 +340,7 @@ Agent
         └── Profile     → .interface/agent/observability/profile.yaml
 ```
 
-The Agent Components are read in the order shown exclusively during an explicit Agent Sync invocation. Agent Sync then reads every Interface-owned Skill Contract after Skill Principles and Profile and realizes each required Rule, Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
+The Agent Components are read in the order shown exclusively during an explicit Agent Sync invocation. Agent Sync then reads every Interface-owned Skill Contract after Skill Principles and Profile, resolves any optional prepared Skill file by exact declared stable key, and realizes each required Rule, Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. A matching prepared Markdown file supplies that Skill's preserved native instruction content; a Skill without one follows its existing Contract- or provider-based realization path. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
 
 
 #### Components

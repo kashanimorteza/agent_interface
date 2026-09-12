@@ -8,6 +8,7 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 
 - **Skill** — reusable instructions or knowledge activated explicitly or by relevance.
 - **Skill Contract** — the portable definition of an Interface-owned Skill's responsibility, inputs, outputs, authority, checks, and stopping conditions.
+- **Prepared Skill File** — an optional Human-authored Markdown instruction body for one declared Skill, materialized by Agent Sync into that Skill's native Runtime folder without changing its meaning.
 - **Activation** — the state in which a Skill is discoverable and usable by its intended role.
 - **Invocation Policy** — whether a Skill may be invoked by the Human, by a declared coordinating Skill, or by both in the selected Runtime.
 
@@ -173,6 +174,16 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
+## 16. A prepared Markdown file may supply a Skill's native instruction body
+
+**Rule:** The Agent Skill Profile declares one optional prepared-file directory and an exact filename convention keyed by declared Skill identity. When the matching Markdown file exists, Agent Sync creates the Skill folder and entrypoint required by the selected Agent Native, preserves that file's instruction content and meaning, and adds or adapts only the minimum native metadata needed for discovery and invocation. When no matching file exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
+
+**Why:** A complete Human-authored Skill should be reusable without forcing every Skill to have a prepared file or turning Runtime output into its source.
+
+**Boundary:** File presence never declares a new Skill, selects a provider, proves Activation, or authorizes an unmatched file to be installed. A prepared file must match exactly one Skill already declared by the Profile and must conform to that Skill's Contract and applicable Principles. Only Agent Sync reads it; ordinary Runtime Skills consume the synchronized native copy. Agent Sync never rewrites the Human-owned source file or silently changes its semantic instructions.
+
+<br>
+
 ## At a Glance
 
 - **Must** — give every Interface-owned Skill exactly one complete portable Contract conforming to the Skill Contract Schema *(1)*
@@ -213,3 +224,6 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Must** — reserve all Agent Module reads exclusively for direct explicit Human invocation of `agent-sync`; every other operation consumes only synchronized Runtime artifacts *(15)*
 - **Never** — let the Agent Native, an Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, or model-generated action invoke, trigger, chain, or simulate `agent-sync` *(15)*
 - **Never** — let `agent-sync` change Human-owned declarations, Target code, broader-scope state, or adopt undeclared capabilities *(15)*
+- **Must** — materialize an exact matching prepared Skill file into the selected Agent Native's required Skill folder while preserving its instruction meaning *(16)*
+- **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file *(16)*
+- **Never** — infer a Skill from an unmatched file, treat a file as proof of Activation, or rewrite the Human-owned prepared source *(16)*

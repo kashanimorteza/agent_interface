@@ -1,8 +1,3 @@
----
-name: fastapi
-description: FastAPI best practices for AI agents — version pins, project structure, async routing rules, Pydantic/SQLAlchemy patterns, dependencies, auth, testing, and anti-patterns. Use when writing, reviewing, or refactoring FastAPI code.
----
-
 # FastAPI Best Practices for AI Agents
 
 A machine-readable companion to [README.md](./README.md) for AI coding agents
