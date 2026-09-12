@@ -94,6 +94,12 @@ if tool in {"Edit", "Write", "NotebookEdit"}:
         block("Agent writes are forbidden throughout .interface/ except authorized records under .interface/foundation/config/.")
     raise SystemExit(0)
 
+if tool == "Skill":
+    skill_name = str(tool_input.get("skill") or tool_input.get("name") or "")
+    if skill_name == "my-interface-agent-sync" or skill_name.endswith("/my-interface-agent-sync"):
+        block("Agent Sync can only run from a direct explicit Human /my-interface-agent-sync invocation, never from a Skill tool call.")
+    raise SystemExit(0)
+
 if tool == "Bash":
     command = str(tool_input.get("command") or "")
     agent_path_reference = re.search(r"(?:^|[\s'\"=])(?:\./)?\.interface/agent(?:/|\b)", command)
