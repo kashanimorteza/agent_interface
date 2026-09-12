@@ -4,7 +4,7 @@
 >
 > This document is the authoritative standard for the project's Database Component.
 >
-> Every AI agent, developer, reviewer, or automation that creates, changes, validates, or reasons about Database code MUST read and follow this document before making changes.
+> Every implementer, reviewer, or automation that creates, changes, validates, or reasons about Database code MUST read and follow this document before making changes.
 >
 > **Principles override preferences, framework defaults, convenience, and implementation choices.**
 >
@@ -74,13 +74,13 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 2.3 Database is an independent package with three internal layers
 
-**Rule:** Database is implemented as an independent package with a documented public interface. Compatible in-process consumers import the public Database gateway and Instance Registry from this package. Database is formed from three distinct internal layers:
+**Rule:** Database is implemented as an independent package with a stable, non-generic public namespace and a documented public interface. Database imports logical Model types only from the Model Component's public namespace; it does not redefine or privately copy them. Compatible in-process consumers import the public Database gateway and Instance Registry from this package. Database is formed from three distinct internal layers:
 
 - **Database Interface** is the only boundary published to consumers and exposes Model operations plus Instance discovery and selection;
 - **Data Logic and Mapping** implements generic Model operations and resolves the physical persistence mapping and enforcement of logical Models, fields, relationships, rules, and initial data; and
 - **Storage Adapter** owns the connection to the selected Database Engine and performs physical persistence operations.
 
-The dependency direction is Database Interface → Data Logic and Mapping → Storage Adapter → Database Engine.
+The dependency direction is Database Interface → Data Logic and Mapping → Storage Adapter → Database Engine. The Model package is an independent upstream contract consumed through its public import interface; consumers do not need to know the Engine, ORM, mapping, or storage implementation.
 
 **Why:** One published boundary over an ordered internal chain is what lets the engine, the mapping, and the exposed operations each change without the others being rewritten.
 
@@ -130,7 +130,7 @@ The dependency direction is Database Interface → Data Logic and Mapping → St
 
 ## 2.8 All data access goes through one generic interface
 
-**Rule:** Consumers use only the generic interface implemented by Database. The interface is generic rather than one access implementation per Model: a caller supplies an imported public Model type or Model instance from the public Model package, selects a supported operation, and supplies any criteria required by that operation. The same interface performs create, read, list, update, delete, and status operations for every persistent Model, and Data Logic uses one Model-driven operation pipeline rather than a separate business-logic implementation for every Model. Public Database operations MUST NOT require a Model name encoded as a string or resolve a Model through an untyped string registry; Model identity is carried by the imported type or instance.
+**Rule:** Consumers use only the generic interface implemented by Database. The interface is generic rather than one access implementation per Model: a caller imports a public Model type or Model instance from the independent Model package, selects a supported operation, and supplies any criteria required by that operation. The same interface provides add/create, read, read-by-identifier, list, edit/update, delete, and status operations for every persistent Model, and Data Logic uses one Model-driven operation pipeline rather than a separate business-logic implementation for every Model. Public Database operations MUST NOT require a Model name encoded as a string or resolve a Model through an untyped string registry; Model identity is carried by the imported type or instance.
 
 The status operation accepts exactly one action: `enable` or `disable`. It is available only when the selected Model declares a `status` field and changes that field to the corresponding enabled or disabled value.
 

@@ -42,7 +42,8 @@ content:
 
   # <!-------------------------------------------- selected -->
   selected:
-    code_path: "model/"
+    package_name: "my_model"
+    code_path: "my_model/"
     language: "Python"
     language_version: "3.13+"
     environment: "uv"
@@ -100,6 +101,11 @@ content:
       naive_datetime: "only when explicitly required by the domain definition"
     pydantic_api:
       base_model: "pydantic.BaseModel"
+      project_base_class_name: "BaseModel"
+      project_base_class_module: "<package_name>._base"
+      concrete_models_inherit_from: "BaseModel"
+      forbidden_project_base_class_names:
+        - "Model"
       configuration: "pydantic.ConfigDict"
       field_validation: "pydantic.field_validator"
       model_validation: "pydantic.model_validator"
@@ -112,10 +118,21 @@ content:
         - "parse_obj"
         - "dict"
         - "json"
+    validation:
+      declarative_constraints_first: true
+      field_validation_api: "pydantic.field_validator"
+      cross_field_validation_api: "pydantic.model_validator"
+      strictness: "enable deliberately when coercion would hide invalid domain data"
+      validation_side_effects: false
+    representation:
+      computed_fields: "pydantic.computed_field only for deterministic values derived from Model data"
+      aliases: "only for shared interoperability requirements"
+      unknown_fields: "forbid by default for closed domain objects"
+      immutability: "use frozen configuration only when it is part of domain semantics"
     package:
       public_imports: "explicitly re-exported from the package interface"
-      canonical_import_style: "import model; model.<module>.<ModelType>"
-      alternate_import_style: "from model import <module>; <module>.<ModelType>"
+      canonical_import_style: "import my_model; my_model.<module>.<ModelType>"
+      alternate_import_style: "from my_model import <module>; <module>.<ModelType>"
       model_identity: "imported module, Model type, or Model instance; never a public string selector"
       internal_modules: "not imported by consumers as a public contract"
       representation_priority: "logical domain representation before platform-specific derivations"

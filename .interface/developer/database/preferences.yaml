@@ -41,13 +41,17 @@ content:
 
   # <!-------------------------------------------- selected -->
   selected:
-    code_path: "database/"
+    package_name: "my_database"
+    code_path: "my_database/"
     engine: "SQLite"
     orm: "SQLAlchemy"
     migration_tool: "Alembic"
     default_instance: "general"
     credential_storage_mode: "encrypted"
     portability_policy: "portable contract first; engine-specific extensions explicit"
+    canonical_import_style: "import my_database; my_database.<public_module>.<operation>"
+    model_import_source: "my_model public namespace"
+    consumer_access: "public Database interface only"
 
   # <!-------------------------------------------- options -->
   options:
@@ -191,7 +195,7 @@ content:
 
     storage_adapter:
       runtime_configuration:
-        file: "Use Development's runtime_configuration.files.layer convention with layer = database and this Component's resolved code_path; its default resolves to database/database.yaml."
+        file: "Use Development's runtime_configuration.files.layer convention with layer = database and this Component's resolved code_path; its default resolves to <code_path>/database.yaml."
         sections:
           engines: "Resolved supported Engine profiles from options.engines and explicit compatible project choices, including driver, storage, and connection parameter settings. A profile denotes implemented adapter support, not a claim that its server is running; adding a configuration entry alone does not implement a new adapter."
           instances: "Resolved entries from storage_adapter.instances or explicit project Instances, keyed by stable identity, with name, purpose, Engine reference, database identity, and applicable non-secret connection settings or secret references."
@@ -199,7 +203,7 @@ content:
         ownership: "All Database-owned non-secret runtime settings belong in this layer-local file. Cross-layer bindings and secret values retain the separate locations and delivery rules defined by Development; do not duplicate them here."
         registry: "Build the public Instance Registry from the validated runtime Instance catalogue. Export it through the package's public interface alongside the Database gateway; expose selectable identities and the default, never raw connections or secret values."
         validation: "Before accepting data operations, validate Engine references and required Instance settings, and require the default to name an existing Instance. Reject an explicit unknown Instance; use the default only when selection is omitted. A connection failure never redirects an operation to another Instance."
-        storage_paths: "Resolve file-backed Engine storage locations from this Component's code_path, independent of the process working directory. Under the default SQLite profile, data remains under database/data/. Server-backed Engines keep physical data on their configured server, not in the application package."
+        storage_paths: "Resolve file-backed Engine storage locations from this Component's code_path, independent of the process working directory. Under the default file-backed profile, data remains under <code_path>/data/. Server-backed Engines keep physical data on their configured server, not in the application package."
       backups:
         enabled: "environment-managed"
         required_for_irreversible_migrations: true

@@ -4,7 +4,7 @@
 >
 > This document is the single source of truth for the project's Model component.
 >
-> Every AI agent, developer, reviewer, or automation that creates, changes, validates, or reasons about Model code MUST read and follow this document before making changes.
+> Every implementer, reviewer, or automation that creates, changes, validates, or reasons about Model code MUST read and follow this document before making changes.
 >
 > **Principles override preferences, framework defaults, convenience, and implementation choices.**
 >
@@ -74,7 +74,7 @@ Different sources are authoritative for different decisions:
 | Domain Model names, fields, relationships, domain rules, and Initial Data | Current Target Model definition |
 | Model boundaries, validation ownership, representation independence, and public package contract | This Model Standard |
 | Python version, Pydantic version, defaults, and compatible implementation choices | Model Preferences |
-| Framework syntax and version-specific behaviour | Current Pydantic documentation and the installed compatible toolchain |
+| Framework syntax and version-specific behaviour | The implementation documentation and compatible toolchain selected by Model Preferences |
 | Architecture vocabulary and optional modeling notation | Referenced external standards |
 
 An external standard never silently adds a Target Model, field, relationship, rule, or Initial Data record. A framework default never overrides an explicit Target definition or this Standard. When sources govern different concerns, apply each source only within its authority and record a consequential implementation choice where the governing source requires it.
@@ -114,7 +114,9 @@ Technical components derive their own representations from the Model.
 
 The resolved Model set MUST be implemented as one independent package.
 
-The Model package MUST provide one documented public import interface made of explicit public submodules and typed Model classes. The canonical consumer style is module-qualified import, so a consumer can use `import model` followed by `model.<module>.<ModelType>`, or `from model import <module>` followed by `<module>.<ModelType>`.
+The Model package MUST provide one documented public import interface made of explicit public submodules and typed Model classes. The canonical consumer style is module-qualified import through the namespace selected by Model Preferences, followed by `<namespace>.<module>.<ModelType>` or an equivalent explicit module import.
+
+The public namespace MUST be stable and unambiguous within the host ecosystem. Its concrete name is an implementation preference, not a logical Model rule.
 
 Model identity MUST be represented by an imported module, Model type, or Model instance. A public Model operation MUST NOT require a Model name encoded as a string, an untyped string registry lookup, or dynamic attribute resolution from caller-controlled text. String values remain valid only as ordinary domain data when the Model definition explicitly declares a string field.
 
@@ -122,33 +124,9 @@ Every public Model MUST be exposed exactly once through that interface.
 
 Compatible application components MUST import the shared Model package instead of maintaining private copies of the same domain definitions.
 
-Canonical examples:
+The concrete syntax for the canonical module-qualified import is defined by Model Preferences and demonstrated in the Component README. The logical requirement is that public Model modules and types are imported explicitly and addressed through the package namespace.
 
-```python
-import model
-
-record = model.entity.Entity(name="Example")
-payload = record.model_dump()
-schema = model.entity.Entity.model_json_schema()
-```
-
-An equivalent explicit module import is also supported:
-
-```python
-from model import entity
-
-record = entity.Entity(name="Example")
-```
-
-rather than:
-
-```python
-from backend.models import Entity
-from database.models import Entity
-from frontend_contracts import Entity
-```
-
-when all three are attempting to redefine the same logical Model.
+rather than allowing Backend, Database, or Frontend to define competing copies of the same logical Model.
 
 A consumer that cannot import the package directly MAY use a representation derived from the same Model definitions through its own declared boundary.
 
@@ -232,32 +210,13 @@ These belong to their respective technical components.
 
 ---
 
-# 4. Technology Standard
+# 4. Logical Model Standard
 
-The default implementation technology for Model is:
+The logical Model MUST be defined independently of a programming language, framework, validation library, package format, runtime, ORM, database engine, API framework, or serialization library.
 
-```text
-Python        3.13+
-Pydantic      v2
-Typing        modern Python typing
-Enums         StrEnum
-Precision     Decimal where exact decimal semantics matter
-Time          timezone-aware domain semantics
-```
+An implementation technology MAY provide typing, validation, serialization, schema generation, or package organization, but it MUST preserve the logical meaning defined by this Standard. The selected language, library, version, syntax, tooling, and compatibility choices belong to Model Preferences and its implementation documentation.
 
-Pydantic is the default implementation tool for Model because it provides:
-
-- strong typing,
-- validation,
-- serialization,
-- reusable domain objects,
-- schema introspection,
-- deterministic transformation,
-- and clean composition.
-
-Pydantic MUST NOT change the architectural meaning of Model.
-
-Framework behavior is subordinate to Model Principles.
+Logical Model rules MUST remain understandable and testable without requiring knowledge of a particular implementation technology.
 
 ---
 
@@ -265,16 +224,13 @@ Framework behavior is subordinate to Model Principles.
 
 A Model package MAY contain different categories of domain definitions.
 
+When the selected implementation provides a shared base class, every concrete Model MUST inherit from the base class selected in Model Preferences. The component name `Model` MUST NOT be used as that implementation base-class name.
+
 ## 5.1 Entity Model
 
 Represents one meaningful domain entity.
 
-Example:
-
-```python
-class Entity(Model):
-    ...
-```
+Example: a named domain entity with a stable logical identity and declared fields.
 
 ## 5.2 Value Object
 
@@ -348,18 +304,9 @@ waiting for declared generation/default
 
 These are different domain states.
 
-Example:
+Example: `name: String` and `nickname: Optional<String>`.
 
-```python
-name: str
-nickname: str | None
-```
-
-does not mean the same thing as:
-
-```python
-nickname: str | None = None
-```
+does not mean the same thing as a nullable field whose default is explicitly `null`.
 
 A required field does not necessarily need to be supplied by the caller if the operation permits omission and a declared default or generation mechanism supplies it before the resulting state is considered complete.
 
@@ -416,68 +363,7 @@ A default MUST NOT:
 
 ---
 
-# 10. Pydantic v2 Base Standard
-
-Use Pydantic v2 only.
-
-Recommended base:
-
-```python
-from pydantic import BaseModel, ConfigDict
-
-
-class Model(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-```
-
-Shared configuration MAY be placed in a common Model base when it represents a project-wide Model rule.
-
-Avoid deep inheritance hierarchies.
-
-Prefer composition.
-
----
-
-# 11. Modern Pydantic v2 API
-
-Use:
-
-```python
-Model.model_validate(...)
-instance.model_dump()
-instance.model_dump_json()
-instance.model_copy()
-```
-
-Do not introduce legacy Pydantic v1 APIs such as:
-
-```python
-parse_obj()
-.dict()
-.json()
-.copy()
-```
-
-Do not use:
-
-```python
-class Config:
-    ...
-```
-
-for new Pydantic models.
-
-Use:
-
-```python
-model_config = ConfigDict(...)
-```
-
----
-
-# 12. Naming
+# 10. Naming
 
 Model names MUST represent domain meaning.
 
@@ -564,74 +450,15 @@ The rule remains logically traceable to the Model even when another component is
 
 # 14. Field Validation
 
-Prefer declarative validation first.
+Prefer declarative field constraints and reusable domain types before custom validation code. The implementation mechanism is selected by Model Preferences.
 
-Use:
-
-- `Annotated`,
-- `Field`,
-- reusable value objects,
-- enums,
-- constrained domain types.
-
-Example:
-
-```python
-from typing import Annotated
-from pydantic import Field
-
-
-NonEmptyName = Annotated[
-    str,
-    Field(min_length=1, max_length=100),
-]
-```
-
-Use `field_validator` when field-specific logic cannot be expressed cleanly through declarative constraints.
-
-Example:
-
-```python
-from pydantic import field_validator
-
-
-class Resource(Model):
-    code: str
-
-    @field_validator("code")
-    @classmethod
-    def normalize_symbol(cls, value: str) -> str:
-        value = value.strip().upper()
-
-        if not value:
-            raise ValueError("symbol cannot be empty")
-
-        return value
-```
+Field validation MUST preserve the declared type, nullability, bounds, normalization, and domain meaning. A field-specific validator MAY be used when the rule cannot be expressed declaratively.
 
 ---
 
 # 15. Cross-Field Validation
 
-Use `model_validator` when a domain rule depends on multiple fields.
-
-Example:
-
-```python
-from pydantic import model_validator
-
-
-class PriceRange(Model):
-    low: Decimal
-    high: Decimal
-
-    @model_validator(mode="after")
-    def validate_range(self):
-        if self.high < self.low:
-            raise ValueError("high must be greater than or equal to low")
-
-        return self
-```
+Use a model-level or cross-field validator when a domain rule depends on multiple fields. The implementation mechanism is selected by Model Preferences.
 
 Validators MUST NOT:
 
@@ -647,16 +474,7 @@ Validators MUST NOT:
 
 Use strict validation when implicit type coercion could hide invalid domain data.
 
-Example:
-
-```python
-class Quantity(Model):
-    model_config = ConfigDict(strict=True)
-
-    value: int
-```
-
-Strict mode SHOULD be enabled deliberately, not mechanically for every Model.
+Strict validation SHOULD be enabled deliberately, not mechanically for every Model. The selected implementation MAY expose a strictness setting, but it must preserve the logical field types and reject invalid coercions when the domain requires it.
 
 The decision depends on domain semantics.
 
@@ -681,28 +499,11 @@ Prefer reusable domain types over duplicated validators.
 
 ---
 
-# 18. StrEnum
+# 18. Domain Enumerations
 
-Use `StrEnum` for stable reusable domain values.
+Use a named enumeration for stable reusable domain values.
 
-Example:
-
-```python
-from enum import StrEnum
-
-
-class OperationKind(StrEnum):
-    FIRST = "first"
-    SECOND = "second"
-```
-
-Prefer:
-
-```python
-OperationKind.FIRST
-```
-
-over repeated magic strings.
+Example: define one named enumeration with stable values and use its named members rather than repeated magic strings.
 
 Enums belong to Model only when they represent domain meaning.
 
@@ -712,20 +513,13 @@ API representation belongs to API.
 
 ---
 
-# 19. Literal
+# 19. Closed Value Sets
 
-Use `Literal` for a small local closed set when a reusable named enum would add no value.
+Use a local closed value set when a reusable named enumeration would add no value.
 
-Example:
+Example: a local closed value set containing `asc` and `desc`.
 
-```python
-from typing import Literal
-
-
-SortDirection = Literal["asc", "desc"]
-```
-
-If the value has reusable domain identity, prefer `StrEnum`.
+If the value has reusable domain identity, prefer a named domain enumeration.
 
 ---
 
@@ -733,15 +527,7 @@ If the value has reusable domain identity, prefer `StrEnum`.
 
 Use a dedicated Model when a primitive value has independent domain meaning or rules.
 
-Example:
-
-```python
-from decimal import Decimal
-
-
-class Price(Model):
-    value: Decimal
-```
+Example: a value object named `Price` containing an exact decimal value.
 
 A value object SHOULD be:
 
@@ -771,15 +557,7 @@ quantity when decimal precision matters
 
 Do not use `float` blindly for financial domain values.
 
-Example:
-
-```python
-from decimal import Decimal
-
-
-class Price(Model):
-    value: Decimal
-```
+Example: a financial Model field whose logical type is an exact decimal value.
 
 Rounding rules belong to Model only when rounding is itself a domain rule.
 
@@ -805,15 +583,7 @@ UTC is the preferred canonical representation for absolute instants.
 
 Do not mix naive and timezone-aware datetime values without an explicit domain reason.
 
-Example:
-
-```python
-from datetime import datetime
-
-
-class Trade(Model):
-    executed_at: datetime
-```
+Example: a Model field representing an instant in time with explicit timezone semantics.
 
 If the domain concept is:
 
@@ -827,77 +597,7 @@ Persistence strategy belongs to Database.
 
 ---
 
-# 23. RootModel
-
-Use `RootModel` only when the domain concept genuinely represents one root value.
-
-Example:
-
-```python
-from pydantic import RootModel
-
-
-class Symbols(RootModel[list[str]]):
-    pass
-```
-
-Do not use `RootModel` when named fields would express meaning more clearly.
-
----
-
-# 24. Generic Models
-
-Use generic Models only for genuinely reusable domain structures.
-
-Example:
-
-```python
-from typing import Generic, TypeVar
-from pydantic import BaseModel
-
-
-T = TypeVar("T")
-
-
-class Collection(Model, Generic[T]):
-    items: list[T]
-```
-
-Do not introduce generics for a single isolated use case.
-
----
-
-# 25. Discriminated Unions
-
-Use discriminated unions when one domain concept has multiple explicit variants.
-
-Example:
-
-```python
-from typing import Annotated, Literal
-from pydantic import Field
-
-
-class VariantA(Model):
-    type: Literal["variant_a"]
-
-
-class VariantB(Model):
-    type: Literal["variant_b"]
-    value: Decimal
-
-
-DomainVariant = Annotated[
-    VariantA | VariantB,
-    Field(discriminator="type"),
-]
-```
-
-Prefer discriminated unions over manual type switching when the variants are part of the domain.
-
----
-
-# 26. Serialization
+# 23. Serialization
 
 Serialization in Model MUST be:
 
@@ -919,35 +619,19 @@ Transport-specific formatting belongs to API or integration layers.
 
 ---
 
-# 27. Computed Fields
+# 24. Computed Fields
 
-Use `computed_field` for deterministic values derived entirely from Model data.
-
-Example:
-
-```python
-from pydantic import computed_field
-
-
-class PriceRange(Model):
-    high: Decimal
-    low: Decimal
-
-    @computed_field
-    @property
-    def spread(self) -> Decimal:
-        return self.high - self.low
-```
+Use an implementation-supported computed value for deterministic values derived entirely from Model data.
 
 Computed fields MUST NOT perform I/O.
 
 ---
 
-# 28. Aliases
+# 25. Aliases
 
 Use aliases only when they represent a real shared interoperability need.
 
-Internal Python naming SHOULD remain idiomatic `snake_case`.
+Internal implementation naming SHOULD follow the naming convention selected by Preferences.
 
 External transport naming conventions SHOULD normally be handled by the relevant technical layer.
 
@@ -955,15 +639,9 @@ Do not make Model depend on one API's JSON naming unless that external naming is
 
 ---
 
-# 29. Extra Fields
+# 26. Extra Fields
 
-For strict domain objects, prefer:
-
-```python
-model_config = ConfigDict(extra="forbid")
-```
-
-Unexpected fields often indicate:
+For strict domain objects, prefer the implementation's explicit reject-unknown-fields policy. Unexpected fields often indicate:
 
 - a typo,
 - a stale consumer,
@@ -975,24 +653,15 @@ The policy must be intentional.
 
 ---
 
-# 30. Immutability
+# 27. Immutability
 
 Use frozen Models where immutability is part of the domain semantics.
 
-Example:
-
-```python
-class CodeValue(Model):
-    model_config = ConfigDict(frozen=True)
-
-    value: str
-```
-
-Do not make mutable concepts immutable merely for style.
+The selected implementation MAY provide a frozen or immutable representation when immutability is part of the domain semantics. Do not make mutable concepts immutable merely for style.
 
 ---
 
-# 31. Relationships
+# 28. Relationships
 
 Relationships describe conceptual connections between Models.
 
@@ -1035,7 +704,7 @@ Those belong to Database.
 
 ---
 
-# 32. Initial Data
+# 29. Initial Data
 
 Initial data that must logically exist when the project begins is part of Model.
 
@@ -1069,7 +738,7 @@ when these are actual domain records rather than implementation constants.
 
 ---
 
-# 33. Sensitive and Credential Fields
+# 30. Sensitive and Credential Fields
 
 Model MAY declare that a field is sensitive or credential-related when that property is part of its domain meaning.
 
@@ -1096,7 +765,7 @@ Consumers MUST preserve the sensitive meaning declared by Model.
 
 ---
 
-# 34. Deterministic Domain Behavior
+# 31. Deterministic Domain Behavior
 
 Small deterministic behavior that belongs directly to the data concept MAY live in Model.
 
@@ -1125,7 +794,7 @@ The difference is whether the behavior is determinable from the Model's own data
 
 ---
 
-# 35. Side-Effect Rule
+# 32. Side-Effect Rule
 
 Model code MUST be free from unrelated side effects.
 
@@ -1142,14 +811,14 @@ Model validators, computed fields, serializers, and constructors MUST NOT:
 
 ---
 
-# 36. Public Package Interface
+# 33. Public Package Interface
 
 The Model package MUST expose a stable documented public interface.
 
 Preferred pattern:
 
 ```text
-model/
+<package_namespace>/
 ├── __init__.py
 ├── entity.py
 ├── operation.py
@@ -1158,19 +827,7 @@ model/
 └── types/
 ```
 
-Public imports MAY be re-exported from the package root:
-
-```python
-from .entity import Entity
-from .operation import Operation
-from .resource import Resource
-
-__all__ = [
-    "Entity",
-    "Operation",
-    "Resource",
-]
-```
+Public modules and Model types MAY be re-exported from the package root when the selected implementation supports it. The exact re-export syntax belongs to Model Preferences and the Component README.
 
 Consumers MUST import public Model modules or types from the documented package interface instead of deep internal modules. Package-root class re-exports MAY exist as a convenience, but they do not replace the canonical module-qualified interface.
 
@@ -1178,7 +835,7 @@ Internal file organization MAY change without breaking the logical public Model 
 
 ---
 
-# 37. One Definition Rule
+# 34. One Definition Rule
 
 Each resolved logical Model MUST have one authoritative definition.
 
@@ -1199,7 +856,7 @@ They MUST NOT silently redefine domain meaning.
 
 ---
 
-# 38. Derived Representations
+# 35. Derived Representations
 
 Technical representations may be narrower than the Model.
 
@@ -1227,7 +884,7 @@ It does not become the authoritative definition of Entity.
 
 ---
 
-# 39. Model Completeness
+# 36. Model Completeness
 
 A representation can be partial while the domain Model remains complete.
 
@@ -1247,7 +904,7 @@ Do not weaken a Model rule merely because a technical representation contains fe
 
 ---
 
-# 40. Framework Independence
+# 37. Framework Independence
 
 The logical definition of a Model MUST remain understandable without knowledge of:
 
@@ -1259,13 +916,11 @@ The logical definition of a Model MUST remain understandable without knowledge o
 - a specific message broker,
 - a specific API format.
 
-Pydantic is the implementation technology.
-
-Pydantic is not the domain itself.
+The implementation technology is selected by Model Preferences and is not the domain itself.
 
 ---
 
-# 41. Database Independence
+# 38. Database Independence
 
 Model MUST NOT contain SQLAlchemy persistence concerns.
 
@@ -1302,7 +957,7 @@ but Database determines how persistent uniqueness is guaranteed.
 
 ---
 
-# 42. API Independence
+# 39. API Independence
 
 Model MUST NOT contain FastAPI or HTTP transport concerns.
 
@@ -1327,7 +982,7 @@ The API derives representations from Model.
 
 ---
 
-# 43. Testing Standard
+# 40. Testing Standard
 
 Model tests SHOULD cover:
 
@@ -1349,15 +1004,7 @@ Model tests SHOULD cover:
 
 Example:
 
-```python
-import pytest
-from pydantic import ValidationError
-
-
-def test_price_must_be_positive():
-    with pytest.raises(ValidationError):
-        Price(value=Decimal("-1"))
-```
+The selected implementation's test framework SHOULD verify these cases, including construction failure for invalid values.
 
 Tests for persistence constraints belong to Database tests.
 
@@ -1365,7 +1012,7 @@ Tests for HTTP behavior belong to API tests.
 
 ---
 
-# 44. Documentation Standard
+# 41. Documentation Standard
 
 The Model Component MUST include a public `README.md` at its package boundary. The README is a required developer-facing explanation of the completed Model package, not an optional project note.
 
@@ -1381,12 +1028,12 @@ The README MUST explain, in clear language:
 
 The README MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Model package to:
 
-- import the package namespace with `import model` and use `model.<module>.<ModelType>`;
+- import the package namespace selected by Preferences and use `<namespace>.<module>.<ModelType>`;
 - import a public Model module with `from model import <module>` and use `<module>.<ModelType>`;
 - construct a valid Model instance;
 - observe and handle validation failure for invalid data;
-- serialize an instance with `model_dump()` and `model_dump_json()`;
-- generate its JSON Schema with `model_json_schema()`;
+- serialize an instance using the selected implementation's standard serialization operations;
+- generate its schema using the selected implementation's schema operation;
 - distinguish omitted values, explicit `None`, supplied values, defaults, and generated values;
 - perform a partial update while preserving the documented update semantics;
 - use a domain Enum, Value Object, reusable type, and declared relationship where applicable;
@@ -1409,26 +1056,7 @@ Document domain meaning and non-obvious invariants.
 
 ---
 
-# 45. Forbidden Legacy Pydantic Patterns
-
-Do not introduce:
-
-```text
-Pydantic v1 APIs
-class Config:
-orm_mode = True
-parse_obj()
-.dict()
-.json()
-.copy()
-BaseSettings from pydantic
-```
-
-`BaseSettings` belongs to application configuration, not Model.
-
----
-
-# 46. Forbidden Architecture Patterns
+# 42. Forbidden Architecture Patterns
 
 Model MUST NOT:
 
@@ -1451,37 +1079,7 @@ Model MUST NOT:
 
 ---
 
-# 47. AI Agent Mandatory Rules
-
-Before changing Model code, an AI agent MUST:
-
-1. Read this document completely.
-2. Treat this document as the authoritative Model standard.
-3. Preserve the architectural independence of Model.
-4. Identify the domain concept before choosing a Python structure.
-5. Use Pydantic v2 only.
-6. Use modern Python typing.
-7. Prefer explicit domain types over generic containers.
-8. Preserve omitted vs null vs generated semantics.
-9. Preserve Model rules even when technical representations are partial.
-10. Keep persistence concerns out of Model.
-11. Keep API transport concerns out of Model.
-12. Keep business workflows out of Model.
-13. Keep external I/O out of Model.
-14. Use `StrEnum` for reusable domain enumerations.
-15. Use `Literal` for small local closed sets.
-16. Use `Decimal` when exact decimal semantics matter.
-17. Preserve timezone semantics explicitly.
-18. Use validators only for rules determinable from Model data.
-19. Prefer composition over deep inheritance.
-20. Reuse one authoritative Model definition.
-21. Avoid legacy Pydantic patterns.
-22. Verify version-sensitive Pydantic behavior against the installed version or current official documentation when uncertain.
-23. Explicitly report a conflict if a requested change would violate this standard.
-
----
-
-# 48. Decision Order
+# 43. Decision Order
 
 When multiple implementations are possible, prefer in this order:
 
@@ -1490,7 +1088,7 @@ When multiple implementations are possible, prefer in this order:
 3. Clear component boundaries.
 4. Type safety.
 5. Explicit validation.
-6. Current supported Pydantic APIs.
+6. The implementation choices selected by Model Preferences.
 7. Simplicity.
 8. Reusability.
 9. Maintainability.
@@ -1498,7 +1096,7 @@ When multiple implementations are possible, prefer in this order:
 
 ---
 
-# 49. At a Glance
+# 44. At a Glance
 
 ## MUST
 
@@ -1512,22 +1110,17 @@ When multiple implementations are possible, prefer in this order:
 - Declare conceptual relationships and cardinality.
 - Keep domain rules traceable to Model.
 - Validate rules determinable from Model's own data.
-- Use modern Pydantic v2.
-- Use modern Python typing.
 - Use exact domain types where meaning requires them.
 - Use deterministic, side-effect-free validation and serialization.
 - Include and verify a developer-facing `README.md` for every completed Model package.
 
 ## SHOULD
 
-- Prefer `Annotated` + `Field` for reusable field constraints.
-- Prefer `StrEnum` for reusable string domain values.
-- Prefer `Literal` for small local closed sets.
+- Prefer the implementation's reusable constraint and enumeration mechanisms as selected by Preferences.
 - Prefer `Decimal` for exact financial values.
 - Prefer timezone-aware semantics for real-world instants.
 - Prefer composition over inheritance.
-- Prefer a stable package-root public import interface.
-- Prefer `extra="forbid"` for strict closed domain objects.
+- Prefer a stable public module interface.
 
 ## NEVER
 
@@ -1543,17 +1136,17 @@ When multiple implementations are possible, prefer in this order:
 - Confuse omitted input with explicit null.
 - Allow defaults to override explicit Model declarations.
 - Duplicate the same logical Model independently in multiple components.
-- Introduce Pydantic v1 patterns into new code.
+- Let an implementation library or framework redefine the logical Model.
 
 ---
 
-# 50. Final Rule
+# 45. Final Rule
 
 The Model component defines **what the project's domain data means**.
 
 It is the shared logical source used by Database, Backend, Frontend, and other technical components.
 
-Use **Pydantic v2** to implement that shared domain model.
+Use the language and modeling library selected by Model Preferences to implement that shared domain model.
 
 Keep Model independent from persistence, transport, workflows, presentation, and deployment.
 
