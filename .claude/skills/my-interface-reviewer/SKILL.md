@@ -34,7 +34,7 @@ Never introduce a third `Project Understanding`. Plan, State, Review Config, imp
 
 ## Workflow
 
-Resolve the current Planning Skill, Review, Plan and State authorities, applicable Component authorities, operational records, implementation, public interfaces, and verification capabilities.
+Resolve the current synchronized Planning Skill, Review, Plan and State authorities, applicable Developer Component authorities, operational records, implementation, public interfaces, and Runtime verification capabilities.
 
 Process each selected phase as follows:
 

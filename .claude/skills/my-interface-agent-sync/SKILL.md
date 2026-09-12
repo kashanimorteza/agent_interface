@@ -43,13 +43,13 @@ Verify that the selected Runtime is available and compatible with the declared P
 
 A selected desired state is standing project authorization for additive, project-scoped reconciliation of that exact declaration. Still honor runtime permission prompts and stop for Human action when provisioning needs credentials, trust of an external service, broader scope, destructive replacement, an irreversible action, or authority not already expressed by the declaration.
 
-When a required native resource is missing, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Point to existing contracts instead of copying Interface policy into multiple runtime files where the Runtime can resolve references. Never invent content for an explicit empty category.
+When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Every non-Sync Skill and Agent must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
 Write only to an exact `write_target` in the affected Component's Realization record and only when its owning declarations otherwise authorize the change. When actual state conflicts with multiple authorities or meaningful Human-authored runtime content would be overwritten, make no write to that resource. Report the conflict and the exact decision needed.
 
 ## Verification
 
-After reconciliation, discard pre-change observations, rediscover the complete Agent Component inventory from the canonical Interface, revalidate one-to-one Component Realization coverage, independently re-read every native artifact, and query runtime status where supported. Apply every Component's declared verification obligation. A declaration or file presence alone is insufficient.
+After reconciliation, discard pre-change observations, rediscover the complete Agent Component inventory from the canonical Interface, revalidate one-to-one Component Realization coverage, independently re-read every native artifact, and query runtime status where supported. Apply every Component's declared verification obligation. Audit all non-Sync Runtime instructions and mappings and fail verification if any directs its consumer to enter, read, search, resolve, or use an Agent Module source. A declaration or file presence alone is insufficient.
 
 Verify at least that:
 

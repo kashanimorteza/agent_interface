@@ -69,7 +69,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 **Why:** Status is trustworthy only when the reporter cannot change what it is observing.
 
-**Boundary:** `interface-reader` never writes files, executes project work, repairs discrepancies, or invents missing facts.
+**Boundary:** `interface-reader` never reads Agent Module sources, writes files, executes project work, repairs discrepancies, or invents missing facts. It consumes synchronized Runtime rules for Agent-side behavior.
 
 <br>
 
@@ -84,3 +84,4 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Never** — let primary accountability expand authority *(4)*
 - **Must** — provide `interface-reader` for read-only current status reporting *(5)*
 - **Never** — let `interface-reader` mutate, execute, repair, or invent project state *(5)*
+- **Never** — let `interface-reader` enter or inspect the Agent Module *(5)*

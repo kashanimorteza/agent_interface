@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
   purpose: "Defaults and supported technical profiles for the independent Backend package, its Model Interface, Database Interface, Logic, API Interface, and API framework."
   standard: "Agent Project Interface"
-  version: "6.2"
+  version: "6.3"
   updated: "2026-09-12"
 
 

@@ -273,9 +273,9 @@ Each line names a Component so that a phase target can be resolved to its owner.
 
 <!-------------------------- Agent -->
 ### Agent
-The Agent module defines the execution side of Agent Interface through Components. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, native mappings, and explicit empty categories.
+The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent should operate. The Human declares that view once through its Components—including Agent identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, native mappings, and explicit empty categories.
 
-Together, these Components form the Agent Profile. Explicit Agent Sync reads the Profile and maps it to native capabilities in a compatible Runtime without requiring the Target or Developer modules to be redesigned.
+Together, these Components form the Agent Profile. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Profile, realizes it through that Runtime's native Agents, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent then operates from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 
 #### Structure
 

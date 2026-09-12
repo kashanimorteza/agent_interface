@@ -12,7 +12,7 @@ It owns instruction scope, loading conditions, and precedence among Rules. It do
 
 ## Relationships
 
-- **Consumes Target, Developer, and Agent Modules** — references their authorities without redefining them.
+- **Consumes Target and Developer Modules during ordinary execution** — Agent Module authorities are consumed only by explicit Agent Sync and realized as Runtime Rules for every other operation.
 - **Consumed by Agent Context and Skill** — supplies persistent applicable guidance.
 - **Consumed by Agent Permission and Hook** — provides behavioral context while those Components supply enforceable controls.
 

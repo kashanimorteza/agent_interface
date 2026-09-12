@@ -4,7 +4,7 @@ meta:
   path_note: "The Profile layer of the Agent Hook Component."
   purpose: "Lifecycle events, matchers, handlers, failure policies, and Hook catalogs."
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -64,8 +64,15 @@ content:
       interface-boundary-guard:
         path: ".claude/hooks/interface-boundary-guard.py"
         event: "PreToolUse"
-        matcher: "Edit|Write|NotebookEdit|Bash"
-        responsibility: "Block direct Interface mutations outside the authorized Config boundary."
+        matcher: "Read|Glob|Grep|Edit|Write|NotebookEdit|Bash"
+        responsibility: "Block Agent Module reads outside the exact explicit Agent Sync prompt and block direct Interface mutations outside the authorized Config boundary."
+        failure_policy: "fail_closed"
+        required: true
+      agent-sync-read-grant:
+        path: ".claude/hooks/interface-boundary-guard.py"
+        event: "UserPromptExpansion"
+        matcher: "my-interface-agent-sync"
+        responsibility: "Grant Agent Module read access only to the prompt created by an explicit Human invocation of Agent Sync."
         failure_policy: "fail_closed"
         required: true
     user_hooks: {}

@@ -42,7 +42,17 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
-## 3. Secrets never enter project declarations or reports
+## 3. Agent Module reads belong only to explicit Agent Sync
+
+**Rule:** Access to Agent Module sources is denied to every Skill, Agent Role, coordinator, startup routine, and Understanding workflow except `agent-sync` after explicit Human invocation. Agent Sync reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
+
+**Why:** The Agent Module defines how an Agent should be constructed; it is not operational context for the Agent after construction.
+
+**Boundary:** Reading the canonical Interface file and seeing its Agent Structure does not grant entry into the Agent Module. This restriction does not prevent the Human from reading or editing Human-owned sources.
+
+<br>
+
+## 4. Secrets never enter project declarations or reports
 
 **Rule:** Credentials, tokens, private keys, and secret values remain in approved external stores or runtime channels and are never committed, copied into project declarations, logged, or exposed in Agent output.
 
@@ -52,7 +62,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
-## 4. Unrelated Human work is preserved
+## 5. Unrelated Human work is preserved
 
 **Rule:** Agent actions preserve unrelated Human changes and data. Destructive operations resolve exact targets and use recoverable mechanisms when practical.
 
@@ -69,5 +79,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Must** — obtain applicable authorization for materially consequential actions *(1)*
 - **Must** — grant every capability only its minimum required access *(2)*
 - **Never** — let a lower layer or delegate broaden a deny boundary *(2)*
-- **Never** — store or expose secret values in project declarations, logs, or output *(3)*
-- **Must** — preserve unrelated Human work and resolve destructive targets exactly *(4)*
+- **Must** — reserve every Agent Module read for explicit Human invocation of `agent-sync` *(3)*
+- **Never** — use Agent Module sources as ordinary Understanding or as a fallback for Runtime drift *(3)*
+- **Never** — store or expose secret values in project declarations, logs, or output *(4)*
+- **Must** — preserve unrelated Human work and resolve destructive targets exactly *(5)*

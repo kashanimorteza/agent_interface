@@ -12,7 +12,7 @@ It owns context composition and freshness. It does not own the meaning of Target
 
 ## Relationships
 
-- **Consumes Target, Developer, and Agent Modules** — loads current authoritative sources as required by the active role.
+- **Consumes Target and Developer Modules for ordinary roles** — loads current authoritative sources required by the active role; Agent Module sources are loaded only for explicit Agent Sync.
 - **Consumes Agent Rule** — loads applicable persistent and scoped instructions.
 - **Consumed by Agent, Role, Skill, and Session** — supplies the current information they use.
 
@@ -28,7 +28,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 **Why:** Long-lived or resumed sessions otherwise act on stale assumptions.
 
-**Boundary:** A role reads only the context necessary for its bounded responsibility.
+**Boundary:** A role reads only the context necessary for its bounded responsibility. Agent Sync is the sole role context permitted to include Agent Module sources; every other role uses synchronized Runtime realizations and never enters that module.
 
 <br>
 
@@ -55,6 +55,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 ## At a Glance
 
 - **Must** — establish current Interface and role-required Target Understanding before acting *(1)*
+- **Must** — load Agent Module sources only for explicit Agent Sync and use synchronized Runtime artifacts for every other role *(1)*
 - **Never** — substitute memory or prior summaries for current authorities *(1)*
 - **Must** — retain each context source's origin and authority *(2)*
 - **Never** — let instructions or Memory override owned sources *(2)*

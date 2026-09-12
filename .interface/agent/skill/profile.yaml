@@ -4,7 +4,7 @@ meta:
   path_note: "The Profile layer of the Agent Skill Component."
   purpose: "Interface-owned Skill Contracts and native mappings, plus contextual, built-in, user, managed, and extension provider Skill declarations."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "1.2"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,10 +13,10 @@ policy:
   rule: "This file is human-owned; Skill execution and activation state are observed without writing here."
   changed_by: "The human, directly."
   precedence: "An explicit project decision and every applicable Principle take precedence over this file."
-  consumption: "Resolve every Interface-owned Skill's portable Contract and native implementation; resolve external Skills from their provider declaration; verify usability before invocation."
+  consumption: "Only explicit Agent Sync reads this Profile to resolve portable Contracts and provider declarations, then materializes self-contained native Skills and a Runtime capability catalog for every other consumer."
   selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
   version_resolution: "Runtime and extension Skills resolve from their active providers."
-  matching: "Match Interface-owned Skills by stable key, portable Contract, and native name; match external Skills by stable key and provider declaration."
+  matching: "During explicit Agent Sync, match Interface-owned Skills by stable key, portable Contract, and native name; match external Skills by stable key and provider declaration, then project stable identifiers and native mappings into the Runtime."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]

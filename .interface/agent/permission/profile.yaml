@@ -4,7 +4,7 @@ meta:
   path_note: "The Profile layer of the Agent Permission Component."
   purpose: "Permission mode, allow/ask/deny rules, sandboxing, protected sources, trust, authentication, and secrets."
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -67,6 +67,13 @@ content:
     protected_sources:
       protected_root: ".interface/"
       mutation: "deny by default"
+      read_restrictions:
+        agent_module:
+          path: ".interface/agent/"
+          default: "deny"
+          sole_consumer: "skill.project_skills.supporting.agent-sync"
+          invocation: "explicit-human"
+          effect: "Every other Skill, Agent, coordinator, startup routine, and Understanding workflow consumes synchronized Runtime artifacts instead."
       editable_exception:
         path: ".interface/foundation/config/"
         condition: "Only the active Skill's declared write authority and the owning Component's rules may authorize an exact Config record."
