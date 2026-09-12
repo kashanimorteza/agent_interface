@@ -158,6 +158,16 @@ Every statement here is mandatory. A Developer Preference or implementation choi
 
 <br>
 
+## 14. A required Agent Skill is a Backend completion gate
+
+**Rule:** When the resolved Backend Preference for a selected technology declares an associated Agent Skill with `requirement: required`, Development verifies that exact capability is currently discoverable and usable, invokes it through its synchronized Runtime mechanism before making implementation decisions for that technology, reads its complete primary instructions and every referenced guidance source applicable to the work, and checks every instruction as applied or explicitly not applicable with a reason. Review independently resolves and uses the same current Skill when judging the resulting implementation. Backend work involving that technology is complete only when every applicable Skill instruction is satisfied by observable evidence.
+
+**Why:** Naming a Skill without requiring its complete application proves neither that it influenced the implementation nor that the result follows its current standard.
+
+**Boundary:** A Preference that declares no associated Skill creates no Skill requirement, and no operation invents one. An unavailable required Skill blocks only the affected work and is reported as an Agent capability gap. Skill guidance never selects the technology, expands scope, or overrides Target intent, Backend Principles, resolved Preferences, Plan obligations, Role, or Permission; a conflict follows the shared decision policy.
+
+<br>
+
 ## At a Glance
 
 - **Must** — keep Backend architecture independent of Targets and implementation technologies while leaving Target-specific meaning in Target *(1)*
@@ -186,3 +196,6 @@ Every statement here is mandatory. A Developer Preference or implementation choi
 - **Never** — expose secrets, Database internals, or private implementation as documentation contracts *(12)*
 - **Must** — apply the Backend decision order only to choices left open by higher authorities *(13)*
 - **Never** — let framework convenience override Target meaning, Component ownership, or Backend boundaries *(13)*
+- **Must** — invoke and completely apply every applicable instruction from a required Agent Skill before completing work on its selected Backend technology *(14)*
+- **Must** — make Review independently verify required Agent Skill compliance against observable implementation evidence *(14)*
+- **Never** — invent a Skill requirement for a Preference that declares none or let Skill guidance override an owning authority *(14)*

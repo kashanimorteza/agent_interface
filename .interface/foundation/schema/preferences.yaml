@@ -145,7 +145,7 @@ sections:
               values:
                 - "optional"
                 - "required"
-              purpose: "Whether work may continue when the referenced Skill is not currently usable."
+              purpose: "Whether selected work may continue without the referenced Skill and, when required, whether complete application of its applicable guidance is a completion gate."
             activation:
               required: true
               value: "when_selected"
@@ -157,7 +157,7 @@ sections:
           association_only: "An association neither defines nor installs a Skill and never proves Activation. Agent Sync owns translation from the Human-owned declaration to the Runtime catalog, and current Runtime evidence proves whether it is usable."
           authority: "An associated Skill supplies guidance only. It never selects this option, expands Target scope, or overrides Target, Principles, Preferences, Plan, Role, Permission, or another owning authority."
           optional: "Use an optional associated Skill when it is declared, discoverable, and usable. If it is unavailable, continue without it and report the unavailable aid when consequential."
-          required: "A required associated Skill that is not usable blocks the affected work and is handled through the Agent capability lifecycle rather than silently approximated."
+          required: "A required associated Skill that is not usable blocks the affected work and is handled through the Agent capability lifecycle rather than silently approximated. When usable, it is invoked through its synchronized Runtime mechanism and its complete applicable guidance is applied and verified under the owning Component's Principles before affected work is complete."
     rules:
       no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
       no_project_data: "An option entry carries no Models, fields, records, or other project data."

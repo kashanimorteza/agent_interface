@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
   purpose: "Defaults and supported technical profiles for the independent Backend package, its Model Interface, Database Interface, Logic, API Interface, and API framework."
   standard: "Agent Project Interface"
-  version: "6.3"
+  version: "6.4"
   updated: "2026-09-12"
 
 
@@ -74,9 +74,9 @@ content:
             http_testing: "httpx"
           agent_skills:
             - resource: "project_skills.contextual.fastapi"
-              requirement: "optional"
+              requirement: "required"
               activation: "when_selected"
-              purpose: "Apply focused FastAPI guidance while implementing the selected API framework and its durable checks."
+              purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
 
   # <!-------------------------------------------- settings -->
   settings:
