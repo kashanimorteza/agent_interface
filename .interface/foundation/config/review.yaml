@@ -1,0 +1,113 @@
+finding_count: 6
+reviews:
+  P1:
+    id: "P1"
+    title: "Model"
+    target: "Model"
+    scope: "Plan Assurance re-checked against unchanged revision 2; Implementation Assurance performed against the completed my_model package, its test suite, and its README, using independent adversarial checks in addition to Development's own recorded evidence."
+    outcome: "satisfied"
+    plan_outcome: "satisfied"
+    plan_revision: 2
+    implementation_outcome: "satisfied"
+    reviewed_by: "reviewing"
+    reviewed_at: "2026-09-12T19:35:00Z"
+    finding_count: 2
+    findings:
+      P1-F1:
+        id: "P1-F1"
+        kind: "gap"
+        severity: "minor"
+        task: "P1-T2"
+        expected: "The Target declares that User's password and api_key fields are credentials requiring hash storage at rest; the Task's acceptance and verification must establish that this specific designation is observable, consistent with how the Instance and Account Tasks establish their own encrypted designation."
+        observed: "The Task's expected result generically referenced 'credential designations the Target declares' but its acceptance and verification clauses only tested that the fields were sensitive, without testing the hash designation specifically."
+        evidence: "Plan Config P1-T2 acceptance and verify clauses, revision 1."
+        state: "resolved"
+        raised_at: "2026-09-12T19:07:00Z"
+        settled_at: "2026-09-12T19:08:00Z"
+        settled_by: "reviewing after planning reconciliation to revision 2"
+      P1-F2:
+        id: "P1-F2"
+        kind: "missing evidence"
+        severity: "minor"
+        task: null
+        expected: "Every documented README usage example is proven to run against the actual public interface, not merely asserted as prose."
+        observed: "Development's own log cited tests/test_readme_examples.py without independent re-execution; Review independently re-ran the full suite, re-ran an isolated clean-environment install/import, grepped the package for forbidden ORM/API/IO concerns, and independently blocked socket access during import to confirm no network call occurs."
+        evidence: "Independent Review re-run: 39/39 pytest tests passed, ruff and pyright clean, a separate clean venv installed and imported the package, no sqlalchemy/fastapi/mapped_column/__tablename__/APIRouter/HTTPException/requests/httpx/socket/open pattern was found in my_model/*.py, and import succeeded with socket.socket patched to raise."
+        state: "resolved"
+        raised_at: "2026-09-12T19:33:00Z"
+        settled_at: "2026-09-12T19:35:00Z"
+        settled_by: "reviewing, same pass, via independent adversarial re-verification"
+  P2:
+    id: "P2"
+    title: "Database"
+    target: "Database"
+    scope: "Plan Assurance re-checked against unchanged revision 2; Implementation Assurance performed against the completed my_database package, its test suite, its migration history, and its README, using independent adversarial checks in addition to Development's own recorded evidence."
+    outcome: "satisfied"
+    plan_outcome: "satisfied"
+    plan_revision: 2
+    implementation_outcome: "satisfied"
+    reviewed_by: "reviewing"
+    reviewed_at: "2026-09-12T20:25:00Z"
+    finding_count: 2
+    findings:
+      P2-F1:
+        id: "P2-F1"
+        kind: "gap"
+        severity: "major"
+        task: "P2-T2"
+        expected: "Database Preferences resolve a credential field's storage mode by preserving any explicit project (Model-declared) storage mode first, falling back to a field-name default (api_key -> encrypted) only when no field-specific declaration exists. The User Model explicitly declares both password and api_key as hash."
+        observed: "The User mapping Task's acceptance and verification did not state that the explicit hash designation must be preserved even though Database's generic field-name default for a field named api_key is encrypted, a real naming collision that could plausibly be implemented backward."
+        evidence: "Plan Config P2-T2 acceptance and verify clauses, revision 1."
+        state: "resolved"
+        raised_at: "2026-09-12T19:44:00Z"
+        settled_at: "2026-09-12T19:45:00Z"
+        settled_by: "reviewing after planning reconciliation to revision 2"
+      P2-F2:
+        id: "P2-F2"
+        kind: "gap"
+        severity: "major"
+        task: null
+        expected: "Database Principle 2.10 requires Database to guarantee every Model rule that depends on persisted state, including uniqueness across records; the Target declares an explicit record-level uniqueness rule for 14 of the 15 persistent Models."
+        observed: "The persistence-mapping Tasks' acceptance and verification only generically covered missing required fields and foreign-key violations; none named the specific declared uniqueness rule it must enforce, so a Task could be marked complete without the storage structure actually enforcing that rule."
+        evidence: "Plan Config P2-G2 Task acceptance and verify clauses, revision 1, for P2-T2 and P2-T4 through P2-T16."
+        state: "resolved"
+        raised_at: "2026-09-12T19:44:00Z"
+        settled_at: "2026-09-12T19:45:00Z"
+        settled_by: "reviewing after planning reconciliation to revision 2, adding the exact declared uniqueness rule and its verification to each affected Task"
+  P3:
+    id: "P3"
+    title: "Backend"
+    target: "Backend"
+    scope: "Plan Assurance re-checked against unchanged revision 2; Implementation Assurance performed against the completed my_backend package by independently auditing every layer's actual imports and re-exercising the HTTP API, in addition to Development's own recorded evidence."
+    outcome: "satisfied"
+    plan_outcome: "satisfied"
+    plan_revision: 2
+    implementation_outcome: "satisfied"
+    reviewed_by: "reviewing"
+    reviewed_at: "2026-09-12T21:20:00Z"
+    finding_count: 2
+    findings:
+      P3-F1:
+        id: "P3-F1"
+        kind: "gap"
+        severity: "major"
+        task: "P3-T4"
+        expected: "The Target declares that the Trading Platform selected by an Instance's trading_platform_id determines which of its connection fields are required. Model Standard section 13 and Database Principle 2.10 both explicitly exclude this rule from Model and Database, since it depends on operation and referenced-entity context. It must therefore be enforced by Backend Logic."
+        observed: "P3-T4's acceptance and verification covered only the standard six operations and credential write-only handling; the Target-declared platform-required-fields rule was not named or verified anywhere in the P3 Plan."
+        evidence: "Plan Config P3-T4 acceptance and verify clauses, revision 1; Target technical.md Instance Rules; Model Standard section 13; Database Principle 2.10."
+        state: "resolved"
+        raised_at: "2026-09-12T20:39:00Z"
+        settled_at: "2026-09-12T20:40:00Z"
+        settled_by: "reviewing after planning reconciliation to revision 2"
+      P3-F2:
+        id: "P3-F2"
+        kind: "defect"
+        severity: "major"
+        task: null
+        expected: "Backend Principle 2 and 7 require that no Backend layer other than Model Interface imports my_model directly; Logic and API Interface must obtain every Model type only through Model Interface."
+        observed: "api/_factory.py and api/__init__.py imported my_model directly to reference Model types when building routers, and every Model Logic unit (logic/_base.py, logic/instance.py, and the 14 simple per-model logic files) imported my_model directly instead of through Model Interface. _database_interface.py and _schemas.py used my_model.BaseModel directly for a generic type bound rather than Model Interface's re-export."
+        evidence: "grep audit of my_backend/logic/*.py and my_backend/api/*.py for 'import my_model' / 'from my_model', run independently during final Review rather than trusting Development's own log."
+        state: "resolved"
+        raised_at: "2026-09-12T21:15:00Z"
+        settled_at: "2026-09-12T21:20:00Z"
+        settled_by: "reviewing, same pass; Development corrected every affected file to import Model types only through Model Interface, re-ran the full suite (21 passed) and re-confirmed zero direct my_model imports outside _model_interface.py"
