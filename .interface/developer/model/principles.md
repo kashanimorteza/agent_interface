@@ -1379,6 +1379,21 @@ The README MUST explain, in clear language:
 - the applicable validation, serialization, credential, and extension rules;
 - a small set of domain-neutral examples that do not expose project-specific Target information.
 
+The README MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Model package to:
+
+- import the package namespace with `import model` and use `model.<module>.<ModelType>`;
+- import a public Model module with `from model import <module>` and use `<module>.<ModelType>`;
+- construct a valid Model instance;
+- observe and handle validation failure for invalid data;
+- serialize an instance with `model_dump()` and `model_dump_json()`;
+- generate its JSON Schema with `model_json_schema()`;
+- distinguish omitted values, explicit `None`, supplied values, defaults, and generated values;
+- perform a partial update while preserving the documented update semantics;
+- use a domain Enum, Value Object, reusable type, and declared relationship where applicable;
+- handle sensitive or credential fields without exposing protected values.
+
+These examples MUST use imported modules, Model types, or Model instances. They MUST NOT identify a Model by a string, use an untyped string registry, import an internal module, or include ORM, Database, API, or project-specific Target details. Examples MUST remain consistent with the public package interface and the resolved Model Preferences.
+
 The README MUST be generated or updated as part of Model development and MUST be verified for existence, completeness, and consistency with the public interface before the Model Component is reported complete. A Model implementation without this README is incomplete.
 
 Important Models SHOULD communicate meaning through:
