@@ -15,7 +15,7 @@ Use this document as the entry point and follow its sections in this order:
    - **[Developer](#developer)** — understand the engineering philosophy through Components and their Principles and Preferences.
    - **[Agent](#agent)** — understand the executing system, its capabilities, restrictions, and Skills.
 5. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
-6. **[Operations](#operations)** — understand the actions performed through Configure, Planning, Developing, Reviewing, Launch, Implement, and Reset.
+6. **[Operations](#operations)** — understand the one-to-one actions performed through every Interface-owned Skill.
 7. **[Modes](#modes)** — understand the operational positions recorded by State.
 8. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
 9. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
@@ -400,7 +400,7 @@ The Non-Technical Definition is the Human's input to defining the Technical Defi
 <!--------------------------------------------------------------------------------- Operations --->
 ## Operations
 
-Operations are the defined actions that Skills perform through Agent Interface. Each Operation has a distinct responsibility and remains separate from the Mode recorded while work is in progress.
+Operations are the defined actions performed through Interface-owned Skills. Every Interface-owned Skill has exactly one corresponding Operation; the Operation names its Skill and summarizes the outcome that Skill is responsible for. An Operation remains separate from the Mode recorded while work is in progress, and external provider Skills do not create Interface Operations.
 
 ```text
 Operations
@@ -410,7 +410,9 @@ Operations
 ├── Reviewing
 ├── Launch
 ├── Implement
-└── Reset
+├── Reset
+├── Skill Installer
+└── Agent Sync
 ```
 
 <!-------------------------- Configure Operation -->
@@ -418,49 +420,63 @@ Operations
 
 **Agent Skill:** `configure`
 
-Initializes and reconciles operational Config, synchronizes phase State, and prepares the selected Platform Environment.
+This Operation is performed through the `configure` Skill to initialize and reconcile operational Config, synchronize phase State, and prepare the selected Platform Environment.
 
 <!-------------------------- Planning Operation -->
 ### Planning
 
 **Agent Skill:** `planning`
 
-Converts the current Target and applicable Developer guidance into bounded, understandable, and verifiable Tasks.
+This Operation is performed through the `planning` Skill to convert the current Target and applicable Developer guidance into bounded, understandable, and verifiable Tasks.
 
 <!-------------------------- Developing Operation -->
 ### Developing
 
 **Agent Skill:** `developing`
 
-Implements and verifies eligible planned Tasks through the applicable Target and Developer context.
+This Operation is performed through the `developing` Skill to implement and verify eligible planned Tasks through the applicable Target and Developer context.
 
 <!-------------------------- Reviewing Operation -->
 ### Reviewing
 
 **Agent Skill:** `reviewing`
 
-Evaluates implemented work independently and records evidence-based Findings without repairing the result.
+This Operation is performed through the `reviewing` Skill to evaluate implemented work independently and record evidence-based Findings without repairing the result.
 
 <!-------------------------- Launch Operation -->
 ### Launch
 
 **Agent Skill:** `launch`
 
-Verifies the selected Environment prepared by Configure, starts the developed parts through the selected Launch, verifies readiness, and reports access points.
+This Operation is performed through the `launch` Skill to verify the selected Environment prepared by Configure, start the developed parts through the selected Launch, verify readiness, and report access points.
 
 <!-------------------------- Implement Operation -->
 ### Implement
 
 **Agent Skill:** `implement`
 
-Coordinates Configure, baseline Review of existing work, Planning, Development, independent final Review, Finding reconciliation, and eligible Launch for selected phases or every enabled and ready phase.
+This Operation is performed through the `implement` Skill to coordinate Configure, baseline Review of existing work, Planning, Development, independent final Review, Finding reconciliation, and eligible Launch for selected phases or every enabled and ready phase.
 
 <!-------------------------- Reset Operation -->
 ### Reset
 
 **Agent Skill:** `reset`
 
-Previews and, after human confirmation, resets the outputs and operational records covered by the selected reset stage.
+This Operation is performed through the `reset` Skill to preview and, after Human confirmation, reset only the outputs and operational records covered by the selected reset stage.
+
+<!-------------------------- Skill Installer Operation -->
+### Skill Installer
+
+**Agent Skill:** `skill-installer`
+
+This Operation is performed through the `skill-installer` Skill to derive Agent capability needs, discover compatible project-scoped candidates, obtain Human approval, provision only approved capabilities, and verify their activation.
+
+<!-------------------------- Agent Sync Operation -->
+### Agent Sync
+
+**Agent Skill:** `agent-sync`
+
+This Operation is performed through the `agent-sync` Skill to compare the complete declared Agent Profile with the selected Runtime, reconcile authorized project-scoped native resources and selected capabilities, and verify actual availability.
 
 <br><br>
 
@@ -545,7 +561,9 @@ Configure, Planning, and Developing = write the active Workflow position under S
 Launch = changes runtime state through Platform and writes Launch State, access points, and History under State
 Implement = coordinates operation Skills and writes only Implementation State and its History under State
 Reset = after human confirmation of the preview, removes or resets the outputs and operational records covered by the selected reset stage, including the Workflow position, under the owning Components' rules
-Reviewer, Launch, Implement, and Skill Installer = do not directly change the active Workflow mode
+Skill Installer = discovers Agent capabilities and, after approval, provisions only approved project-scoped capabilities outside Interface sources
+Agent Sync = reconciles declared Agent Profile choices with project-scoped native Runtime artifacts outside Interface sources
+Reviewing, Launch, Implement, Skill Installer, and Agent Sync = do not directly change the active Workflow mode
 Every Skill = may record its own Blockers and Open Questions under State's rules when applicable
 ```
 
