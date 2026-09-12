@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-preferences"
-  version: "1.0"
+  version: "1.1"
   purpose: "The common structure every Preferences file follows. It defines what a Developer or Agent Component's Preferences hold and how they are arranged, not which choices any owner makes."
 
 # <!--------------------------------------------------------------------------------- Frame -->
@@ -24,12 +24,13 @@ scope:
     - "Supported technologies, tools, libraries, engines, and their versions."
     - "The selected option for each decision the Component owns."
     - "Configuration values, naming conventions, paths, and declared resources belonging to the Component."
+    - "Optional references from a technical option to Agent Skills that can guide work for that option."
   excludes:
     - "Mandatory rules, responsibilities, and boundaries, which belong to the Component's Principles."
     - "Project data such as Models, fields, phases, or initial data, which belong to the human project definition."
     - "Operational records such as Plans, Tasks, progress, or Workflow position, which belong to Config."
     - "A choice owned by another Component; that Component's own Preferences hold it."
-  empty_component: "A Component with no technical choices still has a Preferences file with the full frame and all three content sections present and empty. The absence of choices is stated, never implied by a missing file or a missing section."
+  empty_component: "A Component with no technical choices still has a Preferences file with the full frame and all three core content sections present and empty. The optional implementation section is present only when the Component separates implementation conventions from general settings. The absence of choices is stated, never implied by a missing file or a missing core section."
 
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
@@ -86,9 +87,12 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Structure -->
 structure:
-  - "selected"
-  - "options"
-  - "settings"
+  core:
+    - "selected"
+    - "options"
+    - "settings"
+  optional:
+    - "implementation"
 
 # <!--------------------------------------------------------------------------------- Sections -->
 sections:
@@ -120,6 +124,33 @@ sections:
       compatibility:
         required: false
         purpose: "Other options this one works with, named by their keys in their own catalogues."
+      agent_skills:
+        required: false
+        purpose: "Agent Skills associated with work on this option, resolved from Agent Skill Preferences rather than defined or installed here."
+        shape:
+          type: "list"
+          item:
+            resource:
+              required: true
+              purpose: "Stable dotted reference to one Skill declared under Agent Skill Preferences content.settings."
+            requirement:
+              required: true
+              values:
+                - "optional"
+                - "required"
+              purpose: "Whether work may continue when the referenced Skill is not currently usable."
+            activation:
+              required: true
+              value: "when_selected"
+              purpose: "Makes the association relevant only when this technical option is resolved as selected."
+            purpose:
+              required: true
+              purpose: "The bounded guidance this Skill contributes while work on the selected option is performed."
+        rules:
+          association_only: "An association neither defines nor installs a Skill and never proves Activation. Agent Skill Preferences remains authoritative for the Skill declaration, and current Runtime evidence proves whether it is usable."
+          authority: "An associated Skill supplies guidance only. It never selects this option, expands Target scope, or overrides Target, Principles, Preferences, Plan, Role, Permission, or another owning authority."
+          optional: "Use an optional associated Skill when it is declared, discoverable, and usable. If it is unavailable, continue without it and report the unavailable aid when consequential."
+          required: "A required associated Skill that is not usable blocks the affected work and is handled through the Agent capability lifecycle rather than silently approximated."
     rules:
       no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
       no_project_data: "An option entry carries no Models, fields, records, or other project data."
@@ -138,9 +169,19 @@ sections:
       declared_resources: "A resource the Component declares, such as a named instance, is recorded here with its identity and configuration."
     empty: "An empty mapping when the Component configures nothing."
 
+  implementation:
+    required: false
+    default: {}
+    purpose: "Concrete implementation conventions that complement the Component's Principles and selected technical profile without redefining Target meaning or repeating general settings."
+    rules:
+      no_repetition: "An implementation entry never repeats a value already stated in selected, options, or settings."
+      no_new_authority: "The section supplies implementation preferences only; it never introduces a mandatory Principle, changes Target intent, or claims a choice owned by another Component."
+      applicability: "Use this section when implementation-level conventions form a coherent body that would obscure the Component's general settings. Omit it when settings already express the Component completely."
+    empty: "An explicit empty mapping when the Component uses the four-section format but currently has no additional implementation conventions."
+
 # <!--------------------------------------------------------------------------------- Conventions -->
 conventions:
   placeholders: "A value that is completed at resolution time is written in angle brackets, such as `<project>` or `<role>`. A key in angle brackets describes the shape of future entries rather than one real entry."
   unresolved: "A choice that the project must make and this file cannot supply is written as `to be defined`, and the operation that meets it raises an Open Question rather than inventing a value."
-  read_order: "`read_order` lists the three content sections in their structural order."
-  content_map: "`content_map` carries one line per content section, naming what that section holds for this Preferences owner."
+  read_order: "`read_order` lists the three core content sections in their structural order and includes `implementation` when that optional section is present."
+  content_map: "`content_map` carries one line per present content section, naming what that section holds for this Preferences owner."

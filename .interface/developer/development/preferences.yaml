@@ -5,7 +5,7 @@ meta:
   purpose: "Package conventions and cross-cutting capability defaults used when no explicit project choice exists."
   standard: "Agent Project Interface"
   version: "2.0"
-  updated: "2026-09-08"
+  updated: "2026-09-12"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -25,6 +25,7 @@ read_order:
   - "selected"
   - "options"
   - "settings"
+  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -32,6 +33,7 @@ content_map:
   selected: "Empty. Development chooses among no catalogued alternatives and owns no code path of its own."
   options: "Empty. Development catalogues no alternatives; each technology is offered by the Preferences of the Component that owns it."
   settings: "Package and cross-cutting conventions applied across the application layers."
+  implementation: "Empty. Development records composition and shared conventions; implementation technology remains owned by the participating Components."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -88,3 +90,6 @@ content:
       authentication:
         enabled: false
         applies_to: []
+
+  # <!-------------------------------------------- implementation -->
+  implementation: {}
