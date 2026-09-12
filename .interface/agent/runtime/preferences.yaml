@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Agent Runtime Component."
   purpose: "The selected runtime and its provider, model, effort, compatibility, and native capability mapping."
   standard: "Agent Project Interface"
-  version: "1.0"
-  updated: "2026-09-11"
+  version: "1.1"
+  updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -46,7 +46,9 @@ content:
       required_profile_version: "1.0"
       status: "compatible"
     native_capability_mapping:
-      roles: ".claude/agents/"
+      primary_agent: "runtime-provided"
+      agents: ".claude/agents/"
+      roles: "assigned through Agent Definitions"
       skills: ".claude/skills/"
       legacy_commands: ".claude/commands/"
       rules: ".claude/rules/"

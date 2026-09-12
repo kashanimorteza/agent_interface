@@ -1,6 +1,6 @@
 ---
 name: my-interface-agent-sync
-description: Reconcile the complete human-declared Agent Profile with the active project-scoped Agent runtime, materializing and verifying missing or drifted roles, skills, commands, rules, tools, hooks, integrations, extensions, interaction choices, permissions, settings, sessions, and observability resources without changing Interface sources or Target code.
+description: Dynamically reconcile every Agent Component declared by the current Interface with the active project-scoped Agent runtime, materializing authorized missing or drifted capabilities and certifying synchronization only after complete post-change verification.
 disable-model-invocation: true
 ---
 
@@ -16,7 +16,9 @@ This Skill applies existing Human-owned decisions. It does not discover or selec
 
 ## Understanding
 
-Establish Interface Understanding from the canonical Interface document. Follow its Agent Module route and read every Agent Component's Principles and Preferences, including explicit empty categories. Resolve the selected Runtime and its native capability mappings from those sources rather than assuming a particular vendor, directory, command, or settings shape.
+Establish Interface Understanding from the canonical Interface document. Derive the complete current Component inventory from its Agent Structure, then read every discovered Component's Principles, Preferences, and declared resources, including explicit empty categories. Resolve the selected Runtime and its native capability mappings from those sources rather than assuming a particular vendor, directory, command, settings shape, Component list, or mechanism list.
+
+Repeat this discovery on every invocation. A Component or mechanism added to the Agent Module after this adapter was written is part of the run automatically.
 
 Treat Principles as mandatory contracts and Preferences as Human-owned desired state. Never modify either. Inspect current project-scoped runtime artifacts and runtime-reported activation state only after deriving the expected profile.
 
@@ -27,19 +29,13 @@ Build a complete inventory before changing runtime state:
 | Component | Declared desired state | Native destination or provider | Observed state | Proposed action | Authority or blocker |
 | --- | --- | --- | --- | --- | --- |
 
-Include every Agent Component, even when its declared category is empty or already satisfied. Classify each action as `no change`, `create`, `update`, `install`, `enable`, `activation required`, `report only`, or `blocked`.
+Include every dynamically discovered Agent Component, even when its declared category is empty or already satisfied. Classify each action as `no change`, `create`, `update`, `install`, `enable`, `activation required`, `report only`, or `blocked`. Never silently skip an unknown, new, or unsupported Component or mechanism; report a missing native mapping as blocked.
 
 Resolve ownership before proposing a write. Preserve compatible native values that the Agent Profile leaves unspecified. Report an undeclared native capability as unmanaged unless it conflicts with a Principle or selected choice; do not remove or disable it automatically.
 
 ## Reconcile
 
-Apply the inventory in dependency-safe order:
-
-1. Verify that the selected Runtime is available and compatible with the declared profile.
-2. Reconcile project-scoped Settings, Permissions, Rules, Hooks, and Interaction choices that establish the execution boundary.
-3. Reconcile required Roles, Skills, Commands, Tools, Coordination resources, Session behavior, and Observability resources through the Runtime's declared native mechanisms.
-4. Reconcile declared Integrations and Extensions. Add required declared sources, then install or enable only entries selected by the Human-owned Preferences and only at project scope.
-5. Reload or activate changed capabilities when the Runtime supports doing so safely, then verify actual discovery and usability.
+Verify that the selected Runtime is available and compatible with the declared Profile. Derive reconciliation order from the current Component Relationships and Runtime mappings, then process every inventory row while preserving its owner's authority. Add required declared sources and install or enable only entries already selected by Human-owned Preferences and only at project scope. Reload or activate changed capabilities when the Runtime supports doing so safely.
 
 A selected desired state is standing project authorization for additive, project-scoped reconciliation of that exact declaration. Still honor runtime permission prompts and stop for Human action when provisioning needs credentials, trust of an external service, broader scope, destructive replacement, an irreversible action, or authority not already expressed by the declaration.
 
@@ -49,7 +45,7 @@ When actual state conflicts with multiple authorities or meaningful Human-author
 
 ## Verification
 
-After reconciliation, independently re-read the native artifacts and query runtime status where supported. A declaration or file presence alone is insufficient.
+After reconciliation, discard pre-change observations, rediscover the complete Agent Component inventory from the canonical Interface, independently re-read every native artifact, and query runtime status where supported. A declaration or file presence alone is insufficient.
 
 Verify at least that:
 
@@ -60,7 +56,7 @@ Verify at least that:
 - each selected Integration is project-declared, trusted, connected, and usable, or is truthfully marked as requiring activation; and
 - no secret was written to a project artifact.
 
-Re-run the complete inventory after changes. Repeating this Skill against unchanged declarations and runtime state must produce no mutation.
+The second pass must account for every current Component and every required declaration. Repeating this Skill against unchanged declarations and runtime state must produce no mutation; additions or changes to Agent Components and their sources must be detected on the next run without editing this adapter.
 
 ## Boundaries
 
@@ -70,4 +66,6 @@ Do not report a capability as synchronized until its required activation and usa
 
 ## Report
 
-Report each Agent Component as `synchronized`, `already synchronized`, `activation required`, `unmanaged`, or `blocked`. For every mutation, identify the owning declaration, native project artifact or provider action, and verification result. List preserved undeclared capabilities separately, state any Human action still required, and finish with one truthful overall profile status.
+Report every dynamically discovered Agent Component as `synchronized`, `already synchronized`, `activation required`, `unmanaged`, or `blocked`. For every mutation, identify the owning declaration, native project artifact or provider action, and verification result. List preserved undeclared capabilities separately and state any Human action still required.
+
+Finish with `Agent Profile synchronized` only when the complete second pass proves every required declaration and mechanism is realized, active, and usable. Otherwise report `Agent Profile not fully synchronized` and enumerate every condition preventing the assurance claim.

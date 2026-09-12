@@ -1,6 +1,6 @@
 # Agent Tool Principles
 
-Agent Tool is the Component that defines atomic executable capabilities available to Agent Roles, whether supplied by the runtime or an approved integration. Tools perform bounded actions; Skills compose them into reasoned workflows.
+Agent Tool is the Component that defines atomic executable capabilities assigned to Agent Definitions for use within their Roles, whether supplied by the runtime or an approved integration. Tools perform bounded actions; Skills compose them into reasoned workflows.
 
 It owns tool identity, action boundaries, inputs, outputs, and availability. It does not own workflow decisions or permission policy.
 
@@ -13,7 +13,7 @@ It owns tool identity, action boundaries, inputs, outputs, and availability. It 
 ## Relationships
 
 - **Consumes Agent Runtime, Integration, and Permission** — receives implementations, external capabilities, and execution authority.
-- **Consumed by Agent Role, Skill, and Hook** — provides bounded actions they can invoke.
+- **Consumed by Agent, Role, Skill, and Hook** — provides bounded actions they can invoke.
 
 Technical tool catalogs, mappings, and availability expectations belong to Agent Tool Preferences.
 

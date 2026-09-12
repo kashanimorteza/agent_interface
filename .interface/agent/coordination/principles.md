@@ -1,18 +1,18 @@
 # Agent Coordination Principles
 
-Agent Coordination is the Component that organizes work across multiple Agent Roles, sessions, tasks, and isolated workspaces. It defines delegation, communication, synchronization, and integration without redefining the roles being coordinated.
+Agent Coordination is the Component that organizes work across multiple Agent Definitions and their Roles, sessions, tasks, and isolated workspaces. It defines delegation, communication, synchronization, and integration without redefining the Agents or Roles being coordinated.
 
 It owns coordination protocol and conflict boundaries. It does not own role contracts, project Plans, or implementation decisions.
 
 ## Terms
 
-- **Delegation** — assignment of a bounded objective from one Agent Role to another.
-- **Team** — multiple independently executing Agent Roles coordinated toward one authorized outcome.
+- **Delegation** — assignment of a bounded objective from one Agent to another under their declared Roles.
+- **Team** — multiple independently executing Agents coordinated toward one authorized outcome.
 - **Coordination Record** — transient runtime state used to assign, synchronize, and collect work.
 
 ## Relationships
 
-- **Consumes Agent Role, Context, Permission, and Session** — coordinates eligible roles within current authority and lifecycle.
+- **Consumes Agent, Role, Context, Permission, and Session** — coordinates eligible Agent Definitions while preserving Role, authority, and lifecycle boundaries.
 - **Consumed by Agent Observability** — provides attribution and coordination outcomes.
 
 Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Coordination Preferences.

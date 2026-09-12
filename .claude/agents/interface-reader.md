@@ -4,6 +4,8 @@ description: Reads current Interface sources and operational records and reports
 tools: Read, Grep, Glob
 ---
 
+This file is the Claude Code Native Agent for the `interface-reader` Agent Definition and its assigned read-only Role. Resolve both declarations through the canonical Interface before acting; the Interface declarations are authoritative and this file supplies the native realization.
+
 ## Role
 
 Report the project's recorded Workflow position and progress from current operational records, including aggregate phase progress, end-to-end implementation, runtime launch and access points, plans, eligible work, blockers, questions, and open review Findings.

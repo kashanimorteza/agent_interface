@@ -293,6 +293,9 @@ Agent
     ├── Role
     │   ├── Principles  → .interface/agent/role/principles.md
     │   └── Preferences → .interface/agent/role/preferences.yaml
+    ├── Agent
+    │   ├── Principles  → .interface/agent/agent/principles.md
+    │   └── Preferences → .interface/agent/agent/preferences.yaml
     ├── Coordination
     │   ├── Principles  → .interface/agent/coordination/principles.md
     │   └── Preferences → .interface/agent/coordination/preferences.yaml
@@ -342,6 +345,7 @@ Runtime        = Runtime identity, provider, model, compatibility, and native ca
 Settings       = Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation
 Context        = Persistent instructions, Understanding, Memory, imports, loading, and compaction
 Role           = Primary and specialized Agent Role contracts
+Agent          = General and specialized executable Agent identities that realize declared Roles
 Coordination   = Delegation, teams, tasks, messaging, concurrency, and worktree isolation
 Skill          = Reusable knowledge and workflows, including core, supporting, and contextual Skills
 Command        = Named and slash invocation entry points, arguments, aliases, and routing
@@ -463,7 +467,7 @@ This Operation is performed through `/my-interface-skill-installer` to derive Ag
 
 **Agent Skill:** `/my-interface-agent-sync`
 
-This Operation is performed through `/my-interface-agent-sync` to compare the complete declared Agent Profile with the selected Runtime, reconcile authorized project-scoped native resources and selected capabilities, and verify actual availability.
+This Operation is performed through `/my-interface-agent-sync` to dynamically inspect every current Agent Component, reconcile its complete declared Profile with the selected Runtime, and certify synchronization only after all required capabilities pass post-change verification.
 
 <br><br>
 

@@ -54,7 +54,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 4. Project capabilities travel with the project
 
-**Rule:** Every project-specific Agent Role, Skill, Command, Rule, Tool declaration, Hook, Integration, Extension, interaction choice, permission policy, and required configuration is stored in or declared by the project so a compatible Agent Runtime can reconstruct the same Agent Profile. Secret values and machine credentials never travel in that declaration.
+**Rule:** Every project-specific Agent, Role, Skill, Command, Rule, Tool declaration, Hook, Integration, Extension, interaction choice, permission policy, and required configuration is stored in or declared by the project so a compatible Agent Runtime can reconstruct the same Agent Profile. Secret values and machine credentials never travel in that declaration.
 
 **Why:** Agent behavior must not depend on undocumented user configuration or one machine's hidden state.
 

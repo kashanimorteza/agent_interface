@@ -1,6 +1,6 @@
 # Agent Context Principles
 
-Agent Context is the Component that establishes the current information available to an Agent Role. It governs persistent instructions, loaded project knowledge, memory, imports, and context preservation across runtime lifecycle events.
+Agent Context is the Component that establishes the current information available to an Agent Definition while it performs an assigned Role. It governs persistent instructions, loaded project knowledge, memory, imports, and context preservation across runtime lifecycle events.
 
 It owns context composition and freshness. It does not own the meaning of Target, Developer, or Agent sources and never replaces those authorities with remembered summaries.
 
@@ -14,7 +14,7 @@ It owns context composition and freshness. It does not own the meaning of Target
 
 - **Consumes Target, Developer, and Agent Modules** — loads current authoritative sources as required by the active role.
 - **Consumes Agent Rule** — loads applicable persistent and scoped instructions.
-- **Consumed by Agent Role, Skill, and Session** — supplies the current information they use.
+- **Consumed by Agent, Role, Skill, and Session** — supplies the current information they use.
 
 Technical loading sources, memory behavior, imports, and limits belong to Agent Context Preferences.
 

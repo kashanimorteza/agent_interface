@@ -6,7 +6,7 @@ Reconstruct and verify the declared Agent Profile in a compatible project-scoped
 
 ## Responsibility
 
-Compare every Agent Component declaration with observed native state, reconcile authorized project artifacts and already-selected capabilities, and prove required availability. Agent Sync applies existing Human choices; it never discovers or selects new ones.
+Discover every current Agent Component from the canonical Interface, compare each Component's complete declaration with observed native state, reconcile authorized project artifacts and already-selected capabilities, and prove required availability. Agent Sync applies existing Human choices; it never discovers or selects new ones.
 
 ## Trigger
 
@@ -18,11 +18,11 @@ Accept no capability selection. Consume the complete Agent Profile, including ex
 
 ## Outputs
 
-Produce a complete component inventory, project-scoped native resources and additive provisioning authorized by selected declarations, post-change verification, preserved unmanaged capabilities, required Human activation steps, and one truthful overall profile status.
+Produce one result for every dynamically discovered Agent Component, project-scoped native resources and additive provisioning authorized by selected declarations, post-change verification, preserved unmanaged capabilities, required Human activation steps, and one truthful overall profile status. A successful overall status certifies that every required declaration is currently realized and usable.
 
 ## Required Understanding
 
-Establish Interface Understanding and read every Agent Component's Principles and Preferences. Read each declared Skill Contract. Target Understanding is required only when an Agent declaration explicitly depends on Target-selected context.
+Establish Interface Understanding, derive the current Component inventory from the Agent Structure it exposes, and read every discovered Component's Principles, Preferences, and declared supporting resources. Read each Interface-owned Skill Contract. Never rely on a Component list remembered by this Contract, a native adapter, or an earlier run. Target Understanding is required only when an Agent declaration explicitly depends on Target-selected context.
 
 ## Authority
 
@@ -30,21 +30,25 @@ Modify only project-scoped native Agent artifacts selected by Runtime mapping. P
 
 ## Workflow Invariants
 
-- Inventory every Agent Component before mutation, including declared empty and already-satisfied categories.
+- Dynamically enumerate every Agent Component from the current canonical Agent Structure before mutation. A Component or supported mechanism added later is automatically part of the same run without requiring a hardcoded list change.
+- For every discovered Component, read all sources it declares, derive its complete desired state, identify the Runtime mechanism that realizes it, observe actual state, and record the proposed action and verification gate. Include empty and already-satisfied categories.
 - Resolve ownership and classify each item as no change, create, update, install, enable, activation required, report only, or blocked.
+- Never silently skip an unknown, new, or unsupported Component, category, or mechanism. Reconcile it when the selected Runtime supplies an authorized mapping; otherwise report it as blocked with the missing mapping or capability.
 - Preserve compatible native values left unspecified and report undeclared capabilities as unmanaged unless they conflict; never remove them automatically.
-- Verify Runtime compatibility first, then reconcile execution boundaries, executable capabilities, and finally Integrations and Extensions in dependency-safe order.
+- Verify Runtime compatibility first, derive dependency-safe reconciliation order from current Component Relationships and Runtime mappings, and preserve each Component's ownership throughout execution.
 - Treat a selected desired state as standing authorization only for exact additive project-scoped reconciliation. Credentials, external trust, broader scope, destructive replacement, irreversible action, or missing authority still requires Human action.
 - Materialize the smallest native adapter that realizes its portable Contract. Never invent content for an empty category or copy authoritative Interface text where a reference is supported.
 - Preserve meaningful Human-authored runtime content when ownership is ambiguous and report the exact conflict.
 
 ## Verification
 
-Re-read native artifacts and query current runtime state. Prove required Roles and Skills are discoverable, Commands resolve, effective settings and enforcement match, selected Extensions expose expected capabilities, selected Integrations are usable or accurately pending, and no secret entered project artifacts.
+After reconciliation, discard the pre-change observations and perform a second complete pass from the canonical Agent Structure. Re-read every discovered Component source and native artifact and query current runtime state. Prove every required declaration and mechanism is realized and usable, including instantiable Agent Definitions, correct Role and capability assignments, discoverable Skills, resolvable Commands, matching effective settings and enforcement, active selected Extensions, usable selected Integrations, and absence of secrets in project artifacts.
+
+The overall result is `synchronized` only when this second pass covers every current Agent Component and every required item passes its own verification gate. Any blocked, missing, conflicting, inactive, unsupported, or unverified required item prevents the success claim, even when all other Components pass.
 
 ## Idempotency
 
-After successful reconciliation, a complete second inventory against unchanged declarations and runtime state produces no mutation.
+After successful reconciliation, a new invocation against unchanged declarations and runtime state produces no mutation. A newly added or changed Agent Component, Principle, Preference, Contract, resource, category, or mechanism is detected from current sources and reconciled on the next invocation.
 
 ## Stopping Conditions
 
@@ -52,4 +56,4 @@ Block an affected item on incompatible Runtime, ambiguous ownership, unsupported
 
 ## Runtime Realization
 
-A native adapter uses only mappings declared by Agent Runtime and Settings. It must be bootstrappable from this Contract and the Agent Profile and cannot depend on the previous presence of another vendor's adapter.
+A native adapter uses only mappings declared by Agent Runtime and Settings, dynamically traverses the Agent Structure, and contains no exhaustive Component or mechanism list. It must be bootstrappable from this Contract and the Agent Profile and cannot depend on the previous presence of another vendor's adapter.

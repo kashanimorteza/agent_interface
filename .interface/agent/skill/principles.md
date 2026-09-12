@@ -14,7 +14,7 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 
 - **Consumes Agent Role, Context, Rule, Tool, and Permission** — executes within their contracts.
 - **Consumes Developer Components and Target** — reads current authorities required by its responsibility.
-- **Consumed by Agent Command and Coordination** — provides invocable and delegable workflows.
+- **Consumed by Agent, Command, and Coordination** — provides assignable, invocable, and delegable workflows.
 
 Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, provider resources, and native implementation mappings belong to Agent Skill Preferences. Command names and argument forms belong to Agent Command Preferences.
 
@@ -164,7 +164,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 15. `agent-sync` realizes the declared Agent Profile
 
-**Rule:** The architecture requires the `agent-sync` Skill. Its purpose is portable Agent Profile realization; its responsibility is to compare every Agent Component's Human-owned declarations with the selected Runtime, reconcile authorized project-scoped native artifacts and selected capabilities, and verify actual availability; its task coverage is the complete Agent Profile, including explicit empty categories.
+**Rule:** The architecture requires the `agent-sync` Skill. Its purpose is portable Agent Profile realization; its responsibility is to dynamically discover every current Agent Component from the canonical Interface, compare its Human-owned declarations with the selected Runtime, reconcile authorized project-scoped native artifacts and selected capabilities, and verify actual availability through a complete post-change pass; its task coverage is the complete current Agent Profile, including new mechanisms and explicit empty categories. Overall synchronization is claimed only when every required declaration passes that verification.
 
 **Why:** A portable Agent definition is useful only when a compatible Runtime can reconstruct and prove the same operational Agent without repeated manual setup.
 
@@ -202,5 +202,5 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Never** — let `typer` select technology, change scope, or override authorities *(13)*
 - **Must** — activate `library-skills` only for package-provided Skill management *(14)*
 - **Never** — let `library-skills` overwrite hand-authored Skills or replace general capability management *(14)*
-- **Must** — provide `agent-sync` to reconcile and verify the complete declared Agent Profile at project scope *(15)*
+- **Must** — provide `agent-sync` to dynamically reconcile every current Agent Component and verify the complete declared Agent Profile at project scope before claiming synchronization *(15)*
 - **Never** — let `agent-sync` change Human-owned declarations, Target code, broader-scope state, or adopt undeclared capabilities *(15)*
