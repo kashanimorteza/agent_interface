@@ -244,6 +244,20 @@ The README MUST explain:
 - credential protection, controlled SQL, and operational safety rules;
 - domain-neutral examples that do not expose project-specific Target information.
 
+The README MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Database package to:
+
+- add or create a record from an imported Model type or instance;
+- read one record by its typed identifier, such as an identifier equal to `1`;
+- list records with typed criteria, deterministic ordering, and pagination where supported;
+- update or edit a record while preserving Model validation and partial-update semantics;
+- delete a record and observe the documented constraint or failure result;
+- enable or disable a Model that declares a `status` field;
+- select an Instance explicitly and use the configured default when selection is omitted;
+- group related operations in one transaction and observe commit or rollback;
+- handle the public result, validation error, not-found result, constraint failure, and transaction failure.
+
+These examples MUST pass Model types or instances through the public interface. They MUST NOT identify a Model by a string such as `"Entity"`, pass an unrelated untyped field dictionary, expose a connection, or import an internal adapter or ORM object. If controlled SQL is documented, its example MUST show parameterized values, allow-listed structure, transaction usage, and protected results.
+
 The README MUST be generated or updated as part of Database development and verified for existence, completeness, and consistency with the public interface before Database is reported complete.
 
 ---
