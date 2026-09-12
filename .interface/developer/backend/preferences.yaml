@@ -2,9 +2,9 @@
 meta:
   path: ".interface/developer/backend/preferences.yaml"
   path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
-  purpose: "Defaults and supported technical profiles for the independent Backend package, its API framework, and the API, Logic, and Data Access layers."
+  purpose: "Defaults and supported technical profiles for the independent Backend package, its Model Interface, Database Interface, Logic, API Interface, and API framework."
   standard: "Agent Project Interface"
-  version: "4.3"
+  version: "5.0"
   updated: "2026-09-12"
 
 
@@ -31,9 +31,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Backend package name, code path, architectural role, package style, language, isolated environment, and API framework."
+  selected: "The Backend package name, code path, architectural role, package style, language and version, isolated environment, and API framework."
   options: "Supported Backend languages, isolated environments, and API frameworks, including associated Agent Skills that can guide work on a selected option."
-  settings: "Configuration grouped by the API, Logic, and Data Access layers."
+  settings: "Configuration grouped by Model Interface, Database Interface, Logic, and API Interface."
   implementation: "Empty. Concrete Backend implementation decisions are resolved from the Target, this Standard, and the selected compatible technical profile."
 
 
@@ -45,10 +45,11 @@ content:
     package_name: "my_backend"
     code_path: "my_backend/"
     language: "Python"
+    language_version: "latest"
     environment: "uv"
     api_framework: "FastAPI"
-    architectural_role: "application Behaviour and external API"
-    package_style: "one independent package with API, Logic, and Data Access layers"
+    architectural_role: "application Behaviour with Model, Database, and external API interfaces"
+    package_style: "one independent package with Model Interface, Database Interface, Logic, and API Interface layers"
 
   # <!-------------------------------------------- options -->
   options:
@@ -86,13 +87,9 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
 
-    api:
-      transport:
-        protocol: "HTTP"
-      api_documentation:
-        enabled: true
-        type: "OpenAPI"
-      expose_standard_model_operations: true
+    model_interface: {}
+
+    database_interface: {}
 
     logic:
       standard_model_operations:
@@ -111,7 +108,13 @@ content:
         shared_definition_file: false
         registry_may_import_units: true
 
-    data_access: {}
+    api_interface:
+      transport:
+        protocol: "HTTP"
+      api_documentation:
+        enabled: true
+        type: "OpenAPI"
+      expose_standard_model_operations: true
 
   # <!-------------------------------------------- implementation -->
   implementation: {}
