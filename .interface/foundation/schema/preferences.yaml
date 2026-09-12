@@ -1,7 +1,7 @@
 schema:
-  id: "agent-interface-developer-preferences"
-  version: "2.1"
-  purpose: "The common structure every Developer Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, conditional implementation-standard references, and optional Agent Skill associations without deciding Target-specific meaning."
+  id: "agent-interface-preferences"
+  version: "3.0"
+  purpose: "The common structure every Developer Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, and optional Agent Skill associations without deciding Target-specific meaning."
 
 # <!--------------------------------------------------------------------------------- Frame -->
 frame:
@@ -24,7 +24,6 @@ scope:
     - "Supported technologies, tools, libraries, engines, and their versions."
     - "The selected option for each decision the Component owns."
     - "Configuration values, naming conventions, paths, and declared resources belonging to the Component."
-    - "Optional references from a technical option to a conditional implementation standard that becomes applicable when that option is selected."
     - "Optional references from a technical option to Agent Skills that can guide work for that option."
   excludes:
     - "Mandatory rules, responsibilities, and boundaries, which belong to the Component's Principles."
@@ -113,7 +112,7 @@ sections:
     required: true
     default: {}
     purpose: "What this Preferences owner supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
-    shape: "One mapping per kind of alternative, named in the plural, each holding entries keyed by the option's name."
+    shape: "One mapping per kind of top-level alternative, named in the plural, each holding entries keyed by the option's name. An option may contain embedded subordinate profiles when those choices exist only within that parent, such as one language's environment or API framework."
     entry:
       version:
         required: "Only for a versioned technology or definition."
@@ -124,15 +123,14 @@ sections:
       compatibility:
         required: false
         purpose: "Other options this one works with, named by their keys in their own catalogues."
-      implementation_standard:
+      subordinate_profiles:
         required: false
-        type: "path"
-        purpose: "The Interface-owned implementation standard that becomes applicable only when this exact technical option is selected."
+        purpose: "Choices whose meaning and availability depend on this parent option, represented inside the parent rather than as unrelated top-level catalogues."
+        shape: "A singular key names each resolved subordinate kind and contains its name, version when applicable, option-owned attributes, and any agent_skills associations."
         rules:
-          conditional: "The reference does not select its option. Selection of the option activates the referenced standard for work involving that option."
-          resolution: "Resolve the path from the repository root, require it to identify one readable Interface source, and read it before planning, implementing, or reviewing affected work."
-          authority: "The referenced standard governs only realization of its selected option. It remains subordinate to explicit Target intent and applicable Component Principles and never expands Component ownership or operation authority."
-          failure: "A missing, unreadable, ambiguous, or conflicting referenced standard is reported and prevents the affected operation from claiming complete coverage or satisfaction."
+          ownership: "Nest a choice only when it has no independent meaning outside its parent. A reusable cross-language or cross-owner choice remains in its own owning catalogue or Component."
+          resolution: "Selecting the parent resolves each embedded subordinate profile unless an explicit project value replaces that subordinate choice."
+          recursion: "The agent_skills rules defined for an option entry apply identically to every embedded subordinate profile."
       agent_skills:
         required: false
         purpose: "Agent Skills associated with work on this option, resolved from the Agent Skill Profile rather than defined or installed here."
@@ -164,7 +162,7 @@ sections:
       no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
       no_project_data: "An option entry carries no Models, fields, records, or other project data."
       self_contained: "An entry describes only itself. A value shared by every option of a kind belongs to `settings`."
-      conditional_sources: "An implementation_standard and agent_skills associations apply only after their owning option is resolved as selected; an unselected option contributes neither authority nor guidance."
+      conditional_skills: "Agent Skill associations apply only after their owning top-level or embedded option is resolved as selected; an unselected option contributes no Skill guidance."
     empty: "An empty mapping when the Component supports no alternatives."
 
   settings:

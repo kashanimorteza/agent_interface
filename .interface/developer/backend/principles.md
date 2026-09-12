@@ -1,292 +1,188 @@
-# Backend Standard
+# Backend Principles
 
-> **Authoritative Standard for the Backend Component**
->
-> This document is the authoritative standard for the project's Backend Component.
->
-> Every implementer, reviewer, or automation that creates, changes, validates, or reasons about Backend code MUST read and follow this document before making changes.
->
-> **Principles override preferences, framework defaults, convenience, and implementation choices.**
->
-> A project may add stricter rules, but it must not weaken the rules defined here.
+Backend is the independent Component that implements application Behaviour and publishes the API Interface through which external consumers reach that Behaviour. It keeps Logic at its center and separates access to shared Model meaning, persistence, and external communication through explicit interfaces.
 
----
+Backend is independent of any Target, language, framework, protocol, package manager, database engine, provider, or deployment topology. It does not own domain-model meaning, physical persistence, user-interface presentation, runtime provisioning, or cross-layer composition.
 
-# 1. Purpose
+## Terms
 
-Backend is an independent package that executes application Behaviour and publishes the application's API Interface. It turns shared domain meaning into what the application does, enforces rules that depend on application context, and exposes the result as the contract used by external consumers.
+- **Model Interface** — the Backend boundary through which Logic consumes shared Model definitions and validation.
+- **Database Interface** — the Backend boundary through which Logic consumes the public Database interface.
+- **Logic** — the Backend layer that implements application Behaviour and Model-specific logic.
+- **API Interface** — the Backend boundary through which external consumers invoke Logic and receive results.
+- **Model Logic** — one distinct logical unit inside Logic that carries the operations and Behaviour belonging to one shared Model.
+- **Behaviour** — what the application does and the application-context rules under which it does it, independent of how it is requested or stored.
 
-Backend owns:
+## Relationships
 
-- application Behaviour;
-- the route from Behaviour to persistence; and
-- the external API Interface contract.
+- **Consumes Target** — receives Target-specific Behaviour, Model-operation intent, integrations, and externally required capabilities without copying them into this standard.
+- **Consumes Model** — receives shared domain definitions, validation, relationships, and Credential markers only through Model Interface.
+- **Consumes Database** — receives generic persistence operations, stored-state constraints, and transaction capability only through Database Interface.
+- **Consumes Development** — receives package conventions, cross-cutting capabilities, supporting-service scope, and ownership rules for configuration and private secrets.
+- **Consumes Platform** — receives runtime Bindings through the selected Launch definition.
+- **Consumed by Frontend** — provides the public API Interface through which the user interface reaches application data and capabilities.
 
-Backend does not own domain-model meaning, physical persistence, user-interface presentation, or cross-layer composition.
+Technical choices and defaults belong to Backend Preferences. Implementation applies those choices to the current Target without changing Backend ownership or dependency direction.
 
----
-
-# Project Independence
-
-Backend is reusable across Targets. This standard defines how a Backend Component works, not which domain, Behaviour, Model set, API Interface operation, provider, or deployment topology a particular Target contains.
-
-Its architecture is independent of language, framework, protocol, package manager, database engine, and project. Target-specific Behaviour, Model operations, integrations, and externally exposed capabilities belong to the current Target definition and MUST NOT be copied into this standard.
-
-Technical selections populate the architecture through Backend Preferences without changing its ownership boundaries or dependency direction. Changing the Target MUST NOT require changing this standard.
-
----
-
-# Architectural Foundation
-
-Backend is an independent package with Logic at its center and three boundary layers around it:
-
-1. Model Interface is Logic's only route to the shared Model package.
-2. Database Interface is Logic's only route to the public Database interface.
-3. Logic implements application Behaviour and Model-specific logic.
-4. API Interface is the external boundary through which consumers reach Logic.
-
-```text
-Model package ── Model Interface ──┐
-                                   ├── Logic ── API Interface ── External consumers
-Database ─────── Database Interface┘
-```
-
-The architecture separates domain access, persistence access, Behaviour, and external communication so each boundary can change without redefining the others.
-
----
-
-# Authority by Concern
-
-| Concern | Authoritative source |
-| --- | --- |
-| Domain Models, fields, relationships, credential markers, and rules determined from Model data | Model Standard and current Target Model definition |
-| Target-specific application Behaviour and externally required capabilities | Current Target definition |
-| Backend layers, interface boundaries, Behaviour ownership, dependency direction, and transaction coordination | This Backend Standard |
-| Language, environment, API framework, standard operations, and technical defaults | Backend Preferences |
-| Rules for realizing the selected API framework | The framework implementation standard referenced by the selected Backend Preference |
-| Persistence operations, transaction mechanism, constraints over stored state, and credential storage mode | Database Standard and Database public interface |
-| Package conventions, cross-cutting capabilities, and supporting-service scope | Development Standard and Development Preferences |
-| Runtime Bindings delivered to Backend | Platform and the selected Launch definition |
-
-Backend MUST apply each source only within its authority. It MUST NOT invent domain meaning, persistence semantics, or cross-layer ownership because a framework makes doing so convenient.
-
----
-
-# 2. Core Principles
-
-## 2.1 Terms
-
-- **Model Interface** — the layer through which Logic consumes shared logical Model definitions and validation.
-- **Database Interface** — the layer through which Logic consumes the public Database interface.
-- **Logic** — the layer that implements application Behaviour and Model-specific logic.
-- **API Interface** — the layer through which external consumers invoke Logic and receive results.
-- **Model Logic** — the logical unit inside Logic that belongs to one shared Model and carries its operations and Behaviour.
-- **Behaviour** — what the application does and the rules under which it does it, independent of how it is requested or stored.
-- **Credential** — a Model field marked as secret, accepted as input but never returned across the API Interface boundary.
-
-## 2.2 Relationships
-
-- **Consumes Model** — the shared logical Model definitions reached only through Model Interface.
-- **Consumes Database** — the generic data-access interface reached only through Database Interface.
-- **Consumes Development** — the common package standard, ownership rules for Backend settings and private secrets, and the cross-cutting capabilities selected for the Target.
-- **Consumes Platform** — the Bindings the selected Launch delivers to Backend's boundary.
-- **Consumed by Frontend** — the public API Interface through which the user interface reaches application data and capabilities.
-
-Technical choices and defaults belong to Backend Preferences. Backend implementation applies those choices to the current Target definition. When the selected API framework references an implementation standard, that standard is mandatory only for realizing that framework and remains subordinate to these Backend Principles.
-
-## 2.3 Backend has Logic and three boundary interfaces
-
-**Rule:** Backend is implemented as one independent package with its own identity, configuration, documented public boundary, and four internal layers: Model Interface, Database Interface, Logic, and API Interface. Logic owns Behaviour. It consumes Model only through Model Interface, consumes Database only through Database Interface, and is reached by external consumers only through API Interface.
-
-**Why:** Separating all three integration boundaries from Behaviour lets Model, Database, API technology, and Logic evolve without collapsing their responsibilities into one layer.
-
-**Boundary:** No Backend layer bypasses Model Interface, Database Interface, Logic, or API Interface for a responsibility owned by that layer. Package identity and code path are resolved through Backend Preferences; they never change the four-layer architecture or expose an internal layer as an independent competing Backend.
+Every statement here is mandatory. A Developer Preference or implementation choice can never override a Principle, and a Target may only add stricter rules, never looser ones.
 
 <br>
 
-## 2.4 Logic owns application Behaviour
+## 1. Backend architecture is Target- and technology-independent
 
-**Rule:** Logic implements what the application does and the rules under which it does it. It enforces conditions that depend on the operation or application context and uses Model Interface for shared Model definitions and validation. For partial changes, Logic ensures validation considers the resulting domain state, including existing values needed to evaluate applicable rules. Logic communicates with persistence only through Database Interface and with external consumers only through API Interface. Database remains responsible for guaranteeing constraints that depend on stored state.
+**Rule:** Backend defines a reusable architecture whose responsibilities and dependency direction remain unchanged across Targets, languages, frameworks, protocols, package managers, database engines, providers, and deployment topologies. Target-specific Behaviour, Model operations, integrations, and externally exposed capabilities remain in the current Target definition, and changing the Target never requires changing these Principles.
 
-Logic determines which related data operations must succeed as one unit and requests that unit through Database Interface. It does not implement the underlying transaction mechanism or treat changes to external services as part of a Database transaction.
+**Why:** Stable architectural meaning lets different projects and implementations use the same Backend contract without importing one project's details into another.
 
-**Why:** Behaviour expressed without transport or storage detail remains valid when the API technology or Database implementation changes.
-
-**Boundary:** Logic is independent of HTTP, API frameworks, database engines, ORM implementations, physical storage, and transport-specific request or response shapes. It never imports around Model Interface or Database Interface.
+**Boundary:** Independence does not prevent Preferences or the Target from selecting concrete technologies and capabilities; those selections realize this architecture without redefining it.
 
 <br>
 
-## 2.5 Every Model has a standard Logic surface
+## 2. Backend has Logic and three boundary interfaces
 
-**Rule:** Every shared Model receives its own logical unit inside Logic, defined separately from the unit of every other Model. That unit provides a consistent baseline for common Model operations such as create, get, list, update, and delete. Common operations may be implemented in a shared base or helper and reused through inheritance or composition.
+**Rule:** Backend is one independent package with its own identity, configuration, documented public boundary, and four internal layers: Model Interface, Database Interface, Logic, and API Interface. Logic owns Behaviour, consumes Model only through Model Interface, consumes Database only through Database Interface, and is reached by external consumers only through API Interface.
 
-Model-specific Behaviour may extend this baseline: one Model may perform validation, calculations, coordination, or other actions that another Model does not. An API Interface request for a Model is handled by the corresponding Model Logic, which may use Model Interface and Database Interface and perform other Behaviour required by that Model.
+**Why:** Explicit boundaries let domain access, persistence access, Behaviour, and external communication evolve without collapsing into one another.
 
-The operations selected in Backend Preferences are offered only where the shared Model supports them. When status is selected, it is available only for a Model declaring the corresponding field, and its actions follow the public Database interface. A status request passes through the corresponding Model Logic and Database Interface; it never creates a missing field or bypasses Model-specific Behaviour.
-
-**Why:** Each Model retains its own unit even when it currently uses only the common baseline, so its operations and Behaviour can later be extended independently without changing another Model's Logic.
-
-**Boundary:** A definition shared by several Models does not satisfy this separation. A shared registry may import and connect the units without defining them itself. Model-specific additions remain inside that Model's Logic and never weaken the common interface expected across Models. API Interface never substitutes direct persistence for Model Logic.
+**Boundary:** No layer bypasses the layer responsible for the next boundary. Package identity and code path come from Backend Preferences and never expose an internal layer as an independent competing Backend.
 
 <br>
 
-## 2.6 Database Interface is the only Backend route to Database
+## 3. Logic owns application Behaviour
 
-**Rule:** Database Interface translates data operations requested by Logic into calls to the generic interface published by Database, then translates the results back into logical data.
+**Rule:** Logic implements what the application does and enforces conditions that depend on an operation or application context. It uses Model Interface for shared Model definitions and validation, ensures partial changes are validated against the resulting domain state, communicates with persistence only through Database Interface, and is exposed externally only through API Interface. Logic determines which related persistence operations form one unit and requests that unit through Database Interface.
 
-When Logic requests a group of related operations, Database Interface connects that group to the public Database transaction boundary on one resolved Instance. Every participating operation uses the same boundary, and Database Interface propagates its outcome without committing individual operations independently. Database retains ownership of commit, rollback, and connection cleanup.
+**Why:** Behaviour expressed independently of transport and storage remains valid when API or Database technology changes.
 
-**Why:** One translation point means the Database implementation can change without Logic being rewritten, and every persistence call remains visible in one place.
-
-**Boundary:** Database Interface contains no application Behaviour and does not decide which operations belong together. It never owns or directly reaches into the database engine, connection, ORM, tables, schema, or migrations. Transaction access exposes none of those internals to Logic or API Interface and implies no atomicity across Instances or external services. API Interface and Logic never bypass Database Interface to access Database.
+**Boundary:** Logic never depends on transport protocols, API frameworks, database engines, ORM implementations, physical storage, or transport-specific request and response shapes. It does not implement the Database transaction mechanism, assume a Database transaction covers external services, guarantee stored-state constraints, or import around Model Interface or Database Interface.
 
 <br>
 
-## 2.7 API Interface is Logic's external boundary
+## 4. Every shared Model has one distinct Model Logic unit
 
-**Rule:** API Interface receives external requests, validates their transport-level shape, invokes Logic, and converts Logic results into external responses. API Interface owns only communication concerns such as request decoding, transport-level validation, response serialization, protocol handling, and mapping logical outcomes to API responses.
+**Rule:** Each shared Model has its own separately defined Model Logic unit. Each unit offers the common operations selected by Backend Preferences only where its Model supports them. Shared behavior may be reused through a common base or composition, while Model-specific Behaviour extends only the unit of that Model. A status operation exists only for a Model that declares the corresponding field and passes through that Model Logic and Database Interface.
 
-**Why:** Keeping the boundary thin means application Behaviour can be reached through any transport, and a protocol change never becomes a Behaviour change.
+**Why:** A distinct unit gives every Model a stable place for current and future Behaviour without coupling it to another Model's logic.
 
-**Boundary:** API Interface does not implement application Behaviour and never calls Model Interface, Database Interface, Model, or Database directly. Model owns validation determined from its own data; Logic owns application-context checks and uses Model Interface to coordinate domain validation required by the operation. API Interface neither duplicates those rules nor treats transport validation as proof that the resulting domain state is valid. Its framework, version, protocol, and other technical settings are resolved from the Target definition and Backend Preferences.
-
-<br>
-
-## 2.8 Model Interface is the only Backend route to Model
-
-**Rule:** Model Interface imports and exposes the shared logical Model definitions required by Logic under Model Principles and Preferences. Logic uses Model meaning, types, and domain validation only through this boundary. Database Interface receives the Model identities and values needed for public Database operations from Logic, and API Interface derives external data shapes from Logic's contract without creating a second domain definition.
-
-**Why:** One shared definition keeps the meaning of a Model identical on both sides of the Backend boundary.
-
-**Boundary:** No other Backend layer imports around Model Interface or copies, redefines, or creates a competing representation of Model meaning. Model Interface contains no application Behaviour, persistence behavior, transport behavior, or private Model implementation. HTTP-specific and storage-specific details remain outside Model.
+**Boundary:** A shared definition or registry never replaces the distinct Model Logic units. A registry may connect or import them but does not define their Behaviour. No operation invents a missing Model capability, and API Interface never substitutes direct persistence for Model Logic.
 
 <br>
 
-## 2.9 API Interface serves Model operations and Target Behaviour
+## 5. Database Interface is Backend's only route to persistence
 
-**Rule:** Backend is not limited to Model CRUD. Logic implements Backend-targeted Behaviour from the current Target, and API Interface exposes the Behaviour that must be available to external consumers. Model-level API intent and externally exposed Behaviour are resolved from the Target definition under Backend Principles and Preferences.
+**Rule:** Database Interface translates persistence operations requested by Logic into calls to the generic public interface published by Database and translates results back into logical data. When Logic requests one related operation group, Database Interface carries the group through one resolved Database Instance's public transaction boundary and propagates its outcome without committing individual operations independently.
 
-**Why:** A Target's value usually lies in what it does beyond storing records, so the API Interface surface follows stated Behaviour rather than only the Model list.
+**Why:** One translation boundary keeps persistence access visible and lets Database implementation change without rewriting Logic.
 
-**Boundary:** Resolution of Behaviour does not itself fix endpoint paths, HTTP method mappings, file layout, or framework implementation details. Those details are implementation output governed by the applicable sources.
-
-<br>
-
-## 2.10 API Interface documentation belongs to API Interface
-
-**Rule:** The capability to publish a machine-readable API description of available operations and data shapes belongs to the API Interface layer.
-
-**Why:** The layer that defines the external contract is the only layer that can describe it accurately as it changes.
-
-**Boundary:** No other Backend layer owns or generates the public API description. Whether API documentation is enabled, its format, and the tool that produces it are technical choices resolved through Backend Preferences.
+**Boundary:** Database Interface contains no application Behaviour, never decides which operations belong together, and never owns or reaches into an engine, connection, ORM, table, schema, migration, commit, rollback, or cleanup mechanism. It promises no atomicity across Database Instances or external services. Logic and API Interface never bypass it to access Database.
 
 <br>
 
-## 2.11 Credentials are write-only at the API Interface boundary
+## 6. API Interface is Logic's only external boundary
 
-**Rule:** A Model field marked as a Credential is write-only API Interface input. It may be accepted when required to create or update its owning Model. Its input definition—including its name, type, requiredness, and write-only nature—may appear in input schemas and API Interface documentation so a consumer knows how to supply it. The field is excluded from API Interface responses and response schemas.
+**Rule:** API Interface receives external requests, validates their transport-level shape, invokes the corresponding Logic operation, converts logical outcomes into protocol outcomes, and serializes approved results into external responses. It owns communication concerns including request decoding, transport validation, protocol handling, response serialization, and response mapping.
 
-Actual credential values are never exposed in documentation, examples, error payloads, diagnostics, traces, or recorded outputs. Examples use non-secret placeholders only.
+**Why:** A thin external boundary keeps application Behaviour independent of its transport and makes the public contract explicit.
 
-**Why:** A credential that leaves the boundary even once is compromised, and its most likely leak points are easy to overlook.
-
-**Boundary:** Backend reads the Credential marker from the shared Model definition and never guesses Credential fields from their names. Database owns the Credential's at-rest storage mode; Backend does not redefine it.
+**Boundary:** API Interface contains no application Behaviour, never calls Model Interface, Database Interface, Model, or Database directly, never duplicates Model validation, and never treats valid transport shape as proof of a valid resulting domain state. Framework, version, protocol, and implementation details come from the current Target and Backend Preferences.
 
 <br>
 
-## 2.12 Logic may orchestrate resolved supporting services
+## 7. Model Interface is Backend's only route to shared Model meaning
 
-**Rule:** Model Logic may use Database Interface and may coordinate supporting services or cross-cutting capabilities selected by Development. Such services are consumed through explicit interfaces and used only by the Model Logic that needs them.
+**Rule:** Model Interface imports and exposes the shared logical Model definitions required by Logic under Model Principles and Preferences. Logic obtains Model types, meaning, and domain validation only through this boundary. Database Interface receives required Model identities and values from Logic, while API Interface derives external data shapes from Logic's contract without creating a second domain definition.
 
-**Why:** Capabilities chosen for the whole Target must be usable inside Behaviour without forcing every Model to depend on them.
+**Why:** One route to shared Model meaning keeps domain definitions consistent across every Backend layer.
 
-**Boundary:** A supporting service does not become a fifth mandatory Backend layer and does not bypass Model Interface, Database Interface, or API Interface. Its availability and application scope are resolved outside Backend rather than hard-coded into Model Logic.
+**Boundary:** No other Backend layer imports around Model Interface or copies, redefines, or creates a competing representation of Model meaning. Model Interface contains no application Behaviour, persistence behavior, transport behavior, or private Model implementation.
 
----
+<br>
 
-# 3. Documentation Standard
+## 8. API Interface exposes both Model operations and Target Behaviour
 
-The Backend package MUST include a public `README.md` at its package boundary, as required by the Development Standard.
+**Rule:** Logic implements Backend-targeted Behaviour from the current Target, and API Interface exposes every declared capability that must be available to external consumers. The public API surface includes supported Model operations and is never limited to generic CRUD when the Target declares additional Behaviour.
 
-The `README.md` MUST explain:
+**Why:** The value of a Backend lies in the Behaviour its Target requires, not merely in storing and retrieving Models.
 
-- Backend's purpose and its Model Interface, Database Interface, Logic, and API Interface boundaries;
-- the public API Interface and how external consumers use it;
-- how Model Logic and Target Behaviour are organized;
-- how Logic reaches Model through Model Interface and Database through Database Interface;
-- non-secret configuration and required runtime Bindings;
-- installation and startup when applicable; and
-- practical usage and failure-handling examples.
+**Boundary:** Resolving a capability does not itself select endpoint paths, protocol methods, names, file layout, or framework details. Those are implementation decisions governed by the Target and Backend Preferences.
 
-The API Interface layer owns any machine-readable API description. When enabled through Backend Preferences, that description MUST remain consistent with the implemented external contract and MUST preserve Credential fields as write-only input excluded from responses and response schemas.
+<br>
 
-Documentation and examples MUST NOT expose actual credentials, private configuration, Database internals, or implementation details as public contracts. The package documentation and machine-readable API description MUST be verified for consistency before Backend is reported complete.
+## 9. API Interface owns its machine-readable contract
 
----
+**Rule:** API Interface owns and, when enabled by Backend Preferences, publishes the machine-readable description of its available operations, input shapes, output shapes, and relevant outcomes. That description remains consistent with the implemented external contract.
 
-# 4. Decision Order
+**Why:** The boundary that publishes an external contract is the only layer able to describe that contract accurately as it changes.
 
-When multiple Backend implementations are possible, prefer in this order:
+**Boundary:** No other Backend layer owns or generates the public API description. Its enablement, format, and realization are technical choices belonging to Backend Preferences.
 
-1. Preserve Model meaning and Target Behaviour.
-2. Preserve Logic as the Behaviour owner and preserve all three interface boundaries.
-3. Keep Behaviour independent of transport and persistence implementation.
-4. Route all persistence through the public Database interface.
-5. Preserve complete validation of the resulting domain state.
-6. Preserve transaction boundaries selected by Logic and implemented by Database.
-7. Protect Credentials across every output and diagnostic surface.
-8. Apply compatible choices selected by Backend Preferences.
-9. Prefer the simplest maintainable implementation.
+<br>
 
----
+## 10. Credential fields are write-only at API Interface
 
-# 5. At a Glance
+**Rule:** A field marked as a Credential by Model is accepted through API Interface only when an input operation requires it. Its name, type, requiredness, and write-only nature may appear in input schemas and API documentation, but the field is always excluded from responses and response schemas. Actual Credential values never appear in documentation, examples, errors, diagnostics, traces, logs, or recorded outputs.
 
-## MUST
+**Why:** Preventing every outbound representation closes the most common paths through which a Credential can escape its protected boundary.
 
-- Implement Backend as one independent package formed from Model Interface, Database Interface, Logic, and API Interface.
-- Let Logic implement application Behaviour, enforce operation-dependent conditions, use Model Interface for shared validation, and validate partial changes against the resulting domain state.
-- Leave constraints dependent on stored state to Database.
-- Let Logic determine related operations that form one unit and request that unit through Database Interface.
-- Give every shared Model its own separately defined Logic unit with the supported common-operation baseline.
-- Offer selected operations only where the Model supports them; route status through Model Logic and Database Interface only for Models declaring the field.
-- Translate Logic's persistence requests through Database Interface into calls on the generic Database interface.
-- Carry a Logic-defined operation group through one Instance's public transaction boundary and propagate its outcome while Database owns commit, rollback, and cleanup.
-- Let API Interface decode requests, validate transport shape, invoke Logic, serialize results, and expose required Target Behaviour.
-- Route all Backend use of shared Model definitions through Model Interface without copying domain meaning.
-- Let API Interface own and produce the machine-readable description of its contract.
-- Accept Credential fields as input only, preserve their write-only definition, and derive their marker from Model.
-- Consume supporting services through explicit interfaces only in the Model Logic that needs them.
-- Provide and verify Backend `README.md` and, when enabled, consistent machine-readable API Interface documentation.
+**Boundary:** Backend reads the Credential marker from Model Interface and never infers it from a field name. Database owns at-rest protection, and Backend never redefines that storage mode. Documentation may use non-secret placeholders only.
 
-## SHOULD
+<br>
 
-- Keep API Interface thin and Logic independent of transport and storage technologies.
-- Reuse a common Logic operation baseline through inheritance or composition while keeping one distinct unit per Model.
-- Keep persistence translation visible in one Database Interface boundary.
-- Use non-secret placeholders in Credential examples.
-- Prefer explicit supporting-service interfaces and the smallest necessary application scope.
+## 11. Logic consumes supporting services through explicit interfaces
 
-## NEVER
+**Rule:** Model Logic may coordinate supporting services and cross-cutting capabilities selected by Development, using explicit interfaces and only within the Model Logic units that need them.
 
-- Let a layer bypass the layer responsible for the next boundary.
-- Let Logic implement Database transaction mechanisms, assume transactions cover external services, or depend on HTTP, API frameworks, database engines, ORM implementations, or physical storage.
-- Let a status operation invent a missing field or bypass Model-specific Behaviour.
-- Let one shared definition replace the separate Logic units of several Models, or let API Interface substitute direct persistence for Model Logic.
-- Let Database Interface independently commit grouped operations, decide application grouping, promise atomicity across Instances or external services, contain Behaviour, or reach into engine, connection, ORM, tables, schema, or migrations.
-- Let API Interface duplicate Model validation, treat transport validation as proof of valid domain state, implement Behaviour, or call Database Interface or Database directly.
-- Copy, redefine, or create a competing representation of Model meaning.
-- Treat resolution of Behaviour as a fixed endpoint path, HTTP method, file layout, or framework detail.
-- Let another Backend layer own or generate the public API description.
-- Return a Credential field or include it in a response schema; expose an actual value in documentation, examples, errors, diagnostics, traces, or recorded output; guess Credential fields by name; or redefine their at-rest storage mode.
-- Let a supporting service become a fifth mandatory Backend layer or bypass one of Logic's three interfaces.
+**Why:** Target capabilities remain available to Behaviour without forcing every Model Logic unit to depend on every service.
 
----
+**Boundary:** A supporting service never becomes a fifth mandatory Backend layer, bypasses Model Interface, Database Interface, or API Interface, or gains a broader application scope merely because one Model Logic unit consumes it.
 
-# 6. Final Rule
+<br>
 
-Backend defines **what the application does and how that Behaviour reaches external consumers without coupling it to transport or persistence internals**.
+## 12. Backend publishes complete and safe package documentation
 
-When a Backend decision is not explicitly covered, preserve Model meaning and Target Behaviour, keep Logic responsible for Behaviour, route Model access through Model Interface, persistence through Database Interface, and external communication through API Interface, protect Credentials, and apply Backend Preferences without weakening the four-layer architecture.
+**Rule:** The Backend package includes public package documentation at its package boundary using the documentation identity selected by Development Preferences. It explains Backend's purpose and boundaries, the public API Interface, organization of Model Logic and Target Behaviour, how Logic reaches Model and Database through their interfaces, non-secret configuration and runtime Bindings, applicable installation and startup, practical usage, and failure handling. Package documentation and any machine-readable API description are verified against the implemented public interfaces before Backend is complete.
 
-When convenience conflicts with these Backend Principles, **the Backend Principles win**.
+**Why:** Consumers and implementers need one accurate public guide without inspecting internal implementation.
+
+**Boundary:** Documentation never exposes actual Credentials, private configuration, Database internals, or implementation details as public contracts. It remains derived and non-authoritative under the Development documentation standard.
+
+<br>
+
+## 13. Backend decisions preserve meaning and boundaries before convenience
+
+**Rule:** When more than one Backend realization is valid, decisions preserve, in order: Model meaning and Target Behaviour; Logic ownership and all three interface boundaries; independence from transport and persistence implementation; the public Database interface; complete resulting-state validation; transaction grouping selected by Logic and realized by Database; Credential protection; compatible Backend Preferences; and the simplest maintainable implementation.
+
+**Why:** A stable priority order prevents local framework convenience from weakening architectural correctness.
+
+**Boundary:** This order resolves choices that remain open. It never overrides an explicit Target decision, weakens another Component's authority, or authorizes a role to act outside its scope.
+
+<br>
+
+## At a Glance
+
+- **Must** — keep Backend architecture independent of Targets and implementation technologies while leaving Target-specific meaning in Target *(1)*
+- **Must** — implement Backend as one package containing Logic, Model Interface, Database Interface, and API Interface *(2)*
+- **Never** — let a Backend layer bypass the boundary responsible for the next interaction *(2)*
+- **Must** — keep application Behaviour and operation-dependent validation in Logic *(3)*
+- **Must** — let Logic select related persistence operations as one unit and request that unit through Database Interface *(3)*
+- **Never** — couple Logic to transport, persistence implementation, or Database transaction mechanics *(3)*
+- **Must** — give every shared Model one distinct Model Logic unit and expose only operations its Model supports *(4)*
+- **Never** — let shared helpers, registries, API Interface, or unsupported operations replace Model-specific Logic *(4)*
+- **Must** — route all Backend persistence through Database Interface and Database's public transaction boundary *(5)*
+- **Never** — put Behaviour or Database internals inside Database Interface or promise unsupported cross-boundary atomicity *(5)*
+- **Must** — keep API Interface responsible only for external communication, transport validation, Logic invocation, and response mapping *(6)*
+- **Never** — put Behaviour, Model access, Database access, or duplicated domain validation in API Interface *(6)*
+- **Must** — route all shared Model meaning and validation used by Logic through Model Interface *(7)*
+- **Never** — copy Model meaning or place Behaviour, persistence, transport, or private Model implementation in Model Interface *(7)*
+- **Must** — expose supported Model operations and every externally required Target Behaviour through API Interface *(8)*
+- **Never** — treat capability resolution as a fixed endpoint, method, name, layout, or framework decision *(8)*
+- **Must** — let API Interface own and keep current its enabled machine-readable public contract *(9)*
+- **Never** — let another Backend layer own the API description *(9)*
+- **Must** — accept Model-marked Credential fields as write-only inputs and exclude them from every output surface *(10)*
+- **Never** — infer Credential fields by name, expose their values, or redefine Database's at-rest protection *(10)*
+- **Must** — consume selected supporting services through explicit interfaces only where their Behaviour is needed *(11)*
+- **Never** — turn a supporting service into a mandatory Backend layer or an interface bypass *(11)*
+- **Must** — publish and verify complete, safe Backend package documentation and the enabled API description *(12)*
+- **Never** — expose secrets, Database internals, or private implementation as documentation contracts *(12)*
+- **Must** — apply the Backend decision order only to choices left open by higher authorities *(13)*
+- **Never** — let framework convenience override Target meaning, Component ownership, or Backend boundaries *(13)*

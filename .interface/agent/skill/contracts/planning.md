@@ -22,7 +22,7 @@ Produce or reconcile only Planning-owned Plan content and Plan Revision, Plannin
 
 ## Required Understanding
 
-Establish Interface Understanding and current Target Understanding. Read current Plan, State, and Review authorities and Schemas plus every Developer Component applicable to the selected phases. For every applicable technical option resolved as selected, resolve and read its declared `implementation_standard` before deriving Plan coverage.
+Establish Interface Understanding and current Target Understanding. Read current Plan, State, and Review authorities and Schemas plus every Developer Component applicable to the selected phases.
 
 ## Authority
 
@@ -32,8 +32,6 @@ Write only Planning-owned Plan fields and Planning-owned aggregate State and His
 
 - Validate the complete input before mutation. Any invalid token prevents the whole planning run and produces the available phase list.
 - Build a transient coverage ledger mapping every selected phase requirement, applicable Principle obligation, and unresolved Review Finding to exactly one owning Task or inherited phase context.
-- Include every obligation from each selected option's declared `implementation_standard` in the coverage ledger without copying that source into the Plan or prescribing implementation. Express its applicable obligations as owned outcomes, acceptance, and complete verification conditions. An unselected option contributes no implementation-standard obligations.
-- Treat a missing, unreadable, ambiguous, or authority-conflicting `implementation_standard` reference as an unresolved coverage conflict. Do not report the affected phase Plan complete until it is resolved.
 - A Plan is incomplete while coverage is missing, duplicated, contradictory, or represented only by a narrower example.
 - Preserve valid identities, boundaries, dependencies, wording, progress, and history; prefer stable decomposition over stylistic regeneration.
 - Set a new Plan's revision to `1`. Increment an existing Plan's revision exactly once when any Planning-owned semantic content changes during the run; preserve it when only Development-owned progress or logs changed or when reconciliation is semantically idempotent.

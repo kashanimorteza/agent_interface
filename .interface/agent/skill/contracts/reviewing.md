@@ -22,7 +22,7 @@ Produce a separate Plan Assurance and Implementation Assurance outcome for every
 
 ## Required Understanding
 
-Reconstruct Interface Understanding and current Target Understanding on every invocation. Read Review, Plan, and State authorities and every Component applicable to each selected phase. For every applicable technical option resolved as selected, resolve and read its declared `implementation_standard` before either assurance pass. Existing Plan, State, implementation, and Review records are evidence to assess and never substitutes for either Understanding.
+Reconstruct Interface Understanding and current Target Understanding on every invocation. Read Review, Plan, and State authorities and every Component applicable to each selected phase. Existing Plan, State, implementation, and Review records are evidence to assess and never substitutes for either Understanding.
 
 ## Authority
 
@@ -31,14 +31,13 @@ Observe and execute non-repairing verification; invoke the current Planning Skil
 ## Workflow Invariants
 
 - Validate all phase input before changing records, invoking Planning, or running verification.
-- For each selected phase, rebuild a transient Plan Assurance ledger directly from current Target Understanding, applicable Developer Principles and Preferences, every selected option's declared `implementation_standard`, and Agent Principles and Profiles, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness. An unselected option contributes no implementation-standard obligations.
-- Record a Plan Gap when an applicable implementation-standard obligation is absent or unverified. Treat a missing, unreadable, ambiguous, or authority-conflicting referenced standard as `inconclusive`; never silently omit it from assurance.
+- For each selected phase, rebuild a transient Plan Assurance ledger directly from current Target Understanding and applicable Developer Principles and Preferences together with Agent Principles and Profiles, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness.
 - If the Plan is absent or Plan Assurance is not satisfied, record the exact Plan Findings, invoke Planning for that phase, then discard prior Plan observations and independently rebuild and apply the Plan Assurance ledger to Planning's result.
 - Record the current positive Plan Revision with every Plan Assurance outcome. Never carry an outcome forward to a different revision; after Planning changes the revision, perform a new independent Plan Assurance pass and bind its result to that new revision.
 - Repeat Plan reconciliation only while a pass closes or materially advances a Plan Finding. Stop the affected phase on a repeated unresolved Finding, no observable progress, inconclusive Plan Assurance, or required Human decision.
 - Do not begin Implementation Assurance until Plan Assurance is satisfied.
 - When no implementation or Development evidence exists, record Implementation Assurance as `not reviewed`; never manufacture a defect or proof for work that has not begun.
-- When implementation exists, build a transient Implementation Assurance ledger covering every Target requirement, applicable Component obligation, applicable selected-option implementation-standard obligation, Plan acceptance clause, and recorded verification condition. Observe each condition independently and judge whether the implementer's checks actually establish it.
+- When implementation exists, build a transient Implementation Assurance ledger covering every Target requirement, applicable Component obligation, Plan acceptance clause, and recorded verification condition. Observe each condition independently and judge whether the implementer's checks actually establish it.
 - Ground every Finding in the expected condition, actual observation, and exact location or observable result. Record absent Plan coverage as a Gap and absent observable proof as missing evidence.
 - Reconcile prior Findings only through current observation. A Finding persists until Review proves it resolved or the Human accepts it.
 - Complete one phase's assurance result before processing the next selected phase. A standalone Review may continue to later independent phases when one phase is unsatisfied or inconclusive; a coordinating Skill may impose a stricter stopping gate.

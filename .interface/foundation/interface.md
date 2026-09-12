@@ -217,7 +217,7 @@ Target
 
 The Developer module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Backend, Frontend, Platform, Plan, Review, and State Components.
 
-Each Component states its mandatory philosophy, responsibilities, and boundaries through Principles, and its preferred technical choices and defaults through Preferences. A selected technology may reference a conditional implementation standard for its own realization; that standard applies only when selected and remains subordinate to the Component Principles.
+Each Component states its mandatory philosophy, responsibilities, and boundaries through Principles, and its preferred technical choices and defaults through Preferences.
 
 #### Structure
 
@@ -235,8 +235,7 @@ Developer
     │   └── Preferences → .interface/developer/database/preferences.yaml
     ├── Backend
     │   ├── Principles  → .interface/developer/backend/principles.md
-    │   ├── Preferences → .interface/developer/backend/preferences.yaml
-    │   └── FastAPI     → .interface/developer/backend/fastapi.md
+    │   └── Preferences → .interface/developer/backend/preferences.yaml
     ├── Frontend
     │   ├── Principles  → .interface/developer/frontend/principles.md
     │   └── Preferences → .interface/developer/frontend/preferences.yaml
@@ -643,7 +642,7 @@ Schemas define the structure followed by authored Interface files and generated 
 .interface/foundation/schema/
 ├── yaml.yaml
 ├── principles.md
-├── developer-preferences.yaml
+├── preferences.yaml
 ├── agent-profile.yaml
 ├── skill-contract.md
 ├── state.yaml
@@ -673,11 +672,11 @@ responsibility = Defines the common Markdown structure followed by every Develop
 ```
 
 
-#### Developer Preferences Schema
+#### Preferences Schema
 
 ```text
-name = Developer Preferences Schema
-path = .interface/foundation/schema/developer-preferences.yaml
+name = Preferences Schema
+path = .interface/foundation/schema/preferences.yaml
 kind = Structure standard
 responsibility = Defines the four-section structure followed by every Developer Component preferences.yaml file
 ```
