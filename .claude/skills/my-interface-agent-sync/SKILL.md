@@ -1,6 +1,6 @@
 ---
 name: my-interface-agent-sync
-description: Dynamically reconcile every Agent Component declared by the current Interface with the active project-scoped Agent runtime, materializing authorized missing or drifted capabilities and certifying synchronization only after complete post-change verification.
+description: Dynamically reconcile every Agent Component declared by the current Interface with the active project-scoped Agent Runtime, materializing authorized missing or drifted capabilities and certifying synchronization only after complete post-change verification.
 disable-model-invocation: true
 ---
 
@@ -10,7 +10,7 @@ This file is the Claude Code adapter for the portable `agent-sync` Skill Contrac
 
 ## Role
 
-Make the active Agent runtime conform to the complete Agent Profile declared by the Interface. Materialize missing native resources, reconcile drift where ownership is unambiguous, provision already-selected project Extensions and Integrations, and prove that every required capability is usable.
+Make the active Agent Native and its Agent Instances conform to the complete Agent Profile declared by the Agent Module. Materialize missing native resources, reconcile drift where ownership is unambiguous, provision already-selected project Extensions and Integrations, and prove that every required capability is usable.
 
 This Skill applies existing Human-owned decisions. It never runs implicitly, at startup, or through another Skill. It does not discover or select new capabilities; use the capability-installation Skill when the Agent Profile does not already declare the needed choice.
 
@@ -43,7 +43,7 @@ Verify that the selected Runtime is available and compatible with the declared P
 
 A selected desired state is standing project authorization for additive, project-scoped reconciliation of that exact declaration. Still honor runtime permission prompts and stop for Human action when provisioning needs credentials, trust of an external service, broader scope, destructive replacement, an irreversible action, or authority not already expressed by the declaration.
 
-When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Every non-Sync Skill and Agent must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
+When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
 Write only to an exact `write_target` in the affected Component's Realization record and only when its owning declarations otherwise authorize the change. When actual state conflicts with multiple authorities or meaningful Human-authored runtime content would be overwritten, make no write to that resource. Report the conflict and the exact decision needed.
 
@@ -53,7 +53,7 @@ After reconciliation, discard pre-change observations, rediscover the complete A
 
 Verify at least that:
 
-- every required Role and Skill is discoverable by its intended Role, and each native Skill invocation control matches its declared Human and coordinator Invocation Policy;
+- the selected Agent Native is active, every required Agent Instance is invocable, every required Role and Skill is discoverable by its intended Role, and each native Skill invocation control matches its declared Human and coordinator Invocation Policy;
 - every Custom Command resolves to its declared owner and argument contract;
 - effective settings, permissions, rules, and hooks match their owners;
 - each selected Extension is installed, project-enabled, and exposes its expected capabilities;

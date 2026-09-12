@@ -1,6 +1,6 @@
 # Synchronized Agent capability catalog
 
-This file is the project-scoped Claude Runtime projection produced by explicit Agent Sync. Ordinary Skills resolve Agent capability identifiers here and never inspect `.interface/agent/`. A missing or unusable required entry is Runtime drift and must be reported; it never authorizes an Agent Module read or automatic Agent Sync.
+This file is the project-scoped Claude Runtime projection produced by explicit Agent Sync. The active Agent Native and its Agent Instances resolve Agent capability identifiers here; they never inspect `.interface/agent/` during ordinary operation. A missing or unusable required entry is Runtime drift and must be reported; it never authorizes an Agent Module read or automatic Agent Sync.
 
 ## Interface-owned workflow Skills
 

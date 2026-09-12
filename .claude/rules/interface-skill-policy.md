@@ -1,8 +1,8 @@
 # Agent Interface Skill policy
 
-These synchronized Runtime rules apply to every Agent Interface Skill and supporting agent, including one written later. Each reads them at the start of its own Workflow. Agent Sync owns reconciliation with the Human-owned Agent Module; ordinary operations treat these Runtime rules as their Agent-side contract.
+These synchronized Runtime Rules apply to every Agent Interface Skill and supporting Agent Instance, including one written later. Each reads them at the start of its own Workflow. Agent Sync owns reconciliation with the Human-owned Agent Module; ordinary operations treat these Runtime Rules as their Agent-side contract.
 
-Never read, search, resolve, or use `.interface/agent/` or another Agent Module source while performing an ordinary operation or Understanding workflow. Only explicit Human invocation of `/my-interface-agent-sync` may enter that module. Do not invoke Agent Sync automatically. If a required Runtime Rule, Skill, Agent, mapping, or capability is missing or unusable, report Runtime drift and ask the Human to run Agent Sync; do not consult its source declaration.
+Never read, search, resolve, or use `.interface/agent/` or another Agent Module source while performing an ordinary operation or Understanding workflow. Only explicit Human invocation of `/my-interface-agent-sync` may enter that module. Do not invoke Agent Sync automatically. If a required Runtime Rule, Skill, Agent Instance, mapping, or capability is missing or unusable, report Runtime drift and ask the Human to run Agent Sync; do not consult its source declaration.
 
 ## README authority
 
@@ -24,7 +24,7 @@ Install or configure every Skill, plugin, MCP integration, agent, or other proje
 
 Check the Skills and capabilities already available in the environment for relevance to the current work. When applicable, read their instructions and use them within the active role and requested scope, respecting the project's resolved decisions and the current write boundaries.
 
-A capability counts as available only when the active Agent can discover and use it in the current project. Files on disk, an installation receipt, or a configuration entry alone are not evidence that a Skill is loadable, a plugin is enabled, or an MCP server is connected. When activation, trust, authentication, reload, or restart is still required, report that condition rather than claiming the capability is ready.
+A capability counts as available only when the active Agent Native or intended Agent Instance can discover and use it in the current project. Files on disk, an installation receipt, or a configuration entry alone are not evidence that a Skill is loadable, a plugin is enabled, or an MCP server is connected. When activation, trust, authentication, reload, or restart is still required, report that condition rather than claiming the capability is ready.
 
 When a relevant Skill recommends an alternative to the project's current choice, briefly explain the current choice, the proposed alternative, which Skill recommends it, and the reason for the recommendation. Ask the human whether to keep the current choice or adopt the alternative. Do not change the choice or proceed with work that depends on that decision until the human answers; independent work may continue. Apply an accepted alternative within the current role and write boundaries, reporting any required changes to human-owned sources.
 

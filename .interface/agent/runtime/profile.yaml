@@ -4,7 +4,7 @@ meta:
   path_note: "The Profile layer of the Agent Runtime Component."
   purpose: "The selected runtime and its provider, model, effort, compatibility, and native capability mapping."
   standard: "Agent Project Interface"
-  version: "1.2"
+  version: "1.3"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -47,9 +47,9 @@ content:
       status: "compatible"
     native_capability_mapping:
       runtime_identity: "runtime-provided"
-      primary_agent: "runtime-provided"
-      agents: ".claude/agents/"
-      roles: "assigned through Agent Definitions"
+      agent_native: "runtime-provided"
+      agent_instances: ".claude/agents/"
+      roles: "assigned through Agent Instance Definitions"
       skills: ".claude/skills/"
       legacy_commands: ".claude/commands/"
       rules: ".claude/rules/"
@@ -82,14 +82,14 @@ content:
         verification: "Prove required persistent instructions, exclusions, loading behavior, and Memory policy are effective without treating runtime Memory as project authority."
       role:
         mode: "composite"
-        mechanisms: ["roles", "primary_agent", "agents"]
+        mechanisms: ["roles", "agent_native", "agent_instances"]
         write_targets: [".claude/agents/"]
-        verification: "Prove every required Role is assigned through an instantiable Agent Definition with its declared boundaries."
+        verification: "Prove every required Role is assigned through an instantiable Agent Instance Definition with its declared boundaries."
       agent:
         mode: "composite"
-        mechanisms: ["primary_agent", "agents"]
+        mechanisms: ["agent_native", "agent_instances"]
         write_targets: [".claude/agents/"]
-        verification: "Prove the selected General Agent and every required Specialized Agent are instantiable with the declared Role and capabilities."
+        verification: "Prove the selected Agent Native is active and the General and every required Specialized Agent Instance are instantiable with their declared Roles and capabilities."
       coordination:
         mode: "runtime-provided"
         mechanisms: ["runtime_coordination"]

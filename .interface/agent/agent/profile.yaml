@@ -2,47 +2,53 @@
 meta:
   path: ".interface/agent/agent/profile.yaml"
   path_note: "The Profile layer of the Agent Component."
-  purpose: "Primary and specialized Agent identities, Role assignments, capability configuration, lifecycle defaults, and native realizations."
+  purpose: "Agent Native selection plus General and Specialized Agent Instance identities, Role assignments, capability configuration, lifecycle defaults, and native realizations."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "1.2"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned; runtime-discovered Agents are observed without being adopted as required Agent Definitions."
+  rule: "This file is human-owned; runtime-discovered Agent Natives and Agent Instances are observed without being adopted as required declarations."
   changed_by: "The human, directly."
   precedence: "An explicit project decision and every applicable Principle take precedence over this file."
-  consumption: "Instantiate the selected General Agent and expose each required Specialized Agent through its declared Native Agent mapping."
-  selection: "An undeclared Native Agent remains optional runtime capability and never becomes part of the required Agent Profile automatically."
-  version_resolution: "Native Agent format and runtime-provided primary behavior resolve from the selected Agent Runtime."
-  matching: "Match Agent Definitions by stable identity, assigned Role reference, and exact native identity or realization."
+  consumption: "Use the selected Agent Native, instantiate the General Agent Instance, and expose each required Specialized Agent Instance through its declared native realization."
+  selection: "An undeclared Agent Native or Agent Instance remains an optional runtime capability and never becomes part of the required Agent Profile automatically."
+  version_resolution: "Agent Native behavior and Native Instance Realization formats resolve from the selected Agent Runtime."
+  matching: "Match the Agent Native by exact runtime identity and Agent Instance Definitions by stable identity, assigned Role reference, and exact native realization."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The selected General Agent."
-  options: "Selectable General Agent definitions."
-  settings: "Project, runtime, user, managed, extension, and built-in Agent definitions plus inherited defaults."
+  selected: "The selected Agent Native and General Agent Instance."
+  options: "Selectable Agent Natives and General Agent Instance definitions."
+  settings: "Project, runtime, user, managed, extension, and built-in Agent Instance definitions plus inherited defaults."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    general_agent: "general"
+    agent_native: "runtime-primary"
+    general_instance: "general"
   options:
-    general_agents:
+    agent_natives:
+      runtime-primary:
+        runtime: "selected Agent Runtime"
+        native_identity: "runtime primary agent"
+        realization: "runtime-provided"
+    general_instances:
       general:
-        resource: "project_agents.general"
+        resource: "project_instances.general"
   settings:
-    project_agents:
+    project_instances:
       general:
         kind: "general"
         role: "role.project_roles.primary-execution"
         native_identity: "runtime primary agent"
         native_definition: "runtime-provided"
-        configuration: "inherits agent_defaults materialized into the synchronized Runtime by explicit Agent Sync"
+        configuration: "inherits instance_defaults materialized into the synchronized Runtime by explicit Agent Sync"
         required: true
       interface-reader:
         kind: "specialized"
@@ -51,13 +57,14 @@ content:
         native_definition: ".claude/agents/interface-reader.md"
         allowed_tools: ["Read", "Grep", "Glob"]
         write_authority: "none"
+        configuration: "inherits instance_defaults with allowed_tools and write_authority overridden by this definition"
         required: true
-    runtime_agents: {}
-    user_agents: {}
-    managed_agents: {}
-    extension_agents: {}
-    built_in_agents: {}
-    agent_defaults:
+    runtime_instances: {}
+    user_instances: {}
+    managed_instances: {}
+    extension_instances: {}
+    built_in_instances: {}
+    instance_defaults:
       model: null
       effort: null
       max_turns: null

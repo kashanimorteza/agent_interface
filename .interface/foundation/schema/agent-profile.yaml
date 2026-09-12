@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-agent-profile"
   version: "1.0"
-  purpose: "The common structure every Agent Component Profile follows. It defines current Agent selections, supported alternatives, declared capabilities, resources, mappings, and explicit empty categories without turning runtime choices into portable Principles."
+  purpose: "The common structure every Agent Component Profile follows. It defines current Agent Module selections, supported alternatives, declared capabilities, resources, mappings, and explicit empty categories without turning runtime choices into portable Principles."
 
 # <!--------------------------------------------------------------------------------- Frame -->
 frame:
@@ -13,7 +13,7 @@ frame:
 
 # <!--------------------------------------------------------------------------------- Purpose -->
 purpose:
-  answers: "Which Agent configuration. An Agent Profile records the current desired Agent choices and capability declarations used to realize the portable Agent Principles in a selected Runtime."
+  answers: "Which Agent Module configuration. An Agent Profile records the current desired Agent Native, Agent Instance, and capability declarations used to realize the portable Agent Principles in a selected Runtime."
   relation_to_principles: "Agent Principles define mandatory portable philosophy, responsibility, and boundaries. The Agent Profile records current selections, resources, native mappings, and explicit absence. A Profile never weakens a Principle."
   relation_to_developer: "Developer Preferences may carry a stable logical capability identifier. Agent Sync projects that identifier into the Runtime capability catalog; ordinary operations resolve it there without reading this Profile. The reference never transfers ownership of that capability to Developer."
   relation_to_runtime: "A declaration is desired Profile state, not proof of installation, activation, availability, authentication, or usability. Current runtime evidence establishes realization."
@@ -21,8 +21,8 @@ purpose:
 # <!--------------------------------------------------------------------------------- Scope -->
 scope:
   contains:
-    - "The selected Agent option for each decision owned by the Component."
-    - "Supported Agent and Runtime alternatives."
+    - "The selected Agent Module option for each decision owned by the Component."
+    - "Supported Agent Native, Agent Instance, and Runtime alternatives."
     - "Project, runtime, built-in, user, managed, and extension capability declarations where applicable."
     - "Native resources, paths, provider identities, mappings, activation intent, requirement status, and verification expectations."
     - "Explicit empty categories when the Profile currently declares no entry of that kind."
@@ -62,7 +62,7 @@ policy:
     agent_may_edit:
       required: true
       value: false
-      purpose: "An Agent observes and realizes the Profile but never rewrites it from runtime state."
+      purpose: "Agent Sync observes and realizes the Profile but never rewrites it from runtime state."
     rule:
       required: true
       purpose: "How the Profile is treated by Agent operations."
@@ -98,7 +98,7 @@ sections:
   selected:
     required: true
     default: {}
-    purpose: "The current Agent option selected for each decision owned by this Component."
+    purpose: "The current Agent Module option selected for each decision owned by this Component."
     rules:
       names_declared_entry: "A selected key resolves to exactly one entry in the matching options catalogue or declared settings resource."
       no_runtime_claim: "Selection expresses desired Profile state and never proves current runtime availability."
@@ -107,7 +107,7 @@ sections:
   options:
     required: true
     default: {}
-    purpose: "Supported alternatives for Agent or Runtime decisions owned by this Component."
+    purpose: "Supported alternatives for Agent Module or Runtime decisions owned by this Component."
     rules:
       no_selection: "An option describes a supported alternative and does not select itself."
       provider_identity: "Provider-owned identity and version information remain explicit when applicable."

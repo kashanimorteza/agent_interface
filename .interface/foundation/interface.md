@@ -71,7 +71,7 @@ Config contains only the mutable operational records used to coordinate this wor
 <!-------------------------- Independence -->
 ### Independence
 
-The core Interface Structure is independent of any specific AI model, Agent, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their self-contained native implementations remain outside `.interface/` as synchronized Runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Profile. Only explicit Agent Sync reads Agent Module sources; every other Runtime operation consumes their last synchronized realization.
+The core Interface Structure is independent of any specific AI model, Agent Native, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their self-contained native implementations remain outside `.interface/` as synchronized Runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Profile. Only explicit Agent Sync reads Agent Module sources; every other Runtime operation consumes their last synchronized realization.
 
 Human project definitions remain flexible, while the Interface gives Agents stable responsibilities, rules, defaults, and operational records. Agent Interface is the communication boundary between those two forms.
 
@@ -138,19 +138,22 @@ This separation is one of the central architectural principles of the project.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
 - **Developer** — the developer's reusable programming philosophy and engineering perspective, independent of a particular Target or Agent.
 - **Agent** — an AI coding system or execution unit that interacts with the Interface and maps its concepts to native capabilities.
-- **Component** — one named part of the Developer or Agent perspective that owns a responsibility and is described through Principles together with Developer Preferences or an Agent Profile; some Developer Components also own operational records.
+- **Component** — one named part of the Developer or Agent Module perspective that owns a responsibility and is described through Principles together with Developer Preferences or an Agent Profile; some Developer Components also own operational records.
 - **Principles** — mandatory portable philosophy, responsibilities, rules, and boundaries owned by a Developer or Agent Component.
 - **Developer Preferences** — preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations used when the Target leaves a choice unspecified.
 - **Schema** — the structure a file follows: either a standard for a Human-authored file or an operational format and initial template for a generated record.
 - **Config** — mutable operational records that coordinate the Workflow and record where work stands; Config does not store what the Target means.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
-- **Understanding** — the current context an Agent establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
+- **Understanding** — the current context an Agent Native or Agent Instance establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
 - **Operation** — one defined action performed through an Agent Skill to configure, plan, develop, review, launch, implement, or reset work.
 - **Workflow** — the ordered path from the Human's Target definition to running software: Define Target, Configure, Plan, Develop, Review, and Launch.
 - **Workflow Path** — the Human's selected level of direct orchestration over that same Workflow: Default, Normal, or Detailed; it is an invocation style, not a State Mode.
 - **Mode** — an operational position in the Workflow, recorded by State.
 - **Skill** — an Agent capability that performs a Workflow action or provides a supporting utility; it is part of the Agent Module's integration surface, while its implementation remains outside `.interface/`.
+- **Agent Module** — the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate. Bare `Agent` is never used as a substitute for this term.
+- **Agent Native** — the core operational Agent supplied by the selected Agent Runtime and currently responsible for receiving the Human's request, applying synchronized Agent Module behavior, and hosting or coordinating Agent Instances.
+- **Agent Instance** — one primary or specialized executable identity operating within an Agent Native, with an assigned Agent Role and bounded capabilities. One Agent Native may expose several Agent Instances.
 - **Agent Profile** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, native mappings, and validation expectations.
 - **Agent Role** — one bounded execution responsibility within the Agent Profile, including the primary role and specialized delegated roles.
 - **Capability** — one declared Agent facility, such as a Skill, Rule, Command, Tool, Hook, Integration, or Extension, with an owning Component and bounded contract.
@@ -273,9 +276,9 @@ Each line names a Component so that a phase target can be resolved to its owner.
 
 <!-------------------------- Agent -->
 ### Agent
-The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent should operate. The Human declares that view once through its Components—including Agent identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, native mappings, and explicit empty categories.
+The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent Native and its Agent Instances should operate. The Human declares that view once through its Components—including the Agent Native, Agent Instance identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, native mappings, and explicit empty categories.
 
-Together, these Components form the Agent Profile. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Profile, realizes it through that Runtime's native Agents, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent then operates from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
+Together, these Components form the Agent Profile. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Profile, realizes it through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 
 #### Structure
 
@@ -336,7 +339,7 @@ Agent
         └── Profile     → .interface/agent/observability/profile.yaml
 ```
 
-The Agent Components are read in the order shown exclusively during an explicit Agent Sync invocation. Agent Sync then reads every Interface-owned Skill Contract after Skill Principles and Profile and realizes each required Rule, Skill, Agent, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. Every other Skill, supporting Agent, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
+The Agent Components are read in the order shown exclusively during an explicit Agent Sync invocation. Agent Sync then reads every Interface-owned Skill Contract after Skill Principles and Profile and realizes each required Rule, Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
 
 
 #### Components
@@ -346,7 +349,7 @@ Runtime        = Runtime identity, provider, model, compatibility, and native ca
 Settings       = Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation
 Context        = Persistent instructions, Understanding, Memory, imports, loading, and compaction
 Role           = Primary and specialized Agent Role contracts
-Agent          = General and specialized executable Agent identities that realize declared Roles
+Agent          = The selected Agent Native and its General and Specialized Agent Instances
 Coordination   = Delegation, teams, tasks, messaging, concurrency, and worktree isolation
 Skill          = Reusable knowledge and workflows, including core, supporting, and contextual Skills
 Command        = Named and slash invocation entry points, arguments, aliases, and routing
@@ -368,7 +371,7 @@ Every Agent Component's Principles and Profile are authoritative for that Compon
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. For every operation except Agent Sync, the Interface routes the Skill only to applicable Target, Developer, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope. Agent Sync alone may follow the Agent Structure into Agent Module sources and does so only after explicit Human invocation.
+Understanding is the current context an Agent Native or Agent Instance establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. For every operation except Agent Sync, the Interface routes the Skill only to applicable Target, Developer, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope. Agent Sync alone may follow the Agent Structure into Agent Module sources and does so only after explicit Human invocation.
 
 - **Interface Understanding:** Read `.interface/foundation/interface.md` as the sole Foundation Source, then follow only the non-Agent-Module routes it provides for the active role. Agent Sync is the sole explicit exception.
 - **Target Understanding:** When required, read both Target definitions located by the Interface. Human Definition provides the Human's stated intent and context; Technical Definition is the primary Target authority and takes precedence wherever they conflict.
@@ -529,7 +532,7 @@ Explicit Target intent and applicable Developer Principles guide operational Ski
 Target = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
 Developer Preferences = engineering defaults for unspecified Target choices
-Agent Profiles = current Agent selections, resources, mappings, and explicit empty categories
+Agent Profiles = current Agent Module selections, resources, mappings, and explicit empty categories
 Schema = common YAML frame for Developer Preferences, Agent Profiles, and Config, authored-source structure, and the storage structure of every operational record
 Config = the mutable operational records
 ```

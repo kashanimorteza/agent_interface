@@ -4,7 +4,7 @@ meta:
   path_note: "The Profile layer of the Agent Tool Component."
   purpose: "Built-in, project, integration, extension, user, and managed Tool catalogs and availability expectations."
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -40,7 +40,7 @@ content:
       Edit: {provider: "Claude Code", required: true}
       Write: {provider: "Claude Code", required: true}
       NotebookEdit: {provider: "Claude Code", required: false}
-      Task: {provider: "Claude Code", required: false}
+      Agent: {provider: "Claude Code", required: true}
       TodoWrite: {provider: "Claude Code", required: false}
       WebFetch: {provider: "Claude Code", required: false}
       WebSearch: {provider: "Claude Code", required: false}

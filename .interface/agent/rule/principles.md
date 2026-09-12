@@ -1,6 +1,6 @@
 # Agent Rule Principles
 
-Agent Rule is the Component that defines persistent behavioral instructions applied across sessions or within a declared path scope. Rules adapt Agent behavior to stable project conventions without becoming enforcement mechanisms or copies of owned Interface sources.
+Agent Rule is the Component that defines persistent behavioral instructions applied across sessions or within a declared path scope. Rules adapt Agent Native and Agent Instance behavior to stable project conventions without becoming enforcement mechanisms or copies of owned Interface sources.
 
 It owns instruction scope, loading conditions, and precedence among Rules. It does not own security enforcement, workflow implementation, or project definitions.
 

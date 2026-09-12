@@ -1,6 +1,6 @@
 # Agent Interaction Principles
 
-Agent Interaction is the Component that governs how Agent work is presented to and exchanged with Humans. It covers output style, progress communication, prompts, status presentation, artifacts, and other user-interface behavior.
+Agent Interaction is the Component that governs how Agent Native and Agent Instance work is presented to and exchanged with Humans. It covers output style, progress communication, prompts, status presentation, artifacts, and other user-interface behavior.
 
 It owns presentation and interaction contracts. It does not own technical meaning, evidence, permission decisions, or the work being communicated.
 
@@ -8,7 +8,7 @@ It owns presentation and interaction contracts. It does not own technical meanin
 
 - **Output Style** — a presentation contract controlling organization, tone, and response format.
 - **Progress Update** — a concise report of active scope, material movement, or a blocking condition.
-- **Artifact** — a rendered or shareable representation of an Agent result.
+- **Artifact** — a rendered or shareable representation of an Agent Native or Agent Instance result.
 
 ## Relationships
 
@@ -43,7 +43,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 3. Interaction requests only material decisions
 
-**Rule:** An Agent asks the Human only when no safe choice avoids materially changing intent, architecture, security, data integrity, permissions, a declared interface, or an irreversible outcome.
+**Rule:** An Agent Native or Agent Instance asks the Human only when no safe choice avoids materially changing intent, architecture, security, data integrity, permissions, a declared interface, or an irreversible outcome.
 
 **Why:** Excessive questions prevent autonomous execution while omitted material choices violate ownership.
 

@@ -1,6 +1,6 @@
 # Agent Observability Principles
 
-Agent Observability is the Component that makes Agent configuration, execution, capability health, evidence, and outcomes inspectable. It defines diagnostics, status, logs, usage signals, and completion evidence without becoming the authority for the work observed.
+Agent Observability is the Component that makes Agent Native and Agent Instance configuration, execution, capability health, evidence, and outcomes inspectable. It defines diagnostics, status, logs, usage signals, and completion evidence without becoming the authority for the work observed.
 
 It owns observation contracts and health vocabulary. It does not own implementation, project intent, hidden reasoning, or the records maintained by other Components.
 
@@ -23,7 +23,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 1. Completion is evidence-backed
 
-**Rule:** An Agent reports success only when every requested and contract-required condition has current observable Evidence. Missing or inconclusive Evidence remains explicit and never becomes success by inference.
+**Rule:** An Agent Native or Agent Instance reports success only when every requested and contract-required condition has current observable Evidence. Missing or inconclusive Evidence remains explicit and never becomes success by inference.
 
 **Why:** Stable outcomes require repeatable gates rather than confidence or plausible artifacts.
 
@@ -35,7 +35,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 **Rule:** Active scope, material decisions, mutations, delegation, checks, outcomes, blockers, configuration drift, Capability Status, and required Human actions are attributable and inspectable.
 
-**Why:** Later Humans and Agents need to distinguish current fact from assumption and unfinished work.
+**Why:** Later Humans, Agent Natives, and Agent Instances need to distinguish current fact from assumption and unfinished work.
 
 **Boundary:** Hidden reasoning, secrets, and irrelevant command transcripts are never observability requirements.
 

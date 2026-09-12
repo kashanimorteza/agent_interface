@@ -1,6 +1,6 @@
 # Agent Hook Principles
 
-Agent Hook is the Component that performs deterministic automation at declared lifecycle events. A Hook may observe, validate, block, transform, notify, or trigger a bounded capability independently of the Agent's discretionary reasoning.
+Agent Hook is the Component that performs deterministic automation at declared lifecycle events. A Hook may observe, validate, block, transform, notify, or trigger a bounded capability independently of an Agent Native's or Agent Instance's discretionary reasoning.
 
 It owns event matching, handler order, inputs, effects, and failure behavior. It does not own the workflow it observes or broader authority than the triggering event permits.
 

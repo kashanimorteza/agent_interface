@@ -12,7 +12,7 @@ It owns session lifecycle and transient execution continuity. It does not own pr
 
 ## Relationships
 
-- **Consumes Agent Runtime, Agent, Context, Role, and Permission** — hosts an Agent Definition executing with current context and authority.
+- **Consumes Agent Runtime, Agent, Context, Role, and Permission** — hosts an Agent Instance executing with current context and authority.
 - **Consumed by Agent Coordination, Hook, Interaction, and Observability** — supplies lifecycle events and execution identity.
 
 Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Session Profile.

@@ -4,7 +4,7 @@ meta:
   path_note: "The Profile layer of the Agent Permission Component."
   purpose: "Permission mode, allow/ask/deny rules, sandboxing, protected sources, trust, authentication, and secrets."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "1.2"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -46,7 +46,7 @@ content:
         - "Edit"
         - "Write"
         - "NotebookEdit"
-        - "Task"
+        - "Agent"
         - "TodoWrite"
         - "WebFetch"
         - "WebSearch"
@@ -72,8 +72,9 @@ content:
           path: ".interface/agent/"
           default: "deny"
           sole_consumer: "skill.project_skills.supporting.agent-sync"
-          invocation: "explicit-human"
-          effect: "Every other Skill, Agent, coordinator, startup routine, and Understanding workflow consumes synchronized Runtime artifacts instead."
+          invocation: "direct-explicit-human-only"
+          grant_scope: "exact expanded Human prompt only; non-transferable"
+          effect: "The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, model-generated action, and Understanding workflow consumes synchronized Runtime artifacts and cannot initiate Agent Sync."
       editable_exception:
         path: ".interface/foundation/config/"
         condition: "Only the active Skill's declared write authority and the owning Component's rules may authorize an exact Config record."

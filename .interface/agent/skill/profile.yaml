@@ -100,7 +100,10 @@ content:
           path: ".claude/skills/my-interface-agent-sync/SKILL.md"
           contract: ".interface/agent/skill/contracts/agent-sync.md"
           architecture_contract: "Agent Skill Principle 15"
-          invocation: "explicit-human"
+          invocation: "direct-explicit-human-only"
+          model_invocation: "disabled"
+          delegated_invocation: "disabled"
+          automated_invocation: "disabled"
           required: true
       contextual:
         fastapi:

@@ -1,8 +1,8 @@
 # Agent Role Principles
 
-Agent Role is the Component that defines the execution responsibilities available within an Agent Profile, including the primary role and specialized delegated roles. It gives each role a stable contract independent of the runtime that hosts it.
+Agent Role is the Component that defines the execution responsibilities available to Agent Instances within an Agent Profile, including the primary role and specialized delegated roles. It gives each role a stable contract independent of the Agent Native that hosts its Instance.
 
-It owns role responsibilities and boundaries. It does not own Agent identities, native definitions, capability configuration, workflow content, runtime configuration, or coordination state.
+It owns role responsibilities and boundaries. It does not own Agent Instance identities, native realizations, capability configuration, workflow content, runtime configuration, or coordination state.
 
 ## Terms
 
@@ -13,11 +13,11 @@ It owns role responsibilities and boundaries. It does not own Agent identities, 
 ## Relationships
 
 - **Consumes Agent Context, Skill, Tool, and Permission** — receives knowledge, workflow, capabilities, and authority needed to act.
-- **Consumed by Agent** — supplies responsibilities that executable Agent Definitions realize.
+- **Consumed by Agent** — supplies responsibilities that executable Agent Instance Definitions realize.
 - **Consumed by Agent Coordination** — supplies the responsibility boundaries preserved during delegation and teams.
 - **Consumed by Agent Observability** — supplies the contract against which role outcomes are reported.
 
-Technical Role catalogs and primary Role selection belong to Agent Role Profile. Agent identities, native definitions, models, tools, Skills, and per-Agent configuration belong to Agent Profile.
+Technical Role catalogs and primary Role selection belong to Agent Role Profile. Agent Instance identities, native realizations, models, tools, Skills, and per-Instance configuration belong to Agent Profile.
 
 Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 

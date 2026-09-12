@@ -1,12 +1,14 @@
 # Agent Runtime Principles
 
-Agent Runtime is the Component that instantiates Agent Definitions, executes their assigned Roles, and exposes the native mechanisms used to realize the Agent Profile. It keeps the Interface independent of one model, provider, client, or capability format.
+Agent Runtime is the Component that supplies the Agent Native, lets it instantiate Agent Instance Definitions and execute their assigned Roles, and exposes the native mechanisms used to realize the Agent Profile. It keeps the Interface independent of one model, provider, client, or capability format.
 
 It owns runtime identity and compatibility. It does not own behavioral instructions, project intent, permissions, or the capabilities implemented through the runtime.
 
 ## Terms
 
-- **Agent Runtime** — the concrete execution system that hosts Native Agents, their assigned Roles, and Capabilities.
+- **Agent Runtime** — the concrete execution system that supplies and hosts the Agent Native and its capabilities.
+- **Agent Native** — the core operational Agent supplied by the Agent Runtime; it receives Human requests and hosts or coordinates Agent Instances.
+- **Agent Instance** — one primary or specialized executable identity instantiated within the Agent Native.
 - **Runtime Mapping** — the correspondence between an Interface capability and its native runtime mechanism.
 - **Compatibility** — the ability to preserve a Capability Contract in a particular runtime.
 

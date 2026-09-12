@@ -38,7 +38,7 @@ content:
         path: ".claude/settings.json"
     reconciliations:
       explicit_agent_sync:
-        meaning: "Apply Agent Module declarations only when the Human explicitly invokes agent-sync; ordinary startup and other Skills use the last synchronized Runtime realization."
+        meaning: "Apply Agent Module declarations only when the Human directly invokes the declared Agent Sync entry point; the Agent Native, Agent Instances, Skills, coordinators, Hooks, lifecycle routines, automations, and model-generated actions cannot initiate it."
   settings:
     source_precedence:
       - "managed"
