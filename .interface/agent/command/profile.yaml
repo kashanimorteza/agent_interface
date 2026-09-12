@@ -4,7 +4,7 @@ meta:
   path_note: "The Profile layer of the Agent Command Component."
   purpose: "Built-in and custom slash entry points, arguments, aliases, scope, and owning capability mappings."
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -39,7 +39,7 @@ content:
       reviewing: {invocation: "/my-interface-reviewer [phase-number ...]", owner: "skill.project_skills.core_workflow.reviewing"}
       launch: {invocation: "/my-interface-launch", owner: "skill.project_skills.core_workflow.launch"}
       implement: {invocation: "/my-interface-implement [phase-number ...]", owner: "skill.project_skills.supporting.implement"}
-      reset: {invocation: "/my-interface-reset <1|2|3>", owner: "skill.project_skills.supporting.reset"}
+      reset: {invocation: "/my-interface-reset [phase-number ... | config | complete]", owner: "skill.project_skills.supporting.reset"}
       skill-installer: {invocation: "/my-interface-skill-installer", owner: "skill.project_skills.supporting.skill-installer"}
       agent-sync: {invocation: "/my-interface-agent-sync", owner: "skill.project_skills.supporting.agent-sync"}
     built_in_commands: {}

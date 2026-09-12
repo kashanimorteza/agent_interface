@@ -118,11 +118,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 10. Reset reconciles State with what it removes
 
-**Rule:** A confirmed Reset returns affected phase fields, Implementation State, and Launch State to values consistent with outputs that remain, and appends a reset History Event whenever State itself is preserved.
+**Rule:** A confirmed phase Reset returns only selected phase fields, Implementation State, and Launch State to values consistent with outputs that remain, preserves unselected phase State, and appends one reset History Event per selected phase. A confirmed Config or Complete Reset removes State with the other operational Config records.
 
 **Why:** State must not claim removed plans, implementation, review evidence, or runtime still exists.
 
-**Boundary:** A Configure reset removes State Config itself and cannot append to that removed record.
+**Boundary:** Config and Complete Reset remove State Config itself and cannot append to that removed record. Config Reset preserves developed outputs; Complete Reset does not.
 
 <br>
 

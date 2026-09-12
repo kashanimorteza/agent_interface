@@ -115,11 +115,11 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 10. `reset` owns previewed workflow rollback
 
-**Rule:** The architecture requires the `reset` Skill. Its purpose is controlled workflow rollback; its responsibility is to resolve and preview one declared reset stage, obtain explicit Human confirmation, and apply only that preview; its task coverage is the exact operational and implementation outputs owned by the selected stage.
+**Rule:** The architecture requires the `reset` Skill. Its purpose is controlled workflow rollback; its responsibility is to resolve and preview explicit phases, every phase with generated work when no phase is supplied, Config only, or the complete Interface-generated system, obtain explicit Human confirmation, and apply only that preview; its task coverage is the exact operational and implementation outputs attributable to the selected scope.
 
 **Why:** Destructive workflow rollback needs one controlled and auditable entry point.
 
-**Boundary:** `reset` never treats invocation as approval, removes an unlisted target, interprets Target intent, reverses Environment preparation, or invokes another workflow operation afterward.
+**Boundary:** `reset` never treats invocation as approval, removes an unlisted target, reinterprets Target intent, guesses implementation attribution, damages an unselected phase, reverses Environment preparation, or invokes another workflow operation afterward.
 
 <br>
 

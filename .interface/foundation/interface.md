@@ -368,7 +368,7 @@ Every Agent Component's Principles and Profile are authoritative for that Compon
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. The Interface then routes the Skill to the Component authorities required by its role; the Agent never needs prior knowledge of the Interface's internal directory structure. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset may omit Target Understanding when its fixed scope does not require it.
+Understanding is the current context an Agent establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. The Interface then routes the Skill to the Component authorities required by its role; the Agent never needs prior knowledge of the Interface's internal directory structure. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope.
 
 - **Interface Understanding:** Read `.interface/foundation/interface.md` as the sole Foundation Source, then follow only the routes it provides for the active role.
 - **Target Understanding:** When required, read both Target definitions located by the Interface. Human Definition provides the Human's stated intent and context; Technical Definition is the primary Target authority and takes precedence wherever they conflict.
@@ -454,7 +454,7 @@ This Operation is performed through `/my-interface-implement [phase-number ...]`
 
 **Agent Skill:** `/my-interface-reset`
 
-This Operation is performed through `/my-interface-reset` to preview and, after Human confirmation, reset only the outputs and operational records covered by the selected reset stage.
+This Operation is performed through `/my-interface-reset [phase-number ...]` to reset selected phases; with no phase input it resets every phase with generated work. `/my-interface-reset config` removes only operational Config, while `/my-interface-reset complete` removes operational Config and the implementation outputs of all phases. Every mode previews its exact impact and requires separate Human confirmation before mutation.
 
 <!-------------------------- Skill Installer Operation -->
 ### Skill Installer
@@ -553,7 +553,7 @@ Reviewer = writes Findings under Review, and Review progress and History under S
 Configure, Planning, and Developing = write the active Workflow position under State
 Launch = changes runtime state through Platform and writes Launch State, access points, and History under State
 Implement = coordinates operation Skills and writes only Implementation State and its History under State
-Reset = after human confirmation of the preview, removes or resets the outputs and operational records covered by the selected reset stage, including the Workflow position, under the owning Components' rules
+Reset = after human confirmation of the preview, removes or resets explicit-phase outputs, every generated phase when no phase is supplied, Config only, or the complete set of Config and all-phase implementation outputs, including reconciliation of the Workflow position, under the owning Components' rules
 Skill Installer = discovers Agent capabilities and, after approval, provisions only approved project-scoped capabilities outside Interface sources
 Agent Sync = reconciles declared Agent Profile choices with project-scoped native Runtime artifacts outside Interface sources
 Reviewing, Launch, Implement, Skill Installer, and Agent Sync = do not directly change the active Workflow mode
