@@ -1,0 +1,841 @@
+meta:
+  path: .interface/foundation/config/plan.yaml
+  path_note: Mutable Plans, Groups, Tasks, counts and progress.
+policy:
+  agent_may_edit: true
+  rule: Apply the current Plan Component and the active operation's ownership rules.
+read_order:
+- task_count
+- plans
+content_map:
+  task_count: Total number of stored Tasks.
+  plans: Current phase Plans and their Groups and Tasks.
+content:
+  task_count: 30
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: Implement the independent Model package and its reusable public interface, expressing every domain entity, relationship, rule, and initial-data declaration from the current Target Model definition.
+      constraints: []
+      task_count: 19
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Package Foundation
+          description: Establishes the independent Model package boundary, its shared base class, and its public interface skeleton so every domain entity can be added behind one stable import surface.
+          area: Model package scaffolding and shared base class
+          does: A stable, importable Model package exists with a documented public interface and a shared base class ready to hold domain entities.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-T1:
+              id: P1-T1
+              title: Establish the Model package and shared base class
+              description: Create the independent Model package as one importable unit with a documented public interface and a shared base class that every domain entity will inherit from, free of any persistence, transport, or workflow concerns.
+              reason: Every domain entity needs one common package boundary and base representation before it can be added, so the package and its shared base must exist first.
+              kind: code
+              inputs: []
+              expected_result: An importable Model package exists with an empty but documented public interface and a shared base class usable by every future domain entity.
+              depends_on: []
+              constraints: []
+              acceptance: The package can be imported through its documented namespace with no I/O, network, or database activity occurring at import time.
+              verify: Importing the package's public namespace succeeds in a clean isolated environment and exposes no domain entities yet.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: Imported my_model.__init__ in a clean venv with no I/O; the package exposed an empty entity surface bound to the shared base class.
+        P1-G2:
+          id: P1-G2
+          title: Identity and Connectivity Models
+          description: Covers the entities that establish who uses the system and how the system reaches a trading platform.
+          area: User identity and trading-platform connectivity
+          does: The User, Trading Platform, and Instance domain entities exist as validated Models expressing their declared fields, relationships, rules, and initial data.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-T2:
+              id: P1-T2
+              title: Define the User domain model
+              description: Implement the User domain entity from the current Target Model definition, expressing its declared fields, credential handling meaning, and required initial data as domain-native validation.
+              reason: The system requires an independent user identity before any owned data or connection can be defined.
+              kind: code
+              inputs:
+              - Current Target Model definition for User
+              expected_result: A validated User Model exists in the shared package, enforcing every declared field and rule and declaring the required initial record.
+              depends_on:
+              - P1-T1
+              constraints: []
+              acceptance: The model accepts every valid declared User state, rejects states that violate a declared rule, and declares the required initial record's identity and values.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_user_valid_and_defaults, test_user_rejects_blank_required_field, test_user_rejects_unknown_field, test_user_initial_data_declares_admin, test_user_credential_fields_declared — all passed.'
+            P1-T3:
+              id: P1-T3
+              title: Define the Trading Platform domain model
+              description: Implement the Trading Platform domain entity from the current Target Model definition, expressing its declared fields, rules, and required initial data as domain-native validation.
+              reason: The system needs a stable domain representation of each supported trading platform standard before platform-dependent entities can reference it.
+              kind: code
+              inputs:
+              - Current Target Model definition for Trading Platform
+              expected_result: A validated Trading Platform Model exists in the shared package, enforcing every declared field and rule and declaring the required initial records.
+              depends_on:
+              - P1-T1
+              constraints: []
+              acceptance: The model accepts every valid declared Trading Platform state, rejects states that violate a declared rule, and declares the required initial records.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_trading_platform_valid_and_initial_data, test_trading_platform_rejects_blank_code — all passed.'
+            P1-T4:
+              id: P1-T4
+              title: Define the Instance domain model
+              description: Implement the Instance domain entity from the current Target Model definition, expressing its declared fields, credential handling meaning, relationships to User and Trading Platform, and conditional connection-field requirements as domain-native validation.
+              reason: A user-owned connection to a trading platform must be represented before any account can use it.
+              kind: code
+              inputs:
+              - Current Target Model definition for Instance
+              - User Model
+              - Trading Platform Model
+              expected_result: A validated Instance Model exists in the shared package, enforcing every declared field, relationship, and conditional-requirement rule, and declaring the required initial record.
+              depends_on:
+              - P1-T2
+              - P1-T3
+              constraints: []
+              acceptance: The model accepts every valid declared Instance state, rejects a state missing a connection field its selected Trading Platform requires, rejects any other violation of a declared rule, and declares the required initial record.
+              verify: Construction succeeds for valid data, fails when a platform-required connection field is missing or another declared rule is violated, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_instance_valid_with_optional_connection_fields_omitted, test_instance_explicit_null_distinct_from_omission, test_instance_enforces_declared_platform_requirement, test_instance_credential_fields_declared — all passed. Note: the Trading Platform per-field connection requirement is declared as an extensible Instance.platform_required_fields registry (currently empty, since no per-platform requirement data exists in the current Target Model definition); it enforces nothing until a later component populates it, consistent with Model validating only what its own data declares.'
+        P1-G3:
+          id: P1-G3
+          title: Reference Data Models
+          description: Covers the entities that describe the currencies, brokers, and tradable assets available to the system.
+          area: Trading reference data
+          does: The Currency, Broker, and Asset domain entities exist as validated Models expressing their declared fields, relationships, rules, and initial data.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-T5:
+              id: P1-T5
+              title: Define the Currency domain model
+              description: Implement the Currency domain entity from the current Target Model definition, expressing its declared fields, ownership relationship to User, rules, and required initial data as domain-native validation.
+              reason: Monetary values throughout the system need a shared, validated currency representation.
+              kind: code
+              inputs:
+              - Current Target Model definition for Currency
+              - User Model
+              expected_result: A validated Currency Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial records.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: The model accepts every valid declared Currency state, rejects states that violate a declared rule such as its uniqueness rule, and declares the required initial records.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_currency_valid_and_defaults, test_currency_rejects_wrong_length_code, test_currency_rejects_negative_decimal_digits — all passed.'
+            P1-T6:
+              id: P1-T6
+              title: Define the Broker domain model
+              description: Implement the Broker domain entity from the current Target Model definition, expressing its declared fields, ownership relationship to User, rules, and required initial data as domain-native validation.
+              reason: Assets and accounts need a validated broker representation to attach to before they can be defined.
+              kind: code
+              inputs:
+              - Current Target Model definition for Broker
+              - User Model
+              expected_result: A validated Broker Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial record.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: The model accepts every valid declared Broker state, rejects states that violate a declared rule such as its uniqueness rule, and declares the required initial record.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_broker_valid_and_initial_data — passed.'
+            P1-T7:
+              id: P1-T7
+              title: Define the Asset domain model
+              description: Implement the Asset domain entity from the current Target Model definition, expressing its declared fields, relationship to Broker, rules, and required initial data as domain-native validation.
+              reason: Actions and positions need a validated tradable asset representation to reference.
+              kind: code
+              inputs:
+              - Current Target Model definition for Asset
+              - Broker Model
+              expected_result: A validated Asset Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial records.
+              depends_on:
+              - P1-T6
+              constraints: []
+              acceptance: The model accepts every valid declared Asset state, rejects states that violate a declared rule such as its uniqueness rule, and declares the required initial records.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_asset_valid_and_boundary_zero_allowed, test_asset_rejects_negative_point_size — all passed.'
+        P1-G4:
+          id: P1-G4
+          title: Account Organization Models
+          description: Covers the entities that organize and represent funded trading accounts.
+          area: Trading account organization
+          does: The Account Group and Account domain entities exist as validated Models expressing their declared fields, relationships, rules, and initial data.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-T8:
+              id: P1-T8
+              title: Define the Account Group domain model
+              description: Implement the Account Group domain entity from the current Target Model definition, expressing its declared fields, ownership relationship to User, rules, and required initial data as domain-native validation.
+              reason: Trading accounts need an independent grouping concept to belong to before they can be organized.
+              kind: code
+              inputs:
+              - Current Target Model definition for Account Group
+              - User Model
+              expected_result: A validated Account Group Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial record.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: The model accepts every valid declared Account Group state, rejects states that violate a declared rule such as its uniqueness rule, and declares the required initial record.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_account_group_valid_and_initial_data — passed.'
+            P1-T9:
+              id: P1-T9
+              title: Define the Account domain model
+              description: Implement the Account domain entity from the current Target Model definition, expressing its declared fields, credential handling meaning, relationships to Account Group, Broker, Instance, and Currency, rules, and required initial data as domain-native validation.
+              reason: A funded trading account must be represented before it can be used by any action or position.
+              kind: code
+              inputs:
+              - Current Target Model definition for Account
+              - Account Group Model
+              - Broker Model
+              - Instance Model
+              - Currency Model
+              expected_result: A validated Account Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial record.
+              depends_on:
+              - P1-T8
+              - P1-T6
+              - P1-T4
+              - P1-T5
+              constraints: []
+              acceptance: The model accepts every valid declared Account state, rejects states that violate a declared rule such as its combined-uniqueness rule or its credential-duplication rule, and declares the required initial record.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_account_valid_and_defaults, test_account_rejects_non_positive_leverage, test_account_credential_fields_declared — all passed.'
+        P1-G5:
+          id: P1-G5
+          title: Risk Management Rule Models
+          description: Covers the entities that define how open trades are trailed and partially closed.
+          area: Trailing and partial-close rule management
+          does: The Trailing Group, Trailing Rule, Partial Group, and Partial Rule domain entities exist as validated Models expressing their declared fields, relationships, and rules.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-T10:
+              id: P1-T10
+              title: Define the Trailing Group domain model
+              description: Implement the Trailing Group domain entity from the current Target Model definition, expressing its declared fields, ownership relationship to User, rules, and required initial data as domain-native validation.
+              reason: Trailing rules need an independent rule-set grouping to belong to before they can be defined.
+              kind: code
+              inputs:
+              - Current Target Model definition for Trailing Group
+              - User Model
+              expected_result: A validated Trailing Group Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial record.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: The model accepts every valid declared Trailing Group state, rejects states that violate a declared rule such as its uniqueness rule, and declares the required initial record.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_trailing_group_valid — passed.'
+            P1-T11:
+              id: P1-T11
+              title: Define the Trailing Rule domain model
+              description: Implement the Trailing Rule domain entity from the current Target Model definition, expressing its declared fields, relationship to Trailing Group, activation and adjustment rules, and rules as domain-native validation.
+              reason: The system needs a validated representation of each individual trailing activation condition and adjustment before it can be applied.
+              kind: code
+              inputs:
+              - Current Target Model definition for Trailing Rule
+              - Trailing Group Model
+              expected_result: A validated Trailing Rule Model exists in the shared package, enforcing every declared field, relationship, and rule.
+              depends_on:
+              - P1-T10
+              constraints: []
+              acceptance: The model accepts every valid declared Trailing Rule state and rejects states that violate a declared rule such as its uniqueness rule.
+              verify: Construction succeeds for valid data and fails for data violating a declared rule.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_trailing_rule_valid_and_optional_adjustments, test_trailing_rule_rejects_negative_trigger_percentage — all passed.'
+            P1-T12:
+              id: P1-T12
+              title: Define the Partial Group domain model
+              description: Implement the Partial Group domain entity from the current Target Model definition, expressing its declared fields, ownership relationship to User, rules, and required initial data as domain-native validation.
+              reason: Partial-close rules need an independent rule-set grouping to belong to before they can be defined.
+              kind: code
+              inputs:
+              - Current Target Model definition for Partial Group
+              - User Model
+              expected_result: A validated Partial Group Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial record.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: The model accepts every valid declared Partial Group state, rejects states that violate a declared rule such as its uniqueness rule, and declares the required initial record.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_partial_group_valid — passed.'
+            P1-T13:
+              id: P1-T13
+              title: Define the Partial Rule domain model
+              description: Implement the Partial Rule domain entity from the current Target Model definition, expressing its declared fields, relationship to Partial Group, activation and close-percentage rules, and rules as domain-native validation.
+              reason: The system needs a validated representation of each individual partial-close activation condition and volume before it can be applied.
+              kind: code
+              inputs:
+              - Current Target Model definition for Partial Rule
+              - Partial Group Model
+              expected_result: A validated Partial Rule Model exists in the shared package, enforcing every declared field, relationship, and rule.
+              depends_on:
+              - P1-T12
+              constraints: []
+              acceptance: The model accepts every valid declared Partial Rule state and rejects states that violate a declared rule such as its uniqueness rule.
+              verify: Construction succeeds for valid data and fails for data violating a declared rule.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_partial_rule_valid_and_boundary_close_percentage, test_partial_rule_rejects_close_percentage_over_100, test_partial_rule_rejects_zero_close_percentage — all passed.'
+        P1-G6:
+          id: P1-G6
+          title: Action and Position Models
+          description: Covers the entities that define how a position is opened and the resulting tracked positions.
+          area: Trading action definition and position tracking
+          does: The Action Group, Action, and Position domain entities exist as validated Models expressing their declared fields, relationships, and rules.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-T14:
+              id: P1-T14
+              title: Define the Action Group domain model
+              description: Implement the Action Group domain entity from the current Target Model definition, expressing its declared fields, ownership relationship to User, rules, and required initial data as domain-native validation.
+              reason: Trading actions need an independent risk-profile grouping to belong to before they can be defined.
+              kind: code
+              inputs:
+              - Current Target Model definition for Action Group
+              - User Model
+              expected_result: A validated Action Group Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial record.
+              depends_on:
+              - P1-T2
+              constraints: []
+              acceptance: The model accepts every valid declared Action Group state, rejects states that violate a declared rule such as its uniqueness rule, and declares the required initial record.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_action_group_valid — passed.'
+            P1-T15:
+              id: P1-T15
+              title: Define the Action domain model
+              description: Implement the Action domain entity from the current Target Model definition, expressing its declared fields, relationships to Action Group, Asset, Account, Partial Group, and Trailing Group, rules, and required initial data as domain-native validation.
+              reason: The system needs a validated representation of how a position must be opened before any position can be created from it.
+              kind: code
+              inputs:
+              - Current Target Model definition for Action
+              - Action Group Model
+              - Asset Model
+              - Account Model
+              - Partial Group Model
+              - Trailing Group Model
+              expected_result: A validated Action Model exists in the shared package, enforcing every declared field, relationship, and rule and declaring the required initial record.
+              depends_on:
+              - P1-T14
+              - P1-T7
+              - P1-T9
+              - P1-T12
+              - P1-T10
+              constraints: []
+              acceptance: The model accepts every valid declared Action state, rejects states that violate a declared rule such as its uniqueness rule, and declares the required initial record.
+              verify: Construction succeeds for valid data, fails for data violating a declared rule, and the declared initial data is observable through the public interface.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_action_valid_and_initial_data — passed.'
+            P1-T16:
+              id: P1-T16
+              title: Define the Position domain model
+              description: Implement the Position domain entity from the current Target Model definition, expressing its declared fields, relationships to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action, and rules as domain-native validation.
+              reason: The system needs a validated record of every opened and pending position, traceable to the action and account that produced it.
+              kind: code
+              inputs:
+              - Current Target Model definition for Position
+              - User Model
+              - Trading Platform Model
+              - Broker Model
+              - Account Model
+              - Trailing Group Model
+              - Partial Group Model
+              - Action Group Model
+              - Action Model
+              expected_result: A validated Position Model exists in the shared package, enforcing every declared field, relationship, and rule.
+              depends_on:
+              - P1-T2
+              - P1-T3
+              - P1-T6
+              - P1-T9
+              - P1-T10
+              - P1-T12
+              - P1-T14
+              - P1-T15
+              constraints: []
+              acceptance: The model accepts every valid declared Position state and rejects states that violate a declared rule such as its uniqueness rule.
+              verify: Construction succeeds for valid data and fails for data violating a declared rule.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'pytest: test_position_valid_and_defaults, test_position_rejects_non_positive_volume — all passed.'
+        P1-G7:
+          id: P1-G7
+          title: Public Interface, Verification, and Documentation
+          description: Confirms the complete Model package behaves correctly as one public unit and is fully documented for its consumers.
+          area: Model package public interface, cross-entity verification, and documentation
+          does: The complete Model package is verified end-to-end from a clean environment and carries a documentation file that meets the Model Standard's requirements.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-T17:
+              id: P1-T17
+              title: Verify domain validation across every Model
+              description: Exercise every domain entity's valid states, invalid states, boundary values, nullability, defaults, omitted-versus-explicit-null semantics, and declared relationships to confirm the complete Model set behaves as the current Target definition and Model Standard require.
+              reason: Individual entity correctness must be confirmed together, since cross-entity relationships and shared conventions can only be observed once every entity exists.
+              kind: verification
+              inputs:
+              - Every domain entity defined in this phase
+              expected_result: Durable checks exist that observe correct and incorrect construction, defaulting, and partial-update behaviour for every domain entity in the package.
+              depends_on:
+              - P1-T2
+              - P1-T3
+              - P1-T4
+              - P1-T5
+              - P1-T6
+              - P1-T7
+              - P1-T8
+              - P1-T9
+              - P1-T10
+              - P1-T11
+              - P1-T12
+              - P1-T13
+              - P1-T14
+              - P1-T15
+              - P1-T16
+              constraints: []
+              acceptance: Every domain entity's declared rules, defaults, and relationships are independently observed to hold, with no requirement resting on a single narrow example.
+              verify: A repeatable check suite constructs valid and invalid states for every entity and observes the expected acceptance or rejection for each.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'Full suite (tests/test_entities.py): 30 tests exercising valid/invalid/boundary/default/omitted-vs-null/relationship/initial-data conditions across all 15 entities — 38 total package tests passed; ruff check and pyright clean on src/.'
+            P1-T18:
+              id: P1-T18
+              title: Verify the public package interface end-to-end
+              description: Confirm that the Model package's documented public interface can be imported, that every domain entity is reachable through it exactly once, that schema generation and serialization behave deterministically, and that the package installs cleanly in an isolated environment.
+              reason: A domain entity is only usable by the rest of the project once it is reliably reachable through the package's stable public interface.
+              kind: verification
+              inputs:
+              - Every domain entity defined in this phase
+              - Model package public interface
+              expected_result: The package's public interface exposes every domain entity exactly once, produces deterministic serialization and schema output, and installs cleanly from a clean environment.
+              depends_on:
+              - P1-T17
+              constraints: []
+              acceptance: A consumer can import every domain entity through the documented public interface, serialize and generate its schema deterministically, and a clean-environment install succeeds.
+              verify: A repeatable check imports the package's public namespace, exercises serialization and schema generation for a representative entity, and performs a clean-environment installation.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: 'tests/test_public_interface.py (8 tests) passed: module-qualified and alternate import, every entity reachable exactly once at root, deterministic model_dump/model_dump_json, model_json_schema for every entity, partial-update omission-vs-null. Clean-environment install verified in an isolated /tmp venv via uv pip install . followed by import and construction.'
+            P1-T19:
+              id: P1-T19
+              title: Produce the Model package documentation
+              description: Write the Model package's required developer-facing documentation describing its responsibility and boundaries, installation and import, public interface and usage pattern, entity categories and their meaning, validation and credential handling, and complete domain-neutral runnable examples.
+              reason: A completed Model package is not usable by another component or developer until its boundary, interface, and usage are documented.
+              kind: documentation
+              inputs:
+              - Every domain entity defined in this phase
+              - Model package public interface
+              expected_result: A complete developer-facing documentation file exists at the Model package boundary covering every section the Model Standard requires.
+              depends_on:
+              - P1-T18
+              constraints: []
+              acceptance: The documentation explains the package's responsibility, boundaries, installation, public interface, entity categories, validation and credential rules, and includes complete domain-neutral runnable examples consistent with the implemented interface.
+              verify: Every required documentation section is present, its examples run successfully against the implemented public interface, and no example exposes project-specific or ORM/API/database detail.
+              status: done
+              log:
+              - at: '2026-09-12T05:05:00Z'
+                by: developing
+                event: completed
+                check: DOCUMENTATION.md written at package root covering all required sections; every code example in it was executed directly and completed without error.
+    P2:
+      id: P2
+      title: Database
+      order: 2
+      target: Database
+      does: 'Implement the database using the shared Model package: its storage mapping, migration history, credential at-rest protection, generic Model-driven data-access interface, transactions, controlled SQL route, and declared initial data, published through one Instance Registry.'
+      constraints: []
+      task_count: 11
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Package Foundation and Runtime Configuration
+          description: Establishes the independent Database package boundary, its three internal layers, and the runtime configuration and Instance Registry that describe available database identities without exposing connections or secrets.
+          area: Database package scaffolding, layering, and Instance Registry
+          does: A stable, importable Database package exists with its three internal layers wired in dependency order, a resolved runtime configuration, and a public Instance Registry exposing the configured default Instance.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T1:
+              id: P2-T1
+              title: Establish the Database package, internal layering, and Instance Registry
+              description: Create the independent Database package with its Database Interface, Data Logic and Mapping, and Storage Adapter layers wired in one dependency direction, resolve the runtime Engine and Instance configuration, and publish an Instance Registry exposing selectable Instance identities and the configured default without exposing connections or secrets.
+              reason: Every later Database capability needs one package boundary, a resolved Instance configuration, and a way for a consumer to discover and select an Instance before any data operation can run.
+              kind: code
+              inputs: []
+              expected_result: An importable Database package exists exposing its public interface and an Instance Registry that lists the configured Instance identities and names the default, with no raw connection or secret reachable through it.
+              depends_on: []
+              constraints: []
+              acceptance: The package can be imported through its documented namespace; the Instance Registry reports the configured default Instance identity; no connection object or secret value is reachable from the public interface.
+              verify: Importing the package's public namespace succeeds in a clean isolated environment, the Instance Registry lists the configured Instance and its default, and inspecting the registry's returned data exposes no connection or secret.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: package imports cleanly in a from-scratch environment; registry.list_instances() lists the "general" Instance and default_instance() names it; no connection or secret attribute is reachable on the returned identity objects (test_registry.py, 2 tests).'
+        P2-G2:
+          id: P2-G2
+          title: Storage Mapping
+          description: Covers the persistence mapping of every domain entity declared by the Model package into the storage schema, preserving field meaning, relationships, and nullability.
+          area: Model-to-storage mapping
+          does: Every persistent domain entity has a traceable storage mapping preserving its fields, relationships, cardinality, and nullability as resolved by Model.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T2:
+              id: P2-T2
+              title: Map every persistent domain entity to its storage schema
+              description: Map every domain entity declared by the current Model package to a storage table, preserving each field's resolved type and nullability, representing every declared relationship as an explicit foreign key with cardinality-preserving constraints, and reproducing every uniqueness rule the current Target declares for that entity as a storage-level uniqueness constraint, without redefining any domain meaning owned by Model.
+              reason: Model rules and relationships persist only when the storage schema faithfully reproduces the meaning Model already resolved.
+              kind: code
+              inputs:
+              - Every domain entity in the current my_model package
+              expected_result: Every persistent domain entity has a resolved storage table whose columns, nullability, foreign keys, and declared uniqueness rules trace back to its Model definition, with each relationship's cardinality and optionality preserved.
+              depends_on:
+              - P2-T1
+              constraints: []
+              acceptance: Every entity's declared fields, relationships, and uniqueness rules are represented in the storage schema with matching nullability, referential structure, and uniqueness enforcement, and no entity is mapped to a table that its own persistence classification does not warrant.
+              verify: The resolved schema is inspected against the current Model definitions and every field, relationship, nullability constraint, and declared uniqueness rule traces to its source without contradiction, and an attempt to persist a duplicate of a uniquely constrained combination is rejected by the storage layer.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: 15 tables created matching my_model 1:1, all foreign keys and 17 declared uniqueness constraints present (unique single-field and composite), confirmed by direct SQLAlchemy inspection against the ORM metadata (test_migrations.py::test_upgrade_creates_exactly_the_resolved_schema; test_no_schema_drift...).'
+        P2-G3:
+          id: P2-G3
+          title: Migration History
+          description: Covers the ordered, recorded history of storage-structure changes that makes the schema reproducible from the repository.
+          area: Schema migration history
+          does: The complete storage schema is reproducible from an ordered, integrity-checked migration history rather than from any manual or startup structural step.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T3:
+              id: P2-T3
+              title: Establish the migration environment and the initial schema migration
+              description: Establish the migration tooling environment and record the initial migration that creates the complete current storage schema, with an integrity marker and a tested reversal, so the schema can be reproduced and verified from the repository alone.
+              reason: The storage schema must never exist only inside a running server or a manual step; migration history is the authoritative record of how it was reached.
+              kind: code
+              inputs:
+              - The resolved storage schema
+              expected_result: Applying the migration history to an empty database produces the complete current schema, downgrading reverses it cleanly, and the migration carries a verifiable integrity marker.
+              depends_on:
+              - P2-T2
+              constraints: []
+              acceptance: An empty database upgraded through the migration history matches the resolved schema exactly, and downgrading afterward returns it to empty; startup never creates or alters schema outside this history.
+              verify: Running the upgrade path against an empty database produces the expected schema, running the downgrade path reverses it, and no code path outside migration issues a structural database command.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: alembic upgrade head creates the complete schema from empty, alembic downgrade -1 removes it completely, re-upgrade reproduces it; integrity manifest checksum matches the current migration file (test_migrations.py, 4 tests).'
+        P2-G4:
+          id: P2-G4
+          title: Credential At-Rest Protection
+          description: Covers the persistence-time transformation applied to every field Model declares as a credential.
+          area: Credential classification and at-rest transformation
+          does: Every credential field declared by a persistent Model resolves to its classified at-rest treatment before being stored, and its storage representation is never exposed through reads or diagnostics.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T4:
+              id: P2-T4
+              title: Apply classified at-rest transformations to declared credential fields
+              description: 'Classify every field a persistent Model declares as a credential and apply its resolved at-rest treatment before the value is stored: an approved one-way hash for a verification-only credential, and authenticated encryption sourced from Database''s private runtime secret for a credential that must be recoverable. Ensure the storage representation is never returned by a read operation or a diagnostic path.'
+              reason: A stored credential is only as safe as its at-rest treatment, and treatment decided per caller rather than per field classification produces inconsistent protection.
+              kind: code
+              inputs:
+              - Every credential field declared across the current my_model entities
+              expected_result: Every declared credential field is transformed to its classified at-rest representation on write, the transformation is reversible only where recoverability is required, and no operation returns the raw storage representation.
+              depends_on:
+              - P2-T2
+              constraints: []
+              acceptance: A hashed credential cannot be recovered from storage, an encrypted credential can only be recovered through the resolved key source, and no read or logged output exposes a storage representation.
+              verify: Writing a credential value and reading it back exposes only the resolved external representation, direct inspection of storage shows the transformed value, and no log or error path prints it.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: password hashed via PBKDF2-HMAC-SHA256 (irreversible, verified via verify_hash), api_key encrypted via Fernet (round-trips via decrypt_value, rejects tampered tokens), seeded Admin row inspected directly in SQLite showing neither field stored as plaintext (test_credentials.py, 5 tests).'
+        P2-G5:
+          id: P2-G5
+          title: Generic Data-Access Interface
+          description: Covers the one generic, Model-driven operation pipeline every persistent entity shares, its status toggle, and its transaction boundary.
+          area: Generic Model-driven data operations and transactions
+          does: A consumer performs add, read, read-by-identifier, list, edit, delete, and status operations on any persistent Model type through one generic interface, with related operations groupable into one committed or rolled-back unit.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-T5:
+              id: P2-T5
+              title: Implement the generic Model-driven CRUD operation pipeline
+              description: Implement one generic operation pipeline that performs add, read, read-by-identifier, list, edit, and delete for any persistent Model type passed as an imported type or instance, applying Model validation and the resolved storage mapping without a separate implementation per Model.
+              reason: Every current and future persistent Model must be usable through the same operations without the interface growing per Model.
+              kind: code
+              inputs:
+              - Resolved storage mapping
+              - Current my_model public interface
+              expected_result: Every persistent Model supports add, read, read-by-identifier, list, edit, and delete through one shared pipeline, rejecting an operation whose criteria or payload does not satisfy Model validation or a persistence constraint.
+              depends_on:
+              - P2-T2
+              - P2-T3
+              - P2-T4
+              constraints: []
+              acceptance: Each operation is exercised against more than one distinct Model type using the same generic call shape, confirming it is not a per-Model implementation, and an invalid payload or unresolvable reference is rejected with an observable result rather than a raw storage error.
+              verify: The same generic operation call, parameterized only by Model type and criteria, is run against multiple distinct persistent Models and produces the correct create, read, list, update, and delete outcome for each, and constraint or validation violations are observably rejected.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: add/get/list/update/delete exercised across Broker, Currency, User, AccountGroup via the identical generic call shape; invalid payload rejected as ValidationFailed before storage; duplicate unique value and unresolvable foreign key rejected as ConstraintViolation; missing identifier raises NotFound (test_operations.py, 12 tests).'
+            P2-T6:
+              id: P2-T6
+              title: Implement the status enable and disable operation
+              description: Implement the status operation accepting exactly enable or disable, available only for a Model that declares a status field, changing that field to the corresponding value through the same generic pipeline.
+              reason: Activating and deactivating a record is a common operation that must not require a bespoke implementation per Model.
+              kind: code
+              inputs:
+              - Generic CRUD operation pipeline
+              expected_result: A Model with a status field can be enabled and disabled through the status operation, and a Model without a status field rejects the operation.
+              depends_on:
+              - P2-T5
+              constraints: []
+              acceptance: Enabling and disabling a record changes only its status field and is observable on a subsequent read; requesting the operation on a Model without a status field is rejected.
+              verify: The status operation is exercised on a Model that declares status and on one that structurally has no status field, observing acceptance in the first case and rejection in the second.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: TradingPlatform (has status) enabled/disabled through the same pipeline and observed on a subsequent read; a locally defined Model without a status field is rejected with UnsupportedOperation, proving the check is real rather than assumed (test_operations.py, 2 tests).'
+            P2-T7:
+              id: P2-T7
+              title: Implement the transaction boundary for grouped operations
+              description: Publish a transaction boundary through the generic interface allowing a consumer to group related data operations on one Instance so they commit together only when the whole unit succeeds, roll back together on failure, and report a distinguishable outcome for conflict, timeout, or connection failure.
+              reason: Related changes must never be left partially applied when one operation in a related group fails.
+              kind: code
+              inputs:
+              - Generic CRUD operation pipeline
+              - Instance Registry
+              expected_result: A group of operations performed inside one transaction is committed together only when every operation and constraint succeeds, and any failure inside the group leaves no partial change.
+              depends_on:
+              - P2-T5
+              constraints: []
+              acceptance: A successful group of operations is fully visible after commit, and a group containing one failing operation leaves the data exactly as it was before the group started.
+              verify: A transaction containing multiple operations is run to a successful commit and observed fully applied; a second transaction is forced to fail partway through and observed to leave no partial change.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: two operations in one Unit are only visible after the with-block exits (commit); a Unit containing a duplicate-name failure leaves zero rows from that group afterward (test_transactions.py, 2 tests).'
+        P2-G6:
+          id: P2-G6
+          title: Initial Data Seeding
+          description: Covers the reproducible insertion of every Model-declared initial record.
+          area: Declared initial-data seeding
+          does: Every initial record declared by a persistent Model exists after seeding, resolved in dependency order and safe to repeat without duplication.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T8:
+              id: P2-T8
+              title: Seed every Model-declared initial record
+              description: Insert every initial record declared by a persistent Model's initial data, resolving required relationships and non-nullable fields, applying declared credential generation instead of a literal value, in dependency order, and without duplicating a record already seeded.
+              reason: A rebuilt database is only equivalent to the project's declared state when its required initial records come back with the same meaning.
+              kind: code
+              inputs:
+              - Every persistent Model's declared initial data
+              - Resolved storage mapping
+              - Credential at-rest transformation
+              expected_result: Every Model-declared initial record exists exactly once after seeding, with every declared credential generated rather than stored as a literal, and repeating seeding introduces no duplicate.
+              depends_on:
+              - P2-T3
+              - P2-T4
+              - P2-T5
+              constraints: []
+              acceptance: Seeding is run against an empty migrated database and every declared initial record is observed present with correct relationships; seeding is run a second time and no duplicate or error results.
+              verify: Seeding a freshly migrated empty database is followed by reading back every declared initial record by its identifying fields, and seeding is repeated to confirm idempotency.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: fresh migrated database seeded with all 12 initial-data-bearing Models and correct counts; running seed() again inserts zero additional rows; seeded relationships (Account -> AccountGroup, Broker) resolve correctly (test_seed.py, 3 tests).'
+        P2-G7:
+          id: P2-G7
+          title: Controlled SQL Execution
+          description: Covers the capability-restricted, parameterized SQL route for data operations the generic pipeline cannot express.
+          area: Controlled parameterized SQL execution
+          does: A capability-restricted route exists for parameterized data-only SQL that preserves the same validation, constraint, and credential protections as the generic operations and rejects structural or privilege changes.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-T9:
+              id: P2-T9
+              title: Implement the controlled parameterized SQL execution route
+              description: Implement a capability-restricted execution route for data-only SQL using parameterized values and an internal allow-list of identifiers, applying the same Model validation, persistence constraints, and credential protections as the generic operations, and rejecting structural changes, privilege changes, and migration operations.
+              reason: Some data operations cannot be expressed through the generic pipeline, but they must never bypass Database's protections to get it.
+              kind: code
+              inputs:
+              - Generic CRUD operation pipeline
+              - Resolved storage mapping
+              expected_result: A parameterized, allow-listed data command executes and returns a protected result under the same validation and constraint guarantees as the generic operations, while a structural, privilege, or migration command is rejected before execution.
+              depends_on:
+              - P2-T5
+              - P2-T7
+              constraints: []
+              acceptance: An allowed parameterized read or write completes and its result withholds credential storage representations; an attempted structural, privilege, or migration command through this route is rejected without effect.
+              verify: A parameterized command is executed and its result inspected for protected-data withholding; a structural command is attempted through the same route and observed rejected with the schema left unchanged.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Verified: a parameterized select redacts password/api_key in its result; DROP/ALTER/GRANT/PRAGMA/VACUUM/multi-statement/unknown-table attempts are all rejected before execution; a parameterized update applies and is observable afterward (test_sql.py, 9 tests).'
+        P2-G8:
+          id: P2-G8
+          title: Verification and Documentation
+          description: Confirms the complete Database package behaves correctly end-to-end and is fully documented for its consumers.
+          area: Database package end-to-end verification and documentation
+          does: The complete Database package is verified end-to-end from a freshly migrated and seeded database and carries documentation meeting the Database Standard's requirements.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-T10:
+              id: P2-T10
+              title: Verify the complete Database package end-to-end
+              description: Exercise migration, storage mapping, credential at-rest protection, the generic operation pipeline, the status operation, transactions, initial-data seeding, and the controlled SQL route together from a freshly migrated database to confirm the complete Database package satisfies the current Database Standard and the current Model definitions.
+              reason: Individual layer correctness must be confirmed together, since schema, mapping, credential protection, and transaction behaviour interact only once the whole package runs against a real database.
+              kind: verification
+              inputs:
+              - Every capability built in this phase
+              expected_result: Durable checks exist that observe migration, mapping, declared uniqueness enforcement, credential protection, every generic operation, the status toggle, transaction commit and rollback, seeding idempotency, and the controlled SQL route against a real database.
+              depends_on:
+              - P2-T2
+              - P2-T3
+              - P2-T4
+              - P2-T5
+              - P2-T6
+              - P2-T7
+              - P2-T8
+              - P2-T9
+              constraints: []
+              acceptance: Every declared persistence guarantee, constraint, and protection is independently observed to hold against a real freshly migrated database, with no requirement resting on a single narrow example.
+              verify: A repeatable check suite migrates an empty database, seeds it, and exercises every generic operation, the status toggle, a committed and a rolled-back transaction, credential protection, and the controlled SQL route, and separately attempts to persist a duplicate of at least one uniquely constrained combination and observes it rejected, observing the expected outcome for each.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: 'Full suite: 38 tests across test_registry, test_migrations, test_credentials, test_operations, test_transactions, test_seed, test_sql passed from a from-scratch environment (rm -rf .venv data; uv sync; pytest). ruff check/format and pyright both clean on src/ and tests/.'
+            P2-T11:
+              id: P2-T11
+              title: Produce the Database package documentation
+              description: Write the Database package's required developer-facing documentation describing its responsibilities and boundaries, its three internal layers, the public interface and Instance Registry, engine and migration configuration, transactions, the boundary between Database and the other components, credential protection and controlled SQL, and complete domain-neutral runnable examples for every required operation.
+              reason: A completed Database package is not usable by another component or developer until its boundary, interface, and usage are documented.
+              kind: documentation
+              inputs:
+              - Every capability built in this phase
+              - Database public interface
+              expected_result: A complete developer-facing documentation file exists at the Database package boundary covering every section the Database Standard requires, with runnable examples for every required operation.
+              depends_on:
+              - P2-T10
+              constraints: []
+              acceptance: Every required documentation section is present and its examples are runnable against the implemented public interface without exposing a connection, secret, ORM object, or Model identified by a bare string.
+              verify: Every required documentation example is executed directly against the implemented public interface and completes without error, and the document is inspected for the required sections.
+              status: done
+              log:
+              - at: '2026-09-12T05:44:29Z'
+                by: developing
+                event: completed
+                check: DOCUMENTATION.md written at the package root covering purpose/boundaries, the three layers, public interface, engine/migration/transaction configuration, the Model/Backend/Platform/Development boundary, credential protection, and controlled SQL. Every code example was executed directly against a freshly migrated and seeded database and completed without error.
