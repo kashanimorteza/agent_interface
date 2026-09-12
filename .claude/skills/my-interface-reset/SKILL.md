@@ -54,11 +54,15 @@ Do not alter Plan, Review, phase State, implementation output, or History belong
 
 ### Config reset
 
-Remove every operational Config file currently catalogued by the Interface. Preserve the Config container, all developed implementation outputs, and Environment preparation. Do not regenerate Config, because regeneration belongs to Configure and running it here would hide whether the reset itself worked. Report that surviving implementation is no longer represented by operational Config until Configure recreates and later operations reconcile those records.
+Remove every operational Config file currently catalogued by the Interface. Preserve the Config container, all developed implementation outputs, and Environment preparation. A removed Config file MUST be physically absent: clearing its records, truncating it, replacing it with schema defaults, or recreating an initialized file is not a Config reset.
+
+Before confirmation, run `python3 scripts/remove_config_files.py --config-root <resolved-config-directory> <resolved-config-file ...>` without `--apply` and include its validated target list in the preview. After confirmation, run the same command with `--apply`. Do not use Edit or Write to simulate deletion. Do not regenerate Config, because regeneration belongs to Configure and running it here would hide whether the reset itself worked. Report that surviving implementation is no longer represented by operational Config until Configure recreates and later operations reconcile those records.
 
 ### Complete reset
 
-Remove every operational Config file currently catalogued by the Interface and every developed implementation output attributable to any Target phase and owned by the current Interface. This is the union of Config reset and resetting all phases. Preserve only the Config container, Interface sources, Human and Technical Target definitions, Environment preparation, and anything outside Interface ownership. Do not regenerate Config or invoke another operation afterward.
+Remove every operational Config file currently catalogued by the Interface and every developed implementation output attributable to any Target phase and owned by the current Interface. This is the union of Config reset and resetting all phases. Preserve only the Config container, Interface sources, Human and Technical Target definitions, Environment preparation, and anything outside Interface ownership.
+
+Keep Config records available until implementation targets have been resolved and removed, then physically delete the Config files last through `scripts/remove_config_files.py` using the same previewed target list. Do not truncate, initialize, rewrite, or recreate them. Do not regenerate Config or invoke another operation afterward.
 
 ### Confirmation
 
@@ -66,11 +70,15 @@ Inspect the resolved targets for the selected scope and show the exact changes w
 
 The initial invocation is not approval. Apply the resolved changes only after the user explicitly accepts that preview. Deletion is permanent for untracked files unless they are separately backed up, which is why the preview exists and why it is never skipped.
 
+For Config and Complete scopes, confirmation authorizes only the exact Config targets validated in the preview. If that list changes, preview again and obtain renewed confirmation.
+
 Do not invoke another workflow operation after resetting.
 
 ## Boundaries
 
 Perform only the selected Reset scope. Do not perform another Interface Operation, reinterpret Target intent, reverse Environment preparation, or remove anything outside the resolved targets shown in the preview.
+
+Never remove or modify an Interface source outside `.interface/foundation/config/`. Before reporting Complete success, verify that every protected Interface source observed during preview still exists and is unchanged.
 
 ## Report
 
@@ -85,3 +93,5 @@ After confirmation, report the outcome:
 4. **Applied** — what was actually removed or changed, and the resulting State position.
 5. **Not applied** — anything in the preview that could not be changed, and why.
 6. **Required next step** — for a phase reset, identify that Planning or Implement may rebuild the selected phases; for config or complete reset, identify which operations must wait for Configure to recreate operational Config. Operations that do not require removed records remain available within their current authority.
+
+For Config and Complete scopes, report success only when every previewed Config path is absent. A remaining, empty, initialized, or recreated Config file is a failed Reset and MUST be listed under **Not applied**.

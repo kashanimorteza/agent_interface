@@ -11,53 +11,5 @@ content_map:
   finding_count: "Total number of stored Findings."
   reviews: "The current review record for each reviewed phase."
 content:
-  finding_count: 1
-  reviews:
-    P3:
-      id: "P3"
-      title: "Backend"
-      target: "Backend"
-      scope: "Plan Assurance re-confirmed satisfied (unchanged), and Implementation Assurance performed against the completed Backend package: source, 21 durable checks (API, Data Access, Logic, OpenAPI), a real running server process, and independent adversarial verification of a third Model's generic CRUD over HTTP, omitted-vs-explicit-null partial-update semantics, credential update-without-echo, pagination, status-on-missing-id, and the Update schema's write-only Credential fields."
-      outcome: "satisfied"
-      plan_outcome: "satisfied"
-      implementation_outcome: "satisfied"
-      reviewed_by: "reviewing"
-      reviewed_at: "2026-09-12T07:31:29Z"
-      finding_count: 0
-      findings: {}
-    P2:
-      id: "P2"
-      title: "Database"
-      target: "Database"
-      scope: "Plan Assurance re-confirmed satisfied (unchanged), and Implementation Assurance performed against the completed Database package: source, 38 durable checks (migrations, credential protection, generic CRUD/status/transactions, seeding, controlled SQL, registry), and independent adversarial verification of referenced-record delete protection across a second relationship, credential redaction on Instance and Account, parameterized-injection safety, and the failure paths of both the migration integrity manifest and the schema-drift detector. All 17 declared uniqueness constraints cross-checked individually against the Target definition."
-      outcome: "satisfied"
-      plan_outcome: "satisfied"
-      implementation_outcome: "satisfied"
-      reviewed_by: "reviewing"
-      reviewed_at: "2026-09-12T05:46:35Z"
-      finding_count: 1
-      findings:
-        P2-F1:
-          id: "P2-F1"
-          kind: "gap"
-          severity: "blocking"
-          task: "P2-T2"
-          expected: "Database Standard 2.10 requires Database to guarantee every Model rule that depends on stored state, explicitly including uniqueness across records, for every persistent Model. The current Target declares a composite or simple uniqueness rule for User, Instance, Currency, Broker, Asset, Account Group, Account, Trailing Group, Trailing Rule, Partial Group, Partial Rule, Action Group, and Position."
-          observed: "Task P2-T2's acceptance and verify cover field types, nullability, and referential (foreign-key) structure, but do not mention or require reproducing any declared uniqueness rule as a storage-level constraint. Task P2-T10's verification of the finished package likewise does not include observing a uniqueness violation being rejected. Planning reconciled both tasks to explicitly require reproducing and verifying declared uniqueness rules as storage-level constraints; the reconciled Plan now covers this obligation."
-          evidence: ".interface/foundation/config/plan.yaml, plans.P2.groups.P2-G2.tasks.P2-T2 (acceptance/verify) and plans.P2.groups.P2-G8.tasks.P2-T10 (verify), reconciled 2026-09-12T05:20:00Z."
-          state: "resolved"
-          raised_at: "2026-09-12T05:19:16Z"
-          settled_at: "2026-09-12T05:20:41Z"
-          settled_by: "reviewing"
-    P1:
-      id: "P1"
-      title: "Model"
-      target: "Model"
-      scope: "Plan Assurance re-confirmed against current Target and Component authorities (unchanged), and Implementation Assurance performed against the completed Model package: source, public interface, durable checks (38 pytest tests, ruff, pyright), and independent adversarial verification of extra-field rejection, blank-string rejection, invalid Decimal input, boundary values, and assignment re-validation across multiple entities."
-      outcome: "satisfied"
-      plan_outcome: "satisfied"
-      implementation_outcome: "satisfied"
-      reviewed_by: "reviewing"
-      reviewed_at: "2026-09-12T05:02:30Z"
-      finding_count: 0
-      findings: {}
+  finding_count: 0
+  reviews: {}

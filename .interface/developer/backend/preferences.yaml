@@ -1,0 +1,120 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/developer/backend/preferences.yaml"
+  path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
+  purpose: "Defaults and supported technical profiles for the independent Backend package, its Model Interface, Database Interface, Logic, API Interface, and API framework."
+  standard: "Agent Project Interface"
+  version: "5.0"
+  updated: "2026-09-12"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved Backend choices back into it."
+  changed_by: "The human, directly. A missing critical technical choice is raised through State."
+  precedence: "An explicit project value and every applicable Backend Principle take precedence over this file."
+  consumption: "Operations resolve unstated Backend choices from these defaults and the current project definition when planning or implementing the work. After resolving an option, they also resolve its agent_skills associations through Agent Skill Profile and use each applicable Skill according to its requirement and current verified availability."
+  selection: "Prefer a supported compatible entry. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Backend stack; implementation records use the resolved concrete version."
+  matching: "Match a selected key to the entry of that key in the matching options catalogue. An explicit project value takes priority over the selection recorded here. Match each agent_skills resource exactly to its dotted declaration under Agent Skill Profile content.settings; the association never defines the Skill or proves that it is usable."
+  environment_handling: "Create and use the selected isolated environment through its resolved tool, and do not commit environment artifacts."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+  - "implementation"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The Backend package name, code path, architectural role, package style, language and version, isolated environment, and API framework."
+  options: "Supported Backend languages, isolated environments, and API frameworks, including associated Agent Skills that can guide work on a selected option."
+  settings: "Configuration grouped by Model Interface, Database Interface, Logic, and API Interface."
+  implementation: "Empty. Concrete Backend implementation decisions are resolved from the Target, this Standard, and the selected compatible technical profile."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- selected -->
+  selected:
+    package_name: "my_backend"
+    code_path: "my_backend/"
+    language: "Python"
+    language_version: "latest"
+    environment: "uv"
+    api_framework: "FastAPI"
+    architectural_role: "application Behaviour with Model, Database, and external API interfaces"
+    package_style: "one independent package with Model Interface, Database Interface, Logic, and API Interface layers"
+
+  # <!-------------------------------------------- options -->
+  options:
+
+    languages:
+      Python:
+        version: "latest"
+        compatible_environments:
+          - "uv"
+        compatible_api_frameworks:
+          - "FastAPI"
+        naming:
+          variables: "snake_case"
+          functions: "snake_case"
+          classes: "PascalCase"
+          constants: "UPPER_SNAKE_CASE"
+          files: "snake_case"
+          folders: "snake_case"
+
+    environments:
+      uv:
+        version: "latest"
+        language: "Python"
+
+    api_frameworks:
+      FastAPI:
+        version: "latest"
+        language: "Python"
+        agent_skills:
+          - resource: "project_skills.contextual.fastapi"
+            requirement: "optional"
+            activation: "when_selected"
+            purpose: "Apply focused FastAPI guidance while implementing the selected API framework and its durable checks."
+
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    model_interface: {}
+
+    database_interface: {}
+
+    logic:
+      standard_model_operations:
+        - "create"
+        - "get"
+        - "list"
+        - "update"
+        - "delete"
+        - "status"
+      model_logic_layout:
+        unit_per_model: true
+        file_per_model: true
+        file_name: "<model>"
+        file_naming: "options.languages.<language>.naming.files"
+        file_extension: "language_default"
+        shared_definition_file: false
+        registry_may_import_units: true
+
+    api_interface:
+      transport:
+        protocol: "HTTP"
+      api_documentation:
+        enabled: true
+        type: "OpenAPI"
+      expose_standard_model_operations: true
+
+  # <!-------------------------------------------- implementation -->
+  implementation: {}

@@ -454,7 +454,7 @@ This Operation is performed through `/my-interface-implement [phase-number ...]`
 
 **Agent Skill:** `/my-interface-reset`
 
-This Operation is performed through `/my-interface-reset [phase-number ...]` to reset selected phases; with no phase input it resets every phase with generated work. `/my-interface-reset config` removes only operational Config, while `/my-interface-reset complete` removes operational Config and the implementation outputs of all phases. Every mode previews its exact impact and requires separate Human confirmation before mutation.
+This Operation is performed through `/my-interface-reset [phase-number ...]` to reset selected phases; with no phase input it resets every phase with generated work. `/my-interface-reset config` physically removes only operational Config files, while `/my-interface-reset complete` physically removes those Config files and the implementation outputs of all phases. Emptying or reinitializing a Config file is not removal. Every mode previews its exact impact and requires separate Human confirmation before mutation.
 
 <!-------------------------- Skill Installer Operation -->
 ### Skill Installer
