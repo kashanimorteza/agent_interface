@@ -19,7 +19,7 @@ Use this document as the entry point and follow its sections in this order:
 7. **[Modes](#modes)** — understand the operational positions recorded by State.
 8. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
 9. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
-10. **[Workflow](#workflow)** — follow the path from defining a Target through configuration, planning, development, review, and launch.
+10. **[Workflow](#workflow)** — choose Default, Normal, or Detailed control while following the path from Target definition through launch.
 
 
 <br><br>
@@ -148,6 +148,7 @@ This separation is one of the central architectural principles of the project.
 - **Understanding** — the current context an Agent establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
 - **Operation** — one defined action performed through an Agent Skill to configure, plan, develop, review, launch, implement, or reset work.
 - **Workflow** — the ordered path from the Human's Target definition to running software: Define Target, Configure, Plan, Develop, Review, and Launch.
+- **Workflow Path** — the Human's selected level of direct orchestration over that same Workflow: Default, Normal, or Detailed; it is an invocation style, not a State Mode.
 - **Mode** — an operational position in the Workflow, recorded by State.
 - **Skill** — an Agent capability that performs a Workflow action or provides a supporting utility; it is part of the Agent Module's integration surface, while its implementation remains outside `.interface/`.
 - **Agent Profile** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, native mappings, and validation expectations.
@@ -727,68 +728,63 @@ generates = .interface/foundation/config/review.yaml
 
 <!--------------------------------------------------------------------------------- Workflow --->
 ## Workflow
-<!-------------------------- Define the Target -->
-### Define the Target
+
+### Define the Project
+
+Define the Target before selecting a Workflow Path:
 
 ```text
-order = 1
-name = Define the Target
-actor = Human
-action = State the Target in .interface/target/non-technical.md, then translate it as the Human developer into .interface/target/technical.md without changing its intent
+Human Definition = .interface/target/non-technical.md
+Technical Definition = .interface/target/technical.md
 ```
 
+The Human states the intended outcome in Human Definition, then records its corresponding technical definition without changing that intent.
 
-<!-------------------------- Configure -->
-### Configure
+After the Project is defined, select Default, Normal, or Detailed. The path controls only how much of the Workflow the Human invokes directly; it does not change any operation contract or verification gate.
+
+### Default
+
+For the simplest complete run:
 
 ```text
-order = 2
-name = Configure
-skill = configure
-command routing = Agent Command Preferences
-action = Reconcile operational Config, synchronize Target phase identities in State, and prepare the selected Platform Environment
+/my-interface-implement
 ```
 
-<!-------------------------- Generate Tasks -->
-### Generate Tasks
+Implement processes all enabled and ready phases and performs Launch when every required gate is satisfied.
+
+### Normal
+
+For complete orchestration with phase selection:
+
+Run phases separately:
 
 ```text
-order = 3
-name = Generate Tasks
-skill = planning
-command routing = Agent Command Preferences
-action = Create or reconcile the Plan for the requested phase
+/my-interface-implement 1
+/my-interface-implement 2
+/my-interface-implement 3
+/my-interface-launch
 ```
 
-<!-------------------------- Develop the Tasks -->
-### Develop the Tasks
+Or run several phases together:
 
 ```text
-order = 4
-name = Develop the Tasks
-skill = developing
-command routing = Agent Command Preferences
-action = Implement and verify eligible Tasks for the requested phase
+/my-interface-implement 1 2 3
+/my-interface-launch
 ```
 
-<!-------------------------- Review the Result -->
-### Review the Result
+Launch runs after all required phases are complete.
+
+### Detailed
+
+For direct control over every operation:
 
 ```text
-order = 5
-name = Review the Result
-skill = reviewing
-command routing = Agent Command Preferences
-action = Evaluate the implemented result for the requested phase and record evidence-based Findings
+/my-interface-configure
+/my-interface-planning 1
+/my-interface-developing 1
+/my-interface-reviewer 1
+Repeat Planning, Developing, and Reviewing for each remaining phase
+/my-interface-launch
 ```
 
-<!-------------------------- Launch the Target -->
-### Launch the Target
-
-```text
-order = 6
-name = Launch the Target
-skill = launch
-command routing = Agent Command Preferences
-action = Verify the prepared Environment, start the completed parts through the selected Launch, verify readiness, and report access points
-```
+Reviewing checks both the current Plan and any existing implementation. A phase is reconciled before advancing, and Launch runs only after all required phases satisfy their gates.

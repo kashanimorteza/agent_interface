@@ -11,7 +11,7 @@ content_map:
   task_count: Total number of stored Tasks.
   plans: Current phase Plans and their Groups and Tasks.
 content:
-  task_count: 30
+  task_count: 37
   plans:
     P1:
       id: P1
@@ -839,3 +839,166 @@ content:
                 by: developing
                 event: completed
                 check: DOCUMENTATION.md written at the package root covering purpose/boundaries, the three layers, public interface, engine/migration/transaction configuration, the Model/Backend/Platform/Development boundary, credential protection, and controlled SQL. Every code example was executed directly against a freshly migrated and seeded database and completed without error.
+    P3:
+      id: P3
+      title: Backend
+      order: 3
+      target: Backend
+      does: Implement the backend layer, including its application Logic and Data Access translation to the shared Database interface, and publish the external API for operating on every defined Model.
+      constraints: []
+      task_count: 7
+      groups:
+        P3-G1:
+          id: P3-G1
+          title: Package Foundation
+          description: Establishes the independent Backend package boundary and its three internal layers wired in one dependency direction.
+          area: Backend package scaffolding and layering
+          does: A stable, importable Backend package exists with its API, Logic, and Data Access layers wired API -> Logic -> Data Access -> Database Interface, and a running application entry point.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-T1:
+              id: P3-T1
+              title: Establish the Backend package and its three-layer wiring
+              description: Create the independent Backend package with its API, Logic, and Data Access layers wired in the single dependency direction API -> Logic -> Data Access -> Database Interface, and an application entry point that can be started.
+              reason: Every later Backend capability needs one package boundary and a fixed dependency direction before Behaviour or endpoints can be added.
+              kind: code
+              inputs: []
+              expected_result: An importable, startable Backend application exists with its three layers present and no layer bypassing the one responsible for the next boundary.
+              depends_on: []
+              constraints: []
+              acceptance: The application starts, and inspecting the package shows API depending only on Logic, Logic only on Data Access, and Data Access as the only layer importing the Database package.
+              verify: The application process starts successfully, and a static check of imports confirms no API or Logic module imports the Database package directly.
+              status: todo
+        P3-G2:
+          id: P3-G2
+          title: Data Access Layer
+          description: Covers the sole Backend boundary that translates Logic's data requests into calls on the generic Database interface and back.
+          area: Data Access translation to the Database interface
+          does: Logic can perform create, read, read-by-identifier, list, update, delete, and status operations, and group related operations in one transaction, entirely through Data Access, with Data Access as the only Backend module that imports Database.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-T2:
+              id: P3-T2
+              title: Implement the Data Access layer
+              description: 'Implement Data Access as the sole Backend translation point to the generic Database interface: it forwards create, read, read-by-identifier, list, update, delete, and status requests for an imported Model type to the corresponding Database operation, translates results back into logical data, and connects a Logic-requested group of related operations to the public Database transaction boundary on one resolved Instance without committing any operation independently.'
+              reason: One translation point keeps every persistence call visible in one place and lets the Database implementation change without Logic being rewritten.
+              kind: code
+              inputs:
+              - Current my_database public interface
+              expected_result: Data Access exposes create, read, read-by-identifier, list, update, delete, status, and a transaction-group capability for any persistent Model type, and no other Backend module imports the Database package.
+              depends_on:
+              - P3-T1
+              constraints: []
+              acceptance: Every exposed Data Access operation reaches the correct Database operation for more than one distinct Model type, a requested group of operations commits or rolls back together through one Database transaction, and Data Access itself contains no application Behaviour.
+              verify: Each Data Access operation is exercised against multiple distinct persistent Models and produces the same outcome as calling Database directly; a grouped Data Access request is shown to commit or roll back as one unit; and a static check confirms only Data Access imports the Database package.
+              status: todo
+        P3-G3:
+          id: P3-G3
+          title: Logic Layer
+          description: Covers the shared common-operation baseline and the separately defined Logic unit for every persistent Model.
+          area: Application Behaviour and per-Model Logic units
+          does: Every persistent Model has its own separately defined Logic unit offering the standard operations the current Target and Backend Preferences select, built on a shared reusable baseline, enforcing application-context conditions and validating the resulting domain state for partial changes.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-T3:
+              id: P3-T3
+              title: Implement the shared Logic baseline and every Model's Logic unit
+              description: Implement a shared, reusable Logic baseline providing create, get, list, update, delete, and status Behaviour built on Data Access, then define one separate Logic unit per persistent Model that uses this baseline, ensuring a partial update's validation considers the resulting complete domain state and that status is offered only for a Model declaring that field.
+              reason: Every Model needs its own Logic unit so its Behaviour can later diverge from every other Model's without changing shared code, even while every unit currently relies only on the common baseline.
+              kind: code
+              inputs:
+              - Every domain entity in the current my_model package
+              - Data Access layer
+              expected_result: Every persistent Model has its own Logic unit offering the Target- and Preference-selected standard operations, correctly enforcing that a partial update's result satisfies the Model's own rules and that status is unavailable where the Model declares no status field.
+              depends_on:
+              - P3-T2
+              constraints: []
+              acceptance: Each Model's Logic unit performs create, get, list, update, and delete correctly, a partial update that would leave the domain state invalid is rejected, and status is available only where the Model declares that field.
+              verify: Every Model's Logic unit is exercised for its standard operations, an update leaving an invalid resulting state is shown to be rejected, and the status operation is confirmed available or unavailable exactly as each Model's declared fields require.
+              status: todo
+        P3-G4:
+          id: P3-G4
+          title: API Layer and Documentation
+          description: Covers the external HTTP boundary exposing every Model's standard operations, Credential write-only protection, and the published machine-readable API description.
+          area: External API boundary, Credential protection, and API documentation
+          does: An external consumer can perform every Target- and Preference-selected standard operation on every persistent Model over HTTP, a Credential field is accepted only as input and never returned, and a machine-readable description of the resulting contract is published and consistent with it.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-T4:
+              id: P3-T4
+              title: Implement the API layer with Credential fields write-only
+              description: Implement the API layer that decodes external requests, validates their transport-level shape, invokes the corresponding Model's Logic unit, and serializes the result, exposing the Target- and Preference-selected standard operations for every persistent Model. A field the Model marks as a Credential is accepted only where a create or update operation requires it and is excluded from every response and response schema.
+              reason: External consumers need one consistent, thin transport boundary over every Model's Behaviour that never leaks a credential across the boundary.
+              kind: code
+              inputs:
+              - Every persistent Model's Logic unit
+              - Current my_model credential markers
+              expected_result: Every persistent Model is reachable over HTTP for its selected standard operations, a Credential field can be supplied on create or update, and no response or response schema for any Model includes a Credential field.
+              depends_on:
+              - P3-T3
+              constraints: []
+              acceptance: A request exercising each standard operation for more than one Model produces the correct transport-level result, a request supplying a Credential field on create or update succeeds, and no response body or response schema for any Model contains a Credential field's value or definition.
+              verify: HTTP requests are made against more than one Model's endpoints for every selected standard operation, and every returned response body and response schema is inspected to confirm no Credential field is present.
+              status: todo
+            P3-T5:
+              id: P3-T5
+              title: Publish and verify the machine-readable API description
+              description: Enable the machine-readable description of the API's available operations and data shapes as selected by Backend Preferences, and verify it remains consistent with the implemented contract, including that every Credential field appears only as write-only input and never in a response schema.
+              reason: The layer that defines the external contract is the only layer that can describe it accurately as it changes.
+              kind: code
+              inputs:
+              - Complete API layer
+              expected_result: A machine-readable API description is published, covers every exposed operation, and shows no Credential field in any response schema.
+              depends_on:
+              - P3-T4
+              constraints: []
+              acceptance: The published description enumerates every exposed operation and its request and response shapes, and inspection confirms no Credential field appears in a response shape.
+              verify: The generated API description is retrieved and checked against the implemented routes and against every Model's declared Credential fields.
+              status: todo
+        P3-G5:
+          id: P3-G5
+          title: Verification and Documentation
+          description: Confirms the complete Backend package behaves correctly end-to-end and is fully documented for its consumers.
+          area: Backend package end-to-end verification and documentation
+          does: The complete Backend package is verified end-to-end against a real running Database and carries documentation meeting the Backend Standard's requirements.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-T6:
+              id: P3-T6
+              title: Verify the complete Backend package end-to-end
+              description: Exercise every layer together, from an HTTP request through Logic and Data Access to a real Database, confirming standard operations, application-context validation, transaction grouping, Credential protection, and the published API description all satisfy the current Backend Standard and Target definition.
+              reason: Individual layer correctness must be confirmed together, since transport, Behaviour, and persistence translation interact only once the whole package runs end-to-end.
+              kind: verification
+              inputs:
+              - Every capability built in this phase
+              expected_result: Durable checks exist that observe every standard operation, application-context validation, transaction grouping, Credential protection, and the API description together against a real Database.
+              depends_on:
+              - P3-T2
+              - P3-T3
+              - P3-T4
+              - P3-T5
+              constraints: []
+              acceptance: A repeatable check suite issues HTTP requests covering every standard operation for multiple Models, confirms Credential protection end-to-end, exercises a transaction-grouped Logic operation, and validates the published API description, observing the expected outcome for each.
+              verify: A repeatable check suite is run and every observed outcome is recorded.
+              status: todo
+            P3-T7:
+              id: P3-T7
+              title: Produce the Backend package documentation
+              description: Write the Backend package's required developer-facing documentation describing its purpose and three-layer boundaries, the public API and how external consumers use it, how Model Logic and Target Behaviour are organized, how Backend reaches Database only through Data Access, non-secret configuration and required runtime Bindings, installation and startup, and practical usage and failure-handling examples.
+              reason: A completed Backend package is not usable by another component or developer until its boundary, contract, and usage are documented.
+              kind: documentation
+              inputs:
+              - Every capability built in this phase
+              - Published API description
+              expected_result: A complete developer-facing documentation file exists at the Backend package boundary covering every section the Backend Standard requires, consistent with the published API description.
+              depends_on:
+              - P3-T6
+              constraints: []
+              acceptance: Every required documentation section is present, its examples are runnable against the implemented API, and no example exposes an actual credential, private configuration, or Database internal detail.
+              verify: Every required documentation example is executed directly against the running API and completes without error, and the document is inspected for the required sections and for consistency with the published API description.
+              status: todo
