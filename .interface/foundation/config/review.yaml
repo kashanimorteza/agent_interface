@@ -78,13 +78,13 @@ reviews:
     id: "P3"
     title: "Backend"
     target: "Backend"
-    scope: "Independent re-review triggered by a post-satisfaction change to Backend Principles and Preferences: a new completion-gate Principle and a Preference change marking the FastAPI Agent Skill 'required' instead of 'optional'. Plan Assurance rebuilt its ledger from current authorities, found the revision-2 Plan did not cover the new obligation, invoked Planning, and independently re-checked the reconciled revision-3 Plan. Implementation Assurance then re-ran the full existing test suite fresh (still 21/21, no regression) and independently searched the complete my_backend package and Task history for evidence of the newly required Skill's invocation."
-    outcome: "not satisfied"
+    scope: "Final Review after Development resolved Finding P3-F4. Plan Assurance re-confirmed against unchanged revision 3. Implementation Assurance independently invoked the same current required Agent Skill and applied its complete guidance to the whole Backend API surface, rather than trusting Development's own log: re-ran a clean-environment install and the full test suite (21/21), ruff, and pyright; confirmed the previously found double-response-construction anti-pattern is actually fixed by grepping for its pattern; and independently re-confirmed every anti-pattern Development recorded as not present (async def, Depends, jose, json_encoders, BackgroundTasks, bare except Exception, async_asgi_testclient) is genuinely absent."
+    outcome: "satisfied"
     plan_outcome: "satisfied"
     plan_revision: 3
-    implementation_outcome: "not satisfied"
+    implementation_outcome: "satisfied"
     reviewed_by: "reviewing"
-    reviewed_at: "2026-09-12T22:45:00Z"
+    reviewed_at: "2026-09-12T23:00:00Z"
     finding_count: 4
     findings:
       P3-F1:
@@ -131,7 +131,7 @@ reviews:
         expected: "P3-T1's foundation decisions and the new P3-T19 whole-surface check both require observable evidence that the Agent Skill required by the resolved Backend Preferences for the selected API technology was invoked, its complete applicable guidance was read, and every applicable instruction was checked as applied or explicitly not applicable with a reason."
         observed: "The existing my_backend implementation and its recorded Task history, produced before this obligation existed, contain no reference anywhere to the required Agent Skill's invocation or guidance; P3-T19 has no implementation at all, and P3-T1's original completion evidence predates and does not address the newly reconciled clause."
         evidence: "Independent search of the complete my_backend package and its documented Task history found zero references to the required Agent Skill; P3-T1's log entry is dated 2026-09-12T21:10:00Z, before the Backend Principle 14 change (2026-09-12T22:33:30Z); P3-T19 status is 'todo' with no log. A fresh re-run of the full existing suite (21 tests) still passed, confirming no regression elsewhere."
-        state: "open"
+        state: "resolved"
         raised_at: "2026-09-12T22:45:00Z"
-        settled_at: null
-        settled_by: null
+        settled_at: "2026-09-12T23:00:00Z"
+        settled_by: "reviewing, independently: invoked the same required Agent Skill and confirmed Development's checklist against the actual implementation. One real anti-pattern (double response construction in api/_factory.py) was genuinely found and fixed, re-verified via a fresh clean-environment install, the full test suite (21/21), ruff, and pyright; every other instruction was independently confirmed either already satisfied or correctly marked not applicable."

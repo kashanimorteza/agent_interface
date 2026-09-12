@@ -1708,6 +1708,16 @@ plans:
                 type; requested a create operation through Database Interface and confirmed the record
                 was persisted; confirmed Logic's source contains no direct import of my_database.
               outcome: passed
+            - at: '2026-09-12T22:55:00Z'
+              by: developing
+              event: reconciled
+              check: The Backend Preferences' required Agent Skill association for the selected API technology
+                was added after this foundation was first built. Invoked the required Skill, read its
+                complete guidance, and re-examined the foundation's actual technology decisions (application
+                creation, exception-handler registration, dependency direction) against it; found no applicable
+                instruction violated in the foundation itself. The full instruction-by-instruction record
+                covering the whole Backend API surface is kept on P3-T19.
+              outcome: passed
       P3-G2:
         id: P3-G2
         title: Model Logic and API Interface
@@ -2384,7 +2394,38 @@ plans:
               Backend package and API Interface, and confirm every applicable instruction is either satisfied
               with observable evidence or recorded as not applicable with a stated reason, with none left
               unchecked.
-            status: todo
+            status: done
+            log:
+            - at: '2026-09-12T22:58:00Z'
+              by: developing
+              event: completed
+              check: 'Invoked the required Agent Skill and checked every instruction in its complete current
+                guidance against the whole implemented Backend API surface. Applied and confirmed: version
+                floor met; all routes are synchronous `def` because Database Interface is itself synchronous,
+                so no blocking call sits inside an `async def`; ruff check and ruff format both clean;
+                none of the anti-pattern table''s violations were present except one, which was found and
+                fixed during this pass: api/_factory.py constructed a read_schema instance and also declared
+                response_model= the same class, validating every response twice; changed it to return a
+                plain dict so response_model validates and serializes exactly once, re-confirmed by the
+                full suite (21 passed), ruff, and pyright, all clean. Explicitly not applicable, each with
+                its reason: the generic domain-folder project structure (Backend Principle 2 mandates its
+                own Model Interface / Database Interface / Logic / API Interface layering, which supersedes
+                it); Pydantic field-validator ownership (belongs to Model Interface, not Backend, and the
+                Update schema''s intentionally relaxed per-field constraints are already re-validated as
+                complete state by Database Interface before commit); custom datetime serialization (Target
+                declares no such requirement); per-domain BaseSettings (Backend declares no environment-specific
+                settings of its own); Annotated Depends / dependency chaining (no repeated cross-route
+                validation exists to extract; centralized exception handlers already give equivalent behavior);
+                JWT authentication (Target declares none in this phase); SQLAlchemy/Alembic async conventions
+                (owned by the Database Component, already assessed under phase P2); BackgroundTasks/Celery
+                (the Target''s fire-and-forget trading behaviour belongs to disabled phase P6); async test
+                client (Backend''s routes are synchronous by design, so the synchronous TestClient already
+                in use is the applicable counterpart, and it is not the unmaintained async_asgi_testclient);
+                hiding API docs per environment (the Target declares no deployment-environment distinction
+                to gate on); and per-endpoint prose summaries/response-code documentation (presentational
+                metadata beyond what Backend Principle 9 or this Plan''s acceptance require, given the
+                published response_model contract is itself already accurate and complete).'
+              outcome: passed
       P3-G4:
         id: P3-G4
         title: Package Documentation

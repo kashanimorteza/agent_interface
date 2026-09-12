@@ -5,6 +5,8 @@ is parameterized by dynamically built schema types, and FastAPI must
 resolve their real annotations at runtime to validate and document them.
 """
 
+from typing import Any
+
 from fastapi import APIRouter, status
 from pydantic import BaseModel
 
@@ -13,9 +15,13 @@ from my_backend._schemas import build_schemas
 from my_backend.logic._base import ModelLogic
 
 
-def _to_read(record: _model_interface.BaseModel, read_schema: type[BaseModel]) -> BaseModel:
+def _to_read(record: _model_interface.BaseModel, read_schema: type[BaseModel]) -> dict[str, Any]:
+    # Returns a plain dict rather than a `read_schema` instance: the route's
+    # `response_model=read_schema` already validates and serializes this
+    # value, so constructing a `read_schema` instance here as well would
+    # validate the same data twice for every response.
     values = record.model_dump()
-    return read_schema(**{name: values[name] for name in read_schema.model_fields})
+    return {name: values[name] for name in read_schema.model_fields}
 
 
 def build_router(logic: ModelLogic, *, prefix: str, tag: str) -> APIRouter:
@@ -28,22 +34,22 @@ def build_router(logic: ModelLogic, *, prefix: str, tag: str) -> APIRouter:
     router = APIRouter(prefix=prefix, tags=[tag])
 
     @router.post("", response_model=read_schema, status_code=status.HTTP_201_CREATED)
-    def create(payload: create_schema) -> BaseModel:  # type: ignore[valid-type]
+    def create(payload: create_schema) -> dict[str, Any]:  # type: ignore[valid-type]
         record = logic.create(payload.model_dump())
         return _to_read(record, read_schema)
 
     @router.get("/{id}", response_model=read_schema)
-    def get(id: int) -> BaseModel:
+    def get(id: int) -> dict[str, Any]:
         record = logic.get(id)
         return _to_read(record, read_schema)
 
     @router.get("", response_model=list[read_schema])
-    def list_(limit: int = 50, offset: int = 0) -> list[BaseModel]:
+    def list_(limit: int = 50, offset: int = 0) -> list[dict[str, Any]]:
         records = logic.list(limit=limit, offset=offset)
         return [_to_read(record, read_schema) for record in records]
 
     @router.patch("/{id}", response_model=read_schema)
-    def update(id: int, payload: update_schema) -> BaseModel:  # type: ignore[valid-type]
+    def update(id: int, payload: update_schema) -> dict[str, Any]:  # type: ignore[valid-type]
         # exclude_unset preserves the distinction between an omitted field
         # (left unchanged) and an explicitly supplied field (including null,
         # where the Model permits it), matching partial-update semantics.
@@ -61,7 +67,7 @@ def build_router(logic: ModelLogic, *, prefix: str, tag: str) -> APIRouter:
             action: str
 
         @router.post("/{id}/status", response_model=read_schema)
-        def set_status(id: int, payload: StatusAction) -> BaseModel:
+        def set_status(id: int, payload: StatusAction) -> dict[str, Any]:
             record = logic.set_status(id, payload.action)  # type: ignore[arg-type]
             return _to_read(record, read_schema)
 
