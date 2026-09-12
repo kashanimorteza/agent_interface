@@ -1,0 +1,50 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/role/profile.yaml"
+  path_note: "The Profile layer of the Agent Role Component."
+  purpose: "Primary and specialized responsibility contracts available for assignment to Agent Definitions."
+  standard: "Agent Project Interface"
+  version: "1.1"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; runtime-discovered roles are not adopted as required roles automatically."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Select the declared primary role and use specialized roles only within their contracts."
+  selection: "An undeclared role may be used only as optional runtime capability when compatible with current authority."
+  version_resolution: "Role contracts are portable; any native realization resolves through its owning Agent Definition and selected Runtime."
+  matching: "Match Roles by stable profile key and architecture contract."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The current Primary Role."
+  options: "Selectable primary roles."
+  settings: "Complete role catalogs and role defaults, with unused sources explicit."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    primary_role: "primary-execution"
+  options:
+    primary_roles:
+      primary-execution:
+        resource: "project_roles.primary-execution"
+  settings:
+    project_roles:
+      primary-execution:
+        architecture_contract: "Agent Role Principle 4"
+        required: true
+      interface-reader:
+        architecture_contract: "Agent Role Principle 5"
+        required: true
+    runtime_roles: {}
+    user_roles: {}
+    managed_roles: {}
+    extension_roles: {}
+    built_in_roles: {}

@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-Backend executes application Behaviour and publishes the application's API. It turns shared domain meaning into what the application does, enforces rules that depend on application context, and exposes the result as the contract used by external consumers.
+Backend is an independent package that executes application Behaviour and publishes the application's API. It turns shared domain meaning into what the application does, enforces rules that depend on application context, and exposes the result as the contract used by external consumers.
 
 Backend owns:
 
@@ -38,7 +38,7 @@ Technical selections populate the architecture through Backend Preferences witho
 
 # Architectural Foundation
 
-Backend is an independent application boundary with three internal layers:
+Backend is an independent package and application boundary with three internal layers:
 
 1. API is the external communication boundary.
 2. Logic implements application Behaviour and Model-specific logic.
@@ -89,13 +89,13 @@ Backend MUST apply each source only within its authority. It MUST NOT invent dom
 
 Technical choices and defaults belong to Backend Preferences. Backend implementation applies those choices to the current Target definition.
 
-## 2.3 Backend has three internal layers
+## 2.3 Backend is an independent package with three internal layers
 
-**Rule:** Backend is formed from API, Logic, and Data Access. API is the external communication boundary; Logic implements application Behaviour and Model-specific logic; and Data Access is the only Backend boundary that consumes Database. The dependency direction is API → Logic → Data Access → Database Interface.
+**Rule:** Backend is implemented as one independent package with its own identity, configuration, documented public boundary, and three internal layers: API, Logic, and Data Access. API is the external communication boundary; Logic implements application Behaviour and Model-specific logic; and Data Access is the only Backend boundary that consumes Database. The dependency direction is API → Logic → Data Access → Database Interface.
 
 **Why:** Separating the outside world from what the application does, and both from how data is reached, lets any one of the three be replaced without disturbing the other two.
 
-**Boundary:** No layer bypasses the layer immediately responsible for the next boundary.
+**Boundary:** No layer bypasses the layer immediately responsible for the next boundary. Package identity and code path are resolved through Backend Preferences; they never change the three-layer architecture or expose an internal layer as an independent competing Backend.
 
 <br>
 
@@ -239,7 +239,7 @@ When multiple Backend implementations are possible, prefer in this order:
 
 ## MUST
 
-- Form Backend from API, Logic, and Data Access in that dependency direction.
+- Implement Backend as one independent package formed from API, Logic, and Data Access in that dependency direction.
 - Let Logic implement application Behaviour, enforce operation-dependent conditions, reuse shared Model validation, and validate partial changes against the resulting domain state.
 - Leave constraints dependent on stored state to Database.
 - Let Logic determine related operations that form one unit and request that unit through Data Access.

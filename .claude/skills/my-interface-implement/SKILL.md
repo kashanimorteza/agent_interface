@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Implement the Target
 
-This file is the Claude Code adapter for the portable `implement` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the Claude Code adapter for the portable `implement` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
 
 ## Role
 
@@ -33,7 +33,7 @@ Establish Interface Understanding from the canonical Interface document, then Ta
 
 Execute this fixed sequence; do not derive it from a mutable Target workflow:
 
-1. Resolve Configure, Planning, Reviewing, Developing, and Launch through current Skill Preferences. Before mutation, prove that each is discoverable and that its Invocation Policy and native frontmatter permit model invocation by Implement. If any Child Skill is unavailable or explicit-Human only, stop before Configure and report adapter drift.
+1. Resolve Configure, Planning, Reviewing, Developing, and Launch through current Skill Profile. Before mutation, prove that each is discoverable and that its Invocation Policy and native frontmatter permit model invocation by Implement. If any Child Skill is unavailable or explicit-Human only, stop before Configure and report adapter drift.
 2. Execute Configure exactly once. Continue only when its required operational records and Environment preparation pass their gates.
 3. Record Implementation State as `in progress` under its owner.
 4. Process selected implementable phases strictly in Target order, completing the entire sequence for one phase before touching the next.

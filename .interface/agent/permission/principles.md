@@ -16,9 +16,9 @@ It owns enforceable access decisions. It does not own Human intent, external acc
 - **Consumed by every executing Agent Component** — constrains all reads, mutations, execution, and connections.
 - **Consumed by Agent Hook and Observability** — supplies enforceable decisions and auditable outcomes.
 
-Technical modes, permission rules, sandbox settings, trust policy, and credential references belong to Agent Permission Preferences.
+Technical modes, permission rules, sandbox settings, trust policy, and credential references belong to Agent Permission Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

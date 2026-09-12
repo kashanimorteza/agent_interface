@@ -15,9 +15,9 @@ It owns event matching, handler order, inputs, effects, and failure behavior. It
 - **Consumes Agent Session, Tool, Integration, and Permission** — reacts to events using authorized handlers.
 - **Consumed by Agent Rule and Observability** — enforces guarantees and emits lifecycle evidence.
 
-Technical events, matchers, handlers, timeouts, and native configuration belong to Agent Hook Preferences.
+Technical events, matchers, handlers, timeouts, and native configuration belong to Agent Hook Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

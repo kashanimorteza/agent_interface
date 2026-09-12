@@ -15,9 +15,9 @@ It owns presentation and interaction contracts. It does not own technical meanin
 - **Consumes Agent Role, Command, Session, and Observability** — presents actions, progress, state, and outcomes.
 - **Consumed by every Human-facing Agent capability** — supplies the selected communication contract.
 
-Technical styles, status lines, themes, artifact facilities, and interface selections belong to Agent Interaction Preferences.
+Technical styles, status lines, themes, artifact facilities, and interface selections belong to Agent Interaction Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

@@ -7,7 +7,7 @@ disable-model-invocation: false
 
 # Plan project phases
 
-This file is the Claude Code adapter for the portable `planning` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the Claude Code adapter for the portable `planning` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
 
 ## Role
 
@@ -29,7 +29,7 @@ If arguments are present, validate the complete selection before changing any fi
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Planning's place in the Workflow, and the current locations of the resources Planning needs.
 
-Then establish Target Understanding from the Human and Technical Definitions located by the Interface under their declared precedence, and read the Principles and Preferences applicable to the selected phases and their target Components. Inspect existing implementation and interfaces when they provide relevant current evidence. Plan and State Config are operational records, not a stored representation of this Understanding, so reading them back is not a substitute for reading the sources.
+Then establish Target Understanding from the Human and Technical Definitions located by the Interface under their declared precedence, and read the applicable Developer Principles and Preferences together with Agent Principles and Profiles. Inspect existing implementation and interfaces when they provide relevant current evidence. Plan and State Config are operational records, not a stored representation of this Understanding, so reading them back is not a substitute for reading the sources.
 
 Read the current Plan and State Config files, and the Review Config for each selected phase. Derive the meaning of review Findings and how Planning handles them from the current Review and Plan Component authorities. Resolve the selected phases from current Target Understanding, then derive planning structure, content, granularity, progress handling, validation, ownership, and write boundaries from the current owning Components. Do not assume or reproduce a fixed planning structure here: the Plan Component changes independently of this Skill, and a structure remembered from an earlier run will silently disagree with it.
 

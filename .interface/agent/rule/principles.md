@@ -16,9 +16,9 @@ It owns instruction scope, loading conditions, and precedence among Rules. It do
 - **Consumed by Agent Context and Skill** — supplies persistent applicable guidance.
 - **Consumed by Agent Permission and Hook** — provides behavioral context while those Components supply enforceable controls.
 
-Technical Rule files, scopes, load order, and native locations belong to Agent Rule Preferences.
+Technical Rule files, scopes, load order, and native locations belong to Agent Rule Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

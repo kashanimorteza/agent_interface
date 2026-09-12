@@ -1,0 +1,133 @@
+schema:
+  id: "agent-interface-agent-profile"
+  version: "1.0"
+  purpose: "The common structure every Agent Component Profile follows. It defines current Agent selections, supported alternatives, declared capabilities, resources, mappings, and explicit empty categories without turning runtime choices into portable Principles."
+
+# <!--------------------------------------------------------------------------------- Frame -->
+frame:
+  source: ".interface/foundation/schema/yaml.yaml"
+  inherited: "An Agent Profile is a YAML Interface file, so it follows the common frame: meta, policy, read_order, content_map, content. This schema defines its content rather than repeating that frame."
+  scope: "This schema defines Agent Profile content and the additional expectations placed on inherited meta and policy sections."
+  path: ".interface/agent/<component>/profile.yaml for each Agent Component."
+  ownership: "The Profile is human-owned. Agent Sync observes and realizes it without rewriting its declarations from runtime state."
+
+# <!--------------------------------------------------------------------------------- Purpose -->
+purpose:
+  answers: "Which Agent configuration. An Agent Profile records the current desired Agent choices and capability declarations used to realize the portable Agent Principles in a selected Runtime."
+  relation_to_principles: "Agent Principles define mandatory portable philosophy, responsibility, and boundaries. The Agent Profile records current selections, resources, native mappings, and explicit absence. A Profile never weakens a Principle."
+  relation_to_developer: "Developer Preferences may reference an Agent Profile capability as optional or required implementation guidance. The reference never transfers ownership of that capability to Developer."
+  relation_to_runtime: "A declaration is desired Profile state, not proof of installation, activation, availability, authentication, or usability. Current runtime evidence establishes realization."
+
+# <!--------------------------------------------------------------------------------- Scope -->
+scope:
+  contains:
+    - "The selected Agent option for each decision owned by the Component."
+    - "Supported Agent and Runtime alternatives."
+    - "Project, runtime, built-in, user, managed, and extension capability declarations where applicable."
+    - "Native resources, paths, provider identities, mappings, activation intent, requirement status, and verification expectations."
+    - "Explicit empty categories when the Profile currently declares no entry of that kind."
+  excludes:
+    - "Mandatory portable rules and boundaries, which belong to Agent Principles."
+    - "Developer technology and implementation preferences, which belong to Developer Preferences."
+    - "Target meaning, Models, phases, or Behaviour, which belong to Target definitions."
+    - "Observed runtime state, secrets, generated operational records, or evidence presented as a Human-owned declaration."
+  empty_component: "An Agent Component with no current selections or declarations still carries selected, options, and settings as explicit empty mappings."
+
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  required_fields:
+    path:
+      required: true
+      purpose: "The exact profile.yaml path."
+    path_note:
+      required: true
+      purpose: "Names the Agent Component and states that this is its Profile layer."
+    purpose:
+      required: true
+      purpose: "The selections and declarations owned by this Agent Component."
+    standard:
+      required: true
+      purpose: "The Interface standard the Profile belongs to."
+    version:
+      required: true
+      purpose: "The Profile version, raised whenever declaration meaning changes."
+    updated:
+      required: true
+      purpose: "The date the Profile last changed."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  purpose: "Every Agent Profile states how its Human-owned declarations are read, selected, matched, and realized."
+  required_fields:
+    agent_may_edit:
+      required: true
+      value: false
+      purpose: "An Agent observes and realizes the Profile but never rewrites it from runtime state."
+    rule:
+      required: true
+      purpose: "How the Profile is treated by Agent operations."
+    changed_by:
+      required: true
+      purpose: "Who changes Profile declarations."
+    precedence:
+      required: true
+      purpose: "Applicable Principles and explicit Human decisions take precedence."
+    consumption:
+      required: true
+      purpose: "How consumers use the selected options, declarations, and mappings."
+    selection:
+      required: true
+      purpose: "How a compatible option or undeclared optional capability is handled."
+    version_resolution:
+      required: true
+      purpose: "How runtime-provided and provider-owned versions resolve."
+    matching:
+      required: true
+      purpose: "How stable keys, provider identities, resources, and native mappings correspond."
+  additional_fields: "A Component may add stricter Profile-specific policy fields without removing or renaming the required fields."
+
+# <!--------------------------------------------------------------------------------- Structure -->
+structure:
+  - "selected"
+  - "options"
+  - "settings"
+
+# <!--------------------------------------------------------------------------------- Sections -->
+sections:
+
+  selected:
+    required: true
+    default: {}
+    purpose: "The current Agent option selected for each decision owned by this Component."
+    rules:
+      names_declared_entry: "A selected key resolves to exactly one entry in the matching options catalogue or declared settings resource."
+      no_runtime_claim: "Selection expresses desired Profile state and never proves current runtime availability."
+    empty: "An empty mapping when the Component selects nothing."
+
+  options:
+    required: true
+    default: {}
+    purpose: "Supported alternatives for Agent or Runtime decisions owned by this Component."
+    rules:
+      no_selection: "An option describes a supported alternative and does not select itself."
+      provider_identity: "Provider-owned identity and version information remain explicit when applicable."
+      portable_boundary: "An option may map a portable contract to native mechanisms but never changes that contract."
+    empty: "An empty mapping when the Component catalogues no alternatives."
+
+  settings:
+    required: true
+    default: {}
+    purpose: "Declared Agent resources, capability categories, mappings, defaults, overrides, and explicit empty categories owned by the Component."
+    rules:
+      grouping: "Entries are grouped by the capability categories and ownership sources defined by the Component."
+      explicit_absence: "A supported category with no declaration remains present as an empty mapping when absence must be distinguishable from omission."
+      no_secrets: "A Profile may identify an authentication or secret reference but never stores its value."
+      observed_state: "Installation, activation, health, and usability are verified from runtime evidence and never written back as declarations."
+    empty: "An empty mapping when the Component declares and configures nothing."
+
+# <!--------------------------------------------------------------------------------- Conventions -->
+conventions:
+  placeholders: "A value completed during realization is written in angle brackets."
+  references: "A dotted resource reference resolves from content.settings unless its declaring field explicitly names another root."
+  read_order: "read_order lists selected, options, and settings in that order."
+  content_map: "content_map carries exactly one line for each of the three content sections."

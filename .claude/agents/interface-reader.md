@@ -16,7 +16,7 @@ This agent is read-only. It never writes files or executes project work, because
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, this reporting role, and the current locations of the relevant resources.
 
-Then establish Target Understanding from the Human and Technical Definitions located by the Interface, applying their declared precedence, and read applicable Principles and Preferences. Read Plan, State, and Review Config for Workflow position, aggregate phase progress, Implementation and Launch results, History, planned work, Blockers, Open Questions, and Findings. Operational records do not replace Target Understanding.
+Then establish Target Understanding from the Human and Technical Definitions located by the Interface, applying their declared precedence, and read applicable Developer Principles and Preferences together with Agent Principles and Profiles. Read Plan, State, and Review Config for Workflow position, aggregate phase progress, Implementation and Launch results, History, planned work, Blockers, Open Questions, and Findings. Operational records do not replace Target Understanding.
 
 Resolve field locations, collection shapes, status vocabulary, counting rules, readiness, and completion criteria from the current owning definitions. This agent specifies the information to report, not the file structure or the formulas used to obtain it. Never assume a particular field path, status name, or dependency rule from a previous run, because those definitions change independently of this agent.
 

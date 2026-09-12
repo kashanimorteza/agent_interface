@@ -1,0 +1,77 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/observability/profile.yaml"
+  path_note: "The Profile layer of the Agent Observability Component."
+  purpose: "Validation, status, diagnostics, evidence, logs, telemetry, health, and usage reporting."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; observations update owned runtime or operational records, never these preferences."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Run proportional checks and report current evidence using the declared status vocabulary."
+  selection: "Use the least expensive check that establishes the condition with sufficient confidence."
+  version_resolution: "Diagnostic facilities resolve from the selected runtime."
+  matching: "Match checks to the exact declaration, role, scope, and condition they verify."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Default validation depth."
+  options: "Supported validation depths."
+  settings: "Required checks, statuses, diagnostics, evidence, logs, telemetry, health, and usage."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    validation_depth: "proportional"
+  options:
+    validation_depths:
+      proportional:
+        meaning: "Use evidence proportional to risk and repeat checks after relevant changes."
+  settings:
+    required_checks:
+      - "Every selected resource resolves to a declared option or resource."
+      - "Every required Agent Role, Rule, Skill, Tool, Hook, Integration, and Extension is discoverable and usable."
+      - "The selected Output Style is present and active."
+      - "Effective permissions and sandbox behavior match their declarations."
+      - "No project capability declaration contains a secret or machine credential."
+      - "Every explicit empty category remains represented."
+    capability_statuses:
+      available: "Declared and usable by the intended role."
+      activation_required: "Declared but awaiting a stated activation condition."
+      unavailable: "Declared but not usable in the required scope."
+      conflicting: "Applicable declarations cannot be satisfied together."
+      undeclared: "Observed in the runtime but absent from the project profile."
+      not_configured: "Supported category explicitly contains no entry."
+    configuration_statuses:
+      reconciled: {}
+      drifted: {}
+      invalid: {}
+      unknown: {}
+    diagnostics:
+      status: {}
+      doctor: {}
+      context: {}
+      memory: {}
+      skills: {}
+      agents: {}
+      hooks: {}
+      mcp: {}
+      permissions: {}
+    evidence_records: {}
+    logs: {}
+    telemetry: {}
+    traces: {}
+    metrics: {}
+    health_checks: {}
+    cost_and_usage: {}
+    redaction:
+      secrets: true
+      hidden_reasoning: true

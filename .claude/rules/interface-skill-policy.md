@@ -2,7 +2,7 @@
 
 These shared rules apply to every Agent Interface Skill and supporting agent, including one written later. Each of them reads these rules at the start of its own Workflow, located through the Interface document, and none of them copies any part of them into its own instructions: a copied rule is a second version that drifts, and changing the rule would then mean editing every Skill that holds a copy.
 
-The Agent Component Principles and Preferences located by the Interface document are the authorities for the common Agent contract and selected Agent Profile. This Rule applies those contracts to the current Agent Runtime and adds only the project restrictions stated below.
+The Agent Component Principles and Profiles located by the Interface document are the authorities for the common Agent contract and selected Agent Profile. This Rule applies those contracts to the current Agent Runtime and adds only the project restrictions stated below.
 
 ## Root project README
 

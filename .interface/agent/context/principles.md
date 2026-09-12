@@ -16,9 +16,9 @@ It owns context composition and freshness. It does not own the meaning of Target
 - **Consumes Agent Rule** — loads applicable persistent and scoped instructions.
 - **Consumed by Agent, Role, Skill, and Session** — supplies the current information they use.
 
-Technical loading sources, memory behavior, imports, and limits belong to Agent Context Preferences.
+Technical loading sources, memory behavior, imports, and limits belong to Agent Context Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

@@ -22,7 +22,7 @@ Produce one result for every dynamically discovered Agent Component, project-sco
 
 ## Required Understanding
 
-Establish Interface Understanding, derive the current Component inventory from the Agent Structure it exposes, and read every discovered Component's Principles, Preferences, and declared supporting resources. Read each Interface-owned Skill Contract. Never rely on a Component list remembered by this Contract, a native adapter, or an earlier run. Target Understanding is required only when an Agent declaration explicitly depends on Target-selected context.
+Establish Interface Understanding, derive the current Component inventory from the Agent Structure it exposes, and read every discovered Component's Principles, Profile, and declared supporting resources. Read each Interface-owned Skill Contract. Never rely on a Component list remembered by this Contract, a native adapter, or an earlier run. Target Understanding is required only when an Agent declaration explicitly depends on Target-selected context.
 
 ## Authority
 
@@ -50,7 +50,7 @@ The overall result is `synchronized` only when this second pass covers every cur
 
 ## Idempotency
 
-After successful reconciliation, a new invocation against unchanged declarations and runtime state produces no mutation. A newly added or changed Agent Component, Principle, Preference, Contract, resource, category, or mechanism is detected from current sources and reconciled on the next invocation.
+After successful reconciliation, a new invocation against unchanged declarations and runtime state produces no mutation. A newly added or changed Agent Component, Principle, Profile, Contract, resource, category, or mechanism is detected from current sources and reconciled on the next invocation.
 
 ## Stopping Conditions
 

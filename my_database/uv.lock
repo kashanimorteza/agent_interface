@@ -285,7 +285,7 @@ dev = [
 requires-dist = [
     { name = "alembic", specifier = ">=1.13,<2" },
     { name = "cryptography", specifier = ">=42,<46" },
-    { name = "my-model", directory = "../my_model" },
+    { name = "my-model", editable = "../my_model" },
     { name = "pyyaml", specifier = ">=6,<7" },
     { name = "sqlalchemy", specifier = ">=2,<3" },
 ]
@@ -300,7 +300,7 @@ dev = [
 [[package]]
 name = "my-model"
 version = "0.1.0"
-source = { directory = "../my_model" }
+source = { editable = "../my_model" }
 dependencies = [
     { name = "pydantic" },
 ]

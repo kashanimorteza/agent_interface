@@ -1,0 +1,83 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/permission/profile.yaml"
+  path_note: "The Profile layer of the Agent Permission Component."
+  purpose: "Permission mode, allow/ask/deny rules, sandboxing, protected sources, trust, authentication, and secrets."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned and contains no credential or secret values."
+  changed_by: "The human, directly."
+  precedence: "Human authorization, every applicable Principle, deny rules, and stricter managed controls take precedence."
+  consumption: "Resolve permissions using deny-safe least privilege before executing a protected action."
+  selection: "Request authorization only when an applicable ask boundary or material undecided action requires it."
+  version_resolution: "Permission syntax and sandbox facilities resolve from the selected runtime."
+  matching: "Match exact Tool and resource permission patterns; deny and stricter rules win conflicts."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Current permission mode and sandbox choice."
+  options: "Supported permission modes."
+  settings: "Rules, protected sources, sandbox, trust, authentication references, secrets, and external authorization."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    permission_mode: "acceptEdits"
+  options:
+    permission_modes:
+      acceptEdits:
+        runtime: "Claude Code"
+        meaning: "Apply ordinary file edits without per-edit confirmation while preserving explicit ask and deny rules."
+  settings:
+    rules:
+      allow:
+        - "Bash"
+        - "Read"
+        - "Glob"
+        - "Grep"
+        - "Edit"
+        - "Write"
+        - "NotebookEdit"
+        - "Task"
+        - "TodoWrite"
+        - "WebFetch"
+        - "WebSearch"
+      deny:
+        - "Read(./README.md)"
+      ask:
+        - "Bash(git commit:*)"
+        - "Bash(git push:*)"
+        - "Bash(git reset:*)"
+        - "Bash(git restore:*)"
+        - "Bash(git checkout:*)"
+        - "Bash(git rebase:*)"
+        - "Bash(git clean:*)"
+    sandbox:
+      enabled: null
+      filesystem: {}
+      network: {}
+      process: {}
+    protected_sources:
+      protected_root: ".interface/"
+      mutation: "deny by default"
+      editable_exception:
+        path: ".interface/foundation/config/"
+        condition: "Only the active Skill's declared write authority and the owning Component's rules may authorize an exact Config record."
+      future_paths: "Protected automatically unless they are inside the editable Config exception."
+    trust: {}
+    authentication_references: {}
+    credential_helpers: {}
+    secrets:
+      project_values: {}
+      logging: "redact"
+      output: "redact"
+    external_authorizations: {}
+    managed_restrictions: {}

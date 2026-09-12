@@ -6,7 +6,7 @@ The Interface structure and native Agent implementations are independent of a pa
 
 - `.interface/foundation/interface.md` is the canonical Interface document and file map, and the single entry point every Skill and supporting Agent starts from. Everything else — including these rules — is located through it.
 
-Establish Interface Understanding from the Interface document alone. Then follow the routes and Agent Component read order it defines for the active role. Read every routed Principles and Preferences source required to apply the Agent Profile; empty categories are declarations and must not be treated as missing. Use that Profile to locate the current native Rules, role instructions, and capabilities applicable to the work.
+Establish Interface Understanding from the Interface document alone. Then follow the routes and Agent Component read order it defines for the active role. Read every routed Principles and Profile source required to apply the Agent Profile; empty categories are declarations and must not be treated as missing. Use that Profile to locate the current native Rules, role instructions, and capabilities applicable to the work.
 
 Use the Interface document to locate the current resources required by the active role. Do not assume that a resource exists merely because it existed in an earlier version of the Interface.
 

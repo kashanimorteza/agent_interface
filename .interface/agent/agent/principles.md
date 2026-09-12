@@ -17,9 +17,9 @@ It owns Agent identity, kind, Role assignment, capability assignment, native rea
 - **Consumed by Agent Coordination** — supplies the concrete Agents that may be delegated, teamed, or isolated.
 - **Consumed by Agent Observability** — supplies the declaration against which each Native Agent is validated.
 
-Technical Agent declarations, primary selection, Role assignments, models, tools, Skills, permissions, memory, isolation, and native mappings belong to Agent Preferences.
+Technical Agent declarations, primary selection, Role assignments, models, tools, Skills, permissions, memory, isolation, and native mappings belong to Agent Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

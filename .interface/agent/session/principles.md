@@ -15,9 +15,9 @@ It owns session lifecycle and transient execution continuity. It does not own pr
 - **Consumes Agent Runtime, Agent, Context, Role, and Permission** — hosts an Agent Definition executing with current context and authority.
 - **Consumed by Agent Coordination, Hook, Interaction, and Observability** — supplies lifecycle events and execution identity.
 
-Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Session Preferences.
+Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Session Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

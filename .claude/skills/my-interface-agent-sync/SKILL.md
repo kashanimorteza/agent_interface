@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Synchronize the Agent Profile
 
-This file is the Claude Code adapter for the portable `agent-sync` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the Claude Code adapter for the portable `agent-sync` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
 
 ## Role
 
@@ -16,13 +16,13 @@ This Skill applies existing Human-owned decisions. It does not discover or selec
 
 ## Understanding
 
-Establish Interface Understanding from the canonical Interface document. Derive the complete current Component inventory from its Agent Structure, then read every discovered Component's Principles, Preferences, and declared resources, including explicit empty categories. Resolve the selected Runtime and its native capability mappings from those sources rather than assuming a particular vendor, directory, command, settings shape, Component list, or mechanism list.
+Establish Interface Understanding from the canonical Interface document. Derive the complete current Component inventory from its Agent Structure, then read every discovered Component's Principles, Profile, and declared resources, including explicit empty categories. Resolve the selected Runtime and its native capability mappings from those sources rather than assuming a particular vendor, directory, command, settings shape, Component list, or mechanism list.
 
 Repeat this discovery on every invocation. A Component or mechanism added to the Agent Module after this adapter was written is part of the run automatically.
 
-Treat Principles as mandatory contracts and Preferences as Human-owned desired state. Never modify either. Inspect current project-scoped runtime artifacts and runtime-reported activation state only after deriving the expected profile.
+Treat Principles as mandatory contracts and Profiles as Human-owned desired state. Never modify either. Inspect current project-scoped runtime artifacts and runtime-reported activation state only after deriving the expected profile.
 
-Before native inspection, validate that Runtime Preferences contain exactly one `component_realization` record for every Component dynamically discovered from the canonical Agent Structure. Reject missing, extra, or duplicate records, unresolved `native_capability_mapping` references, absent realization modes, or absent verification obligations as `blocked`; never infer a mapping from a familiar directory layout.
+Before native inspection, validate that Runtime Profile contains exactly one `component_realization` record for every Component dynamically discovered from the canonical Agent Structure. Reject missing, extra, or duplicate records, unresolved `native_capability_mapping` references, absent realization modes, or absent verification obligations as `blocked`; never infer a mapping from a familiar directory layout.
 
 ## Reconciliation plan
 
@@ -39,11 +39,11 @@ Resolve ownership before proposing a write. Preserve compatible native values th
 
 ## Reconcile
 
-Verify that the selected Runtime is available and compatible with the declared Profile. Derive reconciliation order from the current Component Relationships and Runtime mappings, then process every inventory row while preserving its owner's authority. Add required declared sources and install or enable only entries already selected by Human-owned Preferences and only at project scope. Reload or activate changed capabilities when the Runtime supports doing so safely.
+Verify that the selected Runtime is available and compatible with the declared Profile. Derive reconciliation order from the current Component Relationships and Runtime mappings, then process every inventory row while preserving its owner's authority. Add required declared sources and install or enable only entries already selected by Human-owned Profiles and only at project scope. Reload or activate changed capabilities when the Runtime supports doing so safely.
 
 A selected desired state is standing project authorization for additive, project-scoped reconciliation of that exact declaration. Still honor runtime permission prompts and stop for Human action when provisioning needs credentials, trust of an external service, broader scope, destructive replacement, an irreversible action, or authority not already expressed by the declaration.
 
-When a required native resource is missing, construct the smallest implementation that faithfully realizes its owning Principle and declared Preference. Point to existing contracts instead of copying Interface policy into multiple runtime files where the Runtime can resolve references. Never invent content for an explicit empty category.
+When a required native resource is missing, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Point to existing contracts instead of copying Interface policy into multiple runtime files where the Runtime can resolve references. Never invent content for an explicit empty category.
 
 Write only to an exact `write_target` in the affected Component's Realization record and only when its owning declarations otherwise authorize the change. When actual state conflicts with multiple authorities or meaningful Human-authored runtime content would be overwritten, make no write to that resource. Report the conflict and the exact decision needed.
 

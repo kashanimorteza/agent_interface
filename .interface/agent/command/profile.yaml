@@ -1,0 +1,54 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/command/profile.yaml"
+  path_note: "The Profile layer of the Agent Command Component."
+  purpose: "Built-in and custom slash entry points, arguments, aliases, scope, and owning capability mappings."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; command discovery does not create a new command declaration."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Route declared command invocations to their owning capability."
+  selection: "Runtime built-ins remain optional unless explicitly required; custom collisions are reported."
+  version_resolution: "Built-in commands resolve from the active runtime version."
+  matching: "Match exact command name, namespace, alias, and argument contract."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Empty; no command is globally selected."
+  options: "Empty; Commands are entry points rather than alternatives."
+  settings: "Built-in, custom, legacy, user, managed, and extension command catalogs."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected: {}
+  options: {}
+  settings:
+    custom_commands:
+      configure: {invocation: "/my-interface-configure", owner: "skill.project_skills.core_workflow.configure"}
+      planning: {invocation: "/my-interface-planning [phase-number ...]", owner: "skill.project_skills.core_workflow.planning"}
+      developing: {invocation: "/my-interface-developing [phase-number ...]", owner: "skill.project_skills.core_workflow.developing"}
+      reviewing: {invocation: "/my-interface-reviewer [phase-number ...]", owner: "skill.project_skills.core_workflow.reviewing"}
+      launch: {invocation: "/my-interface-launch", owner: "skill.project_skills.core_workflow.launch"}
+      implement: {invocation: "/my-interface-implement [phase-number ...]", owner: "skill.project_skills.supporting.implement"}
+      reset: {invocation: "/my-interface-reset <1|2|3>", owner: "skill.project_skills.supporting.reset"}
+      skill-installer: {invocation: "/my-interface-skill-installer", owner: "skill.project_skills.supporting.skill-installer"}
+      agent-sync: {invocation: "/my-interface-agent-sync", owner: "skill.project_skills.supporting.agent-sync"}
+    built_in_commands: {}
+    legacy_command_files: {}
+    user_commands: {}
+    managed_commands: {}
+    extension_commands: {}
+    aliases: {}
+    compatibility:
+      Claude Code:
+        custom_commands_merged_into_skills: true
+        legacy_directory: ".claude/commands/"

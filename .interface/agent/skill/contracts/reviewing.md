@@ -14,7 +14,7 @@ Activate explicitly for zero or more phase selections, after Planning as a Plan 
 
 ## Inputs
 
-Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Principles and Preferences, Plans, State, prior Review records, implementation, public interfaces, and recorded evidence.
+Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Developer Principles and Preferences, Agent Principles and Profiles, Plans, State, prior Review records, implementation, public interfaces, and recorded evidence.
 
 ## Outputs
 
@@ -31,7 +31,7 @@ Observe and execute non-repairing verification; invoke the current Planning Skil
 ## Workflow Invariants
 
 - Validate all phase input before changing records, invoking Planning, or running verification.
-- For each selected phase, rebuild a transient Plan Assurance ledger directly from current Target Understanding and applicable Component Principles and Preferences, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness.
+- For each selected phase, rebuild a transient Plan Assurance ledger directly from current Target Understanding and applicable Developer Principles and Preferences together with Agent Principles and Profiles, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness.
 - If the Plan is absent or Plan Assurance is not satisfied, record the exact Plan Findings, invoke Planning for that phase, then discard prior Plan observations and independently rebuild and apply the Plan Assurance ledger to Planning's result.
 - Repeat Plan reconciliation only while a pass closes or materially advances a Plan Finding. Stop the affected phase on a repeated unresolved Finding, no observable progress, inconclusive Plan Assurance, or required Human decision.
 - Do not begin Implementation Assurance until Plan Assurance is satisfied.

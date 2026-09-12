@@ -14,7 +14,7 @@ operational_scope:
   purpose: "This file records what has been reviewed and what those reviews found. It is an operational record, not a description of the Target."
   stores: "Which phases were reviewed, when and by whom, separate Plan and Implementation Assurance outcomes, the aggregate outcome, and every Finding with what was expected, what was observed, the evidence for it, and where it stands."
   excludes: "Target concepts, requirements, acceptance criteria, resolved technical choices, Component rules, Task content or progress, and the Workflow position. A Finding refers to what it judged; it never restates it."
-  resolution: "The baseline a Finding was judged against is resolved from current Target Understanding, applicable Interface Principles and Preferences, and the phase's Plan when the review runs, never read back from this file."
+  resolution: "The baseline a Finding was judged against is resolved from current Target Understanding, applicable Principles, Developer Preferences, Agent Profiles, and the phase's Plan when the review runs, never read back from this file."
   authority: "Review owns this file alone. It records the state of its own Findings and changes nothing another Component owns."
 structure:
   - "finding_count"

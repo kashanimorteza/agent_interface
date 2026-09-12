@@ -1,0 +1,57 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/context/profile.yaml"
+  path_note: "The Profile layer of the Agent Context Component."
+  purpose: "Persistent instructions, memory, imports, context loading, compaction, and context-budget choices."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; runtime memory never changes the authorities declared here."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Load the minimum current context required by the active Agent Role."
+  selection: "Use current authoritative project sources; do not infer a missing persistent instruction."
+  version_resolution: "Context formats follow their owning runtime or Interface definition."
+  matching: "Match instruction and memory sources by exact scope and path."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Selected persistent-context and memory behavior."
+  options: "Supported memory behaviors."
+  settings: "Complete instruction, memory, import, compaction, and context-budget declarations."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    auto_memory_behavior: "disabled"
+  options:
+    auto_memory_behaviors:
+      disabled:
+        meaning: "Do not rely on runtime-maintained cross-session memory for project authority."
+      runtime_default:
+        meaning: "Use the runtime default while retaining Memory's non-authoritative status."
+  settings:
+    project_instructions: {}
+    local_instructions: {}
+    user_instructions: {}
+    managed_instructions: {}
+    imports: {}
+    path_scoped_loading: {}
+    auto_memory:
+      entries: {}
+      authoritative: false
+    compaction:
+      required_sources_reload: true
+      custom_instructions: {}
+    context_budget: {}
+    exclusions:
+      project_root_readme:
+        access: "never read"
+        scope: "Only README.md at the project root; scoped Component and package README files remain readable."

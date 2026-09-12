@@ -1,0 +1,70 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/agent/profile.yaml"
+  path_note: "The Profile layer of the Agent Component."
+  purpose: "Primary and specialized Agent identities, Role assignments, capability configuration, lifecycle defaults, and native realizations."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; runtime-discovered Agents are observed without being adopted as required Agent Definitions."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Instantiate the selected General Agent and expose each required Specialized Agent through its declared Native Agent mapping."
+  selection: "An undeclared Native Agent remains optional runtime capability and never becomes part of the required Agent Profile automatically."
+  version_resolution: "Native Agent format and runtime-provided primary behavior resolve from the selected Agent Runtime."
+  matching: "Match Agent Definitions by stable identity, assigned Role reference, and exact native identity or realization."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The selected General Agent."
+  options: "Selectable General Agent definitions."
+  settings: "Project, runtime, user, managed, extension, and built-in Agent definitions plus inherited defaults."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    general_agent: "general"
+  options:
+    general_agents:
+      general:
+        resource: "project_agents.general"
+  settings:
+    project_agents:
+      general:
+        kind: "general"
+        role: "role.project_roles.primary-execution"
+        native_identity: "runtime primary agent"
+        native_definition: "runtime-provided"
+        configuration: "inherits agent_defaults and the active Agent Profile"
+        required: true
+      interface-reader:
+        kind: "specialized"
+        role: "role.project_roles.interface-reader"
+        native_identity: "interface-reader"
+        native_definition: ".claude/agents/interface-reader.md"
+        allowed_tools: ["Read", "Grep", "Glob"]
+        write_authority: "none"
+        required: true
+    runtime_agents: {}
+    user_agents: {}
+    managed_agents: {}
+    extension_agents: {}
+    built_in_agents: {}
+    agent_defaults:
+      model: null
+      effort: null
+      max_turns: null
+      background: false
+      isolation: null
+      memory: null
+      skills: []
+      allowed_tools: []
+      disallowed_tools: []
+    overrides: {}

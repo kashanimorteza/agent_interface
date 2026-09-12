@@ -5,7 +5,7 @@ meta:
   purpose: "Defaults and supported technical profiles for the Frontend package and the Presentation, Interaction Logic, and API Access layers."
   standard: "Agent Project Interface"
   version: "3.1"
-  updated: "2026-09-08"
+  updated: "2026-09-12"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -25,6 +25,7 @@ read_order:
   - "selected"
   - "options"
   - "settings"
+  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -32,6 +33,7 @@ content_map:
   selected: "The Frontend code path, language, user-interface library, application framework, package manager, API client, and Theme."
   options: "Supported languages, user-interface libraries, application frameworks, package managers, API clients, and Themes."
   settings: "Configuration grouped by the Presentation, Interaction Logic, and API Access layers."
+  implementation: "Empty. Frontend currently declares no separate implementation conventions outside its selected options and settings."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -105,3 +107,6 @@ content:
       type_resolution: "Generate operation-specific client types from the current Backend API description when available. generated_types is a preference for generation, not a requirement to enable Backend documentation."
       contract_fallback: "When no machine-readable description is available, derive and maintain equivalent client types from Backend-owned public request and response definitions and documentation, without importing Backend implementation at runtime. Check them against the public API and reconcile them when it changes."
       unresolved_contract: "Do not invent missing API details. Report the affected integration when current public sources cannot establish a correct client; apply the current criticality rules and continue independently defined work."
+
+  # <!-------------------------------------------- implementation -->
+  implementation: {}

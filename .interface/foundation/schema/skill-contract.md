@@ -1,6 +1,6 @@
 # Skill Contract Structure
 
-A Skill Contract is the portable, runtime-independent behavioral definition of one Interface-owned Agent Skill. One Contract exists for every `my-interface-*` Skill declared by Agent Skill Preferences at `.interface/agent/skill/contracts/<interface-owned-skill>.md`.
+A Skill Contract is the portable, runtime-independent behavioral definition of one Interface-owned Agent Skill. One Contract exists for every `my-interface-*` Skill declared by Agent Skill Profile at `.interface/agent/skill/contracts/<interface-owned-skill>.md`.
 
 The Contract is Human-owned. Agents read it and may realize it through a selected Runtime, but never edit it during execution. A native Skill implementation is an adapter and cannot override the Contract.
 
@@ -26,7 +26,7 @@ Every Skill Contract contains these sections in this order:
 
 - The Contract contains no Target facts, resolved project state, credentials, concrete provider commands, or vendor-specific storage layout.
 - A fixed sequence is included only when changing that sequence changes the Skill's meaning, safety, independence, or completion claim.
-- Inputs name semantic values. Command syntax and aliases remain owned by Agent Command Preferences.
+- Inputs name semantic values. Command syntax and aliases remain owned by Agent Command Profile.
 - Source formats, status vocabularies, and storage shapes remain owned by their Components and Schemas; the Contract points to those owners rather than copying them.
-- External framework, package, extension, built-in, user, and managed Skills remain provider-owned resources declared in Skill Preferences. They follow applicable Agent Principles and the active Role but do not receive Interface-owned Skill Contracts.
+- External framework, package, extension, built-in, user, and managed Skills remain provider-owned resources declared in Skill Profile. They follow applicable Agent Principles and the active Role but do not receive Interface-owned Skill Contracts.
 - Every obligation appears once. Shared obligations remain in Agent Skill Principles or another owning Component and are referenced, not copied.

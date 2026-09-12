@@ -16,9 +16,9 @@ It owns connection declarations, trust boundaries, compatibility, and activation
 - **Consumed by Agent Tool, Hook, and Extension** — exposes external capabilities and package-provided connections.
 - **Consumed by Agent Observability** — supplies connection health and activation evidence.
 
-Technical MCP, LSP, channel, application, transport, and authentication-reference choices belong to Agent Integration Preferences.
+Technical MCP, LSP, channel, application, transport, and authentication-reference choices belong to Agent Integration Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

@@ -32,7 +32,7 @@ Write implementation, tests, executable documentation, dependencies, and configu
 
 - Validate the complete phase input before mutation; an invalid token prevents the whole run.
 - Execute only work eligible under current Plan rules and dependency evidence.
-- For every resolved technical option involved in the work, resolve its declared `agent_skills` associations through Agent Skill Preferences. Activate an associated Skill only when the option is selected and the Skill is currently discoverable and usable. Use optional Skills when available and continue without them when unavailable; stop the affected work when a required Skill is unavailable. An associated Skill supplies guidance without changing scope or authority.
+- For every resolved technical option involved in the work, resolve its declared `agent_skills` associations through Agent Skill Profile. Activate an associated Skill only when the option is selected and the Skill is currently discoverable and usable. Use optional Skills when available and continue without them when unavailable; stop the affected work when a required Skill is unavailable. An associated Skill supplies guidance without changing scope or authority.
 - Build a transient verification ledger that splits every acceptance and verification statement into observable conditions and associates each with proof.
 - Derive checks from required conditions, never from the implementation just produced. One passing example proves only that example.
 - Prefer durable checks committed with regressible behavior; one-off probes only supplement them.

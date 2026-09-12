@@ -5,7 +5,7 @@ meta:
   purpose: "Where the Review Component's technical choices would be recorded. The Review Component currently makes none."
   standard: "Agent Project Interface"
   version: "1.0"
-  updated: "2026-09-07"
+  updated: "2026-09-12"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -25,6 +25,7 @@ read_order:
   - "selected"
   - "options"
   - "settings"
+  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -32,6 +33,7 @@ content_map:
   selected: "Empty. The Review Component chooses among no catalogued alternatives and owns no code path."
   options: "Empty. The Review Component catalogues no alternatives."
   settings: "Empty. The Review Component configures nothing."
+  implementation: "Empty. The Review Component declares no implementation conventions."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -45,3 +47,6 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings: {}
+
+  # <!-------------------------------------------- implementation -->
+  implementation: {}

@@ -15,9 +15,9 @@ It owns coordination protocol and conflict boundaries. It does not own role cont
 - **Consumes Agent, Role, Context, Permission, and Session** — coordinates eligible Agent Definitions while preserving Role, authority, and lifecycle boundaries.
 - **Consumed by Agent Observability** — provides attribution and coordination outcomes.
 
-Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Coordination Preferences.
+Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Coordination Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

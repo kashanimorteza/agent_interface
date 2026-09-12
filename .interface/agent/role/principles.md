@@ -17,9 +17,9 @@ It owns role responsibilities and boundaries. It does not own Agent identities, 
 - **Consumed by Agent Coordination** — supplies the responsibility boundaries preserved during delegation and teams.
 - **Consumed by Agent Observability** — supplies the contract against which role outcomes are reported.
 
-Technical Role catalogs and primary Role selection belong to Agent Role Preferences. Agent identities, native definitions, models, tools, Skills, and per-Agent configuration belong to Agent Preferences.
+Technical Role catalogs and primary Role selection belong to Agent Role Profile. Agent identities, native definitions, models, tools, Skills, and per-Agent configuration belong to Agent Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

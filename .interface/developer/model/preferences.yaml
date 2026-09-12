@@ -83,6 +83,44 @@ content:
         forbidden_major_versions:
           - "1.x"
 
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    field_defaults:
+      purpose: "Defaults for missing properties of fields already present in a Model definition. These are not a list of fields to add."
+      common_fields:
+        id:
+          type: "integer"
+          nullable: false
+          auto_increment: true
+          primary_key: true
+        name:
+          type: "string"
+          nullable: false
+          purpose: "The entity's display name."
+        api_key:
+          type: "string"
+          nullable: false
+          credential: true
+          purpose: "The API key assigned to the entity."
+        password:
+          credential: true
+        status:
+          type: "boolean"
+          nullable: false
+          default: true
+          purpose: "Indicates whether the entity is active."
+        description:
+          type: "string"
+          nullable: true
+          purpose: "Describes the entity."
+      field_patterns:
+        "*_id":
+          match: "A field name ending in _id; the exact name id is not included."
+          defaults:
+            type: "integer"
+            nullable: false
+
   # <!-------------------------------------------- implementation -->
   implementation:
     typing:
@@ -153,41 +191,3 @@ content:
         - "Model validation check"
         - "serialization and schema check"
         - "clean-environment install check"
-
-  # <!-------------------------------------------- settings -->
-  settings:
-
-    field_defaults:
-      purpose: "Defaults for missing properties of fields already present in a Model definition. These are not a list of fields to add."
-      common_fields:
-        id:
-          type: "integer"
-          nullable: false
-          auto_increment: true
-          primary_key: true
-        name:
-          type: "string"
-          nullable: false
-          purpose: "The entity's display name."
-        api_key:
-          type: "string"
-          nullable: false
-          credential: true
-          purpose: "The API key assigned to the entity."
-        password:
-          credential: true
-        status:
-          type: "boolean"
-          nullable: false
-          default: true
-          purpose: "Indicates whether the entity is active."
-        description:
-          type: "string"
-          nullable: true
-          purpose: "Describes the entity."
-      field_patterns:
-        "*_id":
-          match: "A field name ending in _id; the exact name id is not included."
-          defaults:
-            type: "integer"
-            nullable: false

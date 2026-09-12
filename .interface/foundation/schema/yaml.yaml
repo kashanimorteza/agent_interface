@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-yaml"
   version: "1.1"
-  purpose: "The common structural frame followed by Interface Preferences and Config files. It defines their outer sections; what goes inside `content` belongs to the schema of that kind of file. Schema definition files, including this file, use their own definition formats and are outside this frame's scope."
+  purpose: "The common structural frame followed by Developer Preferences, Agent Profiles, and Config files. It defines their outer sections; what goes inside `content` belongs to the schema of that kind of file. Schema definition files, including this file, use their own definition formats and are outside this frame's scope."
 
 structure:
   - meta

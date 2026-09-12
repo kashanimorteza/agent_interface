@@ -12,7 +12,7 @@ Use this document as the entry point and follow its sections in this order:
 3. **[Architecture](#architecture)** — see the high-level structure and its primary sections.
 4. **[Modules](#modules)** — locate the three primary conceptual boundaries of the Interface.
    - **[Target](#target)** — understand what is being built through its non-technical and technical definitions.
-   - **[Developer](#developer)** — understand the engineering philosophy through Components and their Principles and Preferences.
+   - **[Developer](#developer)** — understand the engineering philosophy through Components and their Principles and Developer Preferences.
    - **[Agent](#agent)** — understand the executing system, its capabilities, restrictions, and Skills.
 5. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
 6. **[Operations](#operations)** — understand the one-to-one actions performed through every Interface-owned Skill.
@@ -59,7 +59,7 @@ The primary concern of the Interface is the **conceptual contract** between the 
 
 Agent Interface is an independent interface between **Humans** and **AI Agents** for establishing a common protocol, structure, and standard for software development.
 
-Its purpose is to let a Human define a Target in natural language and give Agents common Principles and Preferences for planning and developing it.
+Its purpose is to let a Human define a Target in natural language and give Agents common Developer Principles and Preferences together with an explicit Agent Profile for planning and developing it.
 
 <!-------------------------- How It Works -->
 ### How It Works
@@ -138,9 +138,9 @@ This separation is one of the central architectural principles of the project.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
 - **Developer** — the developer's reusable programming philosophy and engineering perspective, independent of a particular Target or Agent.
 - **Agent** — an AI coding system or execution unit that interacts with the Interface and maps its concepts to native capabilities.
-- **Component** — one named part of the Developer or Agent perspective that owns a responsibility and is described through its Principles and Preferences; some Developer Components also own operational records.
-- **Principles** — mandatory philosophy, responsibilities, rules, and boundaries that describe how the Developer believes software should fundamentally be designed.
-- **Preferences** — preferred choices and defaults used when multiple valid implementations exist and the Target leaves the choice unspecified.
+- **Component** — one named part of the Developer or Agent perspective that owns a responsibility and is described through Principles together with Developer Preferences or an Agent Profile; some Developer Components also own operational records.
+- **Principles** — mandatory portable philosophy, responsibilities, rules, and boundaries owned by a Developer or Agent Component.
+- **Developer Preferences** — preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations used when the Target leaves a choice unspecified.
 - **Schema** — the structure a file follows: either a standard for a Human-authored file or an operational format and initial template for a generated record.
 - **Config** — mutable operational records that coordinate the Workflow and record where work stands; Config does not store what the Target means.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
@@ -273,7 +273,7 @@ Each line names a Component so that a phase target can be resolved to its owner.
 
 <!-------------------------- Agent -->
 ### Agent
-The Agent module defines the execution side of Agent Interface through Components. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and Preferences for its current choices, resources, native mappings, and explicit empty categories.
+The Agent module defines the execution side of Agent Interface through Components. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, native mappings, and explicit empty categories.
 
 Together, these Components form the Agent Profile. A different Agent Runtime reads the same Profile and maps it to native capabilities without requiring the Target or Developer modules to be redesigned.
 
@@ -284,59 +284,59 @@ Agent
 └── Components
     ├── Runtime
     │   ├── Principles  → .interface/agent/runtime/principles.md
-    │   └── Preferences → .interface/agent/runtime/preferences.yaml
+    │   └── Profile     → .interface/agent/runtime/profile.yaml
     ├── Settings
     │   ├── Principles  → .interface/agent/settings/principles.md
-    │   └── Preferences → .interface/agent/settings/preferences.yaml
+    │   └── Profile     → .interface/agent/settings/profile.yaml
     ├── Context
     │   ├── Principles  → .interface/agent/context/principles.md
-    │   └── Preferences → .interface/agent/context/preferences.yaml
+    │   └── Profile     → .interface/agent/context/profile.yaml
     ├── Role
     │   ├── Principles  → .interface/agent/role/principles.md
-    │   └── Preferences → .interface/agent/role/preferences.yaml
+    │   └── Profile     → .interface/agent/role/profile.yaml
     ├── Agent
     │   ├── Principles  → .interface/agent/agent/principles.md
-    │   └── Preferences → .interface/agent/agent/preferences.yaml
+    │   └── Profile     → .interface/agent/agent/profile.yaml
     ├── Coordination
     │   ├── Principles  → .interface/agent/coordination/principles.md
-    │   └── Preferences → .interface/agent/coordination/preferences.yaml
+    │   └── Profile     → .interface/agent/coordination/profile.yaml
     ├── Skill
     │   ├── Principles  → .interface/agent/skill/principles.md
-    │   ├── Preferences → .interface/agent/skill/preferences.yaml
+    │   ├── Profile     → .interface/agent/skill/profile.yaml
     │   └── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
     ├── Command
     │   ├── Principles  → .interface/agent/command/principles.md
-    │   └── Preferences → .interface/agent/command/preferences.yaml
+    │   └── Profile     → .interface/agent/command/profile.yaml
     ├── Rule
     │   ├── Principles  → .interface/agent/rule/principles.md
-    │   └── Preferences → .interface/agent/rule/preferences.yaml
+    │   └── Profile     → .interface/agent/rule/profile.yaml
     ├── Tool
     │   ├── Principles  → .interface/agent/tool/principles.md
-    │   └── Preferences → .interface/agent/tool/preferences.yaml
+    │   └── Profile     → .interface/agent/tool/profile.yaml
     ├── Hook
     │   ├── Principles  → .interface/agent/hook/principles.md
-    │   └── Preferences → .interface/agent/hook/preferences.yaml
+    │   └── Profile     → .interface/agent/hook/profile.yaml
     ├── Integration
     │   ├── Principles  → .interface/agent/integration/principles.md
-    │   └── Preferences → .interface/agent/integration/preferences.yaml
+    │   └── Profile     → .interface/agent/integration/profile.yaml
     ├── Extension
     │   ├── Principles  → .interface/agent/extension/principles.md
-    │   └── Preferences → .interface/agent/extension/preferences.yaml
+    │   └── Profile     → .interface/agent/extension/profile.yaml
     ├── Interaction
     │   ├── Principles  → .interface/agent/interaction/principles.md
-    │   └── Preferences → .interface/agent/interaction/preferences.yaml
+    │   └── Profile     → .interface/agent/interaction/profile.yaml
     ├── Permission
     │   ├── Principles  → .interface/agent/permission/principles.md
-    │   └── Preferences → .interface/agent/permission/preferences.yaml
+    │   └── Profile     → .interface/agent/permission/profile.yaml
     ├── Session
     │   ├── Principles  → .interface/agent/session/principles.md
-    │   └── Preferences → .interface/agent/session/preferences.yaml
+    │   └── Profile     → .interface/agent/session/profile.yaml
     └── Observability
         ├── Principles  → .interface/agent/observability/principles.md
-        └── Preferences → .interface/agent/observability/preferences.yaml
+        └── Profile     → .interface/agent/observability/profile.yaml
 ```
 
-The Agent Components are read in the order shown. When the active role uses an Interface-owned Skill, its portable Contract is read after Skill Principles and Preferences. An external Skill is read from its declared provider resource under the active Role and applicable Agent Principles. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Preferences entries are empty, so absence is explicit rather than indistinguishable from omission. Runtime-specific implementation remains outside the Interface and is only an adapter and evidence that the Profile has been realized.
+The Agent Components are read in the order shown. When the active role uses an Interface-owned Skill, its portable Contract is read after Skill Principles and Profile. An external Skill is read from its declared provider resource under the active Role and applicable Agent Principles. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. Runtime-specific implementation remains outside the Interface and is only an adapter and evidence that the Profile has been realized.
 
 
 #### Components
@@ -361,7 +361,7 @@ Session        = Lifecycle, resume, history, background work, isolation, checkpo
 Observability  = Validation, status, diagnostics, evidence, logs, telemetry, health, and usage
 ```
 
-Every Agent Component's Principles and Preferences are authoritative for that Component only. A runtime artifact not declared in the owning Preferences is optional runtime capability; a required declaration not usable by the selected runtime is an Agent Profile gap.
+Every Agent Component's Principles and Profile are authoritative for that Component only. A runtime artifact not declared in the owning Profile is an optional runtime capability; a required declaration not usable by the selected runtime is an Agent Profile gap.
 
 <br><br>
 
@@ -503,7 +503,7 @@ output = Current operational Config and a prepared selected Environment
 ```text
 state = planning
 responsibility = Create bounded and verifiable Tasks without prescribing implementation
-inputs = Current Target, applicable Principles and Preferences, and operational records
+inputs = Current Target, applicable Developer Principles and Preferences, Agent Profile, and operational records
 output = Updated Plan Config
 ```
 
@@ -513,7 +513,7 @@ output = Updated Plan Config
 ```text
 state = development
 responsibility = Implement and verify eligible planned Tasks
-inputs = Current Target, applicable Principles and Preferences, Plan, State, and existing implementation
+inputs = Current Target, applicable Developer Principles and Preferences, Agent Profile, Plan, State, and existing implementation
 output = Verified implementation and updated operational records
 ```
 
@@ -523,20 +523,21 @@ output = Verified implementation and updated operational records
 <!--------------------------------------------------------------------------------- Authority and Ownership --->
 ## Authority and Ownership
 
-Explicit Target intent and applicable Principles guide each Skill. Preferences supply defaults where the Target leaves a choice unstated. The operational Schemas define the shape of operational records, the Principles and Preferences Schemas define the shape of the authored sources, and the general YAML Schema supplies the common frame for Preferences and Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
+Explicit Target intent and applicable Principles guide each Skill. Developer Preferences supply engineering defaults where the Target leaves a choice unstated, while Agent Profiles declare the current execution capabilities and mappings. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Developer Preferences, and Agent Profiles, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
 
 ```text
 Target = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
-Preferences = technical defaults for unspecified choices
-Schema = common YAML frame for Preferences and Config, authored-source structure, and the storage structure of every operational record
+Developer Preferences = engineering defaults for unspecified Target choices
+Agent Profiles = current Agent selections, resources, mappings, and explicit empty categories
+Schema = common YAML frame for Developer Preferences, Agent Profiles, and Config, authored-source structure, and the storage structure of every operational record
 Config = the mutable operational records
 ```
 
 Ownership answers who a record belongs to, and it belongs to the Human or to a Component:
 
 ```text
-Human = owns Interface, Target, Principles, Preferences, and Schema sources
+Human = owns Interface, Target, Principles, Developer Preferences, Agent Profiles, and Schema sources
 Plan = owns Plans, Groups, Tasks, their status, and their history
 State = owns active Workflow position, aggregate phase progress, Implement and Launch results, operational History, Blockers, and Open Questions
 Review = owns recorded Findings and their state
@@ -641,7 +642,8 @@ Schemas define the structure followed by authored Interface files and generated 
 .interface/foundation/schema/
 ├── yaml.yaml
 ├── principles.md
-├── preferences.yaml
+├── developer-preferences.yaml
+├── agent-profile.yaml
 ├── skill-contract.md
 ├── state.yaml
 ├── plan.yaml
@@ -655,7 +657,7 @@ Schemas define the structure followed by authored Interface files and generated 
 name = YAML Schema
 path = .interface/foundation/schema/yaml.yaml
 kind = Structure standard
-responsibility = Defines the common outer structure followed by Interface Preferences and Config files
+responsibility = Defines the common outer structure followed by Developer Preferences, Agent Profiles, and Config files
 scope = Schema definition files use their own formats and do not follow this outer structure
 ```
 
@@ -670,13 +672,23 @@ responsibility = Defines the common Markdown structure followed by every Develop
 ```
 
 
-#### Preferences Schema
+#### Developer Preferences Schema
 
 ```text
-name = Preferences Schema
-path = .interface/foundation/schema/preferences.yaml
+name = Developer Preferences Schema
+path = .interface/foundation/schema/developer-preferences.yaml
 kind = Structure standard
-responsibility = Defines the common structure followed by every Developer and Agent Component preferences.yaml file
+responsibility = Defines the four-section structure followed by every Developer Component preferences.yaml file
+```
+
+
+#### Agent Profile Schema
+
+```text
+name = Agent Profile Schema
+path = .interface/foundation/schema/agent-profile.yaml
+kind = Structure standard
+responsibility = Defines the three-section structure followed by every Agent Component profile.yaml file
 ```
 
 

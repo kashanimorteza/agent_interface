@@ -1,0 +1,78 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/hook/profile.yaml"
+  path_note: "The Profile layer of the Agent Hook Component."
+  purpose: "Lifecycle events, matchers, handlers, failure policies, and Hook catalogs."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; no Hook is activated from an undeclared runtime observation."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Register declared Hooks only after validating event, scope, handler, permission, and failure policy."
+  selection: "A required deterministic control must be declared; an absent Hook is never inferred from a Rule."
+  version_resolution: "Event and handler formats resolve against the selected runtime."
+  matching: "Match Hooks by stable key, exact Event, matcher, and source."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Empty; no Hook handler is globally selected."
+  options: "Supported handler types."
+  settings: "Complete event and Hook catalogs, including explicit empty project declarations."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected: {}
+  options:
+    handler_types:
+      command: {}
+      http: {}
+      prompt: {}
+      agent: {}
+      mcp_tool: {}
+  settings:
+    lifecycle_events:
+      session_start: {}
+      setup: {}
+      user_prompt_submit: {}
+      user_prompt_expansion: {}
+      pre_tool_use: {}
+      permission_request: {}
+      permission_denied: {}
+      post_tool_use: {}
+      post_tool_use_failure: {}
+      notification: {}
+      subagent_start: {}
+      subagent_stop: {}
+      stop: {}
+      teammate_idle: {}
+      task_completed: {}
+      config_change: {}
+      worktree_create: {}
+      worktree_remove: {}
+      pre_compact: {}
+      session_end: {}
+      instructions_loaded: {}
+    project_hooks:
+      interface-boundary-guard:
+        path: ".claude/hooks/interface-boundary-guard.py"
+        event: "PreToolUse"
+        matcher: "Read|Edit|Write|NotebookEdit|Bash"
+        responsibility: "Block Root README reads and direct Interface mutations outside the authorized Config boundary."
+        failure_policy: "fail_closed"
+        required: true
+    user_hooks: {}
+    managed_hooks: {}
+    extension_hooks: {}
+    sdk_hooks: {}
+    disabled_hooks: {}
+    failure_defaults:
+      security_and_integrity: "fail_closed"
+      notification_only: "fail_open"

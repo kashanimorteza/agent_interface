@@ -16,9 +16,9 @@ It owns configuration source precedence and reconciliation. It does not own the 
 - **Consumed by Agent Runtime** — provides the configuration that the runtime applies.
 - **Consumed by Agent Observability** — provides expected values for diagnostics.
 
-Technical source scopes, merge behavior, and native locations belong to Agent Settings Preferences.
+Technical source scopes, merge behavior, and native locations belong to Agent Settings Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -38,7 +38,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 **Why:** Synchronization must not convert observations into policy.
 
-**Boundary:** A runtime-provided default may be observed without being adopted as a project Preference.
+**Boundary:** A runtime-provided default may be observed without being adopted as a project Profile.
 
 <br>
 

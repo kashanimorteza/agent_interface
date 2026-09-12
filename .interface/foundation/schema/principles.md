@@ -24,8 +24,8 @@ A Principles file contains only mandatory philosophy, responsibilities, and boun
 
 A Principles file never contains:
 
-- a specific tool, library, framework, engine, third-party package, or version selection, or a concrete filename, folder name, path, or implementation layout; these choices belong to Preferences, except that Agent Skill Principles may name a required or conditional Skill and the technology category that activates it without making the technology selection;
-- a technical default or a resolved technical choice, which belong to the Component's Preferences;
+- a specific tool, library, framework, engine, third-party package, or version selection, or a concrete filename, folder name, path, or implementation layout; Developer choices belong to Developer Preferences and Agent declarations belong to the owning Agent Profile, except that Agent Skill Principles may name a required or conditional Skill and the technology category that activates it without making the technology selection;
+- a technical default or resolved technical choice, which belongs to Developer Preferences or the owning Agent Profile;
 - the shape of a generated file, which belongs to the Component's Schema when one exists; or
 - instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.
 
@@ -119,11 +119,11 @@ Relationships are stated between Components and Modules only. No Skill, operatio
 
 One paragraph placing the Component's technical choices outside this file, and naming what holds them:
 
-- technical choices and defaults belong to the Component's Preferences;
+- Developer technical choices and defaults belong to the Component's Preferences, while Agent declarations and runtime mappings belong to the Component's Profile;
 - implementation applies those choices to the current project definition; and
 - when the Component owns a generated file, the shape of that file belongs to its Schema.
 
-A Component whose Preferences currently define nothing still states where its technical choices would belong. The absence of defaults is a fact about today's Preferences, not a reason to omit the layering statement.
+A Component still states where its technical choices or declarations belong even when its Developer Preferences or Agent Profile contains no entries. Explicit absence is not a reason to omit the layering statement.
 
 
 <!--------------------------------------------------------------------------------- Authority --->
@@ -134,7 +134,7 @@ A Component whose Preferences currently define nothing still states where its te
 One paragraph, stating all three of:
 
 - every statement in the file is mandatory;
-- a Preference can never override a Principle; and
+- a Developer Preference or Agent Profile can never override a Principle; and
 - a project may only add stricter rules, never looser ones.
 
 No Principles file omits or weakens any of the three.
@@ -226,11 +226,11 @@ what it is independent of, and what it does not own.>
 - **Consumes <Component>** — <what it takes and why>
 - **Consumed by <Component>** — <what it provides and why>
 
-<Layering: technical choices and defaults belong to <Component> Preferences; implementation
-applies them to the current project definition.>
+<Layering: Developer technical choices and defaults belong to <Component> Preferences;
+Agent declarations and mappings belong to <Component> Profile; implementation realizes them.>
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project
-may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Developer Preference or Agent Profile can never override
+a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

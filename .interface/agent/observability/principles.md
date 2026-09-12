@@ -15,9 +15,9 @@ It owns observation contracts and health vocabulary. It does not own implementat
 - **Consumes every Agent Component** — evaluates their declarations and runtime realization.
 - **Consumed by Agent Role, Interaction, and Session** — supplies diagnostics and evidence-backed outcome claims.
 
-Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting belong to Agent Observability Preferences.
+Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting belong to Agent Observability Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

@@ -15,9 +15,9 @@ It owns runtime identity and compatibility. It does not own behavioral instructi
 - **Consumes Agent Settings** — receives the selected runtime configuration and source precedence.
 - **Consumed by Agent and every executing Agent Component** — provides the execution environment and native mechanisms in which their declarations are realized.
 
-Technical runtime choices belong to Agent Runtime Preferences; implementation maps them to the selected runtime.
+Technical runtime choices belong to Agent Runtime Profile; implementation maps them to the selected runtime.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -27,13 +27,13 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 **Why:** The same Interface must remain executable when its runtime changes.
 
-**Boundary:** Runtime-specific paths, versions, flags, and mappings belong to Preferences.
+**Boundary:** Runtime-specific paths, versions, flags, and mappings belong to Profile.
 
 <br>
 
 ## 2. Runtime compatibility is explicit
 
-**Rule:** A selected Agent Runtime must expose or compatibly map every required capability. Runtime Preferences contain exactly one Realization record for every current Agent Component discovered from the canonical Agent Structure; each record states its realization mode, resolvable native mechanisms, authorized write targets, and verification obligation. An unmapped, duplicated, unresolved, or incompatible requirement is reported as unavailable and never silently approximated.
+**Rule:** A selected Agent Runtime must expose or compatibly map every required capability. Runtime Profile contains exactly one Realization record for every current Agent Component discovered from the canonical Agent Structure; each record states its realization mode, resolvable native mechanisms, authorized write targets, and verification obligation. An unmapped, duplicated, unresolved, or incompatible requirement is reported as unavailable and never silently approximated.
 
 **Why:** A similar-looking native feature may have different authority or lifecycle semantics.
 

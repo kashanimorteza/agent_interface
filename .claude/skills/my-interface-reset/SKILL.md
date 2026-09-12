@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Reset the project workflow
 
-This file is the Claude Code adapter for the portable `reset` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the Claude Code adapter for the portable `reset` Skill Contract. Resolve and read that Contract through Agent Skill Profile before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
 
 ## Role
 

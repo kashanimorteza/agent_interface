@@ -53,4 +53,4 @@ Stop before mutation for missing or ambiguous stage input, unresolved ownership,
 
 ## Runtime Realization
 
-A native adapter exposes the three stable semantic stages through Agent Command Preferences, separates preview from apply, and uses recoverable deletion where practical while truthfully warning when recovery is unavailable.
+A native adapter exposes the three stable semantic stages through Agent Command Profile, separates preview from apply, and uses recoverable deletion where practical while truthfully warning when recovery is unavailable.

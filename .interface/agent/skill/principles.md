@@ -17,9 +17,9 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 - **Consumes Developer Components and Target** — reads current authorities required by its responsibility.
 - **Consumed by Agent, Command, and Coordination** — provides assignable, invocable, and delegable workflows.
 
-Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, provider resources, and native implementation mappings belong to Agent Skill Preferences. Command names and argument forms belong to Agent Command Preferences.
+Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, provider resources, and native implementation mappings belong to Agent Skill Profile. Command names and argument forms belong to Agent Command Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -35,7 +35,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 2. Skill availability is proven
 
-**Rule:** A Skill is available only when its intended Agent Role can discover and invoke it in the current project. A Skill delegated by another Skill is available only when the selected Runtime permits that declared coordinator to invoke it. Core Workflow Skills used by Implement are invocable both directly by the Human and by declared coordinators; top-level or sensitive coordinating Skills remain explicit-Human entry points unless their Preferences state otherwise. A file, installation record, or declaration alone does not prove Activation.
+**Rule:** A Skill is available only when its intended Agent Role can discover and invoke it in the current project. A Skill delegated by another Skill is available only when the selected Runtime permits that declared coordinator to invoke it. Core Workflow Skills used by Implement are invocable both directly by the Human and by declared coordinators; top-level or sensitive coordinating Skills remain explicit-Human entry points unless the Skill Profile states otherwise. A file, installation record, or declaration alone does not prove Activation.
 
 **Why:** Planning around nominal Skills fails when the runtime cannot actually load them.
 

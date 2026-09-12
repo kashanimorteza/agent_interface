@@ -5,7 +5,7 @@ meta:
   purpose: "Where technical choices owned by State would be recorded. State currently makes none."
   standard: "Agent Project Interface"
   version: "1.1"
-  updated: "2026-09-10"
+  updated: "2026-09-12"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -25,6 +25,7 @@ read_order:
   - "selected"
   - "options"
   - "settings"
+  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -32,6 +33,7 @@ content_map:
   selected: "Empty. The State Component chooses among no catalogued alternatives and owns no code path."
   options: "Empty. The State Component catalogues no alternatives."
   settings: "Empty. The State Component configures nothing."
+  implementation: "Empty. The State Component declares no implementation conventions."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -45,3 +47,6 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings: {}
+
+  # <!-------------------------------------------- implementation -->
+  implementation: {}

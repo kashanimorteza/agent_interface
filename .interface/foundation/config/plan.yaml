@@ -869,7 +869,12 @@ content:
               constraints: []
               acceptance: The application starts, and inspecting the package shows API depending only on Logic, Logic only on Data Access, and Data Access as the only layer importing the Database package.
               verify: The application process starts successfully, and a static check of imports confirms no API or Logic module imports the Database package directly.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-12T07:29:39Z'
+                by: developing
+                event: completed
+                check: 'Verified: `backend` package imports cleanly; three layers (api, logic, data_access) present with a single dependency direction; a real uvicorn server process started, served /openapi.json (200) and a live POST /users request, then was stopped cleanly.'
         P3-G2:
           id: P3-G2
           title: Data Access Layer
@@ -893,7 +898,12 @@ content:
               constraints: []
               acceptance: Every exposed Data Access operation reaches the correct Database operation for more than one distinct Model type, a requested group of operations commits or rolls back together through one Database transaction, and Data Access itself contains no application Behaviour.
               verify: Each Data Access operation is exercised against multiple distinct persistent Models and produces the same outcome as calling Database directly; a grouped Data Access request is shown to commit or roll back as one unit; and a static check confirms only Data Access imports the Database package.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-12T07:29:39Z'
+                by: developing
+                event: completed
+                check: 'Verified: create/get/list/update/delete exercised via data_access directly for Broker, Currency, AccountGroup (test_data_access.py); a grouped transaction committed two AccountGroups together and a failing group rolled back both; a static source scan confirms only data_access.py imports my_database (test_only_data_access_module_imports_my_database).'
         P3-G3:
           id: P3-G3
           title: Logic Layer
@@ -918,7 +928,12 @@ content:
               constraints: []
               acceptance: Each Model's Logic unit performs create, get, list, update, and delete correctly, a partial update that would leave the domain state invalid is rejected, and status is available only where the Model declares that field.
               verify: Every Model's Logic unit is exercised for its standard operations, an update leaving an invalid resulting state is shown to be rejected, and the status operation is confirmed available or unavailable exactly as each Model's declared fields require.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-12T07:29:39Z'
+                by: developing
+                event: completed
+                check: 'Verified: all 15 persistent Models present in logic.REGISTRY each with their own Logic unit class (test_every_persistent_model_has_its_own_logic_unit); create/get/list/update/delete exercised through Logic; a partial update leaving an invalid resulting state (blank name) is rejected as ValidationFailed; the status operation is confirmed available for a Model declaring status and rejected (UnsupportedOperation) for a locally defined Model without one.'
         P3-G4:
           id: P3-G4
           title: API Layer and Documentation
@@ -943,7 +958,12 @@ content:
               constraints: []
               acceptance: A request exercising each standard operation for more than one Model produces the correct transport-level result, a request supplying a Credential field on create or update succeeds, and no response body or response schema for any Model contains a Credential field's value or definition.
               verify: HTTP requests are made against more than one Model's endpoints for every selected standard operation, and every returned response body and response schema is inspected to confirm no Credential field is present.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-12T07:29:39Z'
+                by: developing
+                event: completed
+                check: 'Verified via TestClient and a live uvicorn process: full CRUD cycle over HTTP for Broker and Currency; User/create and /get responses never contain password or api_key; status enable/disable over HTTP; 404/422/409 correctly mapped for not-found, validation failure, and duplicate-unique/referenced-record violations (test_api.py, 9 tests).'
             P3-T5:
               id: P3-T5
               title: Publish and verify the machine-readable API description
@@ -958,7 +978,12 @@ content:
               constraints: []
               acceptance: The published description enumerates every exposed operation and its request and response shapes, and inspection confirms no Credential field appears in a response shape.
               verify: The generated API description is retrieved and checked against the implemented routes and against every Model's declared Credential fields.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-12T07:29:39Z'
+                by: developing
+                event: completed
+                check: '/openapi.json inspected: 45 paths covering exactly the 15 resources; every *Read schema checked to contain no password/api_key property; UserCreate schema confirmed to declare password and api_key as required input fields (test_openapi.py, 3 tests).'
         P3-G5:
           id: P3-G5
           title: Verification and Documentation
@@ -985,7 +1010,12 @@ content:
               constraints: []
               acceptance: A repeatable check suite issues HTTP requests covering every standard operation for multiple Models, confirms Credential protection end-to-end, exercises a transaction-grouped Logic operation, and validates the published API description, observing the expected outcome for each.
               verify: A repeatable check suite is run and every observed outcome is recorded.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-12T07:29:39Z'
+                by: developing
+                event: completed
+                check: 'Full suite: 21 tests across test_api, test_openapi, test_data_access, test_logic passed from a from-scratch environment (rm -rf .venv; uv sync; pytest) against a freshly migrated and seeded my_database. ruff check/format and pyright both clean on src/ and tests/. Root cause of two implementation bugs found and fixed during this task: dynamically-created Pydantic schema classes were unresolvable to FastAPI under `from __future__ import annotations` in the router factory (fixed by removing it there); local path dependencies on my_model/my_database defaulted to non-editable installs, giving backend an isolated, un-migrated database copy (fixed by declaring them editable in `[tool.uv.sources]`).'
             P3-T7:
               id: P3-T7
               title: Produce the Backend package documentation
@@ -1001,4 +1031,9 @@ content:
               constraints: []
               acceptance: Every required documentation section is present, its examples are runnable against the implemented API, and no example exposes an actual credential, private configuration, or Database internal detail.
               verify: Every required documentation example is executed directly against the running API and completes without error, and the document is inspected for the required sections and for consistency with the published API description.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-12T07:29:39Z'
+                by: developing
+                event: completed
+                check: DOCUMENTATION.md written at the package root covering purpose/boundaries, the three layers, the public API and standard operations table, Credential write-only behavior, failure-status mapping, Model Logic organization, the Data Access boundary to Database, and runtime Bindings. Every code example was executed directly against a live uvicorn server (or, for the transaction/Logic examples, directly in Python) and completed without error.

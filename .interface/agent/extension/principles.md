@@ -16,9 +16,9 @@ It owns extension identity, provenance, contents, lifecycle, and expected capabi
 - **Consumes Agent Permission** — performs Provisioning within authorization.
 - **Consumed by Agent Runtime and Settings** — supplies runtime-loadable capability bundles and declarations.
 
-Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Extension Preferences.
+Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Extension Profile.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
