@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Launch the Target
 
+This file is the Claude Code adapter for the portable `launch` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+
 ## Role
 
 Bring the developed Target online according to the current Platform authorities. Configure owns Environment preparation; Launch verifies that preparation, then owns runtime startup, connection, readiness verification, and access reporting.

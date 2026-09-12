@@ -7,6 +7,8 @@ disable-model-invocation: true
 
 # Review project phases
 
+This file is the Claude Code adapter for the portable `reviewing` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+
 ## Role
 
 Review the implemented results for the selected phases against current Target Understanding, their Task Plans, and their acceptance criteria, and establish whether the implementation and its verification evidence satisfy those requirements.

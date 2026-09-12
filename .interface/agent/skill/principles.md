@@ -1,13 +1,13 @@
 # Agent Skill Principles
 
-Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Skill implementations translate those stable contracts into focused, discoverable instructions.
+Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Portable Skill Contract resources define each Interface-owned Skill completely, and runtime implementations translate those contracts into focused, discoverable instructions. Externally provided Skills remain provider-owned capabilities declared by the Agent Profile.
 
 It owns Skill contracts and activation boundaries. It does not own the project facts, Component policies, or runtime tools it consumes.
 
 ## Terms
 
 - **Skill** — reusable instructions or knowledge activated explicitly or by relevance.
-- **Skill Contract** — a Skill's responsibility, inputs, outputs, authority, checks, and stopping conditions.
+- **Skill Contract** — the portable definition of an Interface-owned Skill's responsibility, inputs, outputs, authority, checks, and stopping conditions.
 - **Activation** — the state in which a Skill is discoverable and usable by its intended role.
 
 ## Relationships
@@ -16,7 +16,7 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 - **Consumes Developer Components and Target** — reads current authorities required by its responsibility.
 - **Consumed by Agent Command and Coordination** — provides invocable and delegable workflows.
 
-Technical Skill catalogs, activation choices, and native implementation mappings belong to Agent Skill Preferences. Command names and argument forms belong to Agent Command Preferences.
+Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, provider resources, and native implementation mappings belong to Agent Skill Preferences. Command names and argument forms belong to Agent Command Preferences.
 
 Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -24,11 +24,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 1. Every Skill has one complete contract
 
-**Rule:** Every Skill has one contract declaring its responsibility, trigger, inputs, outputs, authority, required Understanding, verification, idempotency expectation, and stopping conditions. This Principles file owns the contract's architectural What and Why; the Skill implementation owns How and never copies the authorities it reads.
+**Rule:** Every Interface-owned Skill has exactly one portable Skill Contract, conforming to the Skill Contract Schema, that declares its purpose, responsibility, trigger, inputs, outputs, required Understanding, authority, workflow invariants, verification, idempotency expectation, stopping conditions, and runtime-realization requirements. Principles own rules shared by Skills, the Skill Contract owns Skill-specific behavior independent of a runtime, and a native Skill implementation owns only runtime-specific execution details and never overrides or becomes a second authority for its Contract.
 
 **Why:** A Skill must remain focused and current when project definitions change.
 
-**Boundary:** A coordinating Skill may invoke several Skills when orchestration is its single declared responsibility.
+**Boundary:** A coordinating Skill Contract may require an exact orchestration sequence when orchestration is its single declared responsibility. An external Skill, including framework and package-provided Skills, remains governed by its provider resource, Profile declaration, applicable Agent Principles, and the active Role; it does not receive an Interface-owned Skill Contract.
 
 <br>
 
@@ -174,8 +174,9 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## At a Glance
 
-- **Must** — give every Skill one complete and bounded contract *(1)*
-- **Never** — copy consumed authorities into Skill instructions *(1)*
+- **Must** — give every Interface-owned Skill exactly one complete portable Contract conforming to the Skill Contract Schema *(1)*
+- **Must** — keep shared rules in Principles, Skill-specific behavior in its Contract, and runtime execution details in the native implementation *(1)*
+- **Never** — let a native Skill implementation override or become a second authority for its Contract *(1)*
 - **Must** — prove Skill availability through discovery and invocation *(2)*
 - **Must** — make repeated execution preserve valid work *(3)*
 - **Never** — use repeatability to justify destructive regeneration *(3)*

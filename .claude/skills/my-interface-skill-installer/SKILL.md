@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Install Agent capabilities
 
+This file is the Claude Code adapter for the portable `skill-installer` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+
 ## Role
 
 Identify where the current Target could benefit from an additional Agent capability, search the environment's supported sources for compatible options, and present the findings for human approval before installing anything.

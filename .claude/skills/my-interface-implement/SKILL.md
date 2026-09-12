@@ -7,6 +7,8 @@ disable-model-invocation: true
 
 # Implement the Target
 
+This file is the Claude Code adapter for the portable `implement` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+
 ## Role
 
 Implement an already defined Target end to end through a fixed orchestration sequence. Implement coordinates other operation Skills, while each operation keeps its own role, authority, validation, and reporting rules.

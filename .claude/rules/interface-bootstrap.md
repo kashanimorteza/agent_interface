@@ -1,6 +1,6 @@
 # Agent Interface bootstrap
 
-Agent Interface Skills and the Interface structure are independent. Changing either one must not require changing the other. This independence is what lets the Interface be handed to a different Agent, and a Skill to a different project, without either being rewritten.
+The Interface structure and native Agent implementations are independent of a particular Runtime layout. Portable Contracts for `my-interface-*` Skills belong to the Interface; their native Skills realize them as runtime adapters. External Skills remain provider-owned resources declared by the Profile. A Contract change may require adapter reconciliation, but never a redesign of Interface structure or a dependency on one vendor's implementation.
 
 ## Entry points
 
@@ -15,5 +15,5 @@ Read a located resource before relying on it. A resource that still exists may h
 ## Separation
 
 - Do not hardcode or copy Interface structure, values, fields, defaults, Policies, or project facts into a Skill. Read them from their current owners using the shared entry points. The same applies to an external capability a Skill uses: name what it must achieve and how to discover the current way of achieving it, rather than freezing one tool's commands, options, or catalog names into the Skill.
-- The Interface may catalog Skill metadata: a Skill's name, path, invocation, the Workflow Mode it executes, and a short statement of what it is for. The catalog exists so that the Interface can route work to a Skill without knowing how that Skill works, which is why the traffic runs one way — the Interface may describe a Skill, while a Skill stores nothing about the Interface. The catalog is a pointer, never a second copy: it carries no part of a Skill's Workflow, boundaries, or report format, and when the catalog and the Skill disagree, the Skill is correct.
+- The Agent Skill Component owns one portable Contract for every Interface-owned `my-interface-*` Skill. The catalog maps that Contract to a native implementation; it is a pointer and never a second copy. A native Interface Skill is a runtime adapter: it may define runtime-specific execution details but never override the Contract's responsibility, invariants, authority, verification, stopping conditions, or output obligations. When a native implementation disagrees with its Contract, the Contract is correct and the adapter is drifted. External Skills have no Interface-owned Contract and are used from their declared provider resource under the active Role and applicable Agent Principles.
 - Change a Skill only when its own role or Workflow changes. A change to the Interface structure or target project must not require a Skill change. When one does, the Skill was holding a copy of something it should have been reading: treat the forced edit as the symptom, and remove the copy rather than only updating it.

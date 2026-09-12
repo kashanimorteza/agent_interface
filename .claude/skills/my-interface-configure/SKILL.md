@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Configure the Interface
 
+This file is the Claude Code adapter for the portable `configure` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+
 ## Role
 
 Generate and maintain the operational Config files required by Agent Interface, synchronize aggregate State with current Target phase identifiers, and prepare the selected Platform Environment.

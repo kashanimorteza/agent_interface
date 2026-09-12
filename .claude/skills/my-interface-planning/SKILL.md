@@ -7,6 +7,8 @@ disable-model-invocation: true
 
 # Plan project phases
 
+This file is the Claude Code adapter for the portable `planning` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+
 ## Role
 
 Plan the selected project phases from current Target Understanding, and produce the planning output the current Interface requires.

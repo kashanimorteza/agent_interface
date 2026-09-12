@@ -2,10 +2,10 @@
 meta:
   path: ".interface/agent/skill/preferences.yaml"
   path_note: "The Preferences layer of the Agent Skill Component."
-  purpose: "Core, supporting, contextual, built-in, user, managed, and extension Skill declarations."
+  purpose: "Interface-owned Skill Contracts and native mappings, plus contextual, built-in, user, managed, and extension provider Skill declarations."
   standard: "Agent Project Interface"
-  version: "1.0"
-  updated: "2026-09-11"
+  version: "1.1"
+  updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -13,10 +13,10 @@ policy:
   rule: "This file is human-owned; Skill execution and activation state are observed without writing here."
   changed_by: "The human, directly."
   precedence: "An explicit project decision and every applicable Principle take precedence over this file."
-  consumption: "Discover required Skills by stable key and verify they are usable before invocation."
+  consumption: "Resolve every Interface-owned Skill's portable Contract and native implementation; resolve external Skills from their provider declaration; verify usability before invocation."
   selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
   version_resolution: "Runtime and extension Skills resolve from their active providers."
-  matching: "Match Skills by stable profile key, declared name, and invocation where present."
+  matching: "Match Interface-owned Skills by stable key, portable Contract, and native name; match external Skills by stable key and provider declaration."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]
@@ -25,7 +25,7 @@ read_order: ["selected", "options", "settings"]
 content_map:
   selected: "Selected coordinating implementation Skill."
   options: "Selectable implementation coordinators."
-  settings: "Complete Skill implementation map grouped by source and architectural contract."
+  settings: "Complete Skill map grouped by ownership, with Contracts for Interface-owned Skills and provider mappings for external Skills."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -41,47 +41,56 @@ content:
         configure:
           name: "my-interface-configure"
           path: ".claude/skills/my-interface-configure/SKILL.md"
+          contract: ".interface/agent/skill/contracts/configure.md"
           architecture_contract: "Agent Skill Principle 4"
           required: true
         planning:
           name: "my-interface-planning"
           path: ".claude/skills/my-interface-planning/SKILL.md"
+          contract: ".interface/agent/skill/contracts/planning.md"
           architecture_contract: "Agent Skill Principle 5"
           required: true
         developing:
           name: "my-interface-developing"
           path: ".claude/skills/my-interface-developing/SKILL.md"
+          contract: ".interface/agent/skill/contracts/developing.md"
           architecture_contract: "Agent Skill Principle 6"
           required: true
         reviewing:
           name: "my-interface-reviewer"
           path: ".claude/skills/my-interface-reviewer/SKILL.md"
+          contract: ".interface/agent/skill/contracts/reviewing.md"
           architecture_contract: "Agent Skill Principle 7"
           required: true
         launch:
           name: "my-interface-launch"
           path: ".claude/skills/my-interface-launch/SKILL.md"
+          contract: ".interface/agent/skill/contracts/launch.md"
           architecture_contract: "Agent Skill Principle 8"
           required: true
       supporting:
         implement:
           name: "my-interface-implement"
           path: ".claude/skills/my-interface-implement/SKILL.md"
+          contract: ".interface/agent/skill/contracts/implement.md"
           architecture_contract: "Agent Skill Principle 9"
           required: true
         reset:
           name: "my-interface-reset"
           path: ".claude/skills/my-interface-reset/SKILL.md"
+          contract: ".interface/agent/skill/contracts/reset.md"
           architecture_contract: "Agent Skill Principle 10"
           required: true
         skill-installer:
           name: "my-interface-skill-installer"
           path: ".claude/skills/my-interface-skill-installer/SKILL.md"
+          contract: ".interface/agent/skill/contracts/skill-installer.md"
           architecture_contract: "Agent Skill Principle 11"
           required: true
         agent-sync:
           name: "my-interface-agent-sync"
           path: ".claude/skills/my-interface-agent-sync/SKILL.md"
+          contract: ".interface/agent/skill/contracts/agent-sync.md"
           architecture_contract: "Agent Skill Principle 15"
           required: true
       contextual:

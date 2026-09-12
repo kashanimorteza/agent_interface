@@ -12,7 +12,7 @@ One Principles file exists per Developer Component at `.interface/developer/<com
 
 A Principles file exists to raise understanding of the project. It answers what its owning Component or Module is, what responsibility it holds, and under which mandatory rules it operates, so that any reader — human or Agent — can reason about that owner without inspecting an implementation.
 
-A Developer or Agent Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. A Principles file does not prescribe a concrete Skill workflow, name current runtime resources, or decide which Skill reads it and when.
+A Developer or Agent Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. A Principles file does not prescribe a concrete Skill workflow, name current runtime resources, or decide which Skill reads it and when. Interface-owned Skill behavior belongs to its declared Skill Contract conforming to the Skill Contract Schema, not to Agent Skill Principles.
 
 
 <!--------------------------------------------------------------------------------- Scope --->
@@ -20,7 +20,7 @@ A Developer or Agent Component describes its own responsibilities, boundaries, a
 
 ## Scope
 
-A Principles file contains only mandatory philosophy, responsibilities, and boundaries. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Principles additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary. A conditional contextual Skill may name the technology it serves without selecting that technology for a Target.
+A Principles file contains only mandatory philosophy, responsibilities, and boundaries. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Principles additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary; each Interface-owned Skill's complete portable behavior belongs to its Skill Contract. A conditional external Skill may name the technology it serves without selecting that technology for a Target.
 
 A Principles file never contains:
 

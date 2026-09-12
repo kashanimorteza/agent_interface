@@ -71,7 +71,7 @@ Config contains only the mutable operational records used to coordinate this wor
 <!-------------------------- Independence -->
 ### Independence
 
-The core Interface Structure is independent of any specific AI model, Agent, or external execution capability. Agent Skills are integrations within the Agent Module, while their implementations remain outside `.interface/` and independent of its internal structure.
+The core Interface Structure is independent of any specific AI model, Agent, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their native implementations remain outside `.interface/` as runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Profile.
 
 Human project definitions remain flexible, while the Interface gives Agents stable responsibilities, rules, defaults, and operational records. Agent Interface is the communication boundary between those two forms.
 
@@ -312,7 +312,8 @@ Agent
 │   └── Preferences → .interface/agent/coordination/preferences.yaml
 ├── Skill
 │   ├── Principles  → .interface/agent/skill/principles.md
-│   └── Preferences → .interface/agent/skill/preferences.yaml
+│   ├── Preferences → .interface/agent/skill/preferences.yaml
+│   └── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
 ├── Command
 │   ├── Principles  → .interface/agent/command/principles.md
 │   └── Preferences → .interface/agent/command/preferences.yaml
@@ -345,7 +346,7 @@ Agent
     └── Preferences → .interface/agent/observability/preferences.yaml
 ```
 
-The Agent Components are read in the order shown. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Preferences entries are empty, so absence is explicit rather than indistinguishable from omission. Runtime-specific implementation remains outside the Interface and is only evidence that the Profile has been realized.
+The Agent Components are read in the order shown. When the active role uses an Interface-owned Skill, its portable Contract is read after Skill Principles and Preferences. An external Skill is read from its declared provider resource under the active Role and applicable Agent Principles. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Preferences entries are empty, so absence is explicit rather than indistinguishable from omission. Runtime-specific implementation remains outside the Interface and is only an adapter and evidence that the Profile has been realized.
 
 
 #### Agent Components
@@ -631,6 +632,7 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── yaml.yaml
 ├── principles.md
 ├── preferences.yaml
+├── skill-contract.md
 ├── state.yaml
 ├── plan.yaml
 └── review.yaml
@@ -665,6 +667,16 @@ name = Preferences Schema
 path = .interface/foundation/schema/preferences.yaml
 kind = Structure standard
 responsibility = Defines the common structure followed by every Developer and Agent Component preferences.yaml file
+```
+
+
+#### Skill Contract Schema
+
+```text
+name = Skill Contract Schema
+path = .interface/foundation/schema/skill-contract.md
+kind = Structure standard
+responsibility = Defines the portable, runtime-independent structure followed by every declared Agent Skill Contract
 ```
 
 

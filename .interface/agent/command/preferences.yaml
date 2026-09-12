@@ -5,7 +5,7 @@ meta:
   purpose: "Built-in and custom slash entry points, arguments, aliases, scope, and owning capability mappings."
   standard: "Agent Project Interface"
   version: "1.0"
-  updated: "2026-09-11"
+  updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
