@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Model Component — supported technical choices and defaults used when a Model choice is unstated."
   purpose: "Defaults for the independent Model package, supported modeling technologies, and properties of existing Model fields whose attributes are unstated."
   standard: "Agent Project Interface"
-  version: "1.0"
-  updated: "2026-09-07"
+  version: "2.0"
+  updated: "2026-09-12"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -26,6 +26,7 @@ read_order:
   - "selected"
   - "options"
   - "settings"
+  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -33,6 +34,7 @@ content_map:
   selected: "The Model package's code path, implementation language, isolated environment, and modeling library."
   options: "Supported implementation languages and modeling and validation libraries."
   settings: "Defaults for missing properties of fields already present in a Model definition."
+  implementation: "Concrete implementation preferences that complement the Model Standard without redefining its domain rules."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -42,15 +44,19 @@ content:
   selected:
     code_path: "model/"
     language: "Python"
+    language_version: "3.13+"
     environment: "uv"
     modeling_library: "Pydantic"
+    modeling_library_version: "2.x"
+    architectural_role: "platform-independent logical Model"
+    package_style: "one independent package with one public import interface"
 
   # <!-------------------------------------------- options -->
   options:
 
     languages:
       Python:
-        version: "latest"
+        version: "3.13+"
         compatible_environments:
           - "uv"
         compatible_modeling_libraries:
@@ -63,14 +69,73 @@ content:
 
     environments:
       uv:
-        version: "latest"
+        version: "latest-compatible"
         language: "Python"
+        lockfile: "uv.lock"
+        environment_directory: ".venv"
 
     modeling_libraries:
       Pydantic:
-        version: "latest"
+        version: "2.x"
         language: "Python"
         package: "pydantic"
+        forbidden_major_versions:
+          - "1.x"
+
+  # <!-------------------------------------------- implementation -->
+  implementation:
+    typing:
+      style: "modern Python typing"
+      prefer_builtin_generics: true
+      prefer_union_operator: true
+      use_optional_for_nullable_fields: true
+    enums:
+      preferred_base: "StrEnum"
+      fallback: "Literal for small local closed sets"
+    numeric_precision:
+      exact_decimal_values: "Decimal"
+      binary_float: "only when the domain explicitly permits approximation"
+    time:
+      datetime: "timezone-aware"
+      naive_datetime: "only when explicitly required by the domain definition"
+    pydantic_api:
+      base_model: "pydantic.BaseModel"
+      configuration: "pydantic.ConfigDict"
+      field_validation: "pydantic.field_validator"
+      model_validation: "pydantic.model_validator"
+      root_model: "pydantic.RootModel"
+      serialization: "model_dump and model_dump_json"
+      schema: "model_json_schema"
+      forbidden_legacy_apis:
+        - "validator"
+        - "root_validator"
+        - "parse_obj"
+        - "dict"
+        - "json"
+    package:
+      public_imports: "explicitly re-exported from the package interface"
+      canonical_import_style: "import model; model.<module>.<ModelType>"
+      alternate_import_style: "from model import <module>; <module>.<ModelType>"
+      model_identity: "imported module, Model type, or Model instance; never a public string selector"
+      internal_modules: "not imported by consumers as a public contract"
+      representation_priority: "logical domain representation before platform-specific derivations"
+      io_at_import_time: false
+      network_at_import_time: false
+      database_at_import_time: false
+    integrations:
+      orm: "none selected for the Model package"
+      api_framework: "none selected for the Model package"
+      database_driver: "none selected for the Model package"
+    quality:
+      formatter: "ruff-format"
+      linter: "ruff"
+      type_checker: "pyright"
+      test_runner: "pytest"
+      required_checks:
+        - "public interface import check"
+        - "Model validation check"
+        - "serialization and schema check"
+        - "clean-environment install check"
 
   # <!-------------------------------------------- settings -->
   settings:
@@ -86,7 +151,6 @@ content:
         name:
           type: "string"
           nullable: false
-          unique: true
           purpose: "The entity's display name."
         api_key:
           type: "string"

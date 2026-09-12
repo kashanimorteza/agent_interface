@@ -2,9 +2,9 @@
 
 These shared rules apply to every Agent Interface Skill and supporting agent, including one written later. Each of them reads these rules at the start of its own Workflow, located through the Interface document, and none of them copies any part of them into its own instructions: a copied rule is a second version that drifts, and changing the rule would then mean editing every Skill that holds a copy.
 
-## Prohibited reads
+## Root project README
 
-Skills and supporting agents must never read the content of a file named `README.md`, including for Interface Understanding, Target Understanding, discovery, setup, documentation, or supporting evidence. Exclude every `README.md` from searches, directory scans, summaries, and bulk reads. Its presence, path, name, size, or other filesystem metadata may be observed only when an operation needs to avoid reading or changing it; its content is never an input to a Workflow.
+Skills and supporting agents must never read the content of the `README.md` located at the project root. This restriction applies only to that root project README, including for discovery, setup, understanding, documentation, or supporting evidence. README files inside Components, packages, or other subdirectories may be read and used as documentation for their own scope.
 
 ## Human-owned files
 
