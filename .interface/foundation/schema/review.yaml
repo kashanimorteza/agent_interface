@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-review"
-  version: "1.0"
-  purpose: "Operational Review file structure. Sections describe stored content; initial is the empty configuration template. Review fills actual Reviews and Findings using the Review Component."
+  version: "1.1"
+  purpose: "Operational Review file structure. Sections describe stored Plan Assurance, Implementation Assurance, and Findings; initial is the empty configuration template."
 initialization:
   source: "initial"
   purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."
@@ -11,10 +11,10 @@ initialization:
   drafts: "Empty strings and zero order values are unfilled record defaults. Before storing a usable Review, the owning operation supplies real identifiers, required descriptive content, and provenance."
   preservation: "Initialization does not overwrite an existing Config file or reset its stored Findings."
 operational_scope:
-  purpose: "This file records what has been reviewed and what those reviews found. It is an operational record, not a description of the project."
-  stores: "Which phases were reviewed, when and by whom, the outcome of each review, and every Finding with what was expected, what was observed, the evidence for it, and where it stands."
-  excludes: "Project concepts, requirements, acceptance criteria, resolved technical choices, Component rules, Task content or progress, and the Workflow position. A Finding refers to what it judged; it never restates it."
-  resolution: "The baseline a Finding was judged against is resolved from the project definition, the Principles, the Preferences, and the phase's Plan when the review runs, never read back from this file."
+  purpose: "This file records what has been reviewed and what those reviews found. It is an operational record, not a description of the Target."
+  stores: "Which phases were reviewed, when and by whom, separate Plan and Implementation Assurance outcomes, the aggregate outcome, and every Finding with what was expected, what was observed, the evidence for it, and where it stands."
+  excludes: "Target concepts, requirements, acceptance criteria, resolved technical choices, Component rules, Task content or progress, and the Workflow position. A Finding refers to what it judged; it never restates it."
+  resolution: "The baseline a Finding was judged against is resolved from current Target Understanding, applicable Interface Principles and Preferences, and the phase's Plan when the review runs, never read back from this file."
   authority: "Review owns this file alone. It records the state of its own Findings and changes nothing another Component owns."
 structure:
   - "finding_count"
@@ -53,8 +53,26 @@ sections:
           outcome:
             required: true
             default: "inconclusive"
-            purpose: "Whether the reviewed scope satisfies what was asked of it."
+            purpose: "The aggregate result: plan satisfied when only Plan Assurance passed, satisfied when both applicable assurances passed, otherwise the exact unsatisfied or inconclusive result."
             allowed:
+              - "plan satisfied"
+              - "satisfied"
+              - "not satisfied"
+              - "inconclusive"
+          plan_outcome:
+            required: false
+            default: "inconclusive"
+            purpose: "Whether the current phase Plan completely and correctly covers current Target Understanding and applicable Component authorities. Required on every new or reconciled Review record."
+            allowed:
+              - "satisfied"
+              - "not satisfied"
+              - "inconclusive"
+          implementation_outcome:
+            required: false
+            default: "not reviewed"
+            purpose: "Whether observed implementation and evidence satisfy the assured Plan, or not reviewed when no implementation exists. Required on every new or reconciled Review record."
+            allowed:
+              - "not reviewed"
               - "satisfied"
               - "not satisfied"
               - "inconclusive"
@@ -138,6 +156,16 @@ sections:
                     default: null
                     purpose: "The review that established the Finding no longer holds, or the human who accepted it; absent while it is open."
 definitions:
+  review_outcome:
+    plan_satisfied: "Plan Assurance passed and no implementation was available to review."
+    satisfied: "Plan Assurance and applicable Implementation Assurance both passed."
+    not_satisfied: "At least one applicable assurance has an observed unsatisfied condition."
+    inconclusive: "An applicable assurance could not be established from current authority and evidence."
+  implementation_outcome:
+    not_reviewed: "No implementation or Development evidence exists, so no implementation judgment was made."
+    satisfied: "Existing implementation and evidence satisfy the assured Plan and current authorities."
+    not_satisfied: "Existing implementation or evidence demonstrably fails an assured condition."
+    inconclusive: "Implementation Assurance could not be established from current evidence."
   finding_kind:
     defect: "The result does not do what the baseline required."
     missing evidence: "An acceptance criterion has nothing observable demonstrating that it holds."

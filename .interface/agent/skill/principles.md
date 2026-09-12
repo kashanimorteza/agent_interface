@@ -84,11 +84,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 7. `reviewing` independently judges results
 
-**Rule:** The architecture requires the `reviewing` Skill. Its purpose is independent assurance; its responsibility is to judge implemented results against current Target Understanding, Component authorities, Plans, acceptance criteria, and observable evidence; its task coverage is verification, Findings, evidence gaps, and exact Review outcomes.
+**Rule:** The architecture requires the `reviewing` Skill. Its purpose is independent assurance; its responsibility is to reconstruct current Interface and Target Understanding, assure every selected phase's Plan, coordinate Planning when that Plan is missing or unsatisfied, independently recheck the reconciled Plan, and then judge implementation when it exists; its task coverage is Plan Assurance, Implementation Assurance, verification, Findings, evidence gaps, and exact Review outcomes for zero or more selected phase positions. Empty input selects every enabled phase, and each resolved phase is reviewed independently in Target order.
 
 **Why:** The operation that produced a result cannot provide fully independent judgment of that result.
 
-**Boundary:** `reviewing` reports and records; it never repairs implementation, replans work, invents requirements, or changes another operation's progress.
+**Boundary:** Each Review pass reports and records without changing what it judges. `reviewing` may invoke Planning as the sole owner of Plan reconciliation, but it never writes Plan content, repairs implementation, invokes Development, invents requirements, or changes another operation's progress.
 
 <br>
 
@@ -104,7 +104,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 9. `implement` is the trustworthy full-path coordinator
 
-**Rule:** The architecture requires the `implement` Skill. Its purpose is trustworthy end-to-end execution; its responsibility is to coordinate Configure, baseline Review where prior work exists, Planning, Development, independent final Review, Finding reconciliation, and eligible Launch while preserving each Skill's authority; its task coverage is selected phases or all implementable phases.
+**Rule:** The architecture requires the `implement` Skill. Its purpose is trustworthy end-to-end execution; its responsibility is to validate phase selection, execute Configure once, and then coordinate Planning, Plan Assurance through Reviewing, Development, final Implementation Assurance through Reviewing, Finding reconciliation, and eligible Launch for each phase in Target order while preserving each Skill's authority; its task coverage is selected phases or all implementable phases.
 
 **Why:** A single entry point is needed when the Human wants a complete evidence-backed implementation rather than manual operation-by-operation control.
 
@@ -187,10 +187,13 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Must** — provide `developing` for implementation, durable checks, and truthful evidence *(6)*
 - **Never** — let `developing` plan, independently review, or exceed Development authority *(6)*
 - **Must** — provide `reviewing` for independent evidence-based judgment and Findings *(7)*
-- **Never** — let `reviewing` repair, replan, invent requirements, or change another operation's progress *(7)*
+- **Must** — let `reviewing` accept zero or more phase positions, default to every enabled phase, and judge each resolved phase independently in Target order *(7)*
+- **Must** — let `reviewing` coordinate Planning for an unsatisfied Plan and independently recheck Planning's result before judging implementation *(7)*
+- **Never** — let `reviewing` write Plan content, repair implementation, invoke Development, invent requirements, or change another operation's progress *(7)*
 - **Must** — provide `launch` for startup, readiness verification, and Access Points *(8)*
 - **Never** — let `launch` prepare the Environment, repair code, or bypass prerequisites *(8)*
 - **Must** — provide `implement` as the gated full-path coordinator *(9)*
+- **Must** — run Configure once, then Planning → Plan Review → Developing → final Review for each phase, advancing only after that phase is satisfied *(9)*
 - **Never** — let `implement` absorb operation authority or bypass a gate or approval *(9)*
 - **Must** — provide `reset` for previewed and explicitly confirmed workflow rollback *(10)*
 - **Never** — let `reset` infer approval or affect a target absent from its preview *(10)*

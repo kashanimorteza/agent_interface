@@ -33,11 +33,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 2. Runtime compatibility is explicit
 
-**Rule:** A selected Agent Runtime must expose or compatibly map every required capability. An unmapped or incompatible requirement is reported as unavailable and never silently approximated.
+**Rule:** A selected Agent Runtime must expose or compatibly map every required capability. Runtime Preferences contain exactly one Realization record for every current Agent Component discovered from the canonical Agent Structure; each record states its realization mode, resolvable native mechanisms, authorized write targets, and verification obligation. An unmapped, duplicated, unresolved, or incompatible requirement is reported as unavailable and never silently approximated.
 
 **Why:** A similar-looking native feature may have different authority or lifecycle semantics.
 
-**Boundary:** Optional native capabilities may remain available without becoming project requirements.
+**Boundary:** A Component need not have a dedicated native directory. Runtime-provided, composite, and explicitly unused Components remain valid when their Realization record makes their observation and verification unambiguous. Optional native capabilities may remain available without becoming project requirements and are preserved as unmanaged.
 
 <br>
 
@@ -46,4 +46,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Must** — define Agent contracts independently of a concrete runtime *(1)*
 - **Must** — preserve meaning, authority, and boundaries through Runtime Mapping *(1)*
 - **Must** — explicitly map every required capability or report it unavailable *(2)*
+- **Must** — provide exactly one resolvable and verifiable Realization record for every current Agent Component *(2)*
+- **Never** — infer that a Component requires a dedicated native directory *(2)*
+- **Never** — remove an undeclared native capability merely to realize an explicitly unused Component *(2)*
 - **Never** — silently approximate an incompatible requirement *(2)*

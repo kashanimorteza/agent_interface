@@ -1,20 +1,23 @@
 # Review Principles
 
-Review is the Component that establishes whether an implemented result satisfies what the project asked for, and records what it found. It exists because the operation that produces a result is the worst judge of it: the implementer knows what it meant to build, and that knowledge quietly fills the gaps that an independent reader would notice.
+Review is the Component that establishes whether a phase Plan and, when implementation exists, its implemented result satisfy the current Interface and Target, and records what it found. It exists because the operation that produces a Plan or result is the worst judge of it: the producer knows what it meant to create, and that knowledge quietly fills the gaps that an independent reader would notice.
 
 Review owns its Findings and the record of what was reviewed. It does not own implementation, Plan, Target, or the active Workflow position, and it never enters or changes a Workflow Mode. It records only aggregate Review progress and its History outcome under State.
 
 ## Terms
 
-- **Review** — one examination of one phase's implemented result against what that phase was asked to produce.
+- **Review** — one independent examination of one phase's Plan and, when present, implemented result against the current Interface and Target.
+- **Plan Assurance** — the mandatory Review judgment that a phase Plan completely and correctly covers current Target Understanding and applicable Component authorities.
+- **Implementation Assurance** — the conditional Review judgment that existing implementation and evidence satisfy the assured Plan and its current authorities.
 - **Finding** — one specific way in which the result does not demonstrably satisfy what was asked, recorded with what was expected, what was observed, and where.
 - **Evidence** — the exact location or observable result that supports a finding, so that a reader can see it without repeating the review.
-- **Outcome** — the reviewed scope's overall result: whether it satisfies what was asked, does not, or cannot be established.
+- **Outcome** — the aggregate result: `plan satisfied` when Plan Assurance passes and implementation is not yet available, `satisfied` when both applicable assurances pass, or the exact `not satisfied` or `inconclusive` result otherwise.
 - **Missing evidence** — an acceptance criterion for which nothing observable demonstrates that it holds.
 - **Gap** — required work that no planned activity covers, found by reviewing the phase rather than any one activity.
 
 ## Relationships
 
+- **Consumes Interface and Target Understanding** — reconstructs both from current sources before judging a phase.
 - **Consumes Plan** — the Plans, acceptance criteria, verification conditions, and recorded execution evidence a result is judged against.
 - **Consumed by Plan** — a Finding recorded as a gap names required work that no planned activity covers, and Planning is where that work is decided.
 - **Updates State** — records the phase's aggregate Review outcome and a concise History event without copying Findings.
@@ -25,23 +28,23 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 1. Review judges the result against what was asked
+## 1. Review always assures the Plan before available implementation
 
-**Rule:** A Review examines one phase's implemented result against the project definition, the applicable Principles and Preferences, and that phase's Plan and acceptance criteria. Those sources are the baseline, and nothing else is.
+**Rule:** A Review reconstructs current Interface Understanding and Target Understanding, then independently judges one phase's Plan against the current Target and every applicable Principle and Preference. Only after Plan Assurance is satisfied does it judge existing implementation and evidence against that assured Plan and the same current authorities. When no implementation exists, Implementation Assurance is explicitly `not reviewed` rather than inferred.
 
 **Why:** A result can only be wrong relative to something. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
 
-**Boundary:** Review does not define new requirements. When the baseline is silent about something, that silence is a fact about the baseline, not a licence to supply the missing requirement and then find the result wanting.
+**Boundary:** Review does not define new requirements. When the authoritative baseline is silent about something, that silence is a fact about the baseline, not a licence to supply the missing requirement and then find the Plan or result wanting.
 
 <br>
 
-## 2. Review reports and never repairs
+## 2. Review passes report; reconciliation stays with the owning operation
 
-**Rule:** Review records what it found and stops there. It changes no implementation, no Plan, no project definition, and no Task progress.
+**Rule:** An individual Review pass changes no implementation, Plan, Target definition, or Task progress. The Reviewing Skill may coordinate Planning for the same phase when Plan Assurance exposes a missing, stale, incomplete, or invalid Plan, then perform a new independent Review pass against Planning's result. It never invokes Development or repairs implementation.
 
 **Why:** An operation that fixes what it finds loses the ability to tell the difference between what was already correct and what it corrected, and the human never learns that the problem existed.
 
-**Boundary:** Recording a Finding is not a repair, and neither is re-running a check. Nothing else Review does may change the thing it is judging.
+**Boundary:** Recording or reconciling a Finding and re-running a check are not repairs. Planning remains the sole writer of Planning-owned content, and Review must preserve evidence of the original Plan Finding before independently judging the reconciled Plan.
 
 <br>
 
@@ -51,7 +54,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 **Why:** The same operation wrote the code and the check that proves it, so a check shaped around the implementation will pass whatever the implementation happens to do. Independence is the whole reason Review exists.
 
-**Boundary:** Independence is about the judgment, not about the sources. Review uses the same project definition, Principles, Preferences, and Plan the implementer used; it does not invent a different standard.
+**Boundary:** Independence is about the judgment, not about the sources. Review uses current Target Understanding, applicable Interface Principles and Preferences, and the phase Plan; it does not invent a different standard.
 
 <br>
 
@@ -97,10 +100,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## At a Glance
 
-- **Must** — a Review judges a phase's result against the project definition, the applicable Principles and Preferences, and that phase's Plan and acceptance criteria *(1)*
+- **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging available implementation *(1)*
+- **Must** — record Plan Assurance and Implementation Assurance separately, using `not reviewed` when implementation does not exist *(1)*
 - **Never** — Review defines a new requirement, or treats silence in the baseline as one *(1)*
-- **Must** — Review records what it found and changes nothing it is judging *(2)*
-- **Never** — Review repairs an implementation, a Plan, a project definition, or Task progress *(2)*
+- **Must** — a Review pass changes nothing it judges; Plan reconciliation is delegated to Planning and followed by a new independent pass *(2)*
+- **Never** — Review writes Plan content, repairs implementation, changes Target, or changes Task progress *(2)*
 - **Must** — Review observes the required condition for itself and judges whether the implementer's check establishes it *(3)*
 - **Never** — Review accepts that a check passed as proof that the condition holds *(3)*
 - **Must** — every Finding states what was expected, what was observed, and the exact evidence that shows it *(4)*

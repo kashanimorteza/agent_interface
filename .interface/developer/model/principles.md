@@ -124,7 +124,7 @@ Every public Model MUST be exposed exactly once through that interface.
 
 Compatible application components MUST import the shared Model package instead of maintaining private copies of the same domain definitions.
 
-The concrete syntax for the canonical module-qualified import is defined by Model Preferences and demonstrated in the Component README. The logical requirement is that public Model modules and types are imported explicitly and addressed through the package namespace.
+The concrete syntax for the canonical module-qualified import is defined by Model Preferences and demonstrated in the Component `DOCUMENTATION.md`. The logical requirement is that public Model modules and types are imported explicitly and addressed through the package namespace.
 
 rather than allowing Backend, Database, or Frontend to define competing copies of the same logical Model.
 
@@ -827,7 +827,7 @@ Preferred pattern:
 └── types/
 ```
 
-Public modules and Model types MAY be re-exported from the package root when the selected implementation supports it. The exact re-export syntax belongs to Model Preferences and the Component README.
+Public modules and Model types MAY be re-exported from the package root when the selected implementation supports it. The exact re-export syntax belongs to Model Preferences and the Component `DOCUMENTATION.md`.
 
 Consumers MUST import public Model modules or types from the documented package interface instead of deep internal modules. Package-root class re-exports MAY exist as a convenience, but they do not replace the canonical module-qualified interface.
 
@@ -1014,9 +1014,9 @@ Tests for HTTP behavior belong to API tests.
 
 # 41. Documentation Standard
 
-The Model Component MUST include a public `README.md` at its package boundary. The README is a required developer-facing explanation of the completed Model package, not an optional project note.
+The Model Component MUST include a public `DOCUMENTATION.md` at its package boundary. This file is a required developer-facing explanation of the completed Model package, not an optional project note.
 
-The README MUST explain, in clear language:
+The `DOCUMENTATION.md` MUST explain, in clear language:
 
 - what the Model Component is responsible for and what it does not own;
 - how the package is installed and imported;
@@ -1026,7 +1026,7 @@ The README MUST explain, in clear language:
 - the applicable validation, serialization, credential, and extension rules;
 - a small set of domain-neutral examples that do not expose project-specific Target information.
 
-The README MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Model package to:
+The `DOCUMENTATION.md` MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Model package to:
 
 - import the package namespace selected by Preferences and use `<namespace>.<module>.<ModelType>`;
 - import a public Model module with `from model import <module>` and use `<module>.<ModelType>`;
@@ -1041,7 +1041,7 @@ The README MUST include complete, runnable, domain-neutral examples showing how 
 
 These examples MUST use imported modules, Model types, or Model instances. They MUST NOT identify a Model by a string, use an untyped string registry, import an internal module, or include ORM, Database, API, or project-specific Target details. Examples MUST remain consistent with the public package interface and the resolved Model Preferences.
 
-The README MUST be generated or updated as part of Model development and MUST be verified for existence, completeness, and consistency with the public interface before the Model Component is reported complete. A Model implementation without this README is incomplete.
+The `DOCUMENTATION.md` MUST be generated or updated as part of Model development and MUST be verified for existence, completeness, and consistency with the public interface before the Model Component is reported complete. A Model implementation without this documentation is incomplete.
 
 Important Models SHOULD communicate meaning through:
 
@@ -1112,7 +1112,7 @@ When multiple implementations are possible, prefer in this order:
 - Validate rules determinable from Model's own data.
 - Use exact domain types where meaning requires them.
 - Use deterministic, side-effect-free validation and serialization.
-- Include and verify a developer-facing `README.md` for every completed Model package.
+- Include and verify a developer-facing `DOCUMENTATION.md` for every completed Model package.
 
 ## SHOULD
 

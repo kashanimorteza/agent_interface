@@ -48,7 +48,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 3. Every Target phase has aggregate operational State
 
-**Rule:** State keeps one Phase State for every stable Target phase identifier. Planning and Development use `not started`, `in progress`, or `completed`. Review uses `not started`, `in progress`, `satisfied`, `not satisfied`, or `inconclusive`.
+**Rule:** State keeps one Phase State for every stable Target phase identifier. Planning and Development use `not started`, `in progress`, or `completed`. Review uses `not started`, `in progress`, `plan satisfied`, `satisfied`, `not satisfied`, or `inconclusive`. `plan satisfied` means Plan Assurance passed while no implementation was available for Implementation Assurance; only `satisfied` certifies both an assured Plan and its implemented result.
 
 **Why:** Target stays human-owned while operations can record where every phase stands.
 
@@ -150,6 +150,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 - **Must** — record the active Workflow position without making it an authorization gate *(1–2)*
 - **Must** — keep aggregate Planning, Development, and Review progress by stable phase identifier *(3–5)*
+- **Must** — distinguish `plan satisfied` from full Review `satisfied` when implementation is not yet available *(3)*
 - **Never** — copy Target meaning or individual Task status, evidence, or history into State *(3–4)*
 - **Must** — preserve existing progress while reconciling phase identity *(4)*
 - **Must** — record truthful Implement progress and exclude disabled or unready phases from completion *(6)*

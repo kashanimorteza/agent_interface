@@ -107,11 +107,11 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 ## 9. Every package documents its use
 
-**Rule:** Each package, including architectural subpackages, carries its own public description: what the package is for, where its boundaries lie, what its public interface offers, what it depends on, how it is configured, how it is installed and started when that applies, and how it is used in practice. A nested package may rely on its parent's description for shared setup rather than duplicating it.
+**Rule:** Each package, including architectural subpackages, carries its own public `DOCUMENTATION.md` at the package boundary: what the package is for, where its boundaries lie, what its public interface offers, what it depends on, how it is configured, how it is installed and started when that applies, and how it is used in practice. A nested package may rely on its parent's `DOCUMENTATION.md` for shared setup rather than duplicating it.
 
 **Why:** That description is what lets a consumer use the package without inspecting its implementation.
 
-**Boundary:** The description distinguishes supported public operations from internal details and explains how to reach the package's interface documentation. It documents configuration by name and by non-secret example, and records no credentials or other secret values. It remains consistent with the implemented interface. The document that carries it, where it lives, and the sections it contains are technical choices resolved through Development Preferences.
+**Boundary:** The description distinguishes supported public operations from internal details and explains how to reach the package's interface documentation. It documents configuration by name and by non-secret example, and records no credentials or other secret values. It remains consistent with the implemented interface. Component documentation never substitutes for, reads, rewrites, or derives from a repository-root README; its location and required sections are resolved through Development Preferences.
 
 <br>
 
@@ -134,5 +134,5 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 - **Never** — being a package requires registry publication, a separate process, or an independently installable distribution *(7)*
 - **Must** — every package states what it exposes and what it consumes, or records that it has no external consumer *(8)*
 - **Never** — nesting alone exposes a package's internals to consumers of its parent *(8)*
-- **Must** — every package, including subpackages, carries a public description covering purpose, boundaries, interface, dependencies, configuration, setup, and usage *(9)*
+- **Must** — every package, including subpackages, carries `DOCUMENTATION.md` at its boundary covering purpose, boundaries, interface, dependencies, configuration, setup, and usage *(9)*
 - **Never** — documentation records credentials or other secret values, or drifts from the implemented interface *(9)*

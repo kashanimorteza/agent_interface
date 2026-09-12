@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Agent Runtime Component."
   purpose: "The selected runtime and its provider, model, effort, compatibility, and native capability mapping."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "1.2"
   updated: "2026-09-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -25,7 +25,7 @@ read_order: ["selected", "options", "settings"]
 content_map:
   selected: "The current Agent Runtime."
   options: "Supported runtime alternatives."
-  settings: "Provider, model, effort, compatibility, and native mappings; unused categories remain explicit."
+  settings: "Provider, model, effort, compatibility, native capability mappings, and one complete realization record per Agent Component; unused categories remain explicit."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -46,17 +46,118 @@ content:
       required_profile_version: "1.0"
       status: "compatible"
     native_capability_mapping:
+      runtime_identity: "runtime-provided"
       primary_agent: "runtime-provided"
       agents: ".claude/agents/"
       roles: "assigned through Agent Definitions"
       skills: ".claude/skills/"
       legacy_commands: ".claude/commands/"
       rules: ".claude/rules/"
+      runtime_context: "runtime-provided"
+      runtime_coordination: "runtime-provided"
+      runtime_tools: "runtime-provided"
       output_styles: ".claude/output-styles/"
       settings: ".claude/settings.json"
       hooks: ".claude/settings.json"
+      hook_handlers: ".claude/hooks/"
       plugins: ".claude/settings.json"
       mcp: ".mcp.json"
+      runtime_session: "runtime-provided"
+      runtime_observability: "runtime-provided"
+    component_realization:
+      runtime:
+        mode: "runtime-provided"
+        mechanisms: ["runtime_identity"]
+        write_targets: []
+        verification: "Observe the active Runtime identity, version, and declared Profile compatibility."
+      settings:
+        mode: "project-artifact"
+        mechanisms: ["settings"]
+        write_targets: [".claude/settings.json"]
+        verification: "Resolve effective setting sources and prove every required project setting has the declared effective value."
+      context:
+        mode: "composite"
+        mechanisms: ["runtime_context", "rules", "settings"]
+        write_targets: [".claude/rules/", ".claude/settings.json"]
+        verification: "Prove required persistent instructions, exclusions, loading behavior, and Memory policy are effective without treating runtime Memory as project authority."
+      role:
+        mode: "composite"
+        mechanisms: ["roles", "primary_agent", "agents"]
+        write_targets: [".claude/agents/"]
+        verification: "Prove every required Role is assigned through an instantiable Agent Definition with its declared boundaries."
+      agent:
+        mode: "composite"
+        mechanisms: ["primary_agent", "agents"]
+        write_targets: [".claude/agents/"]
+        verification: "Prove the selected General Agent and every required Specialized Agent are instantiable with the declared Role and capabilities."
+      coordination:
+        mode: "runtime-provided"
+        mechanisms: ["runtime_coordination"]
+        write_targets: []
+        verification: "Prove the selected coordination and mutation-isolation behavior is supported; empty optional mechanisms require no artifact."
+      skill:
+        mode: "project-artifact"
+        mechanisms: ["skills"]
+        write_targets: [".claude/skills/"]
+        verification: "Prove every required Skill is discoverable and usable by its intended Agent Role and matches its owning Contract or provider declaration."
+      command:
+        mode: "composite"
+        mechanisms: ["skills", "legacy_commands"]
+        write_targets: [".claude/skills/", ".claude/commands/"]
+        verification: "Prove every declared invocation resolves to its owning capability with the declared argument contract."
+      rule:
+        mode: "project-artifact"
+        mechanisms: ["rules"]
+        write_targets: [".claude/rules/"]
+        verification: "Prove every required Rule is present, loadable in its declared scope, and points to current authorities without duplicating them."
+      tool:
+        mode: "composite"
+        mechanisms: ["runtime_tools", "plugins", "mcp"]
+        write_targets: [".claude/settings.json", ".mcp.json"]
+        verification: "Prove every required Tool is available to its intended Agent and governed by effective Permission."
+      hook:
+        mode: "composite"
+        mechanisms: ["hooks", "hook_handlers"]
+        write_targets: [".claude/settings.json", ".claude/hooks/"]
+        verification: "Prove every required Hook is registered for the declared event, its handler is executable, and its failure policy is effective."
+      integration:
+        mode: "explicitly-unused"
+        mechanisms: ["mcp"]
+        write_targets: []
+        verification: "Prove that no Integration is required by the current Profile; preserve observed undeclared Integrations as unmanaged unless they conflict."
+      extension:
+        mode: "composite"
+        mechanisms: ["plugins", "settings"]
+        write_targets: [".claude/settings.json"]
+        verification: "Prove every selected Extension is project-enabled and usable through its declared provider; provider-managed installation state remains provider-owned."
+      interaction:
+        mode: "composite"
+        mechanisms: ["output_styles", "settings"]
+        write_targets: [".claude/output-styles/", ".claude/settings.json"]
+        verification: "Prove the selected Output Style and every required interaction choice are effective on the applicable client surface."
+      permission:
+        mode: "composite"
+        mechanisms: ["settings", "hooks", "hook_handlers"]
+        write_targets: [".claude/settings.json", ".claude/hooks/"]
+        verification: "Prove effective allow, ask, deny, sandbox, and enforcement behavior satisfies the declared strictest applicable controls."
+      session:
+        mode: "runtime-provided"
+        mechanisms: ["runtime_session"]
+        write_targets: []
+        verification: "Prove the Runtime supports the selected lifecycle and resume behavior; generated session state remains non-authoritative."
+      observability:
+        mode: "composite"
+        mechanisms: ["runtime_observability"]
+        write_targets: []
+        verification: "Perform the declared checks and produce truthful redacted evidence for every Component without converting observations into Preferences."
+    realization_policy:
+      coverage: "Every Agent Component discovered from the canonical Agent Structure must have exactly one component_realization record."
+      mechanism_resolution: "Every listed mechanism must resolve through native_capability_mapping."
+      write_boundary: "Reconciliation may write only an exact declared write_target owned by the affected Component and authorized by its declarations."
+      explicitly_unused: "Absence is the required state; observed undeclared capabilities are preserved as unmanaged and are never removed to make the category empty."
+      undeclared_native: "preserve-as-unmanaged"
+      missing_or_invalid: "blocked"
+      destructive_change: "requires-explicit-human-approval"
     client_surfaces:
       terminal: {}
       ide: {}

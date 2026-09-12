@@ -1,6 +1,6 @@
 ---
 name: my-interface-implement
-description: "Implement selected project phases, or every enabled and ready phase when none is specified, through Configure, baseline Review, Planning, Development, independent final Review, reconciliation, and eligible Launch."
+description: Implement selected Target phases, or every enabled and ready phase when none is specified, by running Configure once and then Planning, Plan Review, Developing, and final Review sequentially for each phase before eligible Launch.
 argument-hint: "[phase-number ...]"
 disable-model-invocation: true
 ---
@@ -11,51 +11,54 @@ This file is the Claude Code adapter for the portable `implement` Skill Contract
 
 ## Role
 
-Implement an already defined Target end to end through a fixed orchestration sequence. Implement coordinates other operation Skills, while each operation keeps its own role, authority, validation, and reporting rules.
+Provide the trustworthy full-path entry point while preserving the ownership and gates of Configure, Planning, Developing, Reviewing, and Launch. Implement coordinates those Skills and performs no product operation of its own.
 
-Implement is the trustworthy full-path entry point. A successful result means the selected phases were planned from current authoritative sources, developed under their applicable Component authorities, independently reviewed against those same sources, and reconciled until their Review outcomes were satisfied. The individual Planning, Development, and Review Skills remain available for Humans who choose to run the Workflow one operation at a time.
+The individual operation Skills remain available when the Human wants to work step by step. A successful Implement result means every processed phase passed Planning, independent Plan Assurance, Development, and independent final Implementation Assurance in that order.
 
 ## Input
 
-Accept zero or more whitespace-separated positive integers from `$ARGUMENTS`: `1` selects the first phase, `2` selects the second phase, and so on. Resolve every number against current Target phase order and use each phase's stable identifier throughout orchestration.
+Accept zero or more whitespace-separated positive integers from `$ARGUMENTS`: `1` selects the first phase, `2` the second, and so on. Resolve numbers against current Target phase order and use stable identifiers throughout orchestration.
 
 If `$ARGUMENTS` is empty, select every phase the current Target marks both enabled and ready for implementation.
 
-If arguments are present, validate the complete selection before changing any files. Every token must be a positive integer that resolves to an available phase. Deduplicate repeated numbers and process selected phases in Target order regardless of argument order. Report a selected phase that is disabled or not ready as outside the executable scope and leave it unchanged. If any token is invalid, enumerate the available phases with number, stable identifier, title, status, and readiness, identify every invalid token, and request a corrected list without beginning any operation.
+Validate the complete selection before changing any file or invoking any operation. Every token must be a positive integer resolving to an available phase. Deduplicate repeats and retain Target order. Report disabled or unready selected phases as outside executable scope. For any invalid token, enumerate available phases with number, stable identifier, title, status, and readiness, identify every invalid token, and request a corrected list without running Configure or another operation.
 
-If the resolved selection contains no implementable phase, make no changes and report why no phase can run.
+If no implementable phase remains, make no changes and report why.
+
+## Understanding
+
+Establish Interface Understanding from the canonical Interface document, then Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Resolve phase eligibility and the current implementations, Contracts, records, and stopping conditions for Configure, Planning, Developing, Reviewing, and Launch.
 
 ## Workflow
 
-Establish Interface Understanding from the canonical Interface document. Follow its routes to the shared Skill rules, then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Resolve phase eligibility, the current Skills for Configure, Planning, Development, Review, and Launch, their operational records, and their stopping conditions.
+Execute this fixed sequence; do not derive it from a mutable Target workflow:
 
-A phase is implementable only when Target marks it both enabled and ready for implementation. Preserve disabled, designing, and not-designed phases unchanged and report them as outside the current run.
+1. Execute Configure exactly once. Continue only when its required operational records and Environment preparation pass their gates.
+2. Record Implementation State as `in progress` under its owner.
+3. Process selected implementable phases strictly in Target order, completing the entire sequence for one phase before touching the next.
+4. Invoke Planning for the current phase. An existing valid Plan is reconciled idempotently rather than regenerated for style.
+5. Invoke Reviewing for the same phase as the Plan gate. Use its `plan_outcome`; do not invoke Development unless Plan Assurance is `satisfied`. Reviewing may coordinate Planning and recheck its result under its own Contract.
+6. Invoke Developing for the phase, including its durable verification and completion gate.
+7. Invoke Reviewing again. This final pass re-assures the current Plan and performs Implementation Assurance against current Source and evidence.
+8. If Plan Findings remain, let Reviewing route them through Planning. If implementation Findings remain, invoke Developing with those recorded Findings, then invoke Reviewing again.
+9. Repeat step 8 only while the cycle closes or materially advances at least one Finding. Stop on repetition, no observable progress, an inconclusive assurance, failed dependency or gate, or required Human decision.
+10. Advance to the next selected phase only when the current Review proves both `plan_outcome: satisfied` and `implementation_outcome: satisfied`. Otherwise withhold every later phase in this invocation.
+11. After all selected phases pass, invoke Launch only if every currently enabled and ready Target phase—not merely the requested subset—has completed Planning and Development and satisfied both Review assurances.
 
-Implement does not read, derive, or follow the Interface Workflow. Its sequence is fixed:
+Locate each operation through the current Interface and invoke its implementation directly; do not depend on nested Slash Command invocation. Every operation retains its own write authority. Implement writes only its Implementation State and History.
 
-1. Execute Configure once.
-2. Resolve the selected implementable phases in Target order and establish their applicable Component authorities, operational records, dependencies, and current outputs.
-3. For each selected phase that already has a Plan, implementation output, Development progress, or Review evidence, execute an independent baseline Review before Planning. Use its Findings to describe the actual gap between current sources and current output. If the Review is `satisfied`, Planning and Development are already truthfully complete, and their sources have not changed, preserve the current output and move to the next selected phase without regenerating it.
-4. For a selected phase with no existing work, skip the empty baseline Review and execute Planning.
-5. For existing work that is not satisfied, execute Planning to reconcile the current Plan with authoritative sources and baseline Findings.
-6. Confirm that Planning completed successfully and that its coverage validation passed before invoking Development. Never develop from a missing, incomplete, invalid, or stale Plan.
-7. Execute Development for the phase, including its durable checks and phase completion gate, then execute an independent final Review.
-8. When final Review is `not satisfied`, execute another Planning and Development reconciliation using the recorded Findings, then review again. Continue only while each cycle closes or materially advances at least one Finding. Stop that phase when a cycle repeats an unresolved Finding, makes no observable progress, reaches an inconclusive condition, or requires a Human decision.
-9. Do not execute a later phase whose prerequisites depend on an incomplete selected phase. Continue with a later selected phase only when the current authorities establish that it is independent of every incomplete result.
-10. Execute Launch only when, after this run, every phase currently enabled and ready for implementation has completed Planning and Development and has a `satisfied` Review outcome. A partial phase selection does not Launch an incomplete Target.
+Repeated invocation runs the same gates against current sources. Planning and Developing preserve valid current output, while Reviewing independently re-establishes assurance. Never skip a gate merely because an earlier run recorded success.
 
-Locate each operation's current Skill through the Interface, read its instructions, and execute them directly; do not depend on nested Slash Command invocation. After Configure makes State available, record Implementation State as `in progress`, set this run's start provenance, and append its State History Event.
+## Stopping and state
 
-Do not pass an incomplete operation or phase gate. A missing, inconclusive, or not-satisfied final Review outcome leaves that phase incomplete. Record truthful phase and Implementation State, append the outcome, and report the stopping condition through its owner. Independent selected phases may continue under step 9, but any incomplete implementable phase prevents Launch and prevents the overall Implementation State from becoming `completed`.
+Stop the entire run at the first selected phase that cannot pass. Record truthful phase and Implementation State, every delegated outcome, Blocker or Open Question, and the exact later phases withheld. An incomplete phase prevents Launch and prevents overall Implementation State from becoming `completed`.
 
-After every currently implementable phase is independently satisfied and Launch completes, record Implementation State as `completed`, its completion time, and the outcome History Event. When the requested selection completes but other implementable phases remain incomplete, record the selected phase outcomes without claiming end-to-end completion.
-
-Repeated invocation reconciles the current Target with existing operational records and implementation according to the individual operation rules; it does not discard completed work merely to repeat the sequence.
+After every currently implementable phase is independently satisfied and Launch completes, record Implementation State as `completed`, its completion time, and the outcome History Event. Completion of a selected subset never implies whole-Target completion.
 
 ## Boundaries
 
-Implement coordinates operation roles and performs no product operation of its own. Its only independent write authority is its Implementation State and History under State. It does not define the Target, replace an operation's judgment, combine ownership boundaries, or bypass required human approval.
+Implement coordinates operation roles and performs no product operation itself. It does not define Target, write Plan or Source, perform Review judgment, combine ownership boundaries, bypass a gate, or infer Human approval.
 
 ## Report
 
-Report the requested and resolved phase selection, eligible and skipped phases, each baseline Review, Planning, Development, final Review, and reconciliation outcome in execution order, dependent work withheld, all Blockers and Open Questions, and the final Implementation and Launch result. Distinguish completion of the selected scope from completion of the whole Target.
+Report the requested and resolved phase selection, Configure outcome, and for each phase its Planning, Plan Review, Development, final Review, and reconciliation outcomes in execution order. Then report withheld phases, Blockers and Open Questions, selected-scope completion, whole-Target completion, and Launch result.

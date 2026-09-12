@@ -232,9 +232,9 @@ Migration history includes an integrity marker for each migration and a verified
 
 # 3. Documentation Standard
 
-The Database Component MUST include a public `README.md` at its package boundary. The README is a required developer-facing explanation of the completed Database package.
+The Database Component MUST include a public `DOCUMENTATION.md` at its package boundary. This file is a required developer-facing explanation of the completed Database package.
 
-The README MUST explain:
+The `DOCUMENTATION.md` MUST explain:
 
 - Database's responsibilities and boundaries;
 - the three internal layers and their dependency direction;
@@ -244,7 +244,7 @@ The README MUST explain:
 - credential protection, controlled SQL, and operational safety rules;
 - domain-neutral examples that do not expose project-specific Target information.
 
-The README MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Database package to:
+The `DOCUMENTATION.md` MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Database package to:
 
 - add or create a record from an imported Model type or instance;
 - read one record by its typed identifier, such as an identifier equal to `1`;
@@ -258,7 +258,7 @@ The README MUST include complete, runnable, domain-neutral examples showing how 
 
 These examples MUST pass Model types or instances through the public interface. They MUST NOT identify a Model by a string such as `"Entity"`, pass an unrelated untyped field dictionary, expose a connection, or import an internal adapter or ORM object. If controlled SQL is documented, its example MUST show parameterized values, allow-listed structure, transaction usage, and protected results.
 
-The README MUST be generated or updated as part of Database development and verified for existence, completeness, and consistency with the public interface before Database is reported complete.
+The `DOCUMENTATION.md` MUST be generated or updated as part of Database development and verified for existence, completeness, and consistency with the public interface before Database is reported complete.
 
 ---
 
@@ -288,7 +288,7 @@ When multiple persistence implementations are possible, prefer in this order:
 - Route consumer data access through the public generic interface and Instance Registry.
 - Preserve relationship meaning, persistence constraints, transaction guarantees, and credential protection.
 - Verify migration integrity, schema drift, concurrency handling, and least-privilege operation.
-- Provide and verify a developer-facing Database README.
+- Provide and verify a developer-facing Database `DOCUMENTATION.md`.
 
 ## SHOULD
 

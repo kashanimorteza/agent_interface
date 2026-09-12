@@ -1,61 +1,67 @@
 ---
 name: my-interface-reviewer
-description: Verify selected implemented project phases, or every enabled phase when none is specified, against the current project definition, applicable Component authorities, Task Plans, and actual evidence. Records Findings and never repairs results.
+description: Assure selected Target phase Plans and any existing implementation, or every enabled phase when none is specified, against current Interface and Target Understanding. Coordinates Planning for Plan reconciliation, records Findings, and never repairs implementation.
 argument-hint: "[phase-number ...]"
 disable-model-invocation: true
 ---
 
-# Review project phases
+# Review Target phases
 
 This file is the Claude Code adapter for the portable `reviewing` Skill Contract. Resolve and read that Contract through Agent Skill Preferences before acting; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
 
 ## Role
 
-Review the implemented results for the selected phases against current Target Understanding, their Task Plans, and their acceptance criteria, and establish whether the implementation and its verification evidence satisfy those requirements.
+Provide two independent gates for every selected phase:
 
-Reviewer reports and does not repair. An operation that fixes what it finds stops being able to tell the difference between what was already correct and what it corrected, and the human loses the finding.
+1. **Plan Assurance** — establish that its Plan completely and correctly represents current Interface and Target Understanding.
+2. **Implementation Assurance** — when implementation exists, establish that the result and evidence satisfy the assured Plan and the same current authorities.
 
-Review is independent of how the work was done. A Task states a verification condition and the implementer recorded the check it built to satisfy it; Reviewer judges whether that check actually establishes the condition, and observes the condition for itself rather than only re-running what the implementer already ran. A check written by the same operation that wrote the code can pass while the requirement fails.
+An individual Review pass never changes what it judges. When Plan Assurance fails, invoke the current Planning Skill as the sole Plan owner, preserve the original Findings, and then perform a new independent Review pass. Never write Plan content directly and never invoke Development or repair Source.
 
 ## Input
 
-Accept zero or more whitespace-separated positive integers from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve every number against phase order in Target Understanding and use each phase's stable identifier throughout review.
-
-The numbers are input conveniences; they never rename phases or change stored identifiers or references.
+Accept zero or more whitespace-separated positive integers from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve every number against current Target phase order and use each phase's stable identifier throughout Review.
 
 If `$ARGUMENTS` is empty, select every phase whose current Target status marks it enabled. If no phase is enabled, make no changes and report that there is no phase to review.
 
-If arguments are present, validate the complete selection before changing files or running verification. Every token must be a positive integer that resolves to an available phase. Deduplicate repeated numbers and process selected phases in Target order regardless of argument order. If any token is invalid, enumerate all available phases with number, stable identifier, title, status, and readiness, identify every invalid token, and request a corrected list without beginning Review.
+If arguments are present, validate the complete selection before changing records, invoking Planning, or running verification. Every token must be a positive integer resolving to an available phase. Deduplicate repeated numbers and process selected phases in Target order regardless of argument order. For invalid input, enumerate all available phases with number, stable identifier, title, status, and readiness, identify every invalid token, and request a corrected list without beginning Review.
+
+## Understanding
+
+On every invocation, establish Interface Understanding from the canonical Interface document and follow its routes to the shared Skill rules and current Component authorities. Then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence.
+
+Never introduce a third `Project Understanding`. Plan, State, Review Config, implementation, and earlier conversation are evidence to assess; none substitutes for current Interface Understanding or Target Understanding.
 
 ## Workflow
 
-First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Reviewer's supporting role, and the current locations of the resources Review needs.
+Resolve the current Planning Skill, Review, Plan and State authorities, applicable Component authorities, operational records, implementation, public interfaces, and verification capabilities.
 
-Then establish Target Understanding from the Human and Technical Definitions located by the Interface under their declared precedence, and read the applicable Principles and Preferences, each selected phase's Task Plan, and the current implementation and public interfaces. Plan, State, and Review Config are operational records, not a stored representation of this Understanding.
+Process each selected phase as follows:
 
-Resolve every selected phase's scope, acceptance criteria, required verification, and the destination that stores Findings from those current sources. Process phases in Target order. Review does not enter or change an active Workflow mode, but it records each phase's aggregate Review progress and appends each outcome to State History.
+1. Build a transient Plan Assurance ledger directly from current Target Understanding and every applicable Component obligation. Do not derive this ledger from the Plan it will judge.
+2. Compare the current Plan with the ledger for complete and current coverage, coherent Task boundaries, dependencies, acceptance clauses, verification conditions, and absence of contradiction or duplication.
+3. If the Plan is missing or not satisfied, record exact Plan Findings and invoke the current Planning Skill directly for this phase. Do not depend on nested Slash Command invocation.
+4. After Planning, discard the previous Plan observations, rebuild the ledger from current authorities, and independently Review the reconciled Plan. Repeat only while a cycle closes or materially advances a Finding; stop on repetition, no progress, an inconclusive result, or a required Human decision.
+5. Do not begin Implementation Assurance until Plan Assurance is `satisfied`.
+6. Detect whether implementation or Development evidence exists. If neither exists, record Implementation Assurance as `not reviewed`, aggregate Review State as `plan satisfied`, and report that the phase is ready for Development.
+7. If implementation exists, build a separate transient Implementation Assurance ledger from the assured Plan, current Target, applicable Component obligations, acceptance clauses, verification conditions, and recorded evidence.
+8. Inspect Source, public interfaces, durable checks, and evidence. Observe each condition independently and judge whether the implementer's check establishes it; use adversarial or independent cases where practical.
+9. Record Findings with expected condition, actual observation, and exact evidence. Missing Plan coverage is a Gap; missing proof is missing evidence. Reconcile previous Findings only through current observation.
+10. Record aggregate Review State as `satisfied` only when both Plan Assurance and applicable Implementation Assurance are satisfied. Otherwise record the exact `plan satisfied`, `not satisfied`, or `inconclusive` result.
 
-For each phase, build a transient review ledger that enumerates every requirement in the phase's Target definition, every applicable Component-authority obligation, every Plan acceptance clause, and every recorded verification condition. Use it to establish complete review coverage without storing a duplicate source of requirements. A missing Plan mapping is a Gap; a mapped condition without observable proof is missing evidence.
-
-Inspect the implementation and the recorded evidence. For every item in the transient review ledger, observe the condition for yourself in its applicable context, and judge whether the check the implementer recorded actually establishes it. Use an independent observation or adversarial case where practical instead of relying only on the implementer's happy path; a passing check is evidence about the check, not about the condition. Ground every finding in an exact location or an observable result. Use current project intent, the Component authorities, and the Task acceptance criteria as the review baseline.
-
-Missing evidence remains missing evidence. Do not reconstruct it, infer it from the code, or treat a plausible implementation as proof that a check once passed.
-
-Record Findings and reconcile them with previous review results for each phase according to the current Review Component's structure, recording rules, and update rules. Handle any additional operational updates under the shared rules and the current authority of the Component that owns the record. An inconclusive or not-satisfied phase does not prevent reviewing later selected phases whose evidence can be observed independently.
-
-Set each phase's Review progress to `in progress` when its observation begins, then to its exact final Review outcome: `satisfied`, `not satisfied`, or `inconclusive`. Never infer another operation's progress from that outcome.
+Complete one selected phase before moving to the next. In a standalone invocation, an unsatisfied phase does not prevent reviewing a later phase whose evidence is independent. A coordinator such as Implement may require the current phase to pass before advancing.
 
 ## Boundaries
 
-Perform only Review's role. Do not perform another Interface Operation, repair the result, define new requirements, reinterpret Target intent, or write outside Review's current authority.
+Review writes only Review-owned Findings, assurance results, aggregate Review State, and Review History. Planning writes any Plan reconciliation under its own Contract. Do not modify Source, Target, Plan content directly, Task progress, or another operation's records. Do not invoke Developing.
 
 ## Report
 
-Report in this order, evidence first:
+Report in this order:
 
-1. **Scopes reviewed** — every phase identifier, title, target, and what was inspected, in Target order.
-2. **Findings** — by phase, each one stating what was expected, what was observed, and the exact location or observable result that shows it. Order each phase's Findings by severity.
-3. **Verification** — by phase and condition, what was observed, whether the implementer's recorded check establishes it, and any condition that could not be observed and why.
-4. **Missing evidence** — by phase, every acceptance criterion with no observable proof, named as missing rather than assumed.
-5. **Results for the requested scopes** — whether each phase satisfies its requirements, and only the follow-up the current policy requires.
-6. **Recorded** — by phase, the Findings recorded, aggregate Review State, History outcome, and changes to previous review results under their owning rules.
+1. **Phases** — resolved phase identifiers, titles, targets, and order.
+2. **Plan Assurance** — original result, Findings, any delegated Planning outcome, and independent post-Planning result.
+3. **Implementation Assurance** — `not reviewed` when absent; otherwise conditions observed, independent evidence, and result.
+4. **Findings and missing evidence** — grouped by phase and assurance stage, ordered by severity.
+5. **Recorded outcomes** — Plan outcome, Implementation outcome, aggregate Review State, reconciled Findings, and History.
+6. **Next step** — Development when only the Plan is satisfied, correction through Developing when implementation Findings remain, or the next eligible phase when both gates pass.

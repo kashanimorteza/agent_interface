@@ -64,7 +64,7 @@ content:
         dependency_management: "parent"
         runtime: "parent_when_applicable"
       documentation:
-        filename: "README.md"
+        filename: "DOCUMENTATION.md"
         location: "package_root"
         sections:
           - "purpose_and_boundaries"
@@ -73,7 +73,7 @@ content:
           - "configuration"
           - "installation_and_startup_when_applicable"
           - "usage_examples"
-        nested_setup: "Reference the parent README for shared setup and document this package's interface and usage locally."
+        nested_setup: "Reference the parent DOCUMENTATION.md for shared setup and document this package's interface and usage locally."
 
     cross_cutting:
       testing:

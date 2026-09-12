@@ -2,55 +2,57 @@
 
 ## Purpose
 
-Provide independent evidence-based judgment of implemented phase results.
+Provide independent evidence-based assurance of current phase Plans and, when present, their implemented results.
 
 ## Responsibility
 
-Observe whether implementation satisfies current Target intent, Component authorities, Plans, acceptance criteria, and verification conditions; record Findings and exact Review outcomes. Review reports and never repairs or replans.
+Reconstruct current Interface Understanding and Target Understanding; assure that each selected phase Plan completely and correctly represents them; coordinate Planning when a Plan is missing, stale, incomplete, or invalid; independently recheck the reconciled Plan; and judge existing implementation and evidence against the assured Plan and current authorities. Reviewing records Findings and exact outcomes. It never writes Plan content or repairs implementation.
 
 ## Trigger
 
-Activate explicitly for zero or more phase selections, as a baseline assessment of existing work, or as an independent final gate after Development.
+Activate explicitly for zero or more phase selections, after Planning as a Plan gate, as an assessment of existing work, or as an independent final gate after Development.
 
 ## Inputs
 
-Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process in Target order. Consume current Target Understanding, applicable Principles and Preferences, Plans, State, prior Review records, implementation, public interfaces, and recorded evidence.
+Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Principles and Preferences, Plans, State, prior Review records, implementation, public interfaces, and recorded evidence.
 
 ## Outputs
 
-Produce reconciled Review Findings, exact aggregate Review outcomes and History, missing-evidence records, and an evidence-first phase report. Do not update Task progress or active Workflow mode.
+Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase, reconciled Review Findings, aggregate Review State and History, missing-evidence records, delegated Planning outcomes, and an evidence-first phase report. When no implementation exists, record Implementation Assurance as `not reviewed` and aggregate Review State as `plan satisfied` only when Plan Assurance passes. Do not update Task progress or active Workflow mode.
 
 ## Required Understanding
 
-Establish Interface Understanding and current Target Understanding. Read Review, Plan, and State authorities and every Component applicable to each selected phase.
+Reconstruct Interface Understanding and current Target Understanding on every invocation. Read Review, Plan, and State authorities and every Component applicable to each selected phase. Existing Plan, State, implementation, and Review records are evidence to assess and never substitutes for either Understanding.
 
 ## Authority
 
-Observe and execute non-repairing verification. Write only Review-owned Findings, aggregate Review State, and Review History. Never modify implementation, Plan, Target, Task progress, or another operation's records.
+Observe and execute non-repairing verification; invoke the current Planning Skill for the same selected phase when Plan reconciliation is required; and write only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History. Planning retains all authority over Plan content. Never modify implementation, Target, Plan content directly, Task progress, or another operation's records, and never invoke Development.
 
 ## Workflow Invariants
 
-- Validate all phase input before changing records or running verification.
-- Build a transient review ledger covering every Target requirement, applicable Component obligation, Plan acceptance clause, and recorded verification condition.
-- Observe each condition independently and judge whether the implementer's check actually establishes it; use adversarial or independent cases where practical.
-- Ground every Finding in the expected condition, actual observation, and exact location or observable result.
-- Record missing Plan coverage as a Gap and absent observable proof as missing evidence; never reconstruct or infer missing evidence.
-- Record phase-level work absent from every Task as a phase Finding without planning its repair.
+- Validate all phase input before changing records, invoking Planning, or running verification.
+- For each selected phase, rebuild a transient Plan Assurance ledger directly from current Target Understanding and applicable Component Principles and Preferences, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness.
+- If the Plan is absent or Plan Assurance is not satisfied, record the exact Plan Findings, invoke Planning for that phase, then discard prior Plan observations and independently rebuild and apply the Plan Assurance ledger to Planning's result.
+- Repeat Plan reconciliation only while a pass closes or materially advances a Plan Finding. Stop the affected phase on a repeated unresolved Finding, no observable progress, inconclusive Plan Assurance, or required Human decision.
+- Do not begin Implementation Assurance until Plan Assurance is satisfied.
+- When no implementation or Development evidence exists, record Implementation Assurance as `not reviewed`; never manufacture a defect or proof for work that has not begun.
+- When implementation exists, build a transient Implementation Assurance ledger covering every Target requirement, applicable Component obligation, Plan acceptance clause, and recorded verification condition. Observe each condition independently and judge whether the implementer's checks actually establish it.
+- Ground every Finding in the expected condition, actual observation, and exact location or observable result. Record absent Plan coverage as a Gap and absent observable proof as missing evidence.
 - Reconcile prior Findings only through current observation. A Finding persists until Review proves it resolved or the Human accepts it.
-- Review later independent phases even when another phase is not satisfied or inconclusive.
+- Complete one phase's assurance result before processing the next selected phase. A standalone Review may continue to later independent phases when one phase is unsatisfied or inconclusive; a coordinating Skill may impose a stricter stopping gate.
 
 ## Verification
 
-Every Review conclusion must be traceable to current observable evidence. A phase ends only as `satisfied`, `not satisfied`, or `inconclusive` under current Review authority.
+Plan Assurance is `satisfied` only when the current Plan completely and correctly covers the current Interface and Target authorities. Implementation Assurance is `satisfied` only when existing implementation and evidence satisfy that assured Plan and the same current authorities. Aggregate outcome is `plan satisfied` when only Plan Assurance applies, `satisfied` when both applicable assurances pass, and otherwise the exact `not satisfied` or `inconclusive` result. Every conclusion must be traceable to current observable evidence.
 
 ## Idempotency
 
-Repeated Review preserves stable Findings and outcomes when evidence is unchanged, while appending only the operational History required by State.
+Repeated Review reconstructs both Understandings, preserves stable Findings and outcomes when sources and evidence are unchanged, avoids invoking Planning for an already assured current Plan, and appends only History required by State.
 
 ## Stopping Conditions
 
-Stop the complete run before observation on invalid input. Mark an affected phase inconclusive when required evidence cannot be observed or authorities conflict; never convert uncertainty into satisfaction or a repair action.
+Stop the complete run before observation or delegation on invalid input. Stop an affected phase before Implementation Assurance when Plan Assurance cannot be satisfied. Mark an affected assurance inconclusive when required evidence cannot be observed or authorities conflict; never convert uncertainty into satisfaction, direct Plan editing, or an implementation repair.
 
 ## Runtime Realization
 
-A native adapter exposes optional multi-phase input, uses read and verification capabilities without repair authority, and reports reviewed scope, Findings, verification, missing evidence, outcomes, and records changed.
+A native adapter exposes optional multi-phase input, resolves and invokes the current Planning implementation directly when Plan reconciliation is required, uses read and verification capabilities without Development authority, and reports phase selection, Plan Assurance, delegated Planning, Implementation Assurance, Findings, missing evidence, aggregate outcomes, and records changed.

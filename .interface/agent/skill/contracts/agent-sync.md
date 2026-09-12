@@ -31,6 +31,7 @@ Modify only project-scoped native Agent artifacts selected by Runtime mapping. P
 ## Workflow Invariants
 
 - Dynamically enumerate every Agent Component from the current canonical Agent Structure before mutation. A Component or supported mechanism added later is automatically part of the same run without requiring a hardcoded list change.
+- Validate the selected Runtime's `component_realization` map against that discovered inventory before observing or changing native state. Every discovered Component must occur exactly once; every listed mechanism must resolve through `native_capability_mapping`; every mode and verification obligation must be explicit. A missing, extra, duplicate, or unresolved record is blocked rather than inferred.
 - For every discovered Component, read all sources it declares, derive its complete desired state, identify the Runtime mechanism that realizes it, observe actual state, and record the proposed action and verification gate. Include empty and already-satisfied categories.
 - Resolve ownership and classify each item as no change, create, update, install, enable, activation required, report only, or blocked.
 - Never silently skip an unknown, new, or unsupported Component, category, or mechanism. Reconcile it when the selected Runtime supplies an authorized mapping; otherwise report it as blocked with the missing mapping or capability.
@@ -38,11 +39,12 @@ Modify only project-scoped native Agent artifacts selected by Runtime mapping. P
 - Verify Runtime compatibility first, derive dependency-safe reconciliation order from current Component Relationships and Runtime mappings, and preserve each Component's ownership throughout execution.
 - Treat a selected desired state as standing authorization only for exact additive project-scoped reconciliation. Credentials, external trust, broader scope, destructive replacement, irreversible action, or missing authority still requires Human action.
 - Materialize the smallest native adapter that realizes its portable Contract. Never invent content for an empty category or copy authoritative Interface text where a reference is supported.
+- Write only to an exact `write_target` declared by the affected Component's Realization record and otherwise authorized by its owning declarations. A runtime-provided or explicitly unused record with no write target is observation-only. Explicitly unused means no capability is required; it never authorizes removal of an observed undeclared capability.
 - Preserve meaningful Human-authored runtime content when ownership is ambiguous and report the exact conflict.
 
 ## Verification
 
-After reconciliation, discard the pre-change observations and perform a second complete pass from the canonical Agent Structure. Re-read every discovered Component source and native artifact and query current runtime state. Prove every required declaration and mechanism is realized and usable, including instantiable Agent Definitions, correct Role and capability assignments, discoverable Skills, resolvable Commands, matching effective settings and enforcement, active selected Extensions, usable selected Integrations, and absence of secrets in project artifacts.
+After reconciliation, discard the pre-change observations and perform a second complete pass from the canonical Agent Structure. Revalidate complete one-to-one Component Realization coverage, re-read every discovered Component source and native artifact, and query current runtime state. Apply each Realization record's verification obligation and prove every required declaration and mechanism is realized and usable, including instantiable Agent Definitions, correct Role and capability assignments, discoverable Skills, resolvable Commands, matching effective settings and enforcement, active selected Extensions, usable selected Integrations, and absence of secrets in project artifacts.
 
 The overall result is `synchronized` only when this second pass covers every current Agent Component and every required item passes its own verification gate. Any blocked, missing, conflicting, inactive, unsupported, or unverified required item prevents the success claim, even when all other Components pass.
 

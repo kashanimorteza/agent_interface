@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-state"
-  version: "12.0"
+  version: "12.1"
   purpose: "Operational State format; State Principles define record meaning and ownership."
 operational_scope:
   stores: "Active Workflow position, aggregate phase progress, Implement and Launch results, operational history, Blockers, and Open Questions."
@@ -44,7 +44,7 @@ sections:
           review:
             required: true
             default: "not started"
-            allowed: ["not started", "in progress", "satisfied", "not satisfied", "inconclusive"]
+            allowed: ["not started", "in progress", "plan satisfied", "satisfied", "not satisfied", "inconclusive"]
           updated_by: {required: true, default: "initialization"}
           updated_at: {required: true, default: null, nullable: true}
   implementation:

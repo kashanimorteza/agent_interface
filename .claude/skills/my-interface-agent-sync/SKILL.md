@@ -22,6 +22,8 @@ Repeat this discovery on every invocation. A Component or mechanism added to the
 
 Treat Principles as mandatory contracts and Preferences as Human-owned desired state. Never modify either. Inspect current project-scoped runtime artifacts and runtime-reported activation state only after deriving the expected profile.
 
+Before native inspection, validate that Runtime Preferences contain exactly one `component_realization` record for every Component dynamically discovered from the canonical Agent Structure. Reject missing, extra, or duplicate records, unresolved `native_capability_mapping` references, absent realization modes, or absent verification obligations as `blocked`; never infer a mapping from a familiar directory layout.
+
 ## Reconciliation plan
 
 Build a complete inventory before changing runtime state:
@@ -30,6 +32,8 @@ Build a complete inventory before changing runtime state:
 | --- | --- | --- | --- | --- | --- |
 
 Include every dynamically discovered Agent Component, even when its declared category is empty or already satisfied. Classify each action as `no change`, `create`, `update`, `install`, `enable`, `activation required`, `report only`, or `blocked`. Never silently skip an unknown, new, or unsupported Component or mechanism; report a missing native mapping as blocked.
+
+Use each Component's Realization record to resolve its native mechanisms, authorized write targets, and verification gate. A `runtime-provided` Component is observed rather than materialized unless an exact write target is separately declared. An `explicitly-unused` Component requires no native capability and never authorizes removal of an observed undeclared capability.
 
 Resolve ownership before proposing a write. Preserve compatible native values that the Agent Profile leaves unspecified. Report an undeclared native capability as unmanaged unless it conflicts with a Principle or selected choice; do not remove or disable it automatically.
 
@@ -41,11 +45,11 @@ A selected desired state is standing project authorization for additive, project
 
 When a required native resource is missing, construct the smallest implementation that faithfully realizes its owning Principle and declared Preference. Point to existing contracts instead of copying Interface policy into multiple runtime files where the Runtime can resolve references. Never invent content for an explicit empty category.
 
-When actual state conflicts with multiple authorities or meaningful Human-authored runtime content would be overwritten, make no write to that resource. Report the conflict and the exact decision needed.
+Write only to an exact `write_target` in the affected Component's Realization record and only when its owning declarations otherwise authorize the change. When actual state conflicts with multiple authorities or meaningful Human-authored runtime content would be overwritten, make no write to that resource. Report the conflict and the exact decision needed.
 
 ## Verification
 
-After reconciliation, discard pre-change observations, rediscover the complete Agent Component inventory from the canonical Interface, independently re-read every native artifact, and query runtime status where supported. A declaration or file presence alone is insufficient.
+After reconciliation, discard pre-change observations, rediscover the complete Agent Component inventory from the canonical Interface, revalidate one-to-one Component Realization coverage, independently re-read every native artifact, and query runtime status where supported. Apply every Component's declared verification obligation. A declaration or file presence alone is insufficient.
 
 Verify at least that:
 
