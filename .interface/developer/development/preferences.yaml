@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/developer/development/preferences.yaml"
-  path_note: "The Preferences layer of the Development Component — package publication and Cross-cutting Capability defaults shared across the fixed Component catalogue."
-  purpose: "Defaults for package publication and the applicability of shared Cross-cutting Capabilities."
+  path_note: "The Preferences layer of the Development Component — Shared Technology Profiles, Component assignments, package publication, and Cross-cutting Capability defaults."
+  purpose: "Central technology selections for Participating Components together with Development-owned publication and shared-capability defaults."
   standard: "Agent Project Interface"
-  version: "3.0"
+  version: "4.0"
   updated: "2026-09-13"
 
 
@@ -14,10 +14,11 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
   changed_by: "The human, directly. A missing critical Development choice is raised through State instead of being written into this file."
   precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
-  consumption: "Use packages.publish when the project leaves package publication unstated. Resolve each Cross-cutting Capability from its applies_to list: an empty list is inactive, and a non-empty list applies only to the named Components. Do not write resolved values back into this file."
-  selection: "Development catalogues no technical alternatives. When the project leaves a Development-owned choice unstated and this file supplies no default, use compatible professional judgment under Development Principles and record a consequential implementation choice with the implementation."
-  version_resolution: "No entry here carries a version. Versions belong to the Preferences of the Component that owns the versioned technology."
-  matching: "Match packages.publish by its exact key. Match a Cross-cutting Capability by its exact key and each applies_to value to one canonical Component identifier defined by Development Principles; values are unique within the list."
+  consumption: "For each Participating Component, resolve every selected technology by its exact key in the matching options catalogue and apply the resulting Shared Technology Profiles. Use packages.publish when the project leaves package publication unstated. Resolve each Cross-cutting Capability from its applies_to list: an empty list is inactive, and a non-empty list applies only to the named Components. Do not write resolved values back into this file."
+  selection: "Use the selected compatible Shared Technology Profiles when the project is silent. For an explicit unlisted or incompatible technology, select a well-supported compatible profile under Development Principles and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest-compatible and bounded constraints such as 2.x to the latest concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
+  matching: "Match every Component by its canonical identifier, every selected language or package by the exact key in its options catalogue, packages.publish by its exact key, and each Cross-cutting Capability by its exact key. Each applies_to value is a unique canonical Component identifier defined by Development Principles."
+  additional_dependencies: "A Participating Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the dependency in the Component package definition and README; a consequential recurring choice should be added to this human-owned catalogue by the human."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -30,20 +31,84 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty. Development owns no preferred technical profile."
-  options: "Empty. Development catalogues no technical alternatives."
+  selected: "The language and Component-relevant package selections assigned to each Participating Component."
+  options: "Shared language, package, version, naming, API, and quality-tool profiles referenced by Component selections."
   settings: "The package publication default and Cross-cutting Capability applicability lists."
-  implementation: "Empty. Component-specific realization remains owned by each participating Component."
+  implementation: "Empty. Component-specific conceptual realization remains owned by each Participating Component."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
   # <!-------------------------------------------- selected -->
-  selected: {}
+  selected:
+    components:
+      model:
+        language: "Python"
+        modeling_package: "Pydantic"
 
   # <!-------------------------------------------- options -->
-  options: {}
+  options:
+    languages:
+      Python:
+        version: "latest-compatible"
+        naming:
+          variables: "snake_case"
+          classes: "PascalCase"
+          files: "snake_case"
+          folders: "snake_case"
+        typing:
+          style: "modern Python typing"
+          prefer_builtin_generics: true
+          prefer_union_operator: true
+          nullable_fields: "T | None"
+        closed_value_sets:
+          reusable_named: "StrEnum"
+          small_local: "Literal"
+        concept_mappings:
+          exact_decimal_representation: "decimal.Decimal"
+          timezone_aware_datetime: "datetime.datetime with timezone information"
+        quality_tools:
+          formatter:
+            name: "ruff-format"
+            package: "ruff"
+            version: "latest-compatible"
+          linter:
+            name: "ruff"
+            package: "ruff"
+            version: "latest-compatible"
+          type_checker:
+            name: "pyright"
+            package: "pyright"
+            version: "latest-compatible"
+          test_runner:
+            name: "pytest"
+            package: "pytest"
+            version: "latest-compatible"
+    packages:
+      Pydantic:
+        version: "2.x"
+        language: "Python"
+        package: "pydantic"
+        api:
+          base_model: "pydantic.BaseModel"
+          configuration: "pydantic.ConfigDict"
+          field_validation: "pydantic.field_validator"
+          model_validation: "pydantic.model_validator"
+          root_model: "pydantic.RootModel"
+          computed_field: "pydantic.computed_field"
+          field_serialization: "pydantic.field_serializer"
+          model_serialization: "pydantic.model_serializer"
+          serialization:
+            - "model_dump"
+            - "model_dump_json"
+          schema: "model_json_schema"
+        forbidden_legacy_apis:
+          - "validator"
+          - "root_validator"
+          - "parse_obj"
+          - "dict"
+          - "json"
 
   # <!-------------------------------------------- settings -->
   settings:

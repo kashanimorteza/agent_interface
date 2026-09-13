@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/developer/model/preferences.yaml"
-  path_note: "The Preferences layer of the Model Component — supported technical choices and defaults used when a Model choice is unstated."
-  purpose: "Defaults for the independent Model package, supported modeling technologies, and properties of existing Model fields whose attributes are unstated."
+  path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
+  purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "2.1"
+  version: "3.0"
   updated: "2026-09-13"
 
 
@@ -12,13 +12,12 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Model choices back into it."
-  changed_by: "The human, directly. A missing critical technical choice is raised through State."
+  changed_by: "The human, directly. A missing critical Model choice is raised through State."
   precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
-  consumption: "Resolve unstated Model-package technology from this file. Apply field defaults property by property only to fields present in the project Model definition. Preserve every explicit property, including false and null, and never add a field merely because it appears in these defaults. Implement the resulting definitions in the shared Model package."
-  selection: "Prefer a supported compatible entry. For an unlisted language or incompatible explicit combination, select a well-supported compatible modeling library and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the selected Model stack; implementation records use the resolved concrete version."
-  matching: "Match normalized field names. An explicit Model property takes priority, followed by an exact-name default in field_defaults.common_fields, then a matching field_defaults.field_patterns default. A name pattern alone does not establish a relationship or its target."
-  environment_handling: "Create and use the selected isolated environment through its resolved tool, and do not commit environment artifacts."
+  consumption: "Use the language, packages, and tools assigned to Model by Development Preferences and the Environment and Package Management assigned by Platform Preferences. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in this file. Preserve every explicit property, including false and null, and never write resolved values back into this file."
+  selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
+  version_resolution: "This file owns no versioned technology. Development Preferences resolve language, package, and tool versions, while Platform Preferences resolve Environment and Package Management versions."
+  matching: "An explicit Model property takes priority, followed by an exact-name entry in field_defaults.common_fields, then a matching field_defaults.field_patterns entry. A default applies only to a missing property of an existing Field; otherwise no default applies. A name or pattern never creates a Field, relationship, or behavior."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -31,159 +30,84 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Model implementation language, isolated environment, and modeling library."
-  options: "Supported implementation languages and modeling and validation libraries."
-  settings: "Defaults for missing properties of fields already present in a Model definition."
-  implementation: "Concrete implementation preferences that complement the Model Standard without redefining its domain rules."
+  selected: "Empty. Development and Platform own Model's concrete technology selections."
+  options: "Empty. Development and Platform catalogue Model's concrete technology alternatives."
+  settings: "Defaults for missing properties of Fields already present in the Target's Model definition."
+  implementation: "Technology-independent conventions for Model Foundation, validation, precision, time, public references, unknown Fields, and verification."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
   # <!-------------------------------------------- selected -->
-  selected:
-    language: "Python"
-    language_version: "3.13+"
-    environment: "uv"
-    modeling_library: "Pydantic"
-    modeling_library_version: "2.x"
+  selected: {}
 
   # <!-------------------------------------------- options -->
-  options:
-
-    languages:
-      Python:
-        version: "3.13+"
-        compatible_environments:
-          - "uv"
-        compatible_modeling_libraries:
-          - "Pydantic"
-        naming:
-          variables: "snake_case"
-          classes: "PascalCase"
-          files: "snake_case"
-          folders: "snake_case"
-
-    environments:
-      uv:
-        version: "latest-compatible"
-        language: "Python"
-        lockfile: "uv.lock"
-        environment_directory: ".venv"
-
-    modeling_libraries:
-      Pydantic:
-        version: "2.x"
-        language: "Python"
-        package: "pydantic"
-        forbidden_major_versions:
-          - "1.x"
+  options: {}
 
   # <!-------------------------------------------- settings -->
   settings:
 
     field_defaults:
-      purpose: "Defaults for missing properties of fields already present in a Model definition. These are not a list of fields to add."
+      purpose: "Defaults for missing properties of Fields already present in a Model definition. These entries never add Fields."
+      property_meaning:
+        generated: "A true value means the Field value is supplied automatically, while Model does not select the generation mechanism."
       common_fields:
         id:
           type: "integer"
           nullable: false
-          auto_increment: true
-          primary_key: true
+          identity: true
+          generated: true
         name:
           type: "string"
           nullable: false
-          purpose: "The entity's display name."
         api_key:
           type: "string"
           nullable: false
           credential: true
-          purpose: "The API key assigned to the entity."
         password:
           credential: true
-        status:
+        is_active:
           type: "boolean"
           nullable: false
           default: true
-          purpose: "Indicates whether the entity is active."
+          purpose: "Indicates whether the domain item is active."
         description:
           type: "string"
           nullable: true
-          purpose: "Describes the entity."
+          purpose: "Describes the domain item."
       field_patterns:
         "*_id":
-          match: "A field name ending in _id; the exact name id is not included."
+          match: "A Field name ending in _id; the exact name id is not included."
           defaults:
             type: "integer"
             nullable: false
 
   # <!-------------------------------------------- implementation -->
   implementation:
-    typing:
-      style: "modern Python typing"
-      prefer_builtin_generics: true
-      prefer_union_operator: true
-      use_optional_for_nullable_fields: true
-    enums:
-      preferred_base: "StrEnum"
-      fallback: "Literal for small local closed sets"
-    numeric_precision:
-      exact_decimal_values: "Decimal"
-      binary_float: "only when the domain explicitly permits approximation"
-    time:
-      datetime: "timezone-aware"
-      naive_datetime: "only when explicitly required by the domain definition"
-    pydantic_api:
-      base_model: "pydantic.BaseModel"
-      project_base_class_name: "BaseModel"
-      project_base_class_module: "model._base"
-      concrete_models_inherit_from: "BaseModel"
-      forbidden_project_base_class_names:
-        - "Model"
-      configuration: "pydantic.ConfigDict"
-      field_validation: "pydantic.field_validator"
-      model_validation: "pydantic.model_validator"
-      root_model: "pydantic.RootModel"
-      serialization: "model_dump and model_dump_json"
-      schema: "model_json_schema"
-      forbidden_legacy_apis:
-        - "validator"
-        - "root_validator"
-        - "parse_obj"
-        - "dict"
-        - "json"
+    foundation:
+      name: "ModelBase"
+      module: "model._base"
+      concrete_models_use: "ModelBase"
     validation:
       declarative_constraints_first: true
-      field_validation_api: "pydantic.field_validator"
-      cross_field_validation_api: "pydantic.model_validator"
-      strictness: "enable deliberately when coercion would hide invalid domain data"
-      validation_side_effects: false
-    representation:
-      computed_fields: "pydantic.computed_field only for deterministic values derived from Model data"
-      aliases: "only for shared interoperability requirements"
-      unknown_fields: "forbid by default for closed domain objects"
-      immutability: "use frozen configuration only when it is part of domain semantics"
-    package:
-      public_imports: "explicitly re-exported from the package interface"
-      canonical_import_style: "import model; model.<module>.<ModelType>"
-      alternate_import_style: "from model import <module>; <module>.<ModelType>"
-      model_identity: "imported module, Model type, or Model instance; never a public string selector"
-      internal_modules: "not imported by consumers as a public contract"
-      representation_priority: "logical domain representation before platform-specific derivations"
-      io_at_import_time: false
-      network_at_import_time: false
-      database_at_import_time: false
-    integrations:
-      orm: "none selected for the Model package"
-      api_framework: "none selected for the Model package"
-      database_driver: "none selected for the Model package"
-    quality:
-      formatter: "ruff-format"
-      linter: "ruff"
-      type_checker: "pyright"
-      test_runner: "pytest"
-      required_checks:
-        - "public interface import check"
-        - "Model validation check"
-        - "serialization and schema check"
-        - "clean-environment install check"
+      custom_validation: "only when declarative constraints are insufficient"
+      strictness: "enable when coercion could hide invalid domain data"
+    numeric_precision:
+      exact_values: "exact decimal representation"
+      approximate_values: "only when explicitly permitted by the Target"
+    time:
+      absolute_instants: "timezone-aware"
+      canonical_timezone: "UTC"
+      naive_datetime: "only when explicitly required by the Target"
+    public_interface:
+      reference_priority:
+        - "direct typed reference"
+        - "module-qualified reference"
+        - "string identifier only when necessary"
+    unknown_fields: "reject"
+    verification:
+      checks:
+        - "public interface"
+        - "validation behavior"
+        - "serialization and schema generation"

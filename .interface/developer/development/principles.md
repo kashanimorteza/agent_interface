@@ -1,6 +1,6 @@
 # Development Principles
 
-Development defines the fixed high-level composition through which independent peer Developer Components form one application system. It owns the catalogue of participating Components, their roles and roots, the allowed dependency graph, and the shared rules that make their boundaries work together.
+Development defines the fixed high-level composition through which independent peer Developer Components form one application system. It owns the catalogue of participating Components, their roles and roots, the allowed dependency graph, the shared technology profiles assigned to them, and the shared rules that make their boundaries work together.
 
 Development owns composition rather than the internal design of Model, Database, Backend, Frontend, or Platform. Each of those Components retains authority over the details inside its boundary.
 
@@ -15,17 +15,18 @@ Development owns composition rather than the internal design of Model, Database,
 - **Connection** — one direct dependency from a consumer Component to a provider Component.
 - **Runtime Configuration** — the runtime settings and secret references owned within an Application Package boundary.
 - **Cross-cutting Capability** — a shared capability whose application to more than one Component requires Development-level coordination.
+- **Shared Technology Profile** — one centrally defined language, package, or tool option that Development Preferences may assign to one or more Participating Components.
 
 <br>
 
 ## Relationships
 
 - **Consumes nothing** — Development defines the composition standard without consuming the internal definitions of another Component.
-- **Consumed by Model, Database, Backend, Frontend, and Platform** — these Components use Development's catalogue, boundaries, Connections, and shared rules.
+- **Consumed by Model, Database, Backend, Frontend, and Platform** — these Components use Development's catalogue, boundaries, Connections, Shared Technology Profiles, and shared rules.
 
 <br>
 
-Development publication and Cross-cutting Capability defaults belong to Development Preferences. Internal technical choices belong to the Preferences of the Component that owns them, and implementation applies those choices to the current project definition.
+Shared Technology Profiles, their Component assignments, Development publication, and Cross-cutting Capability defaults belong to Development Preferences. Component-owned conceptual defaults remain in the Preferences of that Component, Environment and Package Management choices belong to Platform Preferences, and implementation applies those choices to the current project definition.
 
 <br>
 
@@ -144,6 +145,16 @@ Documentation may contain code and may demonstrate how an API key or other secre
 
 <br>
 
+## 13. Development centralizes Shared Technology Profiles
+
+**Rule:** Development Preferences defines each Shared Technology Profile once and explicitly assigns the selected language and Component-relevant package or tool choices to each Participating Component. A Participating Component consumes its assigned profiles and never duplicates those concrete selections in its own Preferences. More than one Component may use the same Shared Technology Profile.
+
+**Why:** One central catalogue keeps compatible technology selections consistent across Components and removes repeated definitions.
+
+**Boundary:** A Component's conceptual defaults and internal behavior conventions remain in its own Preferences. Runtime Environment and Package Management choices remain owned by Platform rather than a Shared Technology Profile.
+
+<br>
+
 ## At a Glance
 
 - **Must** — Compose the fixed peer Model, Database, Backend, Frontend, and Platform catalogue with its exact identifiers, names, roots, types, and roles. *(1)*
@@ -174,3 +185,6 @@ Documentation may contain code and may demonstrate how an API key or other secre
 - **Must** — Review, update or regenerate when affected, and verify every direct consumer after a provider's Public Interface changes. *(12)*
 - **Must** — Continue propagation only when an affected consumer's own Public Interface changes. *(12)*
 - **Never** — Trigger consumer work for a private change that preserves the Public Interface or change Components outside the affected dependency path. *(12)*
+- **Must** — Define every Shared Technology Profile once and explicitly assign selected languages and Component-relevant packages or tools to Participating Components. *(13)*
+- **Must** — Let multiple Components consume one Shared Technology Profile without duplicating its concrete selections in their own Preferences. *(13)*
+- **Never** — Move Component-owned conceptual defaults, runtime Environment, or Package Management choices into a Shared Technology Profile. *(13)*
