@@ -88,7 +88,7 @@ content:
         - "list"
         - "update"
         - "delete"
-        - "status"
+        - "activation"
       model_logic_layout:
         unit_per_model: true
         file_per_model: true

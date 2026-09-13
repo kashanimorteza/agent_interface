@@ -82,7 +82,7 @@ Models
 - `username` — Type: `string`; Nullable: `false`; Purpose: The username used to identify the user.
 - `password` — Type: `string`; Nullable: `false`; Purpose: The password credential used by the user.
 - `api_key` — Type: `string`; Nullable: `false`; Purpose: The API key assigned to the user.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the user is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the user is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the user.
 
 **Rules:**
@@ -103,7 +103,7 @@ Models
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `name` — Type: `string`; Nullable: `false`; Purpose: The platform's display name.
 - `code` — Type: `string`; Nullable: `false`; Purpose: Identifies the implementation class the application must use for this trading platform, such as `binance` or `metatrader_5`.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the platform is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the platform is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the platform.
 
 **Initial Data:**
@@ -125,7 +125,7 @@ Models
 - `username` — Type: `string`; Nullable: `true`; Purpose: Defines the technical username used to establish the Instance connection when required.
 - `password` — Type: `string`; Nullable: `true`; Purpose: Defines the technical password used to establish the Instance connection when required.
 - `api_key` — Type: `string`; Nullable: `true`; Purpose: Defines the technical API credential used to establish the Instance connection when required.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the instance is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the instance is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the instance.
 
 **Relationships:**
@@ -155,7 +155,7 @@ Models
 - `symbol` — Type: `string`; Nullable: `true`; Purpose: The currency's display symbol, such as `$`, `€`, or `£`.
 - `country` — Type: `string`; Nullable: `true`; Purpose: Identifies the country or region associated with the currency.
 - `decimal_digits` — Type: `integer`; Nullable: `false`; Default: `2`; Purpose: Defines the number of decimal digits normally used for monetary values in the currency.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the currency is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the currency is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the currency.
 
 **Relationships:**
@@ -186,7 +186,7 @@ Models
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `name` — Type: `string`; Nullable: `false`; Purpose: The broker's display name.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the broker configuration.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the broker is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the broker is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the broker.
 
 **Relationships:**
@@ -213,7 +213,7 @@ Models
 - `category` — Type: `string`; Nullable: `false`; Purpose: Identifies the asset category, such as `Currency`, `Commodity`, or `Cryptocurrency`.
 - `point_size` — Type: `float`; Nullable: `false`; Default: `0.0`; Purpose: Stores the size of one point for the asset.
 - `digits` — Type: `integer`; Nullable: `false`; Default: `0`; Purpose: Stores the number of decimal digits used for the asset's price.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the asset is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the asset is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the asset.
 
 **Relationships:**
@@ -240,7 +240,7 @@ Models
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the account group.
 - `name` — Type: `string`; Nullable: `false`; Purpose: The account group's display name.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account group is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the account group.
 
 **Relationships:**
@@ -272,7 +272,7 @@ Models
 - `leverage` — Type: `integer`; Nullable: `false`; Purpose: Defines the account's leverage multiplier.
 - `balance` — Type: `decimal`; Nullable: `false`; Default: `0`; Purpose: Stores the account's current balance.
 - `account_type` — Type: `string`; Nullable: `false`; Purpose: Identifies the account model, such as `cfd` or `spread_betting`.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the account.
 
 **Relationships:**
@@ -301,7 +301,7 @@ Models
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the trailing group.
 - `name` — Type: `string`; Nullable: `false`; Purpose: The trailing group's display name.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the trailing group is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the trailing group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the trailing group.
 
 **Relationships:**
@@ -328,7 +328,7 @@ Models
 - `trigger_percentage` — Type: `decimal`; Nullable: `false`; Purpose: Defines the profit percentage of the take-profit target that activates the rule.
 - `take_profit_adjustment` — Type: `decimal`; Nullable: `true`; Purpose: Defines the take-profit adjustment applied when the rule is activated.
 - `stop_loss_adjustment` — Type: `decimal`; Nullable: `true`; Purpose: Defines the stop-loss adjustment applied when the rule is activated.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the trailing rule is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the trailing rule is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the trailing rule.
 
 **Relationships:**
@@ -348,7 +348,7 @@ Models
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the partial group.
 - `name` — Type: `string`; Nullable: `false`; Purpose: The partial group's display name.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the partial group is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the partial group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the partial group.
 
 **Relationships:**
@@ -374,7 +374,7 @@ Models
 - `partial_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the partial group that contains the rule.
 - `profit_percentage` — Type: `decimal`; Nullable: `false`; Purpose: Defines the profit percentage that activates the rule.
 - `close_percentage` — Type: `decimal`; Nullable: `false`; Purpose: Defines the percentage of the position closed when the rule is activated.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the partial rule is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the partial rule is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the partial rule.
 
 **Relationships:**
@@ -394,7 +394,7 @@ Models
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the action group.
 - `name` — Type: `string`; Nullable: `false`; Purpose: The action group's display name.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action group is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action group is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the action group.
 
 **Relationships:**
@@ -425,7 +425,7 @@ Models
 - `risk_by_reward` — Type: `decimal`; Nullable: `false`; Purpose: Defines the numeric risk-to-reward value used by the action.
 - `take_profit` — Type: `decimal`; Nullable: `false`; Purpose: Defines the Take Profit value used by the action.
 - `stop_loss` — Type: `decimal`; Nullable: `false`; Purpose: Defines the Stop Loss value used by the action.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the action.
 
 **Relationships:**
@@ -469,7 +469,7 @@ Models
 - `base_sl` — Type: `decimal`; Nullable: `false`; Purpose: Stores the position's initial Stop Loss value.
 - `real_tp` — Type: `decimal`; Nullable: `false`; Purpose: Stores the position's current Take Profit value.
 - `real_sl` — Type: `decimal`; Nullable: `false`; Purpose: Stores the position's current Stop Loss value.
-- `status` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the position is active.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the position is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the position.
 
 **Relationships:**
@@ -536,7 +536,7 @@ Defines the project's implementation phases. Phases are executed step by step in
 id = P1
 title = Model
 target = Model
-status = Enabled
+is_active = Enabled
 readiness = Ready
 goal = Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
 ```
@@ -547,7 +547,7 @@ goal = Implement the independent Model layer and its reusable package from the d
 id = P2
 title = Database
 target = Database
-status = Enabled
+is_active = Enabled
 readiness = Ready
 goal = Implement the database using the shared Model package and insert the defined initial data.
 ```
@@ -558,7 +558,7 @@ goal = Implement the database using the shared Model package and insert the defi
 id = P3
 title = Backend
 target = Backend
-status = Enabled
+is_active = Enabled
 readiness = Ready
 goal = Implement the backend layer, including its application logic and API for operating on the defined models.
 ```
@@ -569,7 +569,7 @@ goal = Implement the backend layer, including its application logic and API for 
 id = P4
 title = Frontend
 target = Frontend
-status = Enabled
+is_active = Enabled
 readiness = Ready
 goal = Implement the frontend based on the backend API.
 ```
@@ -580,7 +580,7 @@ goal = Implement the frontend based on the backend API.
 id = P5
 title = MetaTrader 5 Platform Module
 target = Backend
-status = Disabled
+is_active = Disabled
 readiness = Not Designed
 goal = Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
 ```
@@ -591,7 +591,7 @@ goal = Implement the MetaTrader 5 platform module through the common Trading Pla
 id = P6
 title = Trading Operations
 target = Backend
-status = Disabled
+is_active = Disabled
 readiness = Not Designed
 goal = Implement the execution of the defined trading operations through the selected Trading Platform and Instance.
 ```

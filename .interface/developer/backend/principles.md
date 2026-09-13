@@ -60,7 +60,7 @@ Every statement here is mandatory. A Developer Preference or implementation choi
 
 ## 4. Every shared Model has one distinct Model Logic unit
 
-**Rule:** Each shared Model has its own separately defined Model Logic unit. Each unit offers the common operations selected by Backend Preferences only where its Model supports them. Shared behavior may be reused through a common base or composition, while Model-specific Behaviour extends only the unit of that Model. A status operation exists only for a Model that declares the corresponding field and passes through that Model Logic and Database Interface.
+**Rule:** Each shared Model has its own separately defined Model Logic unit. Each unit offers the common operations selected by Backend Preferences only where its Model supports them. Shared behavior may be reused through a common base or composition, while Model-specific Behaviour extends only the unit of that Model. An activation operation exists only for a Model that declares the corresponding `is_active` field and passes through that Model Logic and Database Interface.
 
 **Why:** A distinct unit gives every Model a stable place for current and future Behaviour without coupling it to another Model's logic.
 
