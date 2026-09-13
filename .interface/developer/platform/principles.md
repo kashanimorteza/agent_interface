@@ -1,96 +1,110 @@
 # Platform Principles
 
-Platform defines the operational Environment in which a Target runs and the Launch method that brings its developed parts online. Platform is separate from Development: Development builds the parts, while Platform describes runtime preparation and operation without redefining their internal responsibilities.
+Platform defines named Launch Items that describe how a completed Target is prepared and brought online. Each Launch Item keeps its Environment and operational Instructions together so the complete launch method can be selected as one coherent definition.
 
-Platform has two primary concepts: Environment and Launch. Each concept may provide multiple named definitions and one selected default.
+Platform owns runtime preparation and operation rather than the internal meaning or implementation of a developed Component. It uses each Component only through its public boundary.
+
+<br>
 
 ## Terms
 
-- **Platform** — the operational boundary that prepares a runtime destination and brings the completed Target online.
-- **Environment** — a named runtime destination and the requirements needed to prepare it for the Target.
-- **Launch** — a named method for starting, connecting, and operating the completed parts of the Target on an Environment.
-- **Binding** — a runtime value one part needs in order to reach another, such as an address, port, credential, or shared secret.
-- **Access Point** — a verified address through which a human or another system can reach the launched Target, such as its website, API, or API documentation.
+- **Launch Item** — one named, selectable definition for preparing and operating a completed Target.
+- **Environment** — the runtime destination described inside a Launch Item.
+- **Instructions** — the scoped operational changes and actions belonging to a Launch Item.
+- **Operating System Instructions** — Instructions that prepare the Environment's operating system, including required package installation or removal.
+- **Component Instructions** — Instructions scoped to operating one developed Component without redefining that Component's internals.
+- **Binding** — a runtime value one Component needs to reach another, such as an address, port, credential reference, or shared secret reference.
+- **Access Point** — a verified address through which a human or another system can reach the launched Target.
+
+<br>
 
 ## Relationships
 
-- **Consumes developed parts** — uses independently developed parts only through their public boundaries.
-- **Consumed by Configure** — Configure resolves and prepares the selected Environment.
-- **Consumed by Launch** — Launch applies the selected Launch method and reports its observable result.
-
-Technical choices and defaults for Platform belong to Platform Preferences. Platform implementation applies those choices to the current Target.
-
-Every statement here is mandatory. A Preference can never override a Principle, and a Target may only add stricter rules, never looser ones.
+- **Consumes Development** — uses the declared Components, Connections, and public boundaries of the composed application.
+- **Consumed by Development** — provides named Platform definitions that Development may reference without copying their contents.
 
 <br>
 
-## 1. Platform is separate from Development
-
-**Rule:** Platform owns Environment and Launch definitions; Development owns the design and implementation of application parts.
-
-**Why:** Runtime preparation and application construction change for different reasons and must remain independently replaceable.
-
-**Boundary:** Platform operates developed parts only through their public boundaries and never owns or redefines their internal logic, data, presentation, or source arrangement.
+Named Launch Items, their Environment values, and their Instructions belong to Platform Preferences. Implementation applies the selected Launch Item to the current Target without writing the resolved result back into Preferences.
 
 <br>
 
-## 2. Environment defines runtime preparation
-
-**Rule:** An Environment defines a runtime destination and the system-level requirements needed to prepare it, including its type, required tools, packages, services, and settings.
-
-**Why:** Different runtime destinations require different preparation while the developed Target remains unchanged.
-
-**Boundary:** Multiple Environment definitions may exist, but Platform selects one default when the Target does not explicitly select another.
+Every statement here is mandatory. A Developer Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 3. Launch defines runtime composition
+## 1. Platform remains separate from developed Components
 
-**Rule:** A Launch defines how completed parts are started, connected, and operated together on the selected Environment.
+**Rule:** Platform prepares and operates developed Components only through their public boundaries. Every developed Component retains ownership of its internal logic, data, presentation, source organization, and Runtime Configuration contract.
 
-**Why:** Preparing a runtime destination and running a composed system are separate responsibilities that may vary independently.
+**Why:** Runtime operation and application implementation change for different reasons and remain independently replaceable.
 
-**Boundary:** Multiple Launch definitions may exist, but Platform selects one default when the Target does not explicitly select another. A Launch does not redefine how any part is developed.
-
-<br>
-
-## 4. Environment and Launch remain independently selectable
-
-**Rule:** Environment and Launch definitions are selected independently, and their selected combination must be compatible.
-
-**Why:** The same Target may use different launch methods on the same environment or the same launch method across compatible environments.
-
-**Boundary:** An incompatible selection must not be applied as if it were runnable.
+**Boundary:** Platform may supply documented runtime inputs but never redefines a developed Component or directly depends on its private implementation.
 
 <br>
 
-## 5. Launch delivers the bindings between parts
+## 2. Every Launch Item is one coherent selectable definition
 
-**Rule:** The selected Launch defines every Binding the composed parts require and delivers each one to the boundary that consumes it.
+**Rule:** Every supported launch method is represented by one uniquely named Launch Item in Platform Preferences. One Launch Item is selected as the default when the Target does not explicitly select another compatible item.
 
-**Why:** Each part owns its own settings, but no part can own a value that two parts must agree on; the launch is the only step that sees both sides of the connection.
+**Why:** A complete named definition can be selected or replaced without combining unrelated fragments implicitly.
 
-**Boundary:** Launch delivers Bindings; it does not define how a part reads, stores, or validates them, and no secret value is recorded in the Target definition or in any Config.
+**Boundary:** Selecting a Launch Item does not authorize applying an incompatible Environment or instruction to the Target.
 
 <br>
 
-## 6. Launch reports verified access
+## 3. Each Launch Item owns its Environment
 
-**Rule:** A Launch verifies the composed Target and reports every usable Access Point that the running result exposes.
+**Rule:** Each Launch Item contains exactly one Environment describing the runtime destination to which that Launch Item's Instructions apply. The Environment is resolved as part of the Launch Item rather than selected independently from it.
+
+**Why:** Keeping the destination with its launch method prevents an invalid combination of independently selected operational definitions.
+
+**Boundary:** Environment describes the runtime destination; operational changes to that destination belong to Instructions.
+
+<br>
+
+## 4. Launch Instructions are explicit and scoped
+
+**Rule:** A Launch Item groups Instructions by the boundary they operate. Operating System Instructions declare system packages that must be installed or removed. Component Instructions declare only the actions needed to operate their named Components. An instruction group may remain empty when that Launch Item requires no action for the scope.
+
+**Why:** Explicit scoped Instructions make runtime changes reviewable and prevent operating-system work from being mixed with Component operation.
+
+**Boundary:** Instructions never define application behavior, change a Component's private implementation, or imply an action that is not declared.
+
+<br>
+
+## 5. Launch delivers required Bindings safely
+
+**Rule:** The selected Launch Item defines every Binding required by the composed Components and delivers each Binding to the public boundary that consumes it. Secret values remain in appropriate secret sources.
+
+**Why:** Launch sees the operational composition and can connect independently owned Components without transferring configuration ownership.
+
+**Boundary:** Launch does not define how a Component internally reads, stores, or validates a Binding, and no secret value is recorded in Interface files or documentation.
+
+<br>
+
+## 6. Launch reports only verified Access Points
+
+**Rule:** The selected Launch Item verifies the composed Target and reports every usable Access Point exposed by the running result.
 
 **Why:** Starting processes is not a complete operational result unless the Target is reachable and its entry points are known.
 
-**Boundary:** Only verified addresses are reported as available. Credentials and secret values are never included in Access Points.
+**Boundary:** Only verified addresses are reported as available, and an Access Point never exposes credentials or secret values.
 
 <br>
 
 ## At a Glance
 
-- **Must** — keep Platform separate from Development and operate parts through public boundaries *(1)*
-- **Must** — prepare the selected Environment and apply the selected Launch *(2–3)*
-- **Must** — support named alternatives and explicit defaults *(2–3)*
-- **Must** — keep Environment and Launch independently selectable and compatible *(4)*
-- **Never** — redefine the internal responsibilities of developed parts *(1, 3)*
-- **Must** — the selected Launch delivers every Binding to the boundary that consumes it *(5)*
-- **Never** — a secret value is recorded in the Target definition or in any Config *(5)*
-- **Must** — verify and report every usable Access Point without exposing secrets *(6)*
+- **Must** — Operate every developed Component only through its public boundary while the Component retains ownership of its internals and Runtime Configuration contract. *(1)*
+- **Never** — Let Platform redefine a developed Component or directly depend on its private implementation. *(1)*
+- **Must** — Represent every supported launch method as one uniquely named Launch Item and select one default. *(2)*
+- **Never** — Apply an Environment or instruction that is incompatible with the selected Launch Item or Target. *(2)*
+- **Must** — Keep exactly one Environment inside each Launch Item and resolve it as part of that item. *(3)*
+- **Never** — Put operational Environment changes outside the Launch Item's Instructions. *(3)*
+- **Must** — Group Instructions by operating-system or Component scope and explicitly declare required actions. *(4)*
+- **Must** — Allow an instruction group to remain empty when its scope requires no action. *(4)*
+- **Never** — Let an Instruction define application behavior, modify private implementation, or imply an undeclared action. *(4)*
+- **Must** — Define and deliver every required Binding to its consuming public boundary while keeping secret values in secret sources. *(5)*
+- **Never** — Redefine a Component's internal Binding handling or record a secret value in Interface files or documentation. *(5)*
+- **Must** — Verify the composed Target and report every usable Access Point. *(6)*
+- **Never** — Report an unverified address as available or expose a credential or secret through an Access Point. *(6)*

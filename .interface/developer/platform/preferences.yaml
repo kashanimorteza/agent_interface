@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/developer/platform/preferences.yaml"
-  path_note: "The Preferences layer of the Platform Component — supported Environment and Launch choices and their defaults."
-  purpose: "Technical choices for preparing a runtime Environment and bringing the completed Target online through a Launch."
+  path_note: "The Preferences layer of the Platform Component — named Launch Items with their owned Environment and scoped Instructions."
+  purpose: "Technical defaults for selecting and applying a complete launch definition to the Target."
   standard: "Agent Project Interface"
-  version: "3.0"
+  version: "4.2"
   updated: "2026-09-13"
 
 
@@ -12,12 +12,12 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Platform choices back into it."
-  changed_by: "The human, directly. A missing critical technical choice is raised through State."
+  changed_by: "The human, directly. A missing critical Platform choice is raised through State."
   precedence: "An explicit Target value and every applicable Platform Principle take precedence over this file."
-  consumption: "Operations use these Preferences only when the Target leaves a Platform choice unstated."
-  selection: "Use the selected default definition unless the Target explicitly selects another compatible option."
-  version_resolution: "Resolve an unpinned version to a concrete compatible stable version and preserve an explicit concrete version."
-  matching: "Match Environment and Launch choices to their applicable named definitions."
+  consumption: "Resolve selected.launch to its exact entry under options.launches, then apply that Launch Item's Environment and each non-empty instruction group as one coherent launch definition. Do not infer an action from an empty group and do not write resolved values back into this file."
+  selection: "Use the selected Launch Item when the Target leaves the launch method unstated. For an explicit unlisted or incompatible need, select the smallest compatible definition and record the consequential choice; ask only when no safe compatible definition can be established."
+  version_resolution: "Preserve every explicit concrete version. Resolve an unpinned version to a concrete compatible stable version when a versioned package or tool is added to a Launch Item."
+  matching: "Match selected.launch to its exact key under options.launches, the Environment by the fields inside that item, and Instructions by their exact operating_system, frontend, backend, and database scope keys."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -30,58 +30,39 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The default Environment and Launch definitions."
-  options: "The supported named Environment and Launch definitions."
-  settings: "Shared rules for applying Platform definitions."
-  implementation: "Empty. Platform currently declares no separate implementation conventions outside its options and settings."
+  selected: "The default named Launch Item."
+  options: "The supported named Launch Items, each containing its Environment and scoped Instructions."
+  settings: "Empty. The complete current Platform configuration is owned by each Launch Item."
+  implementation: "Empty. Platform currently declares no additional realization conventions."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  selected:
-    environment: "linux"
-    launch: "default"
 
+  # <!-------------------------------------------- selected -->
+  selected:
+    launch: "VPS"
+
+  # <!-------------------------------------------- options -->
   options:
-    environments:
-      linux:
-        version: "runtime-provided"
-        type: "linux"
-        system_packages:
-          ensure_installed:
-            - "net-tools"
-            - "iptables"
-          ensure_removed:
-            - "ufw"
-          install_additional_target_requirements: true
     launches:
-      default:
-        version: "1.0"
-        stages:
-          preflight:
-            - "database"
-            - "backend"
-            - "frontend"
-          startup_order:
-            - "database"
-            - "backend"
-            - "frontend"
-          shutdown_order:
-            - "frontend"
-            - "backend"
-            - "database"
-          verification:
-            - "database"
-            - "backend"
-            - "frontend"
-        already_running: "verify_and_preserve"
-        failure: "stop_dependents_and_report"
-  settings:
-    environment:
-      inspect_before_preparation: true
-      preserve_satisfied_requirements: true
-      install_only_missing_requirements: true
-    launch: {}
+      VPS:
+        environment:
+          operating_system: "Linux"
+        instructions:
+          operating_system:
+            packages:
+              install:
+                - "net-tools"
+                - "iptables"
+              remove:
+                - "ufw"
+          frontend: {}
+          backend: {}
+          database: {}
+
+  # <!-------------------------------------------- settings -->
+  settings: {}
 
   # <!-------------------------------------------- implementation -->
   implementation: {}

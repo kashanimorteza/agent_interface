@@ -17,7 +17,7 @@ Model owns domain meaning and behavior determinable from its own data. It does n
 
 ## Relationships
 
-- **Consumes Development** — uses its Component Profile, shared rules, technical items, and Platform Instance reference.
+- **Consumes Development** — uses its Component Profile, shared rules, technical items, and Platform Reference.
 - **Consumed through Development-defined Connections** — provides its Public Interface without repeating the identities or internal behavior of its consumers.
 
 <br>

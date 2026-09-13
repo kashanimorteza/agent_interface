@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
   purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
-  version: "5.0"
+  version: "5.2"
   updated: "2026-09-13"
 
 
@@ -14,11 +14,11 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
   changed_by: "The human, directly. A missing critical Development choice is raised through State instead of being written into this file."
   precedence: "An explicit Target value and every applicable Development Principle take precedence over this file."
-  consumption: "Resolve each Component Profile first. Match its language and database references to their exact option entries and its platform_instance reference, when present, to the exact Platform-owned Instance. Selecting a Language Item automatically applies only the component_packages group matching that Component's canonical identifier. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
+  consumption: "Resolve each Component Profile first. Match its language and database references to their exact option entries and its platform reference to the exact Platform-owned Launch Item. Within a selected Language Item, resolve only the package purposes required by the Target and the Component's conceptual responsibilities; no purpose is bound to a Component identifier. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
   selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
-  matching: "Match Components by canonical identifier; languages, databases, and packages by exact item key; role-specific packages by the selected Component identifier; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
-  additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record it in the Component package definition and README; a consequential recurring choice is added to this human-owned catalogue by the human."
+  matching: "Match Components by canonical identifier; languages and databases by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
+  additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the resolved dependency with the implementation and in the README; a consequential recurring choice is added by the human under the relevant Language Item and Technical Purpose."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -31,8 +31,8 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "One configurable profile per Participating Component, including identity, path, type, role, and applicable language, database, and Platform Instance references."
-  options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and role-specific packages."
+  selected: "One configurable profile per Participating Component, including identity, path, type, role, and applicable language, database, and Platform Launch Item references."
+  options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
   settings: "The declared Connection graph, package-publication default, and Cross-cutting Capability applicability."
   implementation: "Empty. Component-specific conceptual realization remains owned by each Participating Component."
 
@@ -49,6 +49,7 @@ content:
         type: "library"
         role: "Defines the system's shared domain Model."
         language: "Python"
+        platform: "VPS"
       database:
         name: "database"
         path: "database"
@@ -56,23 +57,27 @@ content:
         role: "Owns persistence and access to stored data."
         language: "Python"
         database: "SQLite"
+        platform: "VPS"
       backend:
         name: "backend"
         path: "backend"
         type: "executable"
         role: "Provides server-side application services."
         language: "Python"
+        platform: "VPS"
       frontend:
         name: "frontend"
         path: "frontend"
         type: "executable"
         role: "Provides the user-facing application."
         language: "TypeScript"
+        platform: "VPS"
       platform:
         name: "platform"
         path: "platform"
         type: "guideline"
-        role: "Defines Platform Instance and Launch standards and supporting artifacts."
+        role: "Defines Launch Items, runtime Environments, Instructions, and supporting artifacts."
+        platform: "VPS"
 
   # <!-------------------------------------------- options -->
   options:
@@ -120,31 +125,43 @@ content:
             name: "pytest"
             package: "pytest"
             version: "latest-compatible"
-        component_packages:
-          model:
-            modeling:
-              name: "Pydantic"
-              package: "pydantic"
-              version: "2.x"
-              api:
-                base_model: "pydantic.BaseModel"
-                configuration: "pydantic.ConfigDict"
-                field_validation: "pydantic.field_validator"
-                model_validation: "pydantic.model_validator"
-                root_model: "pydantic.RootModel"
-                computed_field: "pydantic.computed_field"
-                field_serialization: "pydantic.field_serializer"
-                model_serialization: "pydantic.model_serializer"
-                serialization:
-                  - "model_dump"
-                  - "model_dump_json"
-                schema: "model_json_schema"
-              forbidden_legacy_apis:
-                - "validator"
-                - "root_validator"
-                - "parse_obj"
-                - "dict"
-                - "json"
+        packages:
+          modeling:
+            name: "Pydantic"
+            package: "pydantic"
+            version: "2.x"
+            api:
+              base_model: "pydantic.BaseModel"
+              configuration: "pydantic.ConfigDict"
+              field_validation: "pydantic.field_validator"
+              model_validation: "pydantic.model_validator"
+              root_model: "pydantic.RootModel"
+              computed_field: "pydantic.computed_field"
+              field_serialization: "pydantic.field_serializer"
+              model_serialization: "pydantic.model_serializer"
+              serialization:
+                - "model_dump"
+                - "model_dump_json"
+              schema: "model_json_schema"
+            forbidden_legacy_apis:
+              - "validator"
+              - "root_validator"
+              - "parse_obj"
+              - "dict"
+              - "json"
+          api:
+            name: "FastAPI"
+            package: "fastapi[standard]"
+            version: "latest-compatible"
+            supporting_packages:
+              validation: "pydantic>=2,<3"
+              settings: "pydantic-settings"
+              http_testing: "httpx"
+            agent_skills:
+              - resource: "project_skills.contextual.fastapi"
+                requirement: "required"
+                activation: "when_selected"
+                purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
           database:
             orm:
               name: "SQLAlchemy"
@@ -161,20 +178,6 @@ content:
               commands:
                 upgrade: "uv run alembic upgrade head"
                 downgrade: "uv run alembic downgrade -1"
-          backend:
-            api:
-              name: "FastAPI"
-              package: "fastapi[standard]"
-              version: "latest-compatible"
-              supporting_packages:
-                validation: "pydantic>=2,<3"
-                settings: "pydantic-settings"
-                http_testing: "httpx"
-              agent_skills:
-                - resource: "project_skills.contextual.fastapi"
-                  requirement: "required"
-                  activation: "when_selected"
-                  purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
 
       TypeScript:
         version: "latest-compatible"
@@ -189,24 +192,23 @@ content:
           constants: "UPPER_SNAKE_CASE"
           files: "kebab-case"
           folders: "kebab-case"
-        component_packages:
-          frontend:
-            user_interface:
-              name: "React"
-              package: "react"
-              version: "latest-compatible"
-              component_style: "Function components"
-            application_framework:
-              name: "Next.js"
-              package: "next"
-              version: "latest-compatible"
-              user_interface: "React"
-              router: "App Router"
-              run: "npm run dev"
-            api_client:
-              name: "Fetch"
-              package: null
-              version: "runtime-provided"
+        packages:
+          user_interface:
+            name: "React"
+            package: "react"
+            version: "latest-compatible"
+            component_style: "Function components"
+          application_framework:
+            name: "Next.js"
+            package: "next"
+            version: "latest-compatible"
+            user_interface: "React"
+            router: "App Router"
+            run: "npm run dev"
+          api_client:
+            name: "Fetch"
+            package: null
+            version: "runtime-provided"
 
     databases:
       SQLite:

@@ -9,14 +9,14 @@ Development owns composition rather than the internal meaning or implementation 
 ## Terms
 
 - **Participating Component** — one peer Developer Component declared by a Component Profile in Development Preferences.
-- **Component Profile** — the configurable Development Preferences entry that gives one Participating Component its identity, name, root, type, role, and applicable Language Item, Database Item, and Platform Instance references.
+- **Component Profile** — the configurable Development Preferences entry that gives one Participating Component its identity, name, root, type, role, and applicable Language Item, Database Item, and Platform Reference.
 - **Application Package** — a Participating Component whose selected Component Type makes it an importable library or executable application boundary.
 - **Component Type** — the conceptual form of a Participating Component, such as a library, executable, or guideline.
-- **Language Item** — one reusable Development Preferences definition containing a programming language's version, Package Management, conventions, tools, and role-specific packages.
+- **Language Item** — one reusable Development Preferences definition containing a programming language's version, Package Management, conventions, tools, and purpose-specific packages.
 - **Package Management** — the language-owned technical definition used to resolve, install, isolate, and lock that language's packages.
 - **Database Item** — one reusable Development Preferences definition containing a database technology's version, driver, storage, connection, and naming defaults.
-- **Package Role** — a named technical responsibility inside a Language Item, such as modeling, API, persistence mapping, or migration, resolved only for the Component role that uses it.
-- **Platform Instance Reference** — the identifier of one Platform-owned Instance selected by a Component Profile without copying that Instance's definition into Development.
+- **Technical Purpose** — a language-level use such as modeling, API delivery, database access, or migration that remains independent of any Component identity.
+- **Platform Reference** — the identifier of one Platform-owned Launch Item selected by a Component Profile without copying that Launch Item's definition into Development.
 - **Public Interface** — the provider-owned surface intended for consumers, including supported types, functions, APIs, commands, or other entry points.
 - **Connection** — one configurable direct dependency from a consumer Component Profile to a provider Component Profile.
 - **Runtime Configuration** — runtime settings and secret references owned inside an Application Package boundary.
@@ -26,12 +26,12 @@ Development owns composition rather than the internal meaning or implementation 
 
 ## Relationships
 
-- **Consumes Platform** — references Platform-owned Instances without duplicating their definitions.
+- **Consumes Platform** — references Platform-owned Launch Items without duplicating their definitions.
 - **Consumed by every Participating Component** — provides its Component Profile, Connections, applicable technical items, and shared rules.
 
 <br>
 
-Component Profiles, Language Items, Database Items, Connection entries, publication defaults, and Cross-cutting Capability applicability belong to Development Preferences. Platform Instance and Launch definitions belong to Platform Preferences. Component-specific conceptual defaults remain in the Preferences of their owning Component, and implementation applies all resolved selections to the current Target.
+Component Profiles, Language Items, Database Items, Connection entries, publication defaults, and Cross-cutting Capability applicability belong to Development Preferences. Platform Launch Item definitions belong to Platform Preferences. Component-specific conceptual defaults remain in the Preferences of their owning Component, and implementation applies all resolved selections to the current Target.
 
 <br>
 
@@ -41,7 +41,7 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 ## 1. Every Participating Component has one configurable Component Profile
 
-**Rule:** Development Preferences declares exactly one Component Profile for every Participating Component. Each profile has one canonical identifier and declares its name, repository-relative root, Component Type, high-level role, and any applicable Language Item, Database Item, or Platform Instance reference. Profile values remain configurable Preferences rather than fixed Principle values. Component roots are unique, do not overlap or nest, and contain the files owned by their Components. Participating Components are peers, and each owns its internal organization below its root.
+**Rule:** Development Preferences declares exactly one Component Profile for every Participating Component. Each profile has one canonical identifier and declares its name, repository-relative root, Component Type, high-level role, and any applicable Language Item, Database Item, or Platform Reference. Profile values remain configurable Preferences rather than fixed Principle values. Component roots are unique, do not overlap or nest, and contain the files owned by their Components. Participating Components are peers, and each owns its internal organization below its root.
 
 **Why:** One configurable profile gives every Component and Connection a stable resolution point without mixing mutable project defaults into Development philosophy.
 
@@ -75,7 +75,7 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 **Why:** One declared directed graph makes dependency ownership visible and prevents hidden, circular, or accidentally inherited coupling.
 
-**Boundary:** A provider response creates no reverse Connection, a Connection selects no transport, and a Platform Instance Reference is configuration rather than a runtime dependency Connection.
+**Boundary:** A provider response creates no reverse Connection, a Connection selects no transport, and a Platform Reference is configuration rather than a runtime dependency Connection.
 
 <br>
 
@@ -113,7 +113,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 ## 11. Runtime Configuration ownership remains inside its boundary
 
-**Rule:** Each Application Package owns the contract and internal representation of its Runtime Configuration. A selected Platform Instance and Launch may deliver required runtime values through documented inputs. Runtime secret values remain in appropriate secret sources rather than Interface files or documentation.
+**Rule:** Each Application Package owns the contract and internal representation of its Runtime Configuration. A selected Platform Launch Item may deliver required runtime values through documented inputs. Runtime secret values remain in appropriate secret sources rather than Interface files or documentation.
 
 **Why:** Explicit configuration ownership allows Platform to operate the system without taking ownership of application internals or exposing secrets.
 
@@ -133,11 +133,11 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 ## 13. Development centralizes reusable technical items
 
-**Rule:** Development Preferences defines every Language Item and Database Item once. A Language Item contains its version, Package Management choice, naming and typing conventions, quality tools, and Package Roles grouped by the Participating Component that uses them. A Database Item contains its version and applicable technical defaults. Each Component Profile references the applicable items and automatically consumes only the package group matching its own canonical Component identifier. Concrete language, package, database, version, tool, and Package Management selections are never duplicated in a participating Component's own Principles or Preferences.
+**Rule:** Development Preferences defines every Language Item and Database Item once. A Language Item contains its version, Package Management choice, naming and typing conventions, quality tools, and packages grouped by Technical Purpose rather than Component identity. A Database Item contains its version and applicable technical defaults. Each Component Profile references the applicable items, while implementation resolves only the Technical Purposes required by the Target and the Component's own conceptual responsibilities. The same Technical Purpose may be used by any compatible Component. Concrete language, package, database, version, tool, and Package Management selections are never duplicated in a participating Component's own Principles or Preferences.
 
 **Why:** Central technical catalogues preserve all reusable choices in one place while letting Components focus exclusively on their conceptual responsibilities.
 
-**Boundary:** A Component Profile may omit an inapplicable technical reference. Development only references a Platform Instance; the Instance and Launch definitions and all their internal parameters remain owned by Platform.
+**Boundary:** A Component Profile may omit an inapplicable technical reference. A Technical Purpose never restricts its package to a particular Component or transfers conceptual responsibility into the Language Item. Development only references a Platform Launch Item; its definition and all internal parameters remain owned by Platform.
 
 <br>
 
@@ -156,7 +156,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Never** — Let Development define a provider's interface contents or realization method. *(3)*
 - **Must** — Declare every permitted direct dependency exactly once in a direct, non-transitive, acyclic Connection graph. *(4)*
 - **Never** — Infer direct access, reverse dependency, or transport from an indirect path or provider response. *(4)*
-- **Never** — Treat a Platform Instance Reference as a runtime dependency Connection. *(4)*
+- **Never** — Treat a Platform Reference as a runtime dependency Connection. *(4)*
 - **Must** — Activate a Cross-cutting Capability only for unique canonical identifiers in its applicability list. *(6)*
 - **Must** — Keep realization of an active Cross-cutting Capability inside each listed Component. *(6)*
 - **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component. *(6)*
@@ -173,6 +173,8 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Continue propagation only when an affected consumer's own Public Interface changes. *(12)*
 - **Never** — Trigger consumer work for a private compatible change or change Components outside the affected dependency path. *(12)*
 - **Must** — Define each Language Item and Database Item once with its owned configurable technical details. *(13)*
-- **Must** — Resolve a Component Profile through applicable item references and only its own role-specific package group. *(13)*
+- **Must** — Group language packages by Technical Purpose and resolve only the purposes applicable to the Target and Component responsibility. *(13)*
+- **Must** — Allow any compatible Component to use an applicable Technical Purpose. *(13)*
 - **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable. *(13)*
-- **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Instance or Launch definitions into Development. *(13)*
+- **Never** — Group a language package by Component identity or let a Technical Purpose transfer conceptual responsibility. *(13)*
+- **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Launch Item definitions into Development. *(13)*

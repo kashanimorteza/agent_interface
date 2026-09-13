@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
   purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "3.0"
+  version: "3.2"
   updated: "2026-09-13"
 
 
@@ -14,7 +14,7 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Model choices back into it."
   changed_by: "The human, directly. A missing critical Model choice is raised through State."
   precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
-  consumption: "Use Model's identity, language, packages, Package Management, and Platform Instance reference from its Component Profile in Development Preferences. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in this file. Preserve every explicit property, including false and null, and never write resolved values back into this file."
+  consumption: "Use Model's identity, language, and Platform Reference from its Component Profile in Development Preferences, then resolve the applicable language-owned Technical Purposes and Package Management from Development without assuming that a package is bound to Model. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in this file. Preserve every explicit property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
   version_resolution: "This file owns no versioned technology. Development Preferences resolve every versioned technical item assigned to Model."
   matching: "An explicit Model property takes priority, followed by an exact-name entry in field_defaults.common_fields, then a matching field_defaults.field_patterns entry. A default applies only to a missing property of an existing Field; otherwise no default applies. A name or pattern never creates a Field, relationship, or behavior."
