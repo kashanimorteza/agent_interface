@@ -12,7 +12,6 @@ Model owns domain meaning and behavior determinable from its own data.
 - **Field** — one named property of a Domain Definition, with its domain meaning and applicable constraints.
 - **Model Foundation** — the technology-independent common foundation through which concrete Model realizations receive shared configuration and behavior.
 - **Intrinsic Rule** — a domain rule that can be evaluated entirely from the data of the Domain Definition it governs.
-- **Standard Field** — one of the Model-wide fields declared by Model Preferences for every Domain Definition.
 - **Domain Relationship** — a logical association between Domain Definitions whose meaning and constraints come from the Target.
 
 <br>
@@ -44,7 +43,7 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 ## 2. Model preserves explicit Target meaning and invents nothing
 
-**Rule:** Model preserves every explicit Domain Definition, Field, property, Domain Relationship, constraint, sensitive or credential meaning, and Intrinsic Rule stated by the Target. Model also adds only the Standard Fields explicitly declared by Model Preferences when they are absent. Preferences may complete missing properties property by property. A default never creates a non-standard Field, overrides an explicit value including `false` or `null`, changes meaning, or invents a relationship or behavior. Every Domain Relationship preserves the meaning and constraints declared by the Target.
+**Rule:** Model preserves every explicit Domain Definition, Field, property, Domain Relationship, constraint, sensitive or credential meaning, and Intrinsic Rule stated by the Target. Model Preferences may complete only missing properties of existing Fields, property by property. A default never creates a Field, overrides an explicit value including `false` or `null`, changes meaning, or invents a relationship or behavior. Every Domain Relationship preserves the meaning and constraints declared by the Target.
 
 **Why:** The Target remains authoritative for what the domain means while reusable defaults can safely complete genuinely unstated details.
 
@@ -140,8 +139,8 @@ Conceptual example:
 - **Must** — Give every meaningful Target domain concept exactly one authoritative Domain Definition in Model. *(1)*
 - **Never** — Create a Domain Definition solely for an implementation need or independently redefine the same domain identity. *(1)*
 - **Must** — Preserve every explicit Target definition, property, relationship, constraint, sensitive meaning, and Intrinsic Rule. *(2)*
-- **Must** — Add only the declared Standard Fields when they are absent, then apply defaults property by property. *(2)*
-- **Never** — Let a default add a non-standard Field, override an explicit value, change meaning, or invent a relationship or behavior. *(2)*
+- **Must** — Apply Model defaults only to missing properties of existing Fields, property by property. *(2)*
+- **Never** — Let a default add a Field, override an explicit value, change meaning, or invent a relationship or behavior. *(2)*
 - **Never** — Treat Initial Data or another project record as a Model-owned Domain Definition. *(2)*
 - **Must** — Keep Domain Definitions and Intrinsic Rules understandable independently of implementation technology. *(3)*
 - **Must** — Require every selected technology to preserve logical Model meaning. *(3)*
