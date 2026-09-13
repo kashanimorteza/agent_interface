@@ -21,11 +21,11 @@ Development owns composition rather than the internal design of Model, Database,
 ## Relationships
 
 - **Consumes nothing** — Development defines the composition standard without consuming the internal definitions of another Component.
-- **Consumed by Model, Database, Backend, Frontend, and Platform** — these Components apply Development's catalogue, boundaries, Connections, and shared rules before applying their own internal definitions.
+- **Consumed by Model, Database, Backend, Frontend, and Platform** — these Components use Development's catalogue, boundaries, Connections, and shared rules.
 
 <br>
 
-Development publication and Cross-cutting Capability defaults belong to Development Preferences. Internal technical choices belong to the Preferences of the Component that owns them, and implementation applies those choices to the current project definition. Development owns no generated operational record whose shape requires a separate Schema.
+Development publication and Cross-cutting Capability defaults belong to Development Preferences. Internal technical choices belong to the Preferences of the Component that owns them, and implementation applies those choices to the current project definition.
 
 <br>
 
@@ -59,7 +59,7 @@ Each root path identifies the Component's root directory relative to the reposit
 
 **Why:** Logical independence lets an Application Package evolve or be replaced without forbidding the explicit dependencies required to compose a working system.
 
-**Boundary:** Development does not prescribe internal nesting, source layout, dependency-management mechanism, or installation method. An internal item remains owned by its Component and is not a new top-level Component merely because it has its own files or package boundary.
+**Boundary:** Development does not prescribe internal nesting, source layout, dependency-management mechanism, or installation method.
 
 <br>
 
@@ -92,19 +92,9 @@ The direction runs from consumer to provider and represents dependency, not the 
 
 <br>
 
-## 5. Development owns composition without absorbing Component internals
-
-**Rule:** Development owns the Participating Component catalogue, fixed Component identities and roots, Component Types, Connection graph, shared Public Interface, Runtime Configuration and documentation rules, and Cross-cutting Capability coordination. It references Component-owned definitions wherever internal detail is needed instead of copying or redefining them.
-
-**Why:** A single composition view makes the system understandable while leaving every internal concern with one authoritative owner.
-
-**Boundary:** Internal design and implementation remain inside the owning Component. Development does not define their internal structure or duplicate their detailed rules.
-
-<br>
-
 ## 6. Cross-cutting Capabilities are activated through `applies_to`
 
-**Rule:** Development Preferences declares each Cross-cutting Capability with one `applies_to` list. An empty list means the capability is inactive; a non-empty list activates it only for the listed Components. Every entry is a unique canonical Component identifier from the fixed catalogue. Each listed Component applies the shared capability requirement while retaining ownership of its internal implementation.
+**Rule:** The Development Preferences file declares each Cross-cutting Capability with one `applies_to` list. An empty list means the capability is inactive; a non-empty list activates it only for the listed Components. Every entry is a unique canonical Component identifier from the fixed catalogue. Each listed Component applies the shared capability requirement while retaining ownership of its internal implementation.
 
 **Why:** One applicability list gives shared behavior a single coordination point without transferring internal implementation ownership to Development.
 
@@ -158,27 +148,25 @@ Documentation may contain code and may demonstrate how an API key or other secre
 
 - **Must** — Compose the fixed peer Model, Database, Backend, Frontend, and Platform catalogue with its exact identifiers, names, roots, types, and roles. *(1)*
 - **Never** — Let a project or Component override the fixed catalogue. *(1)*
-- **Must** — Interpret every Component path as a unique, non-absolute, non-overlapping repository-relative root containing that Component's files. *(1)*
+- **Must** — Interpret every Component path as a unique, non-absolute, non-overlapping repository-relative root containing that Component's files, while each Component owns its internal organization below that root. *(1)*
 - **Never** — Treat a Participating Component as Development's child or an internal item as a Participating Component unless Development Principles explicitly add it. *(1)*
 - **Must** — Keep every Application Package cohesive and responsible for its implementation, Runtime Configuration, and Public Interface. *(2)*
 - **Must** — Limit every authorized import or installation dependency to the provider's Public Interface. *(2)*
 - **Never** — Turn use of a provider into ownership of or coupling to its internals. *(2)*
 - **Never** — Let Development prescribe a Component's internal structure, dependency management, or installation method. *(2)*
-- **Must** — Route every cross-Component interaction through a provider-owned Public Interface. *(3)*
+- **Must** — Route every cross-Component interaction through a provider-owned Public Interface, while each Connection identifies only its consumer and provider without duplicating the interface definition. *(3)*
 - **Must** — Let each provider own the number, shape, and implementation of its Public Interfaces. *(3)*
 - **Never** — Access another Component's private implementation, storage, resources, or internal Runtime Configuration. *(3)*
 - **Must** — Use only the four fixed direct consumer-to-provider Connections. *(4)*
-- **Must** — Treat Connections as direct, non-transitive, acyclic dependencies rather than request-and-response data directions. *(4)*
+- **Must** — Treat Connections as direct, non-transitive, acyclic dependencies rather than request-and-response data directions; a provider response creates no reverse Connection, and a Connection selects no transport. *(4)*
 - **Never** — Use an unlisted direct dependency or include Platform in the runtime Connection graph. *(4)*
-- **Must** — Keep Development limited to composition, shared boundary rules, and Cross-cutting Capability coordination. *(5)*
-- **Never** — Copy, absorb, or redefine a Component's internal design in Development. *(5)*
-- **Must** — Activate each Cross-cutting Capability only for the unique canonical Component identifiers in its `applies_to` list. *(6)*
+- **Must** — Activate each Cross-cutting Capability only for the unique canonical Component identifiers in its `applies_to` list, while each listed Component retains ownership of its internal implementation. *(6)*
 - **Never** — Use a separate `enabled` value or apply a Cross-cutting Capability to an unlisted Component. *(6)*
 - **Must** — Generate `<component_root>/README.md` for every Participating Component with the content appropriate to its type. *(9)*
 - **Must** — Keep each README consistent with public behavior and sufficient for human or Agent understanding and use. *(9)*
 - **Never** — Put a real credential, token, or secret value in documentation. *(9)*
 - **Never** — Treat derived README content as a replacement for an authoritative source. *(9)*
-- **Must** — Resolve an unstated Development-owned decision through Principles, Preferences, then professional judgment. *(10)*
+- **Must** — Resolve an unstated Development-owned decision through Principles, Preferences, then professional judgment, while Component-internal decisions remain governed by that Component's own Principles and Preferences. *(10)*
 - **Never** — Let professional judgment override a Development Principle or applicable Preference. *(10)*
 - **Must** — Keep each Application Package's Runtime Configuration contract and representation within its boundary. *(11)*
 - **Must** — Let Platform coordinate runtime value delivery through documented Environment and Launch inputs. *(11)*

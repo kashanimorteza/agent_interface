@@ -163,7 +163,7 @@ The title states the rule as a claim, not as a topic: `Data Access is the only B
 
 ### Rule
 
-The mandatory statement itself, written in the present tense as something that holds rather than something to do. It uses the binding words — *is*, *must*, *only*, *never* — and remains free of tools, versions, and locations.
+The mandatory statement itself, written in the present tense as something that holds rather than something to do. It uses the binding words — *is*, *must*, *only*, *never* — and remains free of tools and versions.
 
 The Rule may be one sentence or several, and may carry a list when the rule enumerates parts, such as the layers a Component is formed from or the values a field accepts. It states the rule completely; a reader who reads only the Rule subsections of a file has read every obligation the file imposes.
 
