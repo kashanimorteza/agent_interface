@@ -114,9 +114,9 @@ Technical components derive their own representations from the Model.
 
 The resolved Model set MUST be implemented as one independent package.
 
-The Model package MUST provide one documented public import interface made of explicit public submodules and typed Model classes. The canonical consumer style is module-qualified import through the namespace selected by Model Preferences, followed by `<namespace>.<module>.<ModelType>` or an equivalent explicit module import.
+The Model package MUST provide one documented public import interface made of explicit public submodules and typed Model classes. The canonical consumer style is module-qualified import through the namespace fixed by Development Principles, followed by `<namespace>.<module>.<ModelType>` or an equivalent explicit module import.
 
-The public namespace MUST be stable and unambiguous within the host ecosystem. Its concrete name is an implementation preference, not a logical Model rule.
+The public namespace MUST be stable and unambiguous within the host ecosystem. Its concrete name is fixed by Development Principles, while its import syntax remains a Model implementation preference.
 
 Model identity MUST be represented by an imported module, Model type, or Model instance. A public Model operation MUST NOT require a Model name encoded as a string, an untyped string registry lookup, or dynamic attribute resolution from caller-controlled text. String values remain valid only as ordinary domain data when the Model definition explicitly declares a string field.
 
@@ -1012,50 +1012,6 @@ Tests for HTTP behavior belong to API tests.
 
 ---
 
-# 41. Documentation Standard
-
-The Model Component MUST include a public `README.md` at its package boundary. This file is a required developer-facing explanation of the completed Model package, not an optional project note.
-
-The `README.md` MUST explain, in clear language:
-
-- what the Model Component is responsible for and what it does not own;
-- how the package is installed and imported;
-- the public package interface and the supported usage pattern;
-- the Model categories and the meaning of their important fields and relationships;
-- the boundary between Model, Database, Backend, API, and other Components;
-- the applicable validation, serialization, credential, and extension rules;
-- a small set of domain-neutral examples that do not expose project-specific Target information.
-
-The `README.md` MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Model package to:
-
-- import the package namespace selected by Preferences and use `<namespace>.<module>.<ModelType>`;
-- import a public Model module with `from model import <module>` and use `<module>.<ModelType>`;
-- construct a valid Model instance;
-- observe and handle validation failure for invalid data;
-- serialize an instance using the selected implementation's standard serialization operations;
-- generate its schema using the selected implementation's schema operation;
-- distinguish omitted values, explicit `None`, supplied values, defaults, and generated values;
-- perform a partial update while preserving the documented update semantics;
-- use a domain Enum, Value Object, reusable type, and declared relationship where applicable;
-- handle sensitive or credential fields without exposing protected values.
-
-These examples MUST use imported modules, Model types, or Model instances. They MUST NOT identify a Model by a string, use an untyped string registry, import an internal module, or include ORM, Database, API, or project-specific Target details. Examples MUST remain consistent with the public package interface and the resolved Model Preferences.
-
-The `README.md` MUST be generated or updated as part of Model development and MUST be verified for existence, completeness, and consistency with the public interface before the Model Component is reported complete. A Model implementation without this documentation is incomplete.
-
-Important Models SHOULD communicate meaning through:
-
-- clear Model names,
-- clear field names,
-- precise types,
-- focused descriptions where necessary.
-
-Avoid comments that merely repeat code.
-
-Document domain meaning and non-obvious invariants.
-
----
-
 # 42. Forbidden Architecture Patterns
 
 Model MUST NOT:
@@ -1112,7 +1068,6 @@ When multiple implementations are possible, prefer in this order:
 - Validate rules determinable from Model's own data.
 - Use exact domain types where meaning requires them.
 - Use deterministic, side-effect-free validation and serialization.
-- Include and verify a developer-facing `README.md` for every completed Model package.
 
 ## SHOULD
 

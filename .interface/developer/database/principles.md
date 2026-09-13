@@ -230,38 +230,6 @@ Migration history includes an integrity marker for each migration and a verified
 
 <br>
 
-# 3. Documentation Standard
-
-The Database Component MUST include a public `README.md` at its package boundary. This file is a required developer-facing explanation of the completed Database package.
-
-The `README.md` MUST explain:
-
-- Database's responsibilities and boundaries;
-- the three internal layers and their dependency direction;
-- the public Database Interface and Instance Registry;
-- Engine selection, runtime configuration, migrations, and transactions;
-- the boundary between Database, Model, Backend, Platform, and Development;
-- credential protection, controlled SQL, and operational safety rules;
-- domain-neutral examples that do not expose project-specific Target information.
-
-The `README.md` MUST include complete, runnable, domain-neutral examples showing how a developer uses the public Database package to:
-
-- add or create a record from an imported Model type or instance;
-- read one record by its typed identifier, such as an identifier equal to `1`;
-- list records with typed criteria, deterministic ordering, and pagination where supported;
-- update or edit a record while preserving Model validation and partial-update semantics;
-- delete a record and observe the documented constraint or failure result;
-- enable or disable a Model that declares a `status` field;
-- select an Instance explicitly and use the configured default when selection is omitted;
-- group related operations in one transaction and observe commit or rollback;
-- handle the public result, validation error, not-found result, constraint failure, and transaction failure.
-
-These examples MUST pass Model types or instances through the public interface. They MUST NOT identify a Model by a string such as `"Entity"`, pass an unrelated untyped field dictionary, expose a connection, or import an internal adapter or ORM object. If controlled SQL is documented, its example MUST show parameterized values, allow-listed structure, transaction usage, and protected results.
-
-The `README.md` MUST be generated or updated as part of Database development and verified for existence, completeness, and consistency with the public interface before Database is reported complete.
-
----
-
 # 4. Decision Order
 
 When multiple persistence implementations are possible, prefer in this order:
@@ -288,7 +256,6 @@ When multiple persistence implementations are possible, prefer in this order:
 - Route consumer data access through the public generic interface and Instance Registry.
 - Preserve relationship meaning, persistence constraints, transaction guarantees, and credential protection.
 - Verify migration integrity, schema drift, concurrency handling, and least-privilege operation.
-- Provide and verify a developer-facing Database `README.md`.
 
 ## SHOULD
 

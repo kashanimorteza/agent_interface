@@ -24,7 +24,7 @@ A Principles file contains only mandatory philosophy, responsibilities, and boun
 
 A Principles file never contains:
 
-- a specific tool, library, framework, engine, third-party package, or version selection, or a concrete filename, folder name, path, or implementation layout; Developer choices belong to Developer Preferences and Agent declarations belong to the owning Agent Profile, except that Agent Skill Principles may name a required or conditional Skill and the technology category that activates it without making the technology selection;
+- a specific tool, library, framework, engine, third-party package, or version selection; Developer choices belong to Developer Preferences and Agent declarations belong to the owning Agent Profile, except that Agent Skill Principles may name a required or conditional Skill and the technology category that activates it without making the technology selection;
 - a technical default or resolved technical choice, which belongs to Developer Preferences or the owning Agent Profile;
 - the shape of a generated file, which belongs to the Component's Schema when one exists; or
 - instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.

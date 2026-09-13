@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Frontend Component — supported technical choices and defaults used when a Frontend choice is unstated."
   purpose: "Defaults and supported technical profiles for the Frontend package and the Presentation, Interaction Logic, and API Access layers."
   standard: "Agent Project Interface"
-  version: "3.1"
-  updated: "2026-09-12"
+  version: "3.2"
+  updated: "2026-09-13"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -30,7 +30,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Frontend code path, language, user-interface library, application framework, package manager, API client, and Theme."
+  selected: "The Frontend language, user-interface library, application framework, package manager, API client, and Theme."
   options: "Supported languages, user-interface libraries, application frameworks, package managers, API clients, and Themes."
   settings: "Configuration grouped by the Presentation, Interaction Logic, and API Access layers."
   implementation: "Empty. Frontend currently declares no separate implementation conventions outside its selected options and settings."
@@ -41,7 +41,6 @@ content:
 
   # <!-------------------------------------------- selected -->
   selected:
-    code_path: "frontend/"
     language: "TypeScript"
     library: "React"
     framework: "Next.js"

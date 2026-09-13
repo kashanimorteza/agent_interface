@@ -1,0 +1,29 @@
+# Require a user-visible approval before creating or pushing a Git commit.
+
+prefix_rule(
+    pattern = ["git", "commit"],
+    decision = "prompt",
+    justification = "Run git commit only after the human explicitly requests it.",
+    match = [
+        "git commit -m example",
+        "git commit --amend",
+    ],
+    not_match = [
+        "git status",
+        "git diff",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "Run git push only after the human explicitly requests it.",
+    match = [
+        "git push",
+        "git push origin main",
+    ],
+    not_match = [
+        "git fetch",
+        "git status",
+    ],
+)

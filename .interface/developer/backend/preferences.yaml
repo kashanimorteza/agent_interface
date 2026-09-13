@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Backend Component — supported technical choices and defaults used when a Backend choice is unstated."
   purpose: "Defaults and supported technical profiles for the independent Backend package, its Model Interface, Database Interface, Logic, API Interface, and API framework."
   standard: "Agent Project Interface"
-  version: "6.4"
-  updated: "2026-09-12"
+  version: "6.5"
+  updated: "2026-09-13"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -31,7 +31,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Backend package identity, code path, architectural role, package style, and selected language profile."
+  selected: "The selected Backend language profile."
   options: "Supported Backend language profiles. Each language contains its version, environment, API framework, and associated Agent Skills."
   settings: "Configuration grouped by Model Interface, Database Interface, Logic, and API Interface."
   implementation: "Empty. Concrete Backend implementation decisions are resolved from the Target, this Standard, and the selected compatible technical profile."
@@ -42,11 +42,7 @@ content:
 
   # <!-------------------------------------------- selected -->
   selected:
-    package_name: "my_backend"
-    code_path: "my_backend/"
     language: "Python"
-    architectural_role: "application Behaviour with Model, Database, and external API interfaces"
-    package_style: "one independent package with Model Interface, Database Interface, Logic, and API Interface layers"
 
   # <!-------------------------------------------- options -->
   options:

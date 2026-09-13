@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Model Component — supported technical choices and defaults used when a Model choice is unstated."
   purpose: "Defaults for the independent Model package, supported modeling technologies, and properties of existing Model fields whose attributes are unstated."
   standard: "Agent Project Interface"
-  version: "2.0"
-  updated: "2026-09-12"
+  version: "2.1"
+  updated: "2026-09-13"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -31,7 +31,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Model package's code path, implementation language, isolated environment, and modeling library."
+  selected: "The Model implementation language, isolated environment, and modeling library."
   options: "Supported implementation languages and modeling and validation libraries."
   settings: "Defaults for missing properties of fields already present in a Model definition."
   implementation: "Concrete implementation preferences that complement the Model Standard without redefining its domain rules."
@@ -42,15 +42,11 @@ content:
 
   # <!-------------------------------------------- selected -->
   selected:
-    package_name: "my_model"
-    code_path: "my_model/"
     language: "Python"
     language_version: "3.13+"
     environment: "uv"
     modeling_library: "Pydantic"
     modeling_library_version: "2.x"
-    architectural_role: "platform-independent logical Model"
-    package_style: "one independent package with one public import interface"
 
   # <!-------------------------------------------- options -->
   options:
@@ -140,7 +136,7 @@ content:
     pydantic_api:
       base_model: "pydantic.BaseModel"
       project_base_class_name: "BaseModel"
-      project_base_class_module: "<package_name>._base"
+      project_base_class_module: "model._base"
       concrete_models_inherit_from: "BaseModel"
       forbidden_project_base_class_names:
         - "Model"
@@ -169,8 +165,8 @@ content:
       immutability: "use frozen configuration only when it is part of domain semantics"
     package:
       public_imports: "explicitly re-exported from the package interface"
-      canonical_import_style: "import my_model; my_model.<module>.<ModelType>"
-      alternate_import_style: "from my_model import <module>; <module>.<ModelType>"
+      canonical_import_style: "import model; model.<module>.<ModelType>"
+      alternate_import_style: "from model import <module>; <module>.<ModelType>"
       model_identity: "imported module, Model type, or Model instance; never a public string selector"
       internal_modules: "not imported by consumers as a public contract"
       representation_priority: "logical domain representation before platform-specific derivations"

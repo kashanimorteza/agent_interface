@@ -44,7 +44,7 @@ Every statement here is mandatory. A Developer Preference or implementation choi
 
 **Why:** Explicit boundaries let domain access, persistence access, Behaviour, and external communication evolve without collapsing into one another.
 
-**Boundary:** No layer bypasses the layer responsible for the next boundary. Package identity and code path come from Backend Preferences and never expose an internal layer as an independent competing Backend.
+**Boundary:** No layer bypasses the layer responsible for the next boundary. Package identity and root path come from Development Principles and never expose an internal layer as an independent competing Backend.
 
 <br>
 
@@ -138,16 +138,6 @@ Every statement here is mandatory. A Developer Preference or implementation choi
 
 <br>
 
-## 12. Backend publishes complete and safe package documentation
-
-**Rule:** The Backend package includes public package documentation at its package boundary using the documentation identity selected by Development Preferences. It explains Backend's purpose and boundaries, the public API Interface, organization of Model Logic and Target Behaviour, how Logic reaches Model and Database through their interfaces, non-secret configuration and runtime Bindings, applicable installation and startup, practical usage, and failure handling. Package documentation and any machine-readable API description are verified against the implemented public interfaces before Backend is complete.
-
-**Why:** Consumers and implementers need one accurate public guide without inspecting internal implementation.
-
-**Boundary:** Documentation never exposes actual Credentials, private configuration, Database internals, or implementation details as public contracts. It remains derived and non-authoritative under the Development documentation standard.
-
-<br>
-
 ## 13. Backend decisions preserve meaning and boundaries before convenience
 
 **Rule:** When more than one Backend realization is valid, decisions preserve, in order: Model meaning and Target Behaviour; Logic ownership and all three interface boundaries; independence from transport and persistence implementation; the public Database interface; complete resulting-state validation; transaction grouping selected by Logic and realized by Database; Credential protection; compatible Backend Preferences; and the simplest maintainable implementation.
@@ -192,8 +182,6 @@ Every statement here is mandatory. A Developer Preference or implementation choi
 - **Never** — infer Credential fields by name, expose their values, or redefine Database's at-rest protection *(10)*
 - **Must** — consume selected supporting services through explicit interfaces only where their Behaviour is needed *(11)*
 - **Never** — turn a supporting service into a mandatory Backend layer or an interface bypass *(11)*
-- **Must** — publish and verify complete, safe Backend package documentation and the enabled API description *(12)*
-- **Never** — expose secrets, Database internals, or private implementation as documentation contracts *(12)*
 - **Must** — apply the Backend decision order only to choices left open by higher authorities *(13)*
 - **Never** — let framework convenience override Target meaning, Component ownership, or Backend boundaries *(13)*
 - **Must** — invoke and completely apply every applicable instruction from a required Agent Skill before completing work on its selected Backend technology *(14)*

@@ -1,0 +1,4 @@
+# Project-scoped Codex configuration.
+# Codex loads this file only when the project is trusted.
+
+personality = "pragmatic"
