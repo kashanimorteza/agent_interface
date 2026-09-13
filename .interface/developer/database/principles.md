@@ -1,278 +1,241 @@
-# Database Standard
+# Database Principles
 
-> **Authoritative Standard for the Database Component**
->
-> This document is the authoritative standard for the project's Database Component.
->
-> Every implementer, reviewer, or automation that creates, changes, validates, or reasons about Database code MUST read and follow this document before making changes.
->
-> **Principles override preferences, framework defaults, convenience, and implementation choices.**
->
-> A project may add stricter rules, but it must not weaken the rules defined here.
+Database owns the complete persistence boundary of the Target. It maps the logical Model to durable storage, preserves storage-level guarantees, and exposes one generic public interface through which consumers use persistent data without depending on private persistence details.
 
----
+Database is independent of any particular storage technology, package, version, or runtime destination. It does not redefine domain meaning, application behavior, presentation, transport, or workflow orchestration.
 
-# 1. Purpose
+<br>
 
-Database is the Component that owns the project's complete persistence layer. It turns the logical Models into stored data, keeps the whole storage structure reproducible from the repository, and publishes one generic interface through which every consumer reads and writes without ever meeting the engine behind it. Its philosophy, responsibilities, and boundaries are fixed and independent of any engine, tool, or project.
+## Terms
 
-# Project Independence
-
-Database is reusable across Targets. This standard defines how a Database Component works, not which domain a project contains. Project-specific Model names, fields, relationships, uniqueness rules, initial records, workflows, and platform details belong to the current Target and Model definitions and MUST NOT be copied into this standard.
-
-Examples and implementation choices in this document MUST remain domain-neutral. Changing the Target MUST NOT require changing this standard.
-
----
-
-# Architectural Foundation
-
-Database is the persistence-specific derivation of the platform-independent logical Model. It adds storage representation, durability, constraints, transactions, and engine integration without redefining the Model's domain meaning.
-
-This standard is aligned with platform-independent and platform-specific modeling ideas. It does not claim full conformance to ISO/IEC 9075, an individual database engine, an ORM, or a migration tool. Those references and tools govern only the concerns within their own authority.
-
----
-
-# Authority by Concern
-
-| Concern | Authoritative source |
-| --- | --- |
-| Domain names, fields, relationships, domain rules, and initial data | Current Model and Target definitions |
-| Persistence boundaries, ownership, mapping responsibilities, transactions, and storage guarantees | This Database Standard |
-| Engine, ORM, migration tool, naming, physical types, and version choices | Database Preferences |
-| SQL syntax and engine-specific behaviour | Selected Engine documentation and compatible toolchain |
-
-Database MUST NOT invent a domain Model, field, relationship, rule, or initial record because an engine or ORM makes it convenient. An engine default MUST NOT override an explicit Model definition or this standard.
-
----
-
-# 2. Core Principles
-
-## 2.1 Terms
-
-- **Database Interface** — the layer that is the only boundary published to consumers, exposing Model operations and Instance discovery and selection.
-- **Data Logic and Mapping** — the layer that implements generic Model operations and resolves how logical Models, fields, relationships, rules, and initial data are physically mapped and enforced.
-- **Storage Adapter** — the layer that owns the connection to the selected Engine and performs physical persistence operations.
-- **Engine** — the database technology behind the Storage Adapter, chosen late and replaceable.
+- **Database Interface** — the only Database boundary published to consumers, exposing generic data operations and Instance discovery and selection.
+- **Data Logic and Mapping** — the internal layer that resolves how logical Models and their rules are represented and enforced in storage.
+- **Storage Adapter** — the internal layer that owns connections to the selected Engine and performs persistence operations.
+- **Engine** — the replaceable storage technology behind the Storage Adapter.
 - **Instance** — one selectable database identity with a stable key, name, purpose, and Engine binding.
-- **Instance Registry** — the published catalogue through which consumers discover Instance identities and the default, without receiving connections or secrets.
-- **Migration** — one recorded, ordered change to the storage structure, with a tested reversal when safe and an explicit recovery path when irreversible; it is part of the authoritative record of how that structure was reached.
-- **At-rest mode** — the resolved persistence transformation applied to a field that is a credential.
-- **Transaction** — one unit of data operations on a single Instance whose changes are committed together or rolled back together.
-
-## 2.2 Relationships
-
-- **Consumes Model** — the logical Models, fields, relationships, rules, and initial data that Database maps and enforces.
-- **Consumes Development** — the common package standard and the ownership rules under which Database keeps its own settings and secrets.
-- **Consumes Platform** — the Bindings the selected Launch delivers to Database's boundary, without Platform taking ownership of them.
-- **Consumed by Backend** — the generic data-access interface and Instance Registry, reached only through Backend's Data Access layer.
-
-Technical choices and defaults belong to Database Preferences. Database implementation applies those choices to the current project definition.
-
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+- **Instance Registry** — the public catalogue through which consumers discover Instance identities and the default without receiving connections or secrets.
+- **Migration** — one recorded, ordered change to the storage structure, with a tested reversal when safe and an explicit recovery path when irreversible.
+- **At-rest Mode** — the resolved persistence transformation applied to a credential field.
+- **Transaction** — one unit of data operations on a single Instance whose changes commit together or roll back together.
 
 <br>
 
-## 2.3 Database is an independent package with three internal layers
+## Relationships
 
-**Rule:** Database is implemented as an independent package with a stable, non-generic public namespace and a documented public interface. Database imports logical Model types only from the Model Component's public namespace; it does not redefine or privately copy them. Compatible in-process consumers import the public Database gateway and Instance Registry from this package. Database is formed from three distinct internal layers:
-
-- **Database Interface** is the only boundary published to consumers and exposes Model operations plus Instance discovery and selection;
-- **Data Logic and Mapping** implements generic Model operations and resolves the physical persistence mapping and enforcement of logical Models, fields, relationships, rules, and initial data; and
-- **Storage Adapter** owns the connection to the selected Database Engine and performs physical persistence operations.
-
-The dependency direction is Database Interface → Data Logic and Mapping → Storage Adapter → Database Engine. The Model package is an independent upstream contract consumed through its public import interface; consumers do not need to know the Engine, ORM, mapping, or storage implementation.
-
-**Why:** One published boundary over an ordered internal chain is what lets the engine, the mapping, and the exposed operations each change without the others being rewritten.
-
-**Boundary:** Consumers never import internal adapters, mappings, connections, or configuration implementation. Consumers never bypass Database Interface, and an internal layer never bypasses the layer responsible for the next boundary. Migration is internal Database tooling rather than a runtime application layer: it changes the physical storage structure through the Storage Adapter's resolved technology without becoming part of the public Database Interface.
+- **Consumes Model** — maps and enforces the logical Models, fields, relationships, rules, and declared initial data.
+- **Consumes Development** — uses the shared package standard, technical catalogues, connections, and ownership rules.
+- **Consumes Platform** — receives runtime Bindings delivered to Database's boundary by the selected Launch Item.
+- **Consumed by Backend** — provides the generic data-access interface and Instance Registry through Backend's Data Access boundary.
 
 <br>
 
-## 2.4 Database is independent of its engine
-
-**Rule:** The physical persistence design owned by Database — its tables, columns, foreign keys, constraints, indexes, and enforcement mechanisms — is derived from the logical Model. The portable contract and mapping are described independently of any particular database server. Engine-specific extensions are explicit, isolated, and recorded with their portability impact.
-
-**Why:** If the engine changes, consumers retain the same data-access behaviour and domain meaning while only internal storage and engine-specific configuration may need to differ.
-
-**Boundary:** The engine is an implementation detail chosen late.
+Database-owned defaults and implementation conventions belong to Database Preferences. Concrete technical selections and the Platform Launch Item reference belong to the Database Component Profile in Development Preferences. Implementation applies those sources to the current Target.
 
 <br>
 
-## 2.5 The whole Database is defined as code
-
-**Rule:** Everything needed to recreate Database from nothing lives in the repository: its storage schema, history of changes, constraints, indexes, and any declared initial data.
-
-**Why:** This provides reproducibility: a new environment, server, or checkout can rebuild an identical Database without manual structural work.
-
-**Boundary:** Nothing about the Database structure exists only inside a running server, only in someone's memory, or only in a manual step.
+Every statement here is mandatory. A Developer Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 2.6 Storage-schema changes are ordered and recoverable
+## 1. Database is an independent package with one public boundary
 
-**Rule:** The storage schema never changes without a recorded migration. Each change has a fixed position in an ordered history, and migration history is the authoritative record of how the Database reached its current structure. A migration MUST provide a tested reversal when reversal is semantically safe. A migration that can lose or transform data MAY be irreversible only when it is explicitly marked, protected by an approved backup or recovery procedure, and accompanied by a documented recovery path.
+**Rule:** Database is an independent package with a stable public namespace and documented Database Interface. It imports logical Model types only through the Model Public Interface, does not redefine or privately copy them, and publishes its generic gateway and Instance Registry through its own boundary.
 
-**Why:** An ordered and integrity-checked history is the only way the current structure can be explained, reproduced, and safely recovered.
+**Why:** One independent package gives persistence one replaceable ownership boundary while allowing authorized consumers to reuse it.
 
-**Boundary:** Application code never creates, alters, or drops database objects directly. Silent startup creation and manual structural patches are excluded because they create storage state that cannot be explained by migration history. Migration execution verifies ordering, integrity, and schema drift, and coordinates concurrent runners so that a migration cannot be applied twice or partially recorded as complete.
-
-<br>
-
-## 2.7 Database owns the complete persistence layer
-
-**Rule:** Database alone owns supported engine integration, Database Instances, physical storage, runtime connections, ORM, model-to-storage mappings, storage schema, physical constraints, indexes, migration history, and the generic data-access interface it publishes.
-
-**Why:** Persistence decisions interact with each other, so splitting them across Components produces storage that no single Component can reason about.
-
-**Boundary:** Logical Models, fields, relationships, and domain rules remain owned by Model; Database owns only their persistence mapping and enforcement. No other Component makes or changes Database-owned decisions. Database does not own application behaviour, the HTTP API, Frontend, or secrets belonging to other layers. Database owns its private runtime settings and secrets under Development's rules; Platform delivers the Bindings it needs through the selected Launch. Its boundaries remain explicit in the implementation and its public documentation.
+**Boundary:** Consumers never import private adapters, mappings, connections, files, or configuration. Migration is internal Database tooling and is not part of the public runtime interface.
 
 <br>
 
-## 2.8 All data access goes through one generic interface
+## 2. Database has three ordered internal layers
 
-**Rule:** Consumers use only the generic interface implemented by Database. The interface is generic rather than one access implementation per Model: a caller imports a public Model type or Model instance from the independent Model package, selects a supported operation, and supplies any criteria required by that operation. The same interface provides add/create, read, read-by-identifier, list, edit/update, delete, and status operations for every persistent Model, and Data Logic uses one Model-driven operation pipeline rather than a separate business-logic implementation for every Model. Public Database operations MUST NOT require a Model name encoded as a string or resolve a Model through an untyped string registry; Model identity is carried by the imported type or instance.
+**Rule:** Database is formed from three distinct internal layers: Database Interface, Data Logic and Mapping, and Storage Adapter. Dependencies flow from the public interface through mapping and logic to the adapter and selected Engine.
 
-The status operation accepts exactly one action: `enable` or `disable`. It is available only when the selected Model declares a `status` field and changes that field to the corresponding enabled or disabled value.
+**Why:** An ordered internal chain lets the public operations, mapping rules, and storage technology evolve independently.
 
-The interface MAY also support controlled SQL-command execution for cases that cannot be expressed through standard Model operations, using explicit parameters rather than value interpolation. This route is capability-restricted, separately observable, and only for data operations on the selected Instance. It remains subject to Database's persistence constraints and transaction boundaries. It rejects structural changes, privilege changes, connection administration, and migration operations, which belong exclusively to Migration or private runtime administration. Engine-specific SQL must be identified as such and validated for the selected Engine; it carries no promise of portability when the Engine changes.
-
-Controlled SQL preserves the same data protections as the generic operations. Before accepting a command, Database must establish which data it can read or change and how the applicable protections are enforced. Identifiers such as table and column names come from an internal allow-list or typed operation definition; user input is never interpolated into SQL structure. Writes preserve Model validation of the resulting data, persistence constraints, and the resolved credential transformations; reads never expose credential storage representations or runtime secrets, including through derived results. Parameterization alone does not establish these guarantees. A command whose effects or results cannot be handled with these protections is rejected before execution. Validation of resulting changes occurs within the same transaction before commit, and failure rolls back the changes. This does not authorize Database to take over application-context rules owned by Backend Logic.
-
-**Why:** Differences between Models come from their resolved fields, relationships, constraints, rules, and storage mappings, so one pipeline serves them all and each new Model costs no new access implementation.
-
-**Boundary:** Consumers never receive the engine connection or access storage outside the published Database interface. Model identity and data are not passed as an untyped Model-name string and unrelated field dictionary. A Model without a `status` field rejects the status operation. The controlled SQL route is the explicit exception to Model-driven access; it stays inside the Database boundary and exposes no connection, ORM mapping, migration implementation, or physical database file. It grants no direct storage access and cannot bypass Migration or manage the transaction independently of the public transaction boundary. Model-specific application Behaviour remains in Backend Logic and never enters Database.
+**Boundary:** An internal layer never bypasses the layer responsible for the next boundary, and consumers never bypass Database Interface.
 
 <br>
 
-## 2.9 Database Instances are explicit and selectable
+## 3. Persistence preserves Model meaning without redefining it
 
-**Rule:** Every Database Instance has a stable identifier, human-readable name, stated purpose, and one supported Engine binding. Instance identity is distinct from Engine identity: several Instances may use the same Engine while serving different purposes. Database publishes an Instance Registry through its public interface so consumers can discover available Instance identities and select one. Exactly one Instance is the default, and when a consumer does not select an Instance, Database uses that default explicitly and predictably. The number of Instances is derived from the Instance collection and is never maintained as a separate authoritative value.
+**Rule:** Physical persistence is derived from the logical Model. Database preserves Model identity, field meaning, relationships, constraints, and applicable rules while adding only storage representation, durability, and enforcement required by persistence.
 
-Database-owned runtime configuration declares the supported Engine catalogue, the Instance catalogue, and the default selection. Each Instance refers to one supported Engine, and the default refers to an existing Instance. The public Registry derives from the configured Instances rather than maintaining a second catalogue in implementation. A consumer can supply an identity obtained from that Registry to select the Instance for an operation or transaction. An omitted selection uses the configured default; an explicit unknown Instance is rejected, never silently redirected to the default.
+**Why:** Consumers need durable data that retains the same domain meaning as the source Model.
 
-**Why:** A project outgrows one database, and naming each Instance by purpose lets a consumer choose the right one without learning how any of them connect.
-
-**Boundary:** The registry exposes no raw connection objects and no secret values. Database owns Instance definitions and connection handling; Platform may deliver the Binding that selects an Instance for another layer without taking ownership of it.
+**Boundary:** Database never invents a Model, field, relationship, rule, or initial record because storage makes it convenient. Application-context and operation-dependent behavior remains outside Database.
 
 <br>
 
-## 2.10 Storage mappings and persistence constraints remain traceable to Models
+## 4. Database remains independent of its Engine
 
-**Rule:** Every persistent domain Model has a traceable storage mapping. A relational implementation commonly maps a persistent Model to a table, but value objects, embedded types, projections, and other non-persistent Models do not become tables merely because they exist in Model. An explicit storage mapping takes precedence over a derived mapping, and every resolved mapping records the source Model it implements. Database guarantees the Model rules that depend on stored state, including uniqueness across records and the existence of referenced records, and maps the resolved Model's storage-relevant field properties into persistence constraints. Enforcement remains traceable to the source Model declaration and applies when changes are committed, including under concurrent access. Database reuses shared Model validation for checks determined from Model data instead of maintaining competing definitions. A persistence rule with one clear representation is resolved deterministically; when several representations are possible, the choice preserves its declared meaning.
+**Rule:** The portable persistence contract and mapping remain understandable without a particular Engine. Engine-specific extensions are explicit, isolated behind the Storage Adapter, and recorded with their portability impact.
 
-**Why:** Persistence guarantees must hold for stored data even when several consumers write concurrently, while keeping a rule's declaration separate from its enforcement prevents duplicate or conflicting ownership.
+**Why:** An Engine can be replaced without changing consumer behavior or domain meaning.
 
-**Boundary:** Database does not translate application-context or operation-dependent rules into storage constraints or assume responsibility for Backend Logic. Not every Model rule belongs in the storage schema. A rule within Database's persistence responsibility is never silently dropped or weakened; if the selected Engine cannot represent it directly, Database must provide equivalent enforcement within its boundary or report the unsupported requirement.
-
-<br>
-
-## 2.11 Relationships are explicit and consistently resolved
-
-**Rule:** Relationship mappings preserve the cardinality, optionality, and roles resolved by Model, including one-to-one, one-to-many, and many-to-many relationships. The physical representation uses explicit foreign keys and any association storage and constraints needed to preserve that meaning. One-to-one mappings enforce the required uniqueness; one-to-many mappings allow the declared multiplicity; many-to-many mappings represent both sides without reducing either to a single reference. Association storage reuses an explicit association Model when one is declared; a purely physical association does not introduce a new domain Model.
-
-An explicit relationship field or reference always takes precedence over a default, and an existing declared relationship field is reused rather than duplicated. Each foreign key references the related key and uses the same type. Its nullability preserves the resolved Model field and relationship optionality; Database does not apply a separate logical nullability default. If a physical relationship field is needed where no logical field is declared, its nullability follows the resolved relationship meaning. When one Model relates to the same target more than once, the relationship roles remain explicit, and the resolved storage schema records each foreign-key field, referenced table, and referenced column. A mapping must preserve the complete relationship constraint; foreign-key nullability alone is not proof that every cardinality or participation requirement is enforced.
-
-**Why:** Explicit, recorded connections are what make stored data navigable and enforceable rather than merely conventional.
-
-**Boundary:** Logical field properties and relationship optionality are resolved under the Model Component's rules before storage mapping. Database Preferences supply only unstated physical mapping choices, such as storage naming, indexing, and referential actions, without overriding the resolved Model meaning.
+**Boundary:** Engine selection is a technical Preference resolved outside this Principles file and never becomes a consumer-facing guarantee unless explicitly portable.
 
 <br>
 
-## 2.12 Connection secrets stay outside and credential storage stays internal
+## 5. The complete Database is reproducible from the repository
 
-**Rule:** Connection credentials belong to runtime configuration outside committed files. Credential fields are classified before persistence and each resolves to one supported at-rest treatment: passwords and verifiers use an approved one-way password-hashing scheme; secrets that must be recovered use authenticated encryption or a managed secret store; ordinary sensitive data follows its declared protection. An explicit treatment takes precedence, and otherwise Database Preferences supply the default. Database applies the matching persistence transformation.
+**Rule:** Everything needed to recreate the Database belongs to the repository: storage structure, migration history, constraints, indexes, and declared initial data.
 
-**Why:** A secret in a committed file is public, and a credential whose at-rest treatment is decided per caller is treated inconsistently.
+**Why:** A new environment or checkout can rebuild an equivalent Database without undocumented manual work.
 
-**Boundary:** Runtime connection settings are internal to Database; neither their shape nor secret values are published through the data-access interface. The storage representation of a credential is never exposed to consumers. Password hashes are never reversible, and encryption keys are never stored beside the ciphertext they protect. Encryption keys and connection secrets belong in Database's private runtime area under Development's rules; they never appear in Interface records, general Database configuration, source-controlled implementation, or distributed artifacts. Platform delivers them as Bindings through the selected Launch, without publishing these values to other layers.
-
-<br>
-
-## 2.13 Initial data preserves declared meaning
-
-**Rule:** When initial data exists for a Model, seeding becomes part of Database and each record maps to its resolved table. Every seed key names a resolved Model field. Each record satisfies its required relationships and non-nullable fields through a supplied value, a resolved default, or permitted generated behaviour. Records are resolved in dependency order, explicit relationship identifiers are preserved, and seeding is repeatable without duplicating logical records or breaking uniqueness rules.
-
-**Why:** Initial records are part of what the project declared, so a rebuilt database is only equivalent if they come back with the same meaning.
-
-**Boundary:** Initial data is never supplied by Database Preferences.
+**Boundary:** No Database structure exists only in a running server, memory, or an unrecorded manual step.
 
 <br>
 
-## 2.14 Related data operations share an explicit transaction boundary
+## 6. Storage changes use ordered and recoverable Migrations
 
-**Rule:** Database publishes a transaction boundary through its generic interface so a consumer can group related data operations on one Instance. Changes in the group are committed together only when the unit succeeds and all applicable persistence constraints hold; a failed or cancelled unit rolls back its changes. Operations participating in the unit do not commit independently. A standalone write outside an explicit group forms its own atomic unit. Database resolves and documents the applicable isolation level, locking or version-check strategy, retry rules for transient conflicts, and idempotency expectations. Database owns commit, rollback, and resource cleanup, and reports the outcome without exposing the underlying connection.
+**Rule:** Storage structure never changes without a recorded Migration in an ordered history. A Migration has a tested reversal when semantically safe. A data-losing or data-transforming Migration may be irreversible only when explicitly marked, protected by an approved recovery procedure, and accompanied by a documented recovery path.
 
-**Why:** Related changes must not leave partially applied data when an operation fails, and the consumer needs to express that relationship without taking ownership of persistence internals.
+**Why:** Ordered history explains, reproduces, and safely recovers the current structure.
 
-**Boundary:** The consumer determines which operations belong together as part of its application behaviour; Database provides the persistence guarantee. A transaction belongs to one resolved Instance. Atomicity across different Instances or external services is not implied, and Engine-specific transaction mechanisms remain internal to Database. Deadlock, serialization failure, timeout, and retry outcomes are reported distinctly enough for the consumer to choose a safe response; an automatic retry never silently duplicates a non-idempotent operation.
-
-<br>
-
-## 2.15 Portability and schema integrity are explicit
-
-**Rule:** Every persistence decision is classified as portable contract, portable mapping, or engine-specific extension. Engine-specific types, SQL, indexes, transaction features, and constraints are isolated behind the Storage Adapter and recorded with their compatibility and replacement impact. A Database implementation never presents an engine-specific guarantee as a portable Database guarantee.
-
-Migration history includes an integrity marker for each migration and a verified relationship to the resolved schema. Database detects unexpected schema drift before normal operation or reports it as a blocking state according to the selected operational policy. Concurrent migration runners coordinate through an engine-supported lock or equivalent mechanism, and a failed migration cannot be recorded as successfully applied.
-
-**Why:** Portability is meaningful only when its limits are visible, and reproducibility requires proving that the running structure matches the recorded structure.
-
-**Boundary:** Preferences may select an engine-specific feature, but they cannot silently change the portable contract. Drift detection and migration coordination are Database responsibilities; application code never repairs drift by issuing ad-hoc structural commands.
+**Boundary:** Application code never creates, alters, or drops storage objects directly. Migration execution verifies ordering, integrity, drift, and concurrent-run coordination.
 
 <br>
 
-## 2.16 Persistence security and observability are bounded
+## 7. Database owns the complete persistence responsibility
 
-**Rule:** Database applies least privilege to runtime identities, records security-relevant persistence outcomes without recording secrets, and provides operational signals for connection failure, migration failure, constraint violation, transaction conflict, and protected-data access. Logs, metrics, traces, backups, exports, and error payloads follow the same credential and sensitive-data protection rules as normal reads.
+**Rule:** Database alone owns supported Engine integration, Instances, physical storage, runtime connections, storage mappings, persistence constraints, indexes, Migration history, and the generic data-access interface.
 
-**Why:** A secure schema can still leak data through diagnostics, backups, or overly powerful runtime identities.
+**Why:** Persistence decisions interact and require one authority that can reason about them together.
 
-**Boundary:** Database does not own application authorization or business policy, but it does enforce its own storage-level access boundary and never treats observability as an exception to data protection.
+**Boundary:** Model owns logical meaning; Backend owns application behavior and service orchestration; Frontend owns presentation; Platform operates the result. Database owns only its own private runtime settings and secrets.
 
 <br>
 
-# 4. Decision Order
+## 8. All data access uses one generic Database Interface
 
-When multiple persistence implementations are possible, prefer in this order:
+**Rule:** Consumers use one generic Database Interface for every persistent Model. The interface accepts a public Model type or instance, a supported operation, and the criteria required by that operation. It supports create, read, read-by-identifier, list, update, delete, and activation operations through one Model-driven pipeline rather than one implementation per Model.
 
-1. Preserve the logical Model's meaning.
-2. Preserve the Database public contract and component boundary.
-3. Enforce the required persistence guarantee under concurrency.
-4. Prefer the portable representation.
-5. Prefer explicit, traceable migration and mapping decisions.
-6. Apply least privilege and protected-data handling.
-7. Use the selected Engine's supported capabilities.
-8. Add an engine-specific extension only when its impact is recorded and justified.
-9. Prefer the simplest maintainable implementation.
+Public operations never require a Model name encoded as an untyped string or resolve a Model through an untyped string registry. Model identity is carried by the imported type or instance.
 
----
+The activation operation accepts exactly enable or disable, is available only when the selected Model declares the is_active field, and changes that field to the corresponding value.
 
-# 5. At a Glance
+The interface may also expose a capability-restricted command route for data operations that cannot be expressed through standard operations. It requires explicit parameters, protected identifiers, separate observability, transaction participation, and explicit Engine identification. It rejects structural changes, privilege changes, connection administration, and Migration operations.
 
-## MUST
+**Why:** One generic pipeline serves every Model while preserving a stable public boundary and preventing duplicate business-logic implementations.
 
-- Implement Database as an independent package with Interface, Data Logic and Mapping, and Storage Adapter layers.
-- Derive persistence mapping from the logical Model without redefining domain meaning.
-- Keep schema, migrations, mappings, constraints, and required initial data reproducible from the repository.
-- Route consumer data access through the public generic interface and Instance Registry.
-- Preserve relationship meaning, persistence constraints, transaction guarantees, and credential protection.
-- Verify migration integrity, schema drift, concurrency handling, and least-privilege operation.
+**Boundary:** Consumers never receive connections or storage access. The command route cannot bypass Model validation, persistence constraints, credential protections, Migrations, or the public transaction boundary. Model-specific application behavior remains in Backend Logic.
 
-## SHOULD
+<br>
 
-- Prefer portable mappings and standard SQL capabilities.
-- Prefer typed Model-driven operations over raw SQL.
-- Prefer tested reversals for safe migrations and explicit recovery procedures for irreversible changes.
-- Prefer deterministic naming, explicit mapping, observable failures, and idempotent retries.
+## 9. Database Instances are explicit and selectable
 
-## NEVER
+**Rule:** Every Database Instance has a stable identifier, human-readable name, stated purpose, and one supported Engine binding. Database publishes an Instance Registry through its public interface. Exactly one Instance is the default; an omitted selection uses it, while an unknown explicit selection is rejected.
 
-- Let consumers import connections, adapters, mappings, ORM objects, or secrets.
-- Let application code change schema outside Migration.
-- Accept uncontrolled SQL, interpolated identifiers, structural commands, or privilege changes through the public interface.
-- Expose credential storage representations, secrets, or protected data through results, logs, backups, or errors.
-- Invent domain Models, silently weaken persistence guarantees, or redirect an unknown Instance to the default.
-- Claim engine-specific behavior is portable without recording its limitation.
+The Registry is derived from the configured Instance collection, and the number of Instances is never maintained as a separate authority.
 
-# 6. Final Rule
+**Why:** Named Instances let consumers choose a database by purpose without learning how it connects.
 
-When a Database decision is not explicitly covered, preserve the logical Model's meaning, keep the Database boundary independent of consumers and engine internals, prefer the safest portable representation, and record any consequential engine-specific choice. Never silently invent domain meaning, weaken a persistence guarantee, bypass migration history, or expose a connection, secret, or protected storage representation.
+**Boundary:** The Registry exposes no raw connection objects or secret values. Platform may deliver a Binding needed to select or reach an Instance without taking ownership of the Instance.
+
+<br>
+
+## 10. Storage mappings and constraints remain traceable to Models
+
+**Rule:** Every persistent Model has a traceable storage mapping. An explicit mapping takes precedence over a derived mapping, and every resolved mapping records its source Model. Non-persistent Models do not become stored structures merely because they exist. Database enforces storage-relevant Model constraints, including uniqueness, referenced-record existence, and resolved field properties, while reusing Model validation for checks determined solely from Model data.
+
+**Why:** Stored data remains valid under concurrent writes and every guarantee can be traced to its source meaning.
+
+**Boundary:** Database does not translate application-context rules into storage constraints. A persistence rule is never silently weakened; an unsupported requirement is enforced equivalently within Database or reported.
+
+<br>
+
+## 11. Relationship mappings preserve resolved meaning
+
+**Rule:** Relationship mappings preserve the cardinality, optionality, and roles resolved by Model, including one-to-one, one-to-many, and many-to-many relationships. Physical references, association storage, uniqueness, and referential actions are added only as needed to preserve that meaning. An explicit relationship field is reused rather than duplicated.
+
+**Why:** Explicit mapping keeps stored relationships navigable, enforceable, and faithful to the logical Model.
+
+**Boundary:** Model resolves logical field properties and relationship optionality first. Database Preferences supply only unstated physical mapping choices and never override Model meaning.
+
+<br>
+
+## 12. Credential storage protects values at rest
+
+**Rule:** Connection credentials remain in runtime configuration outside committed files. Credential fields are classified before persistence and resolve to an approved at-rest treatment: verification-only credentials use a one-way transformation, recoverable secrets use authenticated protection or a managed secret store, and other sensitive data follows its declared protection.
+
+**Why:** Committed secrets are exposed, and inconsistent per-caller treatment weakens storage protection.
+
+**Boundary:** Database never exposes credential representations, connection settings, keys, or secret values through its public interface, logs, exports, documentation, or Interface records. Platform delivers required secret Bindings without publishing them to other layers.
+
+<br>
+
+## 13. Declared Initial Data preserves its meaning
+
+**Rule:** When initial data exists for a Model, Database seeds each declared record into its resolved storage mapping. Every key names a resolved Model field, relationships and non-nullable fields are satisfied, records are resolved in dependency order, and seeding is repeatable without duplicate logical records or uniqueness violations.
+
+**Why:** Rebuilding the Database must restore the declared initial state with the same meaning.
+
+**Boundary:** Initial data comes from the Target and Model definitions, never from Database Preferences.
+
+<br>
+
+## 14. Related operations share an explicit Transaction boundary
+
+**Rule:** Database exposes a Transaction boundary through its generic interface so a consumer can group related operations on one Instance. A successful unit commits together; a failed or cancelled unit rolls back, and participating operations do not commit independently. A standalone write forms its own atomic unit. Database owns commit, rollback, cleanup, isolation, conflict handling, retry, and idempotency behavior without exposing the underlying connection.
+
+**Why:** Related changes cannot leave partially applied data when an operation fails.
+
+**Boundary:** The consumer determines which operations belong together. Atomicity across Instances or external services is not implied, and automatic retry never silently duplicates a non-idempotent operation.
+
+<br>
+
+## 15. Portability and schema integrity remain explicit
+
+**Rule:** Every persistence decision is classified as portable contract, portable mapping, or Engine-specific extension. Engine-specific types, commands, indexes, transaction features, and constraints remain isolated and recorded with compatibility and replacement impact. Database verifies that the running structure matches the recorded structure.
+
+**Why:** Portability is meaningful only when its limits are visible, and integrity requires detecting drift.
+
+**Boundary:** Preferences may select an Engine-specific feature, but it cannot silently change the portable contract. Application code never repairs drift with ad-hoc structural commands.
+
+<br>
+
+## 16. Persistence security and observability remain bounded
+
+**Rule:** Database applies least privilege to runtime identities, records security-relevant persistence outcomes without secrets, and provides signals for connection failure, Migration failure, constraint violation, Transaction conflict, and protected-data access. Logs, metrics, traces, backups, exports, and error payloads follow the same protection rules as normal reads.
+
+**Why:** A secure schema can still leak through diagnostics, backups, or overpowered identities.
+
+**Boundary:** Database does not own application authorization or business policy, but it enforces its own storage access boundary and never treats observability as an exception to data protection.
+
+<br>
+
+## At a Glance
+
+- **Must** — Keep Database as an independent package with one documented public boundary. *(1)*
+- **Never** — Let consumers depend on private persistence resources or treat Migration as a public runtime interface. *(1)*
+- **Must** — Preserve the order Database Interface → Data Logic and Mapping → Storage Adapter → Engine. *(2)*
+- **Never** — Let an internal layer bypass its next boundary or let consumers bypass Database Interface. *(2)*
+- **Must** — Preserve Model meaning while adding only persistence representation, durability, and enforcement. *(3)*
+- **Never** — Invent domain definitions, rules, records, or application-context behavior in Database. *(3)*
+- **Must** — Keep the portable contract independent of a particular Engine and isolate extensions. *(4)*
+- **Never** — Present an Engine-specific guarantee as portable without declaring its limits. *(4)*
+- **Must** — Keep the complete reproducible Database structure, history, and initial data in the repository. *(5)*
+- **Never** — Depend on undocumented server state or manual structural work. *(5)*
+- **Must** — Record every storage change as an ordered Migration with safe reversal or explicit recovery. *(6)*
+- **Never** — Change storage objects directly from application code or apply an unverified Migration. *(6)*
+- **Must** — Keep all persistence ownership inside Database and all other responsibilities in their owning Components. *(7)*
+- **Must** — Route all persistent data access through one generic Model-driven Database Interface. *(8)*
+- **Must** — Use is_active with enable or disable for activation when that field exists. *(8)*
+- **Never** — Require untyped Model-name strings, expose connections, or let controlled commands bypass protections. *(8)*
+- **Must** — Give every Instance a stable identity, publish its Registry, and use exactly one explicit default. *(9)*
+- **Never** — Expose raw connections or secrets through the Registry. *(9)*
+- **Must** — Keep every persistent mapping and storage constraint traceable to its source Model. *(10)*
+- **Never** — Turn a non-persistent Model into stored structure or silently weaken a persistence rule. *(10)*
+- **Must** — Preserve resolved relationship cardinality, optionality, roles, and required physical enforcement. *(11)*
+- **Never** — Let physical mapping defaults override Model meaning. *(11)*
+- **Must** — Apply an approved protected at-rest treatment to every persisted credential. *(12)*
+- **Never** — Expose credential representations, keys, connection settings, or secret values through Database outputs. *(12)*
+- **Must** — Seed declared initial data repeatably and preserve its Model meaning. *(13)*
+- **Never** — Source initial data from Database Preferences. *(13)*
+- **Must** — Provide an explicit Transaction boundary with atomic commit and rollback per Instance. *(14)*
+- **Never** — Imply cross-Instance atomicity or silently duplicate non-idempotent work through retries. *(14)*
+- **Must** — Classify portability, isolate Engine-specific extensions, and detect schema drift. *(15)*
+- **Never** — Repair drift with ad-hoc structural commands or hide compatibility impact. *(15)*
+- **Must** — Apply least privilege, protected observability, and signals for security-relevant persistence outcomes. *(16)*
+- **Never** — Treat logs, backups, exports, or diagnostics as exceptions to data protection or take ownership of application authorization. *(16)*
