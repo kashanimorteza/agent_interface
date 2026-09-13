@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
   purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "3.2"
+  version: "3.3"
   updated: "2026-09-13"
 
 
@@ -33,7 +33,7 @@ content_map:
   selected: "Empty. Development owns Model's configurable profile and concrete selections."
   options: "Empty. Development catalogues Model's concrete technical alternatives and Platform reference."
   settings: "Defaults for missing properties of Fields already present in the Target's Model definition."
-  implementation: "Technology-independent conventions for Model Foundation, validation, precision, time, public references, unknown Fields, and verification."
+  implementation: "Technology-independent conventions for validation, precision, time, public references, unknown Fields, and verification."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -49,9 +49,7 @@ content:
   settings:
 
     field_defaults:
-      purpose: "Defaults for missing properties of Fields already present in a Model definition. These entries never add Fields."
-      property_meaning:
-        generated: "A true value means the Field value is supplied automatically, while Model does not select the generation mechanism."
+      purpose: "Defaults for missing properties of Fields already present in a Model definition."
       common_fields:
         id:
           type: "integer"
@@ -85,10 +83,6 @@ content:
 
   # <!-------------------------------------------- implementation -->
   implementation:
-    foundation:
-      name: "ModelBase"
-      module: "model._base"
-      concrete_models_use: "ModelBase"
     validation:
       declarative_constraints_first: true
       custom_validation: "only when declarative constraints are insufficient"

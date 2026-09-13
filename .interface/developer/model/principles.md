@@ -2,13 +2,14 @@
 
 Model defines the authoritative logical meaning of the Target's domain through reusable Domain Definitions. It preserves domain identity, fields, relationships, rules, and behavior as one coherent Model boundary with an explicit Public Interface.
 
-Model owns domain meaning and behavior determinable from its own data. It does not own Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or any other concern outside that logical boundary.
+Model owns domain meaning and behavior determinable from its own data.
 
 <br>
 
 ## Terms
 
 - **Domain Definition** — the authoritative logical definition of one meaningful concept in the Target's domain.
+- **Field** — one named property of a Domain Definition, with its domain meaning and applicable constraints.
 - **Model Foundation** — the technology-independent common foundation through which concrete Model realizations receive shared configuration and behavior.
 - **Intrinsic Rule** — a domain rule that can be evaluated entirely from the data of the Domain Definition it governs.
 - **Domain Relationship** — a logical association between Domain Definitions whose meaning and constraints come from the Target.
@@ -123,6 +124,16 @@ Conceptual example:
 
 <br>
 
+## 9. Model remains separate from external concerns
+
+**Rule:** Model never owns Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or any other concern outside its logical domain boundary.
+
+**Why:** A narrow boundary keeps Model reusable and prevents external concerns from changing or obscuring domain meaning.
+
+**Boundary:** A separate Component may consume Model's Public Interface or realize an external concern using Model data, but that use does not transfer ownership to Model.
+
+<br>
+
 ## At a Glance
 
 - **Must** — Give every meaningful Target domain concept exactly one authoritative Domain Definition in Model. *(1)*
@@ -146,3 +157,5 @@ Conceptual example:
 - **Must** — Name Model concepts from Target domain meaning. *(8)*
 - **Never** — Name a Model concept after an implementation tool or consumer-specific representation unless that name is itself a Target concept. *(8)*
 - **Must** — Take language-level casing and file or folder naming conventions from the applicable Development technology profile. *(8)*
+- **Never** — Let Model own Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or another concern outside its logical boundary. *(9)*
+- **Must** — Keep external realization outside Model ownership even when another Component consumes Model data or its Public Interface. *(9)*
