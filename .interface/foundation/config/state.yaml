@@ -1,0 +1,113 @@
+meta:
+  path: ".interface/foundation/config/state.yaml"
+  path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+read_order:
+  - "active"
+  - "phases"
+  - "implementation"
+  - "launch"
+  - "history"
+  - "blockers"
+  - "open_questions"
+
+content_map:
+  active: "Current or most recently recorded Workflow position."
+  phases: "Aggregate Planning, Development, and Review progress by phase identifier."
+  implementation: "Latest end-to-end Implement result."
+  launch: "Current runtime result and verified access points."
+  history: "Append-only State-changing Workflow events."
+  blockers: "Unresolved critical conditions."
+  open_questions: "Unresolved critical questions."
+
+content:
+  active:
+    mode: "configuring"
+    phase: null
+    mode_reason: "Configure initialized operational Config and synchronized phase records for the current Target."
+    set_by: "configure"
+    set_at: "2026-09-13T23:08:38Z"
+
+  phases:
+    P1:
+      id: "P1"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+
+  implementation:
+    status: "in progress"
+    started_at: "2026-09-13T23:08:38Z"
+    completed_at: null
+    updated_by: "implement"
+    updated_at: "2026-09-13T23:08:38Z"
+
+  launch:
+    status: "not launched"
+    environment: null
+    method: null
+    access_points: []
+    updated_by: "initialization"
+    updated_at: null
+
+  history:
+    - id: "H1"
+      operation: "configure"
+      phase: null
+      event: "Initialized State, Plan, and Review Config from their operational Schemas and synchronized phase records P1-P6 from current Target phase identities."
+      outcome: "completed with one recorded Environment blocker"
+      recorded_by: "configure"
+      recorded_at: "2026-09-13T23:08:38Z"
+
+  blockers:
+    B1:
+      id: "B1"
+      blocks: "Platform Environment preparation for the selected VPS Launch Item"
+      what_is_missing: "The selected Launch Item (VPS) declares a Linux Environment with Operating System Instructions to install net-tools and iptables and remove ufw. The current execution host is macOS, and installing packages or modifying firewall configuration are system-level changes that require explicit Human action rather than automatic Configure execution."
+      consequence: "Local Environment preparation for the selected Launch Item is not performed by Configure. This does not block Planning or Development for phases targeting Model, Database, Backend, or Frontend; it blocks safe automatic Launch preparation until resolved."
+      resolution_owner: "Human"
+      raised_by: "configure"
+      raised_at: "2026-09-13T23:08:38Z"
+
+  open_questions: {}
