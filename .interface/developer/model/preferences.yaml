@@ -14,9 +14,9 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Model choices back into it."
   changed_by: "The human, directly. A missing critical Model choice is raised through State."
   precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
-  consumption: "Use the language, packages, and tools assigned to Model by Development Preferences and the Environment and Package Management assigned by Platform Preferences. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in this file. Preserve every explicit property, including false and null, and never write resolved values back into this file."
+  consumption: "Use Model's identity, language, packages, Package Management, and Platform Instance reference from its Component Profile in Development Preferences. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in this file. Preserve every explicit property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
-  version_resolution: "This file owns no versioned technology. Development Preferences resolve language, package, and tool versions, while Platform Preferences resolve Environment and Package Management versions."
+  version_resolution: "This file owns no versioned technology. Development Preferences resolve every versioned technical item assigned to Model."
   matching: "An explicit Model property takes priority, followed by an exact-name entry in field_defaults.common_fields, then a matching field_defaults.field_patterns entry. A default applies only to a missing property of an existing Field; otherwise no default applies. A name or pattern never creates a Field, relationship, or behavior."
 
 
@@ -30,8 +30,8 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty. Development and Platform own Model's concrete technology selections."
-  options: "Empty. Development and Platform catalogue Model's concrete technology alternatives."
+  selected: "Empty. Development owns Model's configurable profile and concrete selections."
+  options: "Empty. Development catalogues Model's concrete technical alternatives and Platform reference."
   settings: "Defaults for missing properties of Fields already present in the Target's Model definition."
   implementation: "Technology-independent conventions for Model Foundation, validation, precision, time, public references, unknown Fields, and verification."
 

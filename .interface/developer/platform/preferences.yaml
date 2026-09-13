@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/developer/platform/preferences.yaml"
-  path_note: "The Preferences layer of the Platform Component — supported Environment, Package Management, and Launch choices and their defaults."
-  purpose: "Technical choices for preparing runtime Environments, managing Component packages, and bringing the completed Target online through a Launch."
+  path_note: "The Preferences layer of the Platform Component — supported Environment and Launch choices and their defaults."
+  purpose: "Technical choices for preparing a runtime Environment and bringing the completed Target online through a Launch."
   standard: "Agent Project Interface"
-  version: "2.0"
+  version: "3.0"
   updated: "2026-09-13"
 
 
@@ -14,10 +14,10 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Platform choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit Target value and every applicable Platform Principle take precedence over this file."
-  consumption: "Operations use these Preferences only when the Target leaves a Platform choice unstated. Resolve each Component's selected Package Management option relative to that Component's root."
+  consumption: "Operations use these Preferences only when the Target leaves a Platform choice unstated."
   selection: "Use the selected default definition unless the Target explicitly selects another compatible option."
   version_resolution: "Resolve an unpinned version to a concrete compatible stable version and preserve an explicit concrete version."
-  matching: "Match Environment, Launch, and Package Management selections by their exact keys and each Component assignment by the canonical identifier defined in Development Principles."
+  matching: "Match Environment and Launch choices to their applicable named definitions."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -30,8 +30,8 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The default Environment and Launch definitions together with Package Management assigned to each Component."
-  options: "The supported named Environment, Launch, and Package Management definitions."
+  selected: "The default Environment and Launch definitions."
+  options: "The supported named Environment and Launch definitions."
   settings: "Shared rules for applying Platform definitions."
   implementation: "Empty. Platform currently declares no separate implementation conventions outside its options and settings."
 
@@ -41,9 +41,6 @@ content:
   selected:
     environment: "linux"
     launch: "default"
-    components:
-      model:
-        package_manager: "uv"
 
   options:
     environments:
@@ -79,13 +76,6 @@ content:
             - "frontend"
         already_running: "verify_and_preserve"
         failure: "stop_dependents_and_report"
-    package_managers:
-      uv:
-        version: "latest-compatible"
-        lockfile: "uv.lock"
-        isolated_environment:
-          directory: ".venv"
-
   settings:
     environment:
       inspect_before_preparation: true

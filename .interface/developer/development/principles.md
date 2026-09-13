@@ -1,32 +1,37 @@
 # Development Principles
 
-Development defines the fixed high-level composition through which independent peer Developer Components form one application system. It owns the catalogue of participating Components, their roles and roots, the allowed dependency graph, the shared technology profiles assigned to them, and the shared rules that make their boundaries work together.
+Development defines the high-level composition through which independent peer Developer Components form one application system. It owns their shared architectural concepts, configurable Component Profiles, declared dependency graph, centralized technical catalogues, and cross-Component standards.
 
-Development owns composition rather than the internal design of Model, Database, Backend, Frontend, or Platform. Each of those Components retains authority over the details inside its boundary.
+Development owns composition rather than the internal meaning or implementation behavior of another Component. Each Participating Component remains focused on its own role and receives shared technical and platform selections through its Development Component Profile.
 
 <br>
 
 ## Terms
 
-- **Participating Component** — one of Model, Database, Backend, Frontend, or Platform as a peer Developer Component governed by Development's composition standard.
-- **Application Package** — a Developer Component of type `library` or `executable`, with an owned implementation boundary and a Public Interface appropriate to its type.
-- **Component Type** — one of `library`, `executable`, or `guideline`: a library is consumed through imports, an executable runs as an application or service, and a guideline defines standards, configuration, instructions, or supporting artifacts without being an Application Package.
-- **Public Interface** — the provider-owned surface intended for consumers, including any public classes, types, functions, APIs, commands, or other supported entry points.
-- **Connection** — one direct dependency from a consumer Component to a provider Component.
-- **Runtime Configuration** — the runtime settings and secret references owned within an Application Package boundary.
-- **Cross-cutting Capability** — a shared capability whose application to more than one Component requires Development-level coordination.
-- **Shared Technology Profile** — one centrally defined language, package, or tool option that Development Preferences may assign to one or more Participating Components.
+- **Participating Component** — one peer Developer Component declared by a Component Profile in Development Preferences.
+- **Component Profile** — the configurable Development Preferences entry that gives one Participating Component its identity, name, root, type, role, and applicable Language Item, Database Item, and Platform Instance references.
+- **Application Package** — a Participating Component whose selected Component Type makes it an importable library or executable application boundary.
+- **Component Type** — the conceptual form of a Participating Component, such as a library, executable, or guideline.
+- **Language Item** — one reusable Development Preferences definition containing a programming language's version, Package Management, conventions, tools, and role-specific packages.
+- **Package Management** — the language-owned technical definition used to resolve, install, isolate, and lock that language's packages.
+- **Database Item** — one reusable Development Preferences definition containing a database technology's version, driver, storage, connection, and naming defaults.
+- **Package Role** — a named technical responsibility inside a Language Item, such as modeling, API, persistence mapping, or migration, resolved only for the Component role that uses it.
+- **Platform Instance Reference** — the identifier of one Platform-owned Instance selected by a Component Profile without copying that Instance's definition into Development.
+- **Public Interface** — the provider-owned surface intended for consumers, including supported types, functions, APIs, commands, or other entry points.
+- **Connection** — one configurable direct dependency from a consumer Component Profile to a provider Component Profile.
+- **Runtime Configuration** — runtime settings and secret references owned inside an Application Package boundary.
+- **Cross-cutting Capability** — a shared capability whose application to more than one Participating Component requires Development-level coordination.
 
 <br>
 
 ## Relationships
 
-- **Consumes nothing** — Development defines the composition standard without consuming the internal definitions of another Component.
-- **Consumed by Model, Database, Backend, Frontend, and Platform** — these Components use Development's catalogue, boundaries, Connections, Shared Technology Profiles, and shared rules.
+- **Consumes Platform** — references Platform-owned Instances without duplicating their definitions.
+- **Consumed by every Participating Component** — provides its Component Profile, Connections, applicable technical items, and shared rules.
 
 <br>
 
-Shared Technology Profiles, their Component assignments, Development publication, and Cross-cutting Capability defaults belong to Development Preferences. Component-owned conceptual defaults remain in the Preferences of that Component, Environment and Package Management choices belong to Platform Preferences, and implementation applies those choices to the current project definition.
+Component Profiles, Language Items, Database Items, Connection entries, publication defaults, and Cross-cutting Capability applicability belong to Development Preferences. Platform Instance and Launch definitions belong to Platform Preferences. Component-specific conceptual defaults remain in the Preferences of their owning Component, and implementation applies all resolved selections to the current Target.
 
 <br>
 
@@ -34,157 +39,140 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 <br>
 
-## 1. Development fixes the participating Component catalogue
+## 1. Every Participating Component has one configurable Component Profile
 
-**Rule:** Development composes the following peer Participating Components. Their canonical identifiers, names, repository-relative root paths, types, and high-level roles are fixed; neither a project nor another Component changes them.
+**Rule:** Development Preferences declares exactly one Component Profile for every Participating Component. Each profile has one canonical identifier and declares its name, repository-relative root, Component Type, high-level role, and any applicable Language Item, Database Item, or Platform Instance reference. Profile values remain configurable Preferences rather than fixed Principle values. Component roots are unique, do not overlap or nest, and contain the files owned by their Components. Participating Components are peers, and each owns its internal organization below its root.
 
-| Component | Name | Root path | Type | High-level role |
-| --- | --- | --- | --- | --- |
-| `model` | `model` | `model` | `library` | Defines the system's shared Models. |
-| `database` | `database` | `database` | `library` | Owns persistence and access to stored data. |
-| `backend` | `backend` | `backend` | `executable` | Provides server-side application services. |
-| `frontend` | `frontend` | `frontend` | `executable` | Provides the user-facing application through Backend services. |
-| `platform` | `platform` | `platform` | `guideline` | Defines Environment and Launch standards and their supporting artifacts. |
+**Why:** One configurable profile gives every Component and Connection a stable resolution point without mixing mutable project defaults into Development philosophy.
 
-Each root path identifies the Component's root directory relative to the repository root, never an absolute path or an individual file. Root paths are unique, do not overlap or nest inside one another, and contain the files owned by their Components. Each Component owns the internal organization below its root.
-
-**Why:** One stable catalogue gives every Component and Connection the same identity while preserving physically separate boundaries.
-
-**Boundary:** The catalogue does not make a Participating Component a child of Development; all remain peer Developer Components with independent ownership. Another Participating Component exists only after Development Principles explicitly add it. Internal structures, services, tools, or packages created by a Component do not automatically become Participating Components.
+**Boundary:** An internal structure, service, tool, or package created inside a Component does not become a Participating Component merely because it has its own files or package boundary.
 
 <br>
 
 ## 2. Every Application Package is logically independent
 
-**Rule:** Each Application Package has one cohesive responsibility and owns its internal implementation, Runtime Configuration, and Public Interface. A consumer may install or import a provider Application Package, its public classes, types, functions, or other public resources when an authorized Connection identifies that provider. Such use remains limited to the provider's Public Interface and never creates logical ownership of its internals. Each Component may organize additional structures, services, tools, or packages inside its own root as its own Principles and Preferences permit.
+**Rule:** Each Application Package has one cohesive responsibility and owns its internal implementation, Runtime Configuration, and Public Interface. An authorized consumer may install or import a provider Application Package or use another supported public entry point only through a declared Connection and the provider's Public Interface. Such use never transfers logical ownership of provider internals.
 
-**Why:** Logical independence lets an Application Package evolve or be replaced without forbidding the explicit dependencies required to compose a working system.
+**Why:** Logical independence lets an Application Package evolve or be replaced while preserving the explicit dependencies needed to compose a working system.
 
-**Boundary:** Development does not prescribe internal nesting, source layout, dependency-management mechanism, or installation method.
-
-<br>
-
-## 3. Consumers use only provider-owned Public Interfaces
-
-**Rule:** Every cross-Component interaction uses a Public Interface owned by the provider. The provider determines how many public classes, types, functions, APIs, commands, or other entry points it exposes and how they are implemented. A Connection identifies only its consumer and provider; it does not duplicate the provider's interface definition.
-
-**Why:** Consumers can safely depend on a supported contract while providers remain free to change private implementation.
-
-**Boundary:** A consumer never reads, changes, or depends on another Component's private implementation, internal storage, private resources, or internal Runtime Configuration. Development defines the interface standard but not the contents or implementation method of a Component's Public Interface.
+**Boundary:** Development does not prescribe a Component's internal nesting, source layout, or private implementation structure.
 
 <br>
 
-## 4. The application dependency graph is fixed, explicit, and acyclic
+## 3. Cross-Component use stays behind provider-owned Public Interfaces
 
-**Rule:** The application architecture permits exactly these direct Connections:
+**Rule:** Every cross-Component interaction uses a Public Interface owned by the provider. The provider owns the number, shape, and implementation of its public entry points. A Connection identifies only its consumer and provider and never duplicates the provider's interface definition.
 
-| Connection | Consumer | Provider |
-| --- | --- | --- |
-| `frontend_to_backend` | `frontend` | `backend` |
-| `backend_to_database` | `backend` | `database` |
-| `backend_to_model` | `backend` | `model` |
-| `database_to_model` | `database` | `model` |
+**Why:** Consumers depend on a supported contract while providers remain free to change private implementation.
 
-The direction runs from consumer to provider and represents dependency, not the direction in which request and response data travel. Connections are direct, non-transitive, and acyclic. Every direct use of another Application Package requires its own listed Connection; an indirect path never grants direct access. Platform is a guideline Component and does not participate in the runtime Connection graph.
-
-**Why:** A complete directed graph makes dependency ownership visible and prevents hidden, circular, or accidentally inherited coupling.
-
-**Boundary:** A provider's response to its consumer does not create a reverse Connection. A Connection does not select a transport or limit the provider to one Public Interface.
+**Boundary:** A consumer never reads, changes, or depends on another Component's private implementation, internal storage, private resources, or internal Runtime Configuration. Development defines the interface standard but not a Component's interface contents or implementation method.
 
 <br>
 
-## 6. Cross-cutting Capabilities are activated through `applies_to`
+## 4. The declared Connection graph is direct, explicit, and acyclic
 
-**Rule:** The Development Preferences file declares each Cross-cutting Capability with one `applies_to` list. An empty list means the capability is inactive; a non-empty list activates it only for the listed Components. Every entry is a unique canonical Component identifier from the fixed catalogue. Each listed Component applies the shared capability requirement while retaining ownership of its internal implementation.
+**Rule:** Every permitted direct dependency is declared exactly once as a Connection in Development Preferences. Connection direction runs from consumer to provider and represents dependency rather than request-and-response data direction. Connections are direct, non-transitive, and acyclic; an indirect path never grants direct access.
 
-**Why:** One applicability list gives shared behavior a single coordination point without transferring internal implementation ownership to Development.
+**Why:** One declared directed graph makes dependency ownership visible and prevents hidden, circular, or accidentally inherited coupling.
 
-**Boundary:** Development does not use a separate `enabled` value. A Component not listed in `applies_to` does not inherit that capability, and behavior that is wholly internal to one Component remains owned there.
+**Boundary:** A provider response creates no reverse Connection, a Connection selects no transport, and a Platform Instance Reference is configuration rather than a runtime dependency Connection.
 
 <br>
 
-## 9. Every Component has complete, safe, and derived documentation
+## 6. Cross-cutting Capabilities are activated through applicability
 
-**Rule:** Every Participating Component is generated with `<component_root>/README.md`. Its README explains the Component's responsibility, supported surface, non-secret configuration, applicable setup and use, and practical executable examples. An Application Package documents its Public Interface, installation and run or usage method, and dependencies derived from the fixed Connection graph. Platform documents its Environment and Launch inputs, outputs, supporting artifacts, and usage. Documentation remains consistent with public behavior and enables a human or Agent to understand and use the Component without inspecting its private implementation.
+**Rule:** Development Preferences declares each Cross-cutting Capability with one applicability list. An empty list makes the capability inactive; a non-empty list activates it only for the uniquely listed canonical Component identifiers. Each listed Component applies the shared requirement while retaining ownership of its internal realization.
 
-Documentation may contain code and may demonstrate how an API key or other secret is supplied, but it uses placeholders, environment-variable names, or safe secret references and never contains a real usable credential, token, or secret value. When public usage changes, the README changes with it.
+**Why:** One applicability list coordinates shared behavior without transferring implementation ownership to Development.
 
-**Why:** A well-documented boundary remains understandable during initial generation and later maintenance without exposing private implementation or sensitive values.
+**Boundary:** Development uses no separate enabled flag for a Cross-cutting Capability. Behavior wholly internal to one Component remains owned by that Component.
 
-**Boundary:** README files are derived explanations. They may support later Understanding, but they never replace or override Principles, Preferences, the implemented Public Interface, or another authoritative project source.
+<br>
+
+## 9. Every Component has complete, safe, and operational documentation
+
+**Rule:** Every Participating Component is generated with a README at the root selected by its Component Profile. The README briefly explains the Component, its actual public surface and structure, setup, installation, configuration, use, run procedure when applicable, verification, troubleshooting, and every active capability relevant to working with it. It uses the resolved technical selections to provide accurate executable examples. Documentation stays consistent with public behavior and enables a human or Agent to understand and use the Component without inspecting private implementation.
+
+A README may show safe code and secret-supply mechanisms, but it uses placeholders, environment-variable names, or safe secret references and never includes a usable credential, token, or secret value. Public usage changes update the README.
+
+**Why:** Operational documentation gives each resolved Component one practical usage guide without duplicating its governing philosophy.
+
+**Boundary:** A README never copies or restates Principles and never replaces or overrides Principles, Preferences, the implemented Public Interface, or another authoritative project source.
 
 <br>
 
 ## 10. Unstated Development decisions follow one precedence order
 
-**Rule:** When the project leaves a Development-owned decision unstated, the decision applies Development Principles first, Development Preferences second, and professional judgment last.
+**Rule:** When the Target leaves a Development-owned decision unstated, resolution applies Development Principles first, Development Preferences second, and compatible professional judgment last.
 
-**Why:** A short precedence order preserves mandatory architecture, uses the Human's defaults, and leaves judgment only for a genuine gap.
+**Why:** A short precedence order preserves architecture, applies the Human's defaults, and leaves judgment only for a genuine gap.
 
-**Boundary:** Professional judgment never overrides a Development Principle or an applicable Development Preference. Component-internal decisions remain governed by that Component's own Principles and Preferences.
+**Boundary:** Professional judgment never overrides a Development Principle or an applicable Development Preference. Component-internal conceptual decisions remain governed by that Component's own Principles and Preferences.
 
 <br>
 
 ## 11. Runtime Configuration ownership remains inside its boundary
 
-**Rule:** Each Application Package owns the contract and internal representation of its Runtime Configuration. Platform owns Environment and Launch configuration and may deliver required runtime values to an Application Package through its documented inputs. Runtime secret values remain in appropriate secret sources rather than Interface files or documentation.
+**Rule:** Each Application Package owns the contract and internal representation of its Runtime Configuration. A selected Platform Instance and Launch may deliver required runtime values through documented inputs. Runtime secret values remain in appropriate secret sources rather than Interface files or documentation.
 
-**Why:** Explicit configuration ownership lets Platform launch the system without taking ownership of application internals or exposing secrets.
+**Why:** Explicit configuration ownership allows Platform to operate the system without taking ownership of application internals or exposing secrets.
 
-**Boundary:** One Application Package never directly reads or modifies another's internal Runtime Configuration. Platform may coordinate delivery, but it never redefines the internal configuration contract owned by an Application Package.
+**Boundary:** One Application Package never directly reads or modifies another's internal Runtime Configuration. Platform may coordinate delivery but never redefines the internal contract owned by an Application Package.
 
 <br>
 
 ## 12. Public Interface changes propagate through direct consumers
 
-**Rule:** A provider may change its private implementation without requiring consumer changes while its Public Interface remains compatible. When a Public Interface changes, every direct consumer identified by the Connection graph is reviewed and, when affected, regenerated or updated and verified. Propagation continues through later Connections only when an affected consumer's own Public Interface also changes.
+**Rule:** A provider may change private implementation without consumer changes while its Public Interface remains compatible. When a Public Interface changes, every direct consumer in the declared Connection graph is reviewed and, when affected, updated or regenerated and verified. Propagation continues through later Connections only when an affected consumer's own Public Interface also changes.
 
-**Why:** Change follows the actual dependency graph, keeping consumers correct without rebuilding unrelated Components.
+**Why:** Change follows actual dependencies, keeping consumers correct without rebuilding unrelated Components.
 
-**Boundary:** An internal provider change with no Public Interface effect does not trigger consumer work, and a Public Interface change does not authorize changes outside the affected dependency path.
+**Boundary:** A private change with no Public Interface effect triggers no consumer work, and a Public Interface change authorizes no change outside the affected dependency path.
 
 <br>
 
-## 13. Development centralizes Shared Technology Profiles
+## 13. Development centralizes reusable technical items
 
-**Rule:** Development Preferences defines each Shared Technology Profile once and explicitly assigns the selected language and Component-relevant package or tool choices to each Participating Component. A Participating Component consumes its assigned profiles and never duplicates those concrete selections in its own Preferences. More than one Component may use the same Shared Technology Profile.
+**Rule:** Development Preferences defines every Language Item and Database Item once. A Language Item contains its version, Package Management choice, naming and typing conventions, quality tools, and Package Roles grouped by the Participating Component that uses them. A Database Item contains its version and applicable technical defaults. Each Component Profile references the applicable items and automatically consumes only the package group matching its own canonical Component identifier. Concrete language, package, database, version, tool, and Package Management selections are never duplicated in a participating Component's own Principles or Preferences.
 
-**Why:** One central catalogue keeps compatible technology selections consistent across Components and removes repeated definitions.
+**Why:** Central technical catalogues preserve all reusable choices in one place while letting Components focus exclusively on their conceptual responsibilities.
 
-**Boundary:** A Component's conceptual defaults and internal behavior conventions remain in its own Preferences. Runtime Environment and Package Management choices remain owned by Platform rather than a Shared Technology Profile.
+**Boundary:** A Component Profile may omit an inapplicable technical reference. Development only references a Platform Instance; the Instance and Launch definitions and all their internal parameters remain owned by Platform.
 
 <br>
 
 ## At a Glance
 
-- **Must** — Compose the fixed peer Model, Database, Backend, Frontend, and Platform catalogue with its exact identifiers, names, roots, types, and roles. *(1)*
-- **Never** — Let a project or Component override the fixed catalogue. *(1)*
-- **Must** — Interpret every Component path as a unique, non-absolute, non-overlapping repository-relative root containing that Component's files, while each Component owns its internal organization below that root. *(1)*
-- **Never** — Treat a Participating Component as Development's child or an internal item as a Participating Component unless Development Principles explicitly add it. *(1)*
+- **Must** — Declare exactly one configurable Component Profile for every Participating Component. *(1)*
+- **Must** — Give each profile a canonical identifier, name, unique repository-relative root, Component Type, role, and its applicable technical or Platform references. *(1)*
+- **Never** — Fix configurable Component Profile values inside Principles or treat an internal item as a Participating Component. *(1)*
+- **Must** — Keep Participating Components peer-owned and let each own its organization below its non-overlapping root. *(1)*
 - **Must** — Keep every Application Package cohesive and responsible for its implementation, Runtime Configuration, and Public Interface. *(2)*
-- **Must** — Limit every authorized import or installation dependency to the provider's Public Interface. *(2)*
-- **Never** — Turn use of a provider into ownership of or coupling to its internals. *(2)*
-- **Never** — Let Development prescribe a Component's internal structure, dependency management, or installation method. *(2)*
-- **Must** — Route every cross-Component interaction through a provider-owned Public Interface, while each Connection identifies only its consumer and provider without duplicating the interface definition. *(3)*
-- **Must** — Let each provider own the number, shape, and implementation of its Public Interfaces. *(3)*
+- **Must** — Limit every authorized cross-package use to a declared Connection and the provider's Public Interface. *(2)*
+- **Never** — Turn provider use into ownership of its internals or let Development prescribe private implementation structure. *(2)*
+- **Must** — Route every cross-Component interaction through a provider-owned Public Interface. *(3)*
+- **Must** — Let each provider own its public entry points while each Connection records only consumer and provider. *(3)*
 - **Never** — Access another Component's private implementation, storage, resources, or internal Runtime Configuration. *(3)*
-- **Must** — Use only the four fixed direct consumer-to-provider Connections. *(4)*
-- **Must** — Treat Connections as direct, non-transitive, acyclic dependencies rather than request-and-response data directions; a provider response creates no reverse Connection, and a Connection selects no transport. *(4)*
-- **Never** — Use an unlisted direct dependency or include Platform in the runtime Connection graph. *(4)*
-- **Must** — Activate each Cross-cutting Capability only for the unique canonical Component identifiers in its `applies_to` list, while each listed Component retains ownership of its internal implementation. *(6)*
-- **Never** — Use a separate `enabled` value or apply a Cross-cutting Capability to an unlisted Component. *(6)*
-- **Must** — Generate `<component_root>/README.md` for every Participating Component with the content appropriate to its type. *(9)*
-- **Must** — Keep each README consistent with public behavior and sufficient for human or Agent understanding and use. *(9)*
-- **Never** — Put a real credential, token, or secret value in documentation. *(9)*
-- **Never** — Treat derived README content as a replacement for an authoritative source. *(9)*
-- **Must** — Resolve an unstated Development-owned decision through Principles, Preferences, then professional judgment, while Component-internal decisions remain governed by that Component's own Principles and Preferences. *(10)*
-- **Never** — Let professional judgment override a Development Principle or applicable Preference. *(10)*
+- **Never** — Let Development define a provider's interface contents or realization method. *(3)*
+- **Must** — Declare every permitted direct dependency exactly once in a direct, non-transitive, acyclic Connection graph. *(4)*
+- **Never** — Infer direct access, reverse dependency, or transport from an indirect path or provider response. *(4)*
+- **Never** — Treat a Platform Instance Reference as a runtime dependency Connection. *(4)*
+- **Must** — Activate a Cross-cutting Capability only for unique canonical identifiers in its applicability list. *(6)*
+- **Must** — Keep realization of an active Cross-cutting Capability inside each listed Component. *(6)*
+- **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component. *(6)*
+- **Must** — Generate a root README that explains actual structure, public use, setup, configuration, operation, verification, troubleshooting, and active capabilities with executable resolved-technology examples. *(9)*
+- **Must** — Keep every README consistent with public behavior and update it when public usage changes. *(9)*
+- **Never** — Expose a usable secret in documentation or let a README copy, replace, or override an authoritative source. *(9)*
+- **Must** — Resolve an unstated Development decision through Principles, Preferences, then compatible professional judgment. *(10)*
+- **Never** — Let judgment override an applicable Principle or Preference. *(10)*
+- **Must** — Leave Component-internal conceptual decisions to that Component's Principles and Preferences. *(10)*
 - **Must** — Keep each Application Package's Runtime Configuration contract and representation within its boundary. *(11)*
-- **Must** — Let Platform coordinate runtime value delivery through documented Environment and Launch inputs. *(11)*
-- **Never** — Store runtime secrets in Interface files or documentation, or let another Component redefine or directly modify owned Runtime Configuration. *(11)*
-- **Must** — Review, update or regenerate when affected, and verify every direct consumer after a provider's Public Interface changes. *(12)*
+- **Must** — Let Platform deliver runtime values through documented inputs without redefining an owned contract. *(11)*
+- **Never** — Store runtime secrets in Interface files or documentation or let one package directly modify another's Runtime Configuration. *(11)*
+- **Must** — Review, update or regenerate when affected, and verify every direct consumer after a Public Interface changes. *(12)*
 - **Must** — Continue propagation only when an affected consumer's own Public Interface changes. *(12)*
-- **Never** — Trigger consumer work for a private change that preserves the Public Interface or change Components outside the affected dependency path. *(12)*
-- **Must** — Define every Shared Technology Profile once and explicitly assign selected languages and Component-relevant packages or tools to Participating Components. *(13)*
-- **Must** — Let multiple Components consume one Shared Technology Profile without duplicating its concrete selections in their own Preferences. *(13)*
-- **Never** — Move Component-owned conceptual defaults, runtime Environment, or Package Management choices into a Shared Technology Profile. *(13)*
+- **Never** — Trigger consumer work for a private compatible change or change Components outside the affected dependency path. *(12)*
+- **Must** — Define each Language Item and Database Item once with its owned configurable technical details. *(13)*
+- **Must** — Resolve a Component Profile through applicable item references and only its own role-specific package group. *(13)*
+- **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable. *(13)*
+- **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Instance or Launch definitions into Development. *(13)*

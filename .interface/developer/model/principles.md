@@ -2,7 +2,7 @@
 
 Model defines the authoritative logical meaning of the Target's domain through reusable Domain Definitions. It preserves domain identity, fields, relationships, rules, and behavior as one coherent Model boundary with an explicit Public Interface.
 
-Model owns domain meaning and behavior determinable from its own data. It does not own Initial Data, persistence, transport, presentation, workflow orchestration, runtime Environment, Package Management, or any other concern outside that logical boundary.
+Model owns domain meaning and behavior determinable from its own data. It does not own Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or any other concern outside that logical boundary.
 
 <br>
 
@@ -17,13 +17,12 @@ Model owns domain meaning and behavior determinable from its own data. It does n
 
 ## Relationships
 
-- **Consumes Development** — uses its fixed role, root, type, shared rules, and assigned language, packages, and tools.
-- **Consumes Platform** — uses its selected Environment and Package Management definitions without owning them.
+- **Consumes Development** — uses its Component Profile, shared rules, technical items, and Platform Instance reference.
 - **Consumed through Development-defined Connections** — provides its Public Interface without repeating the identities or internal behavior of its consumers.
 
 <br>
 
-Model-owned defaults and implementation conventions belong to Model Preferences. Shared languages, packages, and tools belong to Development Preferences, while Environment and Package Management choices belong to Platform Preferences. Implementation applies those sources to the current Target definition.
+Model-owned defaults and implementation conventions belong to Model Preferences. Model's configurable identity and all technical or Platform references belong to its Component Profile in Development Preferences. Implementation applies those sources to the current Target definition.
 
 <br>
 
@@ -53,11 +52,11 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 ## 3. Logical Model meaning is independent of implementation technology
 
-**Rule:** Every Domain Definition and Intrinsic Rule remains understandable independently of a specific language, package, tool, version, runtime, Environment, or Package Management mechanism. A selected technology may realize Model concepts only while preserving their logical meaning.
+**Rule:** Every Domain Definition and Intrinsic Rule remains understandable independently of a specific language, package, tool, version, runtime, or platform mechanism. A selected technology may realize Model concepts only while preserving their logical meaning.
 
 **Why:** Technology can change without redefining the Target's domain.
 
-**Boundary:** Technology independence does not prevent Development and Platform Preferences from selecting concrete compatible mechanisms for implementation and operation.
+**Boundary:** Technology independence does not prevent the Model Component Profile in Development Preferences from selecting concrete compatible technical and Platform references.
 
 <br>
 

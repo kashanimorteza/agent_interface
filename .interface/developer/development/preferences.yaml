@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/developer/development/preferences.yaml"
-  path_note: "The Preferences layer of the Development Component — Shared Technology Profiles, Component assignments, package publication, and Cross-cutting Capability defaults."
-  purpose: "Central technology selections for Participating Components together with Development-owned publication and shared-capability defaults."
+  path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
+  purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
-  version: "4.0"
+  version: "5.0"
   updated: "2026-09-13"
 
 
@@ -13,12 +13,12 @@ policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
   changed_by: "The human, directly. A missing critical Development choice is raised through State instead of being written into this file."
-  precedence: "An explicit project value and every applicable Development Principle take precedence over this file."
-  consumption: "For each Participating Component, resolve every selected technology by its exact key in the matching options catalogue and apply the resulting Shared Technology Profiles. Use packages.publish when the project leaves package publication unstated. Resolve each Cross-cutting Capability from its applies_to list: an empty list is inactive, and a non-empty list applies only to the named Components. Do not write resolved values back into this file."
-  selection: "Use the selected compatible Shared Technology Profiles when the project is silent. For an explicit unlisted or incompatible technology, select a well-supported compatible profile under Development Principles and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "Preserve an explicit concrete version. Resolve latest-compatible and bounded constraints such as 2.x to the latest concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
-  matching: "Match every Component by its canonical identifier, every selected language or package by the exact key in its options catalogue, packages.publish by its exact key, and each Cross-cutting Capability by its exact key. Each applies_to value is a unique canonical Component identifier defined by Development Principles."
-  additional_dependencies: "A Participating Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the dependency in the Component package definition and README; a consequential recurring choice should be added to this human-owned catalogue by the human."
+  precedence: "An explicit Target value and every applicable Development Principle take precedence over this file."
+  consumption: "Resolve each Component Profile first. Match its language and database references to their exact option entries and its platform_instance reference, when present, to the exact Platform-owned Instance. Selecting a Language Item automatically applies only the component_packages group matching that Component's canonical identifier. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
+  selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
+  matching: "Match Components by canonical identifier; languages, databases, and packages by exact item key; role-specific packages by the selected Component identifier; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
+  additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record it in the Component package definition and README; a consequential recurring choice is added to this human-owned catalogue by the human."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -31,9 +31,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The language and Component-relevant package selections assigned to each Participating Component."
-  options: "Shared language, package, version, naming, API, and quality-tool profiles referenced by Component selections."
-  settings: "The package publication default and Cross-cutting Capability applicability lists."
+  selected: "One configurable profile per Participating Component, including identity, path, type, role, and applicable language, database, and Platform Instance references."
+  options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and role-specific packages."
+  settings: "The declared Connection graph, package-publication default, and Cross-cutting Capability applicability."
   implementation: "Empty. Component-specific conceptual realization remains owned by each Participating Component."
 
 
@@ -44,17 +44,52 @@ content:
   selected:
     components:
       model:
+        name: "model"
+        path: "model"
+        type: "library"
+        role: "Defines the system's shared domain Model."
         language: "Python"
-        modeling_package: "Pydantic"
+      database:
+        name: "database"
+        path: "database"
+        type: "library"
+        role: "Owns persistence and access to stored data."
+        language: "Python"
+        database: "SQLite"
+      backend:
+        name: "backend"
+        path: "backend"
+        type: "executable"
+        role: "Provides server-side application services."
+        language: "Python"
+      frontend:
+        name: "frontend"
+        path: "frontend"
+        type: "executable"
+        role: "Provides the user-facing application."
+        language: "TypeScript"
+      platform:
+        name: "platform"
+        path: "platform"
+        type: "guideline"
+        role: "Defines Platform Instance and Launch standards and supporting artifacts."
 
   # <!-------------------------------------------- options -->
   options:
+
     languages:
       Python:
         version: "latest-compatible"
+        package_management:
+          name: "uv"
+          version: "latest-compatible"
+          lockfile: "uv.lock"
+          isolated_environment_directory: ".venv"
         naming:
           variables: "snake_case"
+          functions: "snake_case"
           classes: "PascalCase"
+          constants: "UPPER_SNAKE_CASE"
           files: "snake_case"
           folders: "snake_case"
         typing:
@@ -85,33 +120,180 @@ content:
             name: "pytest"
             package: "pytest"
             version: "latest-compatible"
-    packages:
-      Pydantic:
-        version: "2.x"
-        language: "Python"
-        package: "pydantic"
-        api:
-          base_model: "pydantic.BaseModel"
-          configuration: "pydantic.ConfigDict"
-          field_validation: "pydantic.field_validator"
-          model_validation: "pydantic.model_validator"
-          root_model: "pydantic.RootModel"
-          computed_field: "pydantic.computed_field"
-          field_serialization: "pydantic.field_serializer"
-          model_serialization: "pydantic.model_serializer"
-          serialization:
-            - "model_dump"
-            - "model_dump_json"
-          schema: "model_json_schema"
-        forbidden_legacy_apis:
-          - "validator"
-          - "root_validator"
-          - "parse_obj"
-          - "dict"
-          - "json"
+        component_packages:
+          model:
+            modeling:
+              name: "Pydantic"
+              package: "pydantic"
+              version: "2.x"
+              api:
+                base_model: "pydantic.BaseModel"
+                configuration: "pydantic.ConfigDict"
+                field_validation: "pydantic.field_validator"
+                model_validation: "pydantic.model_validator"
+                root_model: "pydantic.RootModel"
+                computed_field: "pydantic.computed_field"
+                field_serialization: "pydantic.field_serializer"
+                model_serialization: "pydantic.model_serializer"
+                serialization:
+                  - "model_dump"
+                  - "model_dump_json"
+                schema: "model_json_schema"
+              forbidden_legacy_apis:
+                - "validator"
+                - "root_validator"
+                - "parse_obj"
+                - "dict"
+                - "json"
+          database:
+            orm:
+              name: "SQLAlchemy"
+              package: "SQLAlchemy"
+              version: "latest-compatible"
+              capabilities:
+                model_mapping: true
+                parameterized_sql: true
+            migration:
+              name: "Alembic"
+              package: "Alembic"
+              version: "latest-compatible"
+              compatible_orm: "SQLAlchemy"
+              commands:
+                upgrade: "uv run alembic upgrade head"
+                downgrade: "uv run alembic downgrade -1"
+          backend:
+            api:
+              name: "FastAPI"
+              package: "fastapi[standard]"
+              version: "latest-compatible"
+              supporting_packages:
+                validation: "pydantic>=2,<3"
+                settings: "pydantic-settings"
+                http_testing: "httpx"
+              agent_skills:
+                - resource: "project_skills.contextual.fastapi"
+                  requirement: "required"
+                  activation: "when_selected"
+                  purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
+
+      TypeScript:
+        version: "latest-compatible"
+        package_management:
+          name: "npm"
+          version: "latest-compatible"
+        naming:
+          variables: "camelCase"
+          functions: "camelCase"
+          classes: "PascalCase"
+          components: "PascalCase"
+          constants: "UPPER_SNAKE_CASE"
+          files: "kebab-case"
+          folders: "kebab-case"
+        component_packages:
+          frontend:
+            user_interface:
+              name: "React"
+              package: "react"
+              version: "latest-compatible"
+              component_style: "Function components"
+            application_framework:
+              name: "Next.js"
+              package: "next"
+              version: "latest-compatible"
+              user_interface: "React"
+              router: "App Router"
+              run: "npm run dev"
+            api_client:
+              name: "Fetch"
+              package: null
+              version: "runtime-provided"
+
+    databases:
+      SQLite:
+        version: "runtime-provided"
+        driver:
+          name: "sqlite3"
+          version: "runtime-provided"
+          package: null
+        storage:
+          kind: "file"
+          location: "database/data/<database>.db"
+          committed: false
+        connection:
+          url_scheme: "sqlite"
+          parameters:
+            - "database"
+          foreign_keys: true
+          check_same_thread: false
+        naming:
+          tables: "plural_snake_case"
+          columns: "snake_case"
+          constraints: "snake_case"
+          indexes: "ix_<table>_<column>"
+
+      PostgreSQL:
+        version: "latest-compatible"
+        driver:
+          name: "psycopg"
+          version: "latest-compatible"
+          package: "psycopg"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "postgresql+psycopg"
+          default_port: 5432
+          parameters:
+            - "host"
+            - "port"
+            - "database"
+            - "username_secret"
+            - "password_secret"
+        naming:
+          tables: "plural_snake_case"
+          columns: "snake_case"
+          constraints: "snake_case"
+          indexes: "ix_<table>_<column>"
+
+      MySQL:
+        version: "latest-compatible"
+        driver:
+          name: "PyMySQL"
+          version: "latest-compatible"
+          package: "PyMySQL"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "mysql+pymysql"
+          default_port: 3306
+          parameters:
+            - "host"
+            - "port"
+            - "database"
+            - "username_secret"
+            - "password_secret"
+          charset: "utf8mb4"
+        naming:
+          tables: "plural_snake_case"
+          columns: "snake_case"
+          constraints: "snake_case"
+          indexes: "ix_<table>_<column>"
 
   # <!-------------------------------------------- settings -->
   settings:
+
+    connections:
+      frontend_to_backend:
+        consumer: "frontend"
+        provider: "backend"
+      backend_to_database:
+        consumer: "backend"
+        provider: "database"
+      backend_to_model:
+        consumer: "backend"
+        provider: "model"
+      database_to_model:
+        consumer: "database"
+        provider: "model"
 
     packages:
       publish: false
