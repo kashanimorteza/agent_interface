@@ -662,9 +662,9 @@ output = Active State with no selected work scope
 
 ```text
 state = configuring
-responsibility = Generate a temporary Application Manifest when needed, reconcile operational Config, synchronize phase State, resolve technical requirements, and prepare the selected Platform requirements
+responsibility = Create and reconcile the persistent Application Manifest, reconcile operational Config, synchronize phase State, resolve technical requirements, and prepare the selected Platform requirements
 inputs = Operational Schemas, existing Config, Target phase identities, Implementation Preferences, Platform selections, and Platform authorities
-output = Temporary Application Manifest when needed, current operational Config, resolved technical selections, and a prepared selected Platform runtime
+output = Persistent Application Manifest, current operational Config, resolved technical selections, and a prepared selected Platform runtime
 ```
 
 <!-------------------------- Planning -->
@@ -716,7 +716,7 @@ Review = owns recorded Findings and their state
 Write authority answers which Skill may change a record, and every write happens under the rules of the Component that owns it:
 
 ```text
-Configure = generates a temporary Application Manifest when needed, writes every operational Config, synchronizes phase records, resolves technical requirements, records its State outcome, and prepares the selected Platform runtime
+Configure = creates and reconciles the persistent Application Manifest, writes every operational Config, synchronizes phase records, resolves technical requirements, records its State outcome, and prepares the selected Platform runtime
 Planning = writes Plans, Groups, and Tasks under Plan, and Planning progress and History under State
 Developing = writes implementation and Task status and history under Plan, and Development progress and History under State
 Reviewer = writes Findings under Review, and Review progress and History under State

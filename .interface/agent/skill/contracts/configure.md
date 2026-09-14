@@ -18,7 +18,7 @@ Accept no phase selection. Consume current operational Schemas, existing Config,
 
 ## Outputs
 
-Produce a temporary Schema-valid Application Manifest when generation requires one, Schema-valid operational Config, synchronized phase State records, resolved technical selections with concrete versions, an installed or reconciled prepared Environment, truthful State position and History, and a report of created, installed, reconciled, preserved, conflicted, and blocked results.
+Produce or reconcile the persistent repository-level `application.yaml` Application Manifest from Development Profiles, Connections, and public Component metadata, Schema-valid operational Config, synchronized phase State records, resolved technical selections with concrete versions, an installed or reconciled prepared Environment, truthful State position and History, and a report of created, installed, reconciled, preserved, conflicted, and blocked results.
 
 ## Required Understanding
 
@@ -26,11 +26,12 @@ Establish Interface Understanding. Establish only the Target Understanding neede
 
 ## Authority
 
-Write only Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item. Never modify other Interface sources or product implementation.
+Write the Application Manifest and Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item. Never modify other Interface sources or product implementation.
 
 ## Workflow Invariants
 
-- Generate the temporary Application Manifest from current Development Component Profiles when component generation requires it; do not treat it as a permanent repository source.
+- Create and reconcile the persistent Application Manifest from current Development Component Profiles, declared Connections, and public Component metadata on every Configure run; preserve its structure and include every declared Component section, even when empty.
+- Keep the Application Manifest free of secrets, private implementation details, internal storage structure, and undeclared dependencies; Development Preferences and declared Connections remain authoritative.
 - Derive initialization and reconciliation from each current Schema rather than a remembered structure.
 - Preserve meaningful operational records through structural reconciliation; surface a conflict rather than discard information that has no other owner.
 - Add missing phase records at current initial values and preserve progress. Remove a stale phase record only while it contains initialization defaults; otherwise preserve and report it.

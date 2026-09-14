@@ -22,7 +22,7 @@ Development owns composition rather than the internal meaning or implementation 
 - **Runtime Configuration** — runtime settings and secret references owned inside an Application Package boundary.
 - **Cross-cutting Capability** — a shared capability whose application to more than one Participating Component requires Development-level coordination.
 - **Model Operation** — a named operation that a Model may expose through the composed system, such as create, retrieve, list, search, update, enable, disable, or delete.
-- **Generated Application Manifest** — a temporary `application.yaml` artifact created during Generate or Configure so Components can exchange public metadata.
+- **Application Manifest** — the repository-level `application.yaml` created and reconciled by Configure so Components can exchange current public metadata.
 
 <br>
 
@@ -30,7 +30,7 @@ Development owns composition rather than the internal meaning or implementation 
 
 - **Consumes Platform** — references Platform-owned Launch Items without duplicating their definitions.
 - **Consumed by every Participating Component** — provides its Component Profile, Connections, applicable technical items, and shared rules.
-- **Publishes Generated Application Manifest** — provides temporary public Component metadata required during generation.
+- **Publishes Application Manifest** — provides current public Component metadata required by composition and consumption.
 
 <br>
 
@@ -92,13 +92,13 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 6. Components publish shared application metadata through a generated manifest
+## 6. Components publish shared application metadata through the Application Manifest
 
-**Rule:** Generate or Configure may create a temporary `application.yaml` Application Manifest from the current Component Profiles and public metadata. Each Participating Component may publish the public values required by another Component to compose or consume it, including its repository-relative directory, import package when applicable, public entry points, and other non-secret integration metadata. Consumers use the generated artifact only during that operation and resolve ongoing identity from Development Preferences and declared Connections. The generated artifact is not a permanent Interface source and is removed or ignored after generation.
+**Rule:** Configure creates and reconciles the repository-level `application.yaml` Application Manifest on every run from the current Development Component Profiles, declared Connections, and each Component's public metadata. Each Participating Component may publish the public values required by another Component to compose or consume it, including its repository-relative directory, import package when applicable, public entry points, and other non-secret integration metadata. Consumers may use the Manifest as the shared application metadata surface while ongoing identity and ownership remain authoritative in Development Preferences and declared Connections. Every declared Component has a Manifest section, even when that section is empty.
 
-**Why:** A generated manifest gives the operation a temporary place to discover the public information needed for composition without reaching into another Component's private files.
+**Why:** A persistent, reconciled Manifest gives Components one current place to discover the public information needed for composition without reaching into another Component's private files.
 
-**Boundary:** The generated Application Manifest never contains credentials, secret values, private implementation details, internal storage structure, or undeclared dependencies. It is an operation artifact, not a source of persistent meaning; after generation, its data is discarded or regenerated from authoritative sources.
+**Boundary:** The Application Manifest never contains credentials, secret values, private implementation details, internal storage structure, or undeclared dependencies. It is a shared metadata projection, not the authority for Target meaning, Component ownership, or technical Preferences; Configure reconciles it from those authoritative sources and reports conflicts rather than silently losing meaningful public metadata.
 
 <br>
 
@@ -184,8 +184,9 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Let each Model declare its applicable operations based on its fields, relationships, and lifecycle. *(5)*
 - **May** — Omit an inapplicable default operation or add a Model-specific operation. *(5)*
 - **Never** — Prescribe a Component's internal implementation from a Model Operation. *(5)*
-- **May** — Publish temporary shared public Component metadata through a generated Application Manifest during Generate or Configure, and consume it only through declared Connections. *(6)*
-- **Never** — Put secrets, private implementation details, or undeclared dependencies in a generated Application Manifest. *(6)*
+- **Must** — Maintain the repository-level Application Manifest from Development Profiles, Connections, and public Component metadata. *(6)*
+- **Must** — Include a Manifest section for every declared Component, even when it is empty. *(6)*
+- **Never** — Put secrets, private implementation details, or undeclared dependencies in the Application Manifest. *(6)*
 - **Must** — Activate a Cross-cutting Capability only for unique canonical identifiers in its applicability list. *(7)*
 - **Must** — Keep realization of an active Cross-cutting Capability inside each listed Component. *(7)*
 - **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component. *(7)*
