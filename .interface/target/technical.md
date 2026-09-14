@@ -81,7 +81,7 @@ Models
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The user's display name.
-- `username` — Type: `string`; Nullable: `false`; Purpose: The username used to identify the user.
+- `username` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The username used to identify the user.
 - `password` — Type: `string`; Nullable: `false`; Purpose: The password credential used by the user.
 - `api_key` — Type: `string`; Nullable: `false`; Purpose: The API key assigned to the user.
 - `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the user is active.

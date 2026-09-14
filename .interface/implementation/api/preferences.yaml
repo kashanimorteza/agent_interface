@@ -12,7 +12,7 @@ policy:
 content:
   architecture:
     application_bootstrap:
-      file: "app.py"
+      artifact: "API application bootstrap"
       creates_framework_application: true
       registers_routers: true
       installs_middleware: true
@@ -29,10 +29,10 @@ content:
       file_per_domain: true
       owns_api_operations: true
       depends_on: "Logic Public Interface"
-      depends_on_http_or_fastapi: false
+      depends_on_transport_or_framework: false
   runtime:
     executable: true
-    entrypoint: "api.app:app"
+    entrypoint_source: "Development API runtime entrypoint"
     host_source: "Platform Runtime Binding"
     port_source: "Platform Runtime Binding"
   contract:
@@ -43,10 +43,9 @@ content:
       values_source: "Target or API Runtime Configuration"
     documentation:
       enabled: true
-      type: "OpenAPI"
-      openapi_url: "/openapi.json"
-      docs_url: "/docs"
-      redoc_url: "/redoc"
+      contract_standard: "OpenAPI"
+      contract_endpoint: "/openapi.json"
+      interactive_reference_endpoint: "/docs"
     versioning:
       enabled: true
       strategy: "path"

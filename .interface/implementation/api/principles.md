@@ -11,9 +11,9 @@ These Principles are transport- and framework-independent. Development Preferenc
 - **Transport Schema** — an input or output shape owned by API when it differs from a Domain Definition.
 - **Application Outcome** — a logical success or expected failure returned by Logic.
 - **Request Context** — validated non-secret identity and tracing information for one request.
-- **Application Bootstrap** — the API Composition Root that creates the FastAPI application and wires its public HTTP components.
+- **Application Bootstrap** — the API Composition Root that creates the selected API framework application and wires its public transport components.
 - **Router** — the API layer that owns the HTTP boundary, including routes, HTTP inputs and outputs, transport validation, and HTTP error mapping.
-- **Service** — the API layer between Router and Logic Interface that exposes API operations and coordinates calls without knowing HTTP or FastAPI.
+- **Service** — the API layer between Router and Logic Interface that exposes API operations and coordinates calls without knowing transport or framework details.
 
 ## 1. API is an independent executable
 
@@ -23,7 +23,7 @@ These Principles are transport- and framework-independent. Development Preferenc
 
 ## 2. Application Bootstrap owns API composition
 
-**Rule:** The Application Bootstrap is the API Composition Root. It creates the selected framework application, applies API-level configuration, registers Router modules, installs Middleware and exception handlers, wires Authentication dependencies, configures lifecycle hooks, and exposes the configured application through the selected entrypoint. It contains composition and wiring only; it does not contain business Behaviour or domain-specific operation logic.
+**Rule:** The Application Bootstrap is the API Composition Root. It creates the selected API framework application, applies API-level configuration, registers Router modules, installs transport middleware and exception handlers, wires Authentication dependencies, configures lifecycle hooks, and exposes the configured application through the selected entrypoint. It contains composition and wiring only; it does not contain business Behaviour or domain-specific operation logic.
 
 **Boundary:** Bootstrap configuration is not a Router or Service responsibility. Runtime values such as host, port, deployment path, allowed origins, and secret references come from Platform Bindings or the API runtime configuration contract and are never hard-coded as application meaning.
 
@@ -37,7 +37,7 @@ These Principles are transport- and framework-independent. Development Preferenc
 
 **Rule:** Service is the API layer between Router and Logic Interface. It exposes API operations and domain-specific API actions, prepares or transforms data at the API boundary, and coordinates calls to Logic through its Public Interface. Service may orchestrate an API-level interaction but does not reimplement authoritative Business Behaviour.
 
-**Boundary:** Service never imports FastAPI, Router modules, Request or Response types, HTTP status codes, Middleware, or other transport-specific concepts. Business rules remain in Logic.
+**Boundary:** Service never imports the selected transport framework, Router modules, Request or Response types, transport status codes, Middleware, or other transport-specific concepts. Business rules remain in Logic.
 
 ## 5. API consumes explicit Public Interfaces
 
