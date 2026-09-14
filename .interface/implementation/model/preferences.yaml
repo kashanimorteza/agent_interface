@@ -48,14 +48,6 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
 
-    standards:
-      domain_modeling:
-        selected: "DDD"
-        options:
-          - "DDD"
-          - "UML Domain Modeling"
-          - "Conceptual Data Modeling"
-
   # <!-------------------------------------------- implementation -->
   implementation:
     persistence_contract:

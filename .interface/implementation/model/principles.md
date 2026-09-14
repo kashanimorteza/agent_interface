@@ -6,6 +6,10 @@ Model owns domain meaning and behavior determinable from its own data.
 
 <br>
 
+> **Note:** Model is not limited to Domain Fields. It also preserves the conceptual identity, relationships, defaults, and storage-relevant constraints declared by the Target, so Database can derive its persistence structure from Model without reinterpreting the Target.
+
+<br>
+
 ## Terms
 
 - **Domain Definition** — the authoritative logical definition of one meaningful concept in the Target's domain.
