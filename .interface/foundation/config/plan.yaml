@@ -1,0 +1,542 @@
+meta:
+  path: .interface/foundation/config/plan.yaml
+  path_note: Mutable Plans, Groups, Tasks, counts and progress.
+policy:
+  agent_may_edit: true
+  rule: Apply the current Plan Component and the active operation's ownership rules.
+read_order:
+- task_count
+- plans
+content_map:
+  task_count: Total number of stored Tasks.
+  plans: Current phase Plans and their Groups and Tasks.
+content:
+  task_count: 18
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      revision: 1
+      target: Model
+      does: Deliver the Model library's shared Foundation and an authoritative Domain Definition for every domain concept the Target defines, each exposed through one stable Public Interface with its declared fields, relationships, and rules preserved, and documented as a complete, operational package.
+      constraints: []
+      task_count: 18
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Model Foundation
+          description: The shared foundation every concrete Domain Definition in this phase builds on.
+          area: Shared Model Foundation
+          does: A shared Model Foundation is available for every concrete Domain Definition to build on.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              title: Establish the Model Foundation
+              description: Establish the Model Foundation shared by every concrete Domain Definition in this phase, supplying applicable common configuration and behavior consistently rather than letting each Domain Definition duplicate it.
+              reason: Model Principles require every concrete Model realization to receive applicable shared configuration and behavior through one Model Foundation.
+              kind: code
+              inputs:
+              - The Model Component Profile and its applicable Language Item
+              expected_result: A shared Model Foundation exists and is available to every Domain Definition realized afterward in this phase.
+              depends_on: []
+              constraints: []
+              acceptance: Every Domain Definition built afterward in this phase receives its applicable shared configuration and behavior from this one Foundation rather than repeating it independently.
+              verify: Shared configuration and behavior are observed to apply consistently across more than one Domain Definition built on the Foundation, with no such behavior duplicated independently.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_foundation.py (7 checks) — unknown-field rejection and assignment validation observed consistently across User, Broker, and Trading Platform; every Domain Definition's effective configuration observed equal to the Foundation's.
+                outcome: passed
+        P1-G2:
+          id: P1-G2
+          title: Identity and Connectivity
+          description: The domain concepts that identify a system user and a connection to a supported Trading Platform.
+          area: User identity and platform-connectivity domain definitions
+          does: User identity and platform-connectivity domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              title: Define the User Domain Definition
+              description: Define User as Model's authoritative Domain Definition, preserving every field, credential meaning, and rule the Target states for it.
+              reason: Every user-owned domain concept in this Target depends on User as its owning identity, so Model must give User exactly one authoritative meaning.
+              kind: code
+              inputs:
+              - The Target's Model definition for User
+              - The Model Foundation
+              expected_result: An authoritative User Domain Definition is available through Model's Public Interface, carrying every field, credential meaning, and rule the Target defines for User.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The User Domain Definition matches every field, credential meaning, and rule the Target states for User, with nothing invented and nothing missing.
+              verify: The User Domain Definition's Public Interface, inspected against the Target's stated fields, credential meaning, and rules for User, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_user.py (4 checks) — exact field set, credential meaning on password/api_key, uniqueness (name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G2-T2:
+              id: P1-G2-T2
+              title: Define the Trading Platform Domain Definition
+              description: Define Trading Platform as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, independent of any one exchange or broker.
+              reason: The Target requires the system to stay independent of any specific trading platform, which depends on Trading Platform having exactly one authoritative domain meaning.
+              kind: code
+              inputs:
+              - The Target's Model definition for Trading Platform
+              - The Model Foundation
+              expected_result: An authoritative Trading Platform Domain Definition is available through Model's Public Interface, carrying every field and rule the Target defines for Trading Platform.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The Trading Platform Domain Definition matches every field and rule the Target states for Trading Platform, with nothing invented and nothing missing.
+              verify: The Trading Platform Domain Definition's Public Interface, inspected against the Target's stated fields and rules for Trading Platform, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_trading_platform.py (4 checks) — exact field set, no credential fields, no uniqueness, defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G2-T3:
+              id: P1-G2-T3
+              title: Define the Instance Domain Definition
+              description: Define Instance as Model's authoritative Domain Definition, preserving every field, credential meaning, and rule the Target states for it, including its ownership by one User and its use of one Trading Platform.
+              reason: Instance's domain meaning requires an owning User and a connected Trading Platform, both of which must already have one authoritative meaning before Instance can reference them.
+              kind: code
+              inputs:
+              - The Target's Model definition for Instance
+              - The Model Foundation
+              - The User Domain Definition
+              - The Trading Platform Domain Definition
+              expected_result: An authoritative Instance Domain Definition is available through Model's Public Interface, carrying every field, credential meaning, and rule the Target defines for Instance, including its relationships to User and Trading Platform.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              - P1-G2-T2
+              constraints: []
+              acceptance: The Instance Domain Definition matches every field, credential meaning, relationship, and rule the Target states for Instance, with nothing invented and nothing missing.
+              verify: The Instance Domain Definition's Public Interface, inspected against the Target's stated fields, credential meaning, relationships, and rules for Instance, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_instance.py (4 checks) — exact field set, credential meaning on password/api_key, uniqueness (user_id, name), nullable defaults, JSON round-trip/schema.
+                outcome: passed
+        P1-G3:
+          id: P1-G3
+          title: Financial Reference Data
+          description: The domain concepts that describe currencies, brokers, and the assets available for trading.
+          area: Financial reference domain definitions
+          does: Currency, broker, and tradable-asset domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              title: Define the Currency Domain Definition
+              description: Define Currency as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Currency's domain meaning is user-owned and other domain concepts in this Target reference a Currency, so it must have exactly one authoritative meaning.
+              kind: code
+              inputs:
+              - The Target's Model definition for Currency
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Currency Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Currency.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Currency Domain Definition matches every field, relationship, and rule the Target states for Currency, with nothing invented and nothing missing.
+              verify: The Currency Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Currency, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_currency.py (5 checks) — exact field set, uniqueness (user_id, code), 3-letter code size enforced both directions, decimal_digits default, JSON round-trip/schema.
+                outcome: passed
+            P1-G3-T2:
+              id: P1-G3-T2
+              title: Define the Broker Domain Definition
+              description: Define Broker as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User, without coupling it to one Trading Platform.
+              reason: Broker's domain meaning is user-owned and intentionally independent of any one Trading Platform, and other domain concepts in this Target reference a Broker.
+              kind: code
+              inputs:
+              - The Target's Model definition for Broker
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Broker Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Broker.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Broker Domain Definition matches every field, relationship, and rule the Target states for Broker, with nothing invented and nothing missing.
+              verify: The Broker Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Broker, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_broker.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G3-T3:
+              id: P1-G3-T3
+              title: Define the Asset Domain Definition
+              description: Define Asset as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its provision by one Broker and its category.
+              reason: Asset's domain meaning depends on the Broker that provides it, and the system needs Asset's authoritative meaning to know exactly what is being traded.
+              kind: code
+              inputs:
+              - The Target's Model definition for Asset
+              - The Model Foundation
+              - The Broker Domain Definition
+              expected_result: An authoritative Asset Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Asset.
+              depends_on:
+              - P1-G1-T1
+              - P1-G3-T2
+              constraints: []
+              acceptance: The Asset Domain Definition matches every field, relationship, and rule the Target states for Asset, with nothing invented and nothing missing.
+              verify: The Asset Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Asset, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_asset.py (4 checks) — exact field set, uniqueness (broker_id, symbol), defaults, JSON round-trip/schema.
+                outcome: passed
+        P1-G4:
+          id: P1-G4
+          title: Accounts
+          description: The domain concepts that organize and represent funded trading accounts.
+          area: Trading-account organization domain definitions
+          does: Trading-account organization domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              title: Define the Account Group Domain Definition
+              description: Define Account Group as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Account Group organizes trading accounts owned by one user, and Account references it, so it must have exactly one authoritative meaning.
+              kind: code
+              inputs:
+              - The Target's Model definition for Account Group
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Account Group Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Account Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Account Group Domain Definition matches every field, relationship, and rule the Target states for Account Group, with nothing invented and nothing missing.
+              verify: The Account Group Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Account Group, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_account_group.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G4-T2:
+              id: P1-G4-T2
+              title: Define the Account Domain Definition
+              description: Define Account as Model's authoritative Domain Definition, preserving every field, credential meaning, and rule the Target states for it, including its membership in one Account Group, its Broker, its connecting Instance, and its base Currency.
+              reason: Account is the funded trading account through which the system executes trades, and its domain meaning depends on the Account Group, Broker, Instance, and Currency it references.
+              kind: code
+              inputs:
+              - The Target's Model definition for Account
+              - The Model Foundation
+              - The Account Group Domain Definition
+              - The Broker Domain Definition
+              - The Instance Domain Definition
+              - The Currency Domain Definition
+              expected_result: An authoritative Account Domain Definition is available through Model's Public Interface, carrying every field, credential meaning, relationship, and rule the Target defines for Account.
+              depends_on:
+              - P1-G1-T1
+              - P1-G4-T1
+              - P1-G3-T2
+              - P1-G2-T3
+              - P1-G3-T1
+              constraints: []
+              acceptance: The Account Domain Definition matches every field, credential meaning, relationship, and rule the Target states for Account, with nothing invented and nothing missing.
+              verify: The Account Domain Definition's Public Interface, inspected against the Target's stated fields, credential meaning, relationships, and rules for Account, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_account.py (5 checks) — exact field set, credential meaning on password, both uniqueness groups, exact decimal balance precision, JSON round-trip/schema.
+                outcome: passed
+        P1-G5:
+          id: P1-G5
+          title: Trade Management Rules
+          description: The domain concepts that group and define the rules for trailing Stop Loss/Take Profit management and partial position closing.
+          area: Trade-management rule domain definitions
+          does: Stop-loss/take-profit trailing and partial-close rule domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G5-T1:
+              id: P1-G5-T1
+              title: Define the Trailing Group Domain Definition
+              description: Define Trailing Group as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Trailing Group organizes the rules that manage Stop Loss and Take Profit during a trade, and other domain concepts in this Target reference it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Trailing Group
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Trailing Group Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Trailing Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Trailing Group Domain Definition matches every field, relationship, and rule the Target states for Trailing Group, with nothing invented and nothing missing.
+              verify: The Trailing Group Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Trailing Group, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_trailing_group.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G5-T2:
+              id: P1-G5-T2
+              title: Define the Trailing Rule Domain Definition
+              description: Define Trailing Rule as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its membership in one Trailing Group and its activation condition and adjustment parameters.
+              reason: Trailing Rule tells the system when and how to manage Take Profit and Stop Loss, and its domain meaning depends on the Trailing Group that contains it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Trailing Rule
+              - The Model Foundation
+              - The Trailing Group Domain Definition
+              expected_result: An authoritative Trailing Rule Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Trailing Rule.
+              depends_on:
+              - P1-G1-T1
+              - P1-G5-T1
+              constraints: []
+              acceptance: The Trailing Rule Domain Definition matches every field, relationship, and rule the Target states for Trailing Rule, with nothing invented and nothing missing.
+              verify: The Trailing Rule Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Trailing Rule, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_trailing_rule.py (4 checks) — exact field set, both uniqueness groups, nullable defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G5-T3:
+              id: P1-G5-T3
+              title: Define the Partial Group Domain Definition
+              description: Define Partial Group as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Partial Group organizes rules for managing portions of an open trade, and other domain concepts in this Target reference it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Partial Group
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Partial Group Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Partial Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Partial Group Domain Definition matches every field, relationship, and rule the Target states for Partial Group, with nothing invented and nothing missing.
+              verify: The Partial Group Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Partial Group, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_partial_group.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G5-T4:
+              id: P1-G5-T4
+              title: Define the Partial Rule Domain Definition
+              description: Define Partial Rule as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its membership in one Partial Group and its activation and close-percentage parameters.
+              reason: Partial Rule tells the system under which condition and to what extent part of an open position must be closed, and its domain meaning depends on the Partial Group that contains it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Partial Rule
+              - The Model Foundation
+              - The Partial Group Domain Definition
+              expected_result: An authoritative Partial Rule Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Partial Rule.
+              depends_on:
+              - P1-G1-T1
+              - P1-G5-T3
+              constraints: []
+              acceptance: The Partial Rule Domain Definition matches every field, relationship, and rule the Target states for Partial Rule, with nothing invented and nothing missing.
+              verify: The Partial Rule Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Partial Rule, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_partial_rule.py (4 checks) — exact field set, both uniqueness groups, defaults, JSON round-trip/schema.
+                outcome: passed
+        P1-G6:
+          id: P1-G6
+          title: Actions and Positions
+          description: The domain concepts that define how a position is opened and that record every position the system creates.
+          area: Trading action and position domain definitions
+          does: Trading action and position domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G6-T1:
+              id: P1-G6-T1
+              title: Define the Action Group Domain Definition
+              description: Define Action Group as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Action Group organizes trading actions by risk profile, and other domain concepts in this Target reference it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Action Group
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Action Group Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Action Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Action Group Domain Definition matches every field, relationship, and rule the Target states for Action Group, with nothing invented and nothing missing.
+              verify: The Action Group Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Action Group, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_action_group.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G6-T2:
+              id: P1-G6-T2
+              title: Define the Action Domain Definition
+              description: Define Action as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its membership in one Action Group and its use of one Asset, one Account, one Partial Group, and one Trailing Group.
+              reason: Action defines how a position must be opened, and its domain meaning depends on the Action Group, Asset, Account, Partial Group, and Trailing Group it references.
+              kind: code
+              inputs:
+              - The Target's Model definition for Action
+              - The Model Foundation
+              - The Action Group Domain Definition
+              - The Asset Domain Definition
+              - The Account Domain Definition
+              - The Partial Group Domain Definition
+              - The Trailing Group Domain Definition
+              expected_result: An authoritative Action Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Action.
+              depends_on:
+              - P1-G1-T1
+              - P1-G6-T1
+              - P1-G3-T3
+              - P1-G4-T2
+              - P1-G5-T3
+              - P1-G5-T1
+              constraints: []
+              acceptance: The Action Domain Definition matches every field, relationship, and rule the Target states for Action, with nothing invented and nothing missing.
+              verify: The Action Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Action, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_action.py (4 checks) — exact field set, uniqueness (action_group_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G6-T3:
+              id: P1-G6-T3
+              title: Define the Position Domain Definition
+              description: Define Position as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User and its use of one Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and originating Action.
+              reason: Position stores the complete information for every position the system creates or has pending, and its domain meaning depends on every domain concept it references.
+              kind: code
+              inputs:
+              - The Target's Model definition for Position
+              - The Model Foundation
+              - The User Domain Definition
+              - The Trading Platform Domain Definition
+              - The Broker Domain Definition
+              - The Account Domain Definition
+              - The Trailing Group Domain Definition
+              - The Partial Group Domain Definition
+              - The Action Group Domain Definition
+              - The Action Domain Definition
+              expected_result: An authoritative Position Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Position.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G3-T2
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T3
+              - P1-G6-T1
+              - P1-G6-T2
+              constraints: []
+              acceptance: The Position Domain Definition matches every field, relationship, and rule the Target states for Position, with nothing invented and nothing missing.
+              verify: The Position Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Position, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_position.py (5 checks) — exact 21-field set, uniqueness (name), naive datetime rejected, defaults, JSON round-trip/schema.
+                outcome: passed
+        P1-G7:
+          id: P1-G7
+          title: Model Public Interface
+          description: The complete, verified public boundary through which every Domain Definition in this phase is reached.
+          area: Model Public Interface
+          does: Every Domain Definition in this phase is reachable through one verified, stable Model Public Interface.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G7-T1:
+              id: P1-G7-T1
+              title: Verify the complete Model Public Interface
+              description: Confirm that every Domain Definition produced in this phase is reachable through Model's one explicit and stable Public Interface with one unambiguous public identity, and verify the complete Model boundary's public interface, validation behavior, and serialization/schema generation.
+              reason: Model must expose its authoritative Domain Definitions through one explicit, stable Public Interface rather than private internal resources, and this must be demonstrated across the complete set of Domain Definitions produced in this phase, not only individually.
+              kind: code
+              inputs:
+              - Every Domain Definition produced in this phase
+              expected_result: Every Domain Definition produced in this phase has exactly one public identity reachable through Model's Public Interface, and the complete Model boundary is verified as one coherent whole.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G5-T3
+              - P1-G5-T4
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              constraints: []
+              acceptance: Every Domain Definition produced in this phase is reachable through Model's Public Interface with one unambiguous identity, and no consumer needs private internal resources to use any of them.
+              verify: Public interface resolution, validation behavior, and serialization/schema generation are observed to succeed for every Domain Definition produced in this phase when exercised together as one Model boundary, each Domain Definition is observed to resolve to exactly one unambiguous public identity, and every one of them is observed to be reachable without depending on a private internal resource.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: uv run pytest tests/test_public_interface.py (5 checks) — every Domain Definition reachable, no duplicate public identity, no private-resource dependency, schema generation non-empty for all 15, all build on the Foundation.
+                outcome: passed
+        P1-G8:
+          id: P1-G8
+          title: Component Documentation
+          description: The Model component's operational documentation.
+          area: Model component operational documentation
+          does: The Model component has complete, accurate, and safe operational documentation.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G8-T1:
+              id: P1-G8-T1
+              title: Produce the Model component README
+              description: Produce the Model component's README, explaining the component, its actual public surface and structure, setup, installation, configuration, use, verification, and troubleshooting, with accurate executable examples drawn from the resolved technical selections.
+              reason: Every generated Participating Component must have complete, safe, and operational documentation.
+              kind: documentation
+              inputs:
+              - Every Domain Definition produced in this phase
+              - The resolved Model Component Profile and Language Item
+              expected_result: A README exists for the Model component accurately documenting its actual public surface, setup, configuration, use, verification, and troubleshooting, with no secret values exposed.
+              depends_on:
+              - P1-G7-T1
+              constraints: []
+              acceptance: The README explains the Model component's actual public surface and structure, setup, installation, configuration, use, verification, and troubleshooting with accurate executable examples, and exposes no usable credential, token, or secret value.
+              verify: The README's documented setup, installation, and usage examples are observed to run successfully against the actual Model component, its described public surface is observed to match the component's actual public surface, and its content is observed to carry no usable credential, token, or secret value.
+              status: done
+              log:
+              - at: '2026-09-14T08:19:56Z'
+                event: completed
+                check: 'uv run pytest tests/test_readme.py (5 checks) — required sections present, documented imports match model.__all__ exactly, documented usage example re-executed, documented commands match the real ones, secret scan clean. Whole-suite gate from a clean .venv rebuild: 80 passed, ruff check/format clean, pyright 0 errors. Field integrity re-verified: no unauthorized rename of any Target-stated field.'
+                outcome: passed

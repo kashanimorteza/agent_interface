@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Platform Component — named Launch Items with their owned Environment and scoped Instructions."
   purpose: "Technical defaults for selecting and applying a complete launch definition to the Target."
   standard: "Agent Project Interface"
-  version: "4.2"
-  updated: "2026-09-13"
+  version: "4.3"
+  updated: "2026-09-14"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -58,7 +58,21 @@ content:
               remove:
                 - "ufw"
           frontend: {}
-          backend: {}
+          backend:
+            runtime_binding:
+              host: "0.0.0.0"
+              port: 8000
+              transport:
+                HTTP:
+                  enabled: true
+                HTTPS:
+                  enabled: false
+              cors:
+                allowed_origins: []
+              shutdown:
+                graceful_timeout_seconds: 30
+              infrastructure_rate_limiting:
+                enabled: false
           database: {}
 
   # <!-------------------------------------------- settings -->

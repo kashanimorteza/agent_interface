@@ -1,0 +1,155 @@
+meta:
+  path: ".interface/foundation/config/state.yaml"
+  path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+read_order:
+  - "active"
+  - "phases"
+  - "implementation"
+  - "launch"
+  - "history"
+  - "blockers"
+  - "open_questions"
+
+content_map:
+  active: "Current or most recently recorded Workflow position."
+  phases: "Aggregate Planning, Development, and Review progress by phase identifier."
+  implementation: "Latest end-to-end Implement result."
+  launch: "Current runtime result and verified access points."
+  history: "Append-only State-changing Workflow events."
+  blockers: "Unresolved critical conditions."
+  open_questions: "Unresolved critical questions."
+
+content:
+  active:
+    mode: "development"
+    phase: "P1"
+    mode_reason: "Development implemented and verified all 18 Tasks of the Phase 1 Plan (revision 1)."
+    set_by: "developing"
+    set_at: "2026-09-14T08:19:56Z"
+
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      updated_by: "reviewer"
+      updated_at: "2026-09-14T08:20:36Z"
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+
+  implementation:
+    status: "in progress"
+    started_at: "2026-09-14T08:14:47Z"
+    completed_at: null
+    updated_by: "implement"
+    updated_at: "2026-09-14T08:14:47Z"
+
+  launch:
+    status: "not launched"
+    environment: null
+    method: null
+    access_points: []
+    updated_by: "initialization"
+    updated_at: null
+
+  history:
+    - id: "H1"
+      operation: "configure"
+      phase: null
+      event: "Initialized State, Plan, and Review Config from their operational Schemas and synchronized phase records P1-P6 from current Target phase identities."
+      outcome: "completed with one recorded Environment blocker"
+      recorded_by: "configure"
+      recorded_at: "2026-09-14T08:14:47Z"
+    - id: "H2"
+      operation: "implement"
+      phase: null
+      event: "Started an Implement run for the selected scope: Phase 1."
+      outcome: "in progress"
+      recorded_by: "implement"
+      recorded_at: "2026-09-14T08:14:47Z"
+    - id: "H3"
+      operation: "planning"
+      phase: "P1"
+      event: "Created the Plan for Phase 1 (Model) at revision 1: Model Foundation, one Domain Definition Task for each of the 15 domain concepts the Target defines, a Public Interface verification Task, and a Component Documentation Task, organized into 8 Groups."
+      outcome: "completed"
+      recorded_by: "planning"
+      recorded_at: "2026-09-14T08:16:26Z"
+    - id: "H4"
+      operation: "reviewer"
+      phase: "P1"
+      event: "Ran Plan Assurance against Phase 1 Plan revision 1. Confirmed complete coverage of the Target's 15 domain concepts, the Model Foundation, the Public Interface, and the Component README obligation, with every acceptance clause covered by a verification condition. No Findings."
+      outcome: "plan satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-14T08:16:26Z"
+    - id: "H5"
+      operation: "developing"
+      phase: "P1"
+      event: "Implemented the Model Python library as a uv-managed Python 3.13 package: the Model Foundation, all 15 Domain Definitions with their Target-stated fields (verified none were renamed), credential meaning, and declared uniqueness, the Public Interface, and the component README. All 18 Tasks verified by 80 durable checks, with ruff lint, ruff format, and pyright clean from a clean environment rebuild."
+      outcome: "completed"
+      recorded_by: "developing"
+      recorded_at: "2026-09-14T08:19:56Z"
+    - id: "H6"
+      operation: "reviewer"
+      phase: "P1"
+      event: "Ran Implementation Assurance independently: re-ran the whole check suite, and adversarially checked for forbidden legacy Pydantic APIs, persistence/transport leakage, and field-name fidelity to the Target across all 15 Domain Definitions. No Findings."
+      outcome: "satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-14T08:20:36Z"
+    - id: "H7"
+      operation: "implement"
+      phase: null
+      event: "Completed the selected scope: Phase 1 passed Planning, independent Plan Assurance, Development, and independent Implementation Assurance. Launch was withheld because Phases P2, P3, and P4 are enabled and ready but not yet planned or developed, so whole-Target implementation remains incomplete."
+      outcome: "selected scope satisfied; implementation remains in progress"
+      recorded_by: "implement"
+      recorded_at: "2026-09-14T08:20:36Z"
+
+  blockers:
+    B1:
+      id: "B1"
+      blocks: "Platform Environment preparation for the selected VPS Launch Item"
+      what_is_missing: "The selected Launch Item (VPS) declares a Linux Environment with Operating System Instructions to install net-tools and iptables and remove ufw. The current execution host is macOS, and installing packages or modifying firewall configuration are system-level changes that require explicit Human action rather than automatic Configure execution."
+      consequence: "Local Environment preparation for the selected Launch Item is not performed by Configure. This does not block Planning or Development for phases targeting Model, Database, Backend, or Frontend; it blocks safe automatic Launch preparation until resolved."
+      resolution_owner: "Human"
+      raised_by: "configure"
+      raised_at: "2026-09-14T08:14:47Z"
+
+  open_questions: {}

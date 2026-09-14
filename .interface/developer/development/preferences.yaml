@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
   purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
-  version: "5.3"
-  updated: "2026-09-13"
+  version: "5.4"
+  updated: "2026-09-14"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -302,13 +302,17 @@ content:
 
     cross_cutting:
       testing:
-        applies_to: []
+        applies_to:
+          - "backend"
       logging:
-        applies_to: []
+        applies_to:
+          - "backend"
       error_handling:
-        applies_to: []
+        applies_to:
+          - "backend"
       authentication:
-        applies_to: []
+        applies_to:
+          - "backend"
 
   # <!-------------------------------------------- implementation -->
   implementation: {}
