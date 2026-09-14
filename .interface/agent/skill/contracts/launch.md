@@ -14,7 +14,7 @@ Activate explicitly or after end-to-end orchestration establishes every current 
 
 ## Inputs
 
-Accept one optional Launch Scope selection: `backend`, `frontend`, or `complete` (the alias `all` is equivalent to `complete`). When no scope is supplied, ask the Human to choose one of these values before starting. Consume the selected scope together with Target and Platform selections, Platform authorities, State, developed parts and public interfaces, and observable runtime state.
+Accept one optional Launch Scope selection: `api`, `presentation`, `logic`, or `complete` (the alias `all` is equivalent to `complete`). `logic` prepares or verifies the reusable Logic Component and `api` starts the API executable. When no scope is supplied, ask the Human to choose one of these values before starting. Consume the selected scope together with Target and Platform selections, Platform authorities, State, developed parts and public interfaces, and observable runtime state.
 
 ## Outputs
 
@@ -31,7 +31,7 @@ Control only project runtime startup, connection, readiness, and shutdown action
 ## Workflow Invariants
 
 - Resolve Environment and Launch from explicit Target decisions first and Platform defaults second; never invent a missing definition.
-- Launch only the parts included by the selected Launch Scope: `backend`, `frontend`, or `complete`/`all`.
+- Launch only the parts included by the selected Launch Scope: `api`, `presentation`, `logic`, or `complete`/`all`.
 - Require Development completion for every phase currently enabled and ready. Review is an additional prerequisite only when Target, Platform, or the invoking coordinator requires it.
 - Mark Launch as launching before mutation and record the final truthful state afterward.
 - Verify Environment preparation before startup without performing preparation.

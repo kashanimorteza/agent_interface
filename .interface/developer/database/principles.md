@@ -25,7 +25,7 @@ Database is independent of any particular storage technology, package, version, 
 - **Consumes Model** — maps and enforces the logical Models, fields, relationships, rules, and declared initial data.
 - **Consumes Development** — uses the shared package standard, technical catalogues, connections, and ownership rules.
 - **Consumes Platform** — receives runtime Bindings delivered to Database's boundary by the selected Launch Item.
-- **Consumed by Backend** — provides the generic data-access interface and Instance Registry through Backend's Data Access boundary.
+- **Consumed by Logic** — provides the generic data-access interface and Instance Registry through Logic's Data Access boundary.
 
 <br>
 
@@ -103,7 +103,7 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 **Why:** Persistence decisions interact and require one authority that can reason about them together.
 
-**Boundary:** Model owns logical meaning; Backend owns application behavior and service orchestration; Frontend owns presentation; Platform operates the result. Database owns only its own private runtime settings and secrets.
+**Boundary:** Model owns logical meaning; Logic owns application behavior and service orchestration; Presentation owns presentation; Platform operates the result. Database owns only its own private runtime settings and secrets.
 
 <br>
 
@@ -119,7 +119,7 @@ The interface may also expose a capability-restricted command route for data ope
 
 **Why:** One generic pipeline serves every Model while preserving a stable public boundary and preventing duplicate business-logic implementations.
 
-**Boundary:** Consumers never receive connections or storage access. The command route cannot bypass Model validation, persistence constraints, credential protections, Migrations, or the public transaction boundary. Model-specific application behavior remains in Backend Logic.
+**Boundary:** Consumers never receive connections or storage access. The command route cannot bypass Model validation, persistence constraints, credential protections, Migrations, or the public transaction boundary. Model-specific application behavior remains in Logic.
 
 <br>
 

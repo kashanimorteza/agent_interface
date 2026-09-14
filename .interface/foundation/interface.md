@@ -221,7 +221,7 @@ Each Target definition has a direct link to its authoritative file:
 <!-------------------------- Developer -->
 ### Developer
 
-The Developer module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Backend, Frontend, Platform, Plan, Review, and State Components.
+The Developer module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Logic, Presentation, Platform, Plan, Review, and State Components.
 
 ```text
 Developer Components
@@ -235,12 +235,15 @@ Developer Components
 ├── Database
 │   ├── Principles  → .interface/developer/database/principles.md
 │   └── Preferences → .interface/developer/database/preferences.yaml
-├── Backend
-│   ├── Principles  → .interface/developer/backend/principles.md
-│   └── Preferences → .interface/developer/backend/preferences.yaml
-├── Frontend
-│   ├── Principles  → .interface/developer/frontend/principles.md
-│   └── Preferences → .interface/developer/frontend/preferences.yaml
+├── Logic
+│   ├── Principles  → .interface/developer/logic/principles.md
+│   └── Preferences → .interface/developer/logic/preferences.yaml
+├── API
+│   ├── Principles  → .interface/developer/api/principles.md
+│   └── Preferences → .interface/developer/api/preferences.yaml
+├── Presentation
+│   ├── Principles  → .interface/developer/presentation/principles.md
+│   └── Preferences → .interface/developer/presentation/preferences.yaml
 ├── Platform
 │   ├── Principles  → .interface/developer/platform/principles.md
 │   └── Preferences → .interface/developer/platform/preferences.yaml
@@ -279,19 +282,26 @@ Owns the persistence layer and publishes one generic interface for reading and w
 - [Principles](../developer/database/principles.md)
 - [Preferences](../developer/database/preferences.yaml)
 
-#### Backend
+#### Logic
 
-Executes application Behaviour and publishes the application's API.
+Implements application Behaviour as reusable Logic.
 
-- [Principles](../developer/backend/principles.md)
-- [Preferences](../developer/backend/preferences.yaml)
+- [Principles](../developer/logic/principles.md)
+- [Preferences](../developer/logic/preferences.yaml)
 
-#### Frontend
+#### API
 
-Presents the application to users and consumes the capabilities Backend publishes.
+Runs the external API process and publishes the application's public contract through Logic.
 
-- [Principles](../developer/frontend/principles.md)
-- [Preferences](../developer/frontend/preferences.yaml)
+- [Principles](../developer/api/principles.md)
+- [Preferences](../developer/api/preferences.yaml)
+
+#### Presentation
+
+Presents the application to users and consumes the capabilities Logic publishes.
+
+- [Principles](../developer/presentation/principles.md)
+- [Preferences](../developer/presentation/preferences.yaml)
 
 #### Platform
 
@@ -594,7 +604,7 @@ This Operation is performed through `/my-interface-reviewer [phase-number ...]` 
 
 **Agent Skill:** `/my-interface-launch`
 
-This Operation is performed through `/my-interface-launch [backend|frontend|complete|all]` to read the selected Launch definition and its Component Runtime Requirements, start only the requested scope (or all developed parts for `complete`/`all`), verify readiness, and report access points. When no scope is supplied, the Launch Skill asks the Human to choose one.
+This Operation is performed through `/my-interface-launch [api|logic|presentation|complete|all]` to read the selected Launch definition and its Component Runtime Requirements, start only the requested scope (or all developed parts for `complete`/`all`), verify readiness, and report access points. When no scope is supplied, the Launch Skill asks the Human to choose one.
 
 <!-------------------------- Implement Operation -->
 ### Implement

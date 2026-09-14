@@ -61,16 +61,23 @@ content:
         language: "Python"
         database: "SQLite"
         platform: "VPS"
-      backend:
-        name: "backend"
-        path: "backend"
-        type: "executable"
-        role: "Provides server-side application services."
+      logic:
+        name: "logic"
+        path: "logic"
+        type: "library"
+        role: "Implements server-side application Behaviour as reusable Logic."
         language: "Python"
         platform: "VPS"
-      frontend:
-        name: "frontend"
-        path: "frontend"
+      api:
+        name: "api"
+        path: "api"
+        type: "executable"
+        role: "Publishes the external API and runs the API process."
+        language: "Python"
+        platform: "VPS"
+      presentation:
+        name: "presentation"
+        path: "presentation"
         type: "executable"
         role: "Provides the user-facing application."
         language: "TypeScript"
@@ -296,14 +303,20 @@ content:
   settings:
 
     connections:
-      frontend_to_backend:
-        consumer: "frontend"
-        provider: "backend"
-      backend_to_database:
-        consumer: "backend"
+      presentation_to_api:
+        consumer: "presentation"
+        provider: "api"
+      api_to_logic:
+        consumer: "api"
+        provider: "logic"
+      api_to_model:
+        consumer: "api"
+        provider: "model"
+      logic_to_database:
+        consumer: "logic"
         provider: "database"
-      backend_to_model:
-        consumer: "backend"
+      logic_to_model:
+        consumer: "logic"
         provider: "model"
       database_to_model:
         consumer: "database"
@@ -315,14 +328,16 @@ content:
     cross_cutting:
       testing:
         applies_to:
-          - "backend"
+          - "logic"
+          - "api"
       logging:
         applies_to:
           - "development"
           - "model"
           - "database"
-          - "backend"
-          - "frontend"
+          - "logic"
+          - "api"
+          - "presentation"
           - "plan"
           - "review"
           - "state"
@@ -331,8 +346,9 @@ content:
           - "development"
           - "model"
           - "database"
-          - "backend"
-          - "frontend"
+          - "logic"
+          - "api"
+          - "presentation"
           - "plan"
           - "review"
           - "state"
@@ -341,8 +357,9 @@ content:
           - "development"
           - "model"
           - "database"
-          - "backend"
-          - "frontend"
+          - "logic"
+          - "api"
+          - "presentation"
           - "plan"
           - "review"
           - "state"

@@ -47,9 +47,9 @@ content:
   options:
     launches:
       VPS:
-        frontend:
+        presentation:
           operating_system: "Linux"
-        backend:
+        api:
           operating_system: "Linux"
           web_server: "Nginx"
           runtime_binding:

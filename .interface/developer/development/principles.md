@@ -84,7 +84,7 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 ## 5. Model operations use one shared contract across Components
 
-**Rule:** Development defines one shared vocabulary for operations that may be exposed by a Model. The default Model Operation set is `create`, `get_by_id`, `list`, `search`, `update`, `enable`, `disable`, and `delete`. Each Model declares the operations applicable to its own fields, relationships, and lifecycle; it may omit an inapplicable operation or add a Model-specific operation. When a Model exposes an operation, the Database, Backend Logic, API, and Frontend Components account for that operation in their own responsibilities and preserve its meaning across their public boundaries.
+**Rule:** Development defines one shared vocabulary for operations that may be exposed by a Model. The default Model Operation set is `create`, `get_by_id`, `list`, `search`, `update`, `enable`, `disable`, and `delete`. Each Model declares the operations applicable to its own fields, relationships, and lifecycle; it may omit an inapplicable operation or add a Model-specific operation. When a Model exposes an operation, the Database, Logic, API, and Presentation Components account for that operation in their own responsibilities and preserve its meaning across their public boundaries.
 
 **Why:** One shared operation contract keeps every participating layer aligned while allowing each Model to have the lifecycle and queries its domain actually requires.
 
@@ -180,7 +180,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Declare every permitted direct dependency exactly once in a direct, non-transitive, acyclic Connection graph. *(4)*
 - **Never** — Infer direct access, reverse dependency, or transport from an indirect path or provider response. *(4)*
 - **Never** — Treat a Platform Reference as a runtime dependency Connection. *(4)*
-- **Must** — Use the shared Model Operation vocabulary and preserve the meaning of each exposed operation across Database, Backend Logic, API, and Frontend. *(5)*
+- **Must** — Use the shared Model Operation vocabulary and preserve the meaning of each exposed operation across Database, Logic, API, and Presentation. *(5)*
 - **Must** — Let each Model declare its applicable operations based on its fields, relationships, and lifecycle. *(5)*
 - **May** — Omit an inapplicable default operation or add a Model-specific operation. *(5)*
 - **Never** — Prescribe a Component's internal implementation from a Model Operation. *(5)*

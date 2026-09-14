@@ -16,7 +16,7 @@ Bring the developed Target online according to the current Platform authorities.
 
 Establish Interface Understanding from the canonical Interface document. Follow its routes to the shared Skill rules, then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Read the Platform Principles and Preferences, the operational records, and the public boundaries of the developed parts.
 
-Resolve the selected Environment and Launch from explicit Target decisions first and Platform defaults second. If either selection has no valid definition, record the unresolved condition under State instead of inventing a runtime method.
+Resolve the selected Environment and Launch from explicit Target decisions first and Platform defaults second. If either selection has no valid definition, record the unresolved condition under State instead of inventing a runtime method. The accepted scope values are `api`, `logic`, `presentation`, `complete`, and `all` (alias of `complete`); `logic` is the reusable Logic Component and `api` starts the API executable.
 
 Resolve the phases currently both enabled and ready for implementation, and confirm from State that their Development is complete. Treat incomplete Development as a truthful launch stoppage rather than bypassing it. Use recorded Review outcomes as evidence when available, but do not make Review a prerequisite unless the current Target or Platform explicitly requires it.
 

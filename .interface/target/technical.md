@@ -593,7 +593,7 @@ title = Backend
 target = Backend
 is_active = Enabled
 readiness = Ready
-goal = Implement the backend layer, including its application logic and API for operating on the defined models.
+goal = Implement the Backend Logic library and separate API executable for operating on the defined models.
 ```
 
 ### Phase 4
@@ -604,7 +604,7 @@ title = Frontend
 target = Frontend
 is_active = Enabled
 readiness = Ready
-goal = Implement the frontend based on the backend API.
+goal = Implement the frontend based on the separate API Component.
 ```
 
 ### Phase 5

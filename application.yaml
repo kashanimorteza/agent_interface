@@ -19,11 +19,14 @@ content:
     database:
       path: "database"
       package: "database"
-    backend:
-      path: "backend"
-      package: "backend"
-    frontend:
-      path: "frontend"
+    logic:
+      path: "logic"
+      package: "logic"
+    api:
+      path: "api"
+      package: "api"
+    presentation:
+      path: "presentation"
     platform:
       path: ".interface/developer/platform"
     plan:
