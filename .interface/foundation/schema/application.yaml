@@ -21,6 +21,11 @@ sections:
     required: true
     default: {}
     purpose: "Public metadata sections keyed by canonical Implementation Component identifier."
+    public_metadata_fields:
+      - "package_name"
+      - "path"
+      - "public_entrypoint"
+      - "public_interface"
     fields:
       development: {required: true, default: {}}
       model: {required: true, default: {}}

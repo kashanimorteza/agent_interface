@@ -31,6 +31,7 @@ Write the Application Manifest and Config records owned by Configure and perform
 ## Workflow Invariants
 
 - Create and reconcile the persistent `.interface/foundation/config/application.yaml` from current Development Component Profiles, declared Connections, and public Component metadata on every Configure run; preserve its structure and include every declared Implementation Component section, even when empty.
+- For each generated or configured Implementation Component, publish its non-secret `package_name` when applicable, repository-relative `path`, `public_entrypoint` when applicable, and `public_interface` metadata in that Component's Manifest section.
 - Keep the Application Manifest free of secrets, private implementation details, internal storage structure, and undeclared dependencies; Development Preferences and declared Connections remain authoritative.
 - Derive initialization and reconciliation from each current Schema rather than a remembered structure.
 - Preserve meaningful operational records through structural reconciliation; surface a conflict rather than discard information that has no other owner.
