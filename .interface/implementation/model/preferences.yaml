@@ -17,7 +17,7 @@ policy:
   consumption: "Use Model's identity, language, and Platform Reference from its Component Profile in Development Preferences, then resolve the applicable language-owned Technical Purposes and Package Management from Development without assuming that a package is bound to Model. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in this file. Preserve every explicit property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
   version_resolution: "This file owns no versioned technology. Development Preferences resolve every versioned technical item assigned to Model."
-  matching: "An explicit Model property takes priority, followed by an exact-name entry in field_defaults.common_fields, then a matching field_defaults.field_patterns entry. A default applies only to a missing property of an existing Field; otherwise no default applies. A name or pattern never creates a Field, relationship, or behavior."
+  matching: "An explicit Model property takes priority, followed by a matching field_defaults.field_patterns entry. A default applies only to a missing property of an existing Field; otherwise no default applies. A name or pattern never creates a Field, relationship, or behavior."
   modeling_standard:
     required: true
     rule: "Model must follow the selected domain-modeling standard as completely as possible while preserving the Target and Model Principles."
@@ -62,21 +62,6 @@ content:
 
     field_defaults:
       purpose: "Defaults for missing properties of Fields already present in a Model definition."
-      common_fields:
-        id:
-          type: "integer"
-          nullable: false
-          identity: true
-          generated: true
-        is_active:
-          type: "boolean"
-          nullable: false
-          default: true
-          purpose: "Indicates whether the domain item is active."
-        description:
-          type: "string"
-          nullable: true
-          purpose: "Describes the domain item."
       field_patterns:
         "*_id":
           match: "A Field name ending in _id; the exact name id is not included."

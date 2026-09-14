@@ -10,7 +10,7 @@ Model owns domain meaning and behavior determinable from its own data.
 
 - **Domain Definition** — the authoritative logical definition of one meaningful concept in the Target's domain.
 - **Field** — one named property of a Domain Definition, with its domain meaning and applicable constraints.
-- **Model Foundation** — the technology-independent common foundation through which concrete Model realizations receive shared configuration and behavior.
+- **Model Foundation** — the technology-independent common foundation through which concrete Model realizations receive shared mechanisms without inheriting domain Fields or relationships.
 - **Intrinsic Rule** — a domain rule that can be evaluated entirely from the data of the Domain Definition it governs.
 - **Domain Relationship** — a logical association between Domain Definitions whose meaning and constraints come from the Target.
 
@@ -63,11 +63,11 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 ## 4. Concrete Model realizations share one Model Foundation
 
-**Rule:** Every concrete Model realization receives applicable shared Model configuration and behavior through one Model Foundation.
+**Rule:** Every concrete Model realization receives applicable shared Model mechanisms through one Model Foundation. The Foundation may provide validation, serialization, and metadata-publishing mechanisms, but it never owns, injects, or requires a Field or Domain Relationship. Each Domain Definition declares its own complete set of Fields and relationships from the Target.
 
-**Why:** A single common foundation keeps cross-Model behavior consistent and prevents duplicated configuration.
+**Why:** A single common foundation keeps cross-Model mechanisms consistent without imposing fields or domain meaning on a Domain Definition.
 
-**Boundary:** Model Foundation does not require a base class, inheritance, or any other particular realization mechanism; the selected technology determines the compatible form.
+**Boundary:** Model Foundation does not require a base class, inheritance, or any other particular realization mechanism; the selected technology determines the compatible form. Shared implementation does not imply shared domain Fields.
 
 <br>
 
@@ -154,7 +154,7 @@ Conceptual example:
 - **Never** — Treat Initial Data or another project record as a Model-owned Domain Definition. *(2)*
 - **Must** — Keep Domain Definitions and Intrinsic Rules understandable independently of implementation technology. *(3)*
 - **Must** — Require every selected technology to preserve logical Model meaning. *(3)*
-- **Must** — Give every concrete Model realization applicable shared configuration and behavior through one Model Foundation. *(4)*
+- **Must** — Give every concrete Model realization applicable shared mechanisms through one Model Foundation without imposing Fields or relationships. *(4)*
 - **Never** — Require one particular realization mechanism for Model Foundation. *(4)*
 - **Must** — Expose every authoritative Domain Definition with one unambiguous identity through Model's explicit, stable Public Interface. *(5)*
 - **Never** — Let consumers depend on Model's private internal resources. *(5)*
