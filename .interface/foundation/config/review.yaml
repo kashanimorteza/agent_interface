@@ -1,0 +1,45 @@
+meta:
+  path: ".interface/foundation/config/review.yaml"
+  path_note: "Mutable Reviews, Findings and their state."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Review Component and the active operation's ownership rules."
+
+read_order:
+  - "finding_count"
+  - "reviews"
+
+content_map:
+  finding_count: "Total number of stored Findings."
+  reviews: "The current review record for each reviewed phase."
+
+content:
+  finding_count: 0
+  reviews:
+    P1:
+      id: "P1"
+      title: "Model"
+      target: "Model"
+      scope: "Plan Assurance re-confirmed for Model phase Plan Revision 2 (unchanged since the prior Review). Implementation Assurance against the model Python package at model/: every field, Domain Relationship, credential-storage marking, and declared uniqueness constraint for all 15 Domain Definitions plus the Model Foundation and Public Interface, checked by independently re-reading the source (not trusting the implementer's own account), independently recomputing the expected unique_together value for all 15 definitions against the Target text, and running additional adversarial checks beyond the existing test suite (unknown-field rejection on Position, null rejection on Asset.broker_id, runtime SecretStr coercion from a plain string, and direct inspection of the credential_storage metadata) in addition to the full pytest/ruff/pyright suite."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 2
+      implementation_outcome: "satisfied"
+      reviewed_by: "reviewer"
+      reviewed_at: "2026-09-14T13:00:00Z"
+      finding_count: 0
+      findings: {}
+    P2:
+      id: "P2"
+      title: "Database"
+      target: "Database"
+      scope: "Plan Assurance re-confirmed for Database phase Plan Revision 1 (unchanged since the prior Review). Implementation Assurance against the database Python package at database/: independently re-read foundation.py, adapter.py, interface.py, convert.py, seed.py, and every mapping module against each Task's acceptance and verification conditions; independently recomputed the expected table/constraint/FK shape for all 15 mappings against the Target and Model's declared unique_together; ran additional adversarial checks beyond the implementer's own test suite (NotFoundError on update/delete of a nonexistent row, RESTRICT actually blocking deletion of a referenced User, list_ criteria genuinely filtering) against the real SQLite instance, in addition to the full pytest/ruff/pyright/alembic-check suite."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 1
+      implementation_outcome: "satisfied"
+      reviewed_by: "reviewer"
+      reviewed_at: "2026-09-14T14:30:00Z"
+      finding_count: 0
+      findings: {}

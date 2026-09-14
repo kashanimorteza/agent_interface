@@ -1,0 +1,12 @@
+engines:
+  sqlite:
+    driver: "sqlite3"
+
+default_instance: "general"
+
+instances:
+  general:
+    name: "Trading Assistant General"
+    purpose: "General application data."
+    engine: "sqlite"
+    database: "trading_assistant_general"

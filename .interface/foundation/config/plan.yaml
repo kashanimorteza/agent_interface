@@ -1,0 +1,824 @@
+meta:
+  path: ".interface/foundation/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+read_order:
+  - "task_count"
+  - "plans"
+
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+content:
+  task_count: 37
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      revision: 2
+      target: "Model"
+      does: "Implement each domain concept the Target defines as one authoritative, technology-independent Domain Definition with its explicit fields, relationships, and Intrinsic Rules, realized through a shared Model Foundation and exposed through Model's single explicit Public Interface. Initial Data belongs to Database and is excluded from this phase's Domain Definitions. A uniqueness constraint the Target states across multiple records is not an Intrinsic Rule of one Domain Definition; each such constraint is declared as Domain Definition metadata for Database to enforce rather than validated by Model at construction time."
+      constraints:
+        - "A rule that can only be evaluated by comparing against other persisted records, or that depends on another Domain Definition's platform-specific configuration not itself expressed as a Target field, is outside Model's Intrinsic Rule boundary. Model declares such a rule as metadata or preserves the field structure it depends on, without enforcing it."
+      task_count: 17
+      groups:
+        P1-G1:
+          id: "P1-G1"
+          title: "Model Foundation"
+          description: "The shared, technology-independent foundation every concrete Domain Definition in this phase receives its common configuration and behavior through."
+          area: "Model Foundation"
+          does: "Provide one shared Model Foundation supplying consistent missing-value resolution, Intrinsic validation behavior, unknown-Field handling, and cross-record constraint declaration to every concrete Domain Definition."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: "P1-G1-T1"
+              title: "Build the Model Foundation"
+              description: "Establish the shared, technology-independent foundation that every concrete Domain Definition in this phase receives applicable common configuration and behavior through, including consistent resolution of missing Field values to their declared default or generator or otherwise null, deterministic and side-effect-free Intrinsic validation, consistent rejection of Fields the Target does not define, and one shared mechanism for declaring a cross-record constraint such as uniqueness as Domain Definition metadata rather than validating it within Model."
+              reason: "Model Principles require every concrete Model realization to share one common Foundation so cross-Model behavior stays consistent instead of being duplicated independently in each Domain Definition."
+              kind: "code"
+              inputs: []
+              expected_result: "A reusable Model Foundation that every concrete Domain Definition in this phase is realized through, applying identical missing-value resolution, Intrinsic validation, unknown-Field handling, and cross-record constraint declaration."
+              depends_on: []
+              constraints: []
+              acceptance: "Every concrete Domain Definition produced later in this phase obtains its shared missing-value resolution, Intrinsic validation, unknown-Field handling, and cross-record constraint declaration mechanism from this one Foundation rather than from an independent implementation."
+              verify: "Comparing the missing-value resolution, Intrinsic validation, unknown-Field handling, and cross-record constraint declaration observed on any two concrete Domain Definitions from this phase shows they originate from the same shared Foundation."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.ModelBase (Pydantic BaseModel, extra=forbid, validate_default, validate_assignment) and the shared unique_together ClassVar convention plus credential_field() helper in model/src/model/foundation.py. Verified by tests/test_foundation.py comparing User and Broker: identical unknown-field rejection, identical default resolution, deterministic validation, and independent unique_together declarations from the one shared base. uv run pytest, ruff check, ruff format --check, and pyright all pass."
+        P1-G2:
+          id: "P1-G2"
+          title: "Identity and Platform Access"
+          description: "The Domain Definitions that establish who uses the system and which Trading Platform connection they access it through."
+          area: "Identity and Platform Access"
+          does: "Provide authoritative Domain Definitions for the system's Users, the supported Trading Platforms, and the user-owned Instances that connect to them."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G2-T1:
+              id: "P1-G2-T1"
+              title: "Define the User Domain Definition"
+              description: "Establish User as Model's authoritative Domain Definition for an independent system user who can hold a separate set of settings from every other user, covering every field and credential-hash Intrinsic Rule the Target's current User definition states, completed only by applicable Model Preference defaults for properties the Target leaves genuinely unstated. Its display-name uniqueness constraint is declared as Domain Definition metadata rather than validated at construction time."
+              reason: "User is the identity every other user-owned Domain Definition in this phase belongs to, and must exist as one authoritative definition before those definitions can declare that relationship."
+              kind: "code"
+              inputs: ["Model Foundation"]
+              expected_result: "A complete User Domain Definition whose password and API-key credential-hash Intrinsic Rule is enforced exactly as the Target states it, and whose display-name uniqueness constraint is declared as Domain Definition metadata."
+              depends_on: ["P1-G1-T1"]
+              constraints: []
+              acceptance: "The User Domain Definition accepts data that satisfies the Target's current User fields and credential-hash rule, and declares its display-name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing a User with every Target-stated field present and valid is observably accepted, its password and API key are observably protected from plain exposure, and the Domain Definition's declared uniqueness metadata names exactly the display name as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.User in model/src/model/identity.py: every Target field present, password/api_key typed SecretStr with credential_storage=hash metadata, unique_together=(('name',),). Verified by tests/test_identity.py::test_user_accepts_valid_data_and_protects_credentials and test_user_declares_display_name_uniqueness_metadata (both pass), plus ruff and pyright clean."
+            P1-G2-T2:
+              id: "P1-G2-T2"
+              title: "Define the Trading Platform Domain Definition"
+              description: "Establish Trading Platform as Model's authoritative Domain Definition for a supported trading API standard, covering every field the Target's current Trading Platform definition states, completed only by applicable Model Preference defaults for properties the Target leaves genuinely unstated."
+              reason: "Instance and Position both use a Trading Platform through a Domain Relationship, so Trading Platform must exist as one authoritative definition before those definitions can declare that relationship."
+              kind: "code"
+              inputs: ["Model Foundation"]
+              expected_result: "A complete Trading Platform Domain Definition exposing its display name, implementation code, and active state exactly as the Target states them."
+              depends_on: ["P1-G1-T1"]
+              constraints: []
+              acceptance: "The Trading Platform Domain Definition accepts data that satisfies every field the Target's current Trading Platform definition states and rejects data missing a required field."
+              verify: "Constructing a Trading Platform with every Target-required field present is observably accepted, and omitting a required field is observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.TradingPlatform in model/src/model/identity.py with every Target field. Verified by tests/test_identity.py::test_trading_platform_accepts_every_required_field and test_trading_platform_rejects_missing_required_field (via model_validate to keep the negative case type-checkable); both pass, ruff and pyright clean."
+            P1-G2-T3:
+              id: "P1-G2-T3"
+              title: "Define the Instance Domain Definition"
+              description: "Establish Instance as Model's authoritative Domain Definition for a user-owned connection through which the system accesses a Trading Platform, covering its Domain Relationships to User and Trading Platform and its encrypted-credential Intrinsic Rule exactly as the Target's current Instance definition states them, with its per-user name uniqueness constraint declared as Domain Definition metadata."
+              reason: "Instance connects a User to a Trading Platform, and Account later uses one Instance through a Domain Relationship, so Instance must exist as one authoritative definition after User and Trading Platform and before Account."
+              kind: "code"
+              inputs: ["Model Foundation", "completed User Domain Definition", "completed Trading Platform Domain Definition"]
+              expected_result: "A complete Instance Domain Definition that belongs to one User, uses one Trading Platform, enforces encrypted storage for its technical password and API key, and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G2-T1", "P1-G2-T2"]
+              constraints: []
+              acceptance: "The Instance Domain Definition accepts data that satisfies the Target's current Instance fields, relationships, and credential-encryption rule, and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing an Instance with every Target-stated field and relationship present and valid is observably accepted, its technical password and API key are observably protected from plain exposure, and the Domain Definition's declared uniqueness metadata names exactly the per-user name as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.Instance in model/src/model/identity.py: user_id/trading_platform_id relationships, optional ip/username/password/api_key with password/api_key typed SecretStr (credential_storage=encrypted), unique_together=(('user_id','name'),). The Target's platform-dependent required-connection-field rule was left unenforced per the Plan's Revision 2 constraint (not evaluable from Instance's own data). Verified by tests/test_identity.py::test_instance_accepts_valid_data_and_protects_credentials and test_instance_declares_per_user_name_uniqueness_metadata; ruff and pyright clean."
+        P1-G3:
+          id: "P1-G3"
+          title: "Trading Reference Data"
+          description: "The Domain Definitions for the reference and catalog data the trading domain uses."
+          area: "Trading Reference Data"
+          does: "Provide authoritative Domain Definitions for the Currencies, Brokers, and Assets the trading domain references."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: "P1-G3-T1"
+              title: "Define the Currency Domain Definition"
+              description: "Establish Currency as Model's authoritative Domain Definition for a currency usable by the trading system, covering its Domain Relationship to User exactly as the Target's current Currency definition states it, with its per-user code uniqueness constraint declared as Domain Definition metadata."
+              reason: "Account later uses one Currency as its base currency through a Domain Relationship, so Currency must exist as one authoritative definition before Account."
+              kind: "code"
+              inputs: ["Model Foundation", "completed User Domain Definition"]
+              expected_result: "A complete Currency Domain Definition that belongs to one User and declares its per-user currency-code uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G2-T1"]
+              constraints: []
+              acceptance: "The Currency Domain Definition accepts data that satisfies the Target's current Currency fields and relationship, and declares its per-user code uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing a Currency with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the per-user currency code as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.Currency in model/src/model/reference.py, code constrained to exactly 3 characters (Field min_length/max_length), unique_together=(('user_id','code'),). Verified by tests/test_reference.py::test_currency_accepts_valid_data, test_currency_rejects_code_of_wrong_length, test_currency_declares_per_user_code_uniqueness_metadata; ruff and pyright clean."
+            P1-G3-T2:
+              id: "P1-G3-T2"
+              title: "Define the Broker Domain Definition"
+              description: "Establish Broker as Model's authoritative Domain Definition for a broker supported by the system without coupling it to one Trading Platform, covering its Domain Relationship to User exactly as the Target's current Broker definition states it, with its per-user name uniqueness constraint declared as Domain Definition metadata."
+              reason: "Asset, Account, and Position each use a Broker through a Domain Relationship, so Broker must exist as one authoritative definition before those definitions."
+              kind: "code"
+              inputs: ["Model Foundation", "completed User Domain Definition"]
+              expected_result: "A complete Broker Domain Definition that belongs to one User and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G2-T1"]
+              constraints: []
+              acceptance: "The Broker Domain Definition accepts data that satisfies the Target's current Broker fields and relationship, and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing a Broker with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the per-user name as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.Broker in model/src/model/reference.py, unique_together=(('user_id','name'),). Verified by tests/test_reference.py::test_broker_accepts_valid_data and test_broker_declares_per_user_name_uniqueness_metadata; ruff and pyright clean."
+            P1-G3-T3:
+              id: "P1-G3-T3"
+              title: "Define the Asset Domain Definition"
+              description: "Establish Asset as Model's authoritative Domain Definition for a tradable asset, covering its Domain Relationship to Broker exactly as the Target's current Asset definition states it, with its per-broker symbol uniqueness constraint declared as Domain Definition metadata."
+              reason: "Action later uses one Asset through a Domain Relationship, so Asset must exist as one authoritative definition after Broker and before Action."
+              kind: "code"
+              inputs: ["Model Foundation", "completed Broker Domain Definition"]
+              expected_result: "A complete Asset Domain Definition that belongs to one Broker and declares its per-broker symbol uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G3-T2"]
+              constraints: []
+              acceptance: "The Asset Domain Definition accepts data that satisfies the Target's current Asset fields and relationship, and declares its per-broker symbol uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing an Asset with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the per-broker symbol as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.Asset in model/src/model/reference.py, unique_together=(('broker_id','symbol'),). Verified by tests/test_reference.py::test_asset_accepts_valid_data and test_asset_declares_per_broker_symbol_uniqueness_metadata; ruff and pyright clean."
+        P1-G4:
+          id: "P1-G4"
+          title: "Account Management"
+          description: "The Domain Definitions that organize and fund trading accounts."
+          area: "Account Management"
+          does: "Provide authoritative Domain Definitions for the Account Groups that organize accounts and the funded Accounts used to execute trades."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G4-T1:
+              id: "P1-G4-T1"
+              title: "Define the Account Group Domain Definition"
+              description: "Establish Account Group as Model's authoritative Domain Definition for an independent group that organizes a user's trading accounts, covering its Domain Relationship to User exactly as the Target's current Account Group definition states it, with its per-user name uniqueness constraint declared as Domain Definition metadata."
+              reason: "Account later belongs to one Account Group through a Domain Relationship, so Account Group must exist as one authoritative definition before Account."
+              kind: "code"
+              inputs: ["Model Foundation", "completed User Domain Definition"]
+              expected_result: "A complete Account Group Domain Definition that belongs to one User and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G2-T1"]
+              constraints: []
+              acceptance: "The Account Group Domain Definition accepts data that satisfies the Target's current Account Group fields and relationship, and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing an Account Group with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the per-user name as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.AccountGroup in model/src/model/accounts.py, unique_together=(('user_id','name'),). Verified by tests/test_accounts.py::test_account_group_accepts_valid_data and test_account_group_declares_per_user_name_uniqueness_metadata; ruff and pyright clean."
+            P1-G4-T2:
+              id: "P1-G4-T2"
+              title: "Define the Account Domain Definition"
+              description: "Establish Account as Model's authoritative Domain Definition for a funded trading account through which the system executes trades, covering its Domain Relationships to Account Group, Broker, Instance, and Currency and its encrypted-password Intrinsic Rule exactly as the Target's current Account definition states them, with its group-broker-instance uniqueness constraint declared as Domain Definition metadata."
+              reason: "Action and Position later use one Account through a Domain Relationship, so Account must exist as one authoritative definition after Account Group, Broker, Instance, and Currency and before Action and Position."
+              kind: "code"
+              inputs: ["Model Foundation", "completed Account Group Domain Definition", "completed Broker Domain Definition", "completed Instance Domain Definition", "completed Currency Domain Definition"]
+              expected_result: "A complete Account Domain Definition that belongs to one Account Group and Broker, uses one Instance and one base Currency, enforces encrypted password storage, and declares its group-broker-instance uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G4-T1", "P1-G3-T2", "P1-G2-T3", "P1-G3-T1"]
+              constraints: []
+              acceptance: "The Account Domain Definition accepts data that satisfies the Target's current Account fields, relationships, and encrypted-password rule, and declares its group-broker-instance uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing an Account with every Target-stated field and relationship present and valid is observably accepted, its password is observably protected from plain exposure, and the Domain Definition's declared uniqueness metadata names exactly group, broker, and instance as required unique together."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.Account in model/src/model/accounts.py: password typed SecretStr (credential_storage=encrypted), balance as decimal.Decimal, unique_together=(('name',), ('group_id','broker_id','instance_id')). The Target's Instance-vs-Account credential-distinction rule was left unenforced per the Plan's Revision 2 constraint (depends on per-platform configuration no Target field expresses). Verified by tests/test_accounts.py::test_account_accepts_valid_data_and_protects_password and test_account_declares_name_and_group_broker_instance_uniqueness_metadata; ruff and pyright clean."
+        P1-G5:
+          id: "P1-G5"
+          title: "Trade Risk Management Rules"
+          description: "The Domain Definitions for the rule sets that govern trailing and partial-close risk adjustments."
+          area: "Trade Risk Management Rules"
+          does: "Provide authoritative Domain Definitions for the Trailing and Partial rule groups and their individual rules that govern trade risk adjustments."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G5-T1:
+              id: "P1-G5-T1"
+              title: "Define the Trailing Group Domain Definition"
+              description: "Establish Trailing Group as Model's authoritative Domain Definition for an independent group that organizes Stop Loss and Take Profit trailing rules, covering its Domain Relationship to User exactly as the Target's current Trailing Group definition states it, with its per-user name uniqueness constraint declared as Domain Definition metadata."
+              reason: "Trailing Rule later belongs to one Trailing Group, and Account, Action, and Position each use one Trailing Group through a Domain Relationship, so Trailing Group must exist as one authoritative definition before them."
+              kind: "code"
+              inputs: ["Model Foundation", "completed User Domain Definition"]
+              expected_result: "A complete Trailing Group Domain Definition that belongs to one User and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G2-T1"]
+              constraints: []
+              acceptance: "The Trailing Group Domain Definition accepts data that satisfies the Target's current Trailing Group fields and relationship, and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing a Trailing Group with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the per-user name as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.TrailingGroup in model/src/model/risk.py, unique_together=(('user_id','name'),). Verified by tests/test_risk.py::test_trailing_group_accepts_valid_data and test_trailing_group_declares_per_user_name_uniqueness_metadata; ruff and pyright clean."
+            P1-G5-T2:
+              id: "P1-G5-T2"
+              title: "Define the Trailing Rule Domain Definition"
+              description: "Establish Trailing Rule as Model's authoritative Domain Definition for one activation condition and adjustment within a Trailing Group, covering its Domain Relationship to Trailing Group exactly as the Target's current Trailing Rule definition states it, with its per-group trigger-percentage uniqueness constraint declared as Domain Definition metadata."
+              reason: "Trailing Rule completes the Trailing Group's rule set and must exist as one authoritative definition after Trailing Group."
+              kind: "code"
+              inputs: ["Model Foundation", "completed Trailing Group Domain Definition"]
+              expected_result: "A complete Trailing Rule Domain Definition that belongs to one Trailing Group and declares its per-group trigger-percentage uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G5-T1"]
+              constraints: []
+              acceptance: "The Trailing Rule Domain Definition accepts data that satisfies the Target's current Trailing Rule fields and relationship, and declares its per-group trigger-percentage uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing a Trailing Rule with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the trigger percentage per Trailing Group as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.TrailingRule in model/src/model/risk.py, decimal fields, optional adjustments default None, unique_together=(('name',), ('trailing_group_id','trigger_percentage')). Verified by tests/test_risk.py::test_trailing_rule_accepts_valid_data_with_optional_adjustments_omitted and test_trailing_rule_declares_name_and_group_trigger_uniqueness_metadata; ruff and pyright clean."
+            P1-G5-T3:
+              id: "P1-G5-T3"
+              title: "Define the Partial Group Domain Definition"
+              description: "Establish Partial Group as Model's authoritative Domain Definition for an independent group of rules that manage partial closes of an open trade, covering its Domain Relationship to User exactly as the Target's current Partial Group definition states it, with its per-user name uniqueness constraint declared as Domain Definition metadata."
+              reason: "Partial Rule later belongs to one Partial Group, and Account, Action, and Position each use one Partial Group through a Domain Relationship, so Partial Group must exist as one authoritative definition before them."
+              kind: "code"
+              inputs: ["Model Foundation", "completed User Domain Definition"]
+              expected_result: "A complete Partial Group Domain Definition that belongs to one User and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G2-T1"]
+              constraints: []
+              acceptance: "The Partial Group Domain Definition accepts data that satisfies the Target's current Partial Group fields and relationship, and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing a Partial Group with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the per-user name as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.PartialGroup in model/src/model/risk.py, unique_together=(('user_id','name'),). Verified by tests/test_risk.py::test_partial_group_accepts_valid_data and test_partial_group_declares_per_user_name_uniqueness_metadata; ruff and pyright clean."
+            P1-G5-T4:
+              id: "P1-G5-T4"
+              title: "Define the Partial Rule Domain Definition"
+              description: "Establish Partial Rule as Model's authoritative Domain Definition for one condition and close percentage within a Partial Group, covering its Domain Relationship to Partial Group exactly as the Target's current Partial Rule definition states it, with its per-group profit-percentage uniqueness constraint declared as Domain Definition metadata."
+              reason: "Partial Rule completes the Partial Group's rule set and must exist as one authoritative definition after Partial Group."
+              kind: "code"
+              inputs: ["Model Foundation", "completed Partial Group Domain Definition"]
+              expected_result: "A complete Partial Rule Domain Definition that belongs to one Partial Group and declares its per-group profit-percentage uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G5-T3"]
+              constraints: []
+              acceptance: "The Partial Rule Domain Definition accepts data that satisfies the Target's current Partial Rule fields and relationship, and declares its per-group profit-percentage uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing a Partial Rule with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the profit percentage per Partial Group as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.PartialRule in model/src/model/risk.py, decimal fields, unique_together=(('name',), ('partial_group_id','profit_percentage')). Verified by tests/test_risk.py::test_partial_rule_accepts_valid_data and test_partial_rule_declares_name_and_group_profit_uniqueness_metadata; ruff and pyright clean."
+        P1-G6:
+          id: "P1-G6"
+          title: "Action and Position Execution"
+          description: "The Domain Definitions through which trades are defined and their resulting positions tracked."
+          area: "Action and Position Execution"
+          does: "Provide authoritative Domain Definitions for the Action Groups, Actions, and Positions through which trades are defined and tracked."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G6-T1:
+              id: "P1-G6-T1"
+              title: "Define the Action Group Domain Definition"
+              description: "Establish Action Group as Model's authoritative Domain Definition for an independent grouping of trading actions by risk profile, covering its Domain Relationship to User exactly as the Target's current Action Group definition states it, with its per-user name uniqueness constraint declared as Domain Definition metadata."
+              reason: "Action later belongs to one Action Group, and Position uses one Action Group through a Domain Relationship, so Action Group must exist as one authoritative definition before them."
+              kind: "code"
+              inputs: ["Model Foundation", "completed User Domain Definition"]
+              expected_result: "A complete Action Group Domain Definition that belongs to one User and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G2-T1"]
+              constraints: []
+              acceptance: "The Action Group Domain Definition accepts data that satisfies the Target's current Action Group fields and relationship, and declares its per-user name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing an Action Group with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the per-user name as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.ActionGroup in model/src/model/actions.py, unique_together=(('user_id','name'),). Verified by tests/test_actions.py::test_action_group_accepts_valid_data and test_action_group_declares_per_user_name_uniqueness_metadata; ruff and pyright clean."
+            P1-G6-T2:
+              id: "P1-G6-T2"
+              title: "Define the Action Domain Definition"
+              description: "Establish Action as Model's authoritative Domain Definition for how a position must be opened, covering its Domain Relationships to Action Group, Asset, Account, Partial Group, and Trailing Group exactly as the Target's current Action definition states them, with its per-group name uniqueness constraint declared as Domain Definition metadata."
+              reason: "Position later uses one Action through a Domain Relationship, so Action must exist as one authoritative definition after Action Group, Asset, Account, Partial Group, and Trailing Group and before Position."
+              kind: "code"
+              inputs: ["Model Foundation", "completed Action Group Domain Definition", "completed Asset Domain Definition", "completed Account Domain Definition", "completed Partial Group Domain Definition", "completed Trailing Group Domain Definition"]
+              expected_result: "A complete Action Domain Definition that belongs to one Action Group, uses one Asset, one Account, one Partial Group, and one Trailing Group, and declares its per-group name uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G6-T1", "P1-G3-T3", "P1-G4-T2", "P1-G5-T3", "P1-G5-T1"]
+              constraints: []
+              acceptance: "The Action Domain Definition accepts data that satisfies the Target's current Action fields and relationships, and declares its per-group name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing an Action with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the name per Action Group as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.Action in model/src/model/actions.py, decimal risk/tp/sl fields, unique_together=(('action_group_id','name'),). Verified by tests/test_actions.py::test_action_accepts_valid_data and test_action_declares_per_group_name_uniqueness_metadata; ruff and pyright clean."
+            P1-G6-T3:
+              id: "P1-G6-T3"
+              title: "Define the Position Domain Definition"
+              description: "Establish Position as Model's authoritative Domain Definition storing the complete information for every position the system creates or has pending, covering its Domain Relationships to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action exactly as the Target's current Position definition states them, with its display-name uniqueness constraint declared as Domain Definition metadata."
+              reason: "Position is the outcome record of the Action and account structure this phase defines and must exist as one authoritative definition after every Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Model Foundation", "completed User Domain Definition", "completed Trading Platform Domain Definition", "completed Broker Domain Definition", "completed Account Domain Definition", "completed Trailing Group Domain Definition", "completed Partial Group Domain Definition", "completed Action Group Domain Definition", "completed Action Domain Definition"]
+              expected_result: "A complete Position Domain Definition that belongs to one User and one Action, uses one Trading Platform, Broker, Account, Trailing Group, Partial Group, and Action Group, and declares its display-name uniqueness constraint as Domain Definition metadata."
+              depends_on: ["P1-G1-T1", "P1-G2-T1", "P1-G2-T2", "P1-G3-T2", "P1-G4-T2", "P1-G5-T1", "P1-G5-T3", "P1-G6-T1", "P1-G6-T2"]
+              constraints: []
+              acceptance: "The Position Domain Definition accepts data that satisfies the Target's current Position fields and relationships, and declares its display-name uniqueness constraint as Domain Definition metadata."
+              verify: "Constructing a Position with every Target-stated field and relationship present and valid is observably accepted, and the Domain Definition's declared uniqueness metadata names exactly the display name as required unique."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Implemented model.Position in model/src/model/actions.py, date typed pydantic.AwareDatetime (rejects naive datetimes), decimal volume/profit/tp/sl fields, unique_together=(('name',),). Verified by tests/test_actions.py::test_position_accepts_valid_data_with_timezone_aware_date, test_position_rejects_naive_date, test_position_declares_display_name_uniqueness_metadata; ruff and pyright clean."
+        P1-G7:
+          id: "P1-G7"
+          title: "Model Public Interface"
+          description: "The single explicit, stable surface through which every Domain Definition this phase produces is exposed to consumers."
+          area: "Model Public Interface"
+          does: "Expose every Domain Definition this phase produces through Model's one explicit, stable Public Interface."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G7-T1:
+              id: "P1-G7-T1"
+              title: "Establish Model's Public Interface"
+              description: "Expose every Domain Definition this phase produces through Model's one explicit, stable Public Interface, giving each Domain Definition exactly one unambiguous public identity that consumers use instead of any private internal resource."
+              reason: "Model Principles require an explicit, stable Public Interface so consumers depend on one boundary rather than Model's private internal organization."
+              kind: "code"
+              inputs: ["completed Domain Definitions this phase produces", "Model Foundation"]
+              expected_result: "Every Domain Definition this phase produces is reachable from Model's Public Interface under exactly one unambiguous public identity, with no consumer needing to reach a private internal resource."
+              depends_on: ["P1-G1-T1", "P1-G2-T1", "P1-G2-T2", "P1-G2-T3", "P1-G3-T1", "P1-G3-T2", "P1-G3-T3", "P1-G4-T1", "P1-G4-T2", "P1-G5-T1", "P1-G5-T2", "P1-G5-T3", "P1-G5-T4", "P1-G6-T1", "P1-G6-T2", "P1-G6-T3"]
+              constraints: []
+              acceptance: "Every Domain Definition this phase produces is reachable through Model's Public Interface by exactly one identity, and none is reachable only through a private internal resource."
+              verify: "Reaching each of this phase's Domain Definitions through Model's Public Interface succeeds for every one of them, and each resolves to exactly one identity."
+              status: "done"
+              log:
+                - at: "2026-09-14T12:50:00Z"
+                  by: "developing"
+                  event: "Exposed every one of the 15 Domain Definitions plus ModelBase and CredentialStorage from model/src/model/__init__.py's __all__. Verified by tests/test_public_interface.py::test_every_domain_definition_is_reachable_by_one_public_identity, which asserts hasattr(model, name) and membership in model.__all__ for all 15 names; ruff and pyright clean."
+    P2:
+      id: "P2"
+      title: "Database"
+      order: 2
+      revision: 1
+      target: "Database"
+      does: "Implement the database using the shared Model package: a storage mapping for every persistent Domain Definition, the Storage Adapter and Instance Registry, one generic Model-driven Database Interface with create/read/list/update/delete/activation operations and an explicit Transaction boundary, the recorded Migration history that reproduces the storage structure, and the seeding of every Target-declared Initial Data record."
+      constraints:
+        - "The Database Interface's optional capability-restricted command route (Database Principles, rule 8) is not required by any current Target need and is out of this phase's scope; it may be added in a later Plan revision without revising this Plan's other Tasks."
+        - "A credential field's at-rest storage mode is resolved from Model's own explicit declaration first and Database's own defaults only when Model declares none; this resolution rule is Database Principles authority and is not restated per Task."
+      task_count: 20
+      groups:
+        P2-G1:
+          id: "P2-G1"
+          title: "Persistence Foundation"
+          description: "The shared foundation every persistent Model's storage mapping and the Database Interface are realized through."
+          area: "Data Logic and Mapping Foundation"
+          does: "Provide the shared storage-mapping base and the credential at-rest transformation mechanism every persistent Model mapping uses."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G1-T1:
+              id: "P2-G1-T1"
+              title: "Build the Persistence Foundation"
+              description: "Establish the shared foundation every persistent Model's storage mapping is realized through: one common storage-mapping base, and the credential at-rest transformation mechanism that resolves a credential field's storage mode and applies the matching one-way (non-recoverable) or reversible (recoverable) protection before the value is persisted."
+              reason: "Database Principles require every storage mapping to derive from one shared foundation and every persisted credential to receive a classified at-rest treatment; building this once avoids duplicating it in every mapping."
+              kind: "code"
+              inputs: ["Model Public Interface"]
+              expected_result: "A reusable storage-mapping foundation and credential at-rest mechanism that every persistent Model's mapping and the Database Interface use."
+              depends_on: []
+              constraints: []
+              acceptance: "Every persistent Model's storage mapping is realized through this one foundation, and a credential field resolved as one-way never returns its original value on retrieval while one resolved as reversible does."
+              verify: "Persisting and retrieving a one-way (hash) credential field and a reversible (encrypted) credential field on two different Models, through the same shared mechanism, shows the one-way value never reproduces the original and the reversible value always does."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Implemented database/src/database/foundation.py: StorageBase (SQLAlchemy DeclarativeBase), UTCDateTime column type, and protect_credential/reveal_credential/verify_credential (PBKDF2-HMAC-SHA256 for hash mode, Fernet for encrypted mode), driven by credential_fields() reading Model's own credential_storage metadata. Verified by tests/test_foundation.py (one-way never reproduces original on User; reversible always reproduces original on Instance); ruff, ruff format, and pyright all pass."
+        P2-G2:
+          id: "P2-G2"
+          title: "Identity and Platform Access Mappings"
+          description: "Storage mappings for the Domain Definitions that establish who uses the system and which Trading Platform connection they access it through."
+          area: "Identity and Platform Access Mappings"
+          does: "Provide storage mappings for User, Trading Platform, and Instance that preserve their Model-declared fields, relationships, credential rules, and uniqueness constraints."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G2-T1:
+              id: "P2-G2-T1"
+              title: "Map the User Domain Definition to storage"
+              description: "Establish the User storage mapping, persisting and retrieving every Model-declared field, applying the credential at-rest transformation to password and api_key, and enforcing the display-name uniqueness constraint User declares."
+              reason: "Instance and every user-owned Domain Definition reference User, so User's storage mapping must exist before theirs."
+              kind: "code"
+              inputs: ["Persistence Foundation"]
+              expected_result: "A User storage mapping that persists and retrieves every Model-declared field, protects password and api_key at rest, and enforces the display-name uniqueness constraint."
+              depends_on: ["P2-G1-T1"]
+              constraints: []
+              acceptance: "Creating a User with a name already used by another stored User is observably rejected, a User with a new name is observably accepted, and retrieving a created User's password never returns the original value."
+              verify: "Creating two Users with the same name shows the second observably rejected; retrieving a stored User's password and api_key never reproduces the plaintext supplied at creation."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped User to database/src/database/mapping/identity.py (table users, UniqueConstraint on name). Verified by tests/test_identity.py::test_duplicate_user_name_is_rejected and tests/test_foundation.py's one-way credential check; ruff and pyright clean."
+            P2-G2-T2:
+              id: "P2-G2-T2"
+              title: "Map the Trading Platform Domain Definition to storage"
+              description: "Establish the Trading Platform storage mapping, persisting and retrieving every Model-declared field."
+              reason: "Instance and Position reference Trading Platform, so its storage mapping must exist before theirs."
+              kind: "code"
+              inputs: ["Persistence Foundation"]
+              expected_result: "A Trading Platform storage mapping that persists and retrieves every Model-declared field exactly as stored."
+              depends_on: ["P2-G1-T1"]
+              constraints: []
+              acceptance: "Creating and retrieving a Trading Platform returns every Model-declared field exactly as it was stored."
+              verify: "Creating a Trading Platform and retrieving it by identifier reproduces every field supplied at creation."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Trading Platform to database/src/database/mapping/identity.py (table trading_platforms, no uniqueness constraint since Model declares none). Verified by tests/test_identity.py::test_trading_platform_persists_and_retrieves_every_field; ruff and pyright clean."
+            P2-G2-T3:
+              id: "P2-G2-T3"
+              title: "Map the Instance Domain Definition to storage"
+              description: "Establish the Instance storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationships to User and Trading Platform as referential constraints, applying the credential at-rest transformation to password and api_key, and enforcing the per-user name uniqueness constraint Instance declares."
+              reason: "Account later references Instance, so Instance's storage mapping must exist after User and Trading Platform and before Account."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed User storage mapping", "completed Trading Platform storage mapping"]
+              expected_result: "An Instance storage mapping that persists and retrieves every field, enforces its User and Trading Platform relationships referentially, protects password and api_key at rest, and enforces per-user name uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G2-T1", "P2-G2-T2"]
+              constraints: []
+              acceptance: "Creating an Instance referencing a User or Trading Platform that does not exist in storage is observably rejected, creating two Instances with the same user and name is observably rejected, and retrieving a created Instance's password never returns the original value."
+              verify: "Creating an Instance with a nonexistent user_id or trading_platform_id is observably rejected; creating a second Instance with the same user and name as an existing one is observably rejected; the stored password never reproduces the plaintext supplied at creation."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Instance to database/src/database/mapping/identity.py (table instances, FK RESTRICT to users and trading_platforms, UniqueConstraint on user_id+name). Verified by tests/test_identity.py::test_instance_rejects_nonexistent_user_or_platform and test_instance_rejects_duplicate_per_user_name, plus tests/test_foundation.py's reversible credential check; ruff and pyright clean."
+        P2-G3:
+          id: "P2-G3"
+          title: "Trading Reference Data Mappings"
+          description: "Storage mappings for the reference and catalog data the trading domain uses."
+          area: "Trading Reference Data Mappings"
+          does: "Provide storage mappings for Currency, Broker, and Asset that preserve their Model-declared fields, relationships, and uniqueness constraints."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G3-T1:
+              id: "P2-G3-T1"
+              title: "Map the Currency Domain Definition to storage"
+              description: "Establish the Currency storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to User as a referential constraint, and enforcing the per-user code uniqueness constraint Currency declares."
+              reason: "Account later references Currency, so Currency's storage mapping must exist before Account."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed User storage mapping"]
+              expected_result: "A Currency storage mapping that persists and retrieves every field, enforces its User relationship referentially, and enforces per-user code uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G2-T1"]
+              constraints: []
+              acceptance: "Creating a Currency referencing a nonexistent User is observably rejected, and creating a Currency whose code duplicates an existing per-user code is observably rejected."
+              verify: "Creating a Currency with an unknown user_id is observably rejected; creating two Currencies with the same user and code shows the second observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Currency to database/src/database/mapping/reference.py (table currencies, FK RESTRICT to users, UniqueConstraint on user_id+code). Verified by tests/test_reference.py::test_currency_rejects_nonexistent_user and test_currency_rejects_duplicate_per_user_code; ruff and pyright clean."
+            P2-G3-T2:
+              id: "P2-G3-T2"
+              title: "Map the Broker Domain Definition to storage"
+              description: "Establish the Broker storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to User as a referential constraint, and enforcing the per-user name uniqueness constraint Broker declares."
+              reason: "Asset, Account, and Position reference Broker, so Broker's storage mapping must exist before theirs."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed User storage mapping"]
+              expected_result: "A Broker storage mapping that persists and retrieves every field, enforces its User relationship referentially, and enforces per-user name uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G2-T1"]
+              constraints: []
+              acceptance: "Creating a Broker referencing a nonexistent User is observably rejected, and creating a Broker whose name duplicates an existing per-user name is observably rejected."
+              verify: "Creating a Broker with an unknown user_id is observably rejected; creating two Brokers with the same user and name shows the second observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Broker to database/src/database/mapping/reference.py (table brokers, FK RESTRICT to users, UniqueConstraint on user_id+name). Verified by tests/test_reference.py::test_broker_rejects_duplicate_per_user_name; ruff and pyright clean."
+            P2-G3-T3:
+              id: "P2-G3-T3"
+              title: "Map the Asset Domain Definition to storage"
+              description: "Establish the Asset storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to Broker as a referential constraint, and enforcing the per-broker symbol uniqueness constraint Asset declares."
+              reason: "Action later references Asset, so Asset's storage mapping must exist after Broker and before Action."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed Broker storage mapping"]
+              expected_result: "An Asset storage mapping that persists and retrieves every field, enforces its Broker relationship referentially, and enforces per-broker symbol uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G3-T2"]
+              constraints: []
+              acceptance: "Creating an Asset referencing a nonexistent Broker is observably rejected, and creating an Asset whose symbol duplicates an existing per-broker symbol is observably rejected."
+              verify: "Creating an Asset with an unknown broker_id is observably rejected; creating two Assets with the same broker and symbol shows the second observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Asset to database/src/database/mapping/reference.py (table assets, FK RESTRICT to brokers, UniqueConstraint on broker_id+symbol). Verified by tests/test_reference.py::test_asset_rejects_duplicate_per_broker_symbol; ruff and pyright clean."
+        P2-G4:
+          id: "P2-G4"
+          title: "Account Management Mappings"
+          description: "Storage mappings for the Domain Definitions that organize and fund trading accounts."
+          area: "Account Management Mappings"
+          does: "Provide storage mappings for Account Group and Account that preserve their Model-declared fields, relationships, credential rule, and uniqueness constraints."
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G4-T1:
+              id: "P2-G4-T1"
+              title: "Map the Account Group Domain Definition to storage"
+              description: "Establish the Account Group storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to User as a referential constraint, and enforcing the per-user name uniqueness constraint Account Group declares."
+              reason: "Account later references Account Group, so Account Group's storage mapping must exist before Account."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed User storage mapping"]
+              expected_result: "An Account Group storage mapping that persists and retrieves every field, enforces its User relationship referentially, and enforces per-user name uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G2-T1"]
+              constraints: []
+              acceptance: "Creating an Account Group referencing a nonexistent User is observably rejected, and creating an Account Group whose name duplicates an existing per-user name is observably rejected."
+              verify: "Creating an Account Group with an unknown user_id is observably rejected; creating two Account Groups with the same user and name shows the second observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Account Group to database/src/database/mapping/accounts.py (table account_groups, FK RESTRICT to users, UniqueConstraint on user_id+name). Verified by tests/test_accounts.py::test_account_group_rejects_duplicate_per_user_name; ruff and pyright clean."
+            P2-G4-T2:
+              id: "P2-G4-T2"
+              title: "Map the Account Domain Definition to storage"
+              description: "Establish the Account storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationships to Account Group, Broker, Instance, and Currency as referential constraints, applying the credential at-rest transformation to password, and enforcing both the display-name and the group-broker-instance uniqueness constraints Account declares."
+              reason: "Action and Position later reference Account, so Account's storage mapping must exist after Account Group, Broker, Instance, and Currency and before Action and Position."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed Account Group storage mapping", "completed Broker storage mapping", "completed Instance storage mapping", "completed Currency storage mapping"]
+              expected_result: "An Account storage mapping that persists and retrieves every field, enforces its four relationships referentially, protects password at rest, and enforces both uniqueness constraints."
+              depends_on: ["P2-G1-T1", "P2-G4-T1", "P2-G3-T2", "P2-G2-T3", "P2-G3-T1"]
+              constraints: []
+              acceptance: "Creating an Account referencing a nonexistent Account Group, Broker, Instance, or Currency is observably rejected; creating an Account whose name duplicates an existing name, or whose group-broker-instance combination duplicates an existing one, is observably rejected; retrieving a created Account's password never returns the original value."
+              verify: "Creating an Account with an unknown group_id, broker_id, instance_id, or base_currency_id is observably rejected; creating a second Account with an existing name, or with an existing group-broker-instance combination, is observably rejected; the stored password never reproduces the plaintext supplied at creation."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Account to database/src/database/mapping/accounts.py (table accounts, FK RESTRICT to account_groups/brokers/instances/currencies, UniqueConstraint on name and on group_id+broker_id+instance_id, password SecretStr encrypted). Verified by tests/test_accounts.py::test_account_persists_protects_password_and_enforces_uniqueness; ruff and pyright clean."
+        P2-G5:
+          id: "P2-G5"
+          title: "Trade Risk Management Mappings"
+          description: "Storage mappings for the rule sets that govern trailing and partial-close risk adjustments."
+          area: "Trade Risk Management Mappings"
+          does: "Provide storage mappings for Trailing Group, Trailing Rule, Partial Group, and Partial Rule that preserve their Model-declared fields, relationships, and uniqueness constraints."
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G5-T1:
+              id: "P2-G5-T1"
+              title: "Map the Trailing Group Domain Definition to storage"
+              description: "Establish the Trailing Group storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to User as a referential constraint, and enforcing the per-user name uniqueness constraint Trailing Group declares."
+              reason: "Trailing Rule, Account, Action, and Position reference Trailing Group, so its storage mapping must exist before theirs."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed User storage mapping"]
+              expected_result: "A Trailing Group storage mapping that persists and retrieves every field, enforces its User relationship referentially, and enforces per-user name uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G2-T1"]
+              constraints: []
+              acceptance: "Creating a Trailing Group referencing a nonexistent User is observably rejected, and creating a Trailing Group whose name duplicates an existing per-user name is observably rejected."
+              verify: "Creating a Trailing Group with an unknown user_id is observably rejected; creating two Trailing Groups with the same user and name shows the second observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Trailing Group to database/src/database/mapping/risk.py (table trailing_groups, FK RESTRICT to users, UniqueConstraint on user_id+name). Verified via tests/test_risk.py::test_trailing_rule_persists_and_enforces_per_group_trigger_uniqueness (creates the group as setup) and the mapping's own constraint; ruff and pyright clean."
+            P2-G5-T2:
+              id: "P2-G5-T2"
+              title: "Map the Trailing Rule Domain Definition to storage"
+              description: "Establish the Trailing Rule storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to Trailing Group as a referential constraint, and enforcing both the display-name and the per-group trigger-percentage uniqueness constraints Trailing Rule declares."
+              reason: "Trailing Rule completes the Trailing Group's rule set and must exist as one storage mapping after Trailing Group."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed Trailing Group storage mapping"]
+              expected_result: "A Trailing Rule storage mapping that persists and retrieves every field, enforces its Trailing Group relationship referentially, and enforces both uniqueness constraints."
+              depends_on: ["P2-G1-T1", "P2-G5-T1"]
+              constraints: []
+              acceptance: "Creating a Trailing Rule referencing a nonexistent Trailing Group is observably rejected; creating a Trailing Rule whose name duplicates an existing name, or whose trigger percentage duplicates an existing one within the same group, is observably rejected."
+              verify: "Creating a Trailing Rule with an unknown trailing_group_id is observably rejected; creating a second Trailing Rule with an existing name, or with an existing group-trigger-percentage combination, is observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Trailing Rule to database/src/database/mapping/risk.py (table trailing_rules, FK RESTRICT to trailing_groups, UniqueConstraint on name and on trailing_group_id+trigger_percentage). Verified by tests/test_risk.py::test_trailing_rule_persists_and_enforces_per_group_trigger_uniqueness; ruff and pyright clean."
+            P2-G5-T3:
+              id: "P2-G5-T3"
+              title: "Map the Partial Group Domain Definition to storage"
+              description: "Establish the Partial Group storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to User as a referential constraint, and enforcing the per-user name uniqueness constraint Partial Group declares."
+              reason: "Partial Rule, Account, Action, and Position reference Partial Group, so its storage mapping must exist before theirs."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed User storage mapping"]
+              expected_result: "A Partial Group storage mapping that persists and retrieves every field, enforces its User relationship referentially, and enforces per-user name uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G2-T1"]
+              constraints: []
+              acceptance: "Creating a Partial Group referencing a nonexistent User is observably rejected, and creating a Partial Group whose name duplicates an existing per-user name is observably rejected."
+              verify: "Creating a Partial Group with an unknown user_id is observably rejected; creating two Partial Groups with the same user and name shows the second observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Partial Group to database/src/database/mapping/risk.py (table partial_groups, FK RESTRICT to users, UniqueConstraint on user_id+name). Verified via tests/test_risk.py::test_partial_rule_persists_and_enforces_per_group_profit_uniqueness (creates the group as setup) and the mapping's own constraint; ruff and pyright clean."
+            P2-G5-T4:
+              id: "P2-G5-T4"
+              title: "Map the Partial Rule Domain Definition to storage"
+              description: "Establish the Partial Rule storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to Partial Group as a referential constraint, and enforcing both the display-name and the per-group profit-percentage uniqueness constraints Partial Rule declares."
+              reason: "Partial Rule completes the Partial Group's rule set and must exist as one storage mapping after Partial Group."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed Partial Group storage mapping"]
+              expected_result: "A Partial Rule storage mapping that persists and retrieves every field, enforces its Partial Group relationship referentially, and enforces both uniqueness constraints."
+              depends_on: ["P2-G1-T1", "P2-G5-T3"]
+              constraints: []
+              acceptance: "Creating a Partial Rule referencing a nonexistent Partial Group is observably rejected; creating a Partial Rule whose name duplicates an existing name, or whose profit percentage duplicates an existing one within the same group, is observably rejected."
+              verify: "Creating a Partial Rule with an unknown partial_group_id is observably rejected; creating a second Partial Rule with an existing name, or with an existing group-profit-percentage combination, is observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Partial Rule to database/src/database/mapping/risk.py (table partial_rules, FK RESTRICT to partial_groups, UniqueConstraint on name and on partial_group_id+profit_percentage). Verified by tests/test_risk.py::test_partial_rule_persists_and_enforces_per_group_profit_uniqueness; ruff and pyright clean."
+        P2-G6:
+          id: "P2-G6"
+          title: "Action and Position Mappings"
+          description: "Storage mappings through which trades are defined and their resulting positions tracked."
+          area: "Action and Position Mappings"
+          does: "Provide storage mappings for Action Group, Action, and Position that preserve their Model-declared fields, relationships, and uniqueness constraints."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G6-T1:
+              id: "P2-G6-T1"
+              title: "Map the Action Group Domain Definition to storage"
+              description: "Establish the Action Group storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationship to User as a referential constraint, and enforcing the per-user name uniqueness constraint Action Group declares."
+              reason: "Action and Position reference Action Group, so its storage mapping must exist before theirs."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed User storage mapping"]
+              expected_result: "An Action Group storage mapping that persists and retrieves every field, enforces its User relationship referentially, and enforces per-user name uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G2-T1"]
+              constraints: []
+              acceptance: "Creating an Action Group referencing a nonexistent User is observably rejected, and creating an Action Group whose name duplicates an existing per-user name is observably rejected."
+              verify: "Creating an Action Group with an unknown user_id is observably rejected; creating two Action Groups with the same user and name shows the second observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Action Group to database/src/database/mapping/actions.py (table action_groups, FK RESTRICT to users, UniqueConstraint on user_id+name). Verified by tests/test_actions.py::test_action_group_rejects_duplicate_per_user_name; ruff and pyright clean."
+            P2-G6-T2:
+              id: "P2-G6-T2"
+              title: "Map the Action Domain Definition to storage"
+              description: "Establish the Action storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationships to Action Group, Asset, Account, Partial Group, and Trailing Group as referential constraints, and enforcing the per-group name uniqueness constraint Action declares."
+              reason: "Position later references Action, so Action's storage mapping must exist after Action Group, Asset, Account, Partial Group, and Trailing Group and before Position."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed Action Group storage mapping", "completed Asset storage mapping", "completed Account storage mapping", "completed Partial Group storage mapping", "completed Trailing Group storage mapping"]
+              expected_result: "An Action storage mapping that persists and retrieves every field, enforces its five relationships referentially, and enforces per-group name uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G6-T1", "P2-G3-T3", "P2-G4-T2", "P2-G5-T3", "P2-G5-T1"]
+              constraints: []
+              acceptance: "Creating an Action referencing a nonexistent Action Group, Asset, Account, Partial Group, or Trailing Group is observably rejected, and creating an Action whose name duplicates an existing name within the same group is observably rejected."
+              verify: "Creating an Action with an unknown action_group_id, asset_id, account_id, partial_group_id, or trailing_group_id is observably rejected; creating a second Action with an existing group-name combination is observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Action to database/src/database/mapping/actions.py (table actions, FK RESTRICT to action_groups/assets/accounts/partial_groups/trailing_groups, UniqueConstraint on action_group_id+name). Verified by tests/test_actions.py::test_action_persists_and_enforces_per_group_name_uniqueness; ruff and pyright clean."
+            P2-G6-T3:
+              id: "P2-G6-T3"
+              title: "Map the Position Domain Definition to storage"
+              description: "Establish the Position storage mapping, persisting and retrieving every Model-declared field, enforcing its Domain Relationships to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action as referential constraints, and enforcing the display-name uniqueness constraint Position declares."
+              reason: "Position is the outcome record of the Action and account structure this phase maps and must exist as one storage mapping after every Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Persistence Foundation", "completed User storage mapping", "completed Trading Platform storage mapping", "completed Broker storage mapping", "completed Account storage mapping", "completed Trailing Group storage mapping", "completed Partial Group storage mapping", "completed Action Group storage mapping", "completed Action storage mapping"]
+              expected_result: "A Position storage mapping that persists and retrieves every field, enforces its eight relationships referentially, and enforces display-name uniqueness."
+              depends_on: ["P2-G1-T1", "P2-G2-T1", "P2-G2-T2", "P2-G3-T2", "P2-G4-T2", "P2-G5-T1", "P2-G5-T3", "P2-G6-T1", "P2-G6-T2"]
+              constraints: []
+              acceptance: "Creating a Position referencing a nonexistent User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, or Action is observably rejected, and creating a Position whose name duplicates an existing display name is observably rejected."
+              verify: "Creating a Position with any one of its eight relationship fields set to a nonexistent identifier is observably rejected; creating a second Position with an existing display name is observably rejected."
+              status: "done"
+              log:
+                - at: "2026-09-14T13:55:00Z"
+                  by: "developing"
+                  event: "Mapped Position to database/src/database/mapping/actions.py (table positions, FK RESTRICT across all eight relationships, UniqueConstraint on name, date stored via the UTCDateTime column type). Verified by tests/test_actions.py::test_position_rejects_nonexistent_relationship and test_position_persists_timezone_aware_date_and_enforces_display_name_uniqueness; ruff and pyright clean."
+        P2-G7:
+          id: "P2-G7"
+          title: "Storage Adapter"
+          description: "The Engine connection and Instance Registry through which the Database reaches its configured storage."
+          area: "Storage Adapter"
+          does: "Provide the Storage Adapter's Engine connection and one publicly discoverable Instance Registry naming every configured Instance and exactly one default, without exposing a raw connection or secret value."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G7-T1:
+              id: "P2-G7-T1"
+              title: "Provide the Storage Adapter and Instance Registry"
+              description: "Establish Database's Storage Adapter connecting to the selected Engine, and one public Instance Registry naming every configured Instance by its stable identity, its purpose, and exactly one explicit default, without exposing a raw connection or a secret value."
+              reason: "Every data operation reaches storage through exactly one selected Instance, and Database Principles require that selection to be explicit and discoverable rather than assumed."
+              kind: "code"
+              inputs: []
+              expected_result: "A Storage Adapter that connects to the selected Engine, and an Instance Registry that lists every configured Instance and its default without exposing a connection or secret."
+              depends_on: ["P2-G1-T1"]
+              constraints: []
+              acceptance: "The Instance Registry lists every configured Instance by its stable identity and names exactly one resolvable default; selecting an unconfigured Instance is observably rejected; no Registry entry exposes a connection object or a secret value."
+              verify: "Listing Instances returns the configured identity together with a default that resolves to a real, usable connection; requesting an unconfigured Instance identity is observably rejected; inspecting a Registry entry shows no connection object or secret value."
+              status: "done"
+              log:
+                - at: "2026-09-14T14:05:00Z"
+                  by: "developing"
+                  event: "Implemented database/src/database/adapter.py: resolves database/database.yaml, builds the SQLite engine (PRAGMA foreign_keys=ON on connect), and list_instances()/default_instance(). Verified by tests/test_adapter.py (registry lists 'general' with a connectable engine, entries expose no connection/secret attribute, unknown Instance rejected) and by direct use against the real database file; ruff and pyright clean."
+        P2-G8:
+          id: "P2-G8"
+          title: "Database Interface"
+          description: "The one generic, Model-driven public boundary through which every persistent Model is created, read, updated, deleted, activated, and grouped into Transactions."
+          area: "Database Interface"
+          does: "Provide the one generic Database Interface serving every persistent Model through the same create/read/list/update/delete/activation operations, plus an explicit Transaction boundary."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G8-T1:
+              id: "P2-G8-T1"
+              title: "Provide the generic Database Interface"
+              description: "Establish Database's one generic, Model-driven public interface, accepting a public Model type or instance rather than requiring one implementation per Model, providing create, read-by-identifier, list, update, delete, and activation (enable/disable) operations for every persistent Model, and an explicit Transaction boundary that groups related operations on one Instance into one atomic commit-or-rollback unit."
+              reason: "Database Principles require one generic pipeline serving every Model rather than per-Model duplication, and an explicit Transaction boundary so related changes never leave partial data when an operation fails."
+              kind: "code"
+              inputs: ["Persistence Foundation", "Storage Adapter and Instance Registry", "completed storage mapping for every persistent Domain Definition"]
+              expected_result: "A generic Database Interface through which every one of the 15 persistent Domain Definitions supports create, get-by-id, list, update, delete, and enable/disable without a Model-specific implementation, and a Transaction boundary that commits or rolls back a group of operations together."
+              depends_on: ["P2-G1-T1", "P2-G7-T1", "P2-G2-T1", "P2-G2-T2", "P2-G2-T3", "P2-G3-T1", "P2-G3-T2", "P2-G3-T3", "P2-G4-T1", "P2-G4-T2", "P2-G5-T1", "P2-G5-T2", "P2-G5-T3", "P2-G5-T4", "P2-G6-T1", "P2-G6-T2", "P2-G6-T3"]
+              constraints: []
+              acceptance: "Performing create, get-by-id, list, update, delete, and enable/disable on two different persistent Models through identical generic calls succeeds for both without a Model-specific code path; an operation that fails inside an open Transaction leaves no partial change from that Transaction persisted."
+              verify: "Running the same generic create/get/list/update/delete/enable/disable calls against two unrelated Models (for example Currency and Position) succeeds identically for both; deliberately failing one operation inside an open Transaction that also contains a successful operation leaves neither change persisted."
+              status: "done"
+              log:
+                - at: "2026-09-14T14:05:00Z"
+                  by: "developing"
+                  event: "Implemented database/src/database/interface.py (create/get_by_id/list_/update/delete/set_active, all generic via the mapping.MAPPINGS registry) and transaction(). Verified by tests/test_interface.py::test_generic_operations_work_identically_for_two_unrelated_models (TradingPlatform and Currency through identical calls) and test_failed_operation_inside_a_transaction_leaves_no_partial_change (a later failure in one Transaction rolls back an earlier successful create in the same Transaction); ruff and pyright clean."
+        P2-G9:
+          id: "P2-G9"
+          title: "Migrations"
+          description: "The ordered, recorded history that reproduces the complete current storage structure from the repository alone."
+          area: "Migrations"
+          does: "Record the complete current storage structure as one ordered, applied Migration."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G9-T1:
+              id: "P2-G9-T1"
+              title: "Record the initial storage structure as a Migration"
+              description: "Record the complete current storage structure — every persistent Model's table, column, constraint, and index this phase's mappings define — as one ordered, applied Migration, so the Database can be reproduced from the repository alone without relying on structure created at process startup."
+              reason: "Database Principles require every storage structure change to exist as a recorded, ordered Migration rather than undocumented or startup-created structure."
+              kind: "code"
+              inputs: ["completed storage mapping for every persistent Domain Definition", "Storage Adapter and Instance Registry"]
+              expected_result: "One ordered, applied Migration recorded in the repository that reproduces the complete current storage structure on an empty Instance."
+              depends_on: ["P2-G2-T1", "P2-G2-T2", "P2-G2-T3", "P2-G3-T1", "P2-G3-T2", "P2-G3-T3", "P2-G4-T1", "P2-G4-T2", "P2-G5-T1", "P2-G5-T2", "P2-G5-T3", "P2-G5-T4", "P2-G6-T1", "P2-G6-T2", "P2-G6-T3", "P2-G7-T1"]
+              constraints: []
+              acceptance: "Applying the recorded Migration history to a fresh empty Instance reproduces a structure that supports every mapping Task's create, retrieval, referential, and uniqueness behavior with no additional undocumented step."
+              verify: "Building a fresh empty Instance, applying every recorded Migration in order, and then exercising each mapping's create/retrieve/referential/uniqueness behavior through the Database Interface succeeds without any manual structural step."
+              status: "done"
+              log:
+                - at: "2026-09-14T14:15:00Z"
+                  by: "developing"
+                  event: "Set up Alembic (migrations/, alembic.ini, env.py resolving engine and metadata from database.adapter/database.foundation) and autogenerated+applied the initial migration (migrations/versions/219d37d20708_initial_schema.py) creating all 15 tables. `uv run alembic upgrade head` succeeded on an empty Instance and the full test suite (25 tests) passed against the resulting structure; `uv run alembic check` reports 'No new upgrade operations detected', confirming the running structure exactly matches the recorded Migration. Known step recorded in README: autogenerate does not import the custom UTCDateTime type, so the generated revision needed one added `import database.foundation` line."
+        P2-G10:
+          id: "P2-G10"
+          title: "Initial Data"
+          description: "The seeding of every Target-declared Initial Data record into its resolved storage mapping."
+          area: "Initial Data"
+          does: "Seed every Target-declared Initial Data record in dependency order, repeatably and without duplication."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G10-T1:
+              id: "P2-G10-T1"
+              title: "Seed the Target's declared Initial Data"
+              description: "Seed every Target-declared Initial Data record into its resolved storage mapping, in an order that satisfies every relationship and non-nullable field it depends on, so that seeding is repeatable without creating a duplicate logical record or violating a uniqueness constraint. A generated credential value produced during seeding is returned to the caller and never persisted or recorded in plaintext."
+              reason: "Database Principles require the complete Database, including its declared initial state, to be reproducible from the repository alone."
+              kind: "code"
+              inputs: ["generic Database Interface", "completed storage mapping for every persistent Domain Definition"]
+              expected_result: "Every Target-declared Initial Data record exists in storage after seeding, reachable through the generic Database Interface, with no duplicate created by seeding more than once."
+              depends_on: ["P2-G8-T1", "P2-G2-T1", "P2-G2-T2", "P2-G2-T3", "P2-G3-T1", "P2-G3-T2", "P2-G3-T3", "P2-G4-T1", "P2-G4-T2", "P2-G5-T1", "P2-G5-T3", "P2-G6-T1"]
+              constraints: []
+              acceptance: "Seeding an empty Instance once creates exactly the Target-declared Initial Data records with every relationship and non-nullable field satisfied; seeding it again creates no duplicate record and violates no uniqueness constraint."
+              verify: "Seeding an empty Instance twice in sequence results in exactly one of each Target-declared Initial Data record, each retrievable through the generic Database Interface, with the second seeding run reporting nothing new created."
+              status: "done"
+              log:
+                - at: "2026-09-14T14:20:00Z"
+                  by: "developing"
+                  event: "Implemented database/src/database/seed.py: seeds User Admin, both Trading Platforms, all 8 Currencies, Broker FxPro, Instance MetaTrader, all 4 Assets, Account Group/Trailing Group/Partial Group/Action Group 'Default', Account Acc-1, and Action Default, each guarded by an existence check for idempotency; generated credentials are returned to the caller, never logged or persisted in plaintext. Verified by tests/test_seed.py::test_seeding_twice_creates_no_duplicate_record (in-memory) and by running against the real SQLite database twice in one process: first run returned 5 generated credentials and created the expected row counts (User 1, TradingPlatform 2, Currency 8, Broker 1, Instance 1, Asset 4, AccountGroup 1, Account 1, TrailingGroup 1, PartialGroup 1, ActionGroup 1, Action 1, Position 0 — Position has no Target Initial Data); second run returned no generated credentials and row counts were unchanged. Instance's encrypted password round-tripped correctly through the Database Interface."
