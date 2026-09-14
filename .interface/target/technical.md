@@ -574,17 +574,7 @@ Reserved for future Behaviour definitions.
 
 Defines the development scope and explicit technical exclusions for the Target.
 
-<!-------------------------- Scope -->
-### Scope
 
-The Target is developed without the following capabilities:
-
-- HTTPS or TLS transport configuration.
-- Authentication or authorization mechanisms.
-- Login, application logging, or audit logging.
-- Error handling mechanisms.
-
-These exclusions apply to the implementation, dependencies, configuration, documentation, and verification of the Target. No excluded capability may be introduced unless this Target is explicitly revised.
 
 <br><br>
 
