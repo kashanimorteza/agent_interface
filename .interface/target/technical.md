@@ -100,7 +100,7 @@ Models
 **Fields:**
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
-- `name` — Type: `string`; Nullable: `false`; Purpose: The platform's display name.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The platform's display name.
 - `code` — Type: `string`; Nullable: `false`; Purpose: Identifies the implementation class the application must use for this trading platform, such as `binance` or `metatrader_5`.
 - `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the platform is active.
 - `description` — Type: `string`; Nullable: `true`; Purpose: Describes the platform.
@@ -119,8 +119,8 @@ Models
 
 - `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
 - `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns this instance.
-- `name` — Type: `string`; Nullable: `false`; Purpose: The instance's display name.
 - `trading_platform_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the trading platform used by this instance.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The instance's display name.
 - `ip` — Type: `string`; Nullable: `true`; Purpose: Identifies the technical network address used to reach the Trading Platform when required.
 - `username` — Type: `string`; Nullable: `true`; Purpose: Defines the technical username used to establish the Instance connection when required.
 - `password` — Type: `string`; Nullable: `true`; Purpose: Defines the technical password used to establish the Instance connection when required.
