@@ -1,0 +1,90 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/foundation/config/review.yaml"
+  path_note: "Mutable Reviews, Findings and their state."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Review Component and the active operation's ownership rules."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "finding_count"
+  - "reviews"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  finding_count: "Total number of stored Findings."
+  reviews: "The current review record for each reviewed phase."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  finding_count: 3
+  reviews:
+    P2:
+      id: "P2"
+      title: "Database"
+      target: "Database"
+      scope: "Plan Assurance only: the phase P2 Plan (revision 1, 5 Groups, 21 Tasks) was judged against a ledger built directly from the Target's Model section, Phase 2's stated goal, and the Development, Database, and Plan Component Principles and Preferences. No implementation exists yet for this phase, so Implementation Assurance was not attempted."
+      outcome: "plan satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 1
+      implementation_outcome: "not reviewed"
+      reviewed_by: "reviewer"
+      reviewed_at: "2026-09-14T18:15:20Z"
+      finding_count: 0
+      findings: {}
+    P1:
+      id: "P1"
+      title: "Model"
+      target: "Model"
+      scope: "Third final-gate pass: independent re-assurance of the phase P1 Plan (still revision 1) after a second Developing correction addressed P1-F3 (the id-generation overcorrection), plus fresh Implementation Assurance against the corrected model/ repository. Independently re-ran `uv run pytest` (131 passed), `uv run ruff check` (clean), `uv run ruff format --check` (35 files already formatted), and `uv run pyright` (0 errors, 0 warnings) from model/; independently read foundation.py's id_field()/_generate_id()/_id_sequence and confirmed a real itertools.count(1)-backed default_factory supplies a distinct generated value on omission while explicit null is still rejected (id typed strictly `int`, not `int | None`); spot-checked User, Instance, and Account field sets, defaults, and declared credential storage-at-rest meaning line by line against the Target's Model section, finding no regression from either correction pass."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 1
+      implementation_outcome: "satisfied"
+      reviewed_by: "reviewer"
+      reviewed_at: "2026-09-14T17:56:20Z"
+      finding_count: 3
+      findings:
+        P1-F1:
+          id: "P1-F1"
+          kind: "defect"
+          severity: "major"
+          task: "P1-model-foundation"
+          expected: "Every Domain Definition's `id` Field preserves the Target's explicit `Nullable: false` declaration (stated identically for all 15 Domain Definitions) and, per Model Principle 6, a Field with `nullable: false` rejects `null`; `generated: true` means the value is supplied automatically by the time Model validates it, not that Model tolerates an indefinite null/absent state."
+          observed: "RESOLVED. Independently re-read model/src/model/foundation.py: id_field() now returns pydantic.Field() with no default, and id is typed int (not int | None) in every one of the 15 Domain Definition files. Independently confirmed both omitting id and passing id=None now raise a pydantic ValidationError — the null-acceptance defect no longer exists."
+          evidence: "model/src/model/foundation.py id_field(); model/src/model/user.py, instance.py, account.py, position.py, currency.py `id: int = id_field()`; model/tests/test_foundation.py::test_foundation_requires_id_and_rejects_null."
+          state: "resolved"
+          raised_at: "2026-09-14T17:40:38Z"
+          settled_at: "2026-09-14T17:50:04Z"
+          settled_by: "reviewer (this Review)"
+        P1-F2:
+          id: "P1-F2"
+          kind: "missing evidence"
+          severity: "minor"
+          task: null
+          expected: "Development's phase completion gate re-runs the complete relevant check suite from a clean state and reports its actual outcome before phases.P1.development is recorded as completed (Developing contract, phase completion gate paragraph)."
+          observed: "RESOLVED. Independently re-ran `cd model && uv run ruff format --check .`: \"35 files already formatted\", exit clean. README.md and all touched files are now format-clean."
+          evidence: "`uv run ruff format --check` output: \"35 files already formatted\" (no reformat needed)."
+          state: "resolved"
+          raised_at: "2026-09-14T17:40:38Z"
+          settled_at: "2026-09-14T17:50:04Z"
+          settled_by: "reviewer (this Review)"
+        P1-F3:
+          id: "P1-F3"
+          kind: "defect"
+          severity: "major"
+          task: "P1-model-foundation"
+          expected: "Every Task in the assured phase P1 Plan (revision 1) states in its acceptance clause: \"the identity field is generated rather than supplied\" — i.e. a caller constructs a Domain Definition without providing id, and Model supplies it automatically. This directly reflects Model Principle 6 (\"A generated: true declaration means the value is supplied automatically, while Model does not select the generation mechanism\") together with Model Preferences field_defaults.common_fields.id (generated: true, nullable: false): Model owns no particular generation algorithm, but must still supply *some* value automatically so a `nullable: false`, `generated: true` Field is never left to resolve to null by omission."
+          observed: "RESOLVED. A second correction pass replaced the required-no-default id_field() with a `default_factory=_generate_id` backed by a module-level `itertools.count(1)` sequence (model/src/model/foundation.py). Independently traced the actual generator logic (not just its test): omitting id at construction now resolves through this factory to a real, distinct, non-None int every time, satisfying every Task's \"the identity field is generated rather than supplied\" acceptance clause; id remains strictly typed `int` (not `int | None`), so explicit `None` is still rejected, preserving the P1-F1 fix; an explicit non-null id is still accepted, documented as a deliberate deviation supporting reconstruction/serialization round-tripping (Model Preferences modeling_standard.deviation). A new `test_foundation.py` test set independently confirms: generates-when-omitted, generated-ids-are-distinct, accepts-explicit-override, rejects-explicit-null."
+          evidence: "model/src/model/foundation.py id_field() docstring: \"the identity-generating component must supply a real value before constructing this Domain Definition\" and `pydantic.Field()` with no default/default_factory; model/src/model/instance.py, account.py, position.py, currency.py `id: int = id_field()` (required, no default); .interface/foundation/config/plan.yaml plans.P1 — every one of the 15 Domain Definition Tasks' acceptance clause ends \"...the identity field is generated rather than supplied.\"; model/tests/test_foundation.py::test_foundation_requires_id_and_rejects_null asserts omission is *rejected* rather than generated, and the P1-model-foundation Task log records the prior generated-id test being deleted rather than fixed."
+          state: "resolved"
+          raised_at: "2026-09-14T17:50:04Z"
+          settled_at: "2026-09-14T17:56:20Z"
+          settled_by: "reviewer (this Review)"

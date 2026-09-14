@@ -1,0 +1,17 @@
+# Database-owned, non-secret runtime configuration (Database Preferences
+# `settings.storage_adapter.runtime_configuration`). No credential or secret value belongs in
+# this file (Database Principle 12) — connection secrets are resolved from the runtime
+# environment (see database/src/database/config.py).
+
+engines:
+  sqlite:
+    driver: "sqlite"
+
+instances:
+  general:
+    name: "Trading Assistant General"
+    purpose: "General application data."
+    engine: "sqlite"
+    database: "trading_assistant_general"
+
+default_instance: "general"

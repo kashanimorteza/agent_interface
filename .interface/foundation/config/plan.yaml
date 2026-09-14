@@ -1,0 +1,698 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/foundation/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_count"
+  - "plans"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  task_count: 37
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      revision: 1
+      target: "Model"
+      does: "Define the complete authoritative domain Model: every Domain Definition, Field, Domain Relationship, Intrinsic Rule, and credential or sensitive meaning the Target states, expressed through one shared Model Foundation and one explicit Public Interface, independent of persistence, transport, or any other external concern."
+      constraints: []
+      task_count: 16
+      groups:
+        P1-foundation:
+          id: "P1-foundation"
+          title: "Model Foundation"
+          description: "The shared technical-independent foundation every concrete Domain Definition in this phase depends on for common configuration and behaviour."
+          area: "Cross-Model shared foundation"
+          does: "A reusable Model Foundation exists that every Domain Definition in this Plan receives its shared configuration and behaviour through."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-model-foundation:
+              id: "P1-model-foundation"
+              title: "Establish the Model Foundation"
+              description: "Establish the one Model Foundation through which every concrete Domain Definition in this phase receives shared configuration and behaviour, including the common Field defaults, strict unknown-field rejection, deterministic side-effect-free validation, and the exact-decimal and timezone-aware-UTC conventions the Model Component requires."
+              reason: "Every Domain Definition in this Plan must share one consistent foundation so cross-cutting Model behaviour is defined once instead of independently by each definition."
+              kind: "code"
+              inputs: ["The Model Component's applicable Principles and Preferences"]
+              expected_result: "A shared Model Foundation that every Domain Definition defined in this phase applies for its common configuration and behaviour."
+              depends_on: []
+              constraints: []
+              acceptance: "Applying the Foundation to a concrete Domain Definition supplies its common Field defaults and enforces strict rejection of unknown fields, deterministic side-effect-free validation, exact-decimal numeric handling, and timezone-aware UTC time handling, without requiring any of that behaviour to be redefined per Domain Definition."
+              verify: "A Domain Definition built through the Foundation exhibits the common behaviour without redeclaring it, and rejects data that violates a Foundation-enforced convention."
+              status: "done"
+              log:
+                - "done — implemented as model.foundation.ModelFoundation (extra=\"forbid\", validate_default=True), model.ExactDecimal, model.UTCDateTime, and the id_field/is_active_field/description_field helpers; proven by tests/test_foundation.py (9 tests: common defaults applied without redeclaration, unknown-field rejection, exact-decimal rejects float, exact-decimal accepts str/int, timezone-naive datetime rejected, timezone-aware datetime normalized to UTC, deterministic validation, default Model Operations vocabulary, empty credential_storage default) via a throwaway _Sample subclass built through the Foundation; pytest, ruff check, ruff format --check, and pyright all pass with zero findings."
+                - "correction — Review Finding P1-F1 (major): id_field() declared id as int | None = None, so every Domain Definition accepted an explicit id=None, contradicting the Target's declared Nullable: false for id. Fixed at the Foundation level per Model Principle 6/9: since Model owns no id-generation mechanism, an omitted id resolves to null, which a non-nullable Field must reject — id is now required (pydantic.Field() with no default), exactly like any other non-nullable Field without a Model-owned default. Added tests/test_foundation.py::test_foundation_requires_id_and_rejects_null proving omission and explicit None are both rejected. Also fixed Review Finding P1-F2 (minor): ran uv run ruff format . project-wide (README.md and touched test files were not format-clean). Re-verified clean: pytest 128 passed, ruff check clean, ruff format --check clean, pyright 0 errors."
+                - "correction — Review Finding P1-F3 (major): the P1-F1 fix overcorrected by making id a required caller-supplied Field, contradicting every Domain Definition Task's own acceptance clause (\"the identity field is generated rather than supplied\") and misreading Model Principle 6's 'generated: true means the value is supplied automatically' as caller-supplied. Corrected id_field() to use default_factory=_generate_id, a process-local itertools.count placeholder sequence owned entirely by Model (Model Principle 9 — this is not a persistence-layer auto-increment and carries no uniqueness/ordering guarantee beyond this process; Database (P2) assigns the definitive persisted id). Omitting id now generates a real distinct int automatically; an explicit id (e.g. for reconstruction from persisted data, which serialization round-tripping requires) is still accepted; explicit None is still rejected (nullable: false unchanged from the P1-F1 fix). Replaced the single foundation test with four: generates-when-omitted, generated-ids-are-distinct, accepts-explicit-override, rejects-null. Removed the now-incorrect 'id' entries from all 15 Domain Definition test files' REQUIRED lists (id is no longer caller-required) while re-adding 'id' directly to each NON_NULLABLE list (still must reject explicit None) — a mechanical correction of test expectations, not a change to any Domain Definition's own fields, relationships, or rules. Re-verified clean: pytest 131 passed, ruff check clean, ruff format --check clean (35 files), pyright 0 errors."
+        P1-identity:
+          id: "P1-identity"
+          title: "Identity"
+          description: "The independent user identity that owns every other user-scoped domain concept in this Plan."
+          area: "User identity"
+          does: "The User Domain Definition exists as the Model's authoritative representation of an independent system user."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-user:
+              id: "P1-user"
+              title: "Define the User Domain Definition"
+              description: "Define the User Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, preserving its password and api_key credential fields' declared hash storage-at-rest meaning, and declaring the Model Operations applicable to a User's lifecycle."
+              reason: "User is the independent tenant identity every other user-scoped Domain Definition in this Plan relates to, so it must exist as one stable authoritative definition before those relationships can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for User", "The Model Foundation"]
+              expected_result: "A User Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, credential meaning, and applicable Model Operations."
+              depends_on: ["P1-model-foundation"]
+              constraints: []
+              acceptance: "Constructing a User with valid Target-consistent data succeeds and reports the password and api_key fields' declared hash storage-at-rest meaning; omitting a required field, supplying null for a non-nullable field, or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the User Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields, defaults, and credential meaning match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.User; proven by tests/test_user.py (9 tests: public interface exposure, valid construction + defaults, unknown-field rejection, each of 4 required fields individually rejected when missing, each non-nullable field individually rejects null, wrong-type rejection, id generated not supplied, declared hash credential storage for password/api_key, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_user.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+        P1-platform-catalog:
+          id: "P1-platform-catalog"
+          title: "Trading Platform Catalog"
+          description: "The supported trading-platform standards, the user-owned connections to them, and the brokers through which accounts and assets are reached."
+          area: "Trading platform and connection identity"
+          does: "The Trading Platform, Instance, and Broker Domain Definitions exist and correctly relate to each other and to User."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-trading-platform:
+              id: "P1-trading-platform"
+              title: "Define the Trading Platform Domain Definition"
+              description: "Define the Trading Platform Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, and declare the Model Operations applicable to its lifecycle."
+              reason: "Trading Platform is the independent catalog of supported platform standards that Instance and Position relate to, so it must exist as one stable authoritative definition first."
+              kind: "code"
+              inputs: ["The Target's Model definition for Trading Platform", "The Model Foundation"]
+              expected_result: "A Trading Platform Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, and applicable Model Operations."
+              depends_on: ["P1-model-foundation"]
+              constraints: []
+              acceptance: "Constructing a Trading Platform with valid Target-consistent data succeeds; omitting a required field, supplying null for a non-nullable field, or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Trading Platform Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.TradingPlatform; proven by tests/test_trading_platform.py (8 tests: public interface, valid construction + defaults, unknown-field rejection, each of 2 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_trading_platform.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+            P1-broker:
+              id: "P1-broker"
+              title: "Define the Broker Domain Definition"
+              description: "Define the Broker Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the owning User, and declare the Model Operations applicable to its lifecycle."
+              reason: "Broker identifies the user-owned broker configuration that Asset, Account, and Position relate to, so it must exist as one stable authoritative definition before those relationships can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Broker", "The Model Foundation", "The completed User Domain Definition"]
+              expected_result: "A Broker Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, User relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-user"]
+              constraints: []
+              acceptance: "Constructing a Broker with valid Target-consistent data, including a reference to its owning User, succeeds; omitting a required field, supplying null for a non-nullable field, or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Broker Domain Definition; valid data including its User reference is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.Broker; proven by tests/test_broker.py (8 tests: public interface, valid construction + defaults, unknown-field rejection, each of 2 required fields individually rejected when missing (including user_id), non-nullable field null-rejection, wrong-type rejection on user_id, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_broker.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+            P1-instance:
+              id: "P1-instance"
+              title: "Define the Instance Domain Definition"
+              description: "Define the Instance Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationships to the owning User and the used Trading Platform, preserving its password and api_key credential fields' declared encrypted storage-at-rest meaning, and declaring the Model Operations applicable to its lifecycle."
+              reason: "Instance represents the user-owned technical connection to a Trading Platform that Account relates to, so it must exist as one stable authoritative definition before that relationship can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Instance", "The Model Foundation", "The completed User and Trading Platform Domain Definitions"]
+              expected_result: "An Instance Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, User and Trading Platform relationships, credential meaning, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-user", "P1-trading-platform"]
+              constraints: []
+              acceptance: "Constructing an Instance with valid Target-consistent data, including references to its owning User and used Trading Platform, succeeds and reports the password and api_key fields' declared encrypted storage-at-rest meaning; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Instance Domain Definition; valid data including its relationships is accepted and invalid or missing required data is rejected; its declared fields, defaults, and credential meaning match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.Instance; proven by tests/test_instance.py (10 tests: public interface, valid construction + defaults, optional connection fields (ip/username/password/api_key) default to None, unknown-field rejection, each of 3 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, declared encrypted credential storage for password/api_key, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_instance.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+        P1-reference-data:
+          id: "P1-reference-data"
+          title: "Reference Data"
+          description: "The currencies and tradable assets every account and action is expressed in terms of."
+          area: "Currency and asset reference data"
+          does: "The Currency and Asset Domain Definitions exist and correctly relate to User and Broker."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-currency:
+              id: "P1-currency"
+              title: "Define the Currency Domain Definition"
+              description: "Define the Currency Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the owning User, and declare the Model Operations applicable to its lifecycle."
+              reason: "Currency identifies the user-owned currency that Account relates to as its base currency, so it must exist as one stable authoritative definition before that relationship can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Currency", "The Model Foundation", "The completed User Domain Definition"]
+              expected_result: "A Currency Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, User relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-user"]
+              constraints: []
+              acceptance: "Constructing a Currency with valid Target-consistent data, including a reference to its owning User, succeeds and applies the declared decimal-digits default when omitted; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Currency Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.Currency; proven by tests/test_currency.py (9 test functions, 11 cases with parametrization: public interface, valid construction + decimal_digits default of 2, unknown-field rejection, each of 2 required fields individually rejected when missing, non-nullable fields (is_active, decimal_digits) null-rejection, wrong-type rejection, code length constrained to exactly 3 characters (parametrized over 2/4/0-length rejects), id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_currency.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+            P1-asset:
+              id: "P1-asset"
+              title: "Define the Asset Domain Definition"
+              description: "Define the Asset Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the providing Broker, and declare the Model Operations applicable to its lifecycle."
+              reason: "Asset identifies the tradable instrument that Action relates to, so it must exist as one stable authoritative definition before that relationship can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Asset", "The Model Foundation", "The completed Broker Domain Definition"]
+              expected_result: "An Asset Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, Broker relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-broker"]
+              constraints: []
+              acceptance: "Constructing an Asset with valid Target-consistent data, including a reference to its providing Broker, succeeds and applies the declared point-size and digits defaults when omitted; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Asset Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.Asset; proven by tests/test_asset.py (8 tests: public interface, valid construction + point_size/digits defaults, unknown-field rejection, each of 3 required fields individually rejected when missing, non-nullable fields null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_asset.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+        P1-accounts:
+          id: "P1-accounts"
+          title: "Account Management"
+          description: "The user-owned grouping of trading accounts and the funded accounts themselves."
+          area: "Account grouping and funded accounts"
+          does: "The Account Group and Account Domain Definitions exist and correctly relate to User, Broker, Instance, and Currency."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-account-group:
+              id: "P1-account-group"
+              title: "Define the Account Group Domain Definition"
+              description: "Define the Account Group Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the owning User, and declare the Model Operations applicable to its lifecycle."
+              reason: "Account Group identifies the user-owned grouping that Account relates to, so it must exist as one stable authoritative definition before that relationship can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Account Group", "The Model Foundation", "The completed User Domain Definition"]
+              expected_result: "An Account Group Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, User relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-user"]
+              constraints: []
+              acceptance: "Constructing an Account Group with valid Target-consistent data, including a reference to its owning User, succeeds; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Account Group Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.AccountGroup; proven by tests/test_account_group.py (8 tests: public interface, valid construction + defaults, unknown-field rejection, each of 2 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_account_group.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+            P1-account:
+              id: "P1-account"
+              title: "Define the Account Domain Definition"
+              description: "Define the Account Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationships to the owning Account Group and Broker and the used Instance and base Currency, preserving its password field's declared encrypted storage-at-rest meaning, and declaring the Model Operations applicable to its lifecycle."
+              reason: "Account represents the funded trading account that Action and Position relate to, so it must exist as one stable authoritative definition before those relationships can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Account", "The Model Foundation", "The completed Account Group, Broker, Instance, and Currency Domain Definitions"]
+              expected_result: "An Account Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, Account Group, Broker, Instance, and Currency relationships, credential meaning, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-account-group", "P1-broker", "P1-instance", "P1-currency"]
+              constraints: []
+              acceptance: "Constructing an Account with valid Target-consistent data, including its four relationships, succeeds and reports the password field's declared encrypted storage-at-rest meaning, and applies the declared balance default when omitted; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Account Domain Definition; valid data including its relationships is accepted and invalid or missing required data is rejected; its declared fields, defaults, and credential meaning match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.Account; proven by tests/test_account.py (10 tests: public interface, valid construction + balance default of exact Decimal(0) (isinstance-checked, not just equality — an earlier draft defaulted to a raw int because pydantic does not validate defaults unless validate_default=True; fixed at the Foundation level), balance rejects float input, unknown-field rejection, each of 9 required fields individually rejected when missing, non-nullable fields null-rejection, wrong-type rejection, id generated not supplied, declared encrypted credential storage for password, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_account.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+        P1-risk-rules:
+          id: "P1-risk-rules"
+          title: "Risk Management Rules"
+          description: "The trailing stop-loss/take-profit rule sets and the partial-close rule sets applied to positions."
+          area: "Trailing and partial-close rule sets"
+          does: "The Trailing Group, Trailing Rule, Partial Group, and Partial Rule Domain Definitions exist and correctly relate to User and to their owning Group."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-trailing-group:
+              id: "P1-trailing-group"
+              title: "Define the Trailing Group Domain Definition"
+              description: "Define the Trailing Group Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the owning User, and declare the Model Operations applicable to its lifecycle."
+              reason: "Trailing Group identifies the user-owned rule set that Trailing Rule, Action, and Position relate to, so it must exist as one stable authoritative definition before those relationships can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Trailing Group", "The Model Foundation", "The completed User Domain Definition"]
+              expected_result: "A Trailing Group Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, User relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-user"]
+              constraints: []
+              acceptance: "Constructing a Trailing Group with valid Target-consistent data, including a reference to its owning User, succeeds; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Trailing Group Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.TrailingGroup; proven by tests/test_trailing_group.py (8 tests: public interface, valid construction + defaults, unknown-field rejection, each of 2 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_trailing_group.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+            P1-trailing-rule:
+              id: "P1-trailing-rule"
+              title: "Define the Trailing Rule Domain Definition"
+              description: "Define the Trailing Rule Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the owning Trailing Group, and declare the Model Operations applicable to its lifecycle."
+              reason: "Trailing Rule is the individual activation-condition rule that gives its owning Trailing Group meaning, so it must exist as its own authoritative definition related back to that Group."
+              kind: "code"
+              inputs: ["The Target's Model definition for Trailing Rule", "The Model Foundation", "The completed Trailing Group Domain Definition"]
+              expected_result: "A Trailing Rule Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, Trailing Group relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-trailing-group"]
+              constraints: []
+              acceptance: "Constructing a Trailing Rule with valid Target-consistent data, including a reference to its owning Trailing Group, succeeds; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Trailing Rule Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.TrailingRule; proven by tests/test_trailing_rule.py (10 tests: public interface, valid construction + defaults, optional take_profit_adjustment/stop_loss_adjustment default to None, trigger_percentage rejects float input, unknown-field rejection, each of 3 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_trailing_rule.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+            P1-partial-group:
+              id: "P1-partial-group"
+              title: "Define the Partial Group Domain Definition"
+              description: "Define the Partial Group Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the owning User, and declare the Model Operations applicable to its lifecycle."
+              reason: "Partial Group identifies the user-owned rule set that Partial Rule, Action, and Position relate to, so it must exist as one stable authoritative definition before those relationships can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Partial Group", "The Model Foundation", "The completed User Domain Definition"]
+              expected_result: "A Partial Group Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, User relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-user"]
+              constraints: []
+              acceptance: "Constructing a Partial Group with valid Target-consistent data, including a reference to its owning User, succeeds; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Partial Group Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.PartialGroup; proven by tests/test_partial_group.py (8 tests: public interface, valid construction + defaults, unknown-field rejection, each of 2 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_partial_group.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+            P1-partial-rule:
+              id: "P1-partial-rule"
+              title: "Define the Partial Rule Domain Definition"
+              description: "Define the Partial Rule Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the owning Partial Group, and declare the Model Operations applicable to its lifecycle."
+              reason: "Partial Rule is the individual close-condition rule that gives its owning Partial Group meaning, so it must exist as its own authoritative definition related back to that Group."
+              kind: "code"
+              inputs: ["The Target's Model definition for Partial Rule", "The Model Foundation", "The completed Partial Group Domain Definition"]
+              expected_result: "A Partial Rule Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, Partial Group relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-partial-group"]
+              constraints: []
+              acceptance: "Constructing a Partial Rule with valid Target-consistent data, including a reference to its owning Partial Group, succeeds; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Partial Rule Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.PartialRule; proven by tests/test_partial_rule.py (9 tests: public interface, valid construction + defaults, profit_percentage rejects float input, unknown-field rejection, each of 4 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_partial_rule.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+        P1-actions:
+          id: "P1-actions"
+          title: "Trading Actions"
+          description: "The user-owned grouping of trading actions and the actions that define how a position must be opened."
+          area: "Action grouping and action definitions"
+          does: "The Action Group and Action Domain Definitions exist and correctly relate to User, Asset, Account, Partial Group, and Trailing Group."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-action-group:
+              id: "P1-action-group"
+              title: "Define the Action Group Domain Definition"
+              description: "Define the Action Group Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationship to the owning User, and declare the Model Operations applicable to its lifecycle."
+              reason: "Action Group identifies the user-owned risk-profile grouping that Action and Position relate to, so it must exist as one stable authoritative definition before those relationships can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Action Group", "The Model Foundation", "The completed User Domain Definition"]
+              expected_result: "An Action Group Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, User relationship, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-user"]
+              constraints: []
+              acceptance: "Constructing an Action Group with valid Target-consistent data, including a reference to its owning User, succeeds; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Action Group Domain Definition; valid data is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.ActionGroup; proven by tests/test_action_group.py (8 tests: public interface, valid construction + defaults, unknown-field rejection, each of 2 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_action_group.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+            P1-action:
+              id: "P1-action"
+              title: "Define the Action Domain Definition"
+              description: "Define the Action Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationships to the owning Action Group and the used Asset, Account, Partial Group, and Trailing Group, and declare the Model Operations applicable to its lifecycle."
+              reason: "Action defines how a position must be opened and is what Position relates back to, so it must exist as one stable authoritative definition before that relationship can be defined."
+              kind: "code"
+              inputs: ["The Target's Model definition for Action", "The Model Foundation", "The completed Action Group, Asset, Account, Partial Group, and Trailing Group Domain Definitions"]
+              expected_result: "An Action Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, five relationships, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-action-group", "P1-asset", "P1-account", "P1-partial-group", "P1-trailing-group"]
+              constraints: []
+              acceptance: "Constructing an Action with valid Target-consistent data, including its five relationships, succeeds; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Action Domain Definition; valid data including its relationships is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.Action; proven by tests/test_action.py (8 tests: public interface, valid construction + defaults, unknown-field rejection, each of 9 required fields individually rejected when missing, non-nullable field null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_action.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."
+        P1-positions:
+          id: "P1-positions"
+          title: "Position Tracking"
+          description: "The complete record of every position the system has created, opened or still pending."
+          area: "Position records"
+          does: "The Position Domain Definition exists and correctly relates to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-position:
+              id: "P1-position"
+              title: "Define the Position Domain Definition"
+              description: "Define the Position Domain Definition with exactly the fields, defaults, and Intrinsic Rules the Target's Model section states for it, including its Domain Relationships to the owning User and Action and the used Trading Platform, Broker, Account, Trailing Group, Partial Group, and Action Group, and declare the Model Operations applicable to its lifecycle."
+              reason: "Position is the complete record of a created position and depends on every other Domain Definition in this Plan it relates to, so it must be defined last, once each is available."
+              kind: "code"
+              inputs: ["The Target's Model definition for Position", "The Model Foundation", "The completed User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action Domain Definitions"]
+              expected_result: "A Position Domain Definition published through Model's Public Interface with its declared fields, defaults, identity field, eight relationships, and applicable Model Operations."
+              depends_on: ["P1-model-foundation", "P1-user", "P1-trading-platform", "P1-broker", "P1-account", "P1-trailing-group", "P1-partial-group", "P1-action-group", "P1-action"]
+              constraints: []
+              acceptance: "Constructing a Position with valid Target-consistent data, including its eight relationships, succeeds and applies the declared profit and is_executed defaults when omitted; omitting a required field or supplying data of the wrong type is rejected; the identity field is generated rather than supplied."
+              verify: "Model's Public Interface publishes the Position Domain Definition; valid data including its relationships is accepted and invalid or missing required data is rejected; its declared fields and defaults match the Target; its schema and serialization round-trip preserve every declared field."
+              status: "done"
+              log:
+                - "done — implemented as model.Position; proven by tests/test_position.py (10 tests: public interface, valid construction + profit/is_executed defaults (profit isinstance-checked as exact Decimal), date rejects naive datetime, volume rejects float input, unknown-field rejection, each of 16 required fields individually rejected when missing, non-nullable fields null-rejection, wrong-type rejection, id generated not supplied, serialization+schema round-trip); pytest, ruff, and pyright all clean."
+    P2:
+      id: "P2"
+      title: "Database"
+      order: 2
+      revision: 1
+      target: "Database"
+      does: "Persist the complete Model through one generic Database Interface: a traceable storage mapping for every Domain Definition, an Instance Registry over a selectable Engine, an ordered and recoverable Migration history, an explicit Transaction boundary, the resolved credential at-rest treatment for every credential Field, the cross-record uniqueness and referential-existence constraints Model left to storage, and repeatable dependency-ordered seeding of every Target-declared Initial Data record."
+      constraints:
+        - "Enforces only the cross-record rules that are genuinely storage-relevant (uniqueness, referenced-record existence, resolved field properties); an operation-dependent or cross-record business rule that requires external context beyond the referenced records' own stored data (such as a conditionally required field or a cross-Model duplication rule) is not enforced here."
+      task_count: 21
+      groups:
+        P2-foundation:
+          id: "P2-foundation"
+          title: "Storage Foundation"
+          description: "The shared internal foundation every persistence mapping in this Plan depends on: the Engine connection and Instance Registry, the Migration mechanism, and the Transaction boundary."
+          area: "Cross-mapping storage infrastructure"
+          does: "A reusable Storage Adapter, Instance Registry, Migration mechanism, and Transaction boundary exist for every Domain Definition mapping in this Plan to build on."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-storage-adapter:
+              id: "P2-storage-adapter"
+              title: "Establish the Storage Adapter and Instance Registry"
+              description: "Establish the Storage Adapter that owns the connection to the selected Engine, and publish an Instance Registry through the Database Interface that exposes every configured Instance's selectable identity, name, and purpose together with exactly one default, without exposing raw connections or secret values."
+              reason: "Every persistence mapping and the generic Database Interface need one shared, already-selectable Instance to operate against before any Domain Definition can be mapped."
+              kind: "code"
+              inputs: ["The Database Component's applicable Principles and Preferences", "The selected Platform Environment's delivered runtime Bindings"]
+              expected_result: "A Storage Adapter connected to the selected Engine, and a published Instance Registry exposing selectable Instance identities and exactly one default."
+              depends_on: []
+              constraints: []
+              acceptance: "Consumers can discover every configured Instance identity and the default through the Registry without receiving a connection or secret value; selecting an unknown explicit Instance is rejected; omitting a selection uses the default."
+              verify: "The Registry lists the configured Instances and their default; a data operation against the default Instance succeeds when no Instance is specified; an explicit unknown Instance is rejected; no Registry entry exposes a connection object or secret value."
+              status: "todo"
+            P2-migrations:
+              id: "P2-migrations"
+              title: "Establish the Migration mechanism"
+              description: "Establish the ordered, recorded Migration mechanism that is the only path by which storage structure changes, with a tested reversal when semantically safe and an explicit recovery path when a Migration is irreversible."
+              reason: "Storage structure for every Domain Definition mapping in this Plan must be created and evolved only through a reproducible, recorded history rather than ad-hoc structural change."
+              kind: "code"
+              inputs: ["The Database Component's applicable Principles and Preferences", "The Storage Adapter"]
+              expected_result: "A recorded, ordered Migration history that can recreate the complete current storage structure from an empty Instance, with reversal or recovery for every Migration."
+              depends_on: ["P2-storage-adapter"]
+              constraints: []
+              acceptance: "Applying the complete recorded Migration history to a fresh Instance reproduces the current storage structure; a safe Migration reverses cleanly; drift between the recorded and running structure is detected before normal operations proceed."
+              verify: "A fresh Instance brought up through the recorded Migration history matches the current storage structure; running the reversal of a safe Migration restores the prior structure; an introduced structural difference is detected as drift."
+              status: "todo"
+            P2-transactions:
+              id: "P2-transactions"
+              title: "Establish the Transaction boundary"
+              description: "Establish the explicit Transaction boundary through the Database Interface so a consumer can group related data operations on one Instance into one atomic unit, with commit, rollback, isolation, conflict handling, and retry owned by Database without exposing the underlying connection."
+              reason: "Related changes made through the mappings and Interface built in this Plan must not leave partially applied data when part of a related group fails."
+              kind: "code"
+              inputs: ["The Database Component's applicable Principles and Preferences", "The Storage Adapter"]
+              expected_result: "A Transaction boundary through which a consumer commits or rolls back a group of related operations together, and under which a standalone write remains its own atomic unit."
+              depends_on: ["P2-storage-adapter"]
+              constraints: []
+              acceptance: "A group of related operations performed inside one Transaction either all commit or all roll back together; a failure partway through leaves no partial result; a standalone write outside an explicit Transaction remains atomic on its own."
+              verify: "Forcing a failure partway through a multi-operation Transaction leaves the Instance showing none of that Transaction's changes; a successful Transaction shows all of them; a standalone write not wrapped in a Transaction still succeeds or fails as one atomic unit."
+              status: "todo"
+        P2-mapping:
+          id: "P2-mapping"
+          title: "Persistence Mapping"
+          description: "The traceable storage mapping of every Domain Definition Model publishes, preserving its fields, relationship cardinality and optionality, Target-declared uniqueness constraints, referenced-record existence, and the resolved credential at-rest treatment already declared through Model's own published credential-storage meaning, without redefining any of that meaning."
+          area: "Domain Definition storage mapping"
+          does: "Every one of the 15 Domain Definitions Model publishes has a traceable, constraint-enforcing storage mapping reachable only through the Database Interface."
+          constraints:
+            - "A relationship mapping enforces referential existence against its related mapped Domain Definition; it never becomes reachable, satisfiable, or persistable before every Domain Definition it relates to is itself mapped."
+            - "A credential Field's at-rest treatment is read from the resolved Domain Definition's own declared credential-storage meaning, never re-decided independently by the mapping."
+          task_count: 15
+          tasks:
+            P2-map-user:
+              id: "P2-map-user"
+              title: "Map the User Domain Definition to storage"
+              description: "Map the User Domain Definition to a traceable storage structure preserving its fields and the globally unique constraint on its name, and apply the resolved at-rest treatment to its password and api_key credential Fields."
+              reason: "User is the independent identity every other user-scoped mapping in this Plan relates to, so it must be mapped before those relationships can be enforced in storage."
+              kind: "code"
+              inputs: ["The User Domain Definition published by Model", "The Storage Adapter"]
+              expected_result: "A storage-mapped User reachable only through the Database Interface, with its name uniqueness enforced and its credential Fields stored under their resolved at-rest treatment."
+              depends_on: ["P2-storage-adapter"]
+              constraints: []
+              acceptance: "Persisting a User with valid data round-trips through the Database Interface unchanged in domain meaning; persisting a second User with a duplicate name is rejected; the stored password and api_key values are not recoverable in their original form when their resolved treatment is one-way."
+              verify: "A persisted User is retrievable through the Database Interface with the same field values it was given; a duplicate-name persist attempt is rejected; inspecting the raw stored credential values shows they are not the plaintext originals."
+              status: "todo"
+            P2-map-trading-platform:
+              id: "P2-map-trading-platform"
+              title: "Map the Trading Platform Domain Definition to storage"
+              description: "Map the Trading Platform Domain Definition to a traceable storage structure preserving its fields."
+              reason: "Trading Platform is the independent catalog that Instance and Position relate to, so it must be mapped before those relationships can be enforced in storage."
+              kind: "code"
+              inputs: ["The Trading Platform Domain Definition published by Model", "The Storage Adapter"]
+              expected_result: "A storage-mapped Trading Platform reachable only through the Database Interface."
+              depends_on: ["P2-storage-adapter"]
+              constraints: []
+              acceptance: "Persisting a Trading Platform with valid data round-trips through the Database Interface unchanged in domain meaning."
+              verify: "A persisted Trading Platform is retrievable through the Database Interface with the same field values it was given."
+              status: "todo"
+            P2-map-broker:
+              id: "P2-map-broker"
+              title: "Map the Broker Domain Definition to storage"
+              description: "Map the Broker Domain Definition to a traceable storage structure preserving its fields, its relationship to the owning User, and the unique constraint on the combination of user and name."
+              reason: "Broker is what Asset, Account, and Position relate to, so it must be mapped before those relationships can be enforced in storage."
+              kind: "code"
+              inputs: ["The Broker Domain Definition published by Model", "The Storage Adapter", "The mapped User"]
+              expected_result: "A storage-mapped Broker reachable only through the Database Interface, with its owning-User relationship and user-plus-name uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-user"]
+              constraints: []
+              acceptance: "Persisting a Broker referencing an existing User round-trips through the Database Interface unchanged in domain meaning; persisting a Broker with a duplicate user-and-name combination is rejected; persisting one referencing a non-existent User is rejected."
+              verify: "A persisted Broker is retrievable through the Database Interface with the same field values and User reference it was given; a duplicate user-and-name persist attempt is rejected; a reference to a non-existent User is rejected."
+              status: "todo"
+            P2-map-instance:
+              id: "P2-map-instance"
+              title: "Map the Instance Domain Definition to storage"
+              description: "Map the Instance Domain Definition to a traceable storage structure preserving its fields, its relationships to the owning User and used Trading Platform, and the unique constraint on the combination of user and name, and apply the resolved at-rest treatment to its password and api_key credential Fields."
+              reason: "Instance is what Account relates to, so it must be mapped before that relationship can be enforced in storage."
+              kind: "code"
+              inputs: ["The Instance Domain Definition published by Model", "The Storage Adapter", "The mapped User and Trading Platform"]
+              expected_result: "A storage-mapped Instance reachable only through the Database Interface, with its relationships and user-plus-name uniqueness enforced and its credential Fields stored under their resolved at-rest treatment."
+              depends_on: ["P2-storage-adapter", "P2-map-user", "P2-map-trading-platform"]
+              constraints: []
+              acceptance: "Persisting an Instance referencing an existing User and Trading Platform round-trips through the Database Interface unchanged in domain meaning and stores its credential Fields under their resolved treatment; a duplicate user-and-name combination or a reference to a non-existent User or Trading Platform is rejected."
+              verify: "A persisted Instance is retrievable through the Database Interface with the same field values and relationships it was given; a duplicate user-and-name persist attempt is rejected; a reference to a non-existent related record is rejected; the raw stored credential values are not the plaintext originals."
+              status: "todo"
+            P2-map-currency:
+              id: "P2-map-currency"
+              title: "Map the Currency Domain Definition to storage"
+              description: "Map the Currency Domain Definition to a traceable storage structure preserving its fields, its relationship to the owning User, and the unique constraint on the combination of user and code."
+              reason: "Currency is what Account relates to as its base currency, so it must be mapped before that relationship can be enforced in storage."
+              kind: "code"
+              inputs: ["The Currency Domain Definition published by Model", "The Storage Adapter", "The mapped User"]
+              expected_result: "A storage-mapped Currency reachable only through the Database Interface, with its owning-User relationship and user-plus-code uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-user"]
+              constraints: []
+              acceptance: "Persisting a Currency referencing an existing User round-trips through the Database Interface unchanged in domain meaning; persisting a Currency with a duplicate user-and-code combination is rejected."
+              verify: "A persisted Currency is retrievable through the Database Interface with the same field values it was given; a duplicate user-and-code persist attempt is rejected."
+              status: "todo"
+            P2-map-asset:
+              id: "P2-map-asset"
+              title: "Map the Asset Domain Definition to storage"
+              description: "Map the Asset Domain Definition to a traceable storage structure preserving its fields, its relationship to the providing Broker, and the unique constraint on the combination of broker and symbol."
+              reason: "Asset is what Action relates to, so it must be mapped before that relationship can be enforced in storage."
+              kind: "code"
+              inputs: ["The Asset Domain Definition published by Model", "The Storage Adapter", "The mapped Broker"]
+              expected_result: "A storage-mapped Asset reachable only through the Database Interface, with its providing-Broker relationship and broker-plus-symbol uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-broker"]
+              constraints: []
+              acceptance: "Persisting an Asset referencing an existing Broker round-trips through the Database Interface unchanged in domain meaning; persisting an Asset with a duplicate broker-and-symbol combination is rejected."
+              verify: "A persisted Asset is retrievable through the Database Interface with the same field values it was given; a duplicate broker-and-symbol persist attempt is rejected."
+              status: "todo"
+            P2-map-account-group:
+              id: "P2-map-account-group"
+              title: "Map the Account Group Domain Definition to storage"
+              description: "Map the Account Group Domain Definition to a traceable storage structure preserving its fields, its relationship to the owning User, and the unique constraint on the combination of user and name."
+              reason: "Account Group is what Account relates to, so it must be mapped before that relationship can be enforced in storage."
+              kind: "code"
+              inputs: ["The Account Group Domain Definition published by Model", "The Storage Adapter", "The mapped User"]
+              expected_result: "A storage-mapped Account Group reachable only through the Database Interface, with its owning-User relationship and user-plus-name uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-user"]
+              constraints: []
+              acceptance: "Persisting an Account Group referencing an existing User round-trips through the Database Interface unchanged in domain meaning; persisting one with a duplicate user-and-name combination is rejected."
+              verify: "A persisted Account Group is retrievable through the Database Interface with the same field values it was given; a duplicate user-and-name persist attempt is rejected."
+              status: "todo"
+            P2-map-account:
+              id: "P2-map-account"
+              title: "Map the Account Domain Definition to storage"
+              description: "Map the Account Domain Definition to a traceable storage structure preserving its fields, its relationships to the owning Account Group and Broker and the used Instance and base Currency, the global unique constraint on its name, the unique constraint on the combination of group, broker, and instance, and apply the resolved at-rest treatment to its password credential Field."
+              reason: "Account is what Action and Position relate to, so it must be mapped before those relationships can be enforced in storage."
+              kind: "code"
+              inputs: ["The Account Domain Definition published by Model", "The Storage Adapter", "The mapped Account Group, Broker, Instance, and Currency"]
+              expected_result: "A storage-mapped Account reachable only through the Database Interface, with its four relationships, name uniqueness, and group-broker-instance uniqueness enforced, and its credential Field stored under its resolved at-rest treatment."
+              depends_on: ["P2-storage-adapter", "P2-map-account-group", "P2-map-broker", "P2-map-instance", "P2-map-currency"]
+              constraints: []
+              acceptance: "Persisting an Account referencing its four existing related records round-trips through the Database Interface unchanged in domain meaning and stores its credential Field under its resolved treatment; a duplicate name, a duplicate group-broker-instance combination, or a reference to a non-existent related record is rejected."
+              verify: "A persisted Account is retrievable through the Database Interface with the same field values and relationships it was given; a duplicate-name or duplicate-combination persist attempt is rejected; a reference to a non-existent related record is rejected; the raw stored credential value is not the plaintext original."
+              status: "todo"
+            P2-map-trailing-group:
+              id: "P2-map-trailing-group"
+              title: "Map the Trailing Group Domain Definition to storage"
+              description: "Map the Trailing Group Domain Definition to a traceable storage structure preserving its fields, its relationship to the owning User, and the unique constraint on the combination of user and name."
+              reason: "Trailing Group is what Trailing Rule, Action, and Position relate to, so it must be mapped before those relationships can be enforced in storage."
+              kind: "code"
+              inputs: ["The Trailing Group Domain Definition published by Model", "The Storage Adapter", "The mapped User"]
+              expected_result: "A storage-mapped Trailing Group reachable only through the Database Interface, with its owning-User relationship and user-plus-name uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-user"]
+              constraints: []
+              acceptance: "Persisting a Trailing Group referencing an existing User round-trips through the Database Interface unchanged in domain meaning; persisting one with a duplicate user-and-name combination is rejected."
+              verify: "A persisted Trailing Group is retrievable through the Database Interface with the same field values it was given; a duplicate user-and-name persist attempt is rejected."
+              status: "todo"
+            P2-map-trailing-rule:
+              id: "P2-map-trailing-rule"
+              title: "Map the Trailing Rule Domain Definition to storage"
+              description: "Map the Trailing Rule Domain Definition to a traceable storage structure preserving its fields, its relationship to the owning Trailing Group, the global unique constraint on its name, and the unique constraint on the combination of trailing group and trigger percentage."
+              reason: "Trailing Rule gives its owning Trailing Group meaning and must be mapped as its own traceable storage structure related back to that Group."
+              kind: "code"
+              inputs: ["The Trailing Rule Domain Definition published by Model", "The Storage Adapter", "The mapped Trailing Group"]
+              expected_result: "A storage-mapped Trailing Rule reachable only through the Database Interface, with its owning-Group relationship, name uniqueness, and group-plus-trigger-percentage uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-trailing-group"]
+              constraints: []
+              acceptance: "Persisting a Trailing Rule referencing an existing Trailing Group round-trips through the Database Interface unchanged in domain meaning; a duplicate name or a duplicate group-and-trigger-percentage combination is rejected."
+              verify: "A persisted Trailing Rule is retrievable through the Database Interface with the same field values it was given; a duplicate-name or duplicate-combination persist attempt is rejected."
+              status: "todo"
+            P2-map-partial-group:
+              id: "P2-map-partial-group"
+              title: "Map the Partial Group Domain Definition to storage"
+              description: "Map the Partial Group Domain Definition to a traceable storage structure preserving its fields, its relationship to the owning User, and the unique constraint on the combination of user and name."
+              reason: "Partial Group is what Partial Rule, Action, and Position relate to, so it must be mapped before those relationships can be enforced in storage."
+              kind: "code"
+              inputs: ["The Partial Group Domain Definition published by Model", "The Storage Adapter", "The mapped User"]
+              expected_result: "A storage-mapped Partial Group reachable only through the Database Interface, with its owning-User relationship and user-plus-name uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-user"]
+              constraints: []
+              acceptance: "Persisting a Partial Group referencing an existing User round-trips through the Database Interface unchanged in domain meaning; persisting one with a duplicate user-and-name combination is rejected."
+              verify: "A persisted Partial Group is retrievable through the Database Interface with the same field values it was given; a duplicate user-and-name persist attempt is rejected."
+              status: "todo"
+            P2-map-partial-rule:
+              id: "P2-map-partial-rule"
+              title: "Map the Partial Rule Domain Definition to storage"
+              description: "Map the Partial Rule Domain Definition to a traceable storage structure preserving its fields, its relationship to the owning Partial Group, the global unique constraint on its name, and the unique constraint on the combination of partial group and profit percentage."
+              reason: "Partial Rule gives its owning Partial Group meaning and must be mapped as its own traceable storage structure related back to that Group."
+              kind: "code"
+              inputs: ["The Partial Rule Domain Definition published by Model", "The Storage Adapter", "The mapped Partial Group"]
+              expected_result: "A storage-mapped Partial Rule reachable only through the Database Interface, with its owning-Group relationship, name uniqueness, and group-plus-profit-percentage uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-partial-group"]
+              constraints: []
+              acceptance: "Persisting a Partial Rule referencing an existing Partial Group round-trips through the Database Interface unchanged in domain meaning; a duplicate name or a duplicate group-and-profit-percentage combination is rejected."
+              verify: "A persisted Partial Rule is retrievable through the Database Interface with the same field values it was given; a duplicate-name or duplicate-combination persist attempt is rejected."
+              status: "todo"
+            P2-map-action-group:
+              id: "P2-map-action-group"
+              title: "Map the Action Group Domain Definition to storage"
+              description: "Map the Action Group Domain Definition to a traceable storage structure preserving its fields, its relationship to the owning User, and the unique constraint on the combination of user and name."
+              reason: "Action Group is what Action and Position relate to, so it must be mapped before those relationships can be enforced in storage."
+              kind: "code"
+              inputs: ["The Action Group Domain Definition published by Model", "The Storage Adapter", "The mapped User"]
+              expected_result: "A storage-mapped Action Group reachable only through the Database Interface, with its owning-User relationship and user-plus-name uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-user"]
+              constraints: []
+              acceptance: "Persisting an Action Group referencing an existing User round-trips through the Database Interface unchanged in domain meaning; persisting one with a duplicate user-and-name combination is rejected."
+              verify: "A persisted Action Group is retrievable through the Database Interface with the same field values it was given; a duplicate user-and-name persist attempt is rejected."
+              status: "todo"
+            P2-map-action:
+              id: "P2-map-action"
+              title: "Map the Action Domain Definition to storage"
+              description: "Map the Action Domain Definition to a traceable storage structure preserving its fields, its relationships to the owning Action Group and the used Asset, Account, Partial Group, and Trailing Group, and the unique constraint on the combination of action group and name."
+              reason: "Action is what Position relates back to, so it must be mapped before that relationship can be enforced in storage."
+              kind: "code"
+              inputs: ["The Action Domain Definition published by Model", "The Storage Adapter", "The mapped Action Group, Asset, Account, Partial Group, and Trailing Group"]
+              expected_result: "A storage-mapped Action reachable only through the Database Interface, with its five relationships and action-group-plus-name uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-action-group", "P2-map-asset", "P2-map-account", "P2-map-partial-group", "P2-map-trailing-group"]
+              constraints: []
+              acceptance: "Persisting an Action referencing its five existing related records round-trips through the Database Interface unchanged in domain meaning; a duplicate action-group-and-name combination or a reference to a non-existent related record is rejected."
+              verify: "A persisted Action is retrievable through the Database Interface with the same field values and relationships it was given; a duplicate-combination persist attempt is rejected; a reference to a non-existent related record is rejected."
+              status: "todo"
+            P2-map-position:
+              id: "P2-map-position"
+              title: "Map the Position Domain Definition to storage"
+              description: "Map the Position Domain Definition to a traceable storage structure preserving its fields, its relationships to the owning User and Action and the used Trading Platform, Broker, Account, Trailing Group, Partial Group, and Action Group, and the global unique constraint on its name."
+              reason: "Position depends on every other Domain Definition in this Plan it relates to, so it must be mapped last, once each is available."
+              kind: "code"
+              inputs: ["The Position Domain Definition published by Model", "The Storage Adapter", "The mapped User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action"]
+              expected_result: "A storage-mapped Position reachable only through the Database Interface, with its eight relationships and name uniqueness enforced."
+              depends_on: ["P2-storage-adapter", "P2-map-user", "P2-map-trading-platform", "P2-map-broker", "P2-map-account", "P2-map-trailing-group", "P2-map-partial-group", "P2-map-action-group", "P2-map-action"]
+              constraints: []
+              acceptance: "Persisting a Position referencing its eight existing related records round-trips through the Database Interface unchanged in domain meaning; a duplicate name or a reference to a non-existent related record is rejected."
+              verify: "A persisted Position is retrievable through the Database Interface with the same field values and relationships it was given; a duplicate-name persist attempt is rejected; a reference to a non-existent related record is rejected."
+              status: "todo"
+        P2-interface:
+          id: "P2-interface"
+          title: "Database Interface"
+          description: "The one generic public Database Interface every consumer uses for every mapped Domain Definition, plus its capability-restricted controlled-command route for operations the standard pipeline cannot express."
+          area: "Generic public data-access boundary"
+          does: "Every mapped Domain Definition in this Plan is reachable through one generic, Model-typed Database Interface supporting create, read, read-by-identifier, list, search, update, delete, and (where the Domain Definition declares is_active) enable and disable, plus a separately observable, parameterized, structurally-restricted controlled-command route."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-database-interface:
+              id: "P2-database-interface"
+              title: "Publish the generic Database Interface"
+              description: "Publish the one generic Database Interface that accepts a public Model type or instance, a supported operation, and the criteria that operation requires, routing every mapped Domain Definition through one Model-driven pipeline rather than one implementation per Domain Definition, and expose the capability-restricted controlled-command route for operations the standard pipeline cannot express."
+              reason: "Consumers need one stable, generic boundary to every mapped Domain Definition instead of depending on private per-Domain-Definition persistence details."
+              kind: "code"
+              inputs: ["Every Domain Definition mapped in this Plan", "The Transaction boundary"]
+              expected_result: "A generic Database Interface through which any mapped Domain Definition supports its applicable Model Operations without a Domain-Definition-specific entry point, plus a working controlled-command route."
+              depends_on: ["P2-map-user", "P2-map-trading-platform", "P2-map-broker", "P2-map-instance", "P2-map-currency", "P2-map-asset", "P2-map-account-group", "P2-map-account", "P2-map-trailing-group", "P2-map-trailing-rule", "P2-map-partial-group", "P2-map-partial-rule", "P2-map-action-group", "P2-map-action", "P2-map-position"]
+              constraints: []
+              acceptance: "Every mapped Domain Definition's applicable Model Operations succeed through the generic Interface without a Domain-Definition-specific code path; an operation requiring an is_active Domain Definition to enable or disable changes only that field; the controlled-command route rejects a structural change, a privilege change, and a Migration operation while accepting a parameterized command within its capability restriction; no operation requires an untyped Model-name string."
+              verify: "Each mapped Domain Definition's create/read/list/search/update/delete (and enable/disable where applicable) succeeds through the same generic Interface entry points; a controlled-command attempt at a structural, privilege, or Migration change is rejected; a within-capability controlled command succeeds and is separately observable."
+              status: "todo"
+        P2-seed:
+          id: "P2-seed"
+          title: "Initial Data Seeding"
+          description: "The one reusable, repeatable Seed/Import entry point that inserts every Target-declared Initial Data record in dependency order."
+          area: "Initial data import"
+          does: "Every Target-declared Initial Data record (User, Trading Platform, Instance, Currency, Broker, Asset, Account Group, Account, Trailing Group, Partial Group, Action Group, and Action) exists in storage after seeding, and re-running the seed does not duplicate a logical record."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-seed-initial-data:
+              id: "P2-seed-initial-data"
+              title: "Seed the declared Initial Data"
+              description: "Build the one reusable, configurable Seed/Import entry point that imports every Target-declared Initial Data record for User, Trading Platform, Instance, Currency, Broker, Asset, Account Group, Account, Trailing Group, Partial Group, Action Group, and Action into their resolved storage mappings, in dependency order, satisfying every relationship and non-nullable field, and repeatable without creating duplicate logical records."
+              reason: "Phase 2's stated goal requires the defined initial data to exist in storage, not just a working schema."
+              kind: "code"
+              inputs: ["Every Target-declared Initial Data block", "Every Domain Definition mapped in this Plan", "The Transaction boundary"]
+              expected_result: "Running the seed entry point once leaves every Target-declared Initial Data record persisted with its declared field values and relationships satisfied."
+              depends_on: ["P2-map-user", "P2-map-trading-platform", "P2-map-broker", "P2-map-instance", "P2-map-currency", "P2-map-asset", "P2-map-account-group", "P2-map-account", "P2-map-trailing-group", "P2-map-partial-group", "P2-map-action-group", "P2-map-action"]
+              constraints: []
+              acceptance: "After seeding, every Target-declared Initial Data record is retrievable through the Database Interface with its declared field values and relationships; running the seed a second time leaves exactly one logical copy of each declared record rather than duplicating it."
+              verify: "Querying the Database Interface after seeding returns every declared Initial Data record with matching field values; running the seed entry point a second time does not increase the count of any declared record beyond one logical copy."
+              status: "todo"
+        P2-integrity:
+          id: "P2-integrity"
+          title: "Portability and Observability"
+          description: "The classification of every persistence decision as portable contract, portable mapping, or isolated Engine-specific extension, schema-drift verification, least-privilege runtime access, and the required security-relevant observability signals."
+          area: "Cross-cutting persistence integrity and observability"
+          does: "The complete mapping's portability boundaries are explicit, running structure is verified against recorded structure, runtime access follows least privilege, and connection failure, Migration failure, constraint violation, Transaction conflict, and protected-data access each produce an observable signal without exposing secret or credential values."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-integrity-observability:
+              id: "P2-integrity-observability"
+              title: "Establish portability classification, drift verification, and protected observability"
+              description: "Classify every persistence decision made across this Plan's mappings as portable contract, portable mapping, or explicit isolated Engine-specific extension with its compatibility impact recorded; verify the running storage structure against the recorded Migration history before normal operations proceed; apply least-privilege runtime access; and record connection failure, Migration failure, constraint violation, Transaction conflict, and protected-data access as observable signals that never include secret or credential values."
+              reason: "A persistence layer that hides its Engine-specific extensions, cannot detect structural drift, or leaks protected data through diagnostics undermines every mapping and Migration this Plan already established."
+              kind: "code"
+              inputs: ["Every mapping and the Migration mechanism established in this Plan"]
+              expected_result: "Every Engine-specific extension used by this Plan's mappings is isolated and recorded with its portability impact; drift between recorded and running structure is detected before normal operations proceed; a connection failure, Migration failure, constraint violation, and Transaction conflict each produce a recorded signal with no secret or credential value in it."
+              depends_on: ["P2-migrations"]
+              constraints: []
+              acceptance: "An introduced structural difference is detected as drift before further operations proceed; forcing each of a connection failure, a Migration failure, a constraint violation, and a Transaction conflict produces a corresponding recorded signal; inspecting any such signal or log shows no secret or credential value."
+              verify: "Deliberately diverging the running structure from the recorded history is detected as drift; forcing each listed failure condition produces its recorded signal; the recorded signals and logs contain no secret or credential value."
+              status: "todo"
+                - "correction — Review Finding P1-F1 (major, Foundation-level): id is now a required, non-nullable int Field (see P1-model-foundation log) instead of accepting an explicit id=None. Updated tests/test_position.py accordingly: id added to REQUIRED/NON_NULLABLE and the _valid() fixture; the obsolete assert_id_generated_not_supplied-based test removed since the generic required/non-nullable checks now cover id like any other Field. Re-verified: pytest, ruff check, ruff format --check, and pyright all clean."

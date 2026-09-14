@@ -10,15 +10,43 @@ policy:
   precedence: "Target and API Principles take precedence over these Preferences."
 
 content:
+  architecture:
+    application_bootstrap:
+      file: "app.py"
+      creates_framework_application: true
+      registers_routers: true
+      installs_middleware: true
+      installs_exception_handlers: true
+      wires_authentication_dependencies: true
+      configures_lifecycle: true
+    router:
+      directory: "router"
+      file_per_domain: true
+      controller_layer: "merged_into_router"
+      owns_http_boundary: true
+    service:
+      directory: "service"
+      file_per_domain: true
+      owns_api_operations: true
+      depends_on: "Logic Public Interface"
+      depends_on_http_or_fastapi: false
   runtime:
     executable: true
-    entrypoint: "api.main:app"
+    entrypoint: "api.app:app"
     host_source: "Platform Runtime Binding"
     port_source: "Platform Runtime Binding"
   contract:
+    application:
+      title: "Target API"
+      description: ""
+      version: "v1"
+      values_source: "Target or API Runtime Configuration"
     documentation:
       enabled: true
       type: "OpenAPI"
+      openapi_url: "/openapi.json"
+      docs_url: "/docs"
+      redoc_url: "/redoc"
     versioning:
       enabled: true
       strategy: "path"
@@ -48,6 +76,18 @@ content:
     maximum_limit: 100
     filtering: "explicitly allowlisted Fields only"
     sorting: "explicitly allowlisted Fields with stable ordering"
+  http:
+    root_path:
+      source: "Platform Runtime Binding"
+      default: ""
+    cors:
+      allowed_origins:
+        - "*"
+      allow_credentials: true
+      allowed_methods:
+        - "*"
+      allowed_headers:
+        - "*"
   lifecycle:
     health:
       enabled: true
