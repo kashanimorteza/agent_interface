@@ -1,0 +1,189 @@
+meta:
+  path: ".interface/foundation/config/state.yaml"
+  path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+read_order:
+  - "active"
+  - "phases"
+  - "implementation"
+  - "launch"
+  - "history"
+  - "blockers"
+  - "open_questions"
+
+content_map:
+  active: "Current or most recently recorded Workflow position."
+  phases: "Aggregate Planning, Development, and Review progress by phase identifier."
+  implementation: "Latest end-to-end Implement result."
+  launch: "Current runtime result and verified access points."
+  history: "Append-only State-changing Workflow events."
+  blockers: "Unresolved critical conditions."
+  open_questions: "Unresolved critical questions."
+
+content:
+  active:
+    mode: "development"
+    phase: "P2"
+    mode_reason: "Development implemented and verified all 24 Tasks of the Phase 2 Plan (revision 2) from a clean rebuild."
+    set_by: "developing"
+    set_at: "2026-09-14T09:46:09Z"
+
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      updated_by: "reviewer"
+      updated_at: "2026-09-14T09:20:47Z"
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      updated_by: "reviewer"
+      updated_at: "2026-09-14T09:50:19Z"
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+
+  implementation:
+    status: "in progress"
+    started_at: "2026-09-14T09:08:30Z"
+    completed_at: null
+    updated_by: "implement"
+    updated_at: "2026-09-14T09:50:43Z"
+
+  launch:
+    status: "not launched"
+    environment: null
+    method: null
+    access_points: []
+    updated_by: "initialization"
+    updated_at: null
+
+  history:
+    - id: "H1"
+      operation: "configure"
+      phase: null
+      event: "Initialized State, Plan, and Review Config from their operational Schemas after a Complete Reset, and synchronized phase records P1-P6 from current Target phase identities. Inspected the selected VPS Launch Item's Environment: the execution host is Linux, net-tools and iptables are already present, and ufw is already absent, so every Operating System Instruction was already satisfied and no system change was required."
+      outcome: "completed; no blockers"
+      recorded_by: "configure"
+      recorded_at: "2026-09-14T09:07:52Z"
+    - id: "H2"
+      operation: "implement"
+      phase: null
+      event: "Started an Implement run for the selected scope: Phase 1 and Phase 2, following a Complete Reset. Phase 1's prior Plan, Review, and implementation no longer exist, so this run performs full Planning and Development for Phase 1, then Phase 2."
+      outcome: "in progress"
+      recorded_by: "implement"
+      recorded_at: "2026-09-14T09:08:30Z"
+    - id: "H3"
+      operation: "planning"
+      phase: "P1"
+      event: "Created the Plan for Phase 1 (Model) at revision 1: Model Foundation, one Domain Definition Task for each of the 15 domain concepts the Target defines, a Public Interface verification Task, and a Component Documentation Task, organized into 8 Groups."
+      outcome: "completed"
+      recorded_by: "planning"
+      recorded_at: "2026-09-14T09:09:35Z"
+    - id: "H4"
+      operation: "reviewer"
+      phase: "P1"
+      event: "Ran Plan Assurance against Phase 1 Plan revision 1, built from a coverage ledger derived directly from the Target and Model Principles/Preferences. Confirmed complete coverage of the Target's 15 domain concepts, the Model Foundation, the Public Interface, and the Component README obligation, with every acceptance clause covered by a verification condition. No Findings. No implementation exists yet."
+      outcome: "plan satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-14T09:09:57Z"
+    - id: "H5"
+      operation: "developing"
+      phase: "P1"
+      event: "Implemented the Model Python library as a uv-managed Python 3.13 package: the Model Foundation, all 15 Domain Definitions with their Target-stated fields, credential meaning, and declared uniqueness, the Public Interface, and the component README. All 18 Tasks verified by 83 durable checks, with ruff lint, ruff format, and pyright clean from a clean environment rebuild."
+      outcome: "completed"
+      recorded_by: "developing"
+      recorded_at: "2026-09-14T09:18:02Z"
+    - id: "H6"
+      operation: "reviewer"
+      phase: "P1"
+      event: "Ran Implementation Assurance independently: re-ran the whole check suite from a clean rebuild, and adversarially checked for forbidden legacy Pydantic APIs, persistence/transport leakage, and field-name fidelity to the Target across all 15 Domain Definitions. No Findings."
+      outcome: "satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-14T09:20:47Z"
+    - id: "H7"
+      operation: "planning"
+      phase: "P2"
+      event: "Created the Plan for Phase 2 (Database) at revision 1: Storage Adapter Foundation, Instance Registry, one storage-mapping Task for each of the 15 domain concepts the Target defines, Migration history, the generic Database Interface with its Transaction boundary and controlled command route, declared initial-data seeding, Public Interface verification, and Component Documentation, organized into 12 Groups (24 Tasks)."
+      outcome: "completed"
+      recorded_by: "planning"
+      recorded_at: "2026-09-14T09:23:31Z"
+    - id: "H8"
+      operation: "reviewer"
+      phase: "P2"
+      event: "Ran Plan Assurance against Phase 2 Plan revision 1, built from a coverage ledger derived directly from the Target and Database/Development Principles and Preferences. Found one Gap (F1): no Task covers Database Principle 16's least-privilege and observability-signal requirements. Routing to Planning to reconcile."
+      outcome: "not satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-14T09:24:20Z"
+    - id: "H9"
+      operation: "planning"
+      phase: "P2"
+      event: "Reconciled Phase 2 Plan to revision 2: added least-privilege connection identity and connection-failure signal coverage to the Storage Adapter Foundation Task, migration-failure signal coverage to the Migration History Task, constraint-violation and protected-data-access signal coverage to the Database Interface Task, and Transaction-conflict signal coverage to the Transaction boundary Task, closing Finding F1's gap."
+      outcome: "completed"
+      recorded_by: "planning"
+      recorded_at: "2026-09-14T09:25:54Z"
+    - id: "H10"
+      operation: "reviewer"
+      phase: "P2"
+      event: "Independently re-reviewed the reconciled Phase 2 Plan revision 2 against a freshly rebuilt coverage ledger. Confirmed complete coverage of all 16 Database Principles including the previously-missing least-privilege and observability-signal requirements. Finding F1 resolved. No implementation exists yet."
+      outcome: "plan satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-14T09:26:26Z"
+    - id: "H11"
+      operation: "developing"
+      phase: "P2"
+      event: "Implemented the Database Python library as a uv-managed Python 3.13 package depending on model by relative path: the Storage Adapter foundation (SQLite, least-privilege file permissions, connection-failure signal), the Instance Registry, SQLAlchemy storage mappings for all 15 Domain Definitions with declared uniqueness and credential at-rest protection (pbkdf2 hash / Fernet-encrypted per Target-stated field), an Alembic-managed Migration history with checksum-based drift detection, the generic Database Interface (create/read/read-by-id/list/update/delete/activate) with an explicit Transaction boundary and a capability-restricted controlled command route, declared initial-data seeding, and the component README. All 24 Tasks verified by 59 durable checks, with ruff lint, ruff format, and pyright clean from a clean environment rebuild, and a migration smoke-apply to a fresh database."
+      outcome: "completed"
+      recorded_by: "developing"
+      recorded_at: "2026-09-14T09:46:09Z"
+    - id: "H12"
+      operation: "reviewer"
+      phase: "P2"
+      event: "Ran Implementation Assurance independently: re-ran the whole check suite from a clean rebuild, smoke-applied the Migration history to a fresh database, and adversarially checked foreign-key RESTRICT enforcement (deleting a referenced Broker rejected), SQL-injection-shaped filter input (rejected safely via getattr, never reaches raw SQL), absence of raw f-string SQL, absence of startup schema creation outside Migrations, absence of hardcoded secrets, and consistent credential redaction. No Findings."
+      outcome: "satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-14T09:50:19Z"
+    - id: "H13"
+      operation: "implement"
+      phase: null
+      event: "Completed the selected scope: Phase 1 and Phase 2 each passed Planning, independent Plan Assurance, Development, and independent Implementation Assurance. Launch was withheld because Phases P3 (Backend) and P4 (Frontend) are enabled and ready but not yet planned or developed, so whole-Target implementation remains incomplete."
+      outcome: "selected scope satisfied; implementation remains in progress"
+      recorded_by: "implement"
+      recorded_at: "2026-09-14T09:50:43Z"
+
+  blockers: {}
+
+  open_questions: {}

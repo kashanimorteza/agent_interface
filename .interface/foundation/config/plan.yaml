@@ -1,0 +1,1232 @@
+meta:
+  path: ".interface/foundation/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+read_order:
+  - "task_count"
+  - "plans"
+
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+content:
+  task_count: 42
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      revision: 1
+      target: Model
+      does: Deliver the Model library's shared Foundation and an authoritative Domain Definition for every domain concept the Target defines, each exposed through one stable Public Interface with its declared fields, relationships, and rules preserved, and documented as a complete, operational package.
+      constraints: []
+      task_count: 18
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Model Foundation
+          description: The shared foundation every concrete Domain Definition in this phase builds on.
+          area: Shared Model Foundation
+          does: A shared Model Foundation is available for every concrete Domain Definition to build on.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              title: Establish the Model Foundation
+              description: Establish the Model Foundation shared by every concrete Domain Definition in this phase, supplying applicable common configuration and behavior consistently rather than letting each Domain Definition duplicate it.
+              reason: Model Principles require every concrete Model realization to receive applicable shared configuration and behavior through one Model Foundation.
+              kind: code
+              inputs:
+              - The Model Component Profile and its applicable Language Item
+              expected_result: A shared Model Foundation exists and is available to every Domain Definition realized afterward in this phase.
+              depends_on: []
+              constraints: []
+              acceptance: Every Domain Definition built afterward in this phase receives its applicable shared configuration and behavior from this one Foundation rather than repeating it independently.
+              verify: Shared configuration and behavior are observed to apply consistently across more than one Domain Definition built on the Foundation, with no such behavior duplicated independently.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_foundation.py (7 checks) — unknown-field rejection and assignment validation observed consistently across User, Broker, and Trading Platform; shared Foundation configuration observed equal across Domain Definitions.
+                outcome: passed
+        P1-G2:
+          id: P1-G2
+          title: Identity and Connectivity
+          description: The domain concepts that identify a system user and a connection to a supported Trading Platform.
+          area: User identity and platform-connectivity domain definitions
+          does: User identity and platform-connectivity domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              title: Define the User Domain Definition
+              description: Define User as Model's authoritative Domain Definition, preserving every field, credential meaning, and rule the Target states for it.
+              reason: Every user-owned domain concept in this Target depends on User as its owning identity, so Model must give User exactly one authoritative meaning.
+              kind: code
+              inputs:
+              - The Target's Model definition for User
+              - The Model Foundation
+              expected_result: An authoritative User Domain Definition is available through Model's Public Interface, carrying every field, credential meaning, and rule the Target defines for User.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The User Domain Definition matches every field, credential meaning, and rule the Target states for User, with nothing invented and nothing missing.
+              verify: The User Domain Definition's Public Interface, inspected against the Target's stated fields, credential meaning, and rules for User, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_user.py (5 checks) — exact field set, credential meaning on password/api_key, uniqueness (name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G2-T2:
+              id: P1-G2-T2
+              title: Define the Trading Platform Domain Definition
+              description: Define Trading Platform as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, independent of any one exchange or broker.
+              reason: The Target requires the system to stay independent of any specific trading platform, which depends on Trading Platform having exactly one authoritative domain meaning.
+              kind: code
+              inputs:
+              - The Target's Model definition for Trading Platform
+              - The Model Foundation
+              expected_result: An authoritative Trading Platform Domain Definition is available through Model's Public Interface, carrying every field and rule the Target defines for Trading Platform.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: The Trading Platform Domain Definition matches every field and rule the Target states for Trading Platform, with nothing invented and nothing missing.
+              verify: The Trading Platform Domain Definition's Public Interface, inspected against the Target's stated fields and rules for Trading Platform, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_trading_platform.py (5 checks) — exact field set, no credential fields, no uniqueness, defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G2-T3:
+              id: P1-G2-T3
+              title: Define the Instance Domain Definition
+              description: Define Instance as Model's authoritative Domain Definition, preserving every field, credential meaning, and rule the Target states for it, including its ownership by one User and its use of one Trading Platform.
+              reason: Instance's domain meaning requires an owning User and a connected Trading Platform, both of which must already have one authoritative meaning before Instance can reference them.
+              kind: code
+              inputs:
+              - The Target's Model definition for Instance
+              - The Model Foundation
+              - The User Domain Definition
+              - The Trading Platform Domain Definition
+              expected_result: An authoritative Instance Domain Definition is available through Model's Public Interface, carrying every field, credential meaning, and rule the Target defines for Instance, including its relationships to User and Trading Platform.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              - P1-G2-T2
+              constraints: []
+              acceptance: The Instance Domain Definition matches every field, credential meaning, and rule the Target states for Instance, with nothing invented and nothing missing.
+              verify: The Instance Domain Definition's Public Interface, inspected against the Target's stated fields, credential meaning, relationships, and rules for Instance, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_instance.py (5 checks) — exact field set, credential meaning on password/api_key, uniqueness (user_id, name), nullable defaults, JSON round-trip/schema.
+                outcome: passed
+        P1-G3:
+          id: P1-G3
+          title: Financial Reference Data
+          description: The domain concepts that describe currencies, brokers, and the assets available for trading.
+          area: Financial reference domain definitions
+          does: Currency, broker, and tradable-asset domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              title: Define the Currency Domain Definition
+              description: Define Currency as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Currency's domain meaning is user-owned and other domain concepts in this Target reference a Currency, so it must have exactly one authoritative meaning.
+              kind: code
+              inputs:
+              - The Target's Model definition for Currency
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Currency Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Currency.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Currency Domain Definition matches every field, relationship, and rule the Target states for Currency, with nothing invented and nothing missing.
+              verify: The Currency Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Currency, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_currency.py (5 checks) — exact field set, uniqueness (user_id, code), 3-letter code size enforced both directions, decimal_digits default, JSON round-trip/schema.
+                outcome: passed
+            P1-G3-T2:
+              id: P1-G3-T2
+              title: Define the Broker Domain Definition
+              description: Define Broker as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User, without coupling it to one Trading Platform.
+              reason: Broker's domain meaning is user-owned and intentionally independent of any one Trading Platform, and other domain concepts in this Target reference a Broker.
+              kind: code
+              inputs:
+              - The Target's Model definition for Broker
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Broker Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Broker.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Broker Domain Definition matches every field, relationship, and rule the Target states for Broker, with nothing invented and nothing missing.
+              verify: The Broker Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Broker, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_broker.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G3-T3:
+              id: P1-G3-T3
+              title: Define the Asset Domain Definition
+              description: Define Asset as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its provision by one Broker and its category.
+              reason: Asset's domain meaning depends on the Broker that provides it, and the system needs Asset's authoritative meaning to know exactly what is being traded.
+              kind: code
+              inputs:
+              - The Target's Model definition for Asset
+              - The Model Foundation
+              - The Broker Domain Definition
+              expected_result: An authoritative Asset Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Asset.
+              depends_on:
+              - P1-G1-T1
+              - P1-G3-T2
+              constraints: []
+              acceptance: The Asset Domain Definition matches every field, relationship, and rule the Target states for Asset, with nothing invented and nothing missing.
+              verify: The Asset Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Asset, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_asset.py (4 checks) — exact field set, uniqueness (broker_id, symbol), defaults, JSON round-trip/schema.
+                outcome: passed
+        P1-G4:
+          id: P1-G4
+          title: Accounts
+          description: The domain concepts that organize and represent funded trading accounts.
+          area: Trading-account organization domain definitions
+          does: Trading-account organization domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              title: Define the Account Group Domain Definition
+              description: Define Account Group as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Account Group organizes trading accounts owned by one user, and Account references it, so it must have exactly one authoritative meaning.
+              kind: code
+              inputs:
+              - The Target's Model definition for Account Group
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Account Group Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Account Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Account Group Domain Definition matches every field, relationship, and rule the Target states for Account Group, with nothing invented and nothing missing.
+              verify: The Account Group Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Account Group, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_account_group.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G4-T2:
+              id: P1-G4-T2
+              title: Define the Account Domain Definition
+              description: Define Account as Model's authoritative Domain Definition, preserving every field, credential meaning, and rule the Target states for it, including its membership in one Account Group, its Broker, its connecting Instance, and its base Currency.
+              reason: Account is the funded trading account through which the system executes trades, and its domain meaning depends on the Account Group, Broker, Instance, and Currency it references.
+              kind: code
+              inputs:
+              - The Target's Model definition for Account
+              - The Model Foundation
+              - The Account Group Domain Definition
+              - The Broker Domain Definition
+              - The Instance Domain Definition
+              - The Currency Domain Definition
+              expected_result: An authoritative Account Domain Definition is available through Model's Public Interface, carrying every field, credential meaning, relationship, and rule the Target defines for Account.
+              depends_on:
+              - P1-G1-T1
+              - P1-G4-T1
+              - P1-G3-T2
+              - P1-G2-T3
+              - P1-G3-T1
+              constraints: []
+              acceptance: The Account Domain Definition matches every field, credential meaning, relationship, and rule the Target states for Account, with nothing invented and nothing missing.
+              verify: The Account Domain Definition's Public Interface, inspected against the Target's stated fields, credential meaning, relationships, and rules for Account, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_account.py (5 checks) — exact field set, credential meaning on password, both uniqueness groups, exact decimal balance precision, JSON round-trip/schema.
+                outcome: passed
+        P1-G5:
+          id: P1-G5
+          title: Trade Management Rules
+          description: The domain concepts that group and define the rules for trailing Stop Loss/Take Profit management and partial position closing.
+          area: Trade-management rule domain definitions
+          does: Stop-loss/take-profit trailing and partial-close rule domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G5-T1:
+              id: P1-G5-T1
+              title: Define the Trailing Group Domain Definition
+              description: Define Trailing Group as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Trailing Group organizes the rules that manage Stop Loss and Take Profit during a trade, and other domain concepts in this Target reference it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Trailing Group
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Trailing Group Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Trailing Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Trailing Group Domain Definition matches every field, relationship, and rule the Target states for Trailing Group, with nothing invented and nothing missing.
+              verify: The Trailing Group Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Trailing Group, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_trailing_group.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G5-T2:
+              id: P1-G5-T2
+              title: Define the Trailing Rule Domain Definition
+              description: Define Trailing Rule as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its membership in one Trailing Group and its activation condition and adjustment parameters.
+              reason: Trailing Rule tells the system when and how to manage Take Profit and Stop Loss, and its domain meaning depends on the Trailing Group that contains it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Trailing Rule
+              - The Model Foundation
+              - The Trailing Group Domain Definition
+              expected_result: An authoritative Trailing Rule Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Trailing Rule.
+              depends_on:
+              - P1-G1-T1
+              - P1-G5-T1
+              constraints: []
+              acceptance: The Trailing Rule Domain Definition matches every field, relationship, and rule the Target states for Trailing Rule, with nothing invented and nothing missing.
+              verify: The Trailing Rule Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Trailing Rule, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_trailing_rule.py (4 checks) — exact field set, both uniqueness groups, nullable defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G5-T3:
+              id: P1-G5-T3
+              title: Define the Partial Group Domain Definition
+              description: Define Partial Group as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Partial Group organizes rules for managing portions of an open trade, and other domain concepts in this Target reference it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Partial Group
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Partial Group Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Partial Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Partial Group Domain Definition matches every field, relationship, and rule the Target states for Partial Group, with nothing invented and nothing missing.
+              verify: The Partial Group Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Partial Group, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_partial_group.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G5-T4:
+              id: P1-G5-T4
+              title: Define the Partial Rule Domain Definition
+              description: Define Partial Rule as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its membership in one Partial Group and its activation and close-percentage parameters.
+              reason: Partial Rule tells the system under which condition and to what extent part of an open position must be closed, and its domain meaning depends on the Partial Group that contains it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Partial Rule
+              - The Model Foundation
+              - The Partial Group Domain Definition
+              expected_result: An authoritative Partial Rule Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Partial Rule.
+              depends_on:
+              - P1-G1-T1
+              - P1-G5-T3
+              constraints: []
+              acceptance: The Partial Rule Domain Definition matches every field, relationship, and rule the Target states for Partial Rule, with nothing invented and nothing missing.
+              verify: The Partial Rule Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Partial Rule, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_partial_rule.py (4 checks) — exact field set, both uniqueness groups, defaults, JSON round-trip/schema.
+                outcome: passed
+        P1-G6:
+          id: P1-G6
+          title: Actions and Positions
+          description: The domain concepts that define how a position is opened and that record every position the system creates.
+          area: Trading action and position domain definitions
+          does: Trading action and position domain concepts are represented as authoritative Domain Definitions.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G6-T1:
+              id: P1-G6-T1
+              title: Define the Action Group Domain Definition
+              description: Define Action Group as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User.
+              reason: Action Group organizes trading actions by risk profile, and other domain concepts in this Target reference it.
+              kind: code
+              inputs:
+              - The Target's Model definition for Action Group
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: An authoritative Action Group Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Action Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Action Group Domain Definition matches every field, relationship, and rule the Target states for Action Group, with nothing invented and nothing missing.
+              verify: The Action Group Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Action Group, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_action_group.py (4 checks) — exact field set, uniqueness (user_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G6-T2:
+              id: P1-G6-T2
+              title: Define the Action Domain Definition
+              description: Define Action as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its membership in one Action Group and its use of one Asset, one Account, one Partial Group, and one Trailing Group.
+              reason: Action defines how a position must be opened, and its domain meaning depends on the Action Group, Asset, Account, Partial Group, and Trailing Group it references.
+              kind: code
+              inputs:
+              - The Target's Model definition for Action
+              - The Model Foundation
+              - The Action Group Domain Definition
+              - The Asset Domain Definition
+              - The Account Domain Definition
+              - The Partial Group Domain Definition
+              - The Trailing Group Domain Definition
+              expected_result: An authoritative Action Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Action.
+              depends_on:
+              - P1-G1-T1
+              - P1-G6-T1
+              - P1-G3-T3
+              - P1-G4-T2
+              - P1-G5-T3
+              - P1-G5-T1
+              constraints: []
+              acceptance: The Action Domain Definition matches every field, relationship, and rule the Target states for Action, with nothing invented and nothing missing.
+              verify: The Action Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Action, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_action.py (4 checks) — exact field set, uniqueness (action_group_id, name), defaults, JSON round-trip/schema.
+                outcome: passed
+            P1-G6-T3:
+              id: P1-G6-T3
+              title: Define the Position Domain Definition
+              description: Define Position as Model's authoritative Domain Definition, preserving every field and rule the Target states for it, including its ownership by one User and its use of one Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and originating Action.
+              reason: Position stores the complete information for every position the system creates or has pending, and its domain meaning depends on every domain concept it references.
+              kind: code
+              inputs:
+              - The Target's Model definition for Position
+              - The Model Foundation
+              - The User Domain Definition
+              - The Trading Platform Domain Definition
+              - The Broker Domain Definition
+              - The Account Domain Definition
+              - The Trailing Group Domain Definition
+              - The Partial Group Domain Definition
+              - The Action Group Domain Definition
+              - The Action Domain Definition
+              expected_result: An authoritative Position Domain Definition is available through Model's Public Interface, carrying every field, relationship, and rule the Target defines for Position.
+              depends_on:
+              - P1-G1-T1
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G3-T2
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T3
+              - P1-G6-T1
+              - P1-G6-T2
+              constraints: []
+              acceptance: The Position Domain Definition matches every field, relationship, and rule the Target states for Position, with nothing invented and nothing missing.
+              verify: The Position Domain Definition's Public Interface, inspected against the Target's stated fields, relationships, and rules for Position, shows an exact match.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_position.py (5 checks) — exact 21-field set, uniqueness (name), naive datetime rejected, defaults, JSON round-trip/schema.
+                outcome: passed
+        P1-G7:
+          id: P1-G7
+          title: Model Public Interface
+          description: The complete, verified public boundary through which every Domain Definition in this phase is reached.
+          area: Model Public Interface
+          does: Every Domain Definition in this phase is reachable through one verified, stable Model Public Interface.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G7-T1:
+              id: P1-G7-T1
+              title: Verify the complete Model Public Interface
+              description: Confirm that every Domain Definition produced in this phase is reachable through Model's one explicit and stable Public Interface with one unambiguous public identity, and verify the complete Model boundary's public interface, validation behavior, and serialization/schema generation.
+              reason: Model must expose its authoritative Domain Definitions through one explicit, stable Public Interface rather than private internal resources, and this must be demonstrated across the complete set of Domain Definitions produced in this phase, not only individually.
+              kind: code
+              inputs:
+              - Every Domain Definition produced in this phase
+              expected_result: Every Domain Definition produced in this phase has exactly one public identity reachable through Model's Public Interface, and the complete Model boundary is verified as one coherent whole.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G5-T3
+              - P1-G5-T4
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              constraints: []
+              acceptance: Every Domain Definition produced in this phase is reachable through Model's Public Interface with one unambiguous identity, and no consumer needs private internal resources to use any of them.
+              verify: Public interface resolution, validation behavior, and serialization/schema generation are observed to succeed for every Domain Definition produced in this phase when exercised together as one Model boundary, each Domain Definition is observed to resolve to exactly one unambiguous public identity, and every one of them is observed to be reachable without depending on a private internal resource.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: uv run pytest tests/test_public_interface.py (5 checks) — every Domain Definition reachable, no duplicate public identity, no private-resource dependency, schema generation non-empty for all 15, all build on the Foundation.
+                outcome: passed
+        P1-G8:
+          id: P1-G8
+          title: Component Documentation
+          description: The Model component's operational documentation.
+          area: Model component operational documentation
+          does: The Model component has complete, accurate, and safe operational documentation.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G8-T1:
+              id: P1-G8-T1
+              title: Produce the Model component README
+              description: Produce the Model component's README, explaining the component, its actual public surface and structure, setup, installation, configuration, use, verification, and troubleshooting, with accurate executable examples drawn from the resolved technical selections.
+              reason: Every generated Participating Component must have complete, safe, and operational documentation.
+              kind: documentation
+              inputs:
+              - Every Domain Definition produced in this phase
+              - The resolved Model Component Profile and Language Item
+              expected_result: A README exists for the Model component accurately documenting its actual public surface, setup, configuration, use, verification, and troubleshooting, with no secret values exposed.
+              depends_on:
+              - P1-G7-T1
+              constraints: []
+              acceptance: The README explains the Model component's actual public surface and structure, setup, installation, configuration, use, verification, and troubleshooting with accurate executable examples, and exposes no usable credential, token, or secret value.
+              verify: The README's documented setup, installation, and usage examples are observed to run successfully against the actual Model component, its described public surface is observed to match the component's actual public surface, and its content is observed to carry no usable credential, token, or secret value.
+              status: done
+              log:
+              - at: '2026-09-14T09:18:02Z'
+                event: completed
+                check: 'uv run pytest tests/test_readme.py (5 checks) — required sections present, documented imports match model.__all__ exactly, documented usage example re-executed, documented commands match the real ones, secret scan clean. Whole-suite gate from a clean .venv rebuild: 83 passed, ruff check/format clean, pyright 0 errors.'
+                outcome: passed
+    P2:
+      id: P2
+      title: Database
+      order: 2
+      revision: 2
+      target: Database
+      does: Deliver the Database library's complete persistence boundary for every Domain Definition the Target defines, comprising a shared Storage Adapter foundation, a published Instance Registry, traceable storage mappings preserving every declared field, relationship, uniqueness, and credential protection, an ordered reproducible Migration history, one generic Database Interface with an explicit Transaction boundary and controlled command route, every declared initial record seeded, and documented as a complete, operational package.
+      constraints: []
+      task_count: 24
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Storage Adapter Foundation
+          description: The shared connection and runtime-configuration foundation every storage mapping and the Database Interface in this phase build on.
+          area: Shared Storage Adapter Foundation
+          does: A shared Storage Adapter foundation is available for every storage mapping and the Database Interface to build on.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G1-T1:
+              id: P2-G1-T1
+              title: Establish the Storage Adapter Foundation
+              description: Establish the Storage Adapter foundation shared by every Domain Definition mapped in this phase, resolving the selected Engine connection and the Database's runtime configuration (its configured Engine profiles, Database Instances, and default Database Instance selection) so every later mapping and the Database Interface can build on one consistent connection foundation.
+              reason: Database Principles require Database to be reproducible from the repository and to resolve its complete runtime storage configuration from one place before any persistence operation runs, and every storage mapping and the Database Interface depend on this foundation.
+              kind: code
+              inputs:
+              - The Database Component Profile and its applicable Database Item
+              - The selected default Database Instance and credential at-rest defaults
+              expected_result: A Storage Adapter foundation exists that resolves the configured Engine, validates the configured Database Instances and default selection, connects using a least-privilege runtime identity, records a signal on connection failure without exposing a secret value, and is available to every Domain Definition mapping and the Database Interface built afterward in this phase.
+              depends_on: []
+              constraints: []
+              acceptance: The Storage Adapter foundation established here is the single connection and runtime-configuration resource every later mapping Task and the Database Interface reuse rather than each repeating its own resolution, it never connects with more than the runtime identity's least required privilege, and a connection failure produces an observable signal that carries no secret value.
+              verify: A configured Engine connection and validated Database Instance and default-selection resolution are observed to be reused consistently by more than one later Domain Definition mapping and by the Database Interface, the connecting runtime identity is observed to hold no broader privilege than the foundation requires, and a deliberately induced connection failure is observed to produce a recorded signal containing no secret value.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_adapter.py (3 checks) — foundation reused across more than one mapping and the interface, database file created with 0o600 owner-only permissions, deliberately induced connection failure observed to raise ConnectionFailure and emit a connection_failure signal with no secret value.
+                outcome: passed
+        P2-G2:
+          id: P2-G2
+          title: Instance Registry
+          description: The public catalogue through which consumers discover the configured Database Instances and the default, without receiving connections or secrets.
+          area: Database Instance Registry
+          does: The configured Database Instances and their default are discoverable through one public Registry.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G2-T1:
+              id: P2-G2-T1
+              title: Publish the Database Instance Registry
+              description: Publish the Database's Instance Registry through Database's public boundary, exposing every configured Database Instance's stable identity, name, and purpose together with the resolved default, derived from the validated Database Instance catalogue established by the Storage Adapter foundation, without exposing a raw connection or secret value.
+              reason: Database Principles require every Database Instance to be explicit and selectable through one published Registry so a consumer can choose a database by purpose without learning how it connects, and without maintaining the Instance count as a second authority.
+              kind: code
+              inputs:
+              - The Storage Adapter foundation's validated Database Instance catalogue and default selection
+              expected_result: A public Instance Registry is available that lists every configured Database Instance's identity, name, and purpose, identifies the default, rejects an unknown explicit selection, and exposes no connection object or secret value.
+              depends_on:
+              - P2-G1-T1
+              constraints: []
+              acceptance: The Registry's published Database Instance identities and default match the validated catalogue exactly, an unknown explicit Database Instance selection is rejected, and nothing the Registry publishes exposes a connection object or secret value.
+              verify: The Registry is observed to list every configured Database Instance identity and the correct default, to reject a request naming an unconfigured Database Instance, and to expose no connection object or secret value in any published entry.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_registry.py (3 checks) — every configured Database Instance listed with the correct default, an unknown Instance rejected, no connection or secret text present in any published entry.
+                outcome: passed
+        P2-G3:
+          id: P2-G3
+          title: Identity and Connectivity Storage Mappings
+          description: The storage mappings for the domain concepts that identify a system user and a connection to a supported Trading Platform.
+          area: User identity and platform-connectivity storage mappings
+          does: User identity and platform-connectivity domain concepts are represented as traceable storage mappings.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G3-T1:
+              id: P2-G3-T1
+              title: Map the User Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the User Domain Definition, preserving every field the Domain Definition declares, enforcing its declared uniqueness, and applying the resolved at-rest treatment to its credential fields.
+              reason: User's domain meaning is credential-bearing and referenced by other persisted concepts, so its storage representation must preserve that meaning exactly and protect its credentials at rest.
+              kind: code
+              inputs:
+              - The User Domain Definition from Model's Public Interface
+              - The Storage Adapter foundation
+              - The resolved credential at-rest treatment for User's credential fields
+              expected_result: A storage mapping for User exists, traceable to the User Domain Definition, enforcing its declared uniqueness and storing its credential fields under their resolved at-rest treatment, reachable only through Database's internal mapping layer.
+              depends_on:
+              - P2-G1-T1
+              constraints: []
+              acceptance: The User storage mapping preserves every field and declared uniqueness the Domain Definition states, stores its credential fields under their resolved at-rest treatment with no recoverable plaintext credential stored, and invents no field, relationship, or record.
+              verify: Creating, reading, and updating a User record through the resolved persistence mechanism is observed to preserve every declared field, reject a duplicate on the declared uniqueness, and store its credential fields transformed under their resolved at-rest treatment rather than as plaintext.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_identity.py::test_user_mapping_preserves_fields_and_uniqueness_and_protects_credentials (1 check) plus tests/test_credentials.py (4 checks) — field preservation, name uniqueness rejected, password/api_key never returned as plaintext through the interface and stored hashed (pbkdf2$) at the storage layer itself, credential at-rest mode resolution for explicit Target overrides and defaults.
+                outcome: passed
+            P2-G3-T2:
+              id: P2-G3-T2
+              title: Map the Trading Platform Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Trading Platform Domain Definition, preserving every field the Domain Definition declares.
+              reason: Trading Platform is referenced by the Instance Domain Definition and by Position, so its storage representation must exist and preserve its declared meaning before those references can be mapped.
+              kind: code
+              inputs:
+              - The Trading Platform Domain Definition from Model's Public Interface
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Trading Platform exists, traceable to the Trading Platform Domain Definition, preserving every field it declares.
+              depends_on:
+              - P2-G1-T1
+              constraints: []
+              acceptance: The Trading Platform storage mapping preserves every field the Domain Definition states, with nothing invented and nothing missing.
+              verify: Creating, reading, updating, and listing Trading Platform records through the resolved persistence mechanism is observed to preserve every declared field.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_identity.py::test_trading_platform_mapping_preserves_fields (1 check) — create/read preserve every declared field.
+                outcome: passed
+            P2-G3-T3:
+              id: P2-G3-T3
+              title: Map the Instance Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Instance Domain Definition, preserving every field, its declared uniqueness, its ownership by one User, its use of one Trading Platform, and applying the resolved at-rest treatment to its credential fields.
+              reason: The Instance Domain Definition's domain meaning depends on the User and Trading Platform it references, both of which must already have a storage mapping, and it carries credentials that must be protected at rest.
+              kind: code
+              inputs:
+              - The Instance Domain Definition from Model's Public Interface
+              - The User storage mapping
+              - The Trading Platform storage mapping
+              - The resolved credential at-rest treatment for its credential fields
+              expected_result: A storage mapping for the Instance Domain Definition exists, preserving every declared field, its declared uniqueness, its User and Trading Platform relationships, and storing its credential fields under their resolved at-rest treatment.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              - P2-G3-T2
+              constraints: []
+              acceptance: The Instance storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states, and stores its credential fields under their resolved at-rest treatment with no recoverable plaintext credential stored where the resolved treatment is one-way.
+              verify: Creating and reading an Instance record through the resolved persistence mechanism is observed to preserve its declared fields and relationships, reject a duplicate on its declared uniqueness, and store its credential fields transformed under their resolved at-rest treatment.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_identity.py::test_instance_mapping_preserves_fields_relationships_uniqueness_and_credentials (1 check) — fields/relationships preserved, (user_id, name) uniqueness rejected, credentials never returned as plaintext.
+                outcome: passed
+        P2-G4:
+          id: P2-G4
+          title: Financial Reference Storage Mappings
+          description: The storage mappings for the domain concepts that describe currencies, brokers, and the assets available for trading.
+          area: Financial reference storage mappings
+          does: Currency, broker, and tradable-asset domain concepts are represented as traceable storage mappings.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G4-T1:
+              id: P2-G4-T1
+              title: Map the Currency Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Currency Domain Definition, preserving every field, its declared uniqueness, and its ownership by one User.
+              reason: Currency is referenced by Account as its base currency, so its storage representation must exist and preserve its declared meaning first.
+              kind: code
+              inputs:
+              - The Currency Domain Definition from Model's Public Interface
+              - The User storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Currency exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              constraints: []
+              acceptance: The Currency storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading a Currency record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_financial.py::test_currency_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, (user_id, code) uniqueness rejected.
+                outcome: passed
+            P2-G4-T2:
+              id: P2-G4-T2
+              title: Map the Broker Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Broker Domain Definition, preserving every field, its declared uniqueness, and its ownership by one User, without coupling it to one Trading Platform.
+              reason: Broker is referenced by Asset, Account, and Position, so its storage representation must exist and preserve its declared meaning first.
+              kind: code
+              inputs:
+              - The Broker Domain Definition from Model's Public Interface
+              - The User storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Broker exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              constraints: []
+              acceptance: The Broker storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading a Broker record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_financial.py::test_broker_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, (user_id, name) uniqueness rejected.
+                outcome: passed
+            P2-G4-T3:
+              id: P2-G4-T3
+              title: Map the Asset Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Asset Domain Definition, preserving every field, its declared uniqueness, and its provision by one Broker.
+              reason: Asset's domain meaning depends on the Broker that provides it, and other persisted concepts reference Asset.
+              kind: code
+              inputs:
+              - The Asset Domain Definition from Model's Public Interface
+              - The Broker storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Asset exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G4-T2
+              constraints: []
+              acceptance: The Asset storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading an Asset record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_financial.py::test_asset_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, (broker_id, symbol) uniqueness rejected.
+                outcome: passed
+        P2-G5:
+          id: P2-G5
+          title: Accounts Storage Mappings
+          description: The storage mappings for the domain concepts that organize and represent funded trading accounts.
+          area: Trading-account organization storage mappings
+          does: Trading-account organization domain concepts are represented as traceable storage mappings.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G5-T1:
+              id: P2-G5-T1
+              title: Map the Account Group Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Account Group Domain Definition, preserving every field, its declared uniqueness, and its ownership by one User.
+              reason: Account Group organizes Accounts owned by one user, and Account references it, so its storage representation must exist first.
+              kind: code
+              inputs:
+              - The Account Group Domain Definition from Model's Public Interface
+              - The User storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Account Group exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              constraints: []
+              acceptance: The Account Group storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading an Account Group record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_accounts.py::test_account_group_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, (user_id, name) uniqueness rejected.
+                outcome: passed
+            P2-G5-T2:
+              id: P2-G5-T2
+              title: Map the Account Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Account Domain Definition, preserving every field, its declared uniqueness, its membership in one Account Group, its Broker, its connecting Instance, its base Currency, and applying the resolved at-rest treatment to its credential field.
+              reason: Account is the funded trading account through which the system executes trades, and its domain meaning depends on the Account Group, Broker, Instance, and Currency it references, all of which must already have a storage mapping.
+              kind: code
+              inputs:
+              - The Account Domain Definition from Model's Public Interface
+              - The Account Group, Broker, Instance, and Currency storage mappings
+              - The resolved credential at-rest treatment for its credential field
+              expected_result: A storage mapping for Account exists, preserving every declared field, relationship, and its declared uniqueness, and storing its credential field under its resolved at-rest treatment.
+              depends_on:
+              - P2-G1-T1
+              - P2-G5-T1
+              - P2-G4-T2
+              - P2-G3-T3
+              - P2-G4-T1
+              constraints: []
+              acceptance: The Account storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states, and stores its credential field under its resolved at-rest treatment.
+              verify: Creating and reading an Account record through the resolved persistence mechanism is observed to preserve its declared fields, relationships, and exact decimal balance precision, reject a duplicate on its declared uniqueness, and store its credential field transformed under its resolved at-rest treatment.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_accounts.py::test_account_mapping_preserves_fields_relationships_uniqueness_and_credential (1 check) — fields/relationships and exact Decimal balance preserved, both uniqueness groups rejected, password never returned as plaintext.
+                outcome: passed
+        P2-G6:
+          id: P2-G6
+          title: Trade Management Rule Storage Mappings
+          description: The storage mappings for the domain concepts that group and define the rules for trailing Stop Loss/Take Profit management and partial position closing.
+          area: Trade-management rule storage mappings
+          does: Stop-loss/take-profit trailing and partial-close rule domain concepts are represented as traceable storage mappings.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G6-T1:
+              id: P2-G6-T1
+              title: Map the Trailing Group Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Trailing Group Domain Definition, preserving every field, its declared uniqueness, and its ownership by one User.
+              reason: Trailing Group organizes Trailing Rules and is referenced by Action and Position, so its storage representation must exist first.
+              kind: code
+              inputs:
+              - The Trailing Group Domain Definition from Model's Public Interface
+              - The User storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Trailing Group exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              constraints: []
+              acceptance: The Trailing Group storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading a Trailing Group record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_trade_rules.py::test_trailing_group_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, (user_id, name) uniqueness rejected.
+                outcome: passed
+            P2-G6-T2:
+              id: P2-G6-T2
+              title: Map the Trailing Rule Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Trailing Rule Domain Definition, preserving every field, its declared uniqueness, and its membership in one Trailing Group.
+              reason: Trailing Rule's domain meaning depends on the Trailing Group that contains it, which must already have a storage mapping.
+              kind: code
+              inputs:
+              - The Trailing Rule Domain Definition from Model's Public Interface
+              - The Trailing Group storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Trailing Rule exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G6-T1
+              constraints: []
+              acceptance: The Trailing Rule storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading a Trailing Rule record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_trade_rules.py::test_trailing_rule_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, both uniqueness groups rejected.
+                outcome: passed
+            P2-G6-T3:
+              id: P2-G6-T3
+              title: Map the Partial Group Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Partial Group Domain Definition, preserving every field, its declared uniqueness, and its ownership by one User.
+              reason: Partial Group organizes Partial Rules and is referenced by Action and Position, so its storage representation must exist first.
+              kind: code
+              inputs:
+              - The Partial Group Domain Definition from Model's Public Interface
+              - The User storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Partial Group exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              constraints: []
+              acceptance: The Partial Group storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading a Partial Group record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_trade_rules.py::test_partial_group_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, (user_id, name) uniqueness rejected.
+                outcome: passed
+            P2-G6-T4:
+              id: P2-G6-T4
+              title: Map the Partial Rule Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Partial Rule Domain Definition, preserving every field, its declared uniqueness, and its membership in one Partial Group.
+              reason: Partial Rule's domain meaning depends on the Partial Group that contains it, which must already have a storage mapping.
+              kind: code
+              inputs:
+              - The Partial Rule Domain Definition from Model's Public Interface
+              - The Partial Group storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Partial Rule exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G6-T3
+              constraints: []
+              acceptance: The Partial Rule storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading a Partial Rule record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_trade_rules.py::test_partial_rule_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, both uniqueness groups rejected.
+                outcome: passed
+        P2-G7:
+          id: P2-G7
+          title: Actions and Positions Storage Mappings
+          description: The storage mappings for the domain concepts that define how a position is opened and that record every position the system creates.
+          area: Trading action and position storage mappings
+          does: Trading action and position domain concepts are represented as traceable storage mappings.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G7-T1:
+              id: P2-G7-T1
+              title: Map the Action Group Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Action Group Domain Definition, preserving every field, its declared uniqueness, and its ownership by one User.
+              reason: Action Group organizes Actions and is referenced by Action and Position, so its storage representation must exist first.
+              kind: code
+              inputs:
+              - The Action Group Domain Definition from Model's Public Interface
+              - The User storage mapping
+              - The Storage Adapter foundation
+              expected_result: A storage mapping for Action Group exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              constraints: []
+              acceptance: The Action Group storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading an Action Group record through the resolved persistence mechanism is observed to preserve its declared fields and relationship, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_actions_positions.py::test_action_group_mapping_preserves_fields_relationship_and_uniqueness (1 check) — fields/relationship preserved, (user_id, name) uniqueness rejected.
+                outcome: passed
+            P2-G7-T2:
+              id: P2-G7-T2
+              title: Map the Action Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Action Domain Definition, preserving every field, its declared uniqueness, its membership in one Action Group, and its use of one Asset, one Account, one Partial Group, and one Trailing Group.
+              reason: Action defines how a position must be opened, and its domain meaning depends on the Action Group, Asset, Account, Partial Group, and Trailing Group it references, all of which must already have a storage mapping.
+              kind: code
+              inputs:
+              - The Action Domain Definition from Model's Public Interface
+              - The Action Group, Asset, Account, Partial Group, and Trailing Group storage mappings
+              expected_result: A storage mapping for Action exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G7-T1
+              - P2-G4-T3
+              - P2-G5-T2
+              - P2-G6-T3
+              - P2-G6-T1
+              constraints: []
+              acceptance: The Action storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading an Action record through the resolved persistence mechanism is observed to preserve its declared fields and relationships, and to reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_actions_positions.py::test_action_mapping_preserves_fields_relationships_and_uniqueness (1 check) — fields/relationships preserved, (action_group_id, name) uniqueness rejected.
+                outcome: passed
+            P2-G7-T3:
+              id: P2-G7-T3
+              title: Map the Position Domain Definition to storage
+              description: Establish a traceable storage mapping and persistence constraints for the Position Domain Definition, preserving every field, its declared uniqueness, its ownership by one User, and its use of one Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and originating Action.
+              reason: Position stores the complete information for every position the system creates or has pending, and its domain meaning depends on every domain concept it references, all of which must already have a storage mapping.
+              kind: code
+              inputs:
+              - The Position Domain Definition from Model's Public Interface
+              - The User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action storage mappings
+              expected_result: A storage mapping for Position exists, preserving every declared field, relationship, and its declared uniqueness.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              - P2-G3-T2
+              - P2-G4-T2
+              - P2-G5-T2
+              - P2-G6-T1
+              - P2-G6-T3
+              - P2-G7-T1
+              - P2-G7-T2
+              constraints: []
+              acceptance: The Position storage mapping preserves every field, relationship, and declared uniqueness the Domain Definition states.
+              verify: Creating and reading a Position record through the resolved persistence mechanism is observed to preserve its declared fields and relationships, reject a naive datetime where the resolved time convention requires timezone awareness, and reject a duplicate on its declared uniqueness.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_mapping_actions_positions.py::test_position_mapping_preserves_fields_relationships_uniqueness_and_timezone_rule and ::test_storage_layer_itself_rejects_a_naive_datetime (2 checks) — fields/relationships preserved, name uniqueness rejected, and the storage layer's own UTCDateTime column type independently rejects a naive datetime.
+                outcome: passed
+        P2-G8:
+          id: P2-G8
+          title: Migration History
+          description: The ordered, reproducible record of the complete storage structure produced by every mapping in this phase.
+          area: Storage Migration history
+          does: The complete storage structure produced in this phase is reproducible from an ordered Migration history with drift detection before normal operations.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G8-T1:
+              id: P2-G8-T1
+              title: Establish the ordered Migration history for the complete storage structure
+              description: Record the storage structure produced by every Domain Definition mapping in this phase as an ordered, reproducible Migration history, with drift detection before normal data operations, and without creating storage structure automatically at Database startup.
+              reason: Database Principles require every storage structure change to be recorded as a Migration in ordered history so the complete Database is reproducible from the repository rather than existing only in a running server or an unrecorded manual step.
+              kind: code
+              inputs:
+              - Every storage mapping produced by the Identity and Connectivity, Financial Reference, Accounts, Trade Management Rules, and Actions and Positions Groups
+              - The Storage Adapter foundation
+              expected_result: An ordered Migration history exists that reproduces the complete current storage structure for every mapped Domain Definition from an empty Database, Database verifies the running structure matches the recorded structure before normal operations, and a failed Migration produces an observable signal without exposing a secret value.
+              depends_on:
+              - P2-G1-T1
+              - P2-G3-T1
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T1
+              - P2-G4-T2
+              - P2-G4-T3
+              - P2-G5-T1
+              - P2-G5-T2
+              - P2-G6-T1
+              - P2-G6-T2
+              - P2-G6-T3
+              - P2-G6-T4
+              - P2-G7-T1
+              - P2-G7-T2
+              - P2-G7-T3
+              constraints: []
+              acceptance: Applying the recorded Migration history to an empty Database reproduces the complete current storage structure for every mapped Domain Definition, a structural mismatch between the running and recorded structure is detected before a normal data operation proceeds, and a failed Migration produces a recorded signal carrying no secret value.
+              verify: Applying the ordered Migration history to a freshly created empty Database is observed to produce every mapped Domain Definition's storage structure with its declared constraints, an intentionally introduced structural mismatch is observed to be detected before a normal data operation is allowed to proceed, and a deliberately failed Migration is observed to produce a recorded signal containing no secret value.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_migrations.py (3 checks) — applying the Migration history to an empty database reproduces all 15 tables with declared foreign keys and unique constraints, an intentionally introduced structural mismatch is detected via checksum drift before normal operations, a deliberately failed Migration raises MigrationFailure and emits a migration_failure signal with no secret value.
+                outcome: passed
+        P2-G9:
+          id: P2-G9
+          title: Database Interface and Transaction Boundary
+          description: The generic public Database Interface, its Transaction boundary, and its capability-restricted controlled command route.
+          area: Public Database Interface
+          does: Every persisted Domain Definition is reachable through one generic Database Interface with an explicit Transaction boundary and a capability-restricted controlled command route.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G9-T1:
+              id: P2-G9-T1
+              title: Establish the generic Database Interface
+              description: Establish one generic Database Interface through which every persisted Domain Definition is created, read, read by identifier, listed, updated, deleted, and, where the Domain Definition declares an active-state field, activated or deactivated, driven by the Domain Definition's public type rather than an untyped name.
+              reason: Database Principles require all data access to use one generic Model-driven interface rather than one implementation per Domain Definition, so the public boundary stays stable while private mapping evolves.
+              kind: code
+              inputs:
+              - Every storage mapping produced in this phase
+              - The Instance Registry
+              - The Storage Adapter foundation
+              expected_result: One generic Database Interface is available that performs create, read, read-by-identifier, list, update, delete, and activation operations for any persisted Domain Definition, identified by its public type or instance rather than an untyped string, records an observable signal without a secret value when a persistence constraint is violated, and records an observable signal without a secret value when a credential-marked field is accessed.
+              depends_on:
+              - P2-G8-T1
+              - P2-G2-T1
+              constraints: []
+              acceptance: Every supported operation succeeds for a representative set of persisted Domain Definitions through the same generic interface without a Domain Definition-specific entry point, activation is available only for a Domain Definition that declares an active-state field, no operation accepts an untyped Domain Definition-name string, a violated persistence constraint produces a recorded signal with no secret value, and access to a credential-marked field produces a recorded signal with no secret value.
+              verify: The same generic interface is observed to perform create, read, read-by-identifier, list, update, and delete for more than one persisted Domain Definition, activation is observed to change only the declared active-state field where present and to be unavailable where absent, every operation is observed to require the Domain Definition's public type or instance rather than a name string, a deliberately violated persistence constraint is observed to produce a recorded signal with no secret value, and reading a credential-marked field is observed to produce a recorded access signal with no secret value.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_interface.py (5 checks) — full CRUD+list observed through the same generic pipeline for TradingPlatform, Broker, and User; activation changes only is_active and is rejected for a synthetic type declaring no is_active field; a name string is rejected in place of a Model type; a violated uniqueness constraint raises ConstraintViolation and emits a constraint_violation signal with no secret value; reading a credential-bearing record emits a protected_data_access signal with no credential value.
+                outcome: passed
+            P2-G9-T2:
+              id: P2-G9-T2
+              title: Establish the Transaction boundary
+              description: Establish an explicit Transaction boundary through the Database Interface so a consumer can group related data operations on one Database Instance into one unit that commits together or rolls back together, while a standalone write remains its own atomic unit.
+              reason: Database Principles require related operations to share an explicit Transaction boundary so a failed or cancelled unit never leaves partially applied data.
+              kind: code
+              inputs:
+              - The generic Database Interface
+              - The Storage Adapter foundation
+              expected_result: A Transaction boundary is available through the Database Interface under which grouped operations on one Database Instance commit together or roll back together, without exposing the underlying connection, and a Transaction conflict produces an observable signal without a secret value.
+              depends_on:
+              - P2-G9-T1
+              constraints: []
+              acceptance: Operations grouped under the Transaction boundary are observed to either all take effect or leave no partial effect when the unit fails or is cancelled, a standalone write outside the boundary is unaffected by another unit's rollback, and a Transaction conflict produces a recorded signal with no secret value.
+              verify: A grouped unit of operations on one Database Instance is observed to leave no partial effect when deliberately failed partway through, a successful grouped unit is observed to make every one of its operations visible together, and a deliberately induced Transaction conflict is observed to produce a recorded signal with no secret value.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_transaction.py (5 checks) — a failed grouped unit leaves no partial effect, a successful grouped unit makes every operation visible together, a standalone write is unaffected by another unit's rollback, an OperationalError inside the boundary is translated into TransactionConflict with a transaction_conflict signal, and the signal itself never carries a secret value.
+                outcome: passed
+            P2-G9-T3:
+              id: P2-G9-T3
+              title: Establish the capability-restricted controlled command route
+              description: Establish the capability-restricted controlled command route declared for Database's public interface, accepting only explicit parameterized commands with protected identifiers, participating in the Transaction boundary, separately observable from standard operations, and rejecting structural changes, privilege changes, connection administration, and Migration operations.
+              reason: Database Preferences configure a controlled command route for data operations standard operations cannot express, and Database Principles require it to remain incapable of bypassing Model validation, persistence constraints, credential protections, Migrations, or the public Transaction boundary.
+              kind: code
+              inputs:
+              - The generic Database Interface
+              - The Transaction boundary
+              - The Storage Adapter foundation
+              expected_result: A controlled command route is available that accepts only explicit parameterized commands against protected, allow-listed identifiers, participates in the Transaction boundary, is separately observable from standard operations, and rejects any structural change, privilege change, connection-administration action, or Migration operation.
+              depends_on:
+              - P2-G9-T2
+              constraints: []
+              acceptance: The controlled command route executes only explicit parameterized commands against protected identifiers, is separately observable from standard Database Interface operations, and demonstrably rejects an attempted structural change, privilege change, connection-administration action, and Migration operation.
+              verify: A parameterized command against a protected identifier is observed to execute and to be recorded separately from standard operations, and an attempted structural change, privilege change, connection-administration action, and Migration operation issued through the route are each observed to be rejected.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_commands.py (8 checks) — a registered parameterized command executes and emits a separately observable controlled_command_executed signal; an unregistered command name and an unexpected parameter are both rejected; DROP TABLE, ALTER TABLE, GRANT, and PRAGMA statements are each rejected and never reachable (no path from caller input to free-form SQL); a Migration operation is never a registered command name.
+                outcome: passed
+        P2-G10:
+          id: P2-G10
+          title: Declared Initial Data Seeding
+          description: The seeding of every Target-declared initial record into its resolved storage mapping.
+          area: Declared initial data seeding
+          does: Every Target-declared initial record exists in storage, repeatable without duplication.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G10-T1:
+              id: P2-G10-T1
+              title: Seed every Target-declared initial record
+              description: Seed every record the Target declares as initial data for a persisted Domain Definition into its resolved storage mapping, in dependency order, satisfying every relationship and non-nullable field, generating every credential the Target marks for secure generation and storing it under its resolved at-rest treatment, and repeatable without producing a duplicate logical record or a uniqueness violation.
+              reason: Database Principles require declared Initial Data to be seeded so rebuilding the Database restores the declared initial state with the same meaning, sourced from the Target and Model definitions rather than from Database Preferences.
+              kind: code
+              inputs:
+              - Every storage mapping produced in this phase
+              - The complete set of the Target's declared initial records
+              - The resolved credential at-rest treatment for every credential field requiring secure generation
+              expected_result: Every Target-declared initial record exists in storage with every relationship and non-nullable field satisfied, every securely-generated credential stored under its resolved at-rest treatment, and repeating the seeding produces no duplicate logical record or uniqueness violation.
+              depends_on:
+              - P2-G8-T1
+              - P2-G9-T1
+              constraints: []
+              acceptance: Every initial record the Target declares is present with its declared field values and relationships satisfied, every credential the Target marks for secure generation is present in its protected at-rest form only, and running the seeding a second time changes nothing and raises no uniqueness violation.
+              verify: Querying storage after seeding is observed to show every Target-declared initial record with its declared values and satisfied relationships and no plaintext copy of a securely-generated credential, and re-running the seeding is observed to leave the same records unchanged with no duplicate or uniqueness error.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_seed.py (3 checks) — every Target-declared initial record present (Admin User, 2 Trading Platforms, 1 Instance, 8 Currencies, 1 Broker, 4 Assets, Account Group, Account, Trailing Group, Partial Group, Action Group, Action), no initial data invented for Trailing Rule/Partial Rule/Position, generated credentials protected both through the interface and at the storage layer, and re-running seeding produces no duplicate or uniqueness error.
+                outcome: passed
+        P2-G11:
+          id: P2-G11
+          title: Database Public Interface Verification
+          description: The complete, verified public boundary through which every capability produced in this phase is reached.
+          area: Database Public Interface Verification
+          does: Every capability produced in this phase is reachable through one verified, stable Database public boundary.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G11-T1:
+              id: P2-G11-T1
+              title: Verify the complete Database Public Interface
+              description: Confirm that the Database Interface, the Instance Registry, the Transaction boundary, and the controlled command route together form one coherent, explicit public boundary reachable without depending on a private mapping or Storage Adapter resource, and verify that boundary as one whole rather than only individually.
+              reason: Database Principles require Database to be an independent package with one public boundary that consumers use without depending on private persistence resources, and this must be demonstrated across the complete set of capabilities produced in this phase, not only individually.
+              kind: code
+              inputs:
+              - The Database Interface
+              - The Instance Registry
+              - The Transaction boundary
+              - The controlled command route
+              - Every storage mapping and the Migration history produced in this phase
+              expected_result: The complete Database boundary is verified as one coherent whole, where every persisted Domain Definition is reachable only through the generic Database Interface, the Instance Registry publishes no private resource, the Transaction boundary and controlled command route are reachable through the same public boundary, and no consumer path depends on a private mapping or Storage Adapter resource.
+              depends_on:
+              - P2-G9-T3
+              - P2-G2-T1
+              - P2-G10-T1
+              constraints: []
+              acceptance: Every capability produced in this phase is reachable through Database's one public boundary with no private resource dependency, and the boundary behaves coherently when its operations, Registry, Transaction boundary, and controlled command route are exercised together.
+              verify: Public boundary resolution is observed to succeed for every persisted Domain Definition, the Instance Registry, the Transaction boundary, and the controlled command route when exercised together as one Database boundary, and no successful consumer interaction is observed to require a private mapping or Storage Adapter resource.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: uv run pytest tests/test_public_interface.py (4 checks) — every top-level export reachable, every mapped Domain Definition resolves through the generic pipeline, the Instance Registry/Transaction boundary/controlled command route all reachable through the same Database instance, and the public Database class exposes every required method without requiring a private mapping or adapter import.
+                outcome: passed
+        P2-G12:
+          id: P2-G12
+          title: Component Documentation
+          description: The Database component's operational documentation.
+          area: Database component operational documentation
+          does: The Database component has complete, accurate, and safe operational documentation.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G12-T1:
+              id: P2-G12-T1
+              title: Produce the Database component README
+              description: Produce the Database component's README, explaining the component, its actual public surface and structure, setup, installation, configuration, use, Migration operation, verification, and troubleshooting, with accurate executable examples drawn from the resolved technical selections, and using placeholders rather than usable secret values wherever a credential or secret-supply mechanism is shown.
+              reason: Every generated Participating Component must have complete, safe, and operational documentation.
+              kind: documentation
+              inputs:
+              - The complete Database public boundary produced in this phase
+              - The resolved Database Component Profile, Database Item, and Language Item
+              expected_result: A README exists for the Database component accurately documenting its actual public surface, setup, configuration, use, Migration operation, verification, and troubleshooting, with no secret value exposed.
+              depends_on:
+              - P2-G11-T1
+              constraints: []
+              acceptance: The README explains the Database component's actual public surface and structure, setup, installation, configuration, use, Migration operation, verification, and troubleshooting with accurate executable examples, and exposes no usable credential, token, or secret value.
+              verify: The README's documented setup, installation, Migration, and usage examples are observed to run successfully against the actual Database component, its described public surface is observed to match the component's actual public surface, and its content is observed to carry no usable credential, token, or secret value.
+              status: done
+              log:
+              - at: '2026-09-14T09:46:09Z'
+                event: completed
+                check: 'uv run pytest tests/test_readme.py (5 checks) — required sections present, documented imports match database.__all__ exactly, documented usage example re-executed end to end (create, transaction, Registry, controlled command, seeding), documented commands match the real ones, secret scan clean. Whole-suite gate from a clean rebuild: 59 passed, ruff check/format clean, pyright 0 errors, migration smoke-applies cleanly to a fresh database.'
+                outcome: passed
