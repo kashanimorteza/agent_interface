@@ -10,11 +10,10 @@ Use this document in the following order:
 1. **[Introduction](#introduction)** — understand the Target and its purpose.
 2. **[Architecture](#architecture)** — see the Target's primary structural areas.
 3. **[Models](#models)** — review the models, fields, relationships, rules, and initial data.
-4. **[Trading Platforms](#trading-platforms)** — review how the Target connects to supported trading platforms.
-5. **[Trading Operations](#trading-operations)** — review the operations the Target performs for trading.
-6. **[Behaviour](#behaviour)** — review what the Target must enable users to do.
-7. **[Development](#development)** — review the development scope and explicit exclusions.
-8. **[Phases](#phases)** — follow the intended implementation order.
+4. **[Trading](#trading)** — review the Target's platforms and operations.
+5. **[Behaviour](#behaviour)** — review what the Target must enable users to do.
+6. **[Development](#development)** — review the development scope and explicit exclusions.
+7. **[Phases](#phases)** — follow the intended implementation order.
 
 <br><br>
 
@@ -36,12 +35,8 @@ Defines what the Target is and the main parts that make up the system.
 
 ```text
 Architecture
-├── Modules
-│   └── Models
-├── Trading Platforms
-│   ├── MetaTrader 5
-│   └── Binance
-├── Trading Operations
+├── Models
+├── Trading
 ├── Behaviour
 ├── Development
 └── Phases
@@ -73,6 +68,7 @@ Models
 └── Position
 ```
 
+<!-------------------------- User -->
 ### User
 
 **Purpose:** Defines an independent user of the system and enables multi-user operation. Each user can have a separate set of settings, allowing new users to be added with configurations that remain distinct from those of existing users.
@@ -96,6 +92,7 @@ Models
 
 - `name`: `Admin`; `username`: `admin`; `password`: Generate securely; `api_key`: Generate securely.
 
+<!-------------------------- Trading Platform -->
 ### Trading Platform
 
 **Purpose:** Defines a supported trading API standard, such as MetaTrader 5 or Binance, while keeping the system independent of any specific exchange or broker. Every trading platform implementation exposes the same application-facing trading functions through a dedicated class, while handling communication with its destination API according to that platform's own mechanism. Additional platform implementations can be added without changing the system's common trading interface.
@@ -113,6 +110,7 @@ Models
 - `name`: `MetaTrader 5`; `code`: `metatrader_5`.
 - `name`: `Binance`; `code`: `binance`.
 
+<!-------------------------- Instance -->
 ### Instance
 
 **Purpose:** Defines a user-owned connection instance through which the system accesses a supported Trading Platform.
@@ -145,6 +143,7 @@ Models
 
 - `name`: `MetaTrader`; `user_id`: `1`; `trading_platform_id`: `1`; `ip`: `127.0.0.1`; `username`: `test`; `password`: Generate securely; `api_key`: Generate securely.
 
+<!-------------------------- Currency -->
 ### Currency
 
 **Purpose:** Defines a currency that can be used by the trading system and identifies its standard code, display symbol, associated country or region, and monetary decimal precision.
@@ -179,6 +178,7 @@ Models
 - `user_id`: `1`; `code`: `AUD`; `symbol`: `A$`; `country`: `Australia`; `decimal_digits`: `2`.
 - `user_id`: `1`; `code`: `NZD`; `symbol`: `NZ$`; `country`: `New Zealand`; `decimal_digits`: `2`.
 
+<!-------------------------- Broker -->
 ### Broker
 
 **Purpose:** Defines a broker supported by the system and identifies the user who owns its configuration without coupling the Broker definition to one Trading Platform.
@@ -203,6 +203,7 @@ Models
 
 - `name`: `FxPro`; `user_id`: `1`.
 
+<!-------------------------- Asset -->
 ### Asset
 
 **Purpose:** Defines an asset that can be selected for trading. It provides the system with the complete set of available tradable assets and identifies the category of each asset so the system knows exactly what is being traded.
@@ -233,6 +234,7 @@ Models
 - `broker_id`: `1`; `symbol`: `XAU/USD`; `category`: `Commodity`; `point_size`: `0.01`; `digits`: `2`.
 - `broker_id`: `1`; `symbol`: `USOil`; `category`: `Commodity`; `point_size`: `0.01`; `digits`: `3`.
 
+<!-------------------------- Account Group -->
 ### Account Group
 
 **Purpose:** Defines an independent group for organizing trading accounts owned by one user.
@@ -257,6 +259,7 @@ Models
 
 - `user_id`: `1`; `name`: `Default`.
 
+<!-------------------------- Account -->
 ### Account
 
 **Purpose:** Defines a funded trading account through which the system executes trades and launches positions. Each Account identifies the trading account and its account-level login credentials, while its selected Instance owns the separate technical connection to the Trading Platform.
@@ -294,6 +297,7 @@ Models
 
 - `name`: `Acc-1`; `group_id`: `1`; `broker_id`: `1`; `instance_id`: `1`; `base_currency_id`: `1`; `username`: `test`; `password`: Generate securely; `leverage`: `100`; `account_type`: `CFD`.
 
+<!-------------------------- Trailing Group -->
 ### Trailing Group
 
 **Purpose:** Defines an independent group for organizing the rules that manage Stop Loss and Take Profit during a trade. The group identifies the rule set, while each rule separately defines its activation condition and the changes to apply.
@@ -318,6 +322,7 @@ Models
 
 - `user_id`: `1`; `name`: `Default`.
 
+<!-------------------------- Trailing Rule -->
 ### Trailing Rule
 
 **Purpose:** Defines an individual rule within a Trailing Group that tells the system when and how to manage Take Profit and Stop Loss. Each rule provides the activation condition and the parameters used to apply the required adjustments.
@@ -341,6 +346,7 @@ Models
 
 - The combination of `trailing_group_id` and `trigger_percentage` must be unique.
 
+<!-------------------------- Partial Group -->
 ### Partial Group
 
 **Purpose:** Defines an independent group of rules for managing portions of an open trade. Its rules determine how much of the trade volume must be closed when profit or loss reaches specified thresholds.
@@ -365,6 +371,7 @@ Models
 
 - `user_id`: `1`; `name`: `Default`.
 
+<!-------------------------- Partial Rule -->
 ### Partial Rule
 
 **Purpose:** Defines an individual Partial Close rule that tells the system under which condition part of an open position must be closed and how much of its volume must be closed.
@@ -387,6 +394,7 @@ Models
 
 - The combination of `partial_group_id` and `profit_percentage` must be unique.
 
+<!-------------------------- Action Group -->
 ### Action Group
 
 **Purpose:** Defines an independent grouping for trading actions based on their risk profile, such as high risk, normal risk, or low risk. Actions are assigned to these groups so trades can be organized and selected by their intended risk level.
@@ -411,6 +419,7 @@ Models
 
 - `user_id`: `1`; `name`: `Default`.
 
+<!-------------------------- Action -->
 ### Action
 
 **Purpose:** Defines how a position must be opened. An action selects the asset and account and provides the risk, Take Profit, Stop Loss, Partial Group, and Trailing Group settings that determine the position's parameters and execution behavior.
@@ -446,6 +455,7 @@ Models
 
 - `name`: `Default`; `action_group_id`: `1`; `asset_id`: `1`; `account_id`: `1`; `partial_group_id`: `1`; `trailing_group_id`: `1`; `risk_by_reward`: `1`; `take_profit`: `1`; `stop_loss`: `1`.
 
+<!-------------------------- Position -->
 ### Position
 
 **Purpose:** Stores the complete information for every position created by the system. It allows the system to identify and track positions that have been opened as well as positions that are still pending execution.
@@ -487,39 +497,56 @@ Models
 
 <br><br>
 
-<!--------------------------------------------------------------------------------- Trading Platforms --->
-## Trading Platforms
+<!--------------------------------------------------------------------------------- Trading --->
+## Trading
 
 ```text
-Trading Platforms
-├── MetaTrader 5
-└── Binance
+Trading
+├── Platform
+│   ├── MetaTrader 5
+│   └── Binance
+└── Operation
+    ├── Open Position
+    └── Close Position
 ```
 
-### MetaTrader 5
+<!-------------------------- Platform -->
+### Platform
+
+The Target connects to supported trading platforms through the Platform boundary.
+
+<!-------------------------- MetaTrader 5 -->
+#### MetaTrader 5
 
 Connects the Target to MetaTrader 5 through the applicable MetaTrader 5 libraries and packages.
 
-### Binance
+<!-------------------------- Binance -->
+#### Binance
 
 Connects the Target to Binance through the Binance API.
 
-<br><br>
 
-<!--------------------------------------------------------------------------------- Trading Operations --->
-## Trading Operations
+<!-------------------------- Operation -->
+### Operation
 
-```text
-Trading Operations
-├── Open Position
-└── Close Position
-```
+The Target performs its trading operations through the Operation boundary.
+
+<!-------------------------- Open Position -->
+#### Open Position
+
+<!-------------------------- Close Position -->
+#### Close Position
+
+
+
+
 
 <br><br>
 
 <!--------------------------------------------------------------------------------- Behaviour --->
 ## Behaviour
 
+<!-------------------------- Part 1 -->
 ### Part 1
 
 - Enable users to add data for every defined Model.
@@ -530,10 +557,12 @@ Trading Operations
 - Enable users to disable data for every defined Model.
 - Enable users to delete data for every defined Model.
 
+<!-------------------------- Part 2 -->
 ### Part 2
 
 Reserved for future Behaviour definitions.
 
+<!-------------------------- Part 3 -->
 ### Part 3
 
 Reserved for future Behaviour definitions.
@@ -545,6 +574,7 @@ Reserved for future Behaviour definitions.
 
 Defines the development scope and explicit technical exclusions for the Target.
 
+<!-------------------------- Scope -->
 ### Scope
 
 The Target is developed without the following capabilities:
@@ -563,6 +593,7 @@ These exclusions apply to the implementation, dependencies, configuration, docum
 
 Defines the project's implementation phases. Phases are executed step by step in their defined order, with each phase representing the next intended stage of project development.
 
+<!-------------------------- Phase 1 -->
 ### Phase 1
 
 ```text
@@ -574,6 +605,7 @@ readiness = Ready
 goal = Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
 ```
 
+<!-------------------------- Phase 2 -->
 ### Phase 2
 
 ```text
@@ -585,6 +617,7 @@ readiness = Ready
 goal = Implement the database using the shared Model package and insert the defined initial data.
 ```
 
+<!-------------------------- Phase 3 -->
 ### Phase 3
 
 ```text
@@ -596,6 +629,7 @@ readiness = Ready
 goal = Implement the reusable Logic library for operating on the defined models.
 ```
 
+<!-------------------------- Phase 4 -->
 ### Phase 4
 
 ```text
@@ -607,6 +641,7 @@ readiness = Ready
 goal = Implement the separate API executable over the Logic library for operating on the defined models.
 ```
 
+<!-------------------------- Phase 5 -->
 ### Phase 5
 
 ```text
@@ -618,6 +653,7 @@ readiness = Ready
 goal = Implement the Presentation Component based on the separate API Component.
 ```
 
+<!-------------------------- Phase 6 -->
 ### Phase 6
 
 ```text
@@ -629,6 +665,7 @@ readiness = Not Designed
 goal = Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
 ```
 
+<!-------------------------- Phase 7 -->
 ### Phase 7
 
 ```text
