@@ -134,6 +134,16 @@ Conceptual example:
 
 <br>
 
+## 10. Model publishes storage-relevant constraints without owning persistence
+
+**Rule:** Model publishes the storage-relevant meaning resolved from the Target, including primary-key identity, generated identity, uniqueness, referenced-record relationships, relationship cardinality, nullability, defaults, and single-field or composite constraints. These declarations are technology-independent metadata in the Model Public Interface. Database consumes them to derive and enforce physical storage structure.
+
+**Why:** Database needs a precise machine-readable source for persistence guarantees while Model remains the single authority for domain meaning.
+
+**Boundary:** Model does not create tables, indexes, migrations, SQL, ORM mappings, or engine-specific constraints, and it does not enforce rules that require comparing multiple stored records. Database owns physical realization and enforcement.
+
+<br>
+
 ## At a Glance
 
 - **Must** — Give every meaningful Target domain concept exactly one authoritative Domain Definition in Model. *(1)*
@@ -159,3 +169,5 @@ Conceptual example:
 - **Must** — Take language-level casing and file or folder naming conventions from the applicable Development technology profile. *(8)*
 - **Never** — Let Model own Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or another concern outside its logical boundary. *(9)*
 - **Must** — Keep external realization outside Model ownership even when another Component consumes Model data or its Public Interface. *(9)*
+- **Must** — Publish storage-relevant identity, relationship, field, and constraint meaning as technology-independent Model metadata. *(10)*
+- **Never** — Put tables, indexes, migrations, SQL, ORM mappings, or Engine-specific constraints in Model. *(10)*
