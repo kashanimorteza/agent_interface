@@ -42,7 +42,6 @@ content:
   # <!-------------------------------------------- selected -->
   selected:
     default_instance: "general"
-    credential_storage_mode: "encrypted"
     portability_policy: "portable contract first; engine-specific extensions explicit"
     model_import_source: "Model Public Interface"
     consumer_access: "public Database Interface only"
@@ -72,31 +71,19 @@ content:
     database_interface: {}
 
     data_logic:
-      relationship_defaults:
-        field_name: "<referenced_model>_id"
-        role_field_name: "<role>_<referenced_model>_id"
-        referenced_key: "primary_key"
-        index: true
-        on_delete: "RESTRICT"
-        on_update: "RESTRICT"
       initial_data:
         enabled_when_present: true
         importer:
           name: "database_seed"
-          relative_path: "scripts/seed.py"
-          command: "uv run python scripts/seed.py"
+          entrypoint_source: "Development and the selected implementation"
+          invocation_source: "Development and the selected implementation"
           configurable: true
           input_source: "Target Initial Data"
           repeatable: true
           duplicate_policy: "preserve_one_logical_record"
           transaction_boundary: "one transaction per dependency-ordered batch"
       credential_storage:
-        resolution: "For an existing field resolved as a credential, preserve any explicit project storage mode. Otherwise use its exact-name entry in field_defaults, falling back to selected.credential_storage_mode only when no field-specific default applies. These defaults neither add fields nor override an explicit non-credential classification."
-        field_defaults:
-          password:
-            mode: "hash"
-          api_key:
-            mode: "encrypted"
+        resolution: "For an existing field resolved as a credential, require the Model-declared storage mode. Reject a missing or unsupported mode; Database never infers one from a field name."
 
     storage_adapter:
       runtime_configuration:
@@ -146,7 +133,8 @@ content:
       drift_detection: "before normal operations"
       concurrent_runner_coordination: "engine-supported lock"
       irreversible_migration_requires: "explicit marker, verified backup, and recovery procedure"
-      startup_schema_creation: false
+      startup_schema_creation: true
+      initial_data_required_when_declared: true
     transactions:
       isolation: "engine-resolved and explicitly recorded"
       concurrency: "optimistic version check unless the resolved operation requires locking"

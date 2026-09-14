@@ -169,6 +169,8 @@ The Registry is derived from the configured Instance collection, and the number 
 
 **Rule:** When initial data exists for a Model, Database imports each declared record through one reusable, configurable Seed/Import entry point into its resolved storage mapping. The entry point's name, location, and invocation are Database Preferences defaults and may be changed by the project without changing this Principle. Every key names a resolved Model field, relationships and non-nullable fields are satisfied, records are resolved in dependency order, and importing is repeatable without duplicate logical records or uniqueness violations. The same entry point may accept later bulk data imports when they follow the same validation, ordering, transaction, and duplicate rules.
 
+If the Target declares Initial Data, Database is not ready until the structure has been created and the complete Import succeeds. A missing importer, failed import, incomplete record, unresolved relationship, or constraint violation is a Database setup failure and must not be reported as readiness.
+
 **Why:** Rebuilding the Database must restore the declared initial state with the same meaning.
 
 **Boundary:** Initial data comes from the Target and Model definitions, never from Database Preferences.
