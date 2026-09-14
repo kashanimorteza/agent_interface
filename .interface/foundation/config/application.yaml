@@ -1,0 +1,11 @@
+components:
+  development: {}
+  model: {}
+  database: {}
+  logic: {}
+  api: {}
+  presentation: {}
+  platform: {}
+  plan: {}
+  review: {}
+  state: {}
