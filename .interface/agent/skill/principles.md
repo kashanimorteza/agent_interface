@@ -15,7 +15,7 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 ## Relationships
 
 - **Consumes Agent Role, Context, Rule, Tool, and Permission** — executes within their contracts.
-- **Consumes Developer Components and Target** — reads current authorities required by its responsibility.
+- **Consumes Implementation Components and Target** — reads current authorities required by its responsibility.
 - **Consumed by Agent, Command, and Coordination** — provides assignable, invocable, and delegable workflows.
 
 Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, provider resources, and native implementation mappings belong to Agent Skill Profile. Command names and argument forms belong to Agent Command Profile.
@@ -56,7 +56,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 4. `configure` establishes operational readiness
 
-**Rule:** The architecture requires the `configure` Skill. Its purpose is operational readiness; its responsibility is to initialize and reconcile Config, synchronize stable phase identity and aggregate State, resolve applicable Developer and Platform technical selections with concrete versions, install or reconcile their required packages and tools, and prepare the selected Environment; its task coverage is configuration, technical dependency preparation, and environment preparation required before workflow execution.
+**Rule:** The architecture requires the `configure` Skill. Its purpose is operational readiness; its responsibility is to initialize and reconcile Config, synchronize stable phase identity and aggregate State, resolve applicable Implementation and Platform technical selections with concrete versions, install or reconcile their required packages and tools, and prepare the selected Environment; its task coverage is configuration, technical dependency preparation, and environment preparation required before workflow execution.
 
 **Why:** Every later operation needs valid operational records and a prepared execution environment.
 
@@ -140,7 +140,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 **Why:** Technology-specific work benefits from focused current knowledge without coupling the Agent architecture to one Target.
 
-**Boundary:** `fastapi` provides guidance inside the active role; it never selects FastAPI, expands project scope, overrides Developer or Target authorities, or becomes a workflow operation.
+**Boundary:** `fastapi` provides guidance inside the active role; it never selects FastAPI, expands project scope, overrides Implementation or Target authorities, or becomes a workflow operation.
 
 <br>
 
@@ -150,7 +150,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 **Why:** CLI-specific knowledge should be available when relevant without becoming a universal Target requirement.
 
-**Boundary:** `typer` provides guidance inside the active role; it never selects Typer, expands project scope, overrides Developer or Target authorities, or becomes a workflow operation.
+**Boundary:** `typer` provides guidance inside the active role; it never selects Typer, expands project scope, overrides Implementation or Target authorities, or becomes a workflow operation.
 
 <br>
 

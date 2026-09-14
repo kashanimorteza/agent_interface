@@ -12,7 +12,7 @@ Use this document as the entry point and follow its sections in this order:
 3. **[Architecture](#architecture)** — see the high-level structure and its primary sections.
 4. **[Modules](#modules)** — locate the three primary conceptual boundaries of the Interface.
    - **[Target](#target)** — understand what is being built through its non-technical and technical definitions.
-   - **[Developer](#developer)** — understand the engineering philosophy through Components and their Principles and Developer Preferences.
+   - **[Implementation](#implementation)** — understand the engineering philosophy through Components and their Principles and Implementation Preferences.
    - **[Agent](#agent)** — understand the executing system, its capabilities, restrictions, and Skills.
 5. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
 6. **[Operations](#operations)** — understand the one-to-one actions performed through every Interface-owned Skill.
@@ -29,22 +29,22 @@ Use this document as the entry point and follow its sections in this order:
 <!-------------------------- Overview -->
 ### Overview
 
-**Agent Interface** is a developer-oriented interface for AI-assisted software development.
+**Agent Interface** is a implementation-oriented interface for AI-assisted software development.
 
-The core idea is to create a structured layer between a **Developer**, an **AI Agent**, and a **Target** so that software can be understood, planned, developed, configured, and reviewed according to a consistent set of concepts.
+The core idea is to create a structured layer between a **Implementation**, an **AI Agent**, and a **Target** so that software can be understood, planned, developed, configured, and reviewed according to a consistent set of concepts.
 
 The Interface is not intended to be tied to:
 
 - one specific AI model,
 - one specific coding agent,
-- one specific developer,
+- one specific implementation,
 - or one specific software project.
 
 Instead, these concepts are intentionally separated.
 
-A different **Target** can be provided without changing the Developer or Agent definitions.
+A different **Target** can be provided without changing the Implementation or Agent definitions.
 
-A different **Developer** can provide a different programming philosophy without changing the Target.
+A different **Implementation** can provide a different programming philosophy without changing the Target.
 
 A different **Agent** can execute the same Interface using its own native capabilities.
 
@@ -52,19 +52,19 @@ The long-term implementation may eventually use technologies such as skills, MCP
 
 Those technologies are implementation mechanisms.
 
-The primary concern of the Interface is the **conceptual contract** between the Developer, Agent, and Target.
+The primary concern of the Interface is the **conceptual contract** between the Implementation, Agent, and Target.
 
 <!-------------------------- Purpose -->
 ### Purpose
 
 Agent Interface is an independent interface between **Humans** and **AI Agents** for establishing a common protocol, structure, and standard for software development.
 
-Its purpose is to let a Human define a Target in natural language, provide common Developer Principles and Preferences for planning and developing it, and define a portable Agent Module that explicit Agent Sync realizes in the active Runtime.
+Its purpose is to let a Human define a Target in natural language, provide common Implementation Principles and Preferences for planning and developing it, and define a portable Agent Module that explicit Agent Sync realizes in the active Runtime.
 
 <!-------------------------- How It Works -->
 ### How It Works
 
-The Human states the Target in the Non-Technical Definition. Acting as the developer, the Human translates that intent into the Technical Definition without changing its meaning. Skills then read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks; Review evaluates the result; and Launch brings the completed Target online. Mechanical actions such as Config initialization do not interpret the Target.
+The Human states the Target in the Non-Technical Definition. Acting as the implementation, the Human translates that intent into the Technical Definition without changing its meaning. Skills then read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks; Review evaluates the result; and Launch brings the completed Target online. Mechanical actions such as Config initialization do not interpret the Target.
 
 Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format.
 
@@ -81,7 +81,7 @@ Human project definitions remain flexible, while the Interface gives Agents stab
 Modern AI coding agents can generate and modify software, but an agent still needs to understand several independent things before it can reliably act:
 
 1. **What is being built?**
-2. **How does the developer want software to be built?**
+2. **How does the implementation want software to be built?**
 3. **What agent is performing the work and what capabilities or restrictions does it have?**
 4. **What Mode or supporting action is currently active?**
 
@@ -91,7 +91,7 @@ Conceptually:
 
 ```text
 Target ─────┐
-Developer ──┼── together with Understanding, Modes, and Workflow ──> Implementation
+Implementation ──┼── together with Understanding, Modes, and Workflow ──> Implementation
 Agent ──────┘
 ```
 
@@ -100,7 +100,7 @@ The resulting software is therefore influenced by all three primary entities:
 ```text
 Target
    +
-Developer
+Implementation
    +
 Agent
    ↓
@@ -115,7 +115,7 @@ The Interface should make the following substitutions possible without redesigni
 
 ```text
 Target A     → Target B
-Developer A  → Developer B
+Implementation A  → Implementation B
 Agent A      → Agent B
 ```
 
@@ -132,15 +132,15 @@ This separation is one of the central architectural principles of the project.
 <!--------------------------------------------------------------------------------- Terminology --->
 ## Terminology
 
-- **Interface** — the complete system described by this document; it contains the Target, Developer, and Agent Modules together with Understanding, Operations, Foundation Files, Modes, Authority, and Workflow.
+- **Interface** — the complete system described by this document; it contains the Target, Implementation, and Agent Modules together with Understanding, Operations, Foundation Files, Modes, Authority, and Workflow.
 - **Human** — the person who defines the Target and owns every authored Interface source.
-- **Module** — a primary conceptual boundary with a distinct responsibility inside the Interface. Target, Developer, and Agent are the Interface Modules.
+- **Module** — a primary conceptual boundary with a distinct responsibility inside the Interface. Target, Implementation, and Agent are the Interface Modules.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
-- **Developer** — the developer's reusable programming philosophy and engineering perspective, independent of a particular Target or Agent.
+- **Implementation** — the implementation's reusable programming philosophy and engineering perspective, independent of a particular Target or Agent.
 - **Agent** — an AI coding system or execution unit that interacts with the Interface and maps its concepts to native capabilities.
-- **Component** — one named part of the Developer or Agent Module perspective that owns a responsibility and is described through Principles together with Developer Preferences or an Agent Profile; some Developer Components also own operational records.
-- **Principles** — mandatory portable philosophy, responsibilities, rules, and boundaries owned by a Developer or Agent Component.
-- **Developer Preferences** — preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations used when the Target leaves a choice unspecified.
+- **Component** — one named part of the Implementation or Agent Module perspective that owns a responsibility and is described through Principles together with Implementation Preferences or an Agent Profile; some Implementation Components also own operational records.
+- **Principles** — mandatory portable philosophy, responsibilities, rules, and boundaries owned by an Implementation or Agent Component.
+- **Implementation Preferences** — preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations used when the Target leaves a choice unspecified.
 - **Schema** — the structure a file follows: either a standard for a Human-authored file or an operational format and initial template for a generated record.
 - **Config** — mutable operational records that coordinate the Workflow and record where work stands; Config does not store what the Target means.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
@@ -174,7 +174,7 @@ Architecture
 │
 ├── Modules
 │   ├── Target
-│   ├── Developer
+│   ├── Implementation
 │   └── Agent
 ├── Understanding
 ├── Operations
@@ -193,7 +193,7 @@ Each Module owns one Structure that shows its concepts together with their repos
 <!--------------------------------------------------------------------------------- Modules --->
 ## Modules
 
-Target, Developer, and Agent are the three primary Modules of Agent Interface. Each Module owns a distinct responsibility and documents one combined conceptual and repository Structure.
+Target, Implementation, and Agent are the three primary Modules of Agent Interface. Each Module owns a distinct responsibility and documents one combined conceptual and repository Structure.
 
 <!-------------------------- Target -->
 ### Target
@@ -211,51 +211,51 @@ Target Structure
 The Target is defined through two complementary, human-owned sources:
 
 - **Non-Technical Definition:** The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information.
-- **Technical Definition:** The Human, acting as the developer, translates the Non-Technical Definition into this technical form. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
+- **Technical Definition:** The Human, acting as the implementation, translates the Non-Technical Definition into this technical form. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
 
 Each Target definition has a direct link to its authoritative file:
 
 - [Non-Technical Definition](../target/non-technical.md)
 - [Technical Definition](../target/technical.md)
 
-<!-------------------------- Developer -->
-### Developer
+<!-------------------------- Implementation -->
+### Implementation
 
-The Developer module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Logic, Presentation, Platform, Plan, Review, and State Components.
+The Implementation module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Logic, Presentation, Platform, Plan, Review, and State Components.
 
 ```text
-Developer Components
+Implementation Components
 ├── Development
-│   ├── Principles  → .interface/developer/development/principles.md
-│   ├── Preferences → .interface/developer/development/preferences.yaml
+│   ├── Principles  → .interface/implementation/development/principles.md
+│   ├── Preferences → .interface/implementation/development/preferences.yaml
     │   └── Application  → application.yaml
 ├── Model
-│   ├── Principles  → .interface/developer/model/principles.md
-│   └── Preferences → .interface/developer/model/preferences.yaml
+│   ├── Principles  → .interface/implementation/model/principles.md
+│   └── Preferences → .interface/implementation/model/preferences.yaml
 ├── Database
-│   ├── Principles  → .interface/developer/database/principles.md
-│   └── Preferences → .interface/developer/database/preferences.yaml
+│   ├── Principles  → .interface/implementation/database/principles.md
+│   └── Preferences → .interface/implementation/database/preferences.yaml
 ├── Logic
-│   ├── Principles  → .interface/developer/logic/principles.md
-│   └── Preferences → .interface/developer/logic/preferences.yaml
+│   ├── Principles  → .interface/implementation/logic/principles.md
+│   └── Preferences → .interface/implementation/logic/preferences.yaml
 ├── API
-│   ├── Principles  → .interface/developer/api/principles.md
-│   └── Preferences → .interface/developer/api/preferences.yaml
+│   ├── Principles  → .interface/implementation/api/principles.md
+│   └── Preferences → .interface/implementation/api/preferences.yaml
 ├── Presentation
-│   ├── Principles  → .interface/developer/presentation/principles.md
-│   └── Preferences → .interface/developer/presentation/preferences.yaml
+│   ├── Principles  → .interface/implementation/presentation/principles.md
+│   └── Preferences → .interface/implementation/presentation/preferences.yaml
 ├── Platform
-│   ├── Principles  → .interface/developer/platform/principles.md
-│   └── Preferences → .interface/developer/platform/preferences.yaml
+│   ├── Principles  → .interface/implementation/platform/principles.md
+│   └── Preferences → .interface/implementation/platform/preferences.yaml
 ├── Plan
-│   ├── Principles  → .interface/developer/plan/principles.md
-│   └── Preferences → .interface/developer/plan/preferences.yaml
+│   ├── Principles  → .interface/implementation/plan/principles.md
+│   └── Preferences → .interface/implementation/plan/preferences.yaml
 ├── Review
-│   ├── Principles  → .interface/developer/review/principles.md
-│   └── Preferences → .interface/developer/review/preferences.yaml
+│   ├── Principles  → .interface/implementation/review/principles.md
+│   └── Preferences → .interface/implementation/review/preferences.yaml
 └── State
-    ├── Principles  → .interface/developer/state/principles.md
-    └── Preferences → .interface/developer/state/preferences.yaml
+    ├── Principles  → .interface/implementation/state/principles.md
+    └── Preferences → .interface/implementation/state/preferences.yaml
 ```
 
 Each Component below has its own Principles and Preferences; Development also owns the Application Manifest. Principles are the authoritative expression of the Component's philosophy and view; Preferences contain its preferred choices and default settings. Follow the links to open the authoritative file for that Component.
@@ -264,72 +264,72 @@ Each Component below has its own Principles and Preferences; Development also ow
 
 Defines the layered architecture and how independent layers are composed into one system.
 
-- [Principles](../developer/development/principles.md)
-- [Preferences](../developer/development/preferences.yaml)
+- [Principles](../implementation/development/principles.md)
+- [Preferences](../implementation/development/preferences.yaml)
 - [Application Manifest](../../application.yaml)
 
 #### Model
 
 Describes the domain entities and provides one shared logical meaning for domain data.
 
-- [Principles](../developer/model/principles.md)
-- [Preferences](../developer/model/preferences.yaml)
+- [Principles](../implementation/model/principles.md)
+- [Preferences](../implementation/model/preferences.yaml)
 
 #### Database
 
 Owns the persistence layer and publishes one generic interface for reading and writing.
 
-- [Principles](../developer/database/principles.md)
-- [Preferences](../developer/database/preferences.yaml)
+- [Principles](../implementation/database/principles.md)
+- [Preferences](../implementation/database/preferences.yaml)
 
 #### Logic
 
 Implements application Behaviour as reusable Logic.
 
-- [Principles](../developer/logic/principles.md)
-- [Preferences](../developer/logic/preferences.yaml)
+- [Principles](../implementation/logic/principles.md)
+- [Preferences](../implementation/logic/preferences.yaml)
 
 #### API
 
 Runs the external API process and publishes the application's public contract through Logic.
 
-- [Principles](../developer/api/principles.md)
-- [Preferences](../developer/api/preferences.yaml)
+- [Principles](../implementation/api/principles.md)
+- [Preferences](../implementation/api/preferences.yaml)
 
 #### Presentation
 
 Presents the application to users and consumes the capabilities Logic publishes.
 
-- [Principles](../developer/presentation/principles.md)
-- [Preferences](../developer/presentation/preferences.yaml)
+- [Principles](../implementation/presentation/principles.md)
+- [Preferences](../implementation/presentation/preferences.yaml)
 
 #### Platform
 
 Prepares a completed Target for operation and brings it online.
 
-- [Principles](../developer/platform/principles.md)
-- [Preferences](../developer/platform/preferences.yaml)
+- [Principles](../implementation/platform/principles.md)
+- [Preferences](../implementation/platform/preferences.yaml)
 
 #### Plan
 
 Turns phases into bounded, verifiable activities organized as Plans, Groups, and Tasks.
 
-- [Principles](../developer/plan/principles.md)
-- [Preferences](../developer/plan/preferences.yaml)
+- [Principles](../implementation/plan/principles.md)
+- [Preferences](../implementation/plan/preferences.yaml)
 
 #### Review
 
 Establishes whether implemented work satisfies what was asked, and records what it found.
 
-- [Principles](../developer/review/principles.md)
-- [Preferences](../developer/review/preferences.yaml)
+- [Principles](../implementation/review/principles.md)
+- [Preferences](../implementation/review/preferences.yaml)
 
 #### State
 
 Records active position, aggregate phase progress, implementation, launch, History, Blockers, and Open Questions.
 
-- [Principles](../developer/state/principles.md)
-- [Preferences](../developer/state/preferences.yaml)
+- [Principles](../implementation/state/principles.md)
+- [Preferences](../implementation/state/preferences.yaml)
 
 The Component's own Principles remain the authority: when this summary and a Component's Principles disagree, the Principles are correct.
 
@@ -529,7 +529,7 @@ Every Agent Component's Principles and Profile are authoritative for that Compon
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent Native or Agent Instance establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. For every operation except Agent Sync, the Interface routes the Skill only to applicable Target, Developer, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope. Agent Sync alone may follow the Agent Structure into Agent Module sources and does so only after explicit Human invocation.
+Understanding is the current context an Agent Native or Agent Instance establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. For every operation except Agent Sync, the Interface routes the Skill only to applicable Target, Implementation, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope. Agent Sync alone may follow the Agent Structure into Agent Module sources and does so only after explicit Human invocation.
 
 - **Interface Understanding:** Read `.interface/foundation/interface.md` as the sole Foundation Source, then follow only the non-Agent-Module routes it provides for the active role. Agent Sync is the sole explicit exception.
 - **Target Understanding:** When required, read both Target definitions located by the Interface. Human Definition provides the Human's stated intent and context; Technical Definition is the primary Target authority and takes precedence wherever they conflict.
@@ -576,14 +576,14 @@ Operations
 
 **Agent Skill:** `/my-interface-configure`
 
-This Operation is performed through `/my-interface-configure` to initialize and reconcile operational Config, synchronize phase State, resolve and install applicable Developer and Platform technical requirements with concrete versions, and prepare the selected Platform Environment.
+This Operation is performed through `/my-interface-configure` to initialize and reconcile operational Config, synchronize phase State, resolve and install applicable Implementation and Platform technical requirements with concrete versions, and prepare the selected Platform Environment.
 
 <!-------------------------- Planning Operation -->
 ### Planning
 
 **Agent Skill:** `/my-interface-planning`
 
-This Operation is performed through `/my-interface-planning` to convert the current Target and applicable Developer guidance into bounded, understandable, and verifiable Tasks.
+This Operation is performed through `/my-interface-planning` to convert the current Target and applicable Implementation guidance into bounded, understandable, and verifiable Tasks.
 
 <!-------------------------- Developing Operation -->
 ### Developing
@@ -657,7 +657,7 @@ output = Active State with no selected work scope
 ```text
 state = configuring
 responsibility = Ensure the root Application Manifest, reconcile operational Config, synchronize phase State, resolve technical requirements, and prepare the selected Platform requirements
-inputs = Operational Schemas, existing Config, Target phase identities, Developer Preferences, Platform selections, and Platform authorities
+inputs = Operational Schemas, existing Config, Target phase identities, Implementation Preferences, Platform selections, and Platform authorities
 output = Validated Application Manifest, current operational Config, resolved technical selections, and a prepared selected Platform runtime
 ```
 
@@ -667,7 +667,7 @@ output = Validated Application Manifest, current operational Config, resolved te
 ```text
 state = planning
 responsibility = Create bounded and verifiable Tasks without prescribing implementation
-inputs = Current Target, applicable Developer Principles and Preferences, synchronized Runtime rules, and operational records
+inputs = Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, and operational records
 output = Updated Plan Config
 ```
 
@@ -677,7 +677,7 @@ output = Updated Plan Config
 ```text
 state = development
 responsibility = Implement and verify eligible planned Tasks
-inputs = Current Target, applicable Developer Principles and Preferences, synchronized Runtime rules, Plan, State, and existing implementation
+inputs = Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, Plan, State, and existing implementation
 output = Verified implementation and updated operational records
 ```
 
@@ -687,21 +687,21 @@ output = Verified implementation and updated operational records
 <!--------------------------------------------------------------------------------- Authority and Ownership --->
 ## Authority and Ownership
 
-Explicit Target intent and applicable Developer Principles guide operational Skills. Developer Preferences supply engineering defaults where the Target leaves a choice unstated. Agent Profiles declare desired execution capabilities and mappings solely for Agent Sync, which materializes the synchronized Runtime rules and capabilities consumed by every other Skill. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Developer Preferences, and Agent Profiles, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
+Explicit Target intent and applicable Implementation Principles guide operational Skills. Implementation Preferences supply engineering defaults where the Target leaves a choice unstated. Agent Profiles declare desired execution capabilities and mappings solely for Agent Sync, which materializes the synchronized Runtime rules and capabilities consumed by every other Skill. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Implementation Preferences, and Agent Profiles, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
 
 ```text
 Target = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
-Developer Preferences = engineering defaults for unspecified Target choices
+Implementation Preferences = engineering defaults for unspecified Target choices
 Agent Profiles = current Agent Module selections, resources, mappings, and explicit empty categories
-Schema = common YAML frame for Developer Preferences, Agent Profiles, and Config, authored-source structure, and the storage structure of every operational record
+Schema = common YAML frame for Implementation Preferences, Agent Profiles, and Config, authored-source structure, and the storage structure of every operational record
 Config = the mutable operational records
 ```
 
 Ownership answers who a record belongs to, and it belongs to the Human or to a Component:
 
 ```text
-Human = owns Interface, Target, Principles, Developer Preferences, Agent Profiles, and Schema sources
+Human = owns Interface, Target, Principles, Implementation Preferences, Agent Profiles, and Schema sources
 Plan = owns Plans, Groups, Tasks, their status, and their history
 State = owns active Workflow position, aggregate phase progress, Implement and Launch results, operational History, Blockers, and Open Questions
 Review = owns recorded Findings and their state
@@ -821,7 +821,7 @@ Schemas define the structure followed by authored Interface files and generated 
 name = YAML Schema
 path = .interface/foundation/schema/yaml.yaml
 kind = Structure standard
-responsibility = Defines the common outer structure followed by Developer Preferences, Agent Profiles, and Config files
+responsibility = Defines the common outer structure followed by Implementation Preferences, Agent Profiles, and Config files
 scope = Schema definition files use their own formats and do not follow this outer structure
 ```
 
@@ -832,7 +832,7 @@ scope = Schema definition files use their own formats and do not follow this out
 name = Principles Schema
 path = .interface/foundation/schema/principles.md
 kind = Structure standard
-responsibility = Defines the common Markdown structure followed by every Developer and Agent Component principles.md file
+responsibility = Defines the common Markdown structure followed by every Implementation and Agent Component principles.md file
 ```
 
 
@@ -842,7 +842,7 @@ responsibility = Defines the common Markdown structure followed by every Develop
 name = Preferences Schema
 path = .interface/foundation/schema/preferences.yaml
 kind = Structure standard
-responsibility = Defines the four-section structure followed by every Developer Component preferences.yaml file
+responsibility = Defines the four-section structure followed by every Implementation Component preferences.yaml file
 ```
 
 

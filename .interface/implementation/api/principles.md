@@ -1,6 +1,6 @@
 # API Principles
 
-API is an independent executable Developer Component. It owns the external communication boundary, starts its own application process, validates transport data, invokes Logic, and publishes the resulting application capabilities. API has no application Behaviour of its own and never accesses Database directly.
+API is an independent executable Implementation Component. It owns the external communication boundary, starts its own application process, validates transport data, invokes Logic, and publishes the resulting application capabilities. API has no application Behaviour of its own and never accesses Database directly.
 
 These Principles are transport- and framework-independent. Development Preferences selects the concrete API technology, package, and runtime.
 

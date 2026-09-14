@@ -26,7 +26,7 @@ Named Launch Items and their Component Runtime Requirements belong to Platform P
 
 <br>
 
-Every statement here is mandatory. A Developer Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

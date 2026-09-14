@@ -1,5 +1,5 @@
 meta:
-  path: ".interface/developer/api/preferences.yaml"
+  path: ".interface/implementation/api/preferences.yaml"
   purpose: "API-owned executable boundary defaults and transport settings."
   standard: "Agent Project Interface"
   version: "1.0"

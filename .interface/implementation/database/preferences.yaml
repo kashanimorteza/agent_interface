@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/developer/database/preferences.yaml"
+  path: ".interface/implementation/database/preferences.yaml"
   path_note: "The Preferences layer of the Database Component — persistence defaults, credential treatment, Instances, and implementation conventions."
   purpose: "Database-owned defaults for persistence behavior and runtime storage configuration; concrete technology choices come from Development."
   standard: "Agent Project Interface"

@@ -6,7 +6,7 @@ Establish operational readiness for Interface work.
 
 ## Responsibility
 
-Initialize and reconcile operational Config, synchronize aggregate phase identity and State, resolve the technical requirements declared by all applicable Developer Preferences and the selected Platform Launch Item, install or reconcile the required packages and tools, and prepare the selected Platform Environment. It owns no planning, implementation, review, launch, reset, or Target interpretation beyond the limited facts required for configuration.
+Initialize and reconcile operational Config, synchronize aggregate phase identity and State, resolve the technical requirements declared by all applicable Implementation Preferences and the selected Platform Launch Item, install or reconcile the required packages and tools, and prepare the selected Platform Environment. It owns no planning, implementation, review, launch, reset, or Target interpretation beyond the limited facts required for configuration.
 
 ## Trigger
 
@@ -14,7 +14,7 @@ Activate when operational Config or Environment readiness must be created, valid
 
 ## Inputs
 
-Accept no phase selection. Consume current operational Schemas, existing Config, stable Target phase identifiers, explicit Target and Platform selections, all applicable Developer Component Principles and Preferences, the selected Platform Preferences and Launch Item, and Platform defaults where Target is silent.
+Accept no phase selection. Consume current operational Schemas, existing Config, stable Target phase identifiers, explicit Target and Platform selections, all applicable Implementation Component Principles and Preferences, the selected Platform Preferences and Launch Item, and Platform defaults where Target is silent.
 
 ## Outputs
 
@@ -22,7 +22,7 @@ Produce a Schema-valid root Application Manifest, Schema-valid operational Confi
 
 ## Required Understanding
 
-Establish Interface Understanding. Establish only the Target Understanding needed to resolve stable phase identities and explicit technical or Platform requirements. Read current Config Schemas, State authorities, every applicable Developer Component authority, and Platform authorities.
+Establish Interface Understanding. Establish only the Target Understanding needed to resolve stable phase identities and explicit technical or Platform requirements. Read current Config Schemas, State authorities, every applicable Implementation Component authority, and Platform authorities.
 
 ## Authority
 
@@ -36,7 +36,7 @@ Write only Config records owned by Configure and perform technical dependency in
 - Preserve meaningful operational records through structural reconciliation; surface a conflict rather than discard information that has no other owner.
 - Add missing phase records at current initial values and preserve progress. Remove a stale phase record only while it contains initialization defaults; otherwise preserve and report it.
 - Never copy phase title, goal, target, status, readiness, or other Target meaning into State.
-- Resolve every applicable language, package-management, package, database, tool, platform, and version selection from Developer and Platform authorities before installation.
+- Resolve every applicable language, package-management, package, database, tool, platform, and version selection from Implementation and Platform authorities before installation.
 - Install or reconcile every required resolved technical item and record its concrete version and verification result.
 - Inspect every applicable Platform Component definition and apply its declared system requirements for the selected Launch Item.
 - Inspect the Environment before changing it and apply only missing declared requirements.

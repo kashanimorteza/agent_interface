@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/developer/presentation/preferences.yaml"
+  path: ".interface/implementation/presentation/preferences.yaml"
   path_note: "The Preferences layer of the Presentation Component — supported technical choices and defaults used when a Presentation choice is unstated."
   purpose: "Defaults and supported technical profiles for the Presentation package and the Presentation, Interaction Logic, and API Access layers."
   standard: "Agent Project Interface"

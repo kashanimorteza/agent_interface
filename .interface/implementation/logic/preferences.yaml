@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/developer/logic/preferences.yaml"
+  path: ".interface/implementation/logic/preferences.yaml"
   path_note: "The Preferences layer of the Logic Component — Logic-owned behavioural defaults and internal realization conventions."
   purpose: "Configurable defaults for Logic organization, reliability, and verification."
   standard: "Agent Project Interface"

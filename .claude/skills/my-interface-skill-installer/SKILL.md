@@ -20,7 +20,7 @@ Read the shared Agent Interface rules at the start of the operation and follow t
 
 ### Understand
 
-Establish Interface Understanding from the canonical Interface document, then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Read every applicable Developer Principle and Preference together with synchronized Runtime capabilities and rules, including selected defaults and applicable alternatives. Never enter or inspect the Agent Module. Use dependency manifests, lockfiles, runtime-version files, existing implementation, and installed Agent capabilities as supporting evidence.
+Establish Interface Understanding from the canonical Interface document, then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Read every applicable Implementation Principle and Preference together with synchronized Runtime capabilities and rules, including selected defaults and applicable alternatives. Never enter or inspect the Agent Module. Use dependency manifests, lockfiles, runtime-version files, existing implementation, and installed Agent capabilities as supporting evidence.
 
 Derive capability needs from current evidence on every run. A technology, framework, platform, protocol, service, data source, development activity, or preferred default may indicate that a relevant Agent capability exists. Do not keep a hardcoded technology or capability list in this Skill.
 

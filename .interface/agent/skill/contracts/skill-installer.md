@@ -22,7 +22,7 @@ Produce an evidence-backed need inventory, candidate comparison, exact provision
 
 ## Required Understanding
 
-Establish Interface Understanding and Target Understanding. Read applicable Developer Components, synchronized Runtime capability state, selected defaults, manifests, lockfiles, runtime versions, implementation evidence, and current capability status. Never read Agent Module sources; a candidate that should become part of the portable Agent definition is reported for Human declaration and later explicit Agent Sync.
+Establish Interface Understanding and Target Understanding. Read applicable Implementation Components, synchronized Runtime capability state, selected defaults, manifests, lockfiles, runtime versions, implementation evidence, and current capability status. Never read Agent Module sources; a candidate that should become part of the portable Agent definition is reported for Human declaration and later explicit Agent Sync.
 
 ## Authority
 

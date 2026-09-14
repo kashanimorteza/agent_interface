@@ -1,6 +1,6 @@
 meta:
   path: "application.yaml"
-  purpose: "Shared public metadata used by Developer Components to compose and consume the application."
+  purpose: "Shared public metadata used by Implementation Components to compose and consume the application."
   standard: "Agent Project Interface"
   version: "1.0"
 
@@ -12,7 +12,7 @@ policy:
 content:
   components:
     development:
-      path: ".interface/developer/development"
+      path: ".interface/implementation/development"
     model:
       path: "model"
       package: "model"
@@ -28,10 +28,10 @@ content:
     presentation:
       path: "presentation"
     platform:
-      path: ".interface/developer/platform"
+      path: ".interface/implementation/platform"
     plan:
-      path: ".interface/developer/plan"
+      path: ".interface/implementation/plan"
     review:
-      path: ".interface/developer/review"
+      path: ".interface/implementation/review"
     state:
-      path: ".interface/developer/state"
+      path: ".interface/implementation/state"

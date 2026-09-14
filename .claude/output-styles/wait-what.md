@@ -34,7 +34,7 @@ In every response:
 
 ## Example
 
-> We are moving your phone from the developer build to the public beta. Your
+> We are moving your phone from the implementation build to the public beta. Your
 > phone gets its update permission when it starts. The public version is not
 > ready yet. When it is ready, your phone will see it. You do not need to do
 > anything now.

@@ -28,13 +28,13 @@ If arguments are present, validate the complete selection before changing record
 
 ## Understanding
 
-On every invocation, establish Interface Understanding from the canonical Interface document and follow its authorized routes to synchronized Runtime rules and current Developer Component authorities. Never enter or inspect the Agent Module. Then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence.
+On every invocation, establish Interface Understanding from the canonical Interface document and follow its authorized routes to synchronized Runtime rules and current Implementation Component authorities. Never enter or inspect the Agent Module. Then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence.
 
 Never introduce a third `Project Understanding`. Plan, State, Review Config, implementation, and earlier conversation are evidence to assess; none substitutes for current Interface Understanding or Target Understanding.
 
 ## Workflow
 
-Resolve the current synchronized Planning Skill, Review, Plan and State authorities, applicable Developer Component authorities, operational records, implementation, public interfaces, and Runtime verification capabilities.
+Resolve the current synchronized Planning Skill, Review, Plan and State authorities, applicable Implementation Component authorities, operational records, implementation, public interfaces, and Runtime verification capabilities.
 
 Process each selected phase as follows:
 

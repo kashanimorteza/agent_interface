@@ -17,7 +17,7 @@ Developing owns the implementation method and the arrangement of the source. The
 
 Developing also builds the check that proves each result, because only the operation that made the result knows how to observe it. Build that check from the verification condition the Task states, not from the implementation just written: a check shaped around the code will pass whatever the code happens to do, and prove nothing about what was asked for.
 
-Developing may write implementation and install and configure the prerequisites required by the authorized work, within the scope and write boundaries established by the Plan, applicable Developer Component authorities, and synchronized Runtime rules.
+Developing may write implementation and install and configure the prerequisites required by the authorized work, within the scope and write boundaries established by the Plan, applicable Implementation Component authorities, and synchronized Runtime rules.
 
 ## Input
 
@@ -33,9 +33,9 @@ If arguments are present, validate the complete selection before changing any fi
 
 First establish Interface Understanding by reading the canonical Interface document and the shared Skill rules it catalogues. Use it to understand the Interface organization, Developing's place in the Workflow, and the current locations of the resources Development needs.
 
-Then establish Target Understanding from the Human and Technical Definitions located by the Interface under their declared precedence, and read the applicable Developer Principles and Preferences under synchronized Runtime rules, together with existing implementation and public interfaces. Never enter or inspect the Agent Module. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and its technical context is resolved from the current Developer Preferences rather than read back from the record.
+Then establish Target Understanding from the Human and Technical Definitions located by the Interface under their declared precedence, and read the applicable Implementation Principles and Preferences under synchronized Runtime rules, together with existing implementation and public interfaces. Never enter or inspect the Agent Module. Plan and State Config are operational records, not a stored representation of this Understanding: a Task states an activity, and its technical context is resolved from the current Implementation Preferences rather than read back from the record.
 
-Read every selected phase's current Task Plan and State. Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from current Developer and operational Component authorities. Do not assume or reproduce their fields, statuses, or policies here, because they change independently of this Skill.
+Read every selected phase's current Task Plan and State. Derive work selection, ordering, eligibility, progress updates, evidence handling, validation, ownership, and write boundaries from current Implementation and operational Component authorities. Do not assume or reproduce their fields, statuses, or policies here, because they change independently of this Skill.
 
 Before changing implementation or Task progress for a phase, read its current Review record. Require `plan_outcome: satisfied`, require the stored `plan_revision` to equal the phase Plan's current positive `revision`, and establish from observable repository evidence that no applicable Interface or Target authority changed after that Review. If the Review record is absent, the outcome is not satisfied, revisions differ, or freshness cannot be established, do not develop that phase. Report `/my-interface-reviewer <phase-number>` as the required next operation. Developing never invokes Reviewer or treats its own Plan inspection as independent assurance.
 

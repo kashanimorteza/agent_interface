@@ -22,7 +22,7 @@ Produce or reconcile only Planning-owned Plan content and Plan Revision, Plannin
 
 ## Required Understanding
 
-Establish Interface Understanding and current Target Understanding. Read current Plan, State, and Review authorities and Schemas plus every Developer Component applicable to the selected phases.
+Establish Interface Understanding and current Target Understanding. Read current Plan, State, and Review authorities and Schemas plus every Implementation Component applicable to the selected phases.
 
 ## Authority
 

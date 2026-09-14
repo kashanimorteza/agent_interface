@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/developer/platform/preferences.yaml"
+  path: ".interface/implementation/platform/preferences.yaml"
   path_note: "The Preferences layer of the Platform Component — named Launch Items with per-Component runtime requirements."
   purpose: "Technical defaults for selecting and applying a complete launch definition to the Target."
   standard: "Agent Project Interface"

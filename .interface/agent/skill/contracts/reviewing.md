@@ -14,7 +14,7 @@ Activate explicitly for zero or more phase selections, after Planning as a Plan 
 
 ## Inputs
 
-Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Developer Principles and Preferences, synchronized Runtime rules, Plans, State, prior Review records, implementation, public interfaces, and recorded evidence. Never read Agent Module sources.
+Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Implementation Principles and Preferences, synchronized Runtime rules, Plans, State, prior Review records, implementation, public interfaces, and recorded evidence. Never read Agent Module sources.
 
 ## Outputs
 

@@ -589,22 +589,22 @@ goal = Implement the database using the shared Model package and insert the defi
 
 ```text
 id = P3
-title = Backend
-target = Backend
+title = Logic and API
+target = Logic and API
 is_active = Enabled
 readiness = Ready
-goal = Implement the Backend Logic library and separate API executable for operating on the defined models.
+goal = Implement the Logic library and separate API executable for operating on the defined models.
 ```
 
 ### Phase 4
 
 ```text
 id = P4
-title = Frontend
-target = Frontend
+title = Presentation
+target = Presentation
 is_active = Enabled
 readiness = Ready
-goal = Implement the frontend based on the separate API Component.
+goal = Implement the Presentation Component based on the separate API Component.
 ```
 
 ### Phase 5
@@ -612,7 +612,7 @@ goal = Implement the frontend based on the separate API Component.
 ```text
 id = P5
 title = MetaTrader 5 Platform Module
-target = Backend
+target = Logic
 is_active = Disabled
 readiness = Not Designed
 goal = Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
@@ -623,7 +623,7 @@ goal = Implement the MetaTrader 5 platform module through the common Trading Pla
 ```text
 id = P6
 title = Trading Operations
-target = Backend
+target = Logic
 is_active = Disabled
 readiness = Not Designed
 goal = Implement the execution of the defined trading operations through the selected Trading Platform and Instance.

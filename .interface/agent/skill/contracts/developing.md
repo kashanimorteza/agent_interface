@@ -22,7 +22,7 @@ Produce authorized implementation and durable checks, Development-owned Task pro
 
 ## Required Understanding
 
-Establish Interface Understanding and current Target Understanding. Read every applicable Developer Component, the selected phases' Plans and State, current public interfaces, and existing implementation.
+Establish Interface Understanding and current Target Understanding. Read every applicable Implementation Component, the selected phases' Plans and State, current public interfaces, and existing implementation.
 
 ## Authority
 

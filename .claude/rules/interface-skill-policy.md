@@ -6,7 +6,7 @@ Never read, search, resolve, or use `.interface/agent/` or another Agent Module 
 
 ## README authority
 
-Skills and supporting agents may read a `README.md`, including the file at the project root, for orientation, usage, and consistency verification. A README is derived, non-authoritative documentation: it never replaces current Interface Understanding or Target Understanding, never overrides an owning Developer Principle, Developer Preference, synchronized Runtime rule, Schema, or Target source, and never serves as the sole evidence for an implementation claim. When it conflicts with an authorized owning source or the implemented public interface, use that source and reconcile the README within the active role's write authority.
+Skills and supporting agents may read a `README.md`, including the file at the project root, for orientation, usage, and consistency verification. A README is derived, non-authoritative documentation: it never replaces current Interface Understanding or Target Understanding, never overrides an owning Implementation Principle, Implementation Preference, synchronized Runtime rule, Schema, or Target source, and never serves as the sole evidence for an implementation claim. When it conflicts with an authorized owning source or the implemented public interface, use that source and reconcile the README within the active role's write authority.
 
 ## Interface protection
 

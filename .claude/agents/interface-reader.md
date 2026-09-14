@@ -14,9 +14,9 @@ This Agent Instance is read-only. It never writes files or executes project work
 
 ## Workflow
 
-First establish Interface Understanding by reading the canonical Interface document and following only the non-Agent-Module routes it authorizes for this reporting Role. Use synchronized Runtime Rules to understand this Agent Instance's behavior and use the Interface to locate the current Target, Developer, Foundation, and Config resources required for the report.
+First establish Interface Understanding by reading the canonical Interface document and following only the non-Agent-Module routes it authorizes for this reporting Role. Use synchronized Runtime Rules to understand this Agent Instance's behavior and use the Interface to locate the current Target, Implementation, Foundation, and Config resources required for the report.
 
-Then establish Target Understanding from the Human and Technical Definitions located by the Interface, applying their declared precedence, and read applicable Developer Principles and Preferences under synchronized Runtime rules. Never enter or inspect the Agent Module. Read Plan, State, and Review Config for Workflow position, aggregate phase progress, Implementation and Launch results, History, planned work, Blockers, Open Questions, and Findings. Operational records do not replace Target Understanding.
+Then establish Target Understanding from the Human and Technical Definitions located by the Interface, applying their declared precedence, and read applicable Implementation Principles and Preferences under synchronized Runtime rules. Never enter or inspect the Agent Module. Read Plan, State, and Review Config for Workflow position, aggregate phase progress, Implementation and Launch results, History, planned work, Blockers, Open Questions, and Findings. Operational records do not replace Target Understanding.
 
 Resolve field locations, collection shapes, status vocabulary, counting rules, readiness, and completion criteria from the current owning definitions. This agent specifies the information to report, not the file structure or the formulas used to obtain it. Never assume a particular field path, status name, or dependency rule from a previous run, because those definitions change independently of this agent.
 

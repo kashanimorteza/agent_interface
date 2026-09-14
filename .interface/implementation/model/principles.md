@@ -27,7 +27,7 @@ Model-owned defaults and implementation conventions belong to Model Preferences.
 
 <br>
 
-Every statement here is mandatory. A Developer Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

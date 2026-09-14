@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/developer/development/preferences.yaml"
+  path: ".interface/implementation/development/preferences.yaml"
   path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
   purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
@@ -31,7 +31,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  application: "The default path of the root application manifest shared by Developer Components."
+  application: "The default path of the root application manifest shared by Implementation Components."
   selected: "The default root application manifest path and one configurable profile per Participating Component, including identity, path, type, role, and applicable language, database, and Platform Launch Item references."
   options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
   settings: "The declared Connection graph, package-publication default, and Cross-cutting Capability applicability."

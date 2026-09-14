@@ -1,6 +1,6 @@
 # Development Principles
 
-Development defines the high-level composition through which independent peer Developer Components form one application system. It owns their shared architectural concepts, configurable Component Profiles, declared dependency graph, centralized technical catalogues, and cross-Component standards.
+Development defines the high-level composition through which independent peer Implementation Components form one application system. It owns their shared architectural concepts, configurable Component Profiles, declared dependency graph, centralized technical catalogues, and cross-Component standards.
 
 Development owns composition rather than the internal meaning or implementation behavior of another Component. Each Participating Component remains focused on its own role and receives shared technical and platform selections through its Development Component Profile.
 
@@ -8,7 +8,7 @@ Development owns composition rather than the internal meaning or implementation 
 
 ## Terms
 
-- **Participating Component** — one peer Developer Component declared by a Component Profile in Development Preferences.
+- **Participating Component** — one peer Implementation Component declared by a Component Profile in Development Preferences.
 - **Component Profile** — the configurable Development Preferences entry that gives one Participating Component its identity, name, root, type, role, and applicable Language Item, Database Item, and Platform Reference.
 - **Application Package** — a Participating Component whose selected Component Type makes it an importable library or executable application boundary.
 - **Component Type** — the conceptual form of a Participating Component, such as a library, executable, or guideline.
@@ -38,7 +38,7 @@ Component Profiles, Language Items, Database Items, Connection entries, publicat
 
 <br>
 
-Every statement here is mandatory. A Developer Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. A Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -104,7 +104,7 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 ## 7. Cross-cutting Capabilities are activated through applicability
 
-**Rule:** Development Preferences declares each Cross-cutting Capability with one applicability list. An empty list makes the capability inactive; a non-empty list activates it only for the uniquely listed canonical Component identifiers. Logging, Error Handling, and Authentication are active by default for every Developer Component except Platform. An explicit Target requirement or exclusion overrides that default for the current Target. Each listed Component applies the shared requirement while retaining ownership of its internal realization.
+**Rule:** Development Preferences declares each Cross-cutting Capability with one applicability list. An empty list makes the capability inactive; a non-empty list activates it only for the uniquely listed canonical Component identifiers. Logging, Error Handling, and Authentication are active by default for every Implementation Component except Platform. An explicit Target requirement or exclusion overrides that default for the current Target. Each listed Component applies the shared requirement while retaining ownership of its internal realization.
 
 **Why:** One applicability list coordinates shared behavior without transferring implementation ownership to Development.
 
@@ -189,7 +189,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Activate a Cross-cutting Capability only for unique canonical identifiers in its applicability list. *(7)*
 - **Must** — Keep realization of an active Cross-cutting Capability inside each listed Component. *(7)*
 - **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component. *(7)*
-- **Must** — Apply Logging, Error Handling, and Authentication by default to every Developer Component except Platform. *(7)*
+- **Must** — Apply Logging, Error Handling, and Authentication by default to every Implementation Component except Platform. *(7)*
 - **May** — Override a default Cross-cutting Capability explicitly in the Target. *(7)*
 - **Must** — Generate a root README that explains actual structure, public use, setup, configuration, operation, verification, troubleshooting, and active capabilities with executable resolved-technology examples. *(9)*
 - **Must** — Keep every README consistent with public behavior and update it when public usage changes. *(9)*

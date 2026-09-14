@@ -25,6 +25,6 @@ This file is the project-scoped Claude Runtime projection produced by explicit A
 
 | Capability identifier | Native Skill | Activation | Required |
 |---|---|---|---|
-| `project_skills.contextual.fastapi` | `fastapi` at `.claude/skills/fastapi/SKILL.md` | When a current Developer or Target choice selects FastAPI | Conditional: required when selected |
-| `project_skills.contextual.typer` | `typer` at `.claude/skills/typer/SKILL.md` | When a current Developer or Target choice selects Typer | Conditional: required when selected |
+| `project_skills.contextual.fastapi` | `fastapi` at `.claude/skills/fastapi/SKILL.md` | When a current Implementation or Target choice selects FastAPI | Conditional: required when selected |
+| `project_skills.contextual.typer` | `typer` at `.claude/skills/typer/SKILL.md` | When a current Implementation or Target choice selects Typer | Conditional: required when selected |
 | `project_skills.contextual.library-skills` | `library-skills` at `.claude/skills/library-skills/SKILL.md` | When package-provided Skill management is relevant | No |
