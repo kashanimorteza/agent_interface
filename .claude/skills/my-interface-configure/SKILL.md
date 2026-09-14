@@ -10,7 +10,7 @@ This file is the self-contained Claude Code realization of the portable `configu
 
 ## Role
 
-Generate and maintain the operational Config files required by Agent Interface, synchronize aggregate State with current Target phase identifiers, and prepare the selected Platform Environment.
+Generate and maintain the persistent `.interface/foundation/config/application.yaml` Application Manifest and the operational Config files required by Agent Interface, synchronize aggregate State with current Target phase identifiers, and prepare the selected Platform Environment.
 
 Configure never stores Target interpretation in Config. Its Target Understanding is limited to resolving stable phase identities and any explicit Platform selection or Environment requirement that overrides the Platform defaults.
 
@@ -26,6 +26,8 @@ For each operational Schema:
 4. Preserve every operational record a Config file already holds — the owning Schema states what those are — throughout. Never drop operational data to satisfy a structural change: when a field the Schema no longer defines still carries information that exists nowhere else, surface it as a conflict and leave that part of the file unchanged, because a structural tidy-up that loses recorded work costs more than the untidiness it removes.
 5. Introduce only the initial values and structural changes required by the applicable Schemas. Do not invent operational work, project facts, or technical decisions.
 
+Create or reconcile `.interface/foundation/config/application.yaml` on every Configure run from the Application Manifest Schema. Build its Component sections from the current Development Component Profiles and public metadata exposed by each Component. Include a section for every declared Implementation Component even when that section is empty. Preserve public metadata that remains valid, reconcile stale metadata from its authoritative source, and report conflicts rather than silently discarding meaningful information. Keep the Manifest limited to non-secret composition metadata: Component identity, repository-relative root, Component Type, public entrypoint or interface metadata, and declared Connections. Never write Target meaning, private implementation details, internal storage structure, credentials, secret values, or undeclared dependencies into it.
+
 Synchronize State phase records with the stable phase identifiers currently defined by Target. Create missing records at their Schema defaults and preserve existing progress. Never copy phase titles, goals, targets, status, readiness, or other Target meaning into State. Remove a stale phase record only while it still contains initialization defaults; preserve and report any removed phase carrying meaningful progress or provenance.
 
 Inspect the selected Environment before changing the system. Apply only missing Environment requirements, preserve requirements already satisfied, and use the Environment definition and any compatible explicit Target requirements as the complete authority for system preparation. Record a genuine unresolved preparation condition through State.
@@ -36,14 +38,15 @@ Validate every Config file against its applicable Schemas. Repeating the run aga
 
 ## Boundaries
 
-Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or edit human-owned Interface sources. System preparation is limited to the selected Environment; it grants no authority over product implementation.
+Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or edit human-owned Interface sources. System preparation is limited to the selected Environment; it grants no authority over product implementation. The Application Manifest Config is the sole additional generated output owned by Configure.
 
 ## Report
 
 Report in this order:
 
-1. **Config** — each resolved Config file and whether it was created, updated, or already valid.
-2. **Phase synchronization** — phase records added, preserved, or left as conflicts.
-3. **Environment** — the selected Environment, requirements already satisfied, and preparation performed.
-4. **Preserved records** — existing operational information carried through unchanged.
-5. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.
+1. **Application Manifest** — whether `.interface/foundation/config/application.yaml` was created, updated, or already valid, and its public sections.
+2. **Config** — each resolved Config file and whether it was created, updated, or already valid.
+3. **Phase synchronization** — phase records added, preserved, or left as conflicts.
+4. **Environment** — the selected Environment, requirements already satisfied, and preparation performed.
+5. **Preserved records** — existing operational information carried through unchanged.
+6. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.

@@ -1,0 +1,51 @@
+schema:
+  id: "agent-interface-application"
+  version: "1.0"
+  purpose: "Shared Application Manifest structure for public Component metadata."
+
+operational_scope:
+  purpose: "Shared public metadata surface for Implementation Components."
+  stores: "One section for every declared Implementation Component; each owner may add non-secret public metadata to its section."
+  excludes: "Target meaning, private implementation details, internal storage structure, technical Preferences, credentials, secrets, and undeclared dependencies."
+
+initialization:
+  source: "initial"
+  purpose: "Create the Application Manifest Config from this template, then reconcile public Component metadata on every Configure run."
+  preservation: "Reconciliation preserves valid public metadata and reports conflicts rather than silently discarding meaningful information."
+
+structure:
+  - "components"
+
+sections:
+  components:
+    required: true
+    default: {}
+    purpose: "Public metadata sections keyed by canonical Implementation Component identifier."
+    fields:
+      development: {required: true, default: {}}
+      model: {required: true, default: {}}
+      database: {required: true, default: {}}
+      logic: {required: true, default: {}}
+      api: {required: true, default: {}}
+      presentation: {required: true, default: {}}
+      platform: {required: true, default: {}}
+      plan: {required: true, default: {}}
+      review: {required: true, default: {}}
+      state: {required: true, default: {}}
+
+initial:
+  meta:
+    path: ".interface/foundation/config/application.yaml"
+    path_note: "Shared Application Manifest public Component metadata."
+  content:
+    components:
+      development: {}
+      model: {}
+      database: {}
+      logic: {}
+      api: {}
+      presentation: {}
+      platform: {}
+      plan: {}
+      review: {}
+      state: {}

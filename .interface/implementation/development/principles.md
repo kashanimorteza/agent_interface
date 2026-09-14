@@ -22,7 +22,7 @@ Development owns composition rather than the internal meaning or implementation 
 - **Runtime Configuration** — runtime settings and secret references owned inside an Application Package boundary.
 - **Cross-cutting Capability** — a shared capability whose application to more than one Participating Component requires Development-level coordination.
 - **Model Operation** — a named operation that a Model may expose through the composed system, such as create, retrieve, list, search, update, enable, disable, or delete.
-- **Application Manifest** — the repository-level `application.yaml` created and reconciled by Configure so Components can exchange current public metadata.
+- **Application Manifest** — `.interface/foundation/config/application.yaml`, created and reconciled by Configure so Components can exchange current public metadata.
 
 <br>
 
@@ -94,7 +94,7 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 ## 6. Components publish shared application metadata through the Application Manifest
 
-**Rule:** Configure creates and reconciles the repository-level `application.yaml` Application Manifest on every run from the current Development Component Profiles, declared Connections, and each Component's public metadata. Each Participating Component may publish the public values required by another Component to compose or consume it, including its repository-relative directory, import package when applicable, public entry points, and other non-secret integration metadata. Consumers may use the Manifest as the shared application metadata surface while ongoing identity and ownership remain authoritative in Development Preferences and declared Connections. Every declared Component has a Manifest section, even when that section is empty.
+**Rule:** Configure creates and reconciles `.interface/foundation/config/application.yaml` on every run from the current Development Component Profiles, declared Connections, and each Component's public metadata. Each Implementation Component has one section keyed by its canonical identifier and may publish the public values required by another Component to compose or consume it, including its repository-relative directory, import package when applicable, public entry points, and other non-secret integration metadata. Consumers may use the Manifest as the shared application metadata surface while ongoing identity and ownership remain authoritative in Development Preferences and declared Connections. Every declared Implementation Component has a Manifest section, even when that section is empty.
 
 **Why:** A persistent, reconciled Manifest gives Components one current place to discover the public information needed for composition without reaching into another Component's private files.
 

@@ -770,9 +770,19 @@ Config stores mutable operational information used while executing the Interface
 
 ```text
 .interface/foundation/config/
+├── application.yaml
 ├── state.yaml
 ├── plan.yaml
 └── review.yaml
+```
+
+
+#### Application Manifest Config
+
+```text
+name = Application Manifest Config
+path = .interface/foundation/config/application.yaml
+responsibility = Stores one public metadata section for every Implementation Component; sections may remain empty until their owners publish metadata
 ```
 
 
@@ -810,6 +820,7 @@ Schemas define the structure followed by authored Interface files and generated 
 
 ```text
 .interface/foundation/schema/
+├── application.yaml
 ├── yaml.yaml
 ├── principles.md
 ├── preferences.yaml
@@ -818,6 +829,17 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── state.yaml
 ├── plan.yaml
 └── review.yaml
+```
+
+
+#### Application Manifest Schema
+
+```text
+name = Application Manifest Schema
+path = .interface/foundation/schema/application.yaml
+kind = Operational format
+generates = .interface/foundation/config/application.yaml
+responsibility = Defines the shared Component metadata sections and their empty initial structure
 ```
 
 
