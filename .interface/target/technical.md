@@ -589,17 +589,28 @@ goal = Implement the database using the shared Model package and insert the defi
 
 ```text
 id = P3
-title = Logic and API
-target = Logic and API
+title = Logic
+target = Logic
 is_active = Enabled
 readiness = Ready
-goal = Implement the Logic library and separate API executable for operating on the defined models.
+goal = Implement the reusable Logic library for operating on the defined models.
 ```
 
 ### Phase 4
 
 ```text
 id = P4
+title = API
+target = API
+is_active = Enabled
+readiness = Ready
+goal = Implement the separate API executable over the Logic library for operating on the defined models.
+```
+
+### Phase 5
+
+```text
+id = P5
 title = Presentation
 target = Presentation
 is_active = Enabled
@@ -607,21 +618,21 @@ readiness = Ready
 goal = Implement the Presentation Component based on the separate API Component.
 ```
 
-### Phase 5
+### Phase 6
 
 ```text
-id = P5
+id = P6
 title = MetaTrader 5 Platform Module
-target = Logic
+target = Platform
 is_active = Disabled
 readiness = Not Designed
 goal = Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
 ```
 
-### Phase 6
+### Phase 7
 
 ```text
-id = P6
+id = P7
 title = Trading Operations
 target = Logic
 is_active = Disabled

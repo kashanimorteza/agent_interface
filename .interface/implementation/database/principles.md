@@ -109,7 +109,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 ## 8. All data access uses one generic Database Interface
 
-**Rule:** Consumers use one generic Database Interface for every persistent Model. The interface accepts a public Model type or instance, a supported operation, and the criteria required by that operation. It supports create, read, read-by-identifier, list, update, delete, and activation operations through one Model-driven pipeline rather than one implementation per Model.
+**Rule:** Consumers use one generic Database Interface for every persistent Model. The interface accepts a public Model type or instance, a supported operation, and the criteria required by that operation. It supports create, read, read-by-identifier, list, search, update, delete, and activation operations through one Model-driven pipeline rather than one implementation per Model.
 
 Public operations never require a Model name encoded as an untyped string or resolve a Model through an untyped string registry. Model identity is carried by the imported type or instance.
 
@@ -167,7 +167,7 @@ The Registry is derived from the configured Instance collection, and the number 
 
 ## 13. Declared Initial Data preserves its meaning
 
-**Rule:** When initial data exists for a Model, Database seeds each declared record into its resolved storage mapping. Every key names a resolved Model field, relationships and non-nullable fields are satisfied, records are resolved in dependency order, and seeding is repeatable without duplicate logical records or uniqueness violations.
+**Rule:** When initial data exists for a Model, Database imports each declared record through one reusable, configurable Seed/Import entry point into its resolved storage mapping. The entry point's name, location, and invocation are Database Preferences defaults and may be changed by the project without changing this Principle. Every key names a resolved Model field, relationships and non-nullable fields are satisfied, records are resolved in dependency order, and importing is repeatable without duplicate logical records or uniqueness violations. The same entry point may accept later bulk data imports when they follow the same validation, ordering, transaction, and duplicate rules.
 
 **Why:** Rebuilding the Database must restore the declared initial state with the same meaning.
 
@@ -221,6 +221,7 @@ The Registry is derived from the configured Instance collection, and the number 
 - **Never** — Change storage objects directly from application code or apply an unverified Migration. *(6)*
 - **Must** — Keep all persistence ownership inside Database and all other responsibilities in their owning Components. *(7)*
 - **Must** — Route all persistent data access through one generic Model-driven Database Interface. *(8)*
+- **Must** — Support the shared `search` operation through the generic Model-driven Database Interface when the Model exposes it. *(8)*
 - **Must** — Use is_active with enable or disable for activation when that field exists. *(8)*
 - **Never** — Require untyped Model-name strings, expose connections, or let controlled commands bypass protections. *(8)*
 - **Must** — Give every Instance a stable identity, publish its Registry, and use exactly one explicit default. *(9)*

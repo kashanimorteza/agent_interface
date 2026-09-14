@@ -13,7 +13,6 @@ Presentation is the Component that presents the application to users, manages us
 ## Relationships
 
 - **Consumes API** — the public API through which all application data and application capabilities are reached.
-- **Consumes Model** — the shared logical domain-model set whose meaning Presentation, Interaction Logic, and API Access all preserve.
 - **Consumes Development** — the common package standard and the cross-cutting capabilities selected for the project.
 - **Consumed by no other Component** — Presentation is an outermost layer, and nothing in the architecture depends on it.
 
@@ -73,7 +72,7 @@ When a machine-readable description is unavailable, API Access derives its clien
 
 ## 5. Domain Models are shared, never copied
 
-**Rule:** The shared logical domain-model set comes from the Model Component. Presentation implementation may use it, but it never copies, redefines, or creates a competing definition of Model meaning. Presentation uses Models to describe what users see and edit, Interaction Logic uses their logical meaning, and API Access preserves their identity across the Logic boundary.
+**Rule:** Presentation preserves the identity and meaning of the shared logical domain-model set through the public API contract. Presentation implementation never imports, copies, redefines, or creates a competing definition of Model meaning. API Access translates the API's representations for Interaction Logic and the user interface while preserving their traceability to the shared Model.
 
 Presentation derives operation-specific input and output representations from the public API, preserving their traceability to the shared Model. Deriving client representations is not a second definition of domain meaning. Credential fields may be present in permitted write-only inputs but are excluded from output representations and are never expected in responses. Omitted input and explicit null remain distinct: a partial update does not send an untouched field, and sends null only as an explicit change permitted by the API. A field that API supplies through an allowed default or generation is not filled with a fabricated value merely to make the client representation appear complete.
 

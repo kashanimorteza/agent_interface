@@ -329,37 +329,32 @@ content:
           - "api"
       logging:
         applies_to:
-          - "development"
           - "model"
           - "database"
           - "logic"
           - "api"
           - "presentation"
-          - "plan"
-          - "review"
-          - "state"
       error_handling:
         applies_to:
-          - "development"
           - "model"
           - "database"
           - "logic"
           - "api"
           - "presentation"
-          - "plan"
-          - "review"
-          - "state"
       authentication:
         applies_to:
-          - "development"
           - "model"
           - "database"
           - "logic"
           - "api"
           - "presentation"
-          - "plan"
-          - "review"
-          - "state"
+      encryption:
+        applies_to:
+          - "model"
+          - "database"
+          - "logic"
+          - "api"
+          - "presentation"
 
   # <!-------------------------------------------- implementation -->
   implementation: {}

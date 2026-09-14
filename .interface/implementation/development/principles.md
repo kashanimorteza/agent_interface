@@ -38,7 +38,7 @@ Component Profiles, Language Items, Database Items, Connection entries, publicat
 
 <br>
 
-Every statement here is mandatory. A Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -104,7 +104,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 ## 7. Cross-cutting Capabilities are activated through applicability
 
-**Rule:** Development Preferences declares each Cross-cutting Capability with one applicability list. An empty list makes the capability inactive; a non-empty list activates it only for the uniquely listed canonical Component identifiers. Logging, Error Handling, and Authentication are active by default for every Implementation Component except Platform. An explicit Target requirement or exclusion overrides that default for the current Target. Each listed Component applies the shared requirement while retaining ownership of its internal realization.
+**Rule:** Development Preferences declares each Cross-cutting Capability with one applicability list. An empty list makes the capability inactive; a non-empty list activates it only for the uniquely listed canonical Component identifiers. Logging, Error Handling, Authentication, and Encryption are active by default for the five application Components (`model`, `database`, `logic`, `api`, and `presentation`). An explicit Target requirement or exclusion overrides that default for the current Target. Each listed Component applies the shared requirement while retaining ownership of its internal realization.
 
 **Why:** One applicability list coordinates shared behavior without transferring implementation ownership to Development.
 
@@ -112,7 +112,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 <br>
 
-## 9. Every Component has complete, safe, and operational documentation
+## 8. Every Component has complete, safe, and operational documentation
 
 **Rule:** Every Participating Component is generated with a README at the root selected by its Component Profile. The README briefly explains the Component, its actual public surface and structure, setup, installation, configuration, use, run procedure when applicable, verification, troubleshooting, and every active capability relevant to working with it. It uses the resolved technical selections to provide accurate executable examples. Documentation stays consistent with public behavior and enables a human or Agent to understand and use the Component without inspecting private implementation.
 
@@ -124,7 +124,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 <br>
 
-## 10. Unstated Development decisions follow one precedence order
+## 9. Unstated Development decisions follow one precedence order
 
 **Rule:** When the Target leaves a Development-owned decision unstated, resolution applies Development Principles first, Development Preferences second, and compatible professional judgment last.
 
@@ -134,7 +134,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 <br>
 
-## 11. Runtime Configuration ownership remains inside its boundary
+## 10. Runtime Configuration ownership remains inside its boundary
 
 **Rule:** Each Application Package owns the contract and internal representation of its Runtime Configuration. A selected Platform Launch Item may deliver required runtime values through documented inputs. Runtime secret values remain in appropriate secret sources rather than Interface files or documentation.
 
@@ -144,7 +144,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 <br>
 
-## 12. Public Interface changes propagate through direct consumers
+## 11. Public Interface changes propagate through direct consumers
 
 **Rule:** A provider may change private implementation without consumer changes while its Public Interface remains compatible. When a Public Interface changes, every direct consumer in the declared Connection graph is reviewed and, when affected, updated or regenerated and verified. Propagation continues through later Connections only when an affected consumer's own Public Interface also changes.
 
@@ -154,7 +154,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 <br>
 
-## 13. Development centralizes reusable technical items
+## 12. Development centralizes reusable technical items
 
 **Rule:** Development Preferences defines every Language Item and Database Item once. A Language Item contains its version, Package Management choice, naming and typing conventions, quality tools, and packages grouped by Technical Purpose rather than Component identity. When a Technical Purpose has one package, that package is its default; when it has multiple compatible packages, Development Preferences may mark one with `selected: true` as the default choice. Implementation resolves the selected default only when that purpose is required by the Target and the Component's own conceptual responsibilities. A Database Item contains its version and applicable technical defaults. Each Component Profile references the applicable items, while implementation resolves only the Technical Purposes required by the Target and the Component's own conceptual responsibilities. The same Technical Purpose may be used by any compatible Component. Concrete language, package, database, version, tool, and Package Management selections are never duplicated in a participating Component's own Principles or Preferences.
 
@@ -189,24 +189,24 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Activate a Cross-cutting Capability only for unique canonical identifiers in its applicability list. *(7)*
 - **Must** — Keep realization of an active Cross-cutting Capability inside each listed Component. *(7)*
 - **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component. *(7)*
-- **Must** — Apply Logging, Error Handling, and Authentication by default to every Implementation Component except Platform. *(7)*
+- **Must** — Apply Logging, Error Handling, Authentication, and Encryption by default to the five application Components: Model, Database, Logic, API, and Presentation. *(7)*
 - **May** — Override a default Cross-cutting Capability explicitly in the Target. *(7)*
-- **Must** — Generate a root README that explains actual structure, public use, setup, configuration, operation, verification, troubleshooting, and active capabilities with executable resolved-technology examples. *(9)*
-- **Must** — Keep every README consistent with public behavior and update it when public usage changes. *(9)*
-- **Never** — Expose a usable secret in documentation or let a README copy, replace, or override an authoritative source. *(9)*
-- **Must** — Resolve an unstated Development decision through Principles, Preferences, then compatible professional judgment. *(10)*
-- **Never** — Let judgment override an applicable Principle or Preference. *(10)*
-- **Must** — Leave Component-internal conceptual decisions to that Component's Principles and Preferences. *(10)*
-- **Must** — Keep each Application Package's Runtime Configuration contract and representation within its boundary. *(11)*
-- **Must** — Let Platform deliver runtime values through documented inputs without redefining an owned contract. *(11)*
-- **Never** — Store runtime secrets in Interface files or documentation or let one package directly modify another's Runtime Configuration. *(11)*
-- **Must** — Review, update or regenerate when affected, and verify every direct consumer after a Public Interface changes. *(12)*
-- **Must** — Continue propagation only when an affected consumer's own Public Interface changes. *(12)*
-- **Never** — Trigger consumer work for a private compatible change or change Components outside the affected dependency path. *(12)*
-- **Must** — Define each Language Item and Database Item once with its owned configurable technical details. *(13)*
-- **Must** — Group language packages by Technical Purpose and resolve only the purposes applicable to the Target and Component responsibility. *(13)*
-- **May** — Mark one package with `selected: true` when a Technical Purpose has multiple compatible package choices; a single package is the default without a marker. *(13)*
-- **Must** — Allow any compatible Component to use an applicable Technical Purpose. *(13)*
-- **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable. *(13)*
-- **Never** — Group a language package by Component identity or let a Technical Purpose transfer conceptual responsibility. *(13)*
-- **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Launch Item definitions into Development. *(13)*
+- **Must** — Generate a root README that explains actual structure, public use, setup, configuration, operation, verification, troubleshooting, and active capabilities with executable resolved-technology examples. *(8)*
+- **Must** — Keep every README consistent with public behavior and update it when public usage changes. *(8)*
+- **Never** — Expose a usable secret in documentation or let a README copy, replace, or override an authoritative source. *(8)*
+- **Must** — Resolve an unstated Development decision through Principles, Preferences, then compatible professional judgment. *(9)*
+- **Never** — Let judgment override an applicable Principle or Preference. *(9)*
+- **Must** — Leave Component-internal conceptual decisions to that Component's Principles and Preferences. *(9)*
+- **Must** — Keep each Application Package's Runtime Configuration contract and representation within its boundary. *(10)*
+- **Must** — Let Platform deliver runtime values through documented inputs without redefining an owned contract. *(10)*
+- **Never** — Store runtime secrets in Interface files or documentation or let one package directly modify another's Runtime Configuration. *(10)*
+- **Must** — Review, update or regenerate when affected, and verify every direct consumer after a Public Interface changes. *(11)*
+- **Must** — Continue propagation only when an affected consumer's own Public Interface changes. *(11)*
+- **Never** — Trigger consumer work for a private compatible change or change Components outside the affected dependency path. *(11)*
+- **Must** — Define each Language Item and Database Item once with its owned configurable technical details. *(12)*
+- **Must** — Group language packages by Technical Purpose and resolve only the purposes applicable to the Target and Component responsibility. *(12)*
+- **May** — Mark one package with `selected: true` when a Technical Purpose has multiple compatible package choices; a single package is the default without a marker. *(12)*
+- **Must** — Allow any compatible Component to use an applicable Technical Purpose. *(12)*
+- **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable. *(12)*
+- **Never** — Group a language package by Component identity or let a Technical Purpose transfer conceptual responsibility. *(12)*
+- **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Launch Item definitions into Development. *(12)*

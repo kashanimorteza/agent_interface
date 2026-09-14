@@ -68,6 +68,7 @@ content:
         - "create"
         - "get_by_id"
         - "list"
+        - "search"
         - "update"
         - "delete"
         - "enable"
