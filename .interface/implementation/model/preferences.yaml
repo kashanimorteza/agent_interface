@@ -17,11 +17,7 @@ policy:
   consumption: "Use Model's identity, language, and Platform Reference from its Component Profile in Development Preferences, then resolve the applicable language-owned Technical Purposes and Package Management from Development without assuming that a package is bound to Model. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in this file. Preserve every explicit property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
   version_resolution: "This file owns no versioned technology. Development Preferences resolve every versioned technical item assigned to Model."
-  matching: "An explicit Model property takes priority, followed by a matching field_defaults.field_patterns entry. A default applies only to a missing property of an existing Field; otherwise no default applies. A name or pattern never creates a Field, relationship, or behavior."
-  modeling_standard:
-    required: true
-    rule: "Model must follow the selected domain-modeling standard as completely as possible while preserving the Target and Model Principles."
-    deviation: "Any necessary deviation must be documented with the implementation."
+  matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates a Field, relationship, or behavior."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -36,8 +32,8 @@ read_order:
 content_map:
   selected: "Empty. Development owns Model's configurable profile and concrete selections."
   options: "Empty. Development catalogues Model's concrete technical alternatives and Platform reference."
-  settings: "Defaults for missing properties of Fields already present in the Target's Model definition."
-  implementation: "Technology-independent conventions for validation, precision, time, public references, unknown Fields, and verification."
+  settings: "Empty. Target definitions provide each Field and relationship property; this Component adds no inferred Field defaults."
+  implementation: "Technology-independent conventions for validation, precision, time, metadata publication, and verification."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -60,15 +56,6 @@ content:
           - "UML Domain Modeling"
           - "Conceptual Data Modeling"
 
-    field_defaults:
-      purpose: "Defaults for missing properties of Fields already present in a Model definition."
-      field_patterns:
-        "*_id":
-          match: "A Field name ending in _id; the exact name id is not included."
-          defaults:
-            type: "integer"
-            nullable: false
-
   # <!-------------------------------------------- implementation -->
   implementation:
     persistence_contract:
@@ -79,7 +66,7 @@ content:
         unique: "Marks a field whose value must not repeat across persisted records."
         nullable: "States whether persistence may store null for the field."
         default: "Publishes the resolved default value when the Target declares one."
-        index: "Requests an index when the Target or a resolved persistence decision requires one."
+        index: "Publishes an index requirement only when the Target declares it or a declared Target constraint requires it."
       relationship_metadata:
         foreign_key: "Identifies the referenced Domain Definition and field without naming an Engine or ORM."
         cardinality: "Publishes relationship multiplicity and optionality resolved from the Target."
@@ -97,12 +84,6 @@ content:
       absolute_instants: "timezone-aware"
       canonical_timezone: "UTC"
       naive_datetime: "only when explicitly required by the Target"
-    public_interface:
-      reference_priority:
-        - "direct typed reference"
-        - "module-qualified reference"
-        - "string identifier only when necessary"
-    unknown_fields: "reject"
     verification:
       checks:
         - "public interface"

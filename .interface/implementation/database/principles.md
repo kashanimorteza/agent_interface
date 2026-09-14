@@ -59,7 +59,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 ## 3. Persistence preserves Model meaning without redefining it
 
-**Rule:** Physical persistence is derived from the logical Model and its technology-independent persistence metadata. Database preserves Model identity, field meaning, relationships, constraints, and applicable rules while adding only storage representation, durability, and enforcement required by persistence.
+**Rule:** Physical persistence is derived from the logical Model and the storage-relevant meaning it publishes. Database preserves Model identity, field meaning, relationships, constraints, and applicable rules while adding only storage representation, durability, and enforcement required by persistence.
 
 **Why:** Consumers need durable data that retains the same domain meaning as the source Model.
 
@@ -137,7 +137,7 @@ The Registry is derived from the configured Instance collection, and the number 
 
 ## 10. Storage mappings and constraints remain traceable to Models
 
-**Rule:** Every persistent Model has a traceable storage mapping. An explicit mapping takes precedence over a derived mapping, and every resolved mapping records its source Model and persistence metadata. Non-persistent Models do not become stored structures merely because they exist. Database enforces storage-relevant Model declarations, including primary-key identity, generated identity, uniqueness, referenced-record existence, composite constraints, and resolved field properties, while reusing Model validation for checks determined solely from Model data.
+**Rule:** Every persistent Model has a traceable storage mapping. An explicit mapping takes precedence over a derived mapping, and every resolved mapping records its source Model and persistence metadata. Non-persistent Models do not become stored structures merely because they exist. Database enforces storage-relevant Model declarations, including primary-key identity, generated identity, uniqueness, referenced-record existence, composite constraints, and resolved field properties, while reusing Model validation for checks determined solely from Model data. A missing or ambiguous declaration is reported rather than inferred from names or documentation.
 
 **Why:** Stored data remains valid under concurrent writes and every guarantee can be traced to its source meaning.
 

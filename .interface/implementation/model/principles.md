@@ -87,13 +87,13 @@ model.<public_module>.<ModelType>
 
 <br>
 
-## 6. Every resolved Field value is either a value or `null`
+## 6. Model preserves declared Field presence and absence semantics
 
-**Rule:** Before final validation, an omitted Field value resolves through any applicable declared default or generator; when neither supplies a value, it resolves to `null`. Model has no separate empty or unset Field state. A Field with `nullable: false` rejects `null`. A `generated: true` declaration means the value is supplied automatically, while Model does not select the generation mechanism.
+**Rule:** Model preserves whether each Target Field is required, nullable, defaulted, generated, or otherwise allowed to be absent. An omitted Field is resolved according to the explicit Target declaration or the selected realization's compatible rules; Model never invents an absence state, default, or generation mechanism.
 
-**Why:** One absence representation removes ambiguous empty states while preserving declared defaults and nullability.
+**Why:** Preserving the Target's declared presence semantics prevents a generic Model rule from changing Domain meaning.
 
-**Boundary:** Model defines no partial-update semantics.
+**Boundary:** Model defines no partial-update semantics and does not choose how a realization represents omitted values.
 
 <br>
 
@@ -136,9 +136,9 @@ Conceptual example:
 
 ## 10. Model publishes storage-relevant constraints without owning persistence
 
-**Rule:** Model publishes the storage-relevant meaning resolved from the Target, including primary-key identity, generated identity, uniqueness, referenced-record relationships, relationship cardinality, nullability, defaults, and single-field or composite constraints. These declarations are technology-independent metadata in the Model Public Interface. Database consumes them to derive and enforce physical storage structure.
+**Rule:** Model publishes the storage-relevant meaning resolved from the Target, including primary-key identity, generated identity, uniqueness, referenced-record relationships, relationship cardinality, nullability, defaults, and single-field or composite constraints. These declarations are conceptual and technology-independent. Each selected realization determines how to represent them in its own public Model output, and Database consumes that output to derive and enforce physical storage structure.
 
-**Why:** Database needs a precise machine-readable source for persistence guarantees while Model remains the single authority for domain meaning.
+**Why:** Database needs a precise source for persistence guarantees while Model remains the single authority for domain meaning.
 
 **Boundary:** Model does not create tables, indexes, migrations, SQL, ORM mappings, or engine-specific constraints, and it does not enforce rules that require comparing multiple stored records. Database owns physical realization and enforcement.
 
@@ -159,9 +159,8 @@ Conceptual example:
 - **Must** — Expose every authoritative Domain Definition with one unambiguous identity through Model's explicit, stable Public Interface. *(5)*
 - **Never** — Let consumers depend on Model's private internal resources. *(5)*
 - **Never** — Treat the conceptual example as fixed technical syntax or evolve the Public Interface outside Development's change-propagation rules. *(5)*
-- **Must** — Resolve an omitted Field value through its declared default or generator and otherwise to `null`, with no separate empty or unset state. *(6)*
-- **Never** — Accept `null` for a Field declared with `nullable: false`. *(6)*
-- **Never** — Make Model select a generation mechanism or define partial-update semantics. *(6)*
+- **Must** — Preserve each Target Field's declared required, nullable, default, generated, and absence semantics. *(6)*
+- **Never** — Invent an absence state, default, generation mechanism, or partial-update semantics. *(6)*
 - **Must** — Keep Intrinsic validation and domain behavior deterministic, dependent only on Model data, and free of external I/O and unrelated side effects. *(7)*
 - **Never** — Treat an externally contextual rule as intrinsic or let Model orchestrate a workflow. *(7)*
 - **Must** — Name Model concepts from Target domain meaning. *(8)*
