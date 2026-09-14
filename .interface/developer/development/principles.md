@@ -156,7 +156,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 ## 13. Development centralizes reusable technical items
 
-**Rule:** Development Preferences defines every Language Item and Database Item once. A Language Item contains its version, Package Management choice, naming and typing conventions, quality tools, and packages grouped by Technical Purpose rather than Component identity. A Database Item contains its version and applicable technical defaults. Each Component Profile references the applicable items, while implementation resolves only the Technical Purposes required by the Target and the Component's own conceptual responsibilities. The same Technical Purpose may be used by any compatible Component. Concrete language, package, database, version, tool, and Package Management selections are never duplicated in a participating Component's own Principles or Preferences.
+**Rule:** Development Preferences defines every Language Item and Database Item once. A Language Item contains its version, Package Management choice, naming and typing conventions, quality tools, and packages grouped by Technical Purpose rather than Component identity. When a Technical Purpose has one package, that package is its default; when it has multiple compatible packages, Development Preferences may mark one with `selected: true` as the default choice. Implementation resolves the selected default only when that purpose is required by the Target and the Component's own conceptual responsibilities. A Database Item contains its version and applicable technical defaults. Each Component Profile references the applicable items, while implementation resolves only the Technical Purposes required by the Target and the Component's own conceptual responsibilities. The same Technical Purpose may be used by any compatible Component. Concrete language, package, database, version, tool, and Package Management selections are never duplicated in a participating Component's own Principles or Preferences.
 
 **Why:** Central technical catalogues preserve all reusable choices in one place while letting Components focus exclusively on their conceptual responsibilities.
 
@@ -205,6 +205,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Never** — Trigger consumer work for a private compatible change or change Components outside the affected dependency path. *(12)*
 - **Must** — Define each Language Item and Database Item once with its owned configurable technical details. *(13)*
 - **Must** — Group language packages by Technical Purpose and resolve only the purposes applicable to the Target and Component responsibility. *(13)*
+- **May** — Mark one package with `selected: true` when a Technical Purpose has multiple compatible package choices; a single package is the default without a marker. *(13)*
 - **Must** — Allow any compatible Component to use an applicable Technical Purpose. *(13)*
 - **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable. *(13)*
 - **Never** — Group a language package by Component identity or let a Technical Purpose transfer conceptual responsibility. *(13)*

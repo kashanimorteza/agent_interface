@@ -164,6 +164,15 @@ content:
                 requirement: "required"
                 activation: "when_selected"
                 purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
+          cli:
+            name: "Typer"
+            package: "typer"
+            version: "latest-compatible"
+            agent_skills:
+              - resource: "project_skills.contextual.typer"
+                requirement: "required"
+                activation: "when_selected"
+                purpose: "Apply the complete applicable Typer guidance while implementing and independently reviewing the selected command-line interface."
           database:
             orm:
               name: "SQLAlchemy"
