@@ -18,7 +18,7 @@ Accept no phase selection. Consume current operational Schemas, existing Config,
 
 ## Outputs
 
-Produce a Schema-valid root Application Manifest, Schema-valid operational Config, synchronized phase State records, resolved technical selections with concrete versions, an installed or reconciled prepared Environment, truthful State position and History, and a report of created, installed, reconciled, preserved, conflicted, and blocked results.
+Produce a temporary Schema-valid Application Manifest when generation requires one, Schema-valid operational Config, synchronized phase State records, resolved technical selections with concrete versions, an installed or reconciled prepared Environment, truthful State position and History, and a report of created, installed, reconciled, preserved, conflicted, and blocked results.
 
 ## Required Understanding
 
@@ -30,8 +30,7 @@ Write only Config records owned by Configure and perform technical dependency in
 
 ## Workflow Invariants
 
-- Resolve the default Application Manifest path from Development Preferences before any Component configuration begins.
-- Create the root Application Manifest when it is missing, reconcile it without discarding meaningful published metadata, and verify its structure before configuring any Component.
+- Generate the temporary Application Manifest from current Development Component Profiles when component generation requires it; do not treat it as a permanent repository source.
 - Derive initialization and reconciliation from each current Schema rather than a remembered structure.
 - Preserve meaningful operational records through structural reconciliation; surface a conflict rather than discard information that has no other owner.
 - Add missing phase records at current initial values and preserve progress. Remove a stale phase record only while it contains initialization defaults; otherwise preserve and report it.

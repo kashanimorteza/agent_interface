@@ -31,8 +31,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  application: "The default path of the root application manifest shared by Implementation Components."
-  selected: "The default root application manifest path and one configurable profile per Participating Component, including identity, path, type, role, and applicable language, database, and Platform Launch Item references."
+  selected: "One configurable profile per Participating Component, including identity, path, type, role, and applicable language, database, and Platform Launch Item references."
   options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
   settings: "The declared Connection graph, package-publication default, and Cross-cutting Capability applicability."
   implementation: "Empty. Component-specific conceptual realization remains owned by each Participating Component."
@@ -43,8 +42,6 @@ content:
 
   # <!-------------------------------------------- selected -->
   selected:
-    application:
-      path: "application.yaml"
     components:
       model:
         name: "model"

@@ -139,6 +139,14 @@ This separation is one of the central architectural principles of the project.
 - **Implementation** — the implementation's reusable programming philosophy and engineering perspective, independent of a particular Target or Agent.
 - **Agent** — an AI coding system or execution unit that interacts with the Interface and maps its concepts to native capabilities.
 - **Component** — one named part of the Implementation or Agent Module perspective that owns a responsibility and is described through Principles together with Implementation Preferences or an Agent Profile; some Implementation Components also own operational records.
+- **Implementation Module** — the Module that defines the reusable programming philosophy, Principles, Preferences, and Component composition applied to a Target.
+- **Implementation Component** — one independent Component inside the Implementation Module with a defined responsibility, Public Interface, Principles, and Implementation Preferences.
+- **Logic Component** — the reusable library Component that implements application Behaviour and publishes a Public Logic Interface.
+- **API Component** — the executable Component that starts the API process, owns transport concerns, and invokes Logic through its Public Interface.
+- **Presentation Component** — the executable Component that presents the application to users and consumes the API Component.
+- **Public Logic Interface** — the provider-owned public library surface through which API invokes application Behaviour.
+- **API Contract** — the public description of API operations, transport schemas, versions, and approved outcomes.
+- **Technical Purpose** — a language-level use such as modeling, API delivery, database access, ORM, or migration that may be shared by compatible Components.
 - **Principles** — mandatory portable philosophy, responsibilities, rules, and boundaries owned by an Implementation or Agent Component.
 - **Implementation Preferences** — preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations used when the Target leaves a choice unspecified.
 - **Schema** — the structure a file follows: either a standard for a Human-authored file or an operational format and initial template for a generated record.
@@ -228,7 +236,6 @@ Implementation Components
 ├── Development
 │   ├── Principles  → .interface/implementation/development/principles.md
 │   ├── Preferences → .interface/implementation/development/preferences.yaml
-    │   └── Application  → application.yaml
 ├── Model
 │   ├── Principles  → .interface/implementation/model/principles.md
 │   └── Preferences → .interface/implementation/model/preferences.yaml
@@ -258,7 +265,7 @@ Implementation Components
     └── Preferences → .interface/implementation/state/preferences.yaml
 ```
 
-Each Component below has its own Principles and Preferences; Development also owns the Application Manifest. Principles are the authoritative expression of the Component's philosophy and view; Preferences contain its preferred choices and default settings. Follow the links to open the authoritative file for that Component.
+Each Component below has its own Principles and Preferences. Principles are the authoritative expression of the Component's philosophy and view; Preferences contain its preferred choices and default settings. Follow the links to open the authoritative file for that Component.
 
 #### Development
 
@@ -266,7 +273,6 @@ Defines the layered architecture and how independent layers are composed into on
 
 - [Principles](../implementation/development/principles.md)
 - [Preferences](../implementation/development/preferences.yaml)
-- [Application Manifest](../../application.yaml)
 
 #### Model
 
@@ -656,9 +662,9 @@ output = Active State with no selected work scope
 
 ```text
 state = configuring
-responsibility = Ensure the root Application Manifest, reconcile operational Config, synchronize phase State, resolve technical requirements, and prepare the selected Platform requirements
+responsibility = Generate a temporary Application Manifest when needed, reconcile operational Config, synchronize phase State, resolve technical requirements, and prepare the selected Platform requirements
 inputs = Operational Schemas, existing Config, Target phase identities, Implementation Preferences, Platform selections, and Platform authorities
-output = Validated Application Manifest, current operational Config, resolved technical selections, and a prepared selected Platform runtime
+output = Temporary Application Manifest when needed, current operational Config, resolved technical selections, and a prepared selected Platform runtime
 ```
 
 <!-------------------------- Planning -->
@@ -710,7 +716,7 @@ Review = owns recorded Findings and their state
 Write authority answers which Skill may change a record, and every write happens under the rules of the Component that owns it:
 
 ```text
-Configure = creates or reconciles the root Application Manifest, writes every operational Config, synchronizes phase records, resolves technical requirements, records its State outcome, and prepares the selected Platform runtime
+Configure = generates a temporary Application Manifest when needed, writes every operational Config, synchronizes phase records, resolves technical requirements, records its State outcome, and prepares the selected Platform runtime
 Planning = writes Plans, Groups, and Tasks under Plan, and Planning progress and History under State
 Developing = writes implementation and Task status and history under Plan, and Development progress and History under State
 Reviewer = writes Findings under Review, and Review progress and History under State
