@@ -142,6 +142,8 @@ Conceptual example:
 
 **Rule:** Model publishes the storage-relevant meaning resolved from the Target, including primary-key identity, generated identity, uniqueness, referenced-record relationships, relationship cardinality, nullability, defaults, and single-field or composite constraints. These declarations are conceptual and technology-independent. Each selected realization determines how to represent them in its own public Model output, and Database consumes that output to derive and enforce physical storage structure.
 
+Each Domain Definition also declares whether it is `persistent` or `non-persistent`. Database stores only Domain Definitions that Model declares as persistent and never infers persistence from the existence or name of a Domain Definition.
+
 **Why:** Database needs a precise source for persistence guarantees while Model remains the single authority for domain meaning.
 
 **Boundary:** Model does not create tables, indexes, migrations, SQL, ORM mappings, or engine-specific constraints, and it does not enforce rules that require comparing multiple stored records. Database owns physical realization and enforcement.
@@ -175,4 +177,6 @@ Model also preserves each Target-declared credential classification and required
 - **Never** — Let Model own Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or another concern outside its logical boundary. *(9)*
 - **Must** — Keep external realization outside Model ownership even when another Component consumes Model data or its Public Interface. *(9)*
 - **Must** — Publish storage-relevant identity, relationship, field, and constraint meaning as technology-independent Model metadata. *(10)*
+- **Must** — Declare every Domain Definition as `persistent` or `non-persistent` for Database consumption. *(10)*
+- **Never** — Infer persistence from a Domain Definition's existence or name. *(10)*
 - **Never** — Put tables, indexes, migrations, SQL, ORM mappings, or Engine-specific constraints in Model. *(10)*
