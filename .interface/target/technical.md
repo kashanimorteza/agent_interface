@@ -13,7 +13,8 @@ Use this document in the following order:
 4. **[Trading Platforms](#trading-platforms)** — review how the Target connects to supported trading platforms.
 5. **[Trading Operations](#trading-operations)** — review the operations the Target performs for trading.
 6. **[Behaviour](#behaviour)** — review what the Target must enable users to do.
-7. **[Phases](#phases)** — follow the intended implementation order.
+7. **[Development](#development)** — review the development scope and explicit exclusions.
+8. **[Phases](#phases)** — follow the intended implementation order.
 
 <br><br>
 
@@ -42,6 +43,7 @@ Architecture
 │   └── Binance
 ├── Trading Operations
 ├── Behaviour
+├── Development
 └── Phases
 ```
 
@@ -518,10 +520,41 @@ Trading Operations
 <!--------------------------------------------------------------------------------- Behaviour --->
 ## Behaviour
 
+### Part 1
+
 - Enable users to add data for every defined Model.
 - Enable users to edit and update data for every defined Model.
 - Enable users to list data for every defined Model.
 - Enable users to retrieve an individual item by its ID for every defined Model.
+- Enable users to enable data for every defined Model.
+- Enable users to disable data for every defined Model.
+- Enable users to delete data for every defined Model.
+
+### Part 2
+
+Reserved for future Behaviour definitions.
+
+### Part 3
+
+Reserved for future Behaviour definitions.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Development --->
+## Development
+
+Defines the development scope and explicit technical exclusions for the Target.
+
+### Scope
+
+The Target is developed without the following capabilities:
+
+- HTTPS or TLS transport configuration.
+- Authentication or authorization mechanisms.
+- Login, application logging, or audit logging.
+- Error handling mechanisms.
+
+These exclusions apply to the implementation, dependencies, configuration, documentation, and verification of the Target. No excluded capability may be introduced unless this Target is explicitly revised.
 
 <br><br>
 

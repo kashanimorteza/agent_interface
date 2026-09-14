@@ -31,6 +31,11 @@ from database import (
 - **`Database`** — the generic, Model-driven Database Interface: `create`, `get`,
   `list`, `update`, `delete`, and `activate` for any persisted Domain Definition from
   `model`, identified by its type or instance, never by an untyped name string.
+- **`Database.verify_credential(model_cls, field_name, candidate)`** — checks a
+  candidate value against a one-way-hashed credential field (for example `User.api_key`)
+  without ever returning or logging the stored hash or the candidate; returns the
+  matching active record's `id`, or `None`. Added to support Backend's authentication —
+  verification can only happen where the stored hash lives, so it belongs to Database.
 - **`Database.transaction()`** — the explicit Transaction boundary: a context manager
   under which grouped operations on one Database Instance commit together or roll back
   together. A standalone call (no `txn=` passed) forms its own atomic unit automatically.
@@ -43,7 +48,11 @@ from database import (
   Instance's identity, name, and purpose, and the default, without ever receiving a
   connection or a secret value.
 - **`seed_initial_data(db)`** — seeds every Target-declared initial record in dependency
-  order; safe to call more than once.
+  order; safe to call more than once. Returns a `dict[str, str]` of every credential it
+  generated during that call (for example `"admin_api_key"`), in plaintext, **exactly
+  once** — capture it immediately through an appropriate secret channel, since Database
+  never stores or returns a recoverable plaintext value afterward. A re-run that finds
+  every declared record already present returns an empty dict.
 - **Exceptions** — `ConnectionFailure`, `MigrationFailure`, `ConstraintViolation`,
   `TransactionConflict`, `ControlledCommandRejected`, `UnknownDatabaseInstance`, all
   subclasses of `DatabaseError`.
@@ -72,6 +81,15 @@ database = { path = "../database" }
 ```
 
 ## Configuration
+
+**Component root.** Database resolves `database.yaml`, `data/`, and `.secrets/` relative
+to its own component root. When installed in editable mode inside this repository (its
+own tests, its own `uv run` commands), that root is found automatically. When another
+Component depends on `database` as a regular (non-editable) package dependency — for
+example Backend — its installed copy no longer lives next to `database.yaml`, so the
+consuming Component's deployment must set the `DATABASE_COMPONENT_ROOT` environment
+variable to this component's directory (for example
+`DATABASE_COMPONENT_ROOT=../database`).
 
 Non-secret runtime configuration — the configured Engine profiles, Database Instances,
 and the default selection — lives in `database.yaml` at the component root:
@@ -136,9 +154,11 @@ for info in db.instances.list_instances():
 db.execute_command("count_positions_by_execution", user_id=user.id)
 
 # Seed every Target-declared initial record (repeatable; skips what already exists).
+# Capture the returned plaintext credentials now: this is the only time they exist.
+# Route `generated` to your own secret manager immediately; never print, log, or commit it.
 from database import seed_initial_data
 
-seed_initial_data(db)
+generated = seed_initial_data(db)
 ```
 
 ## Verification
@@ -147,9 +167,10 @@ From the `database` directory, with the development dependencies installed:
 
 ```bash
 uv run alembic upgrade head    # only needed once per fresh data/ directory
-uv run pytest      # 59 checks: adapter, registry, every mapping, migrations, interface,
-                    # transactions, controlled commands, seeding, credentials, the public
-                    # boundary, and this README
+uv run pytest      # 65 checks: adapter, registry, every mapping, migrations, interface,
+                    # transactions, controlled commands, seeding (including the
+                    # one-time generated-credential return), credentials,
+                    # verify_credential, the public boundary, and this README
 uv run ruff check . && uv run ruff format --check .
 uv run pyright
 ```
@@ -172,6 +193,10 @@ uv run pyright
   has replaced the database file with something unusable.
 - **A previously seeded credential appears unchanged after re-running `seed_initial_data`**
   — expected: seeding is idempotent and skips a record whose natural key already exists.
+- **"I seeded the database and now can't find the Admin API key anywhere"** — expected:
+  `seed_initial_data` returns generated credentials in plaintext only once, at the moment
+  it creates them. If that return value was not captured, no other path recovers it;
+  reset and reseed the Database Instance to generate new credentials.
 
 ## Consequential implementation choices
 

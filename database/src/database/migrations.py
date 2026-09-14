@@ -2,20 +2,18 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from alembic import command
 from alembic.config import Config
 
 from . import observability
 from .exceptions import MigrationFailure
-
-_COMPONENT_ROOT = Path(__file__).resolve().parents[2]
+from .paths import component_root
 
 
 def _alembic_config(*, instance: str | None, db_url: str | None) -> Config:
-    cfg = Config(str(_COMPONENT_ROOT / "alembic.ini"))
-    cfg.set_main_option("script_location", str(_COMPONENT_ROOT / "migrations"))
+    root = component_root()
+    cfg = Config(str(root / "alembic.ini"))
+    cfg.set_main_option("script_location", str(root / "migrations"))
     if db_url:
         cfg.set_main_option("sqlalchemy.url", db_url)
     elif instance:

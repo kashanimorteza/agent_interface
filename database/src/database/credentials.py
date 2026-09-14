@@ -13,10 +13,11 @@ import hashlib
 import hmac
 import os
 import secrets as _secrets
-from pathlib import Path
 from typing import Literal
 
 from cryptography.fernet import Fernet
+
+from .paths import component_root
 
 CredentialMode = Literal["hash", "encrypted"]
 
@@ -30,7 +31,6 @@ _EXPLICIT_MODES: dict[tuple[str, str], CredentialMode] = {
 _FIELD_DEFAULTS: dict[str, CredentialMode] = {"password": "hash", "api_key": "encrypted"}
 _FALLBACK_MODE: CredentialMode = "encrypted"
 
-_COMPONENT_ROOT = Path(__file__).resolve().parents[2]
 _PBKDF2_ITERATIONS = 200_000
 
 
@@ -48,7 +48,7 @@ def _encryption_key(instance: str) -> bytes:
     if from_env:
         return from_env.encode("utf-8")
 
-    secrets_dir = _COMPONENT_ROOT / ".secrets"
+    secrets_dir = component_root() / ".secrets"
     secrets_dir.mkdir(parents=True, exist_ok=True)
     key_file = secrets_dir / f"{instance}.key"
     if key_file.exists():

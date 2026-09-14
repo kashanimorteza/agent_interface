@@ -7,8 +7,7 @@ from pathlib import Path
 
 import yaml
 
-_COMPONENT_ROOT = Path(__file__).resolve().parents[2]
-_CONFIG_PATH = _COMPONENT_ROOT / "database.yaml"
+from .paths import component_root
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,13 +48,13 @@ class RuntimeConfig:
             ) from None
 
     def storage_path(self, instance: InstanceProfile) -> Path:
-        data_dir = self.data_dir or (_COMPONENT_ROOT / "data")
+        data_dir = self.data_dir or (component_root() / "data")
         data_dir.mkdir(parents=True, exist_ok=True)
         return data_dir / f"{instance.database}.db"
 
 
 def load_runtime_config(path: Path | None = None) -> RuntimeConfig:
-    config_path = path or _CONFIG_PATH
+    config_path = path or (component_root() / "database.yaml")
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
 
     engines = {

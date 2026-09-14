@@ -15,7 +15,7 @@ content_map:
   reviews: "The current review record for each reviewed phase."
 
 content:
-  finding_count: 1
+  finding_count: 4
   reviews:
     P1:
       id: "P1"
@@ -54,4 +54,53 @@ content:
           state: "resolved"
           raised_at: "2026-09-14T09:24:20Z"
           settled_at: "2026-09-14T09:26:26Z"
+          settled_by: "reviewer"
+    P3:
+      id: "P3"
+      title: "Backend"
+      target: "Backend"
+      scope: "Re-assured Plan Assurance (Plan revision 2, unchanged) and independently performed Implementation Assurance over all 29 completed Tasks: three independent clean rebuilds (model, database, backend), the full 73-check Backend pytest suite plus re-verification of Model's 83 and Database's 65 with zero regression, ruff check, ruff format --check, pyright, and adversarial checks across all 15 exposed resources for delete non-exposure, credential-field absence in every Read schema, and authentication enforcement on every endpoint."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 2
+      implementation_outcome: "satisfied"
+      reviewed_by: "reviewer"
+      reviewed_at: "2026-09-14T11:17:20Z"
+      finding_count: 3
+      findings:
+        F2:
+          id: "F2"
+          kind: "gap"
+          severity: "major"
+          task: null
+          expected: "Backend Principle 15 requires every external or persistence interaction to have a finite timeout and requires automatic retry to be bounded and permitted only for safe or idempotent operations."
+          observed: "Revision 1 stated no timeout or retry-bound condition. Revision 2's P3-G2-T1 acceptance and verify now require every request to carry a finite timeout and require retry to stop after a bounded number of attempts and never apply to a non-idempotent operation."
+          evidence: "Phase 3 Plan revision 2, P3-G2-T1 acceptance and verify fields."
+          state: "resolved"
+          raised_at: "2026-09-14T10:35:50Z"
+          settled_at: "2026-09-14T10:38:29Z"
+          settled_by: "reviewer"
+        F3:
+          id: "F3"
+          kind: "gap"
+          severity: "major"
+          task: null
+          expected: "Backend Principle 17 requires Backend itself to define and validate the contract of the Runtime Configuration it requires, with required values validated before readiness and private values absent from source, documentation, errors, and observability output."
+          observed: "Revision 1 treated the Runtime Configuration contract as a pre-existing input. Revision 2's P3-G12-T1 now states establishing and validating that contract as its own expected_result, with acceptance and verify covering a missing or invalid required value failing startup before readiness."
+          evidence: "Phase 3 Plan revision 2, P3-G12-T1 title, expected_result, acceptance, and verify fields."
+          state: "resolved"
+          raised_at: "2026-09-14T10:35:50Z"
+          settled_at: "2026-09-14T10:38:29Z"
+          settled_by: "reviewer"
+        F4:
+          id: "F4"
+          kind: "gap"
+          severity: "minor"
+          task: null
+          expected: "Backend Preferences configure an allowlist CORS policy sourced from a Platform Runtime Binding, with wildcard origins never combined with credentials."
+          observed: "Revision 1 stated no CORS coverage. Revision 2 adds P3-G10-T4, requiring an allowlisted origin to succeed, a non-allowlisted origin to be rejected, and no configuration to pair a wildcard origin with credentialed access."
+          evidence: "Phase 3 Plan revision 2, P3-G10-T4 acceptance and verify fields."
+          state: "resolved"
+          raised_at: "2026-09-14T10:35:50Z"
+          settled_at: "2026-09-14T10:38:29Z"
           settled_by: "reviewer"

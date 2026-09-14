@@ -69,3 +69,21 @@ def test_seeding_is_repeatable_without_duplicates_or_uniqueness_violations(db) -
     assert len(db.list(model.Asset)) == 4
     assert len(db.list(model.Account, name="Acc-1")) == 1
     assert len(db.list(model.Action, name="Default")) == 1
+
+
+def test_seeding_returns_generated_credentials_exactly_once(db) -> None:
+    first = seed_initial_data(db)
+    assert set(first) == {
+        "admin_password",
+        "admin_api_key",
+        "instance_password",
+        "instance_api_key",
+        "account_password",
+    }
+    for value in first.values():
+        assert value and value != "***protected***"
+
+    second = seed_initial_data(db)
+    assert second == {}
+    for value in first.values():
+        assert value not in second.values()

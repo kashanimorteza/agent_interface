@@ -200,78 +200,128 @@ Target, Developer, and Agent are the three primary Modules of Agent Interface. E
 
 The Target describes **what the Interface is working on**.
 
-The Target is defined through two complementary, human-owned sources:
-
-- **Non-Technical Definition:** The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information.
-- **Technical Definition:** The Human, acting as the developer, translates the Non-Technical Definition into this technical form. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
-
-#### Structure
-
 ```text
-Target
+Target Structure
 ├── Non-Technical Definition
 │   └── .interface/target/non-technical.md
 └── Technical Definition
     └── .interface/target/technical.md
 ```
 
+The Target is defined through two complementary, human-owned sources:
+
+- **Non-Technical Definition:** The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information.
+- **Technical Definition:** The Human, acting as the developer, translates the Non-Technical Definition into this technical form. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
+
+Each Target definition has a direct link to its authoritative file:
+
+- [Non-Technical Definition](../target/non-technical.md)
+- [Technical Definition](../target/technical.md)
+
 <!-------------------------- Developer -->
 ### Developer
 
 The Developer module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Backend, Frontend, Platform, Plan, Review, and State Components.
 
-Each Component states its mandatory philosophy, responsibilities, and boundaries through Principles, and its preferred technical choices and defaults through Preferences.
-
-#### Structure
-
 ```text
-Developer
-└── Components
-    ├── Development
-    │   ├── Principles  → .interface/developer/development/principles.md
-    │   └── Preferences → .interface/developer/development/preferences.yaml
-    ├── Model
-    │   ├── Principles  → .interface/developer/model/principles.md
-    │   └── Preferences → .interface/developer/model/preferences.yaml
-    ├── Database
-    │   ├── Principles  → .interface/developer/database/principles.md
-    │   └── Preferences → .interface/developer/database/preferences.yaml
-    ├── Backend
-    │   ├── Principles  → .interface/developer/backend/principles.md
-    │   └── Preferences → .interface/developer/backend/preferences.yaml
-    ├── Frontend
-    │   ├── Principles  → .interface/developer/frontend/principles.md
-    │   └── Preferences → .interface/developer/frontend/preferences.yaml
-    ├── Platform
-    │   ├── Principles  → .interface/developer/platform/principles.md
-    │   └── Preferences → .interface/developer/platform/preferences.yaml
-    ├── Plan
-    │   ├── Principles  → .interface/developer/plan/principles.md
-    │   └── Preferences → .interface/developer/plan/preferences.yaml
-    ├── Review
-    │   ├── Principles  → .interface/developer/review/principles.md
-    │   └── Preferences → .interface/developer/review/preferences.yaml
-    └── State
-        ├── Principles  → .interface/developer/state/principles.md
-        └── Preferences → .interface/developer/state/preferences.yaml
+Developer Components
+├── Development
+│   ├── Principles  → .interface/developer/development/principles.md
+│   ├── Preferences → .interface/developer/development/preferences.yaml
+    │   └── Application  → application.yaml
+├── Model
+│   ├── Principles  → .interface/developer/model/principles.md
+│   └── Preferences → .interface/developer/model/preferences.yaml
+├── Database
+│   ├── Principles  → .interface/developer/database/principles.md
+│   └── Preferences → .interface/developer/database/preferences.yaml
+├── Backend
+│   ├── Principles  → .interface/developer/backend/principles.md
+│   └── Preferences → .interface/developer/backend/preferences.yaml
+├── Frontend
+│   ├── Principles  → .interface/developer/frontend/principles.md
+│   └── Preferences → .interface/developer/frontend/preferences.yaml
+├── Platform
+│   ├── Principles  → .interface/developer/platform/principles.md
+│   └── Preferences → .interface/developer/platform/preferences.yaml
+├── Plan
+│   ├── Principles  → .interface/developer/plan/principles.md
+│   └── Preferences → .interface/developer/plan/preferences.yaml
+├── Review
+│   ├── Principles  → .interface/developer/review/principles.md
+│   └── Preferences → .interface/developer/review/preferences.yaml
+└── State
+    ├── Principles  → .interface/developer/state/principles.md
+    └── Preferences → .interface/developer/state/preferences.yaml
 ```
 
-<!-------------------------- Developer Components -->
-#### Components
+Each Component below has its own Principles and Preferences; Development also owns the Application Manifest. Principles are the authoritative expression of the Component's philosophy and view; Preferences contain its preferred choices and default settings. Follow the links to open the authoritative file for that Component.
 
-```text
-Development = Defines the layered architecture and how independent layers are composed into one system
-Model       = Describes the domain entities and provides one shared logical meaning for domain data
-Database    = Owns the persistence layer and publishes one generic interface for reading and writing
-Backend     = Executes application Behaviour and publishes the application's API
-Frontend    = Presents the application to users and consumes the capabilities Backend publishes
-Platform    = Prepares a completed Target for operation and brings it online
-Plan        = Turns phases into bounded, verifiable activities organized as Plans, Groups, and Tasks
-Review      = Establishes whether implemented work satisfies what was asked, and records what it found
-State       = Records active position, aggregate phase progress, implementation, launch, History, Blockers, and Open Questions
-```
+#### Development
 
-Each line names a Component so that a phase target can be resolved to its owner. The Component's own Principles remain the authority: when this summary and a Component's Principles disagree, the Principles are correct.
+Defines the layered architecture and how independent layers are composed into one system.
+
+- [Principles](../developer/development/principles.md)
+- [Preferences](../developer/development/preferences.yaml)
+- [Application Manifest](../../application.yaml)
+
+#### Model
+
+Describes the domain entities and provides one shared logical meaning for domain data.
+
+- [Principles](../developer/model/principles.md)
+- [Preferences](../developer/model/preferences.yaml)
+
+#### Database
+
+Owns the persistence layer and publishes one generic interface for reading and writing.
+
+- [Principles](../developer/database/principles.md)
+- [Preferences](../developer/database/preferences.yaml)
+
+#### Backend
+
+Executes application Behaviour and publishes the application's API.
+
+- [Principles](../developer/backend/principles.md)
+- [Preferences](../developer/backend/preferences.yaml)
+
+#### Frontend
+
+Presents the application to users and consumes the capabilities Backend publishes.
+
+- [Principles](../developer/frontend/principles.md)
+- [Preferences](../developer/frontend/preferences.yaml)
+
+#### Platform
+
+Prepares a completed Target for operation and brings it online.
+
+- [Principles](../developer/platform/principles.md)
+- [Preferences](../developer/platform/preferences.yaml)
+
+#### Plan
+
+Turns phases into bounded, verifiable activities organized as Plans, Groups, and Tasks.
+
+- [Principles](../developer/plan/principles.md)
+- [Preferences](../developer/plan/preferences.yaml)
+
+#### Review
+
+Establishes whether implemented work satisfies what was asked, and records what it found.
+
+- [Principles](../developer/review/principles.md)
+- [Preferences](../developer/review/preferences.yaml)
+
+#### State
+
+Records active position, aggregate phase progress, implementation, launch, History, Blockers, and Open Questions.
+
+- [Principles](../developer/state/principles.md)
+- [Preferences](../developer/state/preferences.yaml)
+
+The Component's own Principles remain the authority: when this summary and a Component's Principles disagree, the Principles are correct.
 
 
 <!-------------------------- Agent -->
@@ -280,90 +330,187 @@ The Agent Module is the Human-owned, Runtime-independent home for the complete r
 
 Together, these Components form the Agent Profile. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Profile, realizes it through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 
-#### Structure
-
 ```text
-Agent
-└── Components
-    ├── Runtime
-    │   ├── Principles  → .interface/agent/runtime/principles.md
-    │   └── Profile     → .interface/agent/runtime/profile.yaml
-    ├── Settings
-    │   ├── Principles  → .interface/agent/settings/principles.md
-    │   └── Profile     → .interface/agent/settings/profile.yaml
-    ├── Context
-    │   ├── Principles  → .interface/agent/context/principles.md
-    │   └── Profile     → .interface/agent/context/profile.yaml
-    ├── Role
-    │   ├── Principles  → .interface/agent/role/principles.md
-    │   └── Profile     → .interface/agent/role/profile.yaml
-    ├── Agent
-    │   ├── Principles  → .interface/agent/agent/principles.md
-    │   └── Profile     → .interface/agent/agent/profile.yaml
-    ├── Coordination
-    │   ├── Principles  → .interface/agent/coordination/principles.md
-    │   └── Profile     → .interface/agent/coordination/profile.yaml
-    ├── Skill
-    │   ├── Principles  → .interface/agent/skill/principles.md
-    │   ├── Profile     → .interface/agent/skill/profile.yaml
-    │   ├── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
-    │   └── Files       → .interface/agent/skill/files/<declared-skill-stable-key>.md
-    ├── Command
-    │   ├── Principles  → .interface/agent/command/principles.md
-    │   └── Profile     → .interface/agent/command/profile.yaml
-    ├── Rule
-    │   ├── Principles  → .interface/agent/rule/principles.md
-    │   └── Profile     → .interface/agent/rule/profile.yaml
-    ├── Tool
-    │   ├── Principles  → .interface/agent/tool/principles.md
-    │   └── Profile     → .interface/agent/tool/profile.yaml
-    ├── Hook
-    │   ├── Principles  → .interface/agent/hook/principles.md
-    │   └── Profile     → .interface/agent/hook/profile.yaml
-    ├── Integration
-    │   ├── Principles  → .interface/agent/integration/principles.md
-    │   └── Profile     → .interface/agent/integration/profile.yaml
-    ├── Extension
-    │   ├── Principles  → .interface/agent/extension/principles.md
-    │   └── Profile     → .interface/agent/extension/profile.yaml
-    ├── Interaction
-    │   ├── Principles  → .interface/agent/interaction/principles.md
-    │   └── Profile     → .interface/agent/interaction/profile.yaml
-    ├── Permission
-    │   ├── Principles  → .interface/agent/permission/principles.md
-    │   └── Profile     → .interface/agent/permission/profile.yaml
-    ├── Session
-    │   ├── Principles  → .interface/agent/session/principles.md
-    │   └── Profile     → .interface/agent/session/profile.yaml
-    └── Observability
-        ├── Principles  → .interface/agent/observability/principles.md
-        └── Profile     → .interface/agent/observability/profile.yaml
+Agent Components
+├── Runtime
+│   ├── Principles  → .interface/agent/runtime/principles.md
+│   └── Profile     → .interface/agent/runtime/profile.yaml
+├── Settings
+│   ├── Principles  → .interface/agent/settings/principles.md
+│   └── Profile     → .interface/agent/settings/profile.yaml
+├── Context
+│   ├── Principles  → .interface/agent/context/principles.md
+│   └── Profile     → .interface/agent/context/profile.yaml
+├── Role
+│   ├── Principles  → .interface/agent/role/principles.md
+│   └── Profile     → .interface/agent/role/profile.yaml
+├── Agent
+│   ├── Principles  → .interface/agent/agent/principles.md
+│   └── Profile     → .interface/agent/agent/profile.yaml
+├── Coordination
+│   ├── Principles  → .interface/agent/coordination/principles.md
+│   └── Profile     → .interface/agent/coordination/profile.yaml
+├── Skill
+│   ├── Principles  → .interface/agent/skill/principles.md
+│   ├── Profile     → .interface/agent/skill/profile.yaml
+│   ├── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
+│   └── Files       → .interface/agent/skill/files/<declared-skill-stable-key>.md
+├── Command
+│   ├── Principles  → .interface/agent/command/principles.md
+│   └── Profile     → .interface/agent/command/profile.yaml
+├── Rule
+│   ├── Principles  → .interface/agent/rule/principles.md
+│   └── Profile     → .interface/agent/rule/profile.yaml
+├── Tool
+│   ├── Principles  → .interface/agent/tool/principles.md
+│   └── Profile     → .interface/agent/tool/profile.yaml
+├── Hook
+│   ├── Principles  → .interface/agent/hook/principles.md
+│   └── Profile     → .interface/agent/hook/profile.yaml
+├── Integration
+│   ├── Principles  → .interface/agent/integration/principles.md
+│   └── Profile     → .interface/agent/integration/profile.yaml
+├── Extension
+│   ├── Principles  → .interface/agent/extension/principles.md
+│   └── Profile     → .interface/agent/extension/profile.yaml
+├── Interaction
+│   ├── Principles  → .interface/agent/interaction/principles.md
+│   └── Profile     → .interface/agent/interaction/profile.yaml
+├── Permission
+│   ├── Principles  → .interface/agent/permission/principles.md
+│   └── Profile     → .interface/agent/permission/profile.yaml
+├── Session
+│   ├── Principles  → .interface/agent/session/principles.md
+│   └── Profile     → .interface/agent/session/profile.yaml
+└── Observability
+    ├── Principles  → .interface/agent/observability/principles.md
+    └── Profile     → .interface/agent/observability/profile.yaml
 ```
 
 The Agent Components are read in the order shown exclusively during an explicit Agent Sync invocation. Agent Sync then reads every Interface-owned Skill Contract after Skill Principles and Profile, resolves any optional prepared Skill file by exact declared stable key, and realizes each required Rule, Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. A matching prepared Markdown file supplies that Skill's preserved native instruction content; a Skill without one follows its existing Contract- or provider-based realization path. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
 
+Each Agent Component below has its own Principles and Profile. Principles define the Component's mandatory philosophy, responsibilities, rules, and boundaries; Profiles define its current selections, resources, mappings, and default settings.
 
-#### Components
+#### Runtime
 
-```text
-Runtime        = Runtime identity, provider, model, compatibility, and native capability mapping
-Settings       = Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation
-Context        = Persistent instructions, Understanding, Memory, imports, loading, and compaction
-Role           = Primary and specialized Agent Role contracts
-Agent          = The selected Agent Native and its General and Specialized Agent Instances
-Coordination   = Delegation, teams, tasks, messaging, concurrency, and worktree isolation
-Skill          = Reusable knowledge and workflows, including core, supporting, and contextual Skills
-Command        = Named and slash invocation entry points, arguments, aliases, and routing
-Rule           = Persistent global and scoped behavioral instructions
-Tool           = Atomic built-in and externally provided executable capabilities
-Hook           = Deterministic event-driven lifecycle automation
-Integration    = MCP, LSP, channels, application connectors, and external services
-Extension      = Plugins, marketplaces, capability packages, monitors, and extension lifecycle
-Interaction    = Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior
-Permission     = Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets
-Session        = Lifecycle, resume, history, background work, isolation, checkpoints, and termination
-Observability  = Validation, status, diagnostics, evidence, logs, telemetry, health, and usage
-```
+Runtime identity, provider, model, compatibility, and native capability mapping.
+
+- [Principles](../agent/runtime/principles.md)
+- [Profile](../agent/runtime/profile.yaml)
+
+#### Settings
+
+Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation.
+
+- [Principles](../agent/settings/principles.md)
+- [Profile](../agent/settings/profile.yaml)
+
+#### Context
+
+Persistent instructions, Understanding, Memory, imports, loading, and compaction.
+
+- [Principles](../agent/context/principles.md)
+- [Profile](../agent/context/profile.yaml)
+
+#### Role
+
+Primary and specialized Agent Role contracts.
+
+- [Principles](../agent/role/principles.md)
+- [Profile](../agent/role/profile.yaml)
+
+#### Agent
+
+The selected Agent Native and its General and Specialized Agent Instances.
+
+- [Principles](../agent/agent/principles.md)
+- [Profile](../agent/agent/profile.yaml)
+
+#### Coordination
+
+Delegation, teams, tasks, messaging, concurrency, and worktree isolation.
+
+- [Principles](../agent/coordination/principles.md)
+- [Profile](../agent/coordination/profile.yaml)
+
+#### Skill
+
+Reusable knowledge and workflows, including core, supporting, and contextual Skills.
+
+- [Principles](../agent/skill/principles.md)
+- [Profile](../agent/skill/profile.yaml)
+- [Contracts directory](../agent/skill/contracts/)
+- [Files directory](../agent/skill/files/)
+
+#### Command
+
+Named and slash invocation entry points, arguments, aliases, and routing.
+
+- [Principles](../agent/command/principles.md)
+- [Profile](../agent/command/profile.yaml)
+
+#### Rule
+
+Persistent global and scoped behavioral instructions.
+
+- [Principles](../agent/rule/principles.md)
+- [Profile](../agent/rule/profile.yaml)
+
+#### Tool
+
+Atomic built-in and externally provided executable capabilities.
+
+- [Principles](../agent/tool/principles.md)
+- [Profile](../agent/tool/profile.yaml)
+
+#### Hook
+
+Deterministic event-driven lifecycle automation.
+
+- [Principles](../agent/hook/principles.md)
+- [Profile](../agent/hook/profile.yaml)
+
+#### Integration
+
+MCP, LSP, channels, application connectors, and external services.
+
+- [Principles](../agent/integration/principles.md)
+- [Profile](../agent/integration/profile.yaml)
+
+#### Extension
+
+Plugins, marketplaces, capability packages, monitors, and extension lifecycle.
+
+- [Principles](../agent/extension/principles.md)
+- [Profile](../agent/extension/profile.yaml)
+
+#### Interaction
+
+Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior.
+
+- [Principles](../agent/interaction/principles.md)
+- [Profile](../agent/interaction/profile.yaml)
+
+#### Permission
+
+Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets.
+
+- [Principles](../agent/permission/principles.md)
+- [Profile](../agent/permission/profile.yaml)
+
+#### Session
+
+Lifecycle, resume, history, background work, isolation, checkpoints, and termination.
+
+- [Principles](../agent/session/principles.md)
+- [Profile](../agent/session/profile.yaml)
+
+#### Observability
+
+Validation, status, diagnostics, evidence, logs, telemetry, health, and usage.
+
+- [Principles](../agent/observability/principles.md)
+- [Profile](../agent/observability/profile.yaml)
 
 Every Agent Component's Principles and Profile are authoritative for that Component only. A runtime artifact not declared in the owning Profile is an optional runtime capability; a required declaration not usable by the selected runtime is an Agent Profile gap.
 
@@ -377,17 +524,20 @@ Understanding is the current context an Agent Native or Agent Instance establish
 - **Interface Understanding:** Read `.interface/foundation/interface.md` as the sole Foundation Source, then follow only the non-Agent-Module routes it provides for the active role. Agent Sync is the sole explicit exception.
 - **Target Understanding:** When required, read both Target definitions located by the Interface. Human Definition provides the Human's stated intent and context; Technical Definition is the primary Target authority and takes precedence wherever they conflict.
 
-<!-------------------------- Understanding Structure -->
-### Structure
-
 ```text
-Understanding
+Understanding Structure
 ├── Interface Understanding
 │   └── Interface Foundation Source → .interface/foundation/interface.md
 └── Target Understanding
     ├── Human Definition    → .interface/target/non-technical.md
     └── Technical Definition → .interface/target/technical.md
 ```
+
+Understanding uses these authoritative sources:
+
+- [Interface Foundation Source](interface.md)
+- [Non-Technical Definition](../target/non-technical.md)
+- [Technical Definition](../target/technical.md)
 
 An empty Human Definition contributes no information. Understanding is reconstructed from both current sources under their declared precedence when required and is never copied into Config as a second project definition.
 
@@ -416,7 +566,7 @@ Operations
 
 **Agent Skill:** `/my-interface-configure`
 
-This Operation is performed through `/my-interface-configure` to initialize and reconcile operational Config, synchronize phase State, and prepare the selected Platform Environment.
+This Operation is performed through `/my-interface-configure` to initialize and reconcile operational Config, synchronize phase State, resolve and install applicable Developer and Platform technical requirements with concrete versions, and prepare the selected Platform Environment.
 
 <!-------------------------- Planning Operation -->
 ### Planning
@@ -444,7 +594,7 @@ This Operation is performed through `/my-interface-reviewer [phase-number ...]` 
 
 **Agent Skill:** `/my-interface-launch`
 
-This Operation is performed through `/my-interface-launch` to verify the selected Environment prepared by Configure, start the developed parts through the selected Launch, verify readiness, and report access points.
+This Operation is performed through `/my-interface-launch [backend|frontend|complete|all]` to read the selected Launch definition and its Component Runtime Requirements, start only the requested scope (or all developed parts for `complete`/`all`), verify readiness, and report access points. When no scope is supplied, the Launch Skill asks the Human to choose one.
 
 <!-------------------------- Implement Operation -->
 ### Implement
@@ -496,9 +646,9 @@ output = Active State with no selected work scope
 
 ```text
 state = configuring
-responsibility = Reconcile operational Config, synchronize phase State, and prepare the selected Environment
-inputs = Operational Schemas, existing Config, Target phase identities and Platform selections, and Platform authorities
-output = Current operational Config and a prepared selected Environment
+responsibility = Ensure the root Application Manifest, reconcile operational Config, synchronize phase State, resolve technical requirements, and prepare the selected Platform requirements
+inputs = Operational Schemas, existing Config, Target phase identities, Developer Preferences, Platform selections, and Platform authorities
+output = Validated Application Manifest, current operational Config, resolved technical selections, and a prepared selected Platform runtime
 ```
 
 <!-------------------------- Planning -->
@@ -550,7 +700,7 @@ Review = owns recorded Findings and their state
 Write authority answers which Skill may change a record, and every write happens under the rules of the Component that owns it:
 
 ```text
-Configure = writes every operational Config, synchronizes phase records, records its State outcome, and prepares the selected Environment
+Configure = creates or reconciles the root Application Manifest, writes every operational Config, synchronizes phase records, resolves technical requirements, records its State outcome, and prepares the selected Platform runtime
 Planning = writes Plans, Groups, and Tasks under Plan, and Planning progress and History under State
 Developing = writes implementation and Task status and history under Plan, and Development progress and History under State
 Reviewer = writes Findings under Review, and Review progress and History under State

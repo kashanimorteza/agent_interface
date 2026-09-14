@@ -11,7 +11,7 @@ from typing import Any, TypeVar
 import model
 from sqlalchemy.exc import IntegrityError
 
-from . import commands, conversion, observability
+from . import commands, conversion, credentials, observability
 from .adapter import StorageAdapter
 from .exceptions import ConstraintViolation
 from .mapping import MAPPING_REGISTRY
@@ -118,8 +118,6 @@ class Database:
                 if field in credential_fields:
                     if value is None or value == conversion.REDACTED:
                         continue  # unchanged credential: never overwrite with a redacted echo
-                    from . import credentials
-
                     value = credentials.protect(
                         value,
                         model_name=model_cls.__name__,
@@ -171,6 +169,40 @@ class Database:
             row.is_active = enable
             session.flush()
             return model_cls(**conversion.from_orm_kwargs(row, model_cls))
+
+        return self._run(txn, _do)
+
+    def verify_credential(
+        self,
+        model_cls: type[ModelT],
+        field_name: str,
+        candidate: str,
+        *,
+        txn: Transaction | None = None,
+    ) -> int | None:
+        """Find the record whose named one-way-hashed credential field matches `candidate`.
+
+        Returns the matching record's id, or None when no active record matches. The
+        candidate and the stored hash never leave Database: only an id or None is
+        returned, so this never exposes a credential representation through the public
+        interface.
+        """
+        if credentials.resolve_mode(model_cls.__name__, field_name) != "hash":
+            raise ValueError(
+                f"{model_cls.__name__}.{field_name} is not a one-way-hashed credential field"
+            )
+        orm_cls = self._orm_class(model_cls)
+
+        def _do(session: Any) -> int | None:
+            query = session.query(orm_cls)
+            if "is_active" in model_cls.model_fields:
+                query = query.filter(orm_cls.is_active.is_(True))
+            for row in query.all():
+                stored = getattr(row, field_name)
+                if stored and credentials.verify_hash(candidate, stored):
+                    self._maybe_signal_access(model_cls, "verify")
+                    return row.id
+            return None
 
         return self._run(txn, _do)
 

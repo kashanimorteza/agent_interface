@@ -21,6 +21,8 @@ Development owns composition rather than the internal meaning or implementation 
 - **Connection** — one configurable direct dependency from a consumer Component Profile to a provider Component Profile.
 - **Runtime Configuration** — runtime settings and secret references owned inside an Application Package boundary.
 - **Cross-cutting Capability** — a shared capability whose application to more than one Participating Component requires Development-level coordination.
+- **Model Operation** — a named operation that a Model may expose through the composed system, such as create, retrieve, list, search, update, enable, disable, or delete.
+- **Application Manifest** — the shared `application.yaml` declaration of public Component metadata that another Component may consume through an authorized Connection.
 
 <br>
 
@@ -28,6 +30,7 @@ Development owns composition rather than the internal meaning or implementation 
 
 - **Consumes Platform** — references Platform-owned Launch Items without duplicating their definitions.
 - **Consumed by every Participating Component** — provides its Component Profile, Connections, applicable technical items, and shared rules.
+- **Publishes Application Manifest** — provides public Component metadata required to compose and connect the application.
 
 <br>
 
@@ -79,9 +82,29 @@ Every statement here is mandatory. A Developer Preference can never override a P
 
 <br>
 
-## 6. Cross-cutting Capabilities are activated through applicability
+## 5. Model operations use one shared contract across Components
 
-**Rule:** Development Preferences declares each Cross-cutting Capability with one applicability list. An empty list makes the capability inactive; a non-empty list activates it only for the uniquely listed canonical Component identifiers. Each listed Component applies the shared requirement while retaining ownership of its internal realization.
+**Rule:** Development defines one shared vocabulary for operations that may be exposed by a Model. The default Model Operation set is `create`, `get_by_id`, `list`, `search`, `update`, `enable`, `disable`, and `delete`. Each Model declares the operations applicable to its own fields, relationships, and lifecycle; it may omit an inapplicable operation or add a Model-specific operation. When a Model exposes an operation, the Database, Backend Logic, API, and Frontend Components account for that operation in their own responsibilities and preserve its meaning across their public boundaries.
+
+**Why:** One shared operation contract keeps every participating layer aligned while allowing each Model to have the lifecycle and queries its domain actually requires.
+
+**Boundary:** Development defines operation names, applicability, and cross-Component consistency. It does not prescribe storage statements, service methods, API transport, user-interface controls, or another Component's internal realization.
+
+<br>
+
+## 6. Components publish shared application metadata through one manifest
+
+**Rule:** Development owns one `application.yaml` Application Manifest for shared Component metadata. Each Participating Component may publish the public values required by another Component to compose or consume it, including its repository-relative directory, import package when applicable, public entry points, and other non-secret integration metadata. A consumer reads these values only through a declared Connection and uses them according to the provider's Public Interface. Component Profiles remain authoritative for Component identity and ownership; the Application Manifest is authoritative for the published integration metadata it contains.
+
+**Why:** One shared manifest gives every Component a stable place to discover the public information needed for composition without reaching into another Component's private files or implementation.
+
+**Boundary:** The Application Manifest never contains credentials, secret values, private implementation details, internal storage structure, or undeclared dependencies. A Component may publish only metadata it owns, and a consumer never gains access merely because metadata is present without a declared Connection.
+
+<br>
+
+## 7. Cross-cutting Capabilities are activated through applicability
+
+**Rule:** Development Preferences declares each Cross-cutting Capability with one applicability list. An empty list makes the capability inactive; a non-empty list activates it only for the uniquely listed canonical Component identifiers. Logging, Error Handling, and Authentication are active by default for every Developer Component except Platform. An explicit Target requirement or exclusion overrides that default for the current Target. Each listed Component applies the shared requirement while retaining ownership of its internal realization.
 
 **Why:** One applicability list coordinates shared behavior without transferring implementation ownership to Development.
 
@@ -157,9 +180,17 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Declare every permitted direct dependency exactly once in a direct, non-transitive, acyclic Connection graph. *(4)*
 - **Never** — Infer direct access, reverse dependency, or transport from an indirect path or provider response. *(4)*
 - **Never** — Treat a Platform Reference as a runtime dependency Connection. *(4)*
-- **Must** — Activate a Cross-cutting Capability only for unique canonical identifiers in its applicability list. *(6)*
-- **Must** — Keep realization of an active Cross-cutting Capability inside each listed Component. *(6)*
-- **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component. *(6)*
+- **Must** — Use the shared Model Operation vocabulary and preserve the meaning of each exposed operation across Database, Backend Logic, API, and Frontend. *(5)*
+- **Must** — Let each Model declare its applicable operations based on its fields, relationships, and lifecycle. *(5)*
+- **May** — Omit an inapplicable default operation or add a Model-specific operation. *(5)*
+- **Never** — Prescribe a Component's internal implementation from a Model Operation. *(5)*
+- **Must** — Publish shared public Component metadata through the one Application Manifest and consume it only through declared Connections. *(6)*
+- **Never** — Put secrets, private implementation details, or undeclared dependencies in the Application Manifest. *(6)*
+- **Must** — Activate a Cross-cutting Capability only for unique canonical identifiers in its applicability list. *(7)*
+- **Must** — Keep realization of an active Cross-cutting Capability inside each listed Component. *(7)*
+- **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component. *(7)*
+- **Must** — Apply Logging, Error Handling, and Authentication by default to every Developer Component except Platform. *(7)*
+- **May** — Override a default Cross-cutting Capability explicitly in the Target. *(7)*
 - **Must** — Generate a root README that explains actual structure, public use, setup, configuration, operation, verification, troubleshooting, and active capabilities with executable resolved-technology examples. *(9)*
 - **Must** — Keep every README consistent with public behavior and update it when public usage changes. *(9)*
 - **Never** — Expose a usable secret in documentation or let a README copy, replace, or override an authoritative source. *(9)*

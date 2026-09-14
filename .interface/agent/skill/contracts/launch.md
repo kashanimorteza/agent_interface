@@ -14,7 +14,7 @@ Activate explicitly or after end-to-end orchestration establishes every current 
 
 ## Inputs
 
-Accept no phase selection. Consume Target and Platform selections, Platform authorities, State, developed parts and public interfaces, and observable runtime state.
+Accept one optional Launch Scope selection: `backend`, `frontend`, or `complete` (the alias `all` is equivalent to `complete`). When no scope is supplied, ask the Human to choose one of these values before starting. Consume the selected scope together with Target and Platform selections, Platform authorities, State, developed parts and public interfaces, and observable runtime state.
 
 ## Outputs
 
@@ -26,11 +26,12 @@ Establish Interface Understanding and current Target Understanding. Read Platfor
 
 ## Authority
 
-Control only project runtime startup, connection, readiness, and shutdown actions required by the selected Launch. Write Launch-owned State and History. Never prepare the Environment, repair code, or redefine a part's internals.
+Control only project runtime startup, connection, readiness, and shutdown actions required by the selected Launch Scope and Launch definition. Read the applicable Platform Component Runtime Requirements and perform the declared launch actions in their required order. Write Launch-owned State and History. Never prepare the runtime requirements, repair code, or redefine a part's internals.
 
 ## Workflow Invariants
 
 - Resolve Environment and Launch from explicit Target decisions first and Platform defaults second; never invent a missing definition.
+- Launch only the parts included by the selected Launch Scope: `backend`, `frontend`, or `complete`/`all`.
 - Require Development completion for every phase currently enabled and ready. Review is an additional prerequisite only when Target, Platform, or the invoking coordinator requires it.
 - Mark Launch as launching before mutation and record the final truthful state afterward.
 - Verify Environment preparation before startup without performing preparation.

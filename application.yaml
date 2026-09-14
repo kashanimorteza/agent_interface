@@ -1,0 +1,34 @@
+meta:
+  path: "application.yaml"
+  purpose: "Shared public metadata used by Developer Components to compose and consume the application."
+  standard: "Agent Project Interface"
+  version: "1.0"
+
+policy:
+  ownership: "Development owns this manifest; each Component owns the values it publishes."
+  usage: "Consumers use published metadata only through a declared Connection and the provider's Public Interface."
+  secrets: "Never store credentials, tokens, keys, passwords, or other secret values here."
+
+content:
+  components:
+    development:
+      path: ".interface/developer/development"
+    model:
+      path: "model"
+      package: "model"
+    database:
+      path: "database"
+      package: "database"
+    backend:
+      path: "backend"
+      package: "backend"
+    frontend:
+      path: "frontend"
+    platform:
+      path: ".interface/developer/platform"
+    plan:
+      path: ".interface/developer/plan"
+    review:
+      path: ".interface/developer/review"
+    state:
+      path: ".interface/developer/state"

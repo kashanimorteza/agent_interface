@@ -56,7 +56,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 4. `configure` establishes operational readiness
 
-**Rule:** The architecture requires the `configure` Skill. Its purpose is operational readiness; its responsibility is to initialize and reconcile Config, synchronize stable phase identity and aggregate State, and prepare the selected Environment; its task coverage is configuration and environment preparation required before workflow execution.
+**Rule:** The architecture requires the `configure` Skill. Its purpose is operational readiness; its responsibility is to initialize and reconcile Config, synchronize stable phase identity and aggregate State, resolve applicable Developer and Platform technical selections with concrete versions, install or reconcile their required packages and tools, and prepare the selected Environment; its task coverage is configuration, technical dependency preparation, and environment preparation required before workflow execution.
 
 **Why:** Every later operation needs valid operational records and a prepared execution environment.
 
@@ -195,7 +195,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Never** — let coordinator invocation expand a delegated Skill's authority or permit unrelated automatic execution *(2)*
 - **Must** — make repeated execution preserve valid work *(3)*
 - **Never** — use repeatability to justify destructive regeneration *(3)*
-- **Must** — provide `configure` for Config reconciliation, phase synchronization, and Environment preparation *(4)*
+- **Must** — provide `configure` for Config reconciliation, phase synchronization, technical dependency resolution and installation, and Environment preparation *(4)*
 - **Never** — let `configure` perform another operation or modify non-Config Interface sources *(4)*
 - **Must** — provide `planning` for complete, bounded, and verifiable work definition *(5)*
 - **Never** — let `planning` prescribe implementation or perform downstream operations *(5)*

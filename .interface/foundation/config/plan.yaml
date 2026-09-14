@@ -15,7 +15,7 @@ content_map:
   plans: "Current phase Plans and their Groups and Tasks."
 
 content:
-  task_count: 42
+  task_count: 71
   plans:
     P1:
       id: P1
@@ -1229,4 +1229,816 @@ content:
               - at: '2026-09-14T09:46:09Z'
                 event: completed
                 check: 'uv run pytest tests/test_readme.py (5 checks) — required sections present, documented imports match database.__all__ exactly, documented usage example re-executed end to end (create, transaction, Registry, controlled command, seeding), documented commands match the real ones, secret scan clean. Whole-suite gate from a clean rebuild: 59 passed, ruff check/format clean, pyright 0 errors, migration smoke-applies cleanly to a fresh database.'
+                outcome: passed
+    P3:
+      id: P3
+      title: Backend
+      order: 3
+      revision: 2
+      target: Backend
+      does: Deliver the Backend executable's complete application layer for every Domain Definition the Target defines, comprising Model Interface, Database Interface with bounded timeouts and retries, a shared Logic Foundation, one Model Logic unit per domain concept exposing its Target-authorized standard operations, request authentication and Logic-owned authorization, a versioned and documented API Interface with bounded list queries and a CORS allowlist, safe Application Outcome and failure mapping, an explicit operational lifecycle built on Backend's own validated Runtime Configuration contract with correlated observability, and a verified, minimal, documented public boundary.
+      constraints: []
+      task_count: 29
+      groups:
+        P3-G1:
+          id: P3-G1
+          title: Model Interface
+          description: Backend's boundary through which its internal parts consume the Model Public Interface.
+          area: Backend Model Interface
+          does: Every Domain Definition Backend requires is available to Logic and API Interface through one Model Interface.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G1-T1:
+              id: P3-G1-T1
+              title: Establish Model Interface
+              description: Establish Backend's Model Interface, importing every Domain Definition Backend requires from Model's Public Interface and making those public types available to Logic and API Interface without redefining or privately copying them.
+              reason: Backend Principles require one Model boundary so Backend parts share the same domain meaning instead of copying or redefining it.
+              kind: code
+              inputs:
+              - Model's Public Interface
+              expected_result: Every Domain Definition Backend requires is available to Logic and API Interface through one Model Interface, with no private redefinition.
+              depends_on: []
+              constraints: []
+              acceptance: Logic and API Interface obtain every Domain Definition they use exclusively through Model Interface, and no Backend part defines a competing Domain Definition.
+              verify: Logic and API Interface are observed to resolve every Domain Definition they use through Model Interface, and no Backend source is observed to declare a second definition of a Domain Definition Model already defines.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_model_interface.py (2 checks) — every re-exported name is identical to Model's own type object, and the DOMAIN_DEFINITIONS tuple matches the public name set exactly.
+                outcome: passed
+        P3-G2:
+          id: P3-G2
+          title: Database Interface
+          description: Backend's boundary through which Logic consumes the Database Public Interface.
+          area: Backend Database Interface
+          does: Every persistence request Logic issues reaches Database only through one Database Interface.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G2-T1:
+              id: P3-G2-T1
+              title: Establish Backend's Database Interface
+              description: Establish Backend's Database Interface, translating Logic's persistence requests into calls to Database's Public Interface and returning logical results, and carrying a related group of operations through one resolved Database Instance's Transaction boundary without independently committing their members.
+              reason: Backend Principles require Database Interface to be Backend's only route to persistence so Database remains replaceable and no Backend part gains hidden data access.
+              kind: code
+              inputs:
+              - Database's Public Interface
+              - The Model Interface
+              expected_result: A Database Interface exists that Logic uses for every persistence request, translating each into a Database Public Interface call and grouping related operations under one Transaction boundary when required, with no engine, connection, mapping, or migration mechanism exposed to Logic, every call bounded by a finite timeout, and any automatic retry bounded and applied only to a safe or idempotent operation.
+              depends_on:
+              - P3-G1-T1
+              constraints: []
+              acceptance: Every persistence request Logic issues reaches Database only through this Database Interface, a grouped unit of related operations commits or rolls back together through one Database Instance's Transaction boundary, no Backend part outside Database Interface reaches Database directly, every request carries a finite timeout, and no retry is unbounded or applied to a non-idempotent operation.
+              verify: Logic's persistence requests are observed to reach Database only through Database Interface, a grouped unit of operations is observed to commit or roll back together, no Backend source outside Database Interface is observed to import a Database-owned connection, mapping, or migration mechanism, a deliberately stalled persistence call is observed to fail after its finite timeout rather than hang indefinitely, and a retried call is observed to stop after a bounded number of attempts.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_database_interface.py (5 checks) — requests reach Database only through this interface, a failed grouped unit rolls back completely, a deliberately stalled call raises PersistenceTimeout after its finite timeout, a repeatedly conflicting call retries exactly the bounded number of attempts then raises, and no Backend source imports StorageAdapter/MAPPING_REGISTRY/Base.
+                outcome: passed
+        P3-G3:
+          id: P3-G3
+          title: Logic Foundation
+          description: The shared Logic unit that supplies standard Model operations without duplicating them in every Model Logic unit.
+          area: Shared Logic Foundation
+          does: A shared Logic Foundation is available for every Model Logic unit to build on.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G3-T1:
+              id: P3-G3-T1
+              title: Establish the Logic Foundation
+              description: Establish the shared Logic Foundation that supplies the standard Model operations (create, read by identifier, list, update, enable, disable) to every Model Logic unit through one reusable mechanism, containing no Model-specific Behaviour itself.
+              reason: Backend Principles require every shared Model's standard operations to come from one Logic Foundation rather than being duplicated across Model Logic units.
+              kind: code
+              inputs:
+              - The Model Interface
+              - The Database Interface
+              - Backend Preferences' standard operation vocabulary
+              expected_result: A Logic Foundation exists that supplies create, read-by-identifier, list, update, enable, and disable to any Model Logic unit that builds on it, and every Model Logic unit built afterward in this phase reuses it rather than reimplementing these operations.
+              depends_on:
+              - P3-G1-T1
+              - P3-G2-T1
+              constraints: []
+              acceptance: Every standard operation the Logic Foundation supplies behaves identically in its persistence and validation behavior across more than one Model Logic unit, and the Logic Foundation itself contains no Model-specific Behaviour.
+              verify: The same standard-operation behavior is observed to apply consistently across more than one Model Logic unit built on the Logic Foundation, with no Model-specific Behaviour duplicated inside the Foundation itself.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_foundation.py (6 checks) — identical standard-operation behavior observed across User and Trading Platform Logic, NotFound/ValidationFailed/ConflictOutcome each raised correctly, partial update merges preserve unspecified fields, and the Foundation itself declares no delete method.
+                outcome: passed
+        P3-G4:
+          id: P3-G4
+          title: Identity and Connectivity Model Logic
+          description: The Model Logic units for the domain concepts that identify a system user and a connection to a supported Trading Platform.
+          area: User identity and platform-connectivity Model Logic
+          does: User identity and platform-connectivity domain concepts are represented as Model Logic units.
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-G4-T1:
+              id: P3-G4-T1
+              title: Establish User Logic
+              description: Establish User Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the User Domain Definition, validating resulting state through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve User data, and User's credential fields require Logic to preserve their write-only, non-exposed meaning established by Model.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The User Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: User Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting User state through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              constraints: []
+              acceptance: Every exposed User operation produces a resulting state Model accepts as valid before it is persisted, delete is not reachable through User Logic, and no operation returns a credential field's value.
+              verify: Each exposed User operation is observed to validate its resulting state through Model Interface before persisting it through Database Interface, an attempt to delete a User through Logic is observed to be unavailable, and no observed operation result carries a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_identity.py::test_user_logic_exposes_standard_operations_and_redacts_credentials (1 check) — create/get/update/enable/disable all validated, no delete method, password/api_key never carry plaintext.
+                outcome: passed
+            P3-G4-T2:
+              id: P3-G4-T2
+              title: Establish Trading Platform Logic
+              description: Establish Trading Platform Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Trading Platform Domain Definition, validating resulting state through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Trading Platform data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Trading Platform Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Trading Platform Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              constraints: []
+              acceptance: Every exposed Trading Platform operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Trading Platform Logic.
+              verify: Each exposed Trading Platform operation is observed to validate its resulting state through Model Interface before persisting it through Database Interface, and an attempt to delete a Trading Platform through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_identity.py::test_trading_platform_logic_exposes_standard_operations (1 check) — create/get/list/update validated, no delete method.
+                outcome: passed
+            P3-G4-T3:
+              id: P3-G4-T3
+              title: Establish Instance Logic
+              description: Establish Instance Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Instance Domain Definition, validating resulting state (including its User and Trading Platform relationships) through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Instance data, and Instance's credential fields require Logic to preserve their write-only, non-exposed meaning established by Model.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Instance Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Instance Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting Instance state and its relationships through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it, and no operation returns a credential field's value.
+              depends_on:
+              - P3-G3-T1
+              - P3-G4-T1
+              - P3-G4-T2
+              constraints: []
+              acceptance: Every exposed Instance operation produces a resulting state Model accepts as valid before it is persisted, delete is not reachable through Instance Logic, and no operation returns a credential field's value.
+              verify: Each exposed Instance operation is observed to validate its resulting state and relationships through Model Interface before persisting it through Database Interface, an attempt to delete an Instance through Logic is observed to be unavailable, and no observed operation result carries a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_identity.py::test_instance_logic_validates_relationships_and_redacts_credentials (1 check) — User/Trading Platform relationships validated, password/api_key never carry plaintext, no delete method.
+                outcome: passed
+        P3-G5:
+          id: P3-G5
+          title: Financial Reference Model Logic
+          description: The Model Logic units for the domain concepts that describe currencies, brokers, and the assets available for trading.
+          area: Financial reference Model Logic
+          does: Currency, broker, and tradable-asset domain concepts are represented as Model Logic units.
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-G5-T1:
+              id: P3-G5-T1
+              title: Establish Currency Logic
+              description: Establish Currency Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Currency Domain Definition, validating resulting state and its User relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Currency data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Currency Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Currency Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G4-T1
+              constraints: []
+              acceptance: Every exposed Currency operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Currency Logic.
+              verify: Each exposed Currency operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete a Currency through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_financial.py::test_currency_logic_exposes_standard_operations (1 check) — create/get/update/disable validated, no delete method.
+                outcome: passed
+            P3-G5-T2:
+              id: P3-G5-T2
+              title: Establish Broker Logic
+              description: Establish Broker Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Broker Domain Definition, validating resulting state and its User relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Broker data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Broker Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Broker Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G4-T1
+              constraints: []
+              acceptance: Every exposed Broker operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Broker Logic.
+              verify: Each exposed Broker operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete a Broker through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_financial.py::test_broker_logic_exposes_standard_operations (1 check) — create/get/list validated, no delete method.
+                outcome: passed
+            P3-G5-T3:
+              id: P3-G5-T3
+              title: Establish Asset Logic
+              description: Establish Asset Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Asset Domain Definition, validating resulting state and its Broker relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Asset data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Asset Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Asset Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G5-T2
+              constraints: []
+              acceptance: Every exposed Asset operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Asset Logic.
+              verify: Each exposed Asset operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete an Asset through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_financial.py::test_asset_logic_validates_broker_relationship (1 check) — Broker relationship validated, no delete method.
+                outcome: passed
+        P3-G6:
+          id: P3-G6
+          title: Accounts Model Logic
+          description: The Model Logic units for the domain concepts that organize and represent funded trading accounts.
+          area: Trading-account organization Model Logic
+          does: Trading-account organization domain concepts are represented as Model Logic units.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-G6-T1:
+              id: P3-G6-T1
+              title: Establish Account Group Logic
+              description: Establish Account Group Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Account Group Domain Definition, validating resulting state and its User relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Account Group data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Account Group Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Account Group Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G4-T1
+              constraints: []
+              acceptance: Every exposed Account Group operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Account Group Logic.
+              verify: Each exposed Account Group operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete an Account Group through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_accounts.py::test_account_group_logic_exposes_standard_operations (1 check) — create/get validated, no delete method.
+                outcome: passed
+            P3-G6-T2:
+              id: P3-G6-T2
+              title: Establish Account Logic
+              description: Establish Account Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Account Domain Definition, validating resulting state and its Account Group, Broker, Instance, and Currency relationships through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Account data, and Account's credential field requires Logic to preserve its write-only, non-exposed meaning established by Model.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Account Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Account Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationships through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it, and no operation returns a credential field's value.
+              depends_on:
+              - P3-G3-T1
+              - P3-G6-T1
+              - P3-G5-T2
+              - P3-G4-T3
+              - P3-G5-T1
+              constraints: []
+              acceptance: Every exposed Account operation produces a resulting state Model accepts as valid before it is persisted, delete is not reachable through Account Logic, and no operation returns a credential field's value.
+              verify: Each exposed Account operation is observed to validate its resulting state and relationships through Model Interface before persisting it through Database Interface, an attempt to delete an Account through Logic is observed to be unavailable, and no observed operation result carries a credential field's value.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_accounts.py::test_account_logic_validates_relationships_and_redacts_credential (1 check) — full relationship chain validated, password never carries plaintext, no delete method.
+                outcome: passed
+        P3-G7:
+          id: P3-G7
+          title: Trade Management Rule Model Logic
+          description: The Model Logic units for the domain concepts that group and define the rules for trailing Stop Loss/Take Profit management and partial position closing.
+          area: Trade-management rule Model Logic
+          does: Stop-loss/take-profit trailing and partial-close rule domain concepts are represented as Model Logic units.
+          constraints: []
+          task_count: 4
+          tasks:
+            P3-G7-T1:
+              id: P3-G7-T1
+              title: Establish Trailing Group Logic
+              description: Establish Trailing Group Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Trailing Group Domain Definition, validating resulting state and its User relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Trailing Group data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Trailing Group Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Trailing Group Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G4-T1
+              constraints: []
+              acceptance: Every exposed Trailing Group operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Trailing Group Logic.
+              verify: Each exposed Trailing Group operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete a Trailing Group through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_trade_rules.py::test_trailing_group_and_rule_logic (1 check, shared with P3-G7-T2) — create/get validated for Trailing Group, no delete method.
+                outcome: passed
+            P3-G7-T2:
+              id: P3-G7-T2
+              title: Establish Trailing Rule Logic
+              description: Establish Trailing Rule Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Trailing Rule Domain Definition, validating resulting state and its Trailing Group relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Trailing Rule data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Trailing Rule Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Trailing Rule Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G7-T1
+              constraints: []
+              acceptance: Every exposed Trailing Rule operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Trailing Rule Logic.
+              verify: Each exposed Trailing Rule operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete a Trailing Rule through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_trade_rules.py::test_trailing_group_and_rule_logic (1 check, shared with P3-G7-T1) — Trailing Group relationship validated for Trailing Rule, no delete method.
+                outcome: passed
+            P3-G7-T3:
+              id: P3-G7-T3
+              title: Establish Partial Group Logic
+              description: Establish Partial Group Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Partial Group Domain Definition, validating resulting state and its User relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Partial Group data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Partial Group Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Partial Group Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G4-T1
+              constraints: []
+              acceptance: Every exposed Partial Group operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Partial Group Logic.
+              verify: Each exposed Partial Group operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete a Partial Group through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_trade_rules.py::test_partial_group_and_rule_logic (1 check, shared with P3-G7-T4) — create/get validated for Partial Group, no delete method.
+                outcome: passed
+            P3-G7-T4:
+              id: P3-G7-T4
+              title: Establish Partial Rule Logic
+              description: Establish Partial Rule Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Partial Rule Domain Definition, validating resulting state and its Partial Group relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Partial Rule data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Partial Rule Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Partial Rule Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G7-T3
+              constraints: []
+              acceptance: Every exposed Partial Rule operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Partial Rule Logic.
+              verify: Each exposed Partial Rule operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete a Partial Rule through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_trade_rules.py::test_partial_group_and_rule_logic (1 check, shared with P3-G7-T3) — Partial Group relationship validated for Partial Rule, no delete method.
+                outcome: passed
+        P3-G8:
+          id: P3-G8
+          title: Actions and Positions Model Logic
+          description: The Model Logic units for the domain concepts that define how a position is opened and that record every position the system creates.
+          area: Trading action and position Model Logic
+          does: Trading action and position domain concepts are represented as Model Logic units.
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-G8-T1:
+              id: P3-G8-T1
+              title: Establish Action Group Logic
+              description: Establish Action Group Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Action Group Domain Definition, validating resulting state and its User relationship through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Action Group data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Action Group Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Action Group Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationship through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G4-T1
+              constraints: []
+              acceptance: Every exposed Action Group operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Action Group Logic.
+              verify: Each exposed Action Group operation is observed to validate its resulting state and relationship through Model Interface before persisting it through Database Interface, and an attempt to delete an Action Group through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_actions_positions.py::test_action_group_and_action_logic (1 check, shared with P3-G8-T2) — create/get validated for Action Group, no delete method.
+                outcome: passed
+            P3-G8-T2:
+              id: P3-G8-T2
+              title: Establish Action Logic
+              description: Establish Action Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Action Domain Definition, validating resulting state and its Action Group, Asset, Account, Partial Group, and Trailing Group relationships through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Action data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Action Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Action Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationships through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G8-T1
+              - P3-G5-T3
+              - P3-G6-T2
+              - P3-G7-T3
+              - P3-G7-T1
+              constraints: []
+              acceptance: Every exposed Action operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Action Logic.
+              verify: Each exposed Action operation is observed to validate its resulting state and relationships through Model Interface before persisting it through Database Interface, and an attempt to delete an Action through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_actions_positions.py::test_action_group_and_action_logic (1 check, shared with P3-G8-T1) — full relationship set validated for Action, no delete method.
+                outcome: passed
+            P3-G8-T3:
+              id: P3-G8-T3
+              title: Establish Position Logic
+              description: Establish Position Logic, built on the Logic Foundation, exposing create, read-by-identifier, list, update, enable, and disable for the Position Domain Definition, validating resulting state and its User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action relationships through Model Interface and persisting through Database Interface.
+              reason: The Target requires users to be able to add, edit, list, and retrieve Position data.
+              kind: code
+              inputs:
+              - The Logic Foundation
+              - The Position Domain Definition through Model Interface
+              - The Database Interface
+              expected_result: Position Logic exposes create, read-by-identifier, list, update, enable, and disable, each validating the resulting state and relationships through Model Interface and persisting through Database Interface, with delete not exposed because the Target does not authorize it.
+              depends_on:
+              - P3-G3-T1
+              - P3-G4-T1
+              - P3-G4-T2
+              - P3-G5-T2
+              - P3-G6-T2
+              - P3-G7-T1
+              - P3-G7-T3
+              - P3-G8-T1
+              - P3-G8-T2
+              constraints: []
+              acceptance: Every exposed Position operation produces a resulting state Model accepts as valid before it is persisted, and delete is not reachable through Position Logic.
+              verify: Each exposed Position operation is observed to validate its resulting state and relationships through Model Interface before persisting it through Database Interface, and an attempt to delete a Position through Logic is observed to be unavailable.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_logic_actions_positions.py::test_position_logic_validates_full_relationship_set (1 check) — the complete 8-relationship set validated, no delete method.
+                outcome: passed
+        P3-G9:
+          id: P3-G9
+          title: Authentication and Authorization
+          description: Requester identity establishment at the API Interface and the authorization decision Logic makes from it.
+          area: Backend Authentication and Authorization
+          does: Every request establishes its requester identity where Authentication applies, and Logic decides authorization from that identity.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-G9-T1:
+              id: P3-G9-T1
+              title: Establish Request Identity Authentication
+              description: Establish API Interface's authentication capability, validating a submitted credential and establishing the requester's identity in a Request Context for every request that requires it, without exposing the credential value in a response, log, or error.
+              reason: Development activates Authentication for Backend, and Backend Principles require API Interface to establish requester identity in a Request Context whenever Authentication applies.
+              kind: code
+              inputs:
+              - The Model Interface's User Domain Definition and its credential meaning
+              - The Database Interface
+              expected_result: A request carrying a valid credential resolves to the identity of the User it belongs to in a Request Context; a request carrying an invalid or missing credential where authentication is required is rejected before Logic executes, and no response, log, or error ever carries the credential value.
+              depends_on:
+              - P3-G4-T1
+              - P3-G2-T1
+              constraints: []
+              acceptance: A valid credential is observed to establish the correct requester identity, an invalid or missing credential is observed to be rejected before Logic runs, and no observed response, log entry, or error carries the submitted or stored credential value.
+              verify: Presenting a valid credential is observed to produce a Request Context naming the correct User, presenting an invalid or missing credential is observed to be rejected without reaching Logic, and inspecting every response, log entry, and error produced during these checks shows no credential value present.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_auth.py (4 checks) — a valid API key resolves the correct User, a missing or invalid credential raises Unauthenticated, and the failure never carries the submitted credential value.
+                outcome: passed
+            P3-G9-T2:
+              id: P3-G9-T2
+              title: Establish Authorization Decisions in Logic
+              description: Establish Logic's authorization decision for every operation that requires an authenticated identity, deciding from the established Request Context whether the operation is permitted before it executes.
+              reason: Backend Principles require Logic, not API Interface or Database, to decide whether an established identity is authorized for an operation.
+              kind: code
+              inputs:
+              - The Request Context established by authentication
+              - Every Model Logic unit produced in this phase
+              expected_result: Every operation that requires an authenticated identity is observed to have its authorization decided in Logic from the Request Context before the operation executes, never inferred from transport validity alone and never delegated to Database.
+              depends_on:
+              - P3-G9-T1
+              constraints: []
+              acceptance: An operation requiring authentication is never executed by Logic without first deciding, from the Request Context, whether the identity is authorized, and Database is never consulted to make that decision.
+              verify: An authenticated request without the required authorization is observed to be refused by Logic before the operation's effect occurs, and no Database call is observed to occur as part of making that authorization decision.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_auth.py (2 checks) — an unauthenticated Request Context is refused with Unauthorized, an authenticated one is permitted, decided explicitly in Logic without any Database call.
+                outcome: passed
+        P3-G10:
+          id: P3-G10
+          title: API Interface
+          description: The external Backend boundary that receives requests and publishes results for every Model Logic unit produced in this phase.
+          area: Backend API Interface
+          does: Every Model Logic unit's exposed operations are reachable through one versioned, documented, bounded, CORS-protected external boundary.
+          constraints: []
+          task_count: 4
+          tasks:
+            P3-G10-T1:
+              id: P3-G10-T1
+              title: Expose standard Model operations through the API Interface
+              description: Expose, through the API Interface's versioned external boundary, the create, read-by-identifier, list, update, enable, and disable operations for every Model Logic unit produced in this phase, receiving external requests, obtaining applicable public Model types through Model Interface, invoking Logic, and mapping Application Outcomes to external responses.
+              reason: The Target requires users to add, edit, list, and retrieve data for every defined Model, and Backend Principles require API Interface to expose every Target-required capability rather than only a generic subset.
+              kind: code
+              inputs:
+              - Every Model Logic unit produced in this phase
+              - The Model Interface
+              expected_result: Every Model Logic unit's exposed operations are reachable through one versioned external boundary, request input is validated against its transport shape before Logic executes, and every Logic Application Outcome maps to an approved external response.
+              depends_on:
+              - P3-G4-T1
+              - P3-G4-T2
+              - P3-G4-T3
+              - P3-G5-T1
+              - P3-G5-T2
+              - P3-G5-T3
+              - P3-G6-T1
+              - P3-G6-T2
+              - P3-G7-T1
+              - P3-G7-T2
+              - P3-G7-T3
+              - P3-G7-T4
+              - P3-G8-T1
+              - P3-G8-T2
+              - P3-G8-T3
+              - P3-G9-T2
+              constraints: []
+              acceptance: Every Model Logic unit's exposed standard operations are reachable through the external boundary, invalid transport input never reaches Logic, and API Interface never accesses Database directly.
+              verify: Each Model Logic unit's exposed operations are observed to be reachable and to invoke Logic rather than Database directly, malformed transport input is observed to be rejected before Logic executes, and every Logic Application Outcome exercised is observed to map to its approved external response.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_api_operations.py (4 checks) — full create/read/list/update/enable/disable cycle reachable end to end, no delete route registered (405), malformed input rejected (422), missing record returns 404.
+                outcome: passed
+            P3-G10-T2:
+              id: P3-G10-T2
+              title: Publish the machine-readable API contract with versioning
+              description: Publish and keep current a machine-readable description of the API Interface's operations, input shapes, output shapes, and outcomes under its selected versioning strategy, without restating Backend Principles or exposing a credential value in a documented example.
+              reason: Backend Principles require the boundary publishing the external contract to describe it accurately, and Backend Preferences select a versioned, machine-readable API contract.
+              kind: documentation
+              inputs:
+              - The complete set of operations exposed through the API Interface
+              expected_result: A machine-readable API contract exists that accurately describes every exposed operation's input, output, and outcomes under the selected versioning strategy, with no credential value present in any example.
+              depends_on:
+              - P3-G10-T1
+              constraints: []
+              acceptance: The published contract's described operations, input shapes, and output shapes match the implemented API Interface exactly, and no documented example carries a usable credential value.
+              verify: The published contract is observed to match the implemented API Interface's actual operations, inputs, and outputs, and a scan of its content shows no usable credential value in any example.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_api_contract.py (3 checks) — every Model Logic unit's operations present in the live OpenAPI schema, published version matches configured api_version, no credential field present in any Read schema or elsewhere in the contract.
+                outcome: passed
+            P3-G10-T3:
+              id: P3-G10-T3
+              title: Enforce bounded, allowlisted list queries
+              description: Apply the selected pagination strategy to every list operation exposed through the API Interface, and accept only explicitly allowlisted Fields for filtering and sorting, preserving stable result ordering and rejecting an unsupported Field or unbounded request.
+              reason: Backend Principles require every list operation to be bounded and every filtering and sorting capability to be explicit, protecting availability and reliable client navigation.
+              kind: code
+              inputs:
+              - Backend Preferences' pagination, filtering, and sorting defaults
+              - Every list operation exposed in this phase
+              expected_result: Every exposed list operation applies the selected pagination strategy and its bounds, accepts only allowlisted Fields for filtering and sorting, and returns a stable order for repeated identical requests.
+              depends_on:
+              - P3-G10-T1
+              constraints: []
+              acceptance: No exposed list operation returns more than its maximum bound in one response, an unsupported filter or sort Field is rejected rather than silently ignored or passed to storage, and repeating an identical list request returns the same order.
+              verify: A list request exceeding the maximum bound is observed to be capped, a request naming a non-allowlisted filter or sort Field is observed to be rejected, and two identical list requests are observed to return results in the same order.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_api_pagination.py (5 checks) — a request exceeding the maximum bound is rejected, an explicit limit is respected, a non-allowlisted query parameter is rejected, repeated identical requests return the same order, and a cursor correctly continues after the last-seen id.
+                outcome: passed
+            P3-G10-T4:
+              id: P3-G10-T4
+              title: Enforce the CORS allowlist policy
+              description: Apply an allowlist Cross-Origin Resource Sharing policy to the API Interface, sourcing its allowed origins from a Platform Runtime Binding, and never combining a wildcard origin with credentialed access.
+              reason: Backend Preferences select an allowlist CORS policy sourced from Platform, and permitting a wildcard origin together with credentials would defeat the allowlist.
+              kind: code
+              inputs:
+              - The Platform Runtime Binding naming the allowed origins
+              expected_result: A cross-origin request from an allowlisted origin succeeds, a cross-origin request from a non-allowlisted origin is rejected, and no configuration combines a wildcard origin with credentialed access.
+              depends_on:
+              - P3-G10-T1
+              constraints: []
+              acceptance: Only requests from an allowlisted origin receive a successful cross-origin response, a non-allowlisted origin is rejected, and credentialed access is never paired with a wildcard origin.
+              verify: A cross-origin request from an allowlisted origin is observed to succeed, a cross-origin request from a non-allowlisted origin is observed to be rejected, and the resolved CORS configuration is observed to never pair a wildcard origin with credentialed access.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_api_cors.py (3 checks) — an allowlisted origin receives the CORS header, a non-allowlisted origin receives none, and a wildcard origin resolves allow_credentials=False while a concrete origin resolves True.
+                outcome: passed
+        P3-G11:
+          id: P3-G11
+          title: Error Handling
+          description: The mapping from Logic's Application Outcomes and unexpected failures to safe external responses.
+          area: Backend error handling
+          does: Every Application Outcome and unexpected failure maps to a safe, accurate external response.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G11-T1:
+              id: P3-G11-T1
+              title: Map Application Outcomes and unexpected failures safely
+              description: Map every explicit Application Outcome Logic produces to its approved external response, and convert every unexpected failure into a safe generic response carrying a Request Context reference, without ever passing through a raw framework, Database, or supporting-service error, stack trace, or credential value.
+              reason: Backend Principles require expected failures to remain explicit and internal failure details, including credentials, to never cross the API boundary.
+              kind: code
+              inputs:
+              - Every Application Outcome Logic can produce
+              - The Request Context
+              expected_result: Every explicit Application Outcome maps to its approved external response, and an unexpected failure produces a safe generic response referencing the current Request Context, with no internal exception detail, stack trace, or credential value observable in either case.
+              depends_on:
+              - P3-G10-T1
+              constraints: []
+              acceptance: Every Application Outcome exercised maps to its documented external response, an injected unexpected failure never exposes an internal detail or credential value and always carries a Request Context reference, and no successful Application Outcome is ever hidden by error mapping.
+              verify: Each Application Outcome Logic can produce is observed to map to its approved response when exercised, a deliberately injected unexpected failure is observed to produce only a safe generic response with a Request Context reference and no internal detail, and a successful Outcome is observed not to be reported as an error.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_error_handling.py (6 checks) — NotFound/ValidationFailed/Unauthenticated/ConflictOutcome each map to their status code with a request_id, a deliberately injected RuntimeError produces only the safe generic response with no internal detail or credential text, and a success is never reported as an error.
+                outcome: passed
+        P3-G12:
+          id: P3-G12
+          title: Lifecycle and Observability
+          description: Backend's health, readiness, startup, shutdown, request correlation, and safe operational logging.
+          area: Backend lifecycle and observability
+          does: Backend's operational state is observable and its lifecycle is explicit and safe.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-G12-T1:
+              id: P3-G12-T1
+              title: Establish Backend's Runtime Configuration contract, health, readiness, startup, and graceful shutdown
+              description: Define and validate the contract of the Runtime Configuration Backend requires (the required values it needs and their validity rules, sourced from Platform Runtime Bindings), and establish a health signal reporting that the Backend process is running, a readiness signal that reports ready only after that Runtime Configuration and other required dependencies are usable, startup validation that fails fast on a missing or invalid required value, and a graceful shutdown that stops accepting new work while allowing active work to complete or be cancelled within the Platform-provided boundary.
+              reason: Backend Principles require Backend itself to define and validate its Runtime Configuration contract with required values validated before readiness, require health to be distinguished from readiness, and require an explicit, controlled lifecycle so traffic never reaches an unready or terminating process.
+              kind: code
+              inputs:
+              - Platform's Runtime Bindings for Backend's selected Launch Item
+              - The Platform-provided shutdown boundary
+              expected_result: Backend's Runtime Configuration contract exists and is validated at startup; a health signal reports the process is running; a readiness signal reports ready only once every required configuration value and dependency is confirmed usable; a missing or invalid required configuration value fails startup before readiness is ever reported; and shutdown stops new work while letting active work finish or be cancelled within the provided boundary.
+              depends_on:
+              - P3-G2-T1
+              constraints: []
+              acceptance: Health and readiness are observed as distinct signals, readiness is observed to report not-ready until every required configuration value and dependency is usable, a missing or invalid required configuration value is observed to fail startup rather than surface later, and neither signal nor any startup failure exposes a secret or private connection detail.
+              verify: Health is observed to report running independently of dependency state, readiness is observed to become ready only after every required configuration value and dependency is usable, startup with a missing or invalid required configuration value is observed to fail before readiness, and inspecting both signals' output and the startup failure shows no secret or private connection detail.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_lifecycle.py (6 checks) — health/ready independently correct, readiness False before lifespan startup runs, missing required cors_allowed_origins fails Settings construction immediately, no secret or connection string appears in readiness output, and shutdown releases the Database Interface's executor.
+                outcome: passed
+            P3-G12-T2:
+              id: P3-G12-T2
+              title: Establish request correlation and safe operational logging
+              description: Attach a non-secret request identifier to every request's Request Context, accepting a valid incoming identifier or generating one when absent, and record applicable operational events and safe error context correlated by that identifier, excluding every credential and secret value from every log record.
+              reason: Backend Principles require every request to carry a correlatable, non-secret identifier and require observability to never expose data or change an Application Outcome.
+              kind: code
+              inputs:
+              - The Request Context
+              - Every Application Outcome and unexpected failure produced in this phase
+              expected_result: Every request carries a request identifier available in its Request Context and, when applicable, its error response, every recorded operational event is correlated by that identifier, and no log record contains a credential, secret, or other sensitive value.
+              depends_on:
+              - P3-G11-T1
+              constraints: []
+              acceptance: Every observed request carries a request identifier that appears in its correlated log records and, for an error, in its response, and no log record produced during these checks contains a credential or secret value.
+              verify: A request without an incoming identifier is observed to receive a generated one appearing in its logs and, for an error, its response, and inspecting the log records produced during these checks shows no credential or secret value present.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_observability.py (5 checks) — a generated request id appears in the response header, an incoming id is honored, log records are correlated by the id, an error response carries the same id as its header, and no credential value appears in any log record produced while creating an Instance with real-looking credentials.
+                outcome: passed
+        P3-G13:
+          id: P3-G13
+          title: Backend Public Interface Verification
+          description: The complete, verified public boundary through which every capability produced in this phase is reached.
+          area: Backend Public Interface Verification
+          does: Every capability produced in this phase is reachable through one verified, minimal Backend public boundary.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G13-T1:
+              id: P3-G13-T1
+              title: Verify the complete Backend Public Interface
+              description: Confirm that external Behaviour is reachable only through the API Interface, that the Backend process starts only through its official executable entry point, and that verification uses only the supported application construction surface, with every internal Logic unit, Model Interface, Database Interface, and Runtime Configuration value remaining private.
+              reason: Backend Principles require Backend to expose one minimal Public Interface so internal organization can change without creating hidden consumers, and this must be demonstrated across the complete set of capabilities produced in this phase, not only individually.
+              kind: code
+              inputs:
+              - The API Interface
+              - Every Model Logic unit
+              - The Logic Foundation
+              - The Database Interface
+              - The Model Interface
+              - The official executable entry point
+              expected_result: The complete Backend boundary is verified as one coherent whole, where every capability produced in this phase is reachable through the API Interface via the official executable entry point, and no internal Logic unit, interface, or Runtime Configuration value is reachable by a consumer outside Backend.
+              depends_on:
+              - P3-G10-T2
+              - P3-G10-T3
+              - P3-G10-T4
+              - P3-G11-T1
+              - P3-G12-T1
+              - P3-G12-T2
+              - P3-G9-T2
+              constraints: []
+              acceptance: Every capability produced in this phase is exercised successfully through the official executable entry point and the API Interface alone, and no successful external interaction is observed to depend on an internal Logic, Model Interface, Database Interface, or Runtime Configuration resource.
+              verify: The application constructed only through its supported construction surface and official executable entry point is observed to serve every capability produced in this phase through the API Interface, and no external interaction exercised is observed to require an internal resource outside that boundary.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: uv run pytest tests/test_public_interface.py (4 checks) — health/ready and every Model Logic unit's list endpoint reachable through the app built only via create_app(), no file under database/ or model/ imports backend internals, construction succeeds through the supported surface, and Settings never leak into a response body.
+                outcome: passed
+        P3-G14:
+          id: P3-G14
+          title: Component Documentation
+          description: The Backend component's operational documentation.
+          area: Backend component operational documentation
+          does: The Backend component has complete, accurate, and safe operational documentation.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G14-T1:
+              id: P3-G14-T1
+              title: Produce the Backend component README
+              description: Produce the Backend component's README, explaining the component, its actual public surface and structure, setup, installation, configuration, use, run procedure, verification, and troubleshooting, with accurate executable examples drawn from the resolved technical selections, and using placeholders rather than usable secret values wherever a credential or authentication example is shown.
+              reason: Every generated Participating Component must have complete, safe, and operational documentation.
+              kind: documentation
+              inputs:
+              - The complete Backend public boundary produced in this phase
+              - The resolved Backend Component Profile, Language Item, and Platform reference
+              expected_result: A README exists for the Backend component accurately documenting its actual public surface, setup, configuration, use, run procedure, verification, and troubleshooting, with no secret value exposed.
+              depends_on:
+              - P3-G13-T1
+              constraints: []
+              acceptance: The README explains the Backend component's actual public surface and structure, setup, installation, configuration, use, run procedure, verification, and troubleshooting with accurate executable examples, and exposes no usable credential, token, or secret value.
+              verify: The README's documented setup, installation, run, and usage examples are observed to run successfully against the actual Backend component, its described public surface is observed to match the component's actual public surface, and its content is observed to carry no usable credential, token, or secret value.
+              status: done
+              log:
+              - at: '2026-09-14T11:11:24Z'
+                event: completed
+                check: 'uv run pytest tests/test_readme.py (6 checks) — required sections present, delete-exclusion documented, documented endpoints match the live OpenAPI schema, documented configuration variables match Settings.model_fields exactly, documented commands match the real ones, secret scan clean. Whole-suite gate from a clean rebuild: 73 passed, ruff check/format clean, pyright 0 errors.'
                 outcome: passed
