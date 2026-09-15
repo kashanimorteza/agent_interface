@@ -57,3 +57,9 @@ content:
         scope: "README.md at the project root and every Component or package boundary."
         authority: "non-authoritative"
         use: "Orientation, public usage, and consistency verification only; current Interface and Target owning sources take precedence."
+    understanding_sources:
+      interface: ".interface/foundation/interface.md"
+      target:
+        - ".interface/target/non-technical.md"
+        - ".interface/target/technical.md"
+      target_precedence: "non-technical definition establishes Human intent; technical definition records its corresponding technical definition without changing that intent"

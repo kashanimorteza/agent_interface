@@ -2,23 +2,23 @@
 
 ## Purpose
 
-Provide independent evidence-based assurance of current phase Plans and, when present, their implemented results.
+Bring the selected phase's current understanding, Plan, implementation, and generated Source into alignment through independent review and owner-directed reconciliation.
 
 ## Responsibility
 
-Reconstruct current Interface Understanding and Target Understanding; assure that each selected phase Plan completely and correctly represents them; coordinate Planning when a Plan is missing, stale, incomplete, or invalid; independently recheck the reconciled Plan; and judge existing implementation and evidence against the assured Plan and current authorities. Reviewing records Findings and exact outcomes. It never writes Plan content or repairs implementation.
+Reconstruct current Interface Understanding and Target Understanding; compare the current Plan, implementation, generated Source, and evidence with those authorities; and coordinate Configure, Planning, and Developing through their own Skills whenever reconciliation is required. Independently recheck every resulting state and continue until the current authorities and outputs are aligned or progress is blocked. Reviewing records Findings and exact outcomes and never edits another operation's records or Source directly.
 
 ## Trigger
 
-Activate explicitly for zero or more phase selections, after Planning as a Plan gate, as an assessment of existing work, or as an independent final gate after Development.
+Activate explicitly for zero or more phase selections, after Planning or Development, after a Component or Target change, as an assessment of existing work, or as a final convergence gate.
 
 ## Inputs
 
-Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Implementation Principles and Preferences, synchronized Runtime rules, Plans, State, prior Review records, implementation, public interfaces, and recorded evidence. Never read Agent Module sources.
+Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Implementation Principles and Preferences, synchronized Runtime rules, Configure, Planning, and Developing capabilities, Plans, State, prior Review records, implementation, generated Source, public interfaces, and recorded evidence. Never read Agent Module sources.
 
 ## Outputs
 
-Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, missing-evidence records, delegated Planning outcomes, an obligation-coverage summary, and an evidence-first phase report. When no implementation exists, record Implementation Assurance as `not reviewed` and aggregate Review State as `plan satisfied` only when Plan Assurance passes. Do not persist the transient obligation ledgers, update Task progress, or change active Workflow mode.
+Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, missing-evidence records, delegated Configure/Planning/Developing outcomes, an obligation-coverage summary, and an evidence-first phase report. When no implementation exists, record Implementation Assurance as `not reviewed` and aggregate Review State as `plan satisfied` only when Plan Assurance passes. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
 
 ## Required Understanding
 
@@ -26,7 +26,7 @@ Reconstruct Interface Understanding and current Target Understanding on every in
 
 ## Authority
 
-Observe and execute non-repairing verification; invoke the current Planning Skill for the same selected phase when Plan reconciliation is required; and write only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History. Planning retains all authority over Plan content. Never modify implementation, Target, Plan content directly, Task progress, or another operation's records, and never invoke Development.
+Observe and independently verify; invoke Configure when current requirements or Config readiness require reconciliation, Planning when the Plan requires reconciliation, and Developing when implementation or generated Source requires reconciliation. Write only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History. Each invoked Skill retains authority over its own records and outputs. Never modify implementation, Target, Plan content, Task progress, or another operation's records directly.
 
 ## Workflow Invariants
 
@@ -43,6 +43,11 @@ Observe and execute non-repairing verification; invoke the current Planning Skil
 - Ground every Finding in the expected condition, actual observation, and exact location or observable result. Record absent Plan coverage as a Gap and absent observable proof as missing evidence.
 - Reconcile prior Findings only through current observation. A Finding persists until Review proves it resolved or the Human accepts it.
 - Complete one phase's assurance result before processing the next selected phase. A standalone Review may continue to later independent phases when one phase is unsatisfied or inconclusive; a coordinating Skill may impose a stricter stopping gate.
+- When current authorities or evidence changed since the last assurance, do not carry forward a prior outcome merely because the Plan revision is unchanged; rebuild Understanding and reassess the affected phase.
+- If Config or Environment readiness is stale or insufficient for the current phase, invoke Configure before Plan or Implementation Assurance.
+- If Plan coverage is stale or incomplete, invoke Planning; if implementation or generated Source no longer satisfies the reconciled Plan, invoke Developing through its own Contract.
+- After every delegated reconciliation, discard prior observations and rerun the relevant assurance stages against fresh Understanding and evidence.
+- Continue the reconciliation cycle only while it closes or materially advances a Finding. Stop and report a blocker when a cycle repeats, makes no observable progress, remains inconclusive, or requires Human judgment.
 
 ## Verification
 
@@ -54,8 +59,8 @@ Repeated Review reconstructs both Understandings, preserves stable Findings and 
 
 ## Stopping Conditions
 
-Stop the complete run before observation or delegation on invalid input. Stop an affected phase before Implementation Assurance when Plan Assurance cannot be satisfied. Mark an affected assurance inconclusive when required evidence cannot be observed or authorities conflict; never convert uncertainty into satisfaction, direct Plan editing, or an implementation repair.
+Stop the complete run before observation or delegation on invalid input. Stop an affected phase before Implementation Assurance when Plan Assurance cannot be satisfied. Mark an affected assurance inconclusive when required evidence cannot be observed or authorities conflict; never convert uncertainty into satisfaction or directly edit another operation's records or implementation.
 
 ## Runtime Realization
 
-A native adapter exposes optional multi-phase input, resolves and invokes the current Planning implementation directly when Plan reconciliation is required, uses read and verification capabilities without Development authority, and reports phase selection, Plan Assurance, delegated Planning, Implementation Assurance, Findings, missing evidence, aggregate outcomes, and records changed.
+A native adapter exposes optional multi-phase input, resolves and invokes the current Configure, Planning, and Developing implementations directly when reconciliation is required, and reports phase selection, every delegated outcome, both assurances, Findings, missing evidence, convergence status, aggregate outcomes, and records changed.

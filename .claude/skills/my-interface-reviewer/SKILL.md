@@ -1,6 +1,6 @@
 ---
 name: my-interface-reviewer
-description: Assure selected Target phase Plans and any existing implementation, or every enabled phase when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Coordinates Planning for Plan reconciliation and never repairs implementation.
+description: Assure selected Target phase Plans and implementations, or every enabled phase when none is specified, and coordinate owner Skills to reconcile changed work until current authorities and generated outputs converge.
 argument-hint: "[phase-number ...]"
 disable-model-invocation: false
 ---
@@ -11,12 +11,12 @@ This file is the self-contained Claude Code realization of the portable `reviewi
 
 ## Role
 
-Provide two independent gates for every selected phase:
+Provide two independent gates and a convergence cycle for every selected phase:
 
 1. **Plan Assurance** — establish that its Plan completely and correctly represents current Interface and Target Understanding.
 2. **Implementation Assurance** — when implementation exists, establish that the result and evidence satisfy the assured Plan and the same current authorities.
 
-An individual Review pass never changes what it judges. When Plan Assurance fails, invoke the current Planning Skill as the sole Plan owner, preserve the original Findings, and then perform a new independent Review pass. Never write Plan content directly and never invoke Development or repair Source.
+An individual Review pass never edits what it judges. When current Config, Plan, or implementation is no longer aligned, invoke Configure, Planning, or Developing through its owning Skill, preserve the original Findings, and then perform a new independent Review pass. Never write another operation's content directly.
 
 ## Input
 
@@ -34,7 +34,7 @@ Never introduce a third `Project Understanding`. Plan, State, Review Config, imp
 
 ## Workflow
 
-Resolve the current synchronized Planning Skill, Review, Plan and State authorities, applicable Implementation Component authorities, operational records, implementation, public interfaces, and Runtime verification capabilities.
+Resolve the current synchronized Configure, Planning, Developing, Review, Plan and State authorities, applicable Implementation Component authorities, operational records, implementation, generated Source, public interfaces, and Runtime verification capabilities.
 
 Process each selected phase as follows:
 
@@ -48,13 +48,16 @@ Process each selected phase as follows:
 8. If implementation exists, build a separate transient Implementation Assurance ledger from the assured Plan, current Target, applicable Component obligations, acceptance clauses, verification conditions, and recorded evidence.
 9. Inspect Source, public interfaces, durable checks, and evidence. Observe each condition independently and judge whether the implementer's check establishes it; use adversarial or independent cases where practical.
 10. Record Findings with expected condition, actual observation, and exact evidence. Missing Plan coverage is a Gap; missing proof is missing evidence. Reconcile previous Findings only through current observation.
-11. Record aggregate Review State as `satisfied` only when both Plan Assurance and applicable Implementation Assurance are satisfied. Otherwise record the exact `plan satisfied`, `not satisfied`, or `inconclusive` result.
+11. If current Config or Environment readiness is insufficient, invoke Configure and restart assurance from fresh observations.
+12. If implementation or generated Source no longer satisfies the assured Plan, invoke Developing through its own Contract, discard prior observations, and restart assurance.
+13. Continue reconciliation only while a cycle closes or materially advances a Finding. Stop and report a blocker on repetition, no observable progress, inconclusive evidence, or required Human judgment.
+14. Record aggregate Review State as `satisfied` only when both Plan Assurance and applicable Implementation Assurance are satisfied. Otherwise record the exact `plan satisfied`, `not satisfied`, or `inconclusive` result.
 
 Complete one selected phase before moving to the next. In a standalone invocation, an unsatisfied phase does not prevent reviewing a later phase whose evidence is independent. A coordinator such as Implement may require the current phase to pass before advancing.
 
 ## Boundaries
 
-Review writes only Review-owned Findings, assurance results, aggregate Review State, and Review History. Planning writes any Plan reconciliation under its own Contract. Do not modify Source, Target, Plan content directly, Task progress, or another operation's records. Do not invoke Developing.
+Review writes only Review-owned Findings, assurance results, aggregate Review State, and Review History. Configure, Planning, and Developing write their own records and outputs under their Contracts. Do not modify Source, Target, Plan content, Task progress, or another operation's records directly.
 
 ## Report
 
@@ -65,4 +68,4 @@ Report in this order:
 3. **Implementation Assurance** — `not reviewed` when absent; otherwise conditions observed, independent evidence, and result.
 4. **Findings and missing evidence** — grouped by phase and assurance stage, ordered by severity.
 5. **Recorded outcomes** — Plan outcome, Implementation outcome, aggregate Review State, reconciled Findings, and History.
-6. **Next step** — Development when only the Plan is satisfied, correction through Developing when implementation Findings remain, or the next eligible phase when both gates pass.
+6. **Next step** — the required owner Skill for reconciliation, another Review cycle, or the next eligible phase when both gates pass.

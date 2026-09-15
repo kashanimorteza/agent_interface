@@ -49,35 +49,42 @@ content:
           name: "my-interface-configure"
           path: ".claude/skills/my-interface-configure/SKILL.md"
           contract: ".interface/agent/skill/contracts/configure.md"
-          architecture_contract: "Agent Skill Principle 4"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
           required: true
         planning:
           name: "my-interface-planning"
           path: ".claude/skills/my-interface-planning/SKILL.md"
           contract: ".interface/agent/skill/contracts/planning.md"
-          architecture_contract: "Agent Skill Principle 5"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
           required: true
         developing:
           name: "my-interface-developing"
           path: ".claude/skills/my-interface-developing/SKILL.md"
           contract: ".interface/agent/skill/contracts/developing.md"
-          architecture_contract: "Agent Skill Principle 6"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
           required: true
         reviewing:
           name: "my-interface-reviewer"
           path: ".claude/skills/my-interface-reviewer/SKILL.md"
           contract: ".interface/agent/skill/contracts/reviewing.md"
-          architecture_contract: "Agent Skill Principle 7"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
           required: true
+          coordination:
+            allowed_skills:
+              - "project_skills.core_workflow.configure"
+              - "project_skills.core_workflow.planning"
+              - "project_skills.core_workflow.developing"
+            scope: "same selected phase and current reconciliation Finding"
+            authority: "delegated invocation only; each Skill retains ownership of its records and outputs"
         launch:
           name: "my-interface-launch"
           path: ".claude/skills/my-interface-launch/SKILL.md"
           contract: ".interface/agent/skill/contracts/launch.md"
-          architecture_contract: "Agent Skill Principle 8"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
           required: true
       supporting:
@@ -85,28 +92,28 @@ content:
           name: "my-interface-implement"
           path: ".claude/skills/my-interface-implement/SKILL.md"
           contract: ".interface/agent/skill/contracts/implement.md"
-          architecture_contract: "Agent Skill Principle 9"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "explicit-human"
           required: true
         reset:
           name: "my-interface-reset"
           path: ".claude/skills/my-interface-reset/SKILL.md"
           contract: ".interface/agent/skill/contracts/reset.md"
-          architecture_contract: "Agent Skill Principle 10"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "explicit-human"
           required: true
         skill-installer:
           name: "my-interface-skill-installer"
           path: ".claude/skills/my-interface-skill-installer/SKILL.md"
           contract: ".interface/agent/skill/contracts/skill-installer.md"
-          architecture_contract: "Agent Skill Principle 11"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "explicit-human"
           required: true
         agent-sync:
           name: "my-interface-agent-sync"
           path: ".claude/skills/my-interface-agent-sync/SKILL.md"
           contract: ".interface/agent/skill/contracts/agent-sync.md"
-          architecture_contract: "Agent Skill Principle 15"
+          architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "direct-explicit-human-only"
           model_invocation: "disabled"
           delegated_invocation: "disabled"
@@ -116,19 +123,19 @@ content:
         fastapi:
           name: "fastapi"
           path: ".claude/skills/fastapi/SKILL.md"
-          architecture_contract: "Agent Skill Principle 12"
+          architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when relevant"
           required: false
         typer:
           name: "typer"
           path: ".claude/skills/typer/SKILL.md"
-          architecture_contract: "Agent Skill Principle 13"
+          architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when relevant"
           required: false
         library-skills:
           name: "library-skills"
           path: ".claude/skills/library-skills/SKILL.md"
-          architecture_contract: "Agent Skill Principle 14"
+          architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when package capability discovery is relevant"
           required: false
     user_skills: {}
