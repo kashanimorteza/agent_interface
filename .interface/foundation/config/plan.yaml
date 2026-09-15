@@ -24,5 +24,431 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 0
-  plans: {}
+  task_count: 19
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      revision: 1
+      target: "model"
+      does: "Implement the independent Model layer and its reusable package exposing every Target-defined Domain Definition, publishing storage-relevant metadata for Database consumption."
+      constraints: []
+      task_count: 19
+      groups:
+
+        P1-G-foundation:
+          id: "P1-G-foundation"
+          title: "Model Foundation, Public Interface, and Documentation"
+          description: "Establishes the shared mechanisms every Domain Definition builds on, publishes them as one Public Interface, and proves and documents the resulting package."
+          area: "Shared Model Foundation and Public Interface"
+          does: "A shared Model Foundation exists, every Domain Definition is reachable through one Public Interface, package-level behavior is proven, and the Component is documented."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-T-establish-foundation:
+              id: "P1-T-establish-foundation"
+              title: "Establish the shared Model Foundation"
+              description: "Create the technology-independent common foundation that gives every concrete Domain Definition realization shared validation, serialization, and metadata-publishing mechanisms, without owning, injecting, or requiring any Field or Domain Relationship."
+              reason: "Every Domain Definition needs consistent cross-cutting mechanisms without duplicating them or acquiring shared fields."
+              kind: "code"
+              inputs: ["Model Component Profile and applicable Language Item"]
+              expected_result: "A reusable Model Foundation that concrete Domain Definitions build on for validation, serialization, and metadata publication."
+              depends_on: []
+              constraints: []
+              acceptance: "Every Domain Definition realized afterward receives foundation mechanisms without inheriting domain fields or relationships from the foundation itself."
+              verify: "The foundation publishes validation, serialization, and metadata-publishing behavior usable by an independent Domain Definition, and imposes no field or relationship on it."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Constructed the shared Model Foundation (DomainModel, PersistenceContract, FieldContract, RelationshipContract); confirmed every Domain Definition built on it inherits validation, serialization, and metadata publication with no imposed field or relationship."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+                - event: "reconciled Finding P1-F1"
+                  check: "Replaced FieldContract's has_default boolean flag with a default field that publishes the resolved default value itself, per Model Preferences implementation.persistence_contract.field_metadata.default. Updated every Domain Definition's declared default (is_active, decimal_digits, point_size, digits, balance, profit, is_executed) to publish its actual value, added covering assertions, and re-ran the full suite (uv run pytest: 81 passed; ruff check/format: clean; pyright: 0 errors)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:40:00Z"
+            P1-T-publish-public-interface:
+              id: "P1-T-publish-public-interface"
+              title: "Publish the Model Public Interface"
+              description: "Expose every authoritative Domain Definition through one explicit, stable Public Interface with an unambiguous public identity per Domain Definition, keeping private organization separate."
+              reason: "Consumers must depend on a stable public surface rather than private internal resources."
+              kind: "code"
+              inputs: ["Every completed Domain Definition"]
+              expected_result: "One coherent, documented Public Interface exposing every Domain Definition."
+              depends_on: ["P1-T-define-user", "P1-T-define-trading-platform", "P1-T-define-instance", "P1-T-define-currency", "P1-T-define-broker", "P1-T-define-asset", "P1-T-define-account-group", "P1-T-define-account", "P1-T-define-trailing-group", "P1-T-define-trailing-rule", "P1-T-define-partial-group", "P1-T-define-partial-rule", "P1-T-define-action-group", "P1-T-define-action", "P1-T-define-position"]
+              constraints: []
+              acceptance: "Each Domain Definition is reachable through the Public Interface with one unambiguous identity, and no consumer needs Model's private resources."
+              verify: "The Public Interface exposes every Domain Definition originally declared by the Target, each under one unambiguous identity."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Exposed all 15 Domain Definitions through the model package's top-level public surface; confirmed each is reachable under one unambiguous identity (tests/test_public_interface.py, 3 tests passed)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-verify-package-behavior:
+              id: "P1-T-verify-package-behavior"
+              title: "Verify Model package behavior"
+              description: "Verify the realized Model package's public interface, validation behavior, and serialization and schema-generation behavior across every Domain Definition against current Target and Model authorities."
+              reason: "Behavior-level proof is required beyond individual Domain Definition checks to confirm the package functions as one coherent, consumable boundary."
+              kind: "verification"
+              inputs: ["Published Model Public Interface"]
+              expected_result: "Demonstrated evidence that the Model package's public surface, validation, and serialization and schema-generation behavior are correct across every Domain Definition."
+              depends_on: ["P1-T-publish-public-interface"]
+              constraints: []
+              acceptance: "Every Domain Definition is reachable through the Public Interface, rejects Intrinsic Rule violations, and produces correct serialized output and schema for its declared fields."
+              verify: "Exercising the Model package's public surface for every Domain Definition demonstrates correct validation of intrinsic constraints and correct serialization and schema generation."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Ran the full verification suite (uv run pytest): 81 tests covering public-interface completeness, validation behavior, and serialization/schema generation across every Domain Definition, all passed. Also ran uv run ruff check, uv run ruff format --check, and uv run pyright: zero findings."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-document-model:
+              id: "P1-T-document-model"
+              title: "Document the Model Component"
+              description: "Produce the Model Component's root documentation explaining its actual public surface, structure, setup, configuration, use, verification, troubleshooting, and active capabilities, with accurate examples using the resolved technology."
+              reason: "Every Participating Component requires complete, safe, operational documentation so it can be understood and used without inspecting private implementation."
+              kind: "documentation"
+              inputs: ["Published Model Public Interface", "Resolved Model technical selections"]
+              expected_result: "Root documentation for the Model Component that accurately describes its current public behavior and use."
+              depends_on: ["P1-T-publish-public-interface"]
+              constraints: []
+              acceptance: "The documentation is consistent with the Model Component's actual public behavior, includes no usable secret, and covers setup, configuration, use, verification, and troubleshooting."
+              verify: "The documentation's described public surface and usage examples match the Model Component's actual realized behavior."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Authored the Model Component's root README covering public surface, setup, use, verification, troubleshooting, and active capabilities with accurate uv-based examples."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+
+        P1-G-user-connections:
+          id: "P1-G-user-connections"
+          title: "User Identity and Trading-Platform Connections"
+          description: "Domain Definitions that identify users and how the system connects to and prices trading platforms, brokers, and assets."
+          area: "User identity and trading-platform connection configuration"
+          does: "Users, Trading Platforms, connection Instances, Currencies, Brokers, and Assets exist as authoritative Domain Definitions."
+          constraints: []
+          task_count: 6
+          tasks:
+            P1-T-define-user:
+              id: "P1-T-define-user"
+              title: "Define the User Domain Definition"
+              description: "Define the User Domain Definition with its declared identity, name and username uniqueness, active status, optional description, and its password and API key fields classified as credentials requiring hash storage at rest."
+              reason: "The User concept is the independent identity every other user-owned Domain Definition and multi-user separation in the Target depends on."
+              kind: "code"
+              inputs: ["Target's User definition"]
+              expected_result: "A persistent User Domain Definition exposing id, name, username, password, api_key, is_active, and description, with name and username each unique, and password and api_key declared as credentials requiring hash storage."
+              depends_on: ["P1-T-establish-foundation"]
+              constraints: []
+              acceptance: "Every declared User field, its nullability, uniqueness, default, and credential classification match the Target exactly, and the Domain Definition is usable independently of persistence technology."
+              verify: "The realized User Domain Definition validates and serializes data through its public surface using exactly the declared fields, rejects invalid values for non-nullable and unique-scoped fields, and its published metadata marks password and api_key for hash storage."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized User with declared fields, name/username uniqueness, and password/api_key classified for hash storage; verified via tests/test_user.py (5 tests: construction/defaults, unknown-field rejection, required-field enforcement, persistence-contract metadata, serialization/schema)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-trading-platform:
+              id: "P1-T-define-trading-platform"
+              title: "Define the Trading Platform Domain Definition"
+              description: "Define the Trading Platform Domain Definition identifying a supported trading API standard by its unique display name and its implementation-selecting code, together with active status and optional description."
+              reason: "Every Instance and Position in the Target selects its trading API standard through this Domain Definition, and the Model must give that selection one authoritative meaning independent of any concrete exchange or broker."
+              kind: "code"
+              inputs: ["Target's Trading Platform definition"]
+              expected_result: "A persistent Trading Platform Domain Definition exposing id, name, code, is_active, and description, with name unique."
+              depends_on: ["P1-T-establish-foundation"]
+              constraints: []
+              acceptance: "Every declared field, its nullability, uniqueness, and default match the Target exactly."
+              verify: "The realized Trading Platform Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces name uniqueness at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized TradingPlatform with declared fields and name uniqueness; verified via tests/test_trading_platform.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-instance:
+              id: "P1-T-define-instance"
+              title: "Define the Instance Domain Definition"
+              description: "Define the Instance Domain Definition representing a user-owned connection to a Trading Platform, including its optional technical connection fields, its relationships to its owning User and selected Trading Platform, the uniqueness of name within a user, and the encrypted-storage classification of its password and API key credentials."
+              reason: "The Target requires a connection concept separate from the funded Account, and every Account depends on exactly one Instance for its technical Trading Platform connection."
+              kind: "code"
+              inputs: ["Target's Instance definition"]
+              expected_result: "A persistent Instance Domain Definition exposing id, user_id, trading_platform_id, name, ip, username, password, api_key, is_active, and description, relating one User and one Trading Platform, unique per user by name, with password and api_key declared as credentials requiring encrypted storage."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-user", "P1-T-define-trading-platform"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, uniqueness, and credential classification matches the Target exactly, including that the selected Trading Platform's required connection fields are represented so their presence can be enforced."
+              verify: "The realized Instance Domain Definition validates and serializes data through its public surface using exactly the declared fields and relationships, and its published metadata marks password and api_key for encrypted storage."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized Instance with declared fields, optional technical connection fields, User/TradingPlatform relationships, per-user name uniqueness, and password/api_key classified for encrypted storage; verified via tests/test_instance.py (6 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-currency:
+              id: "P1-T-define-currency"
+              title: "Define the Currency Domain Definition"
+              description: "Define the Currency Domain Definition owned by a User, identifying its standard three-letter code, display symbol, associated country or region, and monetary decimal precision, unique per user by code."
+              reason: "Accounts need an authoritative, user-scoped currency concept for their base currency."
+              kind: "code"
+              inputs: ["Target's Currency definition"]
+              expected_result: "A persistent Currency Domain Definition exposing id, user_id, code, symbol, country, decimal_digits, is_active, and description, relating one User, unique per user by code."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-user"]
+              constraints: []
+              acceptance: "Every declared field, nullability, default, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Currency Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces the per-user code uniqueness at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized Currency with declared fields, per-user code uniqueness, and the 3-character code constraint; verified via tests/test_currency.py (6 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-broker:
+              id: "P1-T-define-broker"
+              title: "Define the Broker Domain Definition"
+              description: "Define the Broker Domain Definition owned by a User, identifying its display name independently of any one Trading Platform, unique per user by name."
+              reason: "Assets and Accounts reference a Broker independently of the Trading Platform used to reach it."
+              kind: "code"
+              inputs: ["Target's Broker definition"]
+              expected_result: "A persistent Broker Domain Definition exposing id, name, user_id, is_active, and description, relating one User, unique per user by name."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-user"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Broker Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces the per-user name uniqueness at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized Broker with declared fields and per-user name uniqueness; verified via tests/test_broker.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-asset:
+              id: "P1-T-define-asset"
+              title: "Define the Asset Domain Definition"
+              description: "Define the Asset Domain Definition representing one tradable instrument provided by a Broker, identifying its symbol, category, point size, and price decimal digits, unique per broker by symbol."
+              reason: "Actions and Positions select the Asset being traded, and the system needs the complete set of available tradable assets with the precision data needed to interpret their prices."
+              kind: "code"
+              inputs: ["Target's Asset definition"]
+              expected_result: "A persistent Asset Domain Definition exposing id, broker_id, symbol, category, point_size, digits, is_active, and description, relating one Broker, unique per broker by symbol."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-broker"]
+              constraints: []
+              acceptance: "Every declared field, nullability, default, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Asset Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces the per-broker symbol uniqueness at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized Asset with declared fields and per-broker symbol uniqueness; verified via tests/test_asset.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+
+        P1-G-accounts:
+          id: "P1-G-accounts"
+          title: "Trading Account Organization"
+          description: "Domain Definitions that organize and represent funded trading accounts."
+          area: "Trading account organization"
+          does: "Account Groups and funded Accounts exist as authoritative Domain Definitions."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-T-define-account-group:
+              id: "P1-T-define-account-group"
+              title: "Define the Account Group Domain Definition"
+              description: "Define the Account Group Domain Definition owned by a User, providing an independent grouping for that User's trading Accounts, unique per user by name."
+              reason: "Accounts must be organized under a User-owned group before an Account can belong to one."
+              kind: "code"
+              inputs: ["Target's Account Group definition"]
+              expected_result: "A persistent Account Group Domain Definition exposing id, user_id, name, is_active, and description, relating one User, unique per user by name."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-user"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Account Group Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces the per-user name uniqueness at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized AccountGroup with declared fields and per-user name uniqueness; verified via tests/test_account_group.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-account:
+              id: "P1-T-define-account"
+              title: "Define the Account Domain Definition"
+              description: "Define the Account Domain Definition representing one funded trading account, identifying its unique name, its Account Group, Broker, Instance, and base Currency relationships, its account-level login credentials with password classified for encrypted storage, its leverage, balance, and account type, and the rule that the same credential value must not be duplicated between an Instance and its Account unless the selected Trading Platform explicitly requires it in both roles."
+              reason: "The Account is the funded entity through which the system executes trades and launches positions, and every dependent rule set and position references it."
+              kind: "code"
+              inputs: ["Target's Account definition"]
+              expected_result: "A persistent Account Domain Definition exposing id, name, group_id, broker_id, instance_id, base_currency_id, username, password, leverage, balance, account_type, is_active, and description, relating one Account Group, one Broker, one Instance, and one base Currency, globally unique by name, unique by the combination of group, broker, and instance, and declaring password for encrypted storage."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-account-group", "P1-T-define-broker", "P1-T-define-instance", "P1-T-define-currency"]
+              constraints: []
+              acceptance: "Every declared field, nullability, default, relationship, uniqueness, and credential classification matches the Target exactly, including the Instance/Account credential-duplication rule."
+              verify: "The realized Account Domain Definition validates and serializes data through its public surface using exactly the declared fields and relationships, enforces its declared uniqueness constraints at the domain level where declared, and its published metadata marks password for encrypted storage."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized Account with declared fields, AccountGroup/Broker/Instance/Currency relationships, global name uniqueness, group/broker/instance composite uniqueness, and password classified for encrypted storage; verified via tests/test_account.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+
+        P1-G-risk-rules:
+          id: "P1-G-risk-rules"
+          title: "Trailing and Partial-Close Rule Sets"
+          description: "Domain Definitions for Stop Loss/Take Profit trailing adjustments and partial position closing."
+          area: "Trailing and partial-close rule sets"
+          does: "Trailing Groups, Trailing Rules, Partial Groups, and Partial Rules exist as authoritative Domain Definitions."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-T-define-trailing-group:
+              id: "P1-T-define-trailing-group"
+              title: "Define the Trailing Group Domain Definition"
+              description: "Define the Trailing Group Domain Definition owned by a User, providing an independent group for organizing the Trailing Rules that manage Stop Loss and Take Profit adjustments, unique per user by name."
+              reason: "Every Trailing Rule belongs to exactly one Trailing Group, and Actions and Positions reference a Trailing Group as their rule set."
+              kind: "code"
+              inputs: ["Target's Trailing Group definition"]
+              expected_result: "A persistent Trailing Group Domain Definition exposing id, user_id, name, is_active, and description, relating one User, unique per user by name."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-user"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Trailing Group Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces the per-user name uniqueness at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized TrailingGroup with declared fields and per-user name uniqueness; verified via tests/test_trailing_group.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-trailing-rule:
+              id: "P1-T-define-trailing-rule"
+              title: "Define the Trailing Rule Domain Definition"
+              description: "Define the Trailing Rule Domain Definition within a Trailing Group, identifying its globally unique name, its activation trigger percentage of the take-profit target, and its optional take-profit and stop-loss adjustments, unique per Trailing Group by trigger percentage."
+              reason: "The Target requires individually addressable rules that tell the system when and how to adjust Stop Loss and Take Profit during a trade."
+              kind: "code"
+              inputs: ["Target's Trailing Rule definition"]
+              expected_result: "A persistent Trailing Rule Domain Definition exposing id, name, trailing_group_id, trigger_percentage, take_profit_adjustment, stop_loss_adjustment, is_active, and description, relating one Trailing Group, globally unique by name, unique per Trailing Group by trigger percentage."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-trailing-group"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Trailing Rule Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces its declared uniqueness constraints at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized TrailingRule with declared fields, TrailingGroup relationship, and per-group trigger-percentage uniqueness; verified via tests/test_trailing_rule.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-partial-group:
+              id: "P1-T-define-partial-group"
+              title: "Define the Partial Group Domain Definition"
+              description: "Define the Partial Group Domain Definition owned by a User, providing an independent group of Partial Rules that manage how much volume of an open trade must be closed at specified thresholds, unique per user by name."
+              reason: "Every Partial Rule belongs to exactly one Partial Group, and Actions and Positions reference a Partial Group as their rule set."
+              kind: "code"
+              inputs: ["Target's Partial Group definition"]
+              expected_result: "A persistent Partial Group Domain Definition exposing id, user_id, name, is_active, and description, relating one User, unique per user by name."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-user"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Partial Group Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces the per-user name uniqueness at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized PartialGroup with declared fields and per-user name uniqueness; verified via tests/test_partial_group.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-partial-rule:
+              id: "P1-T-define-partial-rule"
+              title: "Define the Partial Rule Domain Definition"
+              description: "Define the Partial Rule Domain Definition within a Partial Group, identifying its globally unique name, its activating profit percentage, and the percentage of the position volume closed when activated, unique per Partial Group by profit percentage."
+              reason: "The Target requires individually addressable rules that tell the system when and how much of an open position to close."
+              kind: "code"
+              inputs: ["Target's Partial Rule definition"]
+              expected_result: "A persistent Partial Rule Domain Definition exposing id, name, partial_group_id, profit_percentage, close_percentage, is_active, and description, relating one Partial Group, globally unique by name, unique per Partial Group by profit percentage."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-partial-group"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Partial Rule Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces its declared uniqueness constraints at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized PartialRule with declared fields, PartialGroup relationship, and per-group profit-percentage uniqueness; verified via tests/test_partial_rule.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+
+        P1-G-action-position:
+          id: "P1-G-action-position"
+          title: "Trading Actions and Position Tracking"
+          description: "Domain Definitions for how a position must be opened and the record of every created position."
+          area: "Trading actions and position tracking"
+          does: "Action Groups, Actions, and Positions exist as authoritative Domain Definitions."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-T-define-action-group:
+              id: "P1-T-define-action-group"
+              title: "Define the Action Group Domain Definition"
+              description: "Define the Action Group Domain Definition owned by a User, grouping trading Actions by risk profile such as high, normal, or low risk, unique per user by name."
+              reason: "Every Action belongs to exactly one Action Group, and Positions reference the Action Group associated with the Action that created them."
+              kind: "code"
+              inputs: ["Target's Action Group definition"]
+              expected_result: "A persistent Action Group Domain Definition exposing id, user_id, name, is_active, and description, relating one User, unique per user by name."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-user"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Action Group Domain Definition validates and serializes data through its public surface using exactly the declared fields and enforces the per-user name uniqueness at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized ActionGroup with declared fields and per-user name uniqueness; verified via tests/test_action_group.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-action:
+              id: "P1-T-define-action"
+              title: "Define the Action Domain Definition"
+              description: "Define the Action Domain Definition that specifies how a position must be opened, selecting its Action Group, Asset, Account, Partial Group, and Trailing Group, and carrying its risk-to-reward value, Take Profit, and Stop Loss parameters, unique per Action Group by name."
+              reason: "The Action is the reusable specification the system executes to open a Position with its risk, target, and rule-set parameters."
+              kind: "code"
+              inputs: ["Target's Action definition"]
+              expected_result: "A persistent Action Domain Definition exposing id, name, action_group_id, asset_id, account_id, partial_group_id, trailing_group_id, risk_by_reward, take_profit, stop_loss, is_active, and description, relating one Action Group, one Asset, one Account, one Partial Group, and one Trailing Group, unique per Action Group by name."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-action-group", "P1-T-define-asset", "P1-T-define-account", "P1-T-define-partial-group", "P1-T-define-trailing-group"]
+              constraints: []
+              acceptance: "Every declared field, nullability, relationship, and uniqueness matches the Target exactly."
+              verify: "The realized Action Domain Definition validates and serializes data through its public surface using exactly the declared fields and relationships and enforces its declared uniqueness constraint at the domain level where declared."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized Action with declared fields, ActionGroup/Asset/Account/PartialGroup/TrailingGroup relationships, and per-group name uniqueness; verified via tests/test_action.py (5 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"
+            P1-T-define-position:
+              id: "P1-T-define-position"
+              title: "Define the Position Domain Definition"
+              description: "Define the Position Domain Definition that stores the complete information for every position created by the system, including its User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and originating Action relationships, its date, volume, current profit, execution status, order type, and initial and current Take Profit and Stop Loss values, globally unique by name."
+              reason: "The Target requires tracking of both opened and pending positions with the complete data needed to identify and manage them."
+              kind: "code"
+              inputs: ["Target's Position definition"]
+              expected_result: "A persistent Position Domain Definition exposing id, user_id, name, trading_platform_id, broker_id, account_id, trailing_group_id, partial_group_id, action_group_id, action_id, date, volume, profit, is_executed, order_type, base_tp, base_sl, real_tp, real_sl, is_active, and description, relating one User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and originating Action, globally unique by name."
+              depends_on: ["P1-T-establish-foundation", "P1-T-define-user", "P1-T-define-trading-platform", "P1-T-define-broker", "P1-T-define-account", "P1-T-define-trailing-group", "P1-T-define-partial-group", "P1-T-define-action-group", "P1-T-define-action"]
+              constraints: []
+              acceptance: "Every declared field, nullability, default, and relationship matches the Target exactly."
+              verify: "The realized Position Domain Definition validates and serializes data through its public surface using exactly the declared fields and relationships."
+              status: "done"
+              log:
+                - event: "implemented and verified"
+                  check: "Realized Position with declared fields, its 8 relationships, global name uniqueness, and the timezone-aware date constraint; verified via tests/test_position.py (6 tests)."
+                  outcome: "passed"
+                  recorded_by: "my-interface-developing"
+                  recorded_at: "2026-09-15T15:10:00Z"

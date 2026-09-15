@@ -24,5 +24,30 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  finding_count: 0
-  reviews: {}
+  finding_count: 1
+  reviews:
+    P1:
+      id: "P1"
+      title: "Model"
+      target: "model"
+      scope: "Plan Assurance judged the phase P1 Plan (5 Groups, 19 Tasks) against current Target Understanding and applicable Model, Development, and Plan Component authorities. Implementation Assurance independently inspected the realized model package (15 Domain Definitions, Model Foundation, Public Interface, tests, README) against the assured Plan, re-running the full verification suite and cross-checking every declared field, relationship, uniqueness, credential classification, and default against the Target."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 1
+      implementation_outcome: "satisfied"
+      reviewed_by: "my-interface-reviewer"
+      reviewed_at: "2026-09-15T15:45:00Z"
+      finding_count: 1
+      findings:
+        P1-F1:
+          id: "P1-F1"
+          kind: "defect"
+          severity: "major"
+          task: "P1-T-establish-foundation"
+          expected: "Per Model Preferences (implementation.persistence_contract.field_metadata.default), the persistence contract must publish the resolved default value itself for every Field that declares one."
+          observed: "FieldContract publishes only a has_default boolean flag; the actual resolved default value (for example is_active=True, decimal_digits=2, point_size=0.0, digits=0, balance=Decimal('0'), profit=Decimal('0'), is_executed=False) is never published through persistence_contract()."
+          evidence: "model/src/model/foundation.py FieldContract.has_default: bool; every Domain Definition's PERSISTENCE_CONTRACT, e.g. model/src/model/user.py 'is_active': FieldContract(nullable=False, has_default=True), publishes presence only, not the value."
+          state: "resolved"
+          raised_at: "2026-09-15T15:30:00Z"
+          settled_at: "2026-09-15T15:45:00Z"
+          settled_by: "my-interface-reviewer"
