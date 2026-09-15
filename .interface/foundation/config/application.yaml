@@ -1,11 +1,32 @@
 meta:
-  path: ".interface/foundation/config/application.yaml"
-  path_note: "Shared Application Manifest public Component metadata."
-
+  path: .interface/foundation/config/application.yaml
+  path_note: Shared Application Manifest public Component metadata.
 content:
   components:
     development: {}
-    model: {}
+    model:
+      package_name: model
+      path: model
+      public_entrypoint: model
+      public_interface:
+      - DomainModel
+      - ForeignKey
+      - Credential
+      - User
+      - TradingPlatform
+      - Instance
+      - Currency
+      - Broker
+      - Asset
+      - AccountGroup
+      - Account
+      - TrailingGroup
+      - TrailingRule
+      - PartialGroup
+      - PartialRule
+      - ActionGroup
+      - Action
+      - Position
     database: {}
     logic: {}
     api: {}
