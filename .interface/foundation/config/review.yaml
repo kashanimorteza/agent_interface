@@ -1,0 +1,28 @@
+meta:
+  path: ".interface/foundation/config/review.yaml"
+  path_note: "Mutable Reviews, Findings and their state."
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Review Component and the active operation's ownership rules."
+read_order:
+  - "finding_count"
+  - "reviews"
+content_map:
+  finding_count: "Total number of stored Findings."
+  reviews: "The current review record for each reviewed phase."
+content:
+  finding_count: 0
+  reviews:
+    P1:
+      id: "P1"
+      title: "Model"
+      target: "model"
+      scope: "Plan Assurance against current Target Understanding (15 Domain Definitions, their fields, relationships, rules, and credential treatment) and applicable Model, Development, and Plan Component authorities; Implementation Assurance against the assured Plan by independently observing the implemented model/ package, its durable checks, and its Public Interface and documentation."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 1
+      implementation_outcome: "satisfied"
+      reviewed_by: "reviewing"
+      reviewed_at: "2026-09-15T12:04:09Z"
+      finding_count: 0
+      findings: {}

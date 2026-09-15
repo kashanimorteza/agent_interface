@@ -1,0 +1,661 @@
+meta:
+  path: .interface/foundation/config/plan.yaml
+  path_note: Mutable Plans, Groups, Tasks, counts and progress.
+policy:
+  agent_may_edit: true
+  rule: Apply the current Plan Component and the active operation's ownership rules.
+read_order:
+- task_count
+- plans
+content_map:
+  task_count: Total number of stored Tasks.
+  plans: Current phase Plans and their Groups and Tasks.
+content:
+  task_count: 17
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      revision: 1
+      target: model
+      does: Implement the independent Model layer and its reusable package realizing every defined domain
+        concept, field, relationship, rule, and persistence-relevant metadata, published through one explicit
+        Public Interface.
+      constraints: []
+      task_count: 17
+      groups:
+        P1G1:
+          id: P1G1
+          title: Model Foundation
+          description: The shared, technology-independent mechanisms every Domain Definition relies on.
+          area: Shared Model Foundation and technology-independent conventions
+          does: Every concrete Model realization has access to shared validation, serialization, precision,
+            time, and persistence-metadata-publishing mechanisms without inheriting any Field or relationship.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1G1T1:
+              id: P1G1T1
+              title: Establish the Model Foundation
+              description: 'Create the technology-independent Model Foundation that every Domain Definition
+                shares: deterministic Intrinsic Rule validation, serialization, exact-decimal numeric
+                precision, UTC timezone-aware time handling, and a persistence-relevant metadata-publishing
+                mechanism (primary key, auto-increment, uniqueness, nullability, default, index, foreign
+                key, cardinality, and composite uniqueness) without the Foundation owning, injecting,
+                or requiring any Field or Domain Relationship itself.'
+              reason: Every Domain Definition needs identical shared mechanisms so validation, serialization,
+                and persistence metadata stay consistent across the Model layer without duplicating conventions
+                in each Domain Definition.
+              kind: code
+              inputs:
+              - Model Principles
+              - Model Preferences implementation conventions
+              - the selected Model technical item
+              expected_result: A reusable Model Foundation exists that every Domain Definition can share,
+                exposing deterministic validation, serialization, numeric-precision, time, and persistence-metadata-publishing
+                mechanisms with no Field or relationship of its own.
+              depends_on: []
+              constraints: []
+              acceptance: Any concrete Domain Definition can adopt the Foundation's shared mechanisms
+                without inheriting a Field, a Domain Relationship, or any domain-specific behavior.
+              verify: Constructing a minimal Domain Definition using the Foundation demonstrates its validation,
+                serialization, and persistence-metadata-publishing mechanisms operate correctly while
+                it contributes zero Fields or relationships of its own.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+        P1G2:
+          id: P1G2
+          title: Identity and Platform Definitions
+          description: User identity and the trading-platform connection concepts that depend on it.
+          area: User identity and trading-platform connection concepts
+          does: The User, Trading Platform, Instance, Currency, and Broker domain concepts are each defined
+            with their complete fields, relationships, rules, and credential treatment.
+          constraints: []
+          task_count: 5
+          tasks:
+            P1G2T1:
+              id: P1G2T1
+              title: Define the User Domain Definition
+              description: Define the User Domain Definition with its complete identity fields, uniqueness
+                rules, active-state field, and description, declaring `password` and `api_key` as credentials
+                requiring hash storage at rest, and declaring the Definition as persistent.
+              reason: User is the foundational identity every other user-owned concept in the Target references.
+              kind: code
+              inputs:
+              - Target Model definition for User
+              - Model Foundation
+              expected_result: A complete, persistent User Domain Definition publishing its fields, uniqueness
+                constraints, and hash-at-rest credential classification for `password` and `api_key`.
+              depends_on:
+              - P1G1T1
+              constraints: []
+              acceptance: Every field, uniqueness rule, and credential classification stated by the Target
+                for User is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid User data confirms every declared field,
+                uniqueness rule, and required, nullable, or default semantic is enforced, and the credential
+                fields are classified for hash storage.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G2T2:
+              id: P1G2T2
+              title: Define the Trading Platform Domain Definition
+              description: Define the Trading Platform Domain Definition with its identity, code, and
+                active-state fields and its uniqueness rule, declaring the Definition as persistent.
+              reason: Every Instance and Position resolves its trading API standard through the Trading
+                Platform concept.
+              kind: code
+              inputs:
+              - Target Model definition for Trading Platform
+              - Model Foundation
+              expected_result: A complete, persistent Trading Platform Domain Definition publishing its
+                fields and uniqueness constraint.
+              depends_on:
+              - P1G1T1
+              constraints: []
+              acceptance: Every field and uniqueness rule stated by the Target for Trading Platform is
+                present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Trading Platform data confirms every
+                declared field, its required, nullable, or default semantics, and the uniqueness rule
+                are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G2T3:
+              id: P1G2T3
+              title: Define the Instance Domain Definition
+              description: Define the Instance Domain Definition with its complete fields and its Domain
+                Relationships to User and Trading Platform, declaring `password` and `api_key` as credentials
+                requiring encrypted storage at rest, publishing the conditional field-requirement rule
+                tied to the selected Trading Platform, and the composite uniqueness rule over user and
+                name, declaring the Definition as persistent.
+              reason: Instance is the user-owned connection through which the system reaches a supported
+                Trading Platform, and downstream concepts depend on its identity.
+              kind: code
+              inputs:
+              - Target Model definition for Instance
+              - Model Foundation
+              - User Domain Definition
+              - Trading Platform Domain Definition
+              expected_result: A complete, persistent Instance Domain Definition publishing its fields,
+                its relationships to User and Trading Platform, its encrypted-credential classification,
+                its conditional field-requirement rule, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G2T1
+              - P1G2T2
+              constraints: []
+              acceptance: Every field, relationship, credential classification, conditional rule, and
+                uniqueness rule stated by the Target for Instance is present and unaltered, and the Definition
+                declares itself persistent.
+              verify: Validating representative valid and invalid Instance data, including data exercising
+                the conditional connection-field requirement, confirms every declared field, relationship,
+                credential classification, and uniqueness rule is enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G2T4:
+              id: P1G2T4
+              title: Define the Currency Domain Definition
+              description: Define the Currency Domain Definition with its complete fields, its Domain
+                Relationship to User, and its composite uniqueness rule over user and code, declaring
+                the Definition as persistent.
+              reason: Currency provides the monetary unit every Account's base currency references.
+              kind: code
+              inputs:
+              - Target Model definition for Currency
+              - Model Foundation
+              - User Domain Definition
+              expected_result: A complete, persistent Currency Domain Definition publishing its fields,
+                its relationship to User, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G2T1
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Currency
+                is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Currency data confirms every declared
+                field, its required, nullable, or default semantics, the relationship, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G2T5:
+              id: P1G2T5
+              title: Define the Broker Domain Definition
+              description: Define the Broker Domain Definition with its complete fields, its Domain Relationship
+                to User, and its composite uniqueness rule over user and name, declaring the Definition
+                as persistent.
+              reason: Broker identifies the entity through which Assets, Accounts, and Positions are executed,
+                independent of any one Trading Platform.
+              kind: code
+              inputs:
+              - Target Model definition for Broker
+              - Model Foundation
+              - User Domain Definition
+              expected_result: A complete, persistent Broker Domain Definition publishing its fields,
+                its relationship to User, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G2T1
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Broker
+                is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Broker data confirms every declared
+                field, its required, nullable, or default semantics, the relationship, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+        P1G3:
+          id: P1G3
+          title: Trading Configuration Definitions
+          description: Broker-scoped tradable assets and the funded trading accounts that use them.
+          area: Broker-scoped tradable assets and funded trading accounts
+          does: The Asset, Account Group, and Account domain concepts are each defined with their complete
+            fields, relationships, and rules.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1G3T1:
+              id: P1G3T1
+              title: Define the Asset Domain Definition
+              description: Define the Asset Domain Definition with its complete fields, its Domain Relationship
+                to Broker, and its composite uniqueness rule over broker and symbol, declaring the Definition
+                as persistent.
+              reason: Asset provides the complete set of tradable instruments an Action can select.
+              kind: code
+              inputs:
+              - Target Model definition for Asset
+              - Model Foundation
+              - Broker Domain Definition
+              expected_result: A complete, persistent Asset Domain Definition publishing its fields, its
+                relationship to Broker, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G2T5
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Asset
+                is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Asset data confirms every declared field,
+                its required, nullable, or default semantics, the relationship, and the uniqueness rule
+                are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G3T2:
+              id: P1G3T2
+              title: Define the Account Group Domain Definition
+              description: Define the Account Group Domain Definition with its complete fields, its Domain
+                Relationship to User, and its composite uniqueness rule over user and name, declaring
+                the Definition as persistent.
+              reason: Account Group organizes the trading accounts owned by one user.
+              kind: code
+              inputs:
+              - Target Model definition for Account Group
+              - Model Foundation
+              - User Domain Definition
+              expected_result: A complete, persistent Account Group Domain Definition publishing its fields,
+                its relationship to User, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G2T1
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Account
+                Group is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Account Group data confirms every declared
+                field, its required, nullable, or default semantics, the relationship, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G3T3:
+              id: P1G3T3
+              title: Define the Account Domain Definition
+              description: Define the Account Domain Definition with its complete fields, its Domain Relationships
+                to Account Group, Broker, Instance, and Currency, its encrypted-credential classification
+                for `password`, its rule distinguishing Instance-level and Account-level credentials,
+                and its composite uniqueness rule over group, broker, and instance, declaring the Definition
+                as persistent.
+              reason: Account is the funded trading account through which the system executes trades,
+                and Position depends on its identity.
+              kind: code
+              inputs:
+              - Target Model definition for Account
+              - Model Foundation
+              - Account Group Domain Definition
+              - Broker Domain Definition
+              - Instance Domain Definition
+              - Currency Domain Definition
+              expected_result: A complete, persistent Account Domain Definition publishing its fields,
+                its four relationships, its encrypted-credential classification, its credential-distinction
+                rule, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G3T2
+              - P1G2T5
+              - P1G2T3
+              - P1G2T4
+              constraints: []
+              acceptance: Every field, relationship, credential classification, rule, and uniqueness constraint
+                stated by the Target for Account is present and unaltered, and the Definition declares
+                itself persistent.
+              verify: Validating representative valid and invalid Account data confirms every declared
+                field, its required, nullable, or default semantics, all four relationships, the credential
+                classification, and the uniqueness rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+        P1G4:
+          id: P1G4
+          title: Risk Management Rule Definitions
+          description: Trailing and partial-close rule groups applied to open trades.
+          area: Trailing and partial-close rule groups applied to open trades
+          does: The Trailing Group, Trailing Rule, Partial Group, and Partial Rule domain concepts are
+            each defined with their complete fields, relationships, and rules.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1G4T1:
+              id: P1G4T1
+              title: Define the Trailing Group Domain Definition
+              description: Define the Trailing Group Domain Definition with its complete fields, its Domain
+                Relationship to User, and its composite uniqueness rule over user and name, declaring
+                the Definition as persistent.
+              reason: Trailing Group organizes the rules that manage Stop Loss and Take Profit during
+                a trade.
+              kind: code
+              inputs:
+              - Target Model definition for Trailing Group
+              - Model Foundation
+              - User Domain Definition
+              expected_result: A complete, persistent Trailing Group Domain Definition publishing its
+                fields, its relationship to User, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G2T1
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Trailing
+                Group is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Trailing Group data confirms every declared
+                field, its required, nullable, or default semantics, the relationship, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G4T2:
+              id: P1G4T2
+              title: Define the Trailing Rule Domain Definition
+              description: Define the Trailing Rule Domain Definition with its complete fields, its Domain
+                Relationship to Trailing Group, and its composite uniqueness rule over trailing group
+                and trigger percentage, declaring the Definition as persistent.
+              reason: Trailing Rule provides the activation condition and adjustment parameters a Trailing
+                Group applies.
+              kind: code
+              inputs:
+              - Target Model definition for Trailing Rule
+              - Model Foundation
+              - Trailing Group Domain Definition
+              expected_result: A complete, persistent Trailing Rule Domain Definition publishing its fields,
+                its relationship to Trailing Group, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G4T1
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Trailing
+                Rule is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Trailing Rule data confirms every declared
+                field, its required, nullable, or default semantics, the relationship, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G4T3:
+              id: P1G4T3
+              title: Define the Partial Group Domain Definition
+              description: Define the Partial Group Domain Definition with its complete fields, its Domain
+                Relationship to User, and its composite uniqueness rule over user and name, declaring
+                the Definition as persistent.
+              reason: Partial Group organizes the rules for closing portions of an open trade.
+              kind: code
+              inputs:
+              - Target Model definition for Partial Group
+              - Model Foundation
+              - User Domain Definition
+              expected_result: A complete, persistent Partial Group Domain Definition publishing its fields,
+                its relationship to User, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G2T1
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Partial
+                Group is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Partial Group data confirms every declared
+                field, its required, nullable, or default semantics, the relationship, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G4T4:
+              id: P1G4T4
+              title: Define the Partial Rule Domain Definition
+              description: Define the Partial Rule Domain Definition with its complete fields, its Domain
+                Relationship to Partial Group, and its composite uniqueness rule over partial group and
+                profit percentage, declaring the Definition as persistent.
+              reason: Partial Rule provides the condition and closed-volume percentage a Partial Group
+                applies.
+              kind: code
+              inputs:
+              - Target Model definition for Partial Rule
+              - Model Foundation
+              - Partial Group Domain Definition
+              expected_result: A complete, persistent Partial Rule Domain Definition publishing its fields,
+                its relationship to Partial Group, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G4T3
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Partial
+                Rule is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Partial Rule data confirms every declared
+                field, its required, nullable, or default semantics, the relationship, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+        P1G5:
+          id: P1G5
+          title: Action and Position Definitions
+          description: Position-opening actions and the resulting tracked positions.
+          area: Position-opening actions and their resulting tracked positions
+          does: The Action Group, Action, and Position domain concepts are each defined with their complete
+            fields, relationships, and rules.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1G5T1:
+              id: P1G5T1
+              title: Define the Action Group Domain Definition
+              description: Define the Action Group Domain Definition with its complete fields, its Domain
+                Relationship to User, and its composite uniqueness rule over user and name, declaring
+                the Definition as persistent.
+              reason: Action Group organizes trading actions by risk profile.
+              kind: code
+              inputs:
+              - Target Model definition for Action Group
+              - Model Foundation
+              - User Domain Definition
+              expected_result: A complete, persistent Action Group Domain Definition publishing its fields,
+                its relationship to User, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G2T1
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Action
+                Group is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Action Group data confirms every declared
+                field, its required, nullable, or default semantics, the relationship, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G5T2:
+              id: P1G5T2
+              title: Define the Action Domain Definition
+              description: Define the Action Domain Definition with its complete fields and its Domain
+                Relationships to Action Group, Asset, Account, Partial Group, and Trailing Group, and
+                its composite uniqueness rule over action group and name, declaring the Definition as
+                persistent.
+              reason: Action defines how a position must be opened, and Position depends on its identity.
+              kind: code
+              inputs:
+              - Target Model definition for Action
+              - Model Foundation
+              - Action Group Domain Definition
+              - Asset Domain Definition
+              - Account Domain Definition
+              - Partial Group Domain Definition
+              - Trailing Group Domain Definition
+              expected_result: A complete, persistent Action Domain Definition publishing its fields,
+                its five relationships, and its composite uniqueness rule.
+              depends_on:
+              - P1G1T1
+              - P1G5T1
+              - P1G3T1
+              - P1G3T3
+              - P1G4T3
+              - P1G4T1
+              constraints: []
+              acceptance: Every field, relationship, and uniqueness rule stated by the Target for Action
+                is present and unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Action data confirms every declared
+                field, its required, nullable, or default semantics, all five relationships, and the uniqueness
+                rule are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+            P1G5T3:
+              id: P1G5T3
+              title: Define the Position Domain Definition
+              description: Define the Position Domain Definition with its complete fields and its Domain
+                Relationships to User, Trading Platform, Broker, Account, Trailing Group, Partial Group,
+                Action Group, and Action, declaring the Definition as persistent.
+              reason: Position stores the complete information for every position the system creates,
+                whether pending or already opened.
+              kind: code
+              inputs:
+              - Target Model definition for Position
+              - Model Foundation
+              - User Domain Definition
+              - Trading Platform Domain Definition
+              - Broker Domain Definition
+              - Account Domain Definition
+              - Trailing Group Domain Definition
+              - Partial Group Domain Definition
+              - Action Group Domain Definition
+              - Action Domain Definition
+              expected_result: A complete, persistent Position Domain Definition publishing its fields
+                and its eight relationships.
+              depends_on:
+              - P1G1T1
+              - P1G2T1
+              - P1G2T2
+              - P1G2T5
+              - P1G3T3
+              - P1G4T1
+              - P1G4T3
+              - P1G5T1
+              - P1G5T2
+              constraints: []
+              acceptance: Every field and relationship stated by the Target for Position is present and
+                unaltered, and the Definition declares itself persistent.
+              verify: Validating representative valid and invalid Position data confirms every declared
+                field, its required, nullable, or default semantics, and all eight relationships are enforced.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
+        P1G6:
+          id: P1G6
+          title: Public Interface and Documentation
+          description: The Model package's explicit Public Interface, Application Manifest publication,
+            and operational documentation.
+          area: The Model package's explicit Public Interface and operational documentation
+          does: Every Domain Definition is exposed through one explicit, stable Public Interface, the
+            Model package's public metadata is published to the Application Manifest, and its README documents
+            actual usage.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1G6T1:
+              id: P1G6T1
+              title: Publish the Model Public Interface, Manifest metadata, and README
+              description: Expose every Domain Definition through the Model package's explicit Public
+                Interface, publish the package's public metadata, including package name, path, public
+                entrypoint, and public interface description, to the Application Manifest, and generate
+                the package README explaining its public surface, setup, use, and verification.
+              reason: Consumers require one stable, documented entry point to every Domain Definition
+                without depending on Model's private internal organization.
+              kind: code
+              inputs:
+              - every completed Domain Definition
+              - Application Manifest
+              - Development Component Profile for model
+              expected_result: The Model package exposes one unambiguous public identity for every Domain
+                Definition, its Application Manifest section is published with accurate public metadata,
+                and its README accurately documents the package's actual public surface and use.
+              depends_on:
+              - P1G2T1
+              - P1G2T2
+              - P1G2T3
+              - P1G2T4
+              - P1G2T5
+              - P1G3T1
+              - P1G3T2
+              - P1G3T3
+              - P1G4T1
+              - P1G4T2
+              - P1G4T3
+              - P1G4T4
+              - P1G5T1
+              - P1G5T2
+              - P1G5T3
+              constraints: []
+              acceptance: Every Domain Definition is reachable through the published Public Interface,
+                the Application Manifest's model section accurately reflects the package, and the README
+                enables independent use without inspecting private implementation.
+              verify: Consuming the Model package's Public Interface reaches every Domain Definition without
+                touching a private internal resource, and following the README's documented setup and
+                use succeeds.
+              status: done
+              log:
+              - event: implemented and verified
+                check: uv run pytest -- 22 passed; uv run ruff format/check -- clean; uv run pyright --
+                  0 errors
+                result: passed
+                at: '2026-09-15T12:01:45Z'
