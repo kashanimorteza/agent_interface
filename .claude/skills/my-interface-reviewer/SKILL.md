@@ -18,6 +18,8 @@ Provide two independent gates and a convergence cycle for every selected phase:
 
 An individual Review pass never edits what it judges. When current Config, Plan, or implementation is no longer aligned, invoke Configure, Planning, or Developing through its owning Skill, preserve the original Findings, and then perform a new independent Review pass. Never write another operation's content directly.
 
+This Skill's own `disable-model-invocation: true` withholds only the autonomous, relevance-triggered Skill-tool dispatch surface, matching the Contract's `autonomous_invocation: disabled` requirement; it does not withhold invocation by a declared coordinator such as Implement, which invokes this Skill by reading this file directly and executing its Workflow inline, nor invocation by the Human through the `/my-interface-reviewer` command.
+
 ## Input
 
 Accept zero or more whitespace-separated positive integers from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve every number against current Target phase order and use each phase's stable identifier throughout Review.

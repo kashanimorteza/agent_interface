@@ -1,6 +1,7 @@
 ---
 name: my-interface-launch
 description: Bring the developed Target online through the selected Platform Launch only when explicitly requested by the Human or delegated by a declared Interface coordinator; verify readiness and report access points.
+argument-hint: "[api|logic|presentation|complete|all]"
 disable-model-invocation: false
 ---
 
@@ -11,6 +12,10 @@ This file is the self-contained Claude Code realization of the portable `launch`
 ## Role
 
 Bring the developed Target online according to the current Platform authorities. Configure owns Environment preparation; Launch verifies that preparation, then owns runtime startup, connection, readiness verification, and access reporting.
+
+## Input
+
+Accept one optional Launch Scope token from `$ARGUMENTS`: `api`, `logic`, `presentation`, `complete`, or `all` (`all` is equivalent to `complete`). `logic` prepares or verifies the reusable Logic Component; `api` starts the API executable. If `$ARGUMENTS` is empty, ask the Human to choose one of these values before starting instead of assuming a scope. Reject any other token by listing the accepted values and asking for a corrected one.
 
 ## Workflow
 

@@ -108,11 +108,11 @@ if tool == "Bash":
         block("Shell access to the Agent Module is reserved for an explicit /my-interface-agent-sync prompt.")
     mutation = re.search(
         r"(?:^|[;&|]\s*)(?:rm|mv|cp|install|mkdir|rmdir|touch|truncate|chmod|chown|ln|tee|patch|rsync)\b"
-        r"|\bsed\s+-i\b|\bperl\s+-pi\b|\bgit\s+(?:checkout|restore|clean|reset)\b|(?:^|[^<])>{1,2}",
+        r"|\bsed\s+-i\b|\bperl\s+-pi\b|\bgit\s+(?:checkout|restore|clean|reset)\b|(?:^|[^<])>{1,2}(?!&)",
         command,
     )
     if mutation and ".interface" in command:
-        paths = re.findall(r"(?:^|[\s'\"])(\.interface(?:/[^\s;'\"|&<>]*)?)", command)
+        paths = re.findall(r"(?:^|[\s'\"/])(\.interface(?:/[^\s;'\"|&<>]*)?)", command)
         for raw in paths or [".interface"]:
             target = (project / raw).resolve()
             if within(target, interface) and not within(target, config):
