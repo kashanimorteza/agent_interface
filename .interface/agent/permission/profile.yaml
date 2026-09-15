@@ -16,7 +16,7 @@ policy:
   consumption: "Resolve permissions using deny-safe least privilege before executing a protected action."
   selection: "Request authorization only when an applicable ask boundary or material undecided action requires it."
   version_resolution: "Permission syntax and sandbox facilities resolve from the selected runtime."
-  matching: "Match exact Tool and resource permission patterns; deny and stricter rules win conflicts."
+  matching: "Match portable Tool and resource capability patterns; Agent Sync resolves their Native syntax, and deny and stricter rules win conflicts."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]
@@ -30,35 +30,34 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    permission_mode: "acceptEdits"
+    permission_mode: "edit_authorized"
   options:
     permission_modes:
-      acceptEdits:
-        runtime: "Claude Code"
-        meaning: "Apply ordinary file edits without per-edit confirmation while preserving explicit ask and deny rules."
+      edit_authorized:
+        meaning: "Apply ordinary project file edits without per-edit confirmation while preserving explicit ask and deny rules."
   settings:
     rules:
       allow:
-        - "Bash"
-        - "Read"
-        - "Glob"
-        - "Grep"
-        - "Edit"
-        - "Write"
-        - "NotebookEdit"
-        - "Agent"
-        - "TodoWrite"
-        - "WebFetch"
-        - "WebSearch"
+        - "shell_execute"
+        - "file_read"
+        - "file_discover"
+        - "text_search"
+        - "file_edit"
+        - "file_write"
+        - "notebook_edit"
+        - "agent_delegate"
+        - "task_record"
+        - "web_fetch"
+        - "web_search"
       deny: []
       ask:
-        - "Bash(git commit:*)"
-        - "Bash(git push:*)"
-        - "Bash(git reset:*)"
-        - "Bash(git restore:*)"
-        - "Bash(git checkout:*)"
-        - "Bash(git rebase:*)"
-        - "Bash(git clean:*)"
+        - "shell_execute(git commit:*)"
+        - "shell_execute(git push:*)"
+        - "shell_execute(git reset:*)"
+        - "shell_execute(git restore:*)"
+        - "shell_execute(git checkout:*)"
+        - "shell_execute(git rebase:*)"
+        - "shell_execute(git clean:*)"
     sandbox:
       enabled: null
       filesystem: {}

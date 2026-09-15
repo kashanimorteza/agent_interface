@@ -17,7 +17,7 @@ It owns Agent Native selection, Agent Instance identity, kind, Role assignment, 
 - **Consumed by Agent Coordination** — supplies the concrete Agent Instances that may be delegated, teamed, or isolated.
 - **Consumed by Agent Observability** — supplies the declarations against which the Agent Native and every Agent Instance realization are validated.
 
-Technical Agent Native selection, Agent Instance declarations, primary Instance selection, Role assignments, models, tools, Skills, permissions, memory, isolation, and native mappings belong to Agent Profile.
+Agent Native selection, Agent Instance declarations, primary Instance selection, Role assignments, models, tools, Skills, permissions, memory, isolation, and portable realization requirements belong to Agent Profile. Native paths, file formats, and runtime-specific mappings are resolved by Agent Sync from the selected Agent Native.
 
 Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 

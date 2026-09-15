@@ -35,7 +35,7 @@ content:
   options:
     project_settings_sources:
       shared_project:
-        path: ".claude/settings.json"
+        path: "resolved by Agent Sync from the selected Agent Native"
     reconciliations:
       explicit_agent_sync:
         meaning: "Apply Agent Module declarations only when the Human directly invokes the declared Agent Sync entry point; the Agent Native, Agent Instances, Skills, coordinators, Hooks, lifecycle routines, automations, and model-generated actions cannot initiate it."
@@ -51,7 +51,7 @@ content:
       command_line: {}
       project_local: {}
       shared_project:
-        path: ".claude/settings.json"
+        path: "resolved by Agent Sync from the selected Agent Native"
       user: {}
       global: {}
     merge_behavior:

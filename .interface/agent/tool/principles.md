@@ -15,7 +15,7 @@ It owns tool identity, action boundaries, inputs, outputs, and availability. It 
 - **Consumes Agent Runtime, Integration, and Permission** — receives implementations, external capabilities, and execution authority.
 - **Consumed by Agent, Role, Skill, and Hook** — provides bounded actions they can invoke.
 
-Technical tool catalogs, mappings, and availability expectations belong to Agent Tool Profile.
+Portable tool requirements and availability expectations belong to Agent Tool Profile; Native catalogs and mappings are resolved by Agent Sync from the selected Agent Native.
 
 Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 

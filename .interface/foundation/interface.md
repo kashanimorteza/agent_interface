@@ -162,7 +162,7 @@ This separation is one of the central architectural principles of the project.
 - **Agent Module** — the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate. Bare `Agent` is never used as a substitute for this term.
 - **Agent Native** — the core operational Agent supplied by the selected Agent Runtime and currently responsible for receiving the Human's request, applying synchronized Agent Module behavior, and hosting or coordinating Agent Instances.
 - **Agent Instance** — one primary or specialized executable identity operating within an Agent Native, with an assigned Agent Role and bounded capabilities. One Agent Native may expose several Agent Instances.
-- **Agent Profile** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, native mappings, and validation expectations.
+- **Agent Profile** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, portable realization requirements, and validation expectations; Native-specific paths and formats are resolved by Agent Sync.
 - **Agent Role** — one bounded execution responsibility within the Agent Profile, including the primary role and specialized delegated roles.
 - **Capability** — one declared Agent facility, such as a Skill, Rule, Command, Tool, Hook, Integration, or Extension, with an owning Component and bounded contract.
 
@@ -342,7 +342,7 @@ The Component's own Principles remain the authority: when this summary and a Com
 
 <!-------------------------- Agent -->
 ### Agent
-The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent Native and its Agent Instances should operate. The Human declares that view once through its Components—including the Agent Native, Agent Instance identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, native mappings, and explicit empty categories.
+The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent Native and its Agent Instances should operate. The Human declares that view once through its Components—including the Agent Native, Agent Instance identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, portable realization requirements, and explicit empty categories.
 
 Together, these Components form the Agent Profile within the complete Agent Module. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Agent Module, learns the Native Runtime's own conventions, realizes the Module through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 
@@ -405,7 +405,7 @@ Agent Components
 
 The complete Agent Module is read exclusively during an explicit Agent Sync invocation. Agent Sync first learns the selected Agent Native's own documentation, conventions, capabilities, and limitations, then reads every Module source and Interface-owned Skill Contract, resolves any optional prepared Skill file by exact declared stable key, and realizes each required Rule, Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. A matching prepared Markdown file supplies that Skill's preserved native instruction content; a Skill without one follows its existing Contract- or provider-based realization path. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
 
-Each Agent Component below has its own Principles and Profile. Principles define the Component's mandatory philosophy, responsibilities, rules, and boundaries; Profiles define its current selections, resources, mappings, and default settings.
+Each Agent Component below has its own Principles and Profile. Principles define the Component's mandatory philosophy, responsibilities, rules, and boundaries; Profiles define its current selections, resources, portable realization requirements, and default settings.
 
 #### Runtime
 
@@ -638,7 +638,7 @@ This Operation is performed through `/my-interface-skill-installer` to derive Ag
 
 **Agent Skill:** `/my-interface-agent-sync`
 
-This Operation is performed only through explicit Human invocation of `/my-interface-agent-sync`. It is the sole operation permitted to inspect Agent Module sources, dynamically reconciles every current Agent Component with the selected Runtime, and certifies synchronization only after all required capabilities pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
+This Operation is performed only through explicit Human invocation of `/my-interface-agent-sync`. It is the sole operation permitted to inspect Agent Module sources, understands the complete Module and the selected Agent Native's own conventions, translates the Module into that Native Runtime, and certifies synchronization only after all required declarations pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
 
 <br><br>
 
@@ -693,13 +693,13 @@ output = Verified implementation and updated operational records
 <!--------------------------------------------------------------------------------- Authority and Ownership --->
 ## Authority and Ownership
 
-Explicit Target intent and applicable Implementation Principles guide operational Skills. Implementation Preferences supply engineering defaults where the Target leaves a choice unstated. Agent Profiles declare desired execution capabilities and mappings solely for Agent Sync, which materializes the synchronized Runtime rules and capabilities consumed by every other Skill. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Implementation Preferences, and Agent Profiles, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
+Explicit Target intent and applicable Implementation Principles guide operational Skills. Implementation Preferences supply engineering defaults where the Target leaves a choice unstated. Agent Profiles declare desired portable execution capabilities solely for Agent Sync, which learns Native-specific mappings and materializes the synchronized Runtime rules and capabilities consumed by every other Skill. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Implementation Preferences, and Agent Profiles, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
 
 ```text
 Target = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
 Implementation Preferences = engineering defaults for unspecified Target choices
-Agent Profiles = current Agent Module selections, resources, mappings, and explicit empty categories
+Agent Profiles = current Agent Module selections, resources, portable realization requirements, and explicit empty categories
 Schema = common YAML frame for Implementation Preferences, Agent Profiles, and Config, authored-source structure, and the storage structure of every operational record
 Config = the mutable operational records
 ```

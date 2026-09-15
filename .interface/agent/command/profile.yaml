@@ -2,7 +2,7 @@
 meta:
   path: ".interface/agent/command/profile.yaml"
   path_note: "The Profile layer of the Agent Command Component."
-  purpose: "Built-in and custom slash entry points, arguments, aliases, scope, and owning capability mappings."
+  purpose: "Built-in and custom command concepts, arguments, aliases, scope, and owning capability declarations. Native command realization is resolved by Agent Sync."
   standard: "Agent Project Interface"
   version: "1.1"
   updated: "2026-09-12"
@@ -51,7 +51,3 @@ content:
     managed_commands: {}
     extension_commands: {}
     aliases: {}
-    compatibility:
-      Claude Code:
-        custom_commands_merged_into_skills: true
-        legacy_directory: ".claude/commands/"

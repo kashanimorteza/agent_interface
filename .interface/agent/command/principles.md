@@ -15,7 +15,7 @@ It owns command names, arguments, routing, and discoverability. It does not own 
 - **Consumes Agent Skill, Role, Tool, and Runtime** — routes an invocation to its implementing capability.
 - **Consumed by Agent Interaction** — provides discoverable Human-facing actions.
 
-Technical command names, aliases, argument forms, and native mappings belong to Agent Command Profile.
+Portable command names, aliases, and argument forms belong to Agent Command Profile; Native mappings are resolved by Agent Sync from the selected Agent Native.
 
 Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 

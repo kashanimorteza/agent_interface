@@ -34,17 +34,17 @@ content:
   settings:
     project_rules:
       interface-bootstrap:
-        path: ".claude/rules/interface-bootstrap.md"
+        path: "resolved by Agent Sync from the selected Agent Native"
         scope: "global"
         responsibility: "Enter through the canonical Interface while reserving Agent Module sources exclusively for explicit Agent Sync."
         required: true
       interface-skill-policy:
-        path: ".claude/rules/interface-skill-policy.md"
+        path: "resolved by Agent Sync from the selected Agent Native"
         scope: "global"
         responsibility: "Apply shared human-owned boundaries and capability policy."
         required: true
       interface-agent-capabilities:
-        path: ".claude/rules/interface-agent-capabilities.md"
+        path: "resolved by Agent Sync from the selected Agent Native"
         scope: "global"
         responsibility: "Expose the synchronized Runtime capability identifiers and native mappings without requiring Agent Module reads."
         required: true

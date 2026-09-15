@@ -16,7 +16,7 @@ policy:
   consumption: "Use only Tools available to the active role and permitted for the requested action."
   selection: "An undeclared runtime Tool is optional; a missing required Tool is reported."
   version_resolution: "Runtime-provided Tool contracts resolve from the active runtime."
-  matching: "Match exact native Tool names and provider-qualified external Tool identities."
+  matching: "Match portable Tool capability identities; Agent Sync resolves their Native names and providers."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]
@@ -33,17 +33,17 @@ content:
   options: {}
   settings:
     runtime_tools:
-      Bash: {provider: "Claude Code", required: false}
-      Read: {provider: "Claude Code", required: true}
-      Glob: {provider: "Claude Code", required: true}
-      Grep: {provider: "Claude Code", required: true}
-      Edit: {provider: "Claude Code", required: true}
-      Write: {provider: "Claude Code", required: true}
-      NotebookEdit: {provider: "Claude Code", required: false}
-      Agent: {provider: "Claude Code", required: true}
-      TodoWrite: {provider: "Claude Code", required: false}
-      WebFetch: {provider: "Claude Code", required: false}
-      WebSearch: {provider: "Claude Code", required: false}
+      shell_execute: {required: false}
+      file_read: {required: true}
+      file_discover: {required: true}
+      text_search: {required: true}
+      file_edit: {required: true}
+      file_write: {required: true}
+      notebook_edit: {required: false}
+      agent_delegate: {required: true}
+      task_record: {required: false}
+      web_fetch: {required: false}
+      web_search: {required: false}
     project_tools: {}
     integration_tools: {}
     extension_tools: {}

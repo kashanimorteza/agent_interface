@@ -18,7 +18,7 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 - **Consumes Implementation Components and Target** — reads current authorities required by its responsibility.
 - **Consumed by Agent, Command, and Coordination** — provides assignable, invocable, and delegable workflows.
 
-Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, provider resources, and native implementation mappings belong to Agent Skill Profile. Command names and argument forms belong to Agent Command Profile.
+Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, and provider resources belong to Agent Skill Profile; Native implementation mappings are resolved by Agent Sync from the selected Agent Native. Command names and argument forms belong to Agent Command Profile.
 
 Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 

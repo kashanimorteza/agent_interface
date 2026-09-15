@@ -2,7 +2,7 @@
 meta:
   path: ".interface/agent/skill/profile.yaml"
   path_note: "The Profile layer of the Agent Skill Component."
-  purpose: "Interface-owned Skill Contracts, optional prepared Markdown Skill files, and native mappings, plus contextual, built-in, user, managed, and extension provider Skill declarations."
+  purpose: "Interface-owned Skill Contracts, optional prepared Markdown Skill files, and contextual, built-in, user, managed, and extension provider Skill declarations. Native mappings are resolved by Agent Sync."
   standard: "Agent Project Interface"
   version: "1.3"
   updated: "2026-09-12"
@@ -16,7 +16,7 @@ policy:
   consumption: "Only explicit Agent Sync reads this Profile to resolve portable Contracts and provider declarations, then materializes self-contained native Skills and a Runtime capability catalog for every other consumer."
   selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
   version_resolution: "Runtime and extension Skills resolve from their active providers."
-  matching: "During explicit Agent Sync, match a prepared Markdown Skill file by the declared Skill's exact stable key, match Interface-owned Skills by portable Contract and native name, and match external Skills by stable key and provider declaration; then project stable identifiers and native mappings into the Runtime."
+  matching: "During explicit Agent Sync, match a prepared Markdown Skill file by the declared Skill's exact stable key, match Interface-owned Skills by portable Contract, and match external Skills by stable key and provider declaration; then resolve Native identifiers and mappings from the selected Agent Native."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]
@@ -41,34 +41,34 @@ content:
       naming: "<declared-skill-stable-key>.md"
       presence: "optional per declared Skill"
       present: "Create the selected Runtime's native Skill directory and entrypoint, preserve the prepared Markdown instructions as their content, and add or adapt only metadata required by that Runtime without changing meaning."
-      absent: "Realize the Skill exactly as before from its portable Contract, provider declaration, and Runtime mapping; absence is never an error by itself."
+      absent: "Realize the Skill from its portable Contract or provider declaration using the selected Agent Native's conventions; absence is never an error by itself."
       unmatched: "A Markdown file that does not match exactly one declared Skill is reported and never installed by inference."
     project_skills:
       core_workflow:
         configure:
           name: "my-interface-configure"
-          path: ".claude/skills/my-interface-configure/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/configure.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
           required: true
         planning:
           name: "my-interface-planning"
-          path: ".claude/skills/my-interface-planning/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/planning.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
           required: true
         developing:
           name: "my-interface-developing"
-          path: ".claude/skills/my-interface-developing/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/developing.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
           required: true
         reviewing:
           name: "my-interface-reviewer"
-          path: ".claude/skills/my-interface-reviewer/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/reviewing.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
@@ -84,7 +84,7 @@ content:
             authority: "delegated invocation only; each Skill retains ownership of its records and outputs"
         launch:
           name: "my-interface-launch"
-          path: ".claude/skills/my-interface-launch/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/launch.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
@@ -92,28 +92,28 @@ content:
       supporting:
         implement:
           name: "my-interface-implement"
-          path: ".claude/skills/my-interface-implement/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/implement.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "explicit-human"
           required: true
         reset:
           name: "my-interface-reset"
-          path: ".claude/skills/my-interface-reset/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/reset.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "explicit-human"
           required: true
         skill-installer:
           name: "my-interface-skill-installer"
-          path: ".claude/skills/my-interface-skill-installer/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/skill-installer.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "explicit-human"
           required: true
         agent-sync:
           name: "my-interface-agent-sync"
-          path: ".claude/skills/my-interface-agent-sync/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           contract: ".interface/agent/skill/contracts/agent-sync.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "direct-explicit-human-only"
@@ -124,19 +124,19 @@ content:
       contextual:
         fastapi:
           name: "fastapi"
-          path: ".claude/skills/fastapi/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when relevant"
           required: false
         typer:
           name: "typer"
-          path: ".claude/skills/typer/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when relevant"
           required: false
         library-skills:
           name: "library-skills"
-          path: ".claude/skills/library-skills/SKILL.md"
+          path: "resolved by Agent Sync from the selected Agent Native"
           architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when package capability discovery is relevant"
           required: false
