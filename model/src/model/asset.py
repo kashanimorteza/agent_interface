@@ -13,7 +13,12 @@ class Asset(DomainModel):
     __persistent__ = True
     __unique_sets__ = (("broker_id", "symbol"),)
 
-    id: int = Field(json_schema_extra=field_meta(primary_key=True, auto_increment=True))
+    id: int | None = Field(
+        default=None,
+        json_schema_extra=field_meta(
+            nullable=False, primary_key=True, auto_increment=True
+        ),
+    )
     broker_id: int = Field(
         json_schema_extra=field_meta(foreign_key="broker.id", cardinality="many_to_one")
     )

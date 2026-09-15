@@ -15,7 +15,12 @@ class TrailingRule(DomainModel):
     __persistent__ = True
     __unique_sets__ = (("trailing_group_id", "trigger_percentage"),)
 
-    id: int = Field(json_schema_extra=field_meta(primary_key=True, auto_increment=True))
+    id: int | None = Field(
+        default=None,
+        json_schema_extra=field_meta(
+            nullable=False, primary_key=True, auto_increment=True
+        ),
+    )
     name: str = Field(json_schema_extra=field_meta(unique=True))
     trailing_group_id: int = Field(
         json_schema_extra=field_meta(

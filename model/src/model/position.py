@@ -15,7 +15,12 @@ class Position(DomainModel):
 
     __persistent__ = True
 
-    id: int = Field(json_schema_extra=field_meta(primary_key=True, auto_increment=True))
+    id: int | None = Field(
+        default=None,
+        json_schema_extra=field_meta(
+            nullable=False, primary_key=True, auto_increment=True
+        ),
+    )
     user_id: int = Field(
         json_schema_extra=field_meta(foreign_key="user.id", cardinality="many_to_one")
     )

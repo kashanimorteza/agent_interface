@@ -1,5 +1,42 @@
-finding_count: 3
+finding_count: 6
 reviews:
+  P2:
+    id: "P2"
+    title: "Database"
+    target: "Database"
+    scope: "Plan Assurance (Revision 2, unchanged) plus Implementation Assurance of the database Python package: raw SQLite storage inspected directly (not through the ORM) for credential treatment, exact Target initial-data values, and resolved foreign-key relationships, independently of the implementer's own test suite."
+    outcome: "satisfied"
+    plan_outcome: "satisfied"
+    plan_revision: 2
+    implementation_outcome: "satisfied"
+    reviewed_by: "reviewer"
+    reviewed_at: "2026-09-15T09:37:52Z"
+    finding_count: 2
+    findings:
+      P2F1:
+        id: "P2F1"
+        kind: "gap"
+        severity: "major"
+        task: "P2T4"
+        expected: "A Migration has a tested reversal when semantically safe (Database Principle 6). An initial schema-creation Migration with no destructive data is semantically safe to reverse."
+        observed: "P2T4's acceptance and verify only test forward application (creating structure) and startup drift detection; neither tests that the recorded Migration has a working, tested reversal."
+        evidence: "plan.yaml P2.groups.P2G3.tasks.P2T4.acceptance and .verify test only forward migration and drift detection, no reversal."
+        state: "resolved"
+        raised_at: "2026-09-15T09:15:00Z"
+        settled_at: "2026-09-15T09:18:00Z"
+        settled_by: "reviewer"
+      P2F2:
+        id: "P2F2"
+        kind: "gap"
+        severity: "major"
+        task: "P2T9"
+        expected: "Initial Data import must satisfy every non-nullable field including declared credential fields (e.g. User.password, User.api_key, Instance.password/api_key, Account.password, all declared 'Generate securely' by the Target), and Database Principle 12 requires every persisted credential to receive its declared at-rest treatment before it is considered stored."
+        observed: "P2T9 depends only on P2T4 (Migrations) and P2T5 (Database Interface); it does not depend on P2T3 (Apply declared credential at-rest treatment), so a generated initial credential value could be imported before the mechanism that applies its required at-rest treatment exists."
+        evidence: "plan.yaml P2.groups.P2G5.tasks.P2T9.depends_on: [P2T4, P2T5] — P2T3 is absent."
+        state: "resolved"
+        raised_at: "2026-09-15T09:15:00Z"
+        settled_at: "2026-09-15T09:18:00Z"
+        settled_by: "reviewer"
   P1:
     id: "P1"
     title: "Model"
@@ -10,9 +47,21 @@ reviews:
     plan_revision: 2
     implementation_outcome: "satisfied"
     reviewed_by: "reviewer"
-    reviewed_at: "2026-09-15T01:33:00Z"
-    finding_count: 3
+    reviewed_at: "2026-09-15T09:30:00Z"
+    finding_count: 4
     findings:
+      P1F4:
+        id: "P1F4"
+        kind: "defect"
+        severity: "major"
+        task: null
+        expected: "Model preserves whether each Target Field is required, nullable, defaulted, generated, or otherwise allowed to be absent (Model Principle 6). Every Target id Field is declared 'Auto Increment: true', which is the 'generated' presence state; a generated Field must be constructible without a caller-supplied value."
+        observed: "Every one of the 15 Domain Definitions declares id as a required field with no default (`id: int = Field(...)`), so constructing a new Domain Definition prior to persistence assigning its identity is impossible without supplying a fabricated id value."
+        evidence: "Discovered while implementing Phase 2 (Database) Task P2T9 (Initial Data Import): database.interface.create() accepts a Model instance, but no instance can be constructed for a not-yet-persisted record without inventing an id. model/src/model/*.py: every id field lacks a default."
+        state: "resolved"
+        raised_at: "2026-09-15T09:23:54Z"
+        settled_at: "2026-09-15T09:30:00Z"
+        settled_by: "reviewer"
       P1F1:
         id: "P1F1"
         kind: "defect"

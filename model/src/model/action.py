@@ -15,7 +15,12 @@ class Action(DomainModel):
     __persistent__ = True
     __unique_sets__ = (("action_group_id", "name"),)
 
-    id: int = Field(json_schema_extra=field_meta(primary_key=True, auto_increment=True))
+    id: int | None = Field(
+        default=None,
+        json_schema_extra=field_meta(
+            nullable=False, primary_key=True, auto_increment=True
+        ),
+    )
     name: str = Field(json_schema_extra=field_meta())
     action_group_id: int = Field(
         json_schema_extra=field_meta(

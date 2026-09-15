@@ -22,7 +22,27 @@ components:
         - "Action"
         - "Position"
       metadata_entrypoint: "persistence_metadata"
-  database: {}
+  database:
+    package_name: "database"
+    path: "database"
+    public_entrypoint: "database.interface"
+    public_interface:
+      operations:
+        - "create"
+        - "get_by_id"
+        - "list_"
+        - "search"
+        - "update"
+        - "delete"
+        - "set_active"
+        - "transaction"
+        - "execute_command"
+      controlled_commands:
+        - "increment_account_balance"
+      instance_registry_entrypoint: "database.adapter.instance_registry"
+      initial_data_entrypoint: "database.initial_data.import_initial_data"
+      drift_check_entrypoint: "database.schema_check.is_up_to_date"
+      default_instance: "general"
   logic: {}
   api: {}
   presentation: {}

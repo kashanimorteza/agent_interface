@@ -12,7 +12,12 @@ class User(DomainModel):
 
     __persistent__ = True
 
-    id: int = Field(json_schema_extra=field_meta(primary_key=True, auto_increment=True))
+    id: int | None = Field(
+        default=None,
+        json_schema_extra=field_meta(
+            nullable=False, primary_key=True, auto_increment=True
+        ),
+    )
     name: str = Field(json_schema_extra=field_meta(unique=True))
     username: str = Field(json_schema_extra=field_meta(unique=True))
     password: str = Field(json_schema_extra=field_meta(credential="hash"))

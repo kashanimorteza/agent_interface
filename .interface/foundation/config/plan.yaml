@@ -1,4 +1,4 @@
-task_count: 16
+task_count: 25
 plans:
   P1:
     id: P1
@@ -667,4 +667,391 @@ plans:
               check: Ran uv run pytest tests/test_position.py (model project root) exercising required-field
                 rejection, valid construction, serialization round-trip, and published persistence metadata
                 for every acceptance clause.
+              outcome: passed
+  P2:
+    id: P2
+    title: Database
+    order: 2
+    revision: 2
+    target: Database
+    does: Establish the independent Database package with one generic Database Interface, deriving physical
+      storage structure from Model's published metadata and importing declared Target initial data.
+    constraints:
+    - Every persistence decision (mapping, constraint, or Engine-specific extension) is classified as
+      portable contract, portable mapping, or Engine-specific extension; Engine-specific behavior is isolated
+      behind the Storage Adapter and never presented as a portable guarantee.
+    - Database applies least privilege to its runtime identity and records connection failures, Migration
+      failures, constraint violations, and Transaction conflicts as security-relevant outcomes without
+      exposing secret values or credential representations.
+    task_count: 9
+    groups:
+      P2G1:
+        id: P2G1
+        title: Storage Adapter
+        description: Covers the Storage Adapter that connects to the selected Engine and publishes the
+          Instance Registry.
+        area: Engine connection and Instance Registry
+        does: The Storage Adapter can reach the configured default Instance and the Instance Registry
+          is available for selection.
+        constraints: []
+        task_count: 1
+        tasks:
+          P2T1:
+            id: P2T1
+            title: Build the Storage Adapter and Instance Registry
+            description: Build the Storage Adapter that connects to the selected Engine for each configured
+              Instance, and publish the Instance Registry exposing selectable Instance identities and
+              the default, without exposing raw connections or secret values.
+            reason: Every later Database capability needs a working connection to a named Instance before
+              it can read or write anything.
+            kind: code
+            inputs:
+            - Model Public Interface
+            expected_result: The Storage Adapter opens a working connection to the default Instance, and
+              the Instance Registry lists every configured Instance identity together with the default,
+              exposing no connection object or secret value.
+            depends_on: []
+            constraints: []
+            acceptance: Requesting the default Instance through the Registry returns its identity and
+              succeeds in opening a connection; requesting an unknown Instance is rejected; the Registry's
+              published output contains no connection object or secret value.
+            verify: The Instance Registry's published identities and default match the configured Instances;
+              opening a connection through the default Instance succeeds; inspecting the Registry's output
+              confirms no field carries a raw connection or secret value; requesting an unconfigured Instance
+              identifier is rejected.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_adapter.py (database project root, against a clean-rebuilt
+                environment: 30 tests, ruff, and pyright all pass) exercising every acceptance clause.'
+              outcome: passed
+      P2G2:
+        id: P2G2
+        title: Storage Mapping
+        description: Covers the generic mapping that derives physical storage structure from any persistent
+          Model's published metadata, and applies declared credential treatment.
+        area: Model-driven physical storage mapping
+        does: Every persistent Model has a physical storage structure whose primary key, foreign keys,
+          indexes, and uniqueness constraints trace directly to that Model's published metadata, and every
+          persisted credential carries its declared at-rest treatment.
+        constraints: []
+        task_count: 2
+        tasks:
+          P2T2:
+            id: P2T2
+            title: Derive physical storage structure from Model metadata
+            description: Build the generic storage mapping that derives one physical table structure per
+              persistent Model directly from that Model's published persistence metadata — primary-key
+              identity, generated identity, foreign-key references, relationship cardinality, nullability,
+              defaults, and single-field or composite uniqueness sets — through one shared mapping pipeline
+              rather than a separate implementation per Model.
+            reason: Every persistent Model must get a physical structure that stays traceable to its own
+              published metadata instead of a hand-maintained mapping that can drift from it.
+            kind: code
+            inputs:
+            - Model Public Interface
+            - Storage Adapter
+            expected_result: Every persistent Model declared by the Target has a physical storage structure
+              whose primary key, foreign keys, indexes, and uniqueness constraints are derived from that
+              Model's published metadata, and no non-persistent Model produces a stored structure.
+            depends_on:
+            - P2T1
+            constraints: []
+            acceptance: For every persistent Model, the derived physical structure's primary key, foreign-key
+              references, and uniqueness constraints match that Model's published metadata exactly; a
+              Model marked non-persistent produces no physical structure.
+            verify: Comparing the derived physical structure of each persistent Model against that Model's
+              own `persistence_metadata()` output shows matching primary-key, foreign-key, and uniqueness
+              declarations; constructing a non-persistent Model and checking the mapping confirms no physical
+              structure is produced for it.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_mapping.py (database project root, against a clean-rebuilt
+                environment: 30 tests, ruff, and pyright all pass) exercising every acceptance clause.'
+              outcome: passed
+          P2T3:
+            id: P2T3
+            title: Apply declared credential at-rest treatment
+            description: Apply the at-rest treatment declared by each persistent Model's published credential
+              classification to every classified field at the point of persistence, and reject persisting
+              a classified credential whose treatment is missing or unsupported.
+            reason: A credential's declared classification is meaningless unless Database actually protects
+              the stored value using that exact treatment.
+            kind: code
+            inputs:
+            - Model Public Interface
+            - Storage Mapping
+            expected_result: Every persisted credential field is stored using its declared at-rest treatment,
+              and attempting to persist a credential field whose classification is missing or unsupported
+              is rejected rather than silently stored in plain form.
+            depends_on:
+            - P2T2
+            constraints: []
+            acceptance: Persisting a record with a hash-classified credential stores a one-way, non-recoverable
+              transformation of the value; persisting a record with an encrypted-classified credential
+              stores a recoverable but protected transformation; persisting a record whose credential
+              classification is missing or unsupported is rejected.
+            verify: Reading back a persisted hash-classified credential shows a transformation from which
+              the original value cannot be recovered while still permitting verification; reading back
+              a persisted encrypted-classified credential shows a protected value distinct from the plaintext
+              that can be reversed only through the approved mechanism; persisting an unclassified or
+              unsupported credential field raises a rejection.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_credentials.py (database project root, against a clean-rebuilt
+                environment: 30 tests, ruff, and pyright all pass) exercising every acceptance clause.'
+              outcome: passed
+      P2G3:
+        id: P2G3
+        title: Migrations
+        description: Covers the Migration tooling that creates and verifies the storage structure for
+          every persistent Model.
+        area: Ordered, recorded storage structure changes
+        does: The complete storage structure for every persistent Model is created through one recorded,
+          ordered Migration, and a startup check detects drift between the running and recorded structure.
+        constraints: []
+        task_count: 1
+        tasks:
+          P2T4:
+            id: P2T4
+            title: Establish ordered Migrations creating the initial storage structure
+            description: Establish ordered Migration tooling that creates the complete storage structure
+              for every persistent Model in one recorded history, and verify at startup that the running
+              structure matches the recorded structure.
+            reason: The repository must reproduce an equivalent Database from nothing without an undocumented
+              manual step, and drift must be caught before normal operations proceed.
+            kind: code
+            inputs:
+            - Storage Mapping
+            expected_result: Applying the recorded Migration history to a fresh Instance produces a storage
+              structure containing every persistent Model's physical structure, the recorded Migration
+              has a tested reversal that removes exactly that structure, and a startup check reports whether
+              the running structure matches the recorded structure.
+            depends_on:
+            - P2T2
+            constraints: []
+            acceptance: Applying the Migration history to an empty Instance creates every persistent Model's
+              physical structure with its declared constraints; reversing that same Migration removes
+              the structure it created, leaving an empty Instance; the startup drift check passes immediately
+              after a clean Migration and reports a mismatch when the running structure is altered outside
+              Migration.
+            verify: Running the Migration history against a fresh empty Instance and then inspecting the
+              resulting structure shows every persistent Model's table, primary key, foreign keys, and
+              uniqueness constraints present; reversing the Migration and inspecting the Instance afterward
+              shows none of that structure remaining; running the drift check immediately after a fresh
+              forward Migration reports no drift; altering the running structure directly and re-running
+              the drift check reports a mismatch.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_migrations.py (database project root, against a clean-rebuilt
+                environment: 30 tests, ruff, and pyright all pass) exercising every acceptance clause.'
+              outcome: passed
+      P2G4:
+        id: P2G4
+        title: Database Interface
+        description: 'Covers the one generic Database Interface every consumer uses for every persistent
+          Model: standard operations, activation, the Transaction boundary, and the controlled command
+          route.'
+        area: Generic Model-driven data access
+        does: Every persistent Model is reachable through one generic, Model-driven Database Interface
+          offering create, read, list, search, update, delete, activation, an explicit Transaction boundary,
+          and a capability-restricted controlled command route.
+        constraints: []
+        task_count: 4
+        tasks:
+          P2T5:
+            id: P2T5
+            title: Publish the generic create/read/list/search/update/delete operations
+            description: Publish one generic Database Interface pipeline that accepts a public Model type
+              or instance together with a supported operation and its criteria, and performs create, read,
+              read-by-identifier, list, search, update, and delete for any persistent Model without a
+              separate implementation per Model or an untyped Model-name string.
+            reason: Every consumer needs one stable, Model-typed entry point for persistent data access
+              instead of a bespoke interface per Model.
+            kind: code
+            inputs:
+            - Storage Mapping
+            - Migrations
+            expected_result: Passing any persistent Model type or instance and a supported operation through
+              the Database Interface performs that operation correctly against the Model's own physical
+              structure, and passing a Model that declares no persistence, or an operation the Model does
+              not support, is rejected.
+            depends_on:
+            - P2T2
+            - P2T4
+            constraints: []
+            acceptance: Creating, reading by identifier, listing, searching, updating, and deleting a
+              record through the Database Interface for a persistent Model produces results consistent
+              with what was stored, and enforces that Model's declared uniqueness and referenced-record-existence
+              constraints.
+            verify: For at least one persistent Model with a declared relationship and a declared uniqueness
+              constraint, exercising create, get_by_id, list, search, update, and delete through the Database
+              Interface produces results consistent with the stored data; creating a record that violates
+              a declared uniqueness constraint or references a non-existent related record is rejected.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_interface.py::test_create_get_list_search_update_delete_round_trip
+                tests/test_interface.py::test_declared_uniqueness_is_enforced_by_database tests/test_interface.py::test_referenced_record_existence_is_enforced
+                (database project root, against a clean-rebuilt environment: 30 tests, ruff, and pyright
+                all pass) exercising every acceptance clause.'
+              outcome: passed
+          P2T6:
+            id: P2T6
+            title: Publish the enable/disable activation operation
+            description: Publish the activation operation through the Database Interface for every persistent
+              Model that declares an is_active field, accepting exactly enable or disable and changing
+              that field to the corresponding value.
+            reason: Enabling and disabling records is a shared operation across every Model that declares
+              is_active and belongs in the generic interface rather than a per-Model implementation.
+            kind: code
+            inputs:
+            - Database Interface
+            expected_result: Calling the activation operation with enable or disable on a persistent Model
+              that declares is_active changes only that field to the corresponding value; calling it on
+              a Model without is_active is rejected.
+            depends_on:
+            - P2T5
+            constraints: []
+            acceptance: Disabling a record changes its is_active field to false and re-enabling it changes
+              it back to true without altering any other field; invoking activation on a Model that declares
+              no is_active field is rejected.
+            verify: Disabling then re-enabling a persistent record through the activation operation shows
+              only is_active changing across both transitions, with every other field unchanged; invoking
+              activation for a Model with no is_active field raises a rejection.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_interface.py::test_activation_toggles_only_is_active
+                tests/test_interface.py::test_activation_rejected_for_model_without_is_active (database
+                project root, against a clean-rebuilt environment: 30 tests, ruff, and pyright all pass)
+                exercising every acceptance clause.'
+              outcome: passed
+          P2T7:
+            id: P2T7
+            title: Publish the Transaction boundary
+            description: Publish an explicit Transaction boundary through the Database Interface so a
+              consumer can group related operations on one Instance into one atomic unit that commits
+              or rolls back together, while a standalone write remains its own atomic unit.
+            reason: Related changes must not leave partially applied data when one operation in a group
+              fails.
+            kind: code
+            inputs:
+            - Database Interface
+            expected_result: Operations grouped inside one Transaction either all persist once the Transaction
+              succeeds or none persist when the Transaction fails, and a standalone operation outside
+              any Transaction commits or fails entirely on its own.
+            depends_on:
+            - P2T5
+            constraints: []
+            acceptance: When one operation inside a Transaction fails, every other operation performed
+              in that same Transaction is rolled back and none of their effects are observable afterward;
+              a successful Transaction makes every grouped operation's effect observable together.
+            verify: Running a Transaction containing a valid create followed by an operation that violates
+              a declared constraint shows neither operation's effect present afterward; running a Transaction
+              containing only valid operations shows every operation's effect present afterward.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_interface.py::test_transaction_rolls_back_every_operation_on_failure
+                tests/test_interface.py::test_successful_transaction_commits_every_grouped_operation (database
+                project root, against a clean-rebuilt environment: 30 tests, ruff, and pyright all pass)
+                exercising every acceptance clause.'
+              outcome: passed
+          P2T8:
+            id: P2T8
+            title: Publish the capability-restricted controlled command route
+            description: Publish a capability-restricted controlled command route through the Database
+              Interface for data operations that standard operations cannot express, requiring explicit
+              parameters and protected, allow-listed identifiers, participating in the Transaction boundary,
+              and rejecting structural changes, privilege changes, and Migration operations.
+            reason: Some data operations cannot be expressed through the standard create/read/list/search/update/delete
+              pipeline, but still must not be allowed to bypass Database's protections.
+            kind: code
+            inputs:
+            - Database Interface
+            expected_result: A controlled command executes only against an explicitly allow-listed, parameterized
+              identifier and participates in the same Transaction boundary as standard operations, while
+              an attempt to perform a structural change, privilege change, or Migration operation through
+              the route is rejected.
+            depends_on:
+            - P2T5
+            constraints: []
+            acceptance: Invoking the controlled command route with an allow-listed identifier and valid
+              parameters succeeds and its effect is observable within the current Transaction; invoking
+              it with an identifier outside the allow-list, or requesting a structural change, privilege
+              change, or Migration operation, is rejected.
+            verify: Invoking the controlled command route with a valid allow-listed identifier inside
+              a Transaction that is then rolled back shows no effect afterward; invoking it with an unlisted
+              identifier, or with a request for a structural, privilege, or Migration change, raises a
+              rejection in every case.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_interface.py::test_controlled_command_participates_in_transaction_and_is_allow_listed
+                tests/test_interface.py::test_unlisted_controlled_command_is_rejected (database project
+                root, against a clean-rebuilt environment: 30 tests, ruff, and pyright all pass) exercising
+                every acceptance clause.'
+              outcome: passed
+      P2G5:
+        id: P2G5
+        title: Initial Data Import
+        description: Covers importing every Target-declared initial record for every Model that has one,
+          in dependency order, without duplication.
+        area: Declared Target initial data
+        does: Every Target-declared initial record exists in storage exactly once, in a form that can
+          be rebuilt repeatably from the repository.
+        constraints: []
+        task_count: 1
+        tasks:
+          P2T9:
+            id: P2T9
+            title: Import declared Target initial data
+            description: Build a reusable, configurable mechanism that imports every Target-declared initial
+              record into its resolved physical storage mapping, resolving records in dependency order,
+              satisfying every non-nullable field and declared relationship, and remaining repeatable
+              without producing a duplicate logical record or a uniqueness violation on re-run.
+            reason: The repository must be able to rebuild the Target's declared starting state on a fresh
+              Instance without a manual step, and re-running the same import must not corrupt or duplicate
+              that state.
+            kind: data
+            inputs:
+            - Migrations
+            - Database Interface
+            - Target Initial Data
+            expected_result: Running the import mechanism against a freshly migrated Instance creates
+              exactly the initial records the Target declares, with every relationship and non-nullable
+              field satisfied, every declared credential field securely generated and stored using its
+              declared at-rest treatment, and running it again produces no duplicate or constraint violation.
+            depends_on:
+            - P2T3
+            - P2T4
+            - P2T5
+            constraints: []
+            acceptance: After one import run, every Target-declared initial record exists exactly once
+              with its declared field values and relationships correctly resolved and every declared credential
+              field stored using its declared at-rest treatment; running the same import again leaves
+              the stored data unchanged with no duplicate record and no constraint violation.
+            verify: Running the import against a freshly migrated empty Instance and then listing each
+              affected Model shows exactly the declared initial records with correctly resolved relationships
+              and every declared credential field carrying its declared at-rest treatment rather than
+              a plain value; running the import a second time and re-listing shows the same records with
+              no duplicates and no error.
+            status: done
+            log:
+            - at: '2026-09-15T09:36:09Z'
+              event: implemented and verified
+              check: 'Ran uv run pytest tests/test_initial_data.py (database project root, against a clean-rebuilt
+                environment: 30 tests, ruff, and pyright all pass) exercising every acceptance clause.'
               outcome: passed
