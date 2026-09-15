@@ -28,10 +28,10 @@ Do not require a project-side realization map or predeclared native path, format
 
 Build a complete Agent Module inventory before changing runtime state:
 
-| Component | Declared desired state | Native destination or provider | Observed state | Proposed action | Authority or blocker |
+| Module declaration or resource | Declared desired state | Native destination or provider | Observed state | Proposed action | Authority or blocker |
 | --- | --- | --- | --- | --- | --- |
 
-Include every dynamically discovered Agent Component, even when its declared category is empty or already satisfied. Classify each action as `no change`, `create`, `update`, `install`, `enable`, `activation required`, `report only`, or `blocked`. Never silently skip an unknown, new, or unsupported Component or mechanism; report a missing native mapping as blocked.
+Include every dynamically discovered Agent Module declaration and resource, including empty categories and already-satisfied items. Classify each action as `no change`, `create`, `update`, `install`, `enable`, `activation required`, `report only`, or `blocked`. Never silently skip an unknown, new, or unsupported declaration, resource, or mechanism; report an unsupported Native realization as blocked.
 
 Use the Native Runtime's documented mechanisms to resolve native destinations, authorized project scope, and verification gates. A Native-provided or explicitly-unused declaration is observed rather than materialized. Explicitly unused means no capability is required and never authorizes removal of an observed undeclared capability.
 
