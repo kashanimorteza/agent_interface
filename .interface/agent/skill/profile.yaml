@@ -128,19 +128,25 @@ content:
           path: "resolved by Agent Sync from the selected Agent Native"
           architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when relevant"
-          required: false
+          required: true
         typer:
           name: "typer"
           path: "resolved by Agent Sync from the selected Agent Native"
           architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when relevant"
-          required: false
+          required: true
         library-skills:
           name: "library-skills"
           path: "resolved by Agent Sync from the selected Agent Native"
           architecture_contract: "Skill Profile and shared Agent Skill Principles"
           activation: "implicit when package capability discovery is relevant"
-          required: false
+          required: true
+        pydantic:
+          name: "pydantic"
+          path: "resolved by Agent Sync from the selected Agent Native"
+          architecture_contract: "Skill Profile and shared Agent Skill Principles"
+          activation: "implicit when relevant"
+          required: true
     user_skills: {}
     managed_skills: {}
     runtime_skills: {}

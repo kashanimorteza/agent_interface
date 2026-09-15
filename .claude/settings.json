@@ -62,7 +62,8 @@
     "superpowers@claude-plugins-official": true,
     "andrej-karpathy-skills@karpathy-skills": true,
     "pydantic-ai-harness@pydantic-skills": true,
-    "pydantic@pydantic-skills": true
+    "pydantic@pydantic-skills": true,
+    "pydantic-ai@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
