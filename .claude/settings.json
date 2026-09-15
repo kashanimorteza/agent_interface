@@ -98,5 +98,5 @@
     }
   },
   "outputStyle": "ADHD",
-  "autoMemoryEnabled": false
+  "autoMemoryEnabled": true
 }
