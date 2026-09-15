@@ -81,6 +81,8 @@ content:
           repeatable: true
           duplicate_policy: "preserve_one_logical_record"
           transaction_boundary: "one transaction per dependency-ordered batch"
+          readiness_hook: "invoke after structural migration and integrity verification during Database setup"
+          failure_state: "Database not ready; report the import failure"
       credential_storage:
         resolution: "For an existing field resolved as a credential, require the Model-declared storage mode. Reject a missing or unsupported mode; Database never infers one from a field name."
 

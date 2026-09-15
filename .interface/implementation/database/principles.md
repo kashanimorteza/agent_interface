@@ -169,6 +169,8 @@ The Registry is derived from the configured Instance collection, and the number 
 
 **Rule:** When initial data exists for a Model, Database imports each declared record through a reusable, configurable mechanism into its resolved storage mapping. The selected implementation determines the mechanism's name, location, and invocation. Every key names a resolved Model field, relationships and non-nullable fields are satisfied, records are resolved in dependency order, and importing is repeatable without duplicate logical records or uniqueness violations. The same mechanism may accept later bulk data imports when they follow the same validation, ordering, transaction, and duplicate rules.
 
+Database setup invokes that importer as part of its readiness lifecycle, after pending structural changes are applied and storage integrity is verified. A Database instance is not ready until this import completes successfully, or is explicitly `not applicable` because no Initial Data is declared.
+
 If the Target declares Initial Data, Database is not ready until the structure has been created and the complete Import succeeds. A missing importer, failed import, incomplete record, unresolved relationship, or constraint violation is a Database setup failure and must not be reported as readiness.
 
 **Why:** Rebuilding the Database must restore the declared initial state with the same meaning.
