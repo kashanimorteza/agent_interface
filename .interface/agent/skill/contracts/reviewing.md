@@ -20,6 +20,10 @@ Accept zero or more phase positions. Empty input selects every enabled phase tha
 
 Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase with an implementation, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, delegated Configure/Planning/Developing outcomes, an obligation-coverage summary, and an evidence-first phase report. A phase without implementation is reported as not reviewable and receives no assurance outcome. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
 
+## Understanding
+
+Review establishes fresh Interface and Target Understanding on every invocation. It then compares the current authorities, Plan, implementation, generated Source, public boundaries, and evidence as one connected result. Review is a reconciliation cycle: it assures the Plan, assures existing implementation when present, and delegates Configure, Planning, or Developing to their owning Skills when a gap requires one of them. After every delegated change it rebuilds its Understanding and checks again, continuing only while the result moves toward alignment. Review never repairs another operation's records or Source directly and never starts implementation for a phase that has no implementation.
+
 ## Required Understanding
 
 Reconstruct Interface Understanding and current Target Understanding on every invocation. Read Review, Plan, and State authorities and every Component applicable to each selected phase. Existing Plan, State, implementation, and Review records are evidence to assess and never substitutes for either Understanding.

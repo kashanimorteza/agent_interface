@@ -20,6 +20,10 @@ Accept no phase selection. Consume current operational Schemas, existing Config,
 
 Produce or reconcile Schema-valid `plan.yaml`, `state.yaml`, `review.yaml`, and `application.yaml` Config files, resolved and prepared technical requirements and Environment, truthful State position and History, and a report of created, installed, reconciled, preserved, conflicted, and blocked results.
 
+## Understanding
+
+Configure first understands the Interface and the current Target context needed for configuration. It then understands the Config Schemas, the applicable Implementation and Platform authorities, and the selected Environment. Its work has three connected purposes: create the operational Config records from their Schemas, reconcile and preserve those records, and prepare the project by resolving and installing the technical requirements declared by the applicable authorities. The four Config files, including `application.yaml`, follow the same schema-driven generation process; none is a temporary or optional side file. Configure does not implement product behavior or decide Target meaning.
+
 ## Required Understanding
 
 Establish Interface Understanding and only the Target Understanding needed for Config generation and declared technical or Environment requirements. Read current Config Schemas, applicable Implementation Component authorities, and Platform authorities.

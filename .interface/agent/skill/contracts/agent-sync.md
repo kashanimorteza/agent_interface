@@ -20,6 +20,10 @@ Accept no capability selection. Consume the complete Agent Module, including its
 
 Produce one result for every dynamically discovered Agent Module declaration, project-scoped native resources and additive provisioning authorized by selected declarations, post-change verification, preserved unmanaged capabilities, required Human activation steps, and one truthful overall Module status. A successful overall status certifies that every required declaration is currently realized and usable.
 
+## Understanding
+
+Agent Sync first establishes Interface Understanding, then understands the complete Agent Module without limiting the set of declarations it reads. It also understands the selected Agent Native from that Native's own documentation, structure, conventions, capabilities, and limitations. The Module supplies the portable meaning, principles, profiles, skills, rules, roles, context, and other declarations; the Native Runtime supplies the concrete places, formats, activation mechanisms, and runtime behavior used to realize them. Agent Sync translates between these two sides, verifies the complete result, and leaves other Runtime operations dependent only on the synchronized realization. It never uses Target Understanding and never asks the Module to describe an unknown Native Runtime in advance.
+
 ## Required Understanding
 
 Establish Interface Understanding, then read and understand the complete Agent Module through the sole exception that permits entry into its sources. Discover all current Module declarations from the Agent Structure and current Module sources without a hardcoded component or category list. Learn the selected Agent Native's own documentation, supported capabilities, file conventions, mappings, invocation rules, and limitations before choosing any realization. No Target Understanding is used or required. No other Skill, supporting Agent Instance, coordinator, or Understanding workflow may read, resolve, or use these Agent Module sources. Never rely on a list remembered by this Contract, a native adapter, or an earlier run.
