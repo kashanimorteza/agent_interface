@@ -1,2 +1,51 @@
-finding_count: 0
-reviews: {}
+finding_count: 3
+reviews:
+  P1:
+    id: "P1"
+    title: "Model"
+    target: "Model"
+    scope: "Plan Assurance (Revision 2, unchanged) plus Implementation Assurance of the model Python package against current Target Understanding, Model Principles, and the assured Plan: field presence/nullability, uniqueness metadata, credential classification, persistence declaration, foreign-key/cardinality metadata, and absence of cross-record enforcement, independently cross-checked against Target field-by-field rather than by re-reading the implementer's own tests."
+    outcome: "satisfied"
+    plan_outcome: "satisfied"
+    plan_revision: 2
+    implementation_outcome: "satisfied"
+    reviewed_by: "reviewer"
+    reviewed_at: "2026-09-15T01:33:00Z"
+    finding_count: 3
+    findings:
+      P1F1:
+        id: "P1F1"
+        kind: "defect"
+        severity: "blocking"
+        task: null
+        expected: "Model validates only Intrinsic Rules that are deterministic, depend solely on the Domain Definition's own data, and perform no external I/O (Model Principle 7); Model publishes uniqueness as technology-independent storage-relevant metadata for Database to enforce, and never itself enforces a rule that requires comparing multiple stored records (Model Principle 10 boundary)."
+        observed: "Tasks P1T2, P1T4, P1T5, P1T6, P1T7, P1T8, P1T9, P1T10, P1T11, P1T12, P1T13, P1T14, P1T15, and P1T16 each state acceptance and verification as Model itself rejecting construction of a record whose single-field or composite key duplicates another already-existing record, which requires comparing against previously stored records rather than the Domain Definition's own data."
+        evidence: "plan.yaml P1.groups.P1G2..P1G7, each task's acceptance and verify fields, e.g. P1T4 acceptance: \"...is rejected when its user-and-name combination duplicates an existing Instance...\" and P1T9 acceptance: \"...is rejected when its name duplicates another Account or its group-broker-instance combination duplicates an existing Account...\"."
+        state: "resolved"
+        raised_at: "2026-09-15T01:20:00Z"
+        settled_at: "2026-09-15T01:22:00Z"
+        settled_by: "reviewer"
+      P1F2:
+        id: "P1F2"
+        kind: "gap"
+        severity: "major"
+        task: null
+        expected: "Each Domain Definition declares whether it is persistent or non-persistent, for Database's consumption (Model Principle 10)."
+        observed: "No Task in the Plan states an expected result, acceptance, or verification for declaring or publishing a Domain Definition's persistent/non-persistent classification."
+        evidence: "plan.yaml P1.groups.*.tasks.*, no expected_result, acceptance, or verify field mentions a persistence classification."
+        state: "resolved"
+        raised_at: "2026-09-15T01:20:00Z"
+        settled_at: "2026-09-15T01:22:00Z"
+        settled_by: "reviewer"
+      P1F3:
+        id: "P1F3"
+        kind: "gap"
+        severity: "major"
+        task: null
+        expected: "Each Domain Definition publishes technology-independent storage-relevant metadata for primary-key identity, generated identity, foreign-key references, relationship cardinality, nullability, defaults, and composite uniqueness sets, for Database to derive physical structure from (Model Principle 10)."
+        observed: "Tasks test construction-time behavior (accepting valid values, rejecting invalid or duplicate ones) but no expected_result, acceptance, or verify field requires that this storage-relevant metadata is itself published and observable through the Public Interface."
+        evidence: "plan.yaml P1.groups.*.tasks.*, verify fields test constructor and serialization round-trip behavior only, none inspect published field/relationship/uniqueness metadata."
+        state: "resolved"
+        raised_at: "2026-09-15T01:20:00Z"
+        settled_at: "2026-09-15T01:22:00Z"
+        settled_by: "reviewer"

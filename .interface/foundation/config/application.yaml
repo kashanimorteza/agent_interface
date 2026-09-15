@@ -1,6 +1,27 @@
 components:
   development: {}
-  model: {}
+  model:
+    package_name: "model"
+    path: "model"
+    public_entrypoint: "model"
+    public_interface:
+      domain_definitions:
+        - "User"
+        - "TradingPlatform"
+        - "Instance"
+        - "Currency"
+        - "Broker"
+        - "Asset"
+        - "AccountGroup"
+        - "Account"
+        - "TrailingGroup"
+        - "TrailingRule"
+        - "PartialGroup"
+        - "PartialRule"
+        - "ActionGroup"
+        - "Action"
+        - "Position"
+      metadata_entrypoint: "persistence_metadata"
   database: {}
   logic: {}
   api: {}
