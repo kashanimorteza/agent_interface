@@ -11,7 +11,7 @@ content_map:
   task_count: Total number of stored Tasks.
   plans: Current phase Plans and their Groups and Tasks.
 content:
-  task_count: 17
+  task_count: 29
   plans:
     P1:
       id: P1
@@ -659,3 +659,223 @@ content:
                   0 errors
                 result: passed
                 at: '2026-09-15T12:01:45Z'
+    P2:
+      id: "P2"
+      title: "Database"
+      order: 2
+      revision: 1
+      target: "database"
+      does: "Implement the independent Database package that maps the shared Model to durable storage through an ordered, recoverable Migration history, imports the Target's declared Initial Data, and exposes one generic public Database Interface with an explicit Transaction boundary and a capability-restricted controlled-command route."
+      constraints: []
+      task_count: 12
+      groups:
+        P2G1:
+          id: "P2G1"
+          title: "Storage Adapter Foundation"
+          description: "The runtime storage configuration, supported Engine profile, and public Instance Registry."
+          area: "Runtime storage configuration, Engine profile resolution, and Instance discovery"
+          does: "The Database Component's runtime storage configuration, supported Engine profile, and public Instance Registry are established, exposing selectable Instance identities and the default without any raw connection or secret."
+          constraints: []
+          task_count: 2
+          tasks:
+            P2G1T1:
+              id: "P2G1T1"
+              title: "Establish runtime storage configuration and Engine profile"
+              description: "Establish the Database Component's runtime storage configuration, including its file-backed storage location convention and its supported Engine profile resolved from the Development-owned Database Item, keeping every Engine-specific detail isolated behind the Storage Adapter."
+              reason: "Database needs one authoritative, reproducible place for its non-secret runtime settings before any Instance, mapping, or operation can be resolved."
+              kind: "code"
+              inputs: ["Database Principles", "Database Preferences storage_adapter settings", "the selected Database technical item"]
+              expected_result: "A validated runtime storage configuration exists identifying the supported Engine profile and the file-backed storage location convention, independent of process working directory."
+              depends_on: []
+              constraints: []
+              acceptance: "The configuration validates its Engine references and storage location before any data operation proceeds, and rejects an invalid or missing Engine reference."
+              verify: "Loading the runtime storage configuration in a fresh environment resolves the same Engine profile and storage location without manual steps, and an invalid Engine reference is rejected before any operation runs."
+              status: "todo"
+            P2G1T2:
+              id: "P2G1T2"
+              title: "Publish the Instance Registry"
+              description: "Publish the public Instance Registry from the validated runtime Instance catalogue, exposing exactly one default and every selectable Instance identity, name, and purpose, and rejecting an explicit unknown Instance selection while never exposing a raw connection or secret value."
+              reason: "Consumers must be able to discover and select a database Instance by purpose without learning how it connects or seeing any secret."
+              kind: "code"
+              inputs: ["Database Principles", "runtime storage configuration"]
+              expected_result: "A public Instance Registry lists every configured Instance and its default, resolves an omitted selection to the default, and rejects an unknown explicit selection."
+              depends_on: ["P2G1T1"]
+              constraints: []
+              acceptance: "The Registry never returns a connection object or secret value, resolves the default correctly, and rejects an unknown Instance identity."
+              verify: "Querying the Registry with no selection returns the default Instance's public identity; querying it with an unknown identity is rejected; nothing returned from the Registry carries a connection or secret."
+              status: "todo"
+        P2G2:
+          id: "P2G2"
+          title: "Data Logic and Mapping"
+          description: "Storage mappings traceable to Model and approved at-rest credential treatment."
+          area: "Storage mapping of persistent Domain Definitions and credential at-rest treatment"
+          does: "Every Model-declared persistent Domain Definition has a traceable storage mapping preserving its published meaning, and every persisted credential resolves to its declared approved at-rest treatment."
+          constraints: []
+          task_count: 2
+          tasks:
+            P2G2T1:
+              id: "P2G2T1"
+              title: "Map every persistent Domain Definition to storage"
+              description: "Derive a traceable storage mapping for every Domain Definition the Model package declares persistent, preserving its primary-key identity, generated identity, nullability, defaults, single-field and composite uniqueness, and every Domain Relationship's cardinality and optionality exactly as Model publishes them, reusing an explicit relationship field rather than duplicating it."
+              reason: "Database's storage guarantees must remain traceable to the logical Model rather than reinventing domain meaning."
+              kind: "code"
+              inputs: ["every Model Public Interface Domain Definition and its published persistence contract", "Database Principles"]
+              expected_result: "Every Model-declared persistent Domain Definition has a storage mapping that preserves its published persistence-relevant meaning, and no non-persistent Domain Definition receives a storage mapping."
+              depends_on: ["P2G1T1"]
+              constraints: []
+              acceptance: "Every primary key, generated identity, nullability, default, uniqueness constraint (single and composite), and relationship published by the Model matches its storage mapping exactly."
+              verify: "Inspecting the resolved storage structure for each mapped Domain Definition against the Model's published persistence contract shows no missing, weakened, or invented constraint or relationship."
+              status: "todo"
+            P2G2T2:
+              id: "P2G2T2"
+              title: "Apply approved at-rest treatment to every persisted credential"
+              description: "Apply the storage mode the Model declares for each credential field, one-way transformation for a verification-only credential and authenticated reversible protection for a recoverable credential, sourcing any protection key from Database's private runtime secret source delivered through Platform, never from committed configuration, and reject persistence of a credential field whose declared mode is missing or unsupported."
+              reason: "Persisted credentials must resolve to their Target-declared protection so a stored value can never be exposed as plaintext."
+              kind: "code"
+              inputs: ["every Model-declared credential field classification", "Database Preferences credential_storage_modes"]
+              expected_result: "Every credential field is persisted only in its Model-declared at-rest form, with the protection key resolved from a private runtime secret source, and persistence of an unclassified or unsupported credential field is rejected."
+              depends_on: ["P2G2T1"]
+              constraints: []
+              acceptance: "A one-way-transformed credential cannot be reversed to its original value, a reversible credential can be recovered only through the same private key mechanism, and no plaintext credential ever reaches storage."
+              verify: "Persisting representative hash- and encryption-classified credential data and reading back the stored representation shows the declared transformation applied and no recoverable plaintext without the private key."
+              status: "todo"
+        P2G3:
+          id: "P2G3"
+          title: "Migration History and Schema Integrity"
+          description: "Ordered, recoverable Migration history and pre-operation drift detection."
+          area: "Migration history, reproducibility, and schema drift detection"
+          does: "The complete storage structure is reproducible from a recorded Migration history alone, and drift between the running and recorded structure is detected before normal operations proceed."
+          constraints: []
+          task_count: 2
+          tasks:
+            P2G3T1:
+              id: "P2G3T1"
+              title: "Establish ordered, recoverable Migration history"
+              description: "Record the storage structure derived from the Data Logic and Mapping layer as an ordered Migration history, with a tested reversal for every semantically safe change and an explicit recovery path for any migration marked irreversible, and verify migration ordering, integrity, and coordination among concurrent runners before applying pending changes."
+              reason: "Storage structure must never depend on undocumented server state or an unrecorded manual step, and every change must be reproducible and safely reversible."
+              kind: "code"
+              inputs: ["resolved storage mapping", "Database Principles"]
+              expected_result: "The complete storage structure is reproducible from the recorded Migration history alone, in a fresh environment, without manual intervention."
+              depends_on: ["P2G2T1", "P2G2T2"]
+              constraints: []
+              acceptance: "Applying the recorded Migration history to an empty storage location reproduces the identical current structure, and a semantically safe migration reverses cleanly."
+              verify: "Applying the full Migration history to a fresh, empty storage location produces the same structure as the current one, and reversing a safe migration and reapplying it returns to the identical structure."
+              status: "todo"
+            P2G3T2:
+              id: "P2G3T2"
+              title: "Detect schema drift before normal operations"
+              description: "Verify, before any normal data operation proceeds, that the running storage structure matches the recorded Migration history using an integrity marker, and refuse operations when drift is detected rather than silently repairing it with an ad-hoc structural command."
+              reason: "Undetected drift between recorded and running structure silently invalidates every portability and integrity guarantee Database provides."
+              kind: "code"
+              inputs: ["recorded Migration history", "running storage structure"]
+              expected_result: "A drift check runs before normal operations and refuses to proceed when the running structure does not match the recorded Migration history."
+              depends_on: ["P2G3T1"]
+              constraints: []
+              acceptance: "An intentionally altered running structure is detected as drift and blocks normal operations rather than being silently repaired."
+              verify: "Altering the running storage structure outside the Migration mechanism and then attempting a normal operation is refused with the drift condition identified, while an unaltered structure proceeds normally."
+              status: "todo"
+        P2G4:
+          id: "P2G4"
+          title: "Initial Data Import"
+          description: "Repeatable, dependency-ordered import of every Target-declared Initial Data record."
+          area: "Initial Data import across all persistent Domain Definitions"
+          does: "Every Target-declared Initial Data record exists in storage exactly once, restoring the Target's declared initial state with the same meaning on every rebuild."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2G4T1:
+              id: "P2G4T1"
+              title: "Import declared Initial Data repeatably"
+              description: "Import every Target-declared Initial Data record for every persistent Domain Definition through one reusable, configurable mechanism, resolving records in dependency order, satisfying every relationship and non-nullable field, generating a secure value for any field the Target marks as generated rather than fixed and surfacing each generated credential to the operator exactly once outside any log, backup, or export, and completing without duplicating a logical record or violating a uniqueness constraint on a repeated run."
+              reason: "Rebuilding the Database must restore the Target's declared initial state with the same meaning every time, and a generated credential must reach the human who needs it without ever being persisted or logged in the clear."
+              kind: "code"
+              inputs: ["Target-declared Initial Data for every Domain Definition", "resolved storage mapping", "credential at-rest treatment"]
+              expected_result: "Every Target-declared Initial Data record exists in storage exactly once, every generated credential was surfaced once to the operator and stored only in its approved at-rest form, and re-running the import changes nothing further."
+              depends_on: ["P2G3T1", "P2G2T2"]
+              constraints: []
+              acceptance: "Every declared Initial Data record is present with its declared and generated values, no duplicate logical record or uniqueness violation exists after a repeated run, and no generated credential appears in any log, backup, or export."
+              verify: "Running the import twice against a fresh storage location leaves exactly one logical record per declared Initial Data entry the second time, and inspecting every log, metric, and export produced by the import shows no credential value."
+              status: "todo"
+        P2G5:
+          id: "P2G5"
+          title: "Generic Database Interface"
+          description: "The one public, Model-driven data-access pipeline, its Transaction boundary, and its controlled-command route."
+          area: "Public generic data-access operations, credential exclusion, transactions, and controlled commands"
+          does: "Every persistent Domain Definition is reachable through one generic, Model-driven Database Interface that never exposes a credential representation, supports grouped Transactions, and offers a capability-restricted route for otherwise-inexpressible data operations."
+          constraints: []
+          task_count: 4
+          tasks:
+            P2G5T1:
+              id: "P2G5T1"
+              title: "Provide the generic Model-driven data-access pipeline"
+              description: "Provide one generic Database Interface operation pipeline covering create, read-by-identifier, list, search, update, and delete for every persistent Domain Definition, accepting the imported Model type or instance and the operation's criteria directly rather than an untyped Model-name string, and provide the activation operation accepting exactly enable or disable only for a Domain Definition that declares an active-state field."
+              reason: "Every Model-driven consumer needs one stable, generic way to operate on persistent data without a duplicate implementation per Domain Definition."
+              kind: "code"
+              inputs: ["resolved storage mapping", "Model Public Interface", "Database Principles"]
+              expected_result: "Every persistent Domain Definition supports create, get-by-id, list, search, update, delete, and, when it declares an active-state field, enable and disable, through one shared pipeline."
+              depends_on: ["P2G3T2", "P2G4T1"]
+              constraints: []
+              acceptance: "Every supported operation behaves correctly for a representative Domain Definition without a Model-specific reimplementation of the pipeline itself, and an unsupported activation request on a Domain Definition without an active-state field is rejected."
+              verify: "Exercising create, read, list, search, update, delete, and, where applicable, enable and disable against representative Domain Definitions through the shared pipeline produces the expected stored result for each, and activation on a Domain Definition without an active-state field is rejected."
+              status: "todo"
+            P2G5T2:
+              id: "P2G5T2"
+              title: "Exclude credential representations from every public read"
+              description: "Ensure that no operation of the generic Database Interface, including create's result, read, list, search, and any exported or logged form, ever returns, prints, or otherwise exposes a persisted credential field's stored or original representation to a consumer."
+              reason: "A credential's protection at rest is worthless if the generic interface hands its representation back to any caller."
+              kind: "code"
+              inputs: ["generic Database Interface pipeline", "credential at-rest treatment"]
+              expected_result: "No result returned by any generic Database Interface operation, and no log or export it produces, contains a credential field's stored or original value."
+              depends_on: ["P2G5T1"]
+              constraints: []
+              acceptance: "Every operation's result and observability output is verified free of credential representations for a representative Domain Definition that declares a credential field."
+              verify: "Performing every supported operation against a Domain Definition with a credential field and inspecting each operation's result, log, and export shows no credential representation in any of them."
+              status: "todo"
+            P2G5T3:
+              id: "P2G5T3"
+              title: "Provide an explicit Transaction boundary"
+              description: "Provide a Transaction boundary through the Database Interface that lets a consumer group related operations on one Instance so they commit or roll back together, while a standalone operation forms its own atomic unit, and never implies atomicity across Instances."
+              reason: "Related changes must never leave storage in a partially applied state when part of a related group fails."
+              kind: "code"
+              inputs: ["generic Database Interface pipeline", "Database Principles"]
+              expected_result: "A consumer can group related operations into one Transaction that commits or rolls back as a whole, and a standalone operation remains independently atomic."
+              depends_on: ["P2G5T1"]
+              constraints: []
+              acceptance: "A failure partway through a grouped Transaction leaves none of its operations' changes durably applied, while a preceding standalone operation's already-committed change remains applied."
+              verify: "Forcing a failure partway through a multi-operation Transaction shows none of that Transaction's changes durably applied, while a standalone operation performed before it remains applied."
+              status: "todo"
+            P2G5T4:
+              id: "P2G5T4"
+              title: "Provide the capability-restricted controlled-command route"
+              description: "Provide a capability-restricted, separately observable command route for data operations the standard pipeline cannot express, requiring explicit parameterization and protected identifiers, participating in the Transaction boundary, and rejecting any structural change, privilege change, or Migration operation."
+              reason: "Some data operations cannot be expressed through the standard pipeline, but they must never be allowed to bypass Database's structural, privilege, or Migration protections."
+              kind: "code"
+              inputs: ["generic Database Interface pipeline", "Transaction boundary", "Database Preferences controlled_commands"]
+              expected_result: "The controlled-command route executes a representative non-standard data operation under full parameterization and observability while rejecting an attempted structural, privilege, or Migration command."
+              depends_on: ["P2G5T1", "P2G5T3"]
+              constraints: []
+              acceptance: "Every attempted structural change, privilege change, or Migration command submitted through the controlled-command route is rejected, and an allowed non-standard data operation executes correctly and is separately observable."
+              verify: "Submitting a representative allowed non-standard data operation through the controlled-command route succeeds and is recorded as a distinct observable event, while submitting a structural, privilege, or Migration command through the same route is rejected."
+              status: "todo"
+        P2G6:
+          id: "P2G6"
+          title: "Public Interface and Documentation"
+          description: "The Database package's explicit Public Interface, Application Manifest publication, and operational documentation."
+          area: "The Database package's explicit Public Interface and operational documentation"
+          does: "The Database Interface, Instance Registry, and Transaction boundary are exposed through one explicit, stable Public Interface, the package's public metadata is published to the Application Manifest, and its README documents actual setup, operation, and verification."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2G6T1:
+              id: "P2G6T1"
+              title: "Publish the Database Public Interface, Manifest metadata, and README"
+              description: "Expose the Database Interface, Instance Registry, and Transaction boundary through the package's explicit Public Interface without exposing an internal adapter, mapping, connection, or configuration file, publish the package's public metadata to the Application Manifest, and generate the package README explaining its public surface, setup, use, migration and Initial Data operation, and verification."
+              reason: "Consumers require one stable, documented entry point to Database's capabilities without depending on its private internal organization."
+              kind: "code"
+              inputs: ["every completed Group's result", "Application Manifest", "Development Component Profile for database"]
+              expected_result: "The Database package exposes one unambiguous Public Interface, its Application Manifest section is published with accurate public metadata, and its README accurately documents actual setup, operation, and verification."
+              depends_on: ["P2G1T2", "P2G2T2", "P2G3T2", "P2G4T1", "P2G5T2", "P2G5T3", "P2G5T4"]
+              constraints: []
+              acceptance: "The Public Interface exposes no private internal resource, the Application Manifest's database section accurately reflects the package, and the README enables independent use without inspecting private implementation."
+              verify: "Consuming the Database package's Public Interface reaches the Database Interface, Instance Registry, and Transaction boundary without touching a private internal resource, and following the README's documented setup, migration, and Initial Data steps succeeds."
+              status: "todo"

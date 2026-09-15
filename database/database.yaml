@@ -1,0 +1,16 @@
+meta:
+  path: "database/database.yaml"
+  path_note: "Database's own layer-local, non-secret runtime storage configuration (Storage Adapter). Never holds a secret value; encryption keys and other secrets are resolved only from the runtime environment."
+
+engines:
+  sqlite:
+    driver: "sqlite3"
+
+instances:
+  general:
+    name: "Trading Assistant General"
+    purpose: "General application data."
+    engine: "sqlite"
+    database: "trading_assistant_general"
+
+default_instance: "general"

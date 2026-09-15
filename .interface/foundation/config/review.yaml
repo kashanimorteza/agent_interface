@@ -17,12 +17,12 @@ content:
       id: "P1"
       title: "Model"
       target: "model"
-      scope: "Plan Assurance against current Target Understanding (15 Domain Definitions, their fields, relationships, rules, and credential treatment) and applicable Model, Development, and Plan Component authorities; Implementation Assurance against the assured Plan by independently observing the implemented model/ package, its durable checks, and its Public Interface and documentation."
+      scope: "Plan Assurance against current Target Understanding (15 Domain Definitions, their fields, relationships, rules, and credential treatment) and applicable Model, Development, and Plan Component authorities; Implementation Assurance by independently field-checking all 15 Domain Definitions plus Foundation and Public Interface against the Target, reading every test file rather than trusting its pass/fail alone, and running an independent adversarial script (unknown-field rejection, unique_sets field-name validity, foreign_key target validity, boundary-value rejection, assignment-time validation) across all 15 classes."
       outcome: "satisfied"
       plan_outcome: "satisfied"
       plan_revision: 1
       implementation_outcome: "satisfied"
       reviewed_by: "reviewing"
-      reviewed_at: "2026-09-15T12:04:09Z"
+      reviewed_at: "2026-09-15T12:21:38Z"
       finding_count: 0
       findings: {}
