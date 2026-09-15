@@ -54,127 +54,13 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
-## 4. `configure` establishes operational readiness
+## Skill-specific behavior
 
-**Rule:** The architecture requires the `configure` Skill. Its purpose is operational readiness; its responsibility is to initialize and reconcile Config, synchronize stable phase identity and aggregate State, resolve applicable Implementation and Platform technical selections with concrete versions, install or reconcile their required packages and tools, and prepare the selected Environment; its task coverage is configuration, technical dependency preparation, and environment preparation required before workflow execution.
-
-**Why:** Every later operation needs valid operational records and a prepared execution environment.
-
-**Boundary:** `configure` never stores Target meaning, plans, develops, reviews, launches, resets, or modifies non-Config Interface sources.
+Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, verification, idempotency, stopping conditions, and runtime realization belong only in its own portable Contract. This Principles file defines no Skill-specific workflow or implementation details.
 
 <br>
 
-## 5. `planning` owns work definition
-
-**Rule:** The architecture requires the `planning` Skill. Its purpose is executable work definition; its responsibility is to convert current Target Understanding and applicable Component authorities into complete, bounded, ordered, and verifiable Tasks for selected or all eligible phases; its task coverage is decomposition, dependencies, acceptance, verification conditions, and Plan reconciliation.
-
-**Why:** Development needs an explicit statement of what must be achieved and how completion will be observed.
-
-**Boundary:** `planning` never prescribes implementation, performs development, reviews results, or changes Target intent.
-
-<br>
-
-## 6. `developing` owns implementation and its checks
-
-**Rule:** The architecture requires the `developing` Skill. Its purpose is verified implementation; its responsibility is to execute eligible planned work only after current Review proves Plan Assurance for the exact current Plan Revision, resolve implementation details within current authorities, build durable checks from Task verification conditions, and record truthful evidence; its task coverage is selected or all eligible assured phase work.
-
-**Why:** Planned outcomes become trustworthy only through implementation and observable verification.
-
-**Boundary:** `developing` never creates the Plan, substitutes its own judgment for Plan Assurance, develops against a missing, stale, or differently revised Review, performs independent Review, changes Target intent, or writes outside Development authority.
-
-<br>
-
-## 7. `reviewing` independently judges results
-
-**Rule:** The architecture requires the `reviewing` Skill. Its purpose is independent assurance; its responsibility is to reconstruct current Interface and Target Understanding, assure every selected phase's Plan, coordinate Planning when that Plan is missing or unsatisfied, independently recheck the reconciled Plan, and then judge implementation when it exists; its task coverage is Plan Assurance, Implementation Assurance, verification, Findings, evidence gaps, and exact Review outcomes for zero or more selected phase positions. Empty input selects every enabled phase, and each resolved phase is reviewed independently in Target order. For each assurance stage, Reviewing inventories every applicable mandatory obligation from the complete authorities—not only summaries—including every normative Principle Rule and Boundary, every obligation represented as `Must` or `Never`, every resolved Preference whose requirement is `required`, every active conditional requirement, and every applicable instruction of a required synchronized Skill. It classifies each obligation exactly once as `satisfied`, `not applicable` with an explicit reason, or a `finding` grounded in evidence. No assurance passes while an obligation is missing, unclassified, unsupported, or merely asserted.
-
-**Why:** The operation that produced a result cannot provide fully independent judgment of that result.
-
-**Boundary:** Each Review pass reports and records without changing what it judges. `reviewing` may invoke Planning as the sole owner of Plan reconciliation, but it never writes Plan content, repairs implementation, invokes Development, invents requirements, or changes another operation's progress. `Not applicable` is never inferred from silence and cannot excuse a selected required technology, capability, or obligation merely because its implementation or evidence is absent. The obligation ledger is transient; Review persists Findings, evidence, and outcomes rather than creating a second authority.
-
-<br>
-
-## 8. `launch` owns runtime startup and readiness
-
-**Rule:** The architecture requires the `launch` Skill. Its purpose is operational availability; its responsibility is to verify the selected Environment, start completed Target parts through declared public boundaries, verify readiness, and report Access Points; its task coverage is runtime startup, dependency order, readiness, and access reporting.
-
-**Why:** Completed implementation is not operational until startup and readiness are observed.
-
-**Boundary:** `launch` never prepares the Environment, repairs product code, changes Target intent, or bypasses incomplete prerequisites.
-
-<br>
-
-## 9. `implement` is the trustworthy full-path coordinator
-
-**Rule:** The architecture requires the `implement` Skill. Its purpose is trustworthy end-to-end execution; its responsibility is to validate phase selection, execute Configure once, and then coordinate Planning, Plan Assurance through Reviewing, Development, final Implementation Assurance through Reviewing, Finding reconciliation, and eligible Launch for each phase in Target order while preserving each Skill's authority; its task coverage is selected phases or all implementable phases.
-
-**Why:** A single entry point is needed when the Human wants a complete evidence-backed implementation rather than manual operation-by-operation control.
-
-**Boundary:** `implement` coordinates and integrates outcomes; it performs no product operation of its own and never bypasses an operation gate or Human approval.
-
-<br>
-
-## 10. `reset` owns previewed workflow rollback
-
-**Rule:** The architecture requires the `reset` Skill. Its purpose is controlled workflow rollback; its responsibility is to resolve and preview explicit phases, every phase with generated work when no phase is supplied, Config only, or the complete Interface-generated system, obtain explicit Human confirmation, and apply only that preview; its task coverage is the exact operational and implementation outputs attributable to the selected scope.
-
-**Why:** Destructive workflow rollback needs one controlled and auditable entry point.
-
-**Boundary:** `reset` never treats invocation as approval, removes an unlisted target, reinterprets Target intent, guesses implementation attribution, damages an unselected phase, reverses Environment preparation, or invokes another workflow operation afterward.
-
-<br>
-
-## 11. `skill-installer` owns Agent capability provisioning
-
-**Rule:** The architecture requires the `skill-installer` Skill. Its purpose is controlled Agent capability lifecycle management; its responsibility is to derive needs, discover compatible project-scoped candidates, preview provenance, permissions, dependencies, and scope, obtain approval, provision approved choices, and verify Activation; its task coverage is Agent capabilities rather than application dependencies.
-
-**Why:** Agent capabilities need a controlled lifecycle distinct from application dependency installation.
-
-**Boundary:** `skill-installer` never changes Target code or dependencies, installs at user scope, stores credentials, provisions before approval, or treats discovery as Activation.
-
-<br>
-
-## 12. `fastapi` supplies conditional FastAPI guidance
-
-**Rule:** The current Agent Profile requires the `fastapi` contextual Skill only when FastAPI work is selected by a current authority. Its purpose is current framework guidance; its responsibility is to supply reusable FastAPI knowledge inside the active role; its task coverage is APIs, validation, dependencies, responses, routing, streaming, and related implementation concerns.
-
-**Why:** Technology-specific work benefits from focused current knowledge without coupling the Agent architecture to one Target.
-
-**Boundary:** `fastapi` provides guidance inside the active role; it never selects FastAPI, expands project scope, overrides Implementation or Target authorities, or becomes a workflow operation.
-
-<br>
-
-## 13. `typer` supplies conditional Typer guidance
-
-**Rule:** The current Agent Profile requires the `typer` contextual Skill only when Typer work is selected by a current authority. Its purpose is current CLI-framework guidance; its responsibility is to supply reusable Typer knowledge inside the active role; its task coverage is applications, commands, arguments, options, output, and related implementation concerns.
-
-**Why:** CLI-specific knowledge should be available when relevant without becoming a universal Target requirement.
-
-**Boundary:** `typer` provides guidance inside the active role; it never selects Typer, expands project scope, overrides Implementation or Target authorities, or becomes a workflow operation.
-
-<br>
-
-## 14. `library-skills` conditionally manages package-provided Skills
-
-**Rule:** The current Agent Profile requires the `library-skills` contextual Skill only when installed project packages may provide Agent Skills or managed links need reconciliation. Its purpose is package-provided Skill lifecycle management; its responsibility is to preserve and reconcile package-owned Skill links; its task coverage is discovery, installation, update, repair, and status checks for those Skills.
-
-**Why:** Package-owned Agent guidance needs lifecycle management that preserves its provenance and does not overwrite hand-authored Skills.
-
-**Boundary:** `library-skills` never substitutes for general capability discovery, changes application dependencies as an Agent capability action, deletes hand-authored Skills, or expands beyond package-provided Skill management.
-
-<br>
-
-## 15. `agent-sync` realizes the declared Agent Profile
-
-**Rule:** The architecture requires the explicit-Human `agent-sync` Skill. It starts only when the Human directly invokes its declared Runtime entry point. It is the sole Agent Role or Skill permitted to enter, read, resolve, or use any source inside the Agent Module. Its purpose is portable Agent Profile realization; its responsibility is to dynamically discover every current Agent Component from the canonical Interface, understand its Human-owned declarations, reconcile authorized project-scoped native artifacts and selected capabilities, and verify actual availability through a complete post-change pass. It materializes a conforming Agent Native together with self-contained Runtime Rules, Skills, Agent Instances, Commands, Settings, Hooks, permissions, integrations, and every other declared realization so ordinary Runtime operations never need the Agent Module. Its task coverage is the complete current Agent Profile, including new mechanisms and explicit empty categories. Overall synchronization is claimed only when every required declaration passes that verification.
-
-**Why:** A portable Agent definition is useful only when a compatible Runtime can reconstruct and prove the same operational Agent without repeated manual setup.
-
-**Boundary:** The Agent Native, every Agent Instance, every other Skill, coordinator, Hook, startup or resume routine, automation, and implicit or model-generated action are forbidden from invoking, chaining, triggering, or simulating `agent-sync`. They consume only the last synchronized Runtime realization. A changed Agent Module declaration has no operational effect until the Human directly invokes the declared `agent-sync` entry point. `agent-sync` never changes Interface sources, Target code, application dependencies, user- or machine-scoped state, credentials, or Human choices; it never discovers or adopts undeclared capabilities, removes compatible unmanaged capabilities, or treats declaration or file presence as proof of Activation.
-
-<br>
-
-## 16. A prepared Markdown file may supply a Skill's native instruction body
+## 4. A prepared Markdown file may supply a Skill's native instruction body
 
 **Rule:** The Agent Skill Profile declares one optional prepared-file directory and an exact filename convention keyed by declared Skill identity. When the matching Markdown file exists, Agent Sync creates the Skill folder and entrypoint required by the selected Agent Native, preserves that file's instruction content and meaning, and adds or adapts only the minimum native metadata needed for discovery and invocation. When no matching file exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
 
@@ -195,35 +81,6 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Never** — let coordinator invocation expand a delegated Skill's authority or permit unrelated automatic execution *(2)*
 - **Must** — make repeated execution preserve valid work *(3)*
 - **Never** — use repeatability to justify destructive regeneration *(3)*
-- **Must** — provide `configure` for Config reconciliation, phase synchronization, technical dependency resolution and installation, and Environment preparation *(4)*
-- **Never** — let `configure` perform another operation or modify non-Config Interface sources *(4)*
-- **Must** — provide `planning` for complete, bounded, and verifiable work definition *(5)*
-- **Never** — let `planning` prescribe implementation or perform downstream operations *(5)*
-- **Must** — provide `developing` for implementation, durable checks, and truthful evidence *(6)*
-- **Never** — let `developing` plan, independently review, or exceed Development authority *(6)*
-- **Must** — provide `reviewing` for independent evidence-based judgment and Findings *(7)*
-- **Must** — let `reviewing` accept zero or more phase positions, default to every enabled phase, and judge each resolved phase independently in Target order *(7)*
-- **Must** — let `reviewing` coordinate Planning for an unsatisfied Plan and independently recheck Planning's result before judging implementation *(7)*
-- **Never** — let `reviewing` write Plan content, repair implementation, invoke Development, invent requirements, or change another operation's progress *(7)*
-- **Must** — provide `launch` for startup, readiness verification, and Access Points *(8)*
-- **Never** — let `launch` prepare the Environment, repair code, or bypass prerequisites *(8)*
-- **Must** — provide `implement` as the gated full-path coordinator *(9)*
-- **Must** — run Configure once, then Planning → Plan Review → Developing → final Review for each phase, advancing only after that phase is satisfied *(9)*
-- **Never** — let `implement` absorb operation authority or bypass a gate or approval *(9)*
-- **Must** — provide `reset` for previewed and explicitly confirmed workflow rollback *(10)*
-- **Never** — let `reset` infer approval or affect a target absent from its preview *(10)*
-- **Must** — provide `skill-installer` for approved project-scoped Agent capability provisioning *(11)*
-- **Never** — let `skill-installer` modify application dependencies, use user scope, or provision before approval *(11)*
-- **Must** — activate `fastapi` only when current authorities select FastAPI work *(12)*
-- **Never** — let `fastapi` select technology, change scope, or override authorities *(12)*
-- **Must** — activate `typer` only when current authorities select Typer work *(13)*
-- **Never** — let `typer` select technology, change scope, or override authorities *(13)*
-- **Must** — activate `library-skills` only for package-provided Skill management *(14)*
-- **Never** — let `library-skills` overwrite hand-authored Skills or replace general capability management *(14)*
-- **Must** — provide `agent-sync` to dynamically reconcile every current Agent Component and verify the complete declared Agent Profile at project scope before claiming synchronization *(15)*
-- **Must** — reserve all Agent Module reads exclusively for direct explicit Human invocation of `agent-sync`; every other operation consumes only synchronized Runtime artifacts *(15)*
-- **Never** — let the Agent Native, an Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, or model-generated action invoke, trigger, chain, or simulate `agent-sync` *(15)*
-- **Never** — let `agent-sync` change Human-owned declarations, Target code, broader-scope state, or adopt undeclared capabilities *(15)*
-- **Must** — materialize an exact matching prepared Skill file into the selected Agent Native's required Skill folder while preserving its instruction meaning *(16)*
-- **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file *(16)*
-- **Never** — infer a Skill from an unmatched file, treat a file as proof of Activation, or rewrite the Human-owned prepared source *(16)*
+- **Must** — materialize an exact matching prepared Skill file into the selected Agent Native's required Skill folder while preserving its instruction meaning *(4)*
+- **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file *(4)*
+- **Never** — infer a Skill from an unmatched file, treat a file as proof of Activation, or rewrite the Human-owned prepared source *(4)*

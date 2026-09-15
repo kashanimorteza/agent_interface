@@ -1,0 +1,18 @@
+# Database's own non-secret runtime configuration.
+#
+# Lists supported Engine profiles and configured Instances. No connection
+# secret or credential ever belongs in this file; secrets are delivered
+# through the runtime environment (see README.md).
+
+engines:
+  sqlite:
+    driver: "sqlite"
+
+instances:
+  general:
+    name: "Trading Assistant General"
+    purpose: "General application data."
+    engine: "sqlite"
+    database: "trading_assistant_general"
+
+default_instance: "general"

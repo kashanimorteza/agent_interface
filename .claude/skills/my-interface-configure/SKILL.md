@@ -10,44 +10,50 @@ This file is the self-contained Claude Code realization of the portable `configu
 
 ## Role
 
-Generate and maintain the persistent `.interface/foundation/config/application.yaml` Application Manifest and the operational Config files required by Agent Interface, synchronize aggregate State with current Target phase identifiers, and prepare the selected Platform Environment.
+Configure prepares the project for the remaining Interface workflow. It first establishes the required Interface and Target Understanding, then creates or reconciles the four operational Config files from their Schemas, and finally installs declared technical requirements and prepares the selected project Environment for Development.
 
-Configure never stores Target interpretation in Config. Its Target Understanding is limited to resolving stable phase identities and any explicit Platform selection or Environment requirement that overrides the Platform defaults.
+Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements.
 
 ## Workflow
 
-First establish Interface Understanding from the canonical Interface document and follow its routes to the shared Skill rules. Then establish the limited Target Understanding required by this role from the Target sources located by the Interface under their declared precedence. Use the Interface to locate operational Schemas, Config destinations, Target phase identities, and current Platform authorities. Resolve the selected Environment from explicit Target choices first and Platform defaults second.
+### 1. Understanding
 
-For each operational Schema:
+Establish Interface Understanding from the canonical Interface document and follow its routes to the shared Runtime rules, operational Schemas, Config destinations, Implementation authorities, and Platform authorities. Then establish the limited Target Understanding required by this role from the Target sources located by the Interface under their declared precedence. Resolve the selected Environment from explicit Target choices first and Platform defaults second.
 
-1. Read its current structure, initialization instructions, defaults, and update requirements. Derive the initialization method from those instructions rather than assuming a template key or record structure.
-2. When its Config file is absent, generate it according to those initialization instructions.
-3. When its Config file exists, validate it against the applicable Schemas and reconcile structural differences according to their current requirements, including additions and removals where those requirements call for them.
-4. Preserve every operational record a Config file already holds — the owning Schema states what those are — throughout. Never drop operational data to satisfy a structural change: when a field the Schema no longer defines still carries information that exists nowhere else, surface it as a conflict and leave that part of the file unchanged, because a structural tidy-up that loses recorded work costs more than the untidiness it removes.
-5. Introduce only the initial values and structural changes required by the applicable Schemas. Do not invent operational work, project facts, or technical decisions.
+### 2. Config generation
 
-Create or reconcile `.interface/foundation/config/application.yaml` on every Configure run from the Application Manifest Schema. Build its Component sections from the current Development Component Profiles and public metadata exposed by each Component. Include a section for every declared Implementation Component even when that section is empty. Preserve public metadata that remains valid, reconcile stale metadata from its authoritative source, and report conflicts rather than silently discarding meaningful information. Keep the Manifest limited to non-secret composition metadata: Component identity, repository-relative root, Component Type, public entrypoint or interface metadata, and declared Connections. Never write Target meaning, private implementation details, internal storage structure, credentials, secret values, or undeclared dependencies into it.
-When a Component is generated or configured, publish its non-secret `package_name` when applicable, repository-relative `path`, `public_entrypoint` when applicable, and `public_interface` metadata in that Component's section.
+For each of the four operational Schemas (`plan.yaml`, `state.yaml`, `review.yaml`, and `application.yaml`):
 
-Synchronize State phase records with the stable phase identifiers currently defined by Target. Create missing records at their Schema defaults and preserve existing progress. Never copy phase titles, goals, targets, status, readiness, or other Target meaning into State. Remove a stale phase record only while it still contains initialization defaults; preserve and report any removed phase carrying meaningful progress or provenance.
+  1. Read its current structure, initialization instructions, defaults, and update requirements. Derive the initialization method from those instructions rather than assuming a template key or record structure.
+  2. When its Config file is absent, generate it according to those instructions.
+  3. When its Config file exists, validate it and reconcile only the structural differences required by the Schema.
+  4. Preserve every meaningful operational record already held by the file. If a change would discard information that exists nowhere else, leave it in place and report a conflict.
+  5. Introduce only Schema-defined initial values and structures. Do not invent operational work, project facts, Target meaning, or technical decisions.
 
-Inspect the selected Environment before changing the system. Apply only missing Environment requirements, preserve requirements already satisfied, and use the Environment definition and any compatible explicit Target requirements as the complete authority for system preparation. Record a genuine unresolved preparation condition through State.
+State phase records are synchronized as part of generating `state.yaml`: create missing records from stable Target phase identifiers and Schema defaults, preserve existing progress, and report stale records that contain meaningful provenance instead of silently deleting them. The same Schema-driven process applies to `application.yaml`; its component sections are part of that Schema and are created or reconciled in the same way.
 
-Record this invocation's active position and append its operational outcome according to State.
+### 3. Requirements and Environment preparation
 
-Validate every Config file against its applicable Schemas. Repeating the run against valid current files makes no structural changes and preserves existing work; recording the current invocation follows the owning Component's rules independently of structural reconciliation.
+Read the applicable Implementation and Platform Preferences and public Component requirements exposed through the Interface. Resolve declared packages, languages, tools, versions, and Environment requirements. Install or remove only explicitly declared project-scoped requirements, preserve requirements already satisfied, and report each result. Never infer or invent a dependency or removal.
+
+Use the selected Environment definition and compatible explicit Target requirements as the authority for system preparation. Record any unresolved preparation condition as a blocker through State.
+
+### 4. Validation and outcome
+
+Validate all four Config files against their applicable Schemas. Record this invocation's active position and append its operational outcome according to State. Report created, updated, preserved, conflicted, installed, removed, already-satisfied, and blocked results.
+
+Repeating Configure against unchanged valid sources is idempotent: it makes no unnecessary structural or Environment changes while still recording the current invocation according to State.
 
 ## Boundaries
 
-Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or edit human-owned Interface sources. System preparation is limited to the selected Environment; it grants no authority over product implementation. The Application Manifest Config is the sole additional generated output owned by Configure.
+Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or edit human-owned Interface sources. System preparation is limited to the selected Environment; it grants no authority over product implementation. Configure writes only the four operational Config files and the project-scoped technical or Environment state authorized by their sources.
 
 ## Report
 
 Report in this order:
 
-1. **Application Manifest** — whether `.interface/foundation/config/application.yaml` was created, updated, or already valid, and its public sections.
-2. **Config** — each resolved Config file and whether it was created, updated, or already valid.
-3. **Phase synchronization** — phase records added, preserved, or left as conflicts.
-4. **Environment** — the selected Environment, requirements already satisfied, and preparation performed.
-5. **Preserved records** — existing operational information carried through unchanged.
-6. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.
+1. **Config** — the status of all four files, including `application.yaml`, and any records created, updated, or already valid.
+2. **Phase synchronization** — phase records added, preserved, or left as conflicts.
+3. **Environment and requirements** — the selected Environment, each requirement's resolved version and preparation status, and any removal performed.
+4. **Preserved records** — existing operational information carried through unchanged.
+5. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.

@@ -2,11 +2,11 @@
 
 ## Purpose
 
-Establish operational readiness for Interface work.
+Prepare the project for the Interface workflow.
 
 ## Responsibility
 
-Initialize and reconcile operational Config, synchronize aggregate phase identity and State, resolve the technical requirements declared by all applicable Implementation Preferences and the selected Platform Launch Item, install or reconcile the required packages and tools, and prepare the selected Platform Environment. It owns no planning, implementation, review, launch, reset, or Target interpretation beyond the limited facts required for configuration.
+Establish Interface and Target Understanding, generate or reconcile the four operational Config files from their Schemas, install declared technical requirements, and prepare the selected project Environment for Development. It owns no planning, implementation, review, launch, reset, or Target interpretation beyond the limited facts required for configuration.
 
 ## Trigger
 
@@ -18,25 +18,22 @@ Accept no phase selection. Consume current operational Schemas, existing Config,
 
 ## Outputs
 
-Produce or reconcile the persistent `.interface/foundation/config/application.yaml` Application Manifest from Development Profiles, Connections, and public Component metadata, Schema-valid operational Config, synchronized phase State records, resolved technical selections with concrete versions, an installed or reconciled prepared Environment, truthful State position and History, and a report of created, installed, reconciled, preserved, conflicted, and blocked results.
+Produce or reconcile Schema-valid `plan.yaml`, `state.yaml`, `review.yaml`, and `application.yaml` Config files, resolved and prepared technical requirements and Environment, truthful State position and History, and a report of created, installed, reconciled, preserved, conflicted, and blocked results.
 
 ## Required Understanding
 
-Establish Interface Understanding. Establish only the Target Understanding needed to resolve stable phase identities and explicit technical or Platform requirements. Read current Config Schemas, State authorities, every applicable Implementation Component authority, and Platform authorities.
+Establish Interface Understanding and only the Target Understanding needed for Config generation and declared technical or Environment requirements. Read current Config Schemas, applicable Implementation Component authorities, and Platform authorities.
 
 ## Authority
 
-Write the Application Manifest and Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item. Never modify other Interface sources or product implementation.
+Write the four Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item. Never modify other Interface sources or product implementation.
 
 ## Workflow Invariants
 
-- Create and reconcile the persistent `.interface/foundation/config/application.yaml` from current Development Component Profiles, declared Connections, and public Component metadata on every Configure run; preserve its structure and include every declared Implementation Component section, even when empty.
-- For each generated or configured Implementation Component, publish its non-secret `package_name` when applicable, repository-relative `path`, `public_entrypoint` when applicable, and `public_interface` metadata in that Component's Manifest section.
-- Keep the Application Manifest free of secrets, private implementation details, internal storage structure, and undeclared dependencies; Development Preferences and declared Connections remain authoritative.
-- Derive initialization and reconciliation from each current Schema rather than a remembered structure.
+- Generate or reconcile all four Config files from their current Schemas rather than a remembered structure; `application.yaml` follows the same process as the other three files.
 - Preserve meaningful operational records through structural reconciliation; surface a conflict rather than discard information that has no other owner.
-- Add missing phase records at current initial values and preserve progress. Remove a stale phase record only while it contains initialization defaults; otherwise preserve and report it.
-- Never copy phase title, goal, target, status, readiness, or other Target meaning into State.
+- Add missing phase records at current initial values and preserve progress while generating `state.yaml`; remove a stale record only while it contains initialization defaults, otherwise preserve and report it.
+- Never copy Target meaning into Config.
 - Resolve every applicable language, package-management, package, database, tool, platform, and version selection from Implementation and Platform authorities before installation.
 - Install or reconcile every required resolved technical item and record its concrete version and verification result.
 - Inspect every applicable Platform Component definition and apply its declared system requirements for the selected Launch Item.
