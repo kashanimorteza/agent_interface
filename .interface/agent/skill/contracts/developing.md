@@ -33,7 +33,7 @@ Write implementation, tests, executable documentation, dependencies, and configu
 - Validate the complete phase input before mutation; an invalid token prevents the whole run.
 - Before mutating a phase, require a current valid Plan and establish from current Interface and Target Understanding that the selected work is eligible. A prior Review record is not required; Review is performed after implementation exists.
 - Execute only work eligible under current Plan rules and dependency evidence.
-- For every resolved technical option involved in the work, resolve its declared `agent_skills` associations only through the synchronized Runtime capability catalog. Never read Agent Module sources to resolve them. Activate an associated Skill only when the option is selected and the Skill is currently discoverable and usable. Use optional Skills when available and continue without them when unavailable; stop the affected work when a required Skill is unavailable. An associated Skill supplies guidance without changing scope or authority.
+- For every resolved technical option involved in the work, resolve its declared `agent_skills` associations only through the synchronized Runtime capability catalog; never read Agent Module sources to resolve them. Activate an associated Skill only when the option is selected and the Skill is currently discoverable and usable; use an optional Skill when available and continue without it when unavailable, and stop the affected work when a required Skill is unavailable. Once activated, apply that Skill's complete applicable guidance to every implementation detail it governs; a result that contradicts activated guidance is not complete, whether or not its other acceptance conditions pass. An associated Skill constrains how the option is used; it never expands scope or authority beyond the resolved Plan.
 - Build a transient verification ledger that splits every acceptance and verification statement into observable conditions and associates each with proof.
 - Derive checks from required conditions, never from the implementation just produced. One passing example proves only that example.
 - Prefer durable checks committed with regressible behavior; one-off probes only supplement them.
@@ -44,7 +44,7 @@ Write implementation, tests, executable documentation, dependencies, and configu
 
 ## Verification
 
-Each Task requires observable evidence for every acceptance clause. Phase completion additionally requires the full relevant check suite and reconciliation against current Target, Component authorities, public interfaces, and the verification ledger.
+Each Task requires observable evidence for every acceptance clause. Phase completion additionally requires the full relevant check suite and reconciliation against current Target, Component authorities, public interfaces, and the verification ledger. When a Task's work activated one or more Skills, its evidence additionally includes an explicit observation that the result conforms to each activated Skill's applicable guidance; a Skill consulted but not reflected in the result is a verification failure, not a satisfied Task.
 
 ## Idempotency
 
