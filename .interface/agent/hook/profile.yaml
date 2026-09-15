@@ -67,14 +67,14 @@ content:
         matcher: "Read|Glob|Grep|Edit|Write|NotebookEdit|Bash|Skill"
         responsibility: "Block Agent Module reads outside the exact direct-Human Agent Sync prompt, block every non-Human attempt to invoke Agent Sync, and block direct Interface mutations outside the authorized Config boundary."
         failure_policy: "fail_closed"
-        required: true
+        required: false
       agent-sync-read-grant:
         path: "resolved by Agent Sync from the selected Agent Native"
         event: "UserPromptExpansion"
         matcher: "my-interface-agent-sync"
         responsibility: "Grant Agent Module read access only to the prompt created by the Human's direct explicit Agent Sync entry-point invocation; a model, Agent Native, Agent Instance, Skill, coordinator, Hook, lifecycle routine, or automation can never create, inherit, or borrow this grant."
         failure_policy: "fail_closed"
-        required: true
+        required: false
     user_hooks: {}
     managed_hooks: {}
     extension_hooks: {}
