@@ -72,8 +72,9 @@ content:
           contract: ".interface/agent/skill/contracts/reviewing.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
-          model_invocation: "disabled"
-          delegated_invocation: "enabled for declared coordinators"
+          human_invocation: "enabled"
+          coordinator_invocation: "enabled for declared coordinators"
+          autonomous_invocation: "disabled"
           required: true
           coordination:
             allowed_skills:
