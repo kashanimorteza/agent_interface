@@ -74,7 +74,7 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 - **Must** — give every Interface-owned Skill exactly one complete portable Contract conforming to the Skill Contract Schema *(1)*
 - **Must** — keep shared rules in Principles, Skill-specific behavior in its Contract, and runtime execution details in the native implementation *(1)*
-- **Must** — make every non-Sync native Skill self-contained so it never resolves a Contract or capability through the Agent Module *(1, 15)*
+- **Must** — make every non-Sync native Skill self-contained so it never resolves a Contract or capability through the Agent Module *(1)*
 - **Never** — let a native Skill implementation override or become a second authority for its Contract *(1)*
 - **Must** — prove Skill availability through discovery and invocation *(2)*
 - **Must** — make every delegated Skill invocable by its declared coordinator and verify the complete invocation chain before orchestration mutates state *(2)*

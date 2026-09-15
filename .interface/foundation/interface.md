@@ -344,7 +344,7 @@ The Component's own Principles remain the authority: when this summary and a Com
 ### Agent
 The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent Native and its Agent Instances should operate. The Human declares that view once through its Components—including the Agent Native, Agent Instance identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, native mappings, and explicit empty categories.
 
-Together, these Components form the Agent Profile. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Profile, realizes it through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
+Together, these Components form the Agent Profile within the complete Agent Module. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Agent Module, learns the Native Runtime's own conventions, realizes the Module through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 
 ```text
 Agent Components
@@ -403,7 +403,7 @@ Agent Components
     └── Profile     → .interface/agent/observability/profile.yaml
 ```
 
-The Agent Components are read in the order shown exclusively during an explicit Agent Sync invocation. Agent Sync then reads every Interface-owned Skill Contract after Skill Principles and Profile, resolves any optional prepared Skill file by exact declared stable key, and realizes each required Rule, Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. A matching prepared Markdown file supplies that Skill's preserved native instruction content; a Skill without one follows its existing Contract- or provider-based realization path. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A later Component may consume an earlier one but never becomes its second authority. Every supported category remains represented even when its Profile entries are empty, so absence is explicit rather than indistinguishable from omission. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
+The complete Agent Module is read exclusively during an explicit Agent Sync invocation. Agent Sync first learns the selected Agent Native's own documentation, conventions, capabilities, and limitations, then reads every Module source and Interface-owned Skill Contract, resolves any optional prepared Skill file by exact declared stable key, and realizes each required Rule, Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. A matching prepared Markdown file supplies that Skill's preserved native instruction content; a Skill without one follows its existing Contract- or provider-based realization path. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
 
 Each Agent Component below has its own Principles and Profile. Principles define the Component's mandatory philosophy, responsibilities, rules, and boundaries; Profiles define its current selections, resources, mappings, and default settings.
 
@@ -596,7 +596,7 @@ This Operation is performed through `/my-interface-planning` to convert the curr
 
 **Agent Skill:** `/my-interface-developing`
 
-This Operation is performed through `/my-interface-developing [phase-number ...]` to implement and verify eligible planned Tasks only after current Review proves Plan Assurance for the exact current Plan Revision.
+This Operation is performed through `/my-interface-developing [phase-number ...]` to implement and verify eligible Tasks from a valid current Plan. Review evaluates the resulting implementation afterward.
 
 <!-------------------------- Reviewing Operation -->
 ### Reviewing
@@ -617,7 +617,7 @@ This Operation is performed through `/my-interface-launch [api|logic|presentatio
 
 **Agent Skill:** `/my-interface-implement`
 
-This Operation is performed through `/my-interface-implement [phase-number ...]` to execute Configure once, then Planning, Plan Review, Developing, and final Review for each selected phase in Target order, advancing only after the phase is satisfied, and finally perform eligible Launch. With no phase input, it processes every enabled and ready phase.
+This Operation is performed through `/my-interface-implement [phase-number ...]` to execute Configure once, then Planning, Developing, and Review for each selected phase in Target order, advancing only after the phase is satisfied, and finally perform eligible Launch. With no phase input, it processes every enabled and ready phase.
 
 <!-------------------------- Reset Operation -->
 ### Reset
@@ -988,8 +988,8 @@ For direct control over every operation:
 /my-interface-reviewer 1
 /my-interface-developing 1
 /my-interface-reviewer 1
-Repeat Planning, Plan Review, Developing, and final Review for each remaining phase
+Repeat Planning, Developing, and Review for each remaining phase
 /my-interface-launch
 ```
 
-The first Reviewing pass assures the current Plan Revision before Development. The second re-assures that Plan and judges the existing implementation. A phase is reconciled before advancing, and Launch runs only after all required phases satisfy both gates.
+Planning defines the work, Development creates and verifies the implementation, and Review evaluates the resulting Plan coverage and implementation. A phase is reconciled before advancing, and Launch runs only after all required phases satisfy Review.

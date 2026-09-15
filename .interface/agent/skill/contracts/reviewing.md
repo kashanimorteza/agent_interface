@@ -10,15 +10,15 @@ Reconstruct current Interface Understanding and Target Understanding; compare th
 
 ## Trigger
 
-Activate explicitly for zero or more phase selections, after Planning or Development, after a Component or Target change, as an assessment of existing work, or as a final convergence gate.
+Activate explicitly for zero or more phase selections after an implementation exists, including after Development, a Component or Target change, or as a final convergence gate. Do not start Review for a phase with no implementation.
 
 ## Inputs
 
-Accept zero or more phase positions. Empty input selects every enabled phase. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Implementation Principles and Preferences, synchronized Runtime rules, Configure, Planning, and Developing capabilities, Plans, State, prior Review records, implementation, generated Source, public interfaces, and recorded evidence. Never read Agent Module sources.
+Accept zero or more phase positions. Empty input selects every enabled phase that has an implementation. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Implementation Principles and Preferences, synchronized Runtime rules, Configure, Planning, and Developing capabilities, Plans, State, prior Review records, implementation, generated Source, public interfaces, and recorded evidence. Never read Agent Module sources.
 
 ## Outputs
 
-Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, missing-evidence records, delegated Configure/Planning/Developing outcomes, an obligation-coverage summary, and an evidence-first phase report. When no implementation exists, record Implementation Assurance as `not reviewed` and aggregate Review State as `plan satisfied` only when Plan Assurance passes. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
+Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase with an implementation, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, delegated Configure/Planning/Developing outcomes, an obligation-coverage summary, and an evidence-first phase report. A phase without implementation is reported as not reviewable and receives no assurance outcome. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
 
 ## Required Understanding
 
@@ -31,6 +31,7 @@ Observe and independently verify; invoke Configure when current requirements or 
 ## Workflow Invariants
 
 - Validate all phase input before changing records, invoking Planning, or running verification.
+- Before beginning any assurance or delegation for a phase, verify that implementation and generated Source exist. If they do not, stop Review for that phase and report that Developing or Implement must create the implementation first.
 - For each selected phase, read the complete applicable authorities rather than relying on `At a Glance`, indexes, prior Findings, or other summaries. Build a complete obligation inventory containing every applicable normative Principle Rule and Boundary, every obligation represented as `Must`, every `Never` expressed as its prohibited condition, every resolved Preference with `requirement: required`, every conditional requirement whose activation condition is true, every applicable instruction of a required synchronized Skill, and every applicable Target requirement.
 - For each assurance stage, classify every inventoried obligation exactly once as `satisfied`, `not applicable` with an explicit applicability reason, or `finding` with expected condition, actual observation, and evidence. For Plan Assurance, `satisfied` means the current Plan gives the obligation valid, observable coverage; for Implementation Assurance, it means current implementation and evidence prove the obligation. Never infer `not applicable` from silence, and never use it merely because a selected required technology, capability, implementation, or proof is absent.
 - Rebuild the transient Plan Assurance ledger directly from that inventory and current authorities under the synchronized Runtime rules, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness. An omitted, unclassified, unsupported, or merely asserted obligation is a Plan Finding.
@@ -38,20 +39,20 @@ Observe and independently verify; invoke Configure when current requirements or 
 - Record the current positive Plan Revision with every Plan Assurance outcome. Never carry an outcome forward to a different revision; after Planning changes the revision, perform a new independent Plan Assurance pass and bind its result to that new revision.
 - Repeat Plan reconciliation only while a pass closes or materially advances a Plan Finding. Stop the affected phase on a repeated unresolved Finding, no observable progress, inconclusive Plan Assurance, or required Human decision.
 - Do not begin Implementation Assurance until Plan Assurance is satisfied.
-- When no implementation or Development evidence exists, record Implementation Assurance as `not reviewed`; never manufacture a defect or proof for work that has not begun.
 - When implementation exists, build a transient Implementation Assurance ledger covering the complete obligation inventory, every Plan acceptance clause, and every recorded verification condition. Observe each condition independently and judge whether the implementer's checks actually establish it. An omitted, unclassified, unsupported, or merely asserted obligation is an Implementation Finding or missing-evidence record, never a passing condition.
 - Ground every Finding in the expected condition, actual observation, and exact location or observable result. Record absent Plan coverage as a Gap and absent observable proof as missing evidence.
 - Reconcile prior Findings only through current observation. A Finding persists until Review proves it resolved or the Human accepts it.
 - Complete one phase's assurance result before processing the next selected phase. A standalone Review may continue to later independent phases when one phase is unsatisfied or inconclusive; a coordinating Skill may impose a stricter stopping gate.
 - When current authorities or evidence changed since the last assurance, do not carry forward a prior outcome merely because the Plan revision is unchanged; rebuild Understanding and reassess the affected phase.
 - If Config or Environment readiness is stale or insufficient for the current phase, invoke Configure before Plan or Implementation Assurance.
+- If current authorities declare changed Component paths, packages, versions, tools, public metadata, connections, or Platform requirements, treat the change as a Configure trigger and invoke Configure before reassessing the phase.
 - If Plan coverage is stale or incomplete, invoke Planning; if implementation or generated Source no longer satisfies the reconciled Plan, invoke Developing through its own Contract.
 - After every delegated reconciliation, discard prior observations and rerun the relevant assurance stages against fresh Understanding and evidence.
 - Continue the reconciliation cycle only while it closes or materially advances a Finding. Stop and report a blocker when a cycle repeats, makes no observable progress, remains inconclusive, or requires Human judgment.
 
 ## Verification
 
-Plan Assurance is `satisfied` only when the current Plan completely and correctly covers the current Interface and Target authorities and every applicable mandatory obligation has exactly one supported classification with no Finding. Implementation Assurance is `satisfied` only when existing implementation and evidence satisfy that assured Plan and the same current authorities and every applicable mandatory obligation has exactly one supported classification with no Finding. Aggregate outcome is `plan satisfied` when only Plan Assurance applies, `satisfied` when both applicable assurances pass, and otherwise the exact `not satisfied` or `inconclusive` result. Every conclusion must be traceable to current observable evidence; coverage counts alone never prove satisfaction.
+Plan Assurance is `satisfied` only when the current Plan completely and correctly covers the current Interface and Target authorities and every applicable mandatory obligation has exactly one supported classification with no Finding. Implementation Assurance is `satisfied` only when existing implementation and evidence satisfy that assured Plan and the same current authorities and every applicable mandatory obligation has exactly one supported classification with no Finding. Aggregate outcome is `satisfied` when both applicable assurances pass, and otherwise the exact `not satisfied` or `inconclusive` result. A phase without implementation has no Review assurance outcome. Every conclusion must be traceable to current observable evidence; coverage counts alone never prove satisfaction.
 
 ## Idempotency
 

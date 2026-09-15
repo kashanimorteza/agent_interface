@@ -1,6 +1,6 @@
 ---
 name: my-interface-implement
-description: Implement selected Target phases, or every enabled and ready phase when none is specified, by running Configure once and then Planning, Plan Review, Developing, and final Review sequentially for each phase before eligible Launch.
+description: Implement selected Target phases, or every enabled and ready phase when none is specified, by running Configure once and then Planning, Developing, and Review sequentially for each phase before eligible Launch.
 argument-hint: "[phase-number ...]"
 disable-model-invocation: true
 ---
@@ -13,7 +13,7 @@ This file is the self-contained Claude Code realization of the portable `impleme
 
 Provide the trustworthy full-path entry point while preserving the ownership and gates of Configure, Planning, Developing, Reviewing, and Launch. Implement coordinates those Skills and performs no product operation of its own.
 
-The individual operation Skills remain available when the Human wants to work step by step. A successful Implement result means every processed phase passed Planning, independent Plan Assurance, Development, and independent final Implementation Assurance in that order.
+The individual operation Skills remain available when the Human wants to work step by step. A successful Implement result means every processed phase passed Planning, Development, and Review in that order.
 
 ## Input
 
@@ -33,18 +33,17 @@ Establish Interface Understanding from the canonical Interface document, then Ta
 
 Execute this fixed sequence; do not derive it from a mutable Target workflow:
 
-1. Resolve Configure, Planning, Reviewing, Developing, and Launch from synchronized Runtime Skills. Before mutation, prove that each is discoverable and that its native invocation controls permit model invocation by Implement. If any Child Skill is unavailable or explicit-Human only, stop before Configure and report Runtime drift; never inspect Agent Module sources or invoke Agent Sync automatically.
+1. Resolve Configure, Planning, Reviewing, Developing, and Launch from synchronized Runtime Skills. Before mutation, prove that each is discoverable and that its native invocation controls permit invocation by Implement as the declared coordinator. If any Child Skill is unavailable or does not permit this coordinator, stop before Configure and report Runtime drift; never inspect Agent Module sources or invoke Agent Sync automatically.
 2. Execute Configure exactly once. Continue only when its required operational records and Environment preparation pass their gates.
 3. Record Implementation State as `in progress` under its owner.
 4. Process selected implementable phases strictly in Target order, completing the entire sequence for one phase before touching the next.
 5. Invoke Planning for the current phase. An existing valid Plan is reconciled idempotently rather than regenerated for style.
-6. Invoke Reviewing for the same phase as the Plan gate. Use its `plan_outcome`; do not invoke Development unless Plan Assurance is `satisfied`. Reviewing may coordinate Planning and recheck its result under its own Contract.
-7. Invoke Developing for the phase, including its durable verification and completion gate.
-8. Invoke Reviewing again. This final pass re-assures the current Plan and performs Implementation Assurance against current Source and evidence.
-9. If Plan Findings remain, let Reviewing route them through Planning. If implementation Findings remain, invoke Developing with those recorded Findings, then invoke Reviewing again.
-10. Repeat step 9 only while the cycle closes or materially advances at least one Finding. Stop on repetition, no observable progress, an inconclusive assurance, failed dependency or gate, or required Human decision.
-11. Advance to the next selected phase only when the current Review proves both `plan_outcome: satisfied` and `implementation_outcome: satisfied`. Otherwise withhold every later phase in this invocation.
-12. After all selected phases pass, invoke Launch only if every currently enabled and ready Target phase—not merely the requested subset—has completed Planning and Development and satisfied both Review assurances.
+6. Invoke Developing for the phase, including its durable verification and completion gate.
+7. Invoke Reviewing after implementation exists. Reviewing may coordinate Configure, Planning, or Developing under its own Contract when reconciliation is required.
+8. If Review Findings remain, let Review route each Finding through its owning Skill, then invoke Reviewing again.
+9. Repeat step 8 only while the cycle closes or materially advances at least one Finding. Stop on repetition, no observable progress, an inconclusive assurance, failed dependency or gate, or required Human decision.
+10. Advance to the next selected phase only when the current Review proves its required assurances satisfied. Otherwise withhold every later phase in this invocation.
+12. After all selected phases pass, invoke Launch only if every currently enabled and ready Target phase—not merely the requested subset—has completed Planning and Development and satisfied Review.
 
 Locate each operation through the current Interface and invoke its implementation directly; do not depend on nested Slash Command invocation. Every operation retains its own write authority. Implement writes only its Implementation State and History.
 
@@ -62,4 +61,4 @@ Implement coordinates operation roles and performs no product operation itself. 
 
 ## Report
 
-Report the requested and resolved phase selection, Configure outcome, and for each phase its Planning, Plan Review, Development, final Review, and reconciliation outcomes in execution order. Then report withheld phases, Blockers and Open Questions, selected-scope completion, whole-Target completion, and Launch result.
+Report the requested and resolved phase selection, Configure outcome, and for each phase its Planning, Development, Review, and reconciliation outcomes in execution order. Then report withheld phases, Blockers and Open Questions, selected-scope completion, whole-Target completion, and Launch result.

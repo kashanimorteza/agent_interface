@@ -72,13 +72,15 @@ content:
           contract: ".interface/agent/skill/contracts/reviewing.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
+          model_invocation: "disabled"
+          delegated_invocation: "enabled for declared coordinators"
           required: true
           coordination:
             allowed_skills:
               - "project_skills.core_workflow.configure"
               - "project_skills.core_workflow.planning"
               - "project_skills.core_workflow.developing"
-            scope: "same selected phase and current reconciliation Finding"
+            scope: "same selected phase and current reconciliation Finding; Configure may also reconcile project-wide Config or Environment prerequisites"
             authority: "delegated invocation only; each Skill retains ownership of its records and outputs"
         launch:
           name: "my-interface-launch"

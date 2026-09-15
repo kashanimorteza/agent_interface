@@ -6,7 +6,7 @@ Provide one trustworthy sequential path from operational readiness through indep
 
 ## Responsibility
 
-Validate phase selection, coordinate Configure once, then execute Planning, Plan Assurance through Reviewing, Development, and final Implementation Assurance through Reviewing for each phase in Target order. Reconcile Findings through their owning operations and advance only after the current phase is satisfied. Implement performs no product operation of its own.
+Validate phase selection, coordinate Configure once, then execute Planning, Developing, and Review for each phase in Target order. Reconcile Findings through their owning operations and advance only after the current phase is satisfied. Implement performs no product operation of its own.
 
 ## Trigger
 
@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every phase currently e
 
 ## Outputs
 
-Produce the integrated ordered outcomes of Configure and every per-phase Planning, Plan Review, Development, final Review, and reconciliation cycle; Implementation State and History owned by Implement; withheld phase results; all Blockers and Open Questions; eligible Launch; and a truthful distinction between selected-scope completion and whole-Target completion.
+Produce the integrated ordered outcomes of Configure and every per-phase Planning, Developing, Review, and reconciliation cycle; Implementation State and History owned by Implement; withheld phase results; all Blockers and Open Questions; eligible Launch; and a truthful distinction between selected-scope completion and whole-Target completion.
 
 ## Required Understanding
 
@@ -31,13 +31,13 @@ Coordinate operation Skills directly and write only Implementation State and its
 ## Workflow Invariants
 
 1. Resolve and validate the complete phase selection before any mutation. Invalid input runs no operation.
-2. Resolve Configure, Planning, Reviewing, Developing, and Launch through the synchronized Runtime capability catalog and prove that the Runtime permits Implement to invoke each one. Never read Agent Module sources. An unavailable or explicit-Human Child Skill blocks the run before mutation.
+2. Resolve Configure, Planning, Reviewing, Developing, and Launch through the synchronized Runtime capability catalog and prove that the Runtime permits Implement to invoke each one as the declared coordinator. Never read Agent Module sources. An unavailable or coordinator-incompatible Child Skill blocks the run before mutation.
 3. Execute Configure exactly once, then confirm its required readiness before phase work.
 4. Process selected implementable phases strictly in Target order, one complete phase at a time.
 5. Execute Planning for the current phase even when a Plan exists; Planning's reconciliation and idempotency preserve valid current work.
-6. Execute Reviewing as the Plan gate. Reviewing may coordinate Planning and independently recheck its result. Do not invoke Development until Plan Assurance is `satisfied`.
-7. Execute Development for the current phase, including durable checks and its completion gate, then execute Reviewing again for final Plan and Implementation Assurance.
-8. When final Review is not satisfied, route Plan Findings through Reviewing's Planning reconciliation and implementation Findings through Development, then run final Review again. Continue only while a cycle closes or materially advances at least one Finding.
+6. Execute Developing for the current phase, including durable checks and its completion gate.
+7. Execute Reviewing after implementation exists. Reviewing may coordinate Configure, Planning, or Developing when current authorities or evidence require reconciliation, then re-review the resulting state.
+8. When Review is not satisfied, route each Finding through its owning Skill and run Review again. Continue only while a cycle closes or materially advances at least one Finding.
 9. Stop on a repeated unresolved Finding, no observable progress, inconclusive assurance, unmet dependency, failed operation gate, or required Human decision.
 10. Advance to the next selected phase only after the current phase has satisfied Plan and Implementation Assurance. An incomplete phase withholds every later phase in this invocation.
 11. Launch only when every currently enabled and ready phase—not merely the selected subset—has completed Planning and Development and has satisfied both Review assurances.
@@ -58,4 +58,4 @@ Stop before all mutation on invalid input or an empty implementable selection. S
 
 ## Runtime Realization
 
-A native adapter exposes optional multi-phase input, resolves operation implementations through synchronized Runtime capabilities, invokes Configure once and then the four per-phase gates directly in fixed Contract order, and reports every operation and reconciliation outcome in execution order without reading Agent Module sources.
+A native adapter exposes optional multi-phase input, resolves operation implementations through synchronized Runtime capabilities, invokes Configure once and then Planning → Developing → Review for each phase in fixed Contract order, and reports every operation and reconciliation outcome in execution order without reading Agent Module sources.
