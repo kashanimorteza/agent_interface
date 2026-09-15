@@ -74,9 +74,8 @@ content:
       initial_data:
         enabled_when_present: true
         importer:
-          name: "database_seed"
-          entrypoint_source: "Development and the selected implementation"
-          invocation_source: "Development and the selected implementation"
+          mechanism: "reusable, configurable implementation-defined import mechanism"
+          configuration_source: "the selected implementation"
           configurable: true
           input_source: "Target Initial Data"
           repeatable: true

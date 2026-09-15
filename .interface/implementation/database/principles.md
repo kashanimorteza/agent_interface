@@ -167,13 +167,13 @@ The Registry is derived from the configured Instance collection, and the number 
 
 ## 13. Declared Initial Data preserves its meaning
 
-**Rule:** When initial data exists for a Model, Database imports each declared record through one reusable, configurable Seed/Import entry point into its resolved storage mapping. The entry point's name, location, and invocation are Database Preferences defaults and may be changed by the project without changing this Principle. Every key names a resolved Model field, relationships and non-nullable fields are satisfied, records are resolved in dependency order, and importing is repeatable without duplicate logical records or uniqueness violations. The same entry point may accept later bulk data imports when they follow the same validation, ordering, transaction, and duplicate rules.
+**Rule:** When initial data exists for a Model, Database imports each declared record through a reusable, configurable mechanism into its resolved storage mapping. The selected implementation determines the mechanism's name, location, and invocation. Every key names a resolved Model field, relationships and non-nullable fields are satisfied, records are resolved in dependency order, and importing is repeatable without duplicate logical records or uniqueness violations. The same mechanism may accept later bulk data imports when they follow the same validation, ordering, transaction, and duplicate rules.
 
 If the Target declares Initial Data, Database is not ready until the structure has been created and the complete Import succeeds. A missing importer, failed import, incomplete record, unresolved relationship, or constraint violation is a Database setup failure and must not be reported as readiness.
 
 **Why:** Rebuilding the Database must restore the declared initial state with the same meaning.
 
-**Boundary:** Initial data comes from the Target and Model definitions, never from Database Preferences.
+**Boundary:** Initial data comes from the Target and Model definitions, never from Database Preferences. The physical import mechanism remains an implementation choice.
 
 <br>
 
@@ -234,7 +234,7 @@ If the Target declares Initial Data, Database is not ready until the structure h
 - **Never** — Let physical mapping defaults override Model meaning. *(11)*
 - **Must** — Apply an approved protected at-rest treatment to every persisted credential. *(12)*
 - **Never** — Expose credential representations, keys, connection settings, or secret values through Database outputs. *(12)*
-- **Must** — Seed declared initial data repeatably and preserve its Model meaning. *(13)*
+- **Must** — Import declared initial data repeatably and preserve its Model meaning. *(13)*
 - **Never** — Source initial data from Database Preferences. *(13)*
 - **Must** — Provide an explicit Transaction boundary with atomic commit and rollback per Instance. *(14)*
 - **Never** — Imply cross-Instance atomicity or silently duplicate non-idempotent work through retries. *(14)*
