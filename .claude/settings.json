@@ -39,7 +39,7 @@
     ],
     "UserPromptExpansion": [
       {
-        "matcher": "my-interface-agent-sync",
+        "matcher": "my-interface-agent-sync|my-interface-skill-installer",
         "hooks": [
           {
             "type": "command",

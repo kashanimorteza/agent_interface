@@ -70,7 +70,9 @@ content:
         agent_module:
           path: ".interface/agent/"
           default: "deny"
-          sole_consumer: "skill.project_skills.supporting.agent-sync"
+          consumers:
+            - "skill.project_skills.supporting.agent-sync"
+            - "skill.project_skills.supporting.skill-installer"
           invocation: "direct-explicit-human-only"
           grant_scope: "exact expanded Human prompt only; non-transferable"
           effect: "The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, model-generated action, and Understanding workflow consumes synchronized Runtime artifacts and cannot initiate Agent Sync."

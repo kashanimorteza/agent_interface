@@ -42,9 +42,9 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
-## 3. Agent Module reads belong only to explicit Agent Sync
+## 3. Agent Module reads belong only to explicit Agent Sync and Skill Installer
 
-**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-sync` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, and model-generated action can neither invoke Agent Sync nor create, inherit, borrow, or simulate its access grant. Agent Sync reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
+**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-sync` or `skill-installer` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, and model-generated action can neither invoke Agent Sync nor create, inherit, borrow, or simulate its access grant. Agent Sync reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations, and Skill Installer reads them to resolve which capabilities must be transferred or provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
 
 **Why:** The Agent Module defines how an Agent Native and its Agent Instances should be constructed; it is not their operational context after synchronization.
 

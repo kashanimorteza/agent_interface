@@ -33,7 +33,10 @@ def grant_path(payload: dict[str, object]) -> Path | None:
     prompt_id = payload.get("prompt_id")
     if not isinstance(scratchpad, str) or not scratchpad or not isinstance(prompt_id, str) or not prompt_id:
         return None
-    return Path(scratchpad).resolve() / f"agent-sync-read-{prompt_id}.grant"
+    return Path(scratchpad).resolve() / f"agent-module-read-{prompt_id}.grant"
+
+
+AGENT_MODULE_READERS = {"my-interface-agent-sync", "my-interface-skill-installer"}
 
 
 def has_agent_sync_grant(payload: dict[str, object]) -> bool:
@@ -51,13 +54,13 @@ agent_module = (interface / "agent").resolve()
 config = (interface / "foundation" / "config").resolve()
 
 if event == "UserPromptExpansion":
-    if payload.get("expansion_type") != "slash_command" or payload.get("command_name") != "my-interface-agent-sync":
-        block("Agent Module access can be granted only by explicit /my-interface-agent-sync expansion.")
+    if payload.get("expansion_type") != "slash_command" or payload.get("command_name") not in AGENT_MODULE_READERS:
+        block("Agent Module access can be granted only by explicit /my-interface-agent-sync or /my-interface-skill-installer expansion.")
     marker = grant_path(payload)
     if marker is None:
         block("Cannot bind Agent Module access to this Agent Sync prompt.")
     marker.parent.mkdir(parents=True, exist_ok=True)
-    marker.write_text("explicit-human-agent-sync\n", encoding="utf-8")
+    marker.write_text("explicit-human-agent-module-read\n", encoding="utf-8")
     marker.chmod(0o600)
     raise SystemExit(0)
 
@@ -70,7 +73,7 @@ if tool == "Read":
         if not target.is_absolute():
             target = project / target
         if within(target.resolve(), agent_module) and not agent_sync_granted:
-            block("Agent Module reads are reserved for an explicit /my-interface-agent-sync prompt.")
+            block("Agent Module reads are reserved for an explicit /my-interface-agent-sync or /my-interface-skill-installer prompt.")
     raise SystemExit(0)
 
 if tool in {"Glob", "Grep"}:
@@ -79,7 +82,7 @@ if tool in {"Glob", "Grep"}:
     if not target.is_absolute():
         target = project / target
     if overlaps(target.resolve(), agent_module) and not agent_sync_granted:
-        block("This search scope includes the Agent Module. Scope it outside .interface/agent/ or explicitly run /my-interface-agent-sync.")
+        block("This search scope includes the Agent Module. Scope it outside .interface/agent/ or explicitly run /my-interface-agent-sync or /my-interface-skill-installer.")
     raise SystemExit(0)
 
 if tool in {"Edit", "Write", "NotebookEdit"}:
@@ -96,8 +99,9 @@ if tool in {"Edit", "Write", "NotebookEdit"}:
 
 if tool == "Skill":
     skill_name = str(tool_input.get("skill") or tool_input.get("name") or "")
-    if skill_name == "my-interface-agent-sync" or skill_name.endswith("/my-interface-agent-sync"):
-        block("Agent Sync can only run from a direct explicit Human /my-interface-agent-sync invocation, never from a Skill tool call.")
+    bare = skill_name.rsplit("/", 1)[-1]
+    if bare in AGENT_MODULE_READERS:
+        block(f"{bare} can only run from a direct explicit Human slash-command invocation, never from a Skill tool call.")
     raise SystemExit(0)
 
 if tool == "Bash":
@@ -105,7 +109,7 @@ if tool == "Bash":
     agent_path_reference = re.search(r"(?:^|[\s'\"=])(?:\./)?\.interface/agent(?:/|\b)", command)
     absolute_agent_reference = str(agent_module) in command
     if (agent_path_reference or absolute_agent_reference) and not agent_sync_granted:
-        block("Shell access to the Agent Module is reserved for an explicit /my-interface-agent-sync prompt.")
+        block("Shell access to the Agent Module is reserved for an explicit /my-interface-agent-sync or /my-interface-skill-installer prompt.")
     mutation = re.search(
         r"(?:^|[;&|]\s*)(?:rm|mv|cp|install|mkdir|rmdir|touch|truncate|chmod|chown|ln|tee|patch|rsync)\b"
         r"|\bsed\s+-i\b|\bperl\s+-pi\b|\bgit\s+(?:checkout|restore|clean|reset)\b|(?:^|[^<])>{1,2}(?!&)",

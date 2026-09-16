@@ -162,15 +162,6 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 **Boundary:** A Component Profile may omit an inapplicable technical reference. A Technical Purpose never restricts its package to a particular Component or transfers conceptual responsibility into the Language Item. Development only references a Platform Launch Item; its definition and all internal parameters remain owned by Platform.
 
-<br>
-
-## 13. Package environments provide their own Agent Skills
-
-**Rule:** After a Language Item's Package Management prepares the isolated environment and installs the selected packages, the same preparation checks whether that ecosystem provides a mechanism for discovering and installing Agent Skills bundled by the installed packages, and uses it when one exists. A Language Item may declare the known mechanism to help that discovery; the absence of a declaration never means no mechanism exists, and a declared mechanism never replaces the environment's own current capability.
-
-**Why:** Package-provided guidance stays matched to the installed package version without being copied into the Interface, frozen at one point in time, or waiting for a separate manual step.
-
-**Boundary:** This provisioning only materializes capabilities for packages the project already installs. It never adopts a capability outside those packages, never replaces a Human-authored prepared Skill, and never removes an existing hand-authored Skill directory. Environment preparation owns running the mechanism; the Agent Module remains the sole authority for which Skills it declares.
 
 <br>
 
@@ -221,6 +212,3 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable. *(12)*
 - **Never** — Group a language package by Component identity or let a Technical Purpose transfer conceptual responsibility. *(12)*
 - **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Launch Item definitions into Development. *(12)*
-- **Must** — Check for and use the ecosystem's skill-provisioning mechanism after preparing the environment and installing the selected packages. *(13)*
-- **May** — Declare the known provisioning mechanism on a Language Item to help discovery without gating it. *(13)*
-- **Never** — Provision a capability outside the installed packages, replace a prepared Skill, or remove a hand-authored Skill directory. *(13)*

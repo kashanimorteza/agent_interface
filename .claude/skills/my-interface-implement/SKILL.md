@@ -1,6 +1,6 @@
 ---
 name: my-interface-implement
-description: Implement selected Target phases, or every enabled and ready phase when none is specified, by running Configure once and then Planning, Developing, and Review sequentially for each phase before eligible Launch.
+description: Implement selected Target phases, or every enabled and ready phase when none is specified, by running Configure once only when no phase is specified, and then Planning, Developing, and Review sequentially for each phase before eligible Launch.
 argument-hint: "[phase-number ...]"
 disable-model-invocation: true
 ---
@@ -34,7 +34,7 @@ Establish Interface Understanding from the canonical Interface document, then Ta
 Execute this fixed sequence; do not derive it from a mutable Target workflow:
 
 1. Resolve Configure, Planning, Reviewing, Developing, and Launch from synchronized Runtime Skills. Before mutation, prove that each is discoverable and that its native invocation controls permit invocation by Implement as the declared coordinator. Invoke a Child Skill as coordinator by reading its synchronized `.claude/skills/<name>/SKILL.md` directly and executing its Workflow inline; this direct path is what "invoke directly" and "do not depend on nested Slash Command invocation" mean throughout this Contract. A Skill's `disable-model-invocation: true` frontmatter withholds only the autonomous, relevance-triggered Skill-tool dispatch surface (and direct Human natural-language request to invoke it by name); it does not withhold this direct coordinator path, so it alone never makes a Child Skill coordinator-incompatible. If any Child Skill is unavailable or does not permit this coordinator, stop before Configure and report Runtime drift; never inspect Agent Module sources or invoke Agent Sync automatically.
-2. Execute Configure exactly once. Continue only when its required operational records and Environment preparation pass their gates.
+2. Execute Configure exactly once when the invocation carried no phase selection. When the invocation selected specific phases, do not execute Configure. When Configure ran, continue only when its required operational records and Environment preparation pass their gates.
 3. Record Implementation State as `in progress` under its owner.
 4. Process selected implementable phases strictly in Target order, completing the entire sequence for one phase before touching the next.
 5. Invoke Planning for the current phase. An existing valid Plan is reconciled idempotently rather than regenerated for style.
@@ -61,4 +61,4 @@ Implement coordinates operation roles and performs no product operation itself. 
 
 ## Report
 
-Report the requested and resolved phase selection, Configure outcome, and for each phase its Planning, Development, Review, and reconciliation outcomes in execution order. Then report withheld phases, Blockers and Open Questions, selected-scope completion, whole-Target completion, and Launch result.
+Report the requested and resolved phase selection, the Configure outcome when Configure ran, and for each phase its Planning, Development, Review, and reconciliation outcomes in execution order. Then report withheld phases, Blockers and Open Questions, selected-scope completion, whole-Target completion, and Launch result.

@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every phase currently e
 
 ## Outputs
 
-Produce the integrated ordered outcomes of Configure and every per-phase Planning, Developing, Review, and reconciliation cycle; Implementation State and History owned by Implement; withheld phase results; all Blockers and Open Questions; eligible Launch; and a truthful distinction between selected-scope completion and whole-Target completion.
+Produce the integrated ordered outcomes of Configure when it ran, and of every per-phase Planning, Developing, Review, and reconciliation cycle; Implementation State and History owned by Implement; withheld phase results; all Blockers and Open Questions; eligible Launch; and a truthful distinction between selected-scope completion and whole-Target completion.
 
 ## Required Understanding
 
@@ -32,7 +32,7 @@ Coordinate operation Skills directly and write only Implementation State and its
 
 1. Resolve and validate the complete phase selection before any mutation. Invalid input runs no operation.
 2. Resolve Configure, Planning, Reviewing, Developing, and Launch through the synchronized Runtime capability catalog and prove that the Runtime permits Implement to invoke each one as the declared coordinator. Never read Agent Module sources. An unavailable or coordinator-incompatible Child Skill blocks the run before mutation.
-3. Execute Configure exactly once, then confirm its required readiness before phase work.
+3. Execute Configure exactly once when the invocation carried no phase selection, then confirm its required readiness before phase work. When the invocation selected specific phases, do not execute Configure.
 4. Process selected implementable phases strictly in Target order, one complete phase at a time.
 5. Execute Planning for the current phase even when a Plan exists; Planning's reconciliation and idempotency preserve valid current work.
 6. Execute Developing for the current phase, including durable checks and its completion gate.

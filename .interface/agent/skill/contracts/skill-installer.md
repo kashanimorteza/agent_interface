@@ -2,15 +2,15 @@
 
 ## Purpose
 
-Discover and provision additional Agent capabilities through an explicit, auditable Human decision.
+Materialize the Prepared and Installed capabilities the Agent Module declares, and discover and provision additional ones, always through an explicit, auditable Human decision.
 
 ## Responsibility
 
-Derive capability needs from current Target and synchronized Runtime evidence, discover compatible project-scoped candidates, preview provenance and impact, provision only approved candidates, and verify Activation. It manages Runtime capabilities, never application dependencies, Target implementation, or Agent Module declarations. Already Human-declared Installed capabilities in the Agent Module are Agent Sync's responsibility to provision and verify during synchronization; Skill Installer instead discovers and provisions capability needs that are not yet declared.
+Derive capability needs from current Target and synchronized Runtime evidence, discover compatible project-scoped candidates, preview provenance and impact, provision only approved candidates, and verify Activation. It manages Runtime capabilities, never application dependencies, Target implementation, or Agent Module declarations. It owns every capability the Module declares as Prepared or Installed: Prepared content is transferred into the Runtime unchanged, and an Installed capability is provisioned through its owning provider declaration. Agent Sync builds only Constructed Skills and materializes neither kind.
 
 ## Trigger
 
-Activate explicitly when the Human requests capability discovery or when a required capability is absent from the synchronized Runtime. Because Agent Module sources are unreadable here, an absent capability may still be an already-declared capability awaiting synchronization; report that possibility together with the need and let the Human choose between explicit Agent Sync and provisioning through this Skill, rather than assuming the need is undeclared.
+Activate explicitly when the Human requests capability discovery, when a capability the Agent Module declares as Prepared or Installed is not present and usable in the Runtime, or when a required capability is absent from the synchronized Runtime. Never activate through another Skill, coordinator, automation, or model-generated action.
 
 ## Inputs
 
@@ -22,14 +22,17 @@ Produce an evidence-backed need inventory, candidate comparison, exact provision
 
 ## Required Understanding
 
-Establish Interface Understanding and Target Understanding. Read applicable Implementation Components, synchronized Runtime capability state, selected defaults, manifests, lockfiles, runtime versions, implementation evidence, and current capability status. Never read Agent Module sources; a candidate that should become part of the portable Agent definition is reported for Human declaration and later explicit Agent Sync.
+Establish Interface Understanding and Target Understanding. Read the complete Agent Module through the exception that permits entry into its sources, so every declared capability and its Capability Realization Kind is known. Read applicable Implementation Components, synchronized Runtime capability state, selected defaults, manifests, lockfiles, runtime versions, implementation evidence, and current capability status. Never modify an Agent Module source; a candidate that should become part of the portable Agent definition is reported for Human declaration rather than written here.
 
 ## Authority
 
-Discovery is read-only. After explicit approval, provision only named candidates at project scope through supported Agent capability mechanisms. Never change application dependencies, Target code, Interface sources, credentials, or user- or machine-scoped state.
+Discovery is read-only. After explicit approval, transfer declared Prepared content and provision only named candidates at project scope through supported Agent capability mechanisms. Never change application dependencies, Target code, Interface sources, credentials, or user- or machine-scoped state.
 
 ## Workflow Invariants
 
+- Resolve every declared capability's Capability Realization Kind. A Prepared capability is transferred into the selected Runtime unchanged, preserving every file of its source tree and its internal relative paths, adapting only the native metadata required for discovery. An Installed capability is provisioned through the native mechanism its owning provider declaration names. A Constructed capability is never materialized here; it belongs to Agent Sync.
+- Treat capability as covering Skills, plugins, MCP servers, and every other provider-supplied Agent capability the selected Runtime supports.
+- After the project's packages are installed, use the skill-provisioning mechanism the applicable Language Item declares when one exists, so capabilities bundled by installed packages become discoverable. The absence of a declaration never means no mechanism exists, and a declared mechanism never replaces the environment's own current capability.
 - Enumerate distinct capability needs with exact evidence before search.
 - Check current availability before discovery and search every relevant route supported by the active Runtime.
 - Verify candidate purpose, source, included components, permissions, dependencies, project scope, and version compatibility.

@@ -8,7 +8,7 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 
 - **Skill** — reusable instructions or knowledge activated explicitly or by relevance.
 - **Skill Contract** — the portable definition of an Interface-owned Skill's responsibility, inputs, outputs, authority, checks, and stopping conditions.
-- **Prepared Skill File** — an optional Human-authored Markdown instruction body for one declared Skill, materialized by Agent Sync into that Skill's native Runtime folder without changing its meaning.
+- **Prepared Skill File** — an optional Human-authored Markdown instruction body for one declared Skill, materialized by the Skill Installer operation into that Skill's native Runtime folder without changing its meaning.
 - **Activation** — the state in which a Skill is discoverable and usable by its intended role.
 - **Invocation Policy** — whether a Skill may be invoked by the Human, by a declared coordinating Skill, or by both in the selected Runtime.
 
@@ -62,7 +62,7 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 ## 4. A prepared file or directory may supply a Skill's native instruction body
 
-**Rule:** The Agent Skill Profile declares one optional prepared-file directory and an exact naming convention keyed by declared Skill identity, satisfied either by a single Markdown file or by a directory holding that Skill's complete artifact. When a matching prepared file or directory exists, Agent Sync creates the Skill folder and entrypoint required by the selected Agent Native, preserves the prepared content and its meaning - every file of a prepared directory tree, with its internal relative paths intact - and adds or adapts only the minimum native metadata needed for discovery and invocation. When no match exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
+**Rule:** The Agent Skill Profile declares one optional prepared-file directory and an exact naming convention keyed by declared Skill identity, satisfied either by a single Markdown file or by a directory holding that Skill's complete artifact. When a matching prepared file or directory exists, the Skill Installer operation creates the Skill folder and entrypoint required by the selected Agent Native, preserves the prepared content and its meaning - every file of a prepared directory tree, with its internal relative paths intact - and adds or adapts only the minimum native metadata needed for discovery and invocation. When no match exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
 
 **Why:** A complete Human-authored Skill should be reusable without forcing every Skill to have a prepared file or turning Runtime output into its source.
 
