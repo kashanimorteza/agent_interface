@@ -17,6 +17,7 @@ policy:
   selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
   version_resolution: "Runtime and extension Skills resolve from their active providers."
   matching: "During explicit Agent Sync, match a prepared Markdown Skill file by the declared Skill's exact stable key, match Interface-owned Skills by portable Contract, and match external Skills by stable key and provider declaration; then resolve Native identifiers and mappings from the selected Agent Native."
+  realization: "Every declared Skill resolves to one Capability Realization Kind: a Skill with a matching prepared Markdown file is Prepared, a remaining Interface-owned Skill with a portable Contract is Constructed, and a Skill under an external provider declaration is Installed."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]

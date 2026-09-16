@@ -165,7 +165,7 @@ This separation is one of the central architectural principles of the project.
 - **Agent Profile** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, portable realization requirements, and validation expectations; Native-specific paths and formats are resolved by Agent Sync.
 - **Agent Role** — one bounded execution responsibility within the Agent Profile, including the primary role and specialized delegated roles.
 - **Capability** — one declared Agent facility, such as a Skill, Rule, Command, Tool, Hook, Integration, or Extension, with an owning Component and bounded contract.
-- **Capability Realization Kind** — how a declared Agent capability becomes usable in the active Runtime: **Constructed**, built by the Agent Native from a portable specification such as a Skill Contract; **Prepared**, transferred into the Runtime unchanged from a complete Human-authored artifact; or **Installed**, provisioned by the Agent Native'''s own native mechanism from an external source such as a marketplace, package registry, or MCP server, using per-Agent-Native identity so the Native can find and install it.
+- **Capability Realization Kind** — how a declared Agent capability becomes usable in the active Runtime: **Constructed**, built by the Agent Native from a portable specification such as a Skill Contract; **Prepared**, transferred into the Runtime unchanged from a complete Human-authored artifact; or **Installed**, provisioned by the Agent Native's own native mechanism from an external source such as a marketplace, package registry, or MCP server, using per-Agent-Native identity so the Native can find and install it.
 
 
 

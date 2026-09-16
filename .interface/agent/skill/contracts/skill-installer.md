@@ -10,7 +10,7 @@ Derive capability needs from current Target and synchronized Runtime evidence, d
 
 ## Trigger
 
-Activate explicitly when the Human requests capability discovery or when a required capability is absent and no Human-owned selection already identifies what Agent Sync should realize.
+Activate explicitly when the Human requests capability discovery or when a required capability is absent from the synchronized Runtime. Because Agent Module sources are unreadable here, an absent capability may still be an already-declared capability awaiting synchronization; report that possibility together with the need and let the Human choose between explicit Agent Sync and provisioning through this Skill, rather than assuming the need is undeclared.
 
 ## Inputs
 

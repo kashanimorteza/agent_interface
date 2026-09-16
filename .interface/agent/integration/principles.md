@@ -1,6 +1,6 @@
 # Agent Integration Principles
 
-Agent Integration is the Component that connects the Agent Runtime to external capability providers and protocols, including tool servers, code-intelligence services, communication channels, and external applications. Every declared Integration is Installed: the Agent Native connects to it through its own native mechanism, and it is never built from a portable specification. Because a connection mechanism can differ by Agent Native even when the underlying protocol is shared, an Integration'''s connection details may be declared separately per Agent Native.
+Agent Integration is the Component that connects the Agent Runtime to external capability providers and protocols, including tool servers, code-intelligence services, communication channels, and external applications. Every declared Integration is Installed: the Agent Native connects to it through its own native mechanism, and it is never built from a portable specification. Because a connection mechanism can differ by Agent Native even when the underlying protocol is shared, an Integration's connection details may be declared separately per Agent Native.
 
 It owns connection declarations, trust boundaries, compatibility, and activation state. It does not own external systems, credentials, or the Tools supplied through a connection.
 
