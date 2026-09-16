@@ -38,7 +38,7 @@ Write only Planning-owned Plan fields and Planning-owned aggregate State and His
 - Derive new Task boundaries from responsibilities and real dependencies, never document layout or arbitrary batch size.
 - Keep planning content implementation-independent and require verification conditions to cover every acceptance clause.
 - Process phases independently in Target order unless an owned dependency or Blocker prevents continuation.
-- For every technical option a selected phase resolves, resolve its declared `agent_skills` associations against currently discoverable and usable Runtime Skills. When an associated Skill is required and currently discoverable and usable, shape the governed Task's acceptance and verification to require observable conformance with that Skill's applicable guidance, not only completion of the underlying requirement. Record the unavailability and continue when an associated Skill is not currently usable; an unavailable associated Skill never blocks planning.
+- For every technical option a selected phase resolves, resolve its declared `agent_skills` associations against currently discoverable and usable Runtime Skills. Match the declared name against the Skill's own name within a Runtime's namespaced identifier rather than requiring an exact string match. When an associated Skill is required and currently discoverable and usable, shape the governed Task's acceptance and verification to require observable conformance with that Skill's applicable guidance, not only completion of the underlying requirement. Record the unavailability and continue when an associated Skill is not currently usable; an unavailable associated Skill never blocks planning.
 
 ## Verification
 

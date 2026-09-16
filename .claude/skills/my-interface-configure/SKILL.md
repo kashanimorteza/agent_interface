@@ -41,7 +41,7 @@ Use the selected Environment definition and compatible explicit Target requireme
 
 ### 4. Skill provisioning
 
-After resolving and installing the declared technical requirements, run the skill-provisioning mechanism the applicable Language Item declares, so Skills named by Implementation's `agent_skills` associations become usable before later operations need them. Resolve those names from the applicable Implementation authorities only; never enter or resolve an Agent Module source. Report a named Skill that remains unavailable; never adopt a Skill that no association names, and never remove an existing Skill. An unavailable Skill never blocks Configure or fails its verification — preparation continues and the unavailability is reported for the later operation that needs it.
+After resolving and installing the declared technical requirements, run the skill-provisioning mechanism the applicable Language Item declares, so Skills named by Implementation's `agent_skills` associations become usable before later operations need them. Resolve those names from the applicable Implementation authorities only; never enter or resolve an Agent Module source. Report a named Skill that remains unavailable; never adopt a Skill that no association names, and never remove an existing Skill. An unavailable Skill never blocks Configure or fails its verification — preparation continues and the unavailability is reported for the later operation that needs it. Match the declared name against the Skill's own name within a Runtime's namespaced identifier rather than requiring an exact string match.
 
 ### 5. Validation and outcome
 

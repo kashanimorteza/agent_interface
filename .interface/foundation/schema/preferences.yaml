@@ -139,7 +139,7 @@ sections:
           item:
             resource:
               required: true
-              purpose: "The associated Skill's name, resolved by ordinary operations against currently discoverable and usable Runtime Skills."
+              purpose: "The associated Skill's portable name, resolved by ordinary operations against currently discoverable and usable Runtime Skills. A Runtime may expose a Skill under a namespaced identifier; match the declared name against the Skill's own name within that identifier rather than requiring an exact string match."
             requirement:
               required: true
               values:
