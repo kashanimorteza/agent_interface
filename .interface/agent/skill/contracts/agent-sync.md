@@ -18,7 +18,7 @@ Accept exactly one required semantic mode: `self` realizes only this Skill's own
 
 ## Outputs
 
-Produce one result for every dynamically discovered Agent Module declaration, reported as `synchronized`, `already synchronized`, `activation required`, `unmanaged`, or `blocked`, project-scoped native resources and additive provisioning authorized by selected declarations, post-change verification, preserved unmanaged capabilities, required Human activation steps, and one truthful overall Module status. A successful overall status certifies that every required declaration is currently realized and usable. A `self` run, a `module` run blocked by a stale adapter, or a mode-less invocation reports the resolved mode and its outcome, plus the declarations left unreconciled, instead of an overall Module status.
+Produce one result for every dynamically discovered Agent Module declaration, reported as `synchronized`, `already synchronized`, `activation required`, `unmanaged`, or `blocked`, each naming the Module declaration it came from, the Native mechanism it was realized through, the exact project artifact that carries it, and the outcome of re-reading that artifact during verification, project-scoped native resources and additive provisioning authorized by selected declarations, post-change verification, preserved unmanaged capabilities, required Human activation steps, and one truthful overall Module status. A successful overall status certifies that every required declaration is currently realized and usable. A `self` run, a `module` run blocked by a stale adapter, or a mode-less invocation reports the resolved mode and its outcome, plus the declarations left unreconciled, instead of an overall Module status.
 
 ## Understanding
 
@@ -53,6 +53,8 @@ Modify only project-scoped native Agent artifacts selected by the Native Runtime
 ## Verification
 
 After reconciliation, discard the pre-change observations and perform a second complete pass from the canonical Agent Structure and complete Agent Module. Re-read every discovered Module source and native artifact, query current runtime state, and prove every Module declaration and mechanism is realized and usable, including the active Agent Native, instantiable Agent Instance Definitions, correct Role and capability assignments, discoverable self-contained Skills whose native invocation controls match their declared Human and coordinator Invocation Policies and whose instruction content currently reflects their portable Contract, resolvable Commands, matching effective settings and enforcement, active selected Extensions, usable selected Integrations, and absence of secrets in project artifacts. Audit all synchronized non-Sync instructions and mappings and fail verification if any of them directs its consumer to read, resolve, or use an Agent Module source.
+
+Report this second pass as one mapping record per declaration, stating what the Module declared, what it was realized as, where that realization lives, and whether re-reading it proved conformance. A record claims conformance only from evidence re-read in this pass; a write that succeeded is not itself conformance, and a record without a named artifact is not a claim.
 
 The overall result is `synchronized` only when this second pass covers the complete current Agent Module and every required item passes its own verification gate. Any blocked, missing, conflicting, inactive, unsupported, or unverified required item prevents the success claim, even when all other declarations pass.
 

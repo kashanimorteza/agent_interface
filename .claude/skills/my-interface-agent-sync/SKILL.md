@@ -95,7 +95,18 @@ Do not report a capability as synchronized until its required activation and usa
 
 ## Report
 
-Report every dynamically discovered Agent Module declaration as `synchronized`, `already synchronized`, `activation required`, `unmanaged`, or `blocked`. For every mutation, identify the owning declaration, native project artifact or provider action, and verification result. List preserved undeclared capabilities separately and state any Human action still required.
+Open the report with one mapping table covering every dynamically discovered Agent Module declaration, one row each, in the order they were reconciled:
+
+| | Agent Module declaration | Realized as | Native artifact | Verified |
+|---|---|---|---|---|
+| ✅ | `agent/skill/contracts/<name>.md` | Claude Code project Skill | `.claude/skills/<native-name>/SKILL.md` | re-read; instructs what the Contract requires |
+| ⚠️ | `<declaration>` | `<mechanism>` | `<path or provider>` | activation required: `<what the Human must do>` |
+| 🔍 | — | observed only | `<path>` | unmanaged: present in the Runtime, declared nowhere |
+| ❌ | `<declaration>` | `<mechanism>` | `<path or provider>` | blocked: `<exact reason>` |
+
+Use `✅` for `synchronized`, `☑️` for `already synchronized`, `⚠️` for `activation required`, `🔍` for `unmanaged`, and `❌` for `blocked`. Every row names the artifact it was verified against; a row with no named artifact makes no claim. The Verified column reports what re-reading that artifact in the second pass proved, never that a write succeeded.
+
+After the table, detail every non-`✅` row: what it needs, who must act, and what it prevents. List preserved undeclared capabilities separately and state any Human action still required.
 
 State the resolved mode in every report. A `self` run reports only the adapter outcome plus the declarations left unreconciled, and a `module` run blocked by a stale adapter reports that block and the required `self` run, instead of an overall Module status.
 
