@@ -1,6 +1,6 @@
 # Agent Extension Principles
 
-Agent Extension is the Component that packages and distributes related Agent capabilities through installable units and catalogs. It governs plugins, marketplaces, capability packages, and runtime-supported extension bundles.
+Agent Extension is the Component that packages and distributes related Agent capabilities through installable units and catalogs. It governs plugins, marketplaces, capability packages, and runtime-supported extension bundles. Every capability it packages is Installed: the Agent Native provisions it through its own native mechanism from an external source, and never builds it from a portable specification. Because marketplaces and package ecosystems differ by Agent Native, an Extension'''s identity may be declared separately per Agent Native so each Native can locate and provision it.
 
 It owns extension identity, provenance, contents, lifecycle, and expected capabilities. It does not own the contracts of the capabilities an extension contains.
 

@@ -6,7 +6,7 @@ Discover and provision additional Agent capabilities through an explicit, audita
 
 ## Responsibility
 
-Derive capability needs from current Target and synchronized Runtime evidence, discover compatible project-scoped candidates, preview provenance and impact, provision only approved candidates, and verify Activation. It manages Runtime capabilities, never application dependencies, Target implementation, or Agent Module declarations.
+Derive capability needs from current Target and synchronized Runtime evidence, discover compatible project-scoped candidates, preview provenance and impact, provision only approved candidates, and verify Activation. It manages Runtime capabilities, never application dependencies, Target implementation, or Agent Module declarations. Already Human-declared Installed capabilities in the Agent Module are Agent Sync's responsibility to provision and verify during synchronization; Skill Installer instead discovers and provisions capability needs that are not yet declared.
 
 ## Trigger
 

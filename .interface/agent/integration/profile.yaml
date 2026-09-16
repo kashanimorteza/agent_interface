@@ -37,12 +37,14 @@ content:
       channel: {version: "runtime-provided"}
       application_connector: {version: "runtime-provided"}
   settings:
-    mcp_servers: {}
+    native:
+      claude:
+        mcp_servers: {}
+        lsp_servers: {}
+        channels: {}
+        application_connectors: {}
     mcp_resources: {}
     mcp_prompts: {}
-    lsp_servers: {}
-    channels: {}
-    application_connectors: {}
     http_services: {}
     external_data_sources: {}
     transports: {}

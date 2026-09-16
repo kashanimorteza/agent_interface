@@ -122,6 +122,38 @@ content:
           delegated_invocation: "disabled"
           automated_invocation: "disabled"
           required: true
+      installed:
+        pydantic:
+          name: "pydantic"
+          activation: "implicit when relevant"
+          required: false
+          native:
+            claude:
+              marketplace: {source: "github", repository: "pydantic/skills"}
+              plugin: "pydantic@pydantic-skills"
+        fastapi:
+          name: "fastapi"
+          activation: "implicit when relevant"
+          required: false
+          native:
+            claude:
+              marketplace: {source: "github", repository: "anthropics/skills"}
+              plugin: "example-skills@anthropic-agent-skills"
+        typer:
+          name: "typer"
+          activation: "implicit when relevant"
+          required: false
+          native:
+            claude:
+              marketplace: {source: "github", repository: "anthropics/skills"}
+              plugin: "example-skills@anthropic-agent-skills"
+        library-skills:
+          name: "library-skills"
+          activation: "implicit when package capability discovery is relevant"
+          required: false
+          native:
+            claude:
+              package_tool: "uvx library-skills"
     user_skills: {}
     managed_skills: {}
     runtime_skills: {}

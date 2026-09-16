@@ -30,39 +30,45 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    enabled_plugins:
-      - "claude-code-setup@claude-plugins-official"
-      - "feature-dev@claude-plugins-official"
-      - "commit-commands@claude-plugins-official"
-      - "plugin-dev@claude-plugins-official"
-      - "frontend-design@claude-plugins-official"
-      - "example-skills@anthropic-agent-skills"
-      - "pydantic-ai@claude-plugins-official"
-      - "document-skills@anthropic-agent-skills"
-      - "adhd-output-style@claude-settings"
-      - "claude-md-management@claude-plugins-official"
-      - "superpowers@claude-plugins-official"
-      - "andrej-karpathy-skills@karpathy-skills"
+    native:
+      claude:
+        enabled_plugins:
+          - "claude-code-setup@claude-plugins-official"
+          - "feature-dev@claude-plugins-official"
+          - "commit-commands@claude-plugins-official"
+          - "plugin-dev@claude-plugins-official"
+          - "frontend-design@claude-plugins-official"
+          - "example-skills@anthropic-agent-skills"
+          - "pydantic-ai@claude-plugins-official"
+          - "document-skills@anthropic-agent-skills"
+          - "adhd-output-style@claude-settings"
+          - "claude-md-management@claude-plugins-official"
+          - "superpowers@claude-plugins-official"
+          - "andrej-karpathy-skills@karpathy-skills"
   options:
-    marketplaces:
-      claude-plugins-official: {source: "github", repository: "anthropics/claude-plugins-official"}
-      anthropic-agent-skills: {source: "github", repository: "anthropics/skills"}
-      claude-settings: {source: "github", repository: "fcakyon/claude-codex-settings"}
-      karpathy-skills: {source: "github", repository: "forrestchang/andrej-karpathy-skills"}
+    native:
+      claude:
+        marketplaces:
+          claude-plugins-official: {source: "github", repository: "anthropics/claude-plugins-official"}
+          anthropic-agent-skills: {source: "github", repository: "anthropics/skills"}
+          claude-settings: {source: "github", repository: "fcakyon/claude-codex-settings"}
+          karpathy-skills: {source: "github", repository: "forrestchang/andrej-karpathy-skills"}
   settings:
-    plugins:
-      claude-code-setup: {id: "claude-code-setup@claude-plugins-official", desired_state: "enabled"}
-      feature-dev: {id: "feature-dev@claude-plugins-official", desired_state: "enabled"}
-      commit-commands: {id: "commit-commands@claude-plugins-official", desired_state: "enabled"}
-      plugin-dev: {id: "plugin-dev@claude-plugins-official", desired_state: "enabled"}
-      frontend-design: {id: "frontend-design@claude-plugins-official", desired_state: "enabled"}
-      example-skills: {id: "example-skills@anthropic-agent-skills", desired_state: "enabled"}
-      pydantic-ai: {id: "pydantic-ai@claude-plugins-official", desired_state: "enabled"}
-      document-skills: {id: "document-skills@anthropic-agent-skills", desired_state: "enabled"}
-      adhd-output-style: {id: "adhd-output-style@claude-settings", desired_state: "enabled"}
-      claude-md-management: {id: "claude-md-management@claude-plugins-official", desired_state: "enabled"}
-      superpowers: {id: "superpowers@claude-plugins-official", desired_state: "enabled"}
-      andrej-karpathy-skills: {id: "andrej-karpathy-skills@karpathy-skills", desired_state: "enabled"}
+    native:
+      claude:
+        plugins:
+          claude-code-setup: {id: "claude-code-setup@claude-plugins-official", desired_state: "enabled"}
+          feature-dev: {id: "feature-dev@claude-plugins-official", desired_state: "enabled"}
+          commit-commands: {id: "commit-commands@claude-plugins-official", desired_state: "enabled"}
+          plugin-dev: {id: "plugin-dev@claude-plugins-official", desired_state: "enabled"}
+          frontend-design: {id: "frontend-design@claude-plugins-official", desired_state: "enabled"}
+          example-skills: {id: "example-skills@anthropic-agent-skills", desired_state: "enabled"}
+          pydantic-ai: {id: "pydantic-ai@claude-plugins-official", desired_state: "enabled"}
+          document-skills: {id: "document-skills@anthropic-agent-skills", desired_state: "enabled"}
+          adhd-output-style: {id: "adhd-output-style@claude-settings", desired_state: "enabled"}
+          claude-md-management: {id: "claude-md-management@claude-plugins-official", desired_state: "enabled"}
+          superpowers: {id: "superpowers@claude-plugins-official", desired_state: "enabled"}
+          andrej-karpathy-skills: {id: "andrej-karpathy-skills@karpathy-skills", desired_state: "enabled"}
     plugin_manifests: {}
     capability_packages: {}
     monitors: {}
