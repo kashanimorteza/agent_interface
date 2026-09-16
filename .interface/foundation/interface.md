@@ -347,6 +347,8 @@ The Agent Module is the Human-owned, Runtime-independent home for the complete r
 
 The Agent Module expresses our general understanding, philosophy, rules, responsibilities, boundaries, and desired behavior for an Agent. It is an independent declaration and is not written for Claude Code, Codex, or any other specific Agent Native. It does not define the Target and does not prescribe a vendor's files, directories, command names, configuration format, or implementation mechanism. An Agent Native reads this portable Module through explicit Agent Sync, understands its own runtime documentation and capabilities, and translates the Module into the native structures it supports. The meaning and authority come from the Agent Module; the concrete runtime form comes from the Agent Native.
 
+Every capability the Module declares has exactly one Capability Realization Kind, and that Kind decides what Agent Sync does with it. A Constructed capability is built by the Agent Native from a portable specification such as a Skill Contract. A Prepared capability is transferred into the Runtime unchanged from a complete Human-authored artifact. An Installed capability is provisioned by the Agent Native through its own native mechanism from an external source such as a marketplace, package registry, or MCP server, and is never built or transferred. This distinction applies to every Component, not only to Skills, so a newly declared capability of any kind has a defined place and a defined realization path. Because external sources differ by Agent Native, a declaration may carry optional per-Agent-Native identity for an Installed capability so the selected Native can locate and provision it. That identity helps the Native find an external artifact; it never prescribes the Native's own structure, format, or mechanism, and Agent Sync treats it as an aid rather than an authority.
+
 Together, these Components form the Agent Profile within the complete Agent Module. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Agent Module, learns the Native Runtime's own conventions, realizes the Module through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 
 ```text
@@ -639,9 +641,9 @@ This Operation is performed through `/my-interface-skill-installer` to derive Ag
 <!-------------------------- Agent Sync Operation -->
 ### Agent Sync
 
-**Agent Skill:** `/my-interface-agent-sync`
+**Agent Skill:** `/my-interface-agent-sync <self | module>`
 
-This Operation is performed only through explicit Human invocation of `/my-interface-agent-sync`. It is the sole operation permitted to inspect Agent Module sources, understands the complete Module and the selected Agent Native's own conventions, translates the Module into that Native Runtime, and certifies synchronization only after all required declarations pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
+This Operation is performed only through explicit Human invocation of `/my-interface-agent-sync` in one of two modes: `self` realizes the Agent Sync adapter itself from its current Contract, and `module` realizes every other declaration. It is the sole operation permitted to inspect Agent Module sources, understands the complete Module and the selected Agent Native's own conventions, translates the Module into that Native Runtime, and certifies synchronization only after all required declarations pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
 
 <br><br>
 
