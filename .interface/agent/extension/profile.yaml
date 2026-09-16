@@ -45,6 +45,7 @@ content:
           - "claude-md-management@claude-plugins-official"
           - "superpowers@claude-plugins-official"
           - "andrej-karpathy-skills@karpathy-skills"
+          - "pydantic@pydantic-skills"
   options:
     native:
       claude:
@@ -53,6 +54,7 @@ content:
           anthropic-agent-skills: {source: "github", repository: "anthropics/skills"}
           claude-settings: {source: "github", repository: "fcakyon/claude-codex-settings"}
           karpathy-skills: {source: "github", repository: "forrestchang/andrej-karpathy-skills"}
+          pydantic-skills: {source: "github", repository: "pydantic/skills"}
   settings:
     native:
       claude:
@@ -69,6 +71,7 @@ content:
           claude-md-management: {id: "claude-md-management@claude-plugins-official", desired_state: "enabled"}
           superpowers: {id: "superpowers@claude-plugins-official", desired_state: "enabled"}
           andrej-karpathy-skills: {id: "andrej-karpathy-skills@karpathy-skills", desired_state: "enabled"}
+          pydantic: {id: "pydantic@pydantic-skills", desired_state: "enabled"}
     plugin_manifests: {}
     capability_packages: {}
     monitors: {}
