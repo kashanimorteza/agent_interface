@@ -161,10 +161,34 @@ sections:
                             required: true
                             default: []
                             purpose: "Restrictions and invariants specific to this Task alone and derivable from no other source, stated as observable boundaries; empty when none apply, which is the normal case. A restriction stated by the Target definition, an Implementation Principle, an Implementation Preference, or a synchronized Runtime rule is resolved from its own source and is never copied here; one shared with another Task of the same Plan belongs to their Group or Plan instead."
+                          agent_skills:
+                            required: true
+                            default: []
+                            purpose: "The Agent Skill associations that govern this Task, resolved by Planning from the technical options this Task uses. An empty list is a deliberate statement that those options declare no association, not an omission."
+                            fields:
+                              resource:
+                                required: true
+                                default: ""
+                                purpose: "The declared portable Skill name, exactly as the Implementation association states it."
+                              requirement:
+                                required: true
+                                default: ""
+                                purpose: "The requirement the association declared."
+                                allowed:
+                                  - "optional"
+                                  - "required"
+                              resolved:
+                                required: true
+                                default: false
+                                purpose: "Whether the declared name resolved to a Runtime Skill that was discoverable and usable when this Plan was written."
+                              identifier:
+                                required: true
+                                default: ""
+                                purpose: "The Runtime identifier the declared name resolved to, including any namespace the Runtime applies; empty when it did not resolve."
                           acceptance:
                             required: true
                             default: ""
-                            purpose: "The observable criterion that determines whether the intended result is correct."
+                            purpose: "The observable criterion that determines whether the intended result is correct. When a governing Skill in `agent_skills` resolved and its requirement is `required`, this criterion also requires observable conformance with that Skill's applicable guidance."
                           verify:
                             required: true
                             default: ""
