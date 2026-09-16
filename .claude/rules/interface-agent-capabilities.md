@@ -1,6 +1,8 @@
 # Synchronized Agent capability catalog
 
-This file is the project-scoped Claude Runtime projection produced by explicit Agent Sync. The active Agent Native and its Agent Instances resolve Agent capability identifiers here; they never inspect `.interface/agent/` during ordinary operation. A missing or unusable required entry is Runtime drift and must be reported; it never authorizes an Agent Module read or automatic Agent Sync.
+This file is the project-scoped Claude Runtime projection produced by explicit Agent Sync. It records the Skills the Agent Module declares and their native mappings, so the active Agent Native and its Agent Instances never inspect `.interface/agent/` during ordinary operation.
+
+It is a reference projection, not a gate: a Skill is resolved against whatever is currently discoverable and usable in this Runtime, and this file never restricts which Skills an operation may use. A missing or unusable required entry is Runtime drift and must be reported; it never authorizes an Agent Module read or automatic Agent Sync.
 
 ## Interface-owned workflow Skills
 
@@ -23,8 +25,4 @@ This file is the project-scoped Claude Runtime projection produced by explicit A
 
 ## Contextual Skills
 
-| Capability identifier | Native Skill | Activation | Required |
-|---|---|---|---|
-| `project_skills.contextual.fastapi` | `fastapi` at `.claude/skills/fastapi/SKILL.md` | When a current Implementation or Target choice selects FastAPI | Conditional: required when selected |
-| `project_skills.contextual.typer` | `typer` at `.claude/skills/typer/SKILL.md` | When a current Implementation or Target choice selects Typer | Conditional: required when selected |
-| `project_skills.contextual.library-skills` | `library-skills` at `.claude/skills/library-skills/SKILL.md` | When package-provided Skill management is relevant | No |
+The Agent Module currently declares none. Implementation Preferences name an associated Skill directly (for example `pydantic`, `fastapi`, `typer`), and operations resolve that name against the Skills currently discoverable and usable in this Runtime — whether project-scoped, plugin-provided, or runtime-provided.
