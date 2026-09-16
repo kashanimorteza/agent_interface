@@ -20,6 +20,23 @@ The invoked mode arrives as `$mode`. Resolve it before any mutation, and when it
 
 The stale-adapter check exists because a running instance cannot load a definition it did not start with. Never claim to have executed a Contract this adapter does not currently implement.
 
+## Self realization
+
+This is the complete workflow for `self` mode. The Reconciliation plan, Reconcile, and Verification sections below apply to `module` mode only.
+
+1. Read `.interface/agent/skill/contracts/agent-sync.md` in full. This is the only Agent Module source a `self` run needs.
+2. Read this file, `.claude/skills/my-interface-agent-sync/SKILL.md`, in full.
+3. Compare them section by section. Record every difference of these three kinds:
+   - this adapter instructs something the Contract no longer requires;
+   - this adapter omits something the Contract requires;
+   - this adapter states a rule the Contract has changed.
+4. When the comparison finds no difference, report `already synchronized` for this adapter and stop. Mutate nothing.
+5. When it finds any difference, rewrite this file so every section carries what the Contract currently requires, keeping the frontmatter fields the Runtime needs and the native execution detail the Contract deliberately leaves to the adapter. Write the whole file; do not patch around a difference.
+6. Re-read the written file and prove each recorded difference is gone. A difference that survives the rewrite is reported as `blocked`, never as resolved.
+7. Report the outcome as a mapping record naming this Contract, this adapter path, and what re-reading proved.
+
+A `self` run that found a difference and left this file unwritten has failed, not succeeded. Report it as failed.
+
 ## Role
 
 Understand the complete Agent Module, then make the active Agent Native and its Agent Instances conform to it through the Native Runtime's own documented conventions. Materialize missing native resources, reconcile drift where ownership is unambiguous, provision already-selected project Extensions and Integrations, and prove that every Module declaration is usable.
@@ -61,11 +78,9 @@ A selected desired state is standing project authorization for additive, project
 
 When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Compare an existing adapter's own instruction content against its current Contract, not only its presence or its declared metadata fields. When the Contract no longer matches what the adapter instructs, regenerate that adapter's content rather than classifying it as `no change`. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
-For each declared capability, resolve its Capability Realization Kind before acting.
+Realize only **Constructed** capabilities: an Interface-owned declaration defined by a portable Contract is built into the smallest self-contained native realization of that Contract.
 
-- **Prepared** — a declared Skill with an exact matching Markdown file or matching directory under the Skill Profile's declared file convention (`<declared-skill-stable-key>.md` or `<declared-skill-stable-key>/`). Create the selected Runtime's required Skill folder and entrypoint, preserve the prepared source's instruction content and meaning verbatim — for a prepared directory, every file in its tree with internal relative paths intact — and add or adapt only the minimum native metadata needed for discovery and invocation (for Claude Code, YAML frontmatter `name` and `description`). Report a file or directory that does not match exactly one declared Skill instead of installing it by inference, and never rewrite or reinterpret the Human-owned prepared source.
-- **Constructed** — an Interface-owned declaration with a portable Contract and no matching prepared file or directory. Build the smallest self-contained native realization from that Contract.
-- **Installed** — an externally provided capability declared through Agent Extension or Agent Integration. Observe its actual state, classify it as `no change` when already present and usable, install it additively through the native mechanism named by its owning declaration when absent, and report it as `activation required` or `blocked` when that mechanism is unavailable or demands credentials, external trust, or broader scope. Never build or transfer content for it.
+A **Prepared** capability and an **Installed** capability are outside this operation. Do not create, transfer, install, or remove either one; the Skill Installer operation owns both. Observe them only so the mapping table can state their current Runtime condition.
 
 When any synchronized Runtime instruction, mapping, or Skill realization directs its consumer to enter, read, search, resolve, or use an Agent Module source, treat this as required reconciliation, not merely a verification failure: replace that routing with the corresponding synchronized Runtime Rule, capability, Agent Instance, or Skill realization so no non-Sync consumer depends on an Agent Module source.
 
