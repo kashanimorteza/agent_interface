@@ -59,8 +59,8 @@ When a required native resource is missing or drifted, construct the smallest im
 
 For each declared capability, resolve its Capability Realization Kind before acting.
 
-- **Prepared** — a declared Skill with an exact matching Markdown file under the Skill Profile's declared file convention (directory plus `<declared-skill-stable-key>.md`). Create the selected Runtime's required Skill folder and entrypoint, preserve that file's instruction content and meaning verbatim, and add or adapt only the minimum native metadata needed for discovery and invocation (for Claude Code, YAML frontmatter `name` and `description`). Report a file that does not match exactly one declared Skill instead of installing it by inference, and never rewrite or reinterpret the Human-owned prepared source.
-- **Constructed** — an Interface-owned declaration with a portable Contract and no matching prepared file. Build the smallest self-contained native realization from that Contract.
+- **Prepared** — a declared Skill with an exact matching Markdown file or matching directory under the Skill Profile's declared file convention (`<declared-skill-stable-key>.md` or `<declared-skill-stable-key>/`). Create the selected Runtime's required Skill folder and entrypoint, preserve the prepared source's instruction content and meaning verbatim — for a prepared directory, every file in its tree with internal relative paths intact — and add or adapt only the minimum native metadata needed for discovery and invocation (for Claude Code, YAML frontmatter `name` and `description`). Report a file or directory that does not match exactly one declared Skill instead of installing it by inference, and never rewrite or reinterpret the Human-owned prepared source.
+- **Constructed** — an Interface-owned declaration with a portable Contract and no matching prepared file or directory. Build the smallest self-contained native realization from that Contract.
 - **Installed** — an externally provided capability declared through Agent Extension or Agent Integration. Observe its actual state, classify it as `no change` when already present and usable, install it additively through the native mechanism named by its owning declaration when absent, and report it as `activation required` or `blocked` when that mechanism is unavailable or demands credentials, external trust, or broader scope. Never build or transfer content for it.
 
 Write only to a project-scoped destination documented by the Native Runtime and authorized by the owning Module declaration. When actual state conflicts with multiple authorities or meaningful Human-authored runtime content would be overwritten, make no write to that resource. Report the conflict and the exact decision needed.
@@ -72,7 +72,7 @@ After reconciliation, discard pre-change observations, rediscover and re-read th
 Verify at least that:
 
 - the selected Agent Native is active, every required Agent Instance is invocable, every required Role and Skill is discoverable by its intended Role, and each native Skill invocation control matches its declared Human and coordinator Invocation Policy;
-- every Skill materialized from a matched prepared Markdown file exactly preserves that file's instruction content and meaning;
+- every Skill materialized from a matched prepared Markdown file or prepared directory exactly preserves that file's or directory tree's instruction content and meaning, including internal relative paths;
 - every Custom Command resolves to its declared owner and argument contract;
 - effective settings, permissions, rules, and hooks match their owners;
 - each selected Extension is installed, project-enabled, and exposes its expected capabilities;

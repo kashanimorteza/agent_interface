@@ -2,7 +2,7 @@
 name: my-interface-launch
 description: Bring the developed Target online through the selected Platform Launch only when explicitly requested by the Human or delegated by a declared Interface coordinator; verify readiness and report access points.
 argument-hint: "[api|logic|presentation|complete|all]"
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # Launch the Target

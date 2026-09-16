@@ -1,7 +1,7 @@
 ---
 name: my-interface-configure
 description: Generate or refresh operational Config, synchronize phase State, and prepare the selected Platform Environment when explicitly requested by the Human or delegated by a declared Interface coordinator.
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # Configure the Interface
