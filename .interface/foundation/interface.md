@@ -645,6 +645,8 @@ This Operation is performed through `/my-interface-skill-installer` to derive Ag
 
 This Operation is performed only through explicit Human invocation of `/my-interface-agent-sync` in one of two modes: `self` realizes the Agent Sync adapter itself from its current Contract, and `module` realizes every other declaration. It is the sole operation permitted to inspect Agent Module sources, understands the complete Module and the selected Agent Native's own conventions, translates the Module into that Native Runtime, and certifies synchronization only after all required declarations pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
 
+Agent Sync works only between the Agent Module and the Agent Native, so it needs no Target Understanding and no other Interface Module: it never decides what the product should do, only how the selected Agent Native must be shaped to match the Human's declared view of the Agent. It realizes its own adapter before the rest of the Module because a running adapter cannot load a definition it did not start with.
+
 <br><br>
 
 <!--------------------------------------------------------------------------------- Modes --->

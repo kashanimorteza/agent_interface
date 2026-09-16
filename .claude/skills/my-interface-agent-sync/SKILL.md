@@ -1,6 +1,8 @@
 ---
 name: my-interface-agent-sync
 description: Realize this adapter itself in `self` mode, or translate every other Agent Module declaration through the active Agent Native's own conventions in `module` mode, certifying synchronization only after complete post-change verification.
+argument-hint: "<self | module>"
+arguments: [mode]
 disable-model-invocation: true
 ---
 
@@ -10,7 +12,7 @@ This file is the Claude Code adapter for the portable `agent-sync` Skill Contrac
 
 ## Modes
 
-Resolve the invoked mode before any mutation.
+The invoked mode arrives as `$mode`. Resolve it before any mutation, and when it is empty treat the invocation as mode-less.
 
 - `self` — realize only this adapter from the current `agent-sync` Skill Contract. Reconcile no other declaration, and never report the complete Module as synchronized from a `self` run.
 - `module` — realize every other Agent Module declaration. Before any mutation, re-read the current `agent-sync` Skill Contract and confirm this adapter still matches it. When it does not, mutate nothing, report the exact difference, and stop with the instruction to run `/my-interface-agent-sync self` first.
