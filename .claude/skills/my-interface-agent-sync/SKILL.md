@@ -1,12 +1,22 @@
 ---
 name: my-interface-agent-sync
-description: Understand the complete Agent Module, translate it through the active Agent Native's own conventions, reconcile authorized project-scoped resources, and certify synchronization only after complete post-change verification.
+description: Realize this adapter itself in `self` mode, or translate every other Agent Module declaration through the active Agent Native's own conventions in `module` mode, certifying synchronization only after complete post-change verification.
 disable-model-invocation: true
 ---
 
 # Synchronize the Agent Module
 
 This file is the Claude Code adapter for the portable `agent-sync` Skill Contract and the sole Runtime exception permitted to read Agent Module sources. Resolve and read that Contract through Agent Skill Profile only after explicit Human invocation; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+
+## Modes
+
+Resolve the invoked mode before any mutation.
+
+- `self` — realize only this adapter from the current `agent-sync` Skill Contract. Reconcile no other declaration, and never report the complete Module as synchronized from a `self` run.
+- `module` — realize every other Agent Module declaration. Before any mutation, re-read the current `agent-sync` Skill Contract and confirm this adapter still matches it. When it does not, mutate nothing, report the exact difference, and stop with the instruction to run `/my-interface-agent-sync self` first.
+- no mode supplied — mutate nothing. Report both modes and whether this adapter still matches its current Contract.
+
+The stale-adapter check exists because a running instance cannot load a definition it did not start with. Never claim to have executed a Contract this adapter does not currently implement.
 
 ## Role
 
@@ -16,13 +26,13 @@ This Skill applies existing Human-owned decisions. It never runs implicitly, at 
 
 ## Understanding
 
-Establish Interface Understanding from the canonical Interface document, then read and understand the complete Agent Module through its declared structure and sources. Before choosing a realization, establish Native Runtime Understanding from the selected Agent Native's own documentation, supported capabilities, file conventions, invocation rules, mappings, and limitations. Do not use Target Understanding.
+Establish Interface Understanding from the canonical Interface document, then read and understand the complete Agent Module through its declared structure and sources. Before choosing a realization, establish Native Runtime Understanding from the selected Agent Native's own documentation, supported capabilities, file conventions, invocation rules, mappings, and limitations. Do not use Target Understanding, and do not use Understanding of any Interface Module other than the Agent Module.
 
 Repeat this discovery on every invocation. A Component or mechanism added to the Agent Module after this adapter was written is part of the run automatically.
 
 Treat Principles as mandatory contracts and Profiles as Human-owned desired state. Never modify either. Inspect current project-scoped runtime artifacts and runtime-reported activation state only after deriving the expected profile.
 
-Do not require a project-side realization map or predeclared native path, format, or capability mapping. Derive those from the Native Runtime. If the Native cannot realize a required Module declaration, report the exact unsupported or ambiguous item as `blocked`; never guess from a familiar directory layout.
+Do not require a project-side realization map or predeclared native path, format, or capability mapping. Derive those from the Native Runtime. If the Native cannot realize a required Module declaration, report the exact unsupported or ambiguous item as `blocked`; never guess from a familiar directory layout. When a declaration carries optional per-Agent-Native details, use only the block matching Claude Code, treat it as an aid that narrows discovery rather than an authority that overrides Claude Code's own mechanism, ignore blocks declared for other Agent Natives, and fall back to Claude Code's own documentation when no matching block exists or the declared detail conflicts with the actual mechanism.
 
 ## Reconciliation plan
 
@@ -45,7 +55,11 @@ A selected desired state is standing project authorization for additive, project
 
 When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
-For each declared Skill, resolve the exact optional prepared Markdown file under the Skill Profile's declared file convention (directory plus `<declared-skill-stable-key>.md`). When a file matches exactly one declared Skill, create the selected Runtime's required Skill folder and entrypoint, preserve that file's instruction content and meaning verbatim, and add or adapt only the minimum native metadata needed for discovery and invocation (for Claude Code, YAML frontmatter `name` and `description`). When no matching file exists, realize the Skill exactly as before from its portable Contract or provider declaration. Report a file that does not match exactly one declared Skill instead of installing it by inference, and never rewrite or reinterpret the Human-owned prepared source.
+For each declared capability, resolve its Capability Realization Kind before acting.
+
+- **Prepared** — a declared Skill with an exact matching Markdown file under the Skill Profile's declared file convention (directory plus `<declared-skill-stable-key>.md`). Create the selected Runtime's required Skill folder and entrypoint, preserve that file's instruction content and meaning verbatim, and add or adapt only the minimum native metadata needed for discovery and invocation (for Claude Code, YAML frontmatter `name` and `description`). Report a file that does not match exactly one declared Skill instead of installing it by inference, and never rewrite or reinterpret the Human-owned prepared source.
+- **Constructed** — an Interface-owned declaration with a portable Contract and no matching prepared file. Build the smallest self-contained native realization from that Contract.
+- **Installed** — an externally provided capability declared through Agent Extension or Agent Integration. Observe its actual state, classify it as `no change` when already present and usable, install it additively through the native mechanism named by its owning declaration when absent, and report it as `activation required` or `blocked` when that mechanism is unavailable or demands credentials, external trust, or broader scope. Never build or transfer content for it.
 
 Write only to a project-scoped destination documented by the Native Runtime and authorized by the owning Module declaration. When actual state conflicts with multiple authorities or meaningful Human-authored runtime content would be overwritten, make no write to that resource. Report the conflict and the exact decision needed.
 
@@ -74,5 +88,7 @@ Do not report a capability as synchronized until its required activation and usa
 ## Report
 
 Report every dynamically discovered Agent Module declaration as `synchronized`, `already synchronized`, `activation required`, `unmanaged`, or `blocked`. For every mutation, identify the owning declaration, native project artifact or provider action, and verification result. List preserved undeclared capabilities separately and state any Human action still required.
+
+State the resolved mode in every report. A `self` run reports only the adapter outcome, and a `module` run blocked by a stale adapter reports that block and the required `self` run, instead of an overall Module status.
 
 Finish with `Agent Module synchronized` only when the complete second pass proves every required declaration and mechanism is realized, active, and usable. Otherwise report `Agent Module not fully synchronized` and enumerate every condition preventing the assurance claim.
