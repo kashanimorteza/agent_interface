@@ -39,11 +39,11 @@ content:
   settings:
     skill_files:
       directory: ".interface/agent/skill/files/"
-      naming: "<declared-skill-stable-key>.md"
+      naming: "<declared-skill-stable-key>.md for a single-file Skill, or <declared-skill-stable-key>/ for a Skill whose complete artifact is a directory tree"
       presence: "optional per declared Skill"
-      present: "Create the selected Runtime's native Skill directory and entrypoint, preserve the prepared Markdown instructions as their content, and add or adapt only metadata required by that Runtime without changing meaning."
+      present: "Create the selected Runtime's native Skill directory and entrypoint, preserve the prepared content as authored - the single Markdown file's instructions, or every file of the prepared directory tree with its internal relative paths intact - and add or adapt only metadata required by that Runtime without changing meaning."
       absent: "Realize the Skill from its portable Contract or provider declaration using the selected Agent Native's conventions; absence is never an error by itself."
-      unmatched: "A Markdown file that does not match exactly one declared Skill is reported and never installed by inference."
+      unmatched: "A prepared file or directory that does not match exactly one declared Skill is reported and never installed by inference."
     project_skills:
       core_workflow:
         configure:
@@ -123,6 +123,15 @@ content:
           delegated_invocation: "disabled"
           automated_invocation: "disabled"
           required: true
+      prepared:
+        fastapi:
+          name: "fastapi"
+          activation: "implicit when relevant"
+          required: false
+        typer:
+          name: "typer"
+          activation: "implicit when relevant"
+          required: false
       installed:
         pydantic:
           name: "pydantic"
@@ -132,22 +141,6 @@ content:
             claude:
               marketplace: {source: "github", repository: "pydantic/skills"}
               plugin: "pydantic@pydantic-skills"
-        fastapi:
-          name: "fastapi"
-          activation: "implicit when relevant"
-          required: false
-          native:
-            claude:
-              marketplace: {source: "github", repository: "anthropics/skills"}
-              plugin: "example-skills@anthropic-agent-skills"
-        typer:
-          name: "typer"
-          activation: "implicit when relevant"
-          required: false
-          native:
-            claude:
-              marketplace: {source: "github", repository: "anthropics/skills"}
-              plugin: "example-skills@anthropic-agent-skills"
         library-skills:
           name: "library-skills"
           activation: "implicit when package capability discovery is relevant"

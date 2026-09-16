@@ -375,7 +375,7 @@ Agent Components
 │   ├── Principles  → .interface/agent/skill/principles.md
 │   ├── Profile     → .interface/agent/skill/profile.yaml
 │   ├── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
-│   └── Files       → .interface/agent/skill/files/<declared-skill-stable-key>.md
+│   └── Files       → .interface/agent/skill/files/<declared-skill-stable-key>[.md | /]
 ├── Command
 │   ├── Principles  → .interface/agent/command/principles.md
 │   └── Profile     → .interface/agent/command/profile.yaml

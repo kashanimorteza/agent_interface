@@ -60,13 +60,13 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 <br>
 
-## 4. A prepared Markdown file may supply a Skill's native instruction body
+## 4. A prepared file or directory may supply a Skill's native instruction body
 
-**Rule:** The Agent Skill Profile declares one optional prepared-file directory and an exact filename convention keyed by declared Skill identity. When the matching Markdown file exists, Agent Sync creates the Skill folder and entrypoint required by the selected Agent Native, preserves that file's instruction content and meaning, and adds or adapts only the minimum native metadata needed for discovery and invocation. When no matching file exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
+**Rule:** The Agent Skill Profile declares one optional prepared-file directory and an exact naming convention keyed by declared Skill identity, satisfied either by a single Markdown file or by a directory holding that Skill's complete artifact. When a matching prepared file or directory exists, Agent Sync creates the Skill folder and entrypoint required by the selected Agent Native, preserves the prepared content and its meaning - every file of a prepared directory tree, with its internal relative paths intact - and adds or adapts only the minimum native metadata needed for discovery and invocation. When no match exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
 
 **Why:** A complete Human-authored Skill should be reusable without forcing every Skill to have a prepared file or turning Runtime output into its source.
 
-**Boundary:** File presence never declares a new Skill, selects a provider, proves Activation, or authorizes an unmatched file to be installed. A prepared file must match exactly one Skill already declared by the Profile and must conform to that Skill's Contract and applicable Principles. Only Agent Sync reads it; ordinary Runtime Skills consume the synchronized native copy. Agent Sync never rewrites the Human-owned source file or silently changes its semantic instructions.
+**Boundary:** The presence of a prepared file or directory never declares a new Skill, selects a provider, proves Activation, or authorizes an unmatched artifact to be installed. A prepared file or directory must match exactly one Skill already declared by the Profile and must conform to that Skill's Contract and applicable Principles. Only Agent Sync reads it; ordinary Runtime Skills consume the synchronized native copy. Agent Sync never rewrites the Human-owned source file or silently changes its semantic instructions.
 
 <br>
 
@@ -81,6 +81,6 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 - **Never** — let coordinator invocation expand a delegated Skill's authority or permit unrelated automatic execution *(2)*
 - **Must** — make repeated execution preserve valid work *(3)*
 - **Never** — use repeatability to justify destructive regeneration *(3)*
-- **Must** — materialize an exact matching prepared Skill file into the selected Agent Native's required Skill folder while preserving its instruction meaning *(4)*
+- **Must** — materialize an exact matching prepared Skill file or directory tree into the selected Agent Native's required Skill folder while preserving its instruction meaning and internal relative paths *(4)*
 - **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file *(4)*
-- **Never** — infer a Skill from an unmatched file, treat a file as proof of Activation, or rewrite the Human-owned prepared source *(4)*
+- **Never** — infer a Skill from an unmatched file or directory, treat its presence as proof of Activation, or rewrite the Human-owned prepared source *(4)*
