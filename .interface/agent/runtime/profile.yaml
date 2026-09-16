@@ -1,0 +1,45 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/runtime/profile.yaml"
+  path_note: "The Profile layer of the Agent Runtime Component."
+  purpose: "The selected runtime, provider, model, effort, and compatibility choices."
+  standard: "Agent Project Interface"
+  version: "1.4"
+  updated: "2026-09-15"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; runtime resolution is observed without being written back as a project choice."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Consumers identify the selected Runtime; explicit Agent Sync learns and applies the Native Runtime's own mechanisms."
+  selection: "Use a listed compatible runtime; report incompatibility rather than inventing equivalent behavior."
+  version_resolution: "Runtime-provided values resolve from the active installation without changing this file."
+  matching: "Runtime identity matches the selected Runtime exactly."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The current Agent Runtime."
+  options: "Supported runtime alternatives."
+  settings: "Provider, model, effort, and compatibility declarations. Native paths, formats, mappings, and capability limits are discovered by Agent Sync from the selected Agent Native."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    agent_runtime: "Claude Code"
+  options:
+    agent_runtimes:
+      Claude Code:
+        version: "runtime-provided"
+  settings:
+    providers: {}
+    models: {}
+    effort_levels: {}
+    fallback_models: {}
+    compatibility:
+      required_profile_version: "1.0"
+      status: "compatible"

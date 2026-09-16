@@ -1,0 +1,56 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/session/profile.yaml"
+  path_note: "The Profile layer of the Agent Session Component."
+  purpose: "Session lifecycle, resume, persistence, background work, isolation, checkpoints, and termination."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; generated session history and identifiers remain runtime state."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Revalidate current project and runtime state before resumed or restored mutation."
+  selection: "Use isolation or Background Work only when it materially improves safe execution."
+  version_resolution: "Session mechanisms resolve from the active runtime version."
+  matching: "Match persisted Sessions by runtime identity; never infer identity from conversation text."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Default resume and background-work behavior."
+  options: "Supported resume behaviors."
+  settings: "Complete lifecycle, persistence, background, isolation, checkpoint, and termination categories."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    resume_behavior: "revalidate"
+  options:
+    resume_behaviors:
+      revalidate:
+        meaning: "Re-establish context, scope, permissions, files, and outstanding work before mutation."
+  settings:
+    startup: {}
+    resume: {}
+    fork: {}
+    restore: {}
+    history: {}
+    persistence: {}
+    background_work: {}
+    tasks: {}
+    isolation: {}
+    worktrees: {}
+    checkpoints: {}
+    compaction_events: {}
+    usage_limit_continuation: {}
+    cancellation: {}
+    termination: {}
+    generated_state:
+      human_authored: false
+      project_authority: false

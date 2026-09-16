@@ -1,0 +1,111 @@
+meta:
+  path: ".interface/implementation/api/preferences.yaml"
+  purpose: "API-owned executable boundary defaults and transport settings."
+  standard: "Agent Project Interface"
+  version: "1.0"
+
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Concrete API choices are resolved from Development; this file owns API boundary defaults."
+  precedence: "Target and API Principles take precedence over these Preferences."
+
+content:
+  architecture:
+    application_bootstrap:
+      artifact: "API application bootstrap"
+      creates_framework_application: true
+      registers_routers: true
+      installs_middleware: true
+      installs_exception_handlers: true
+      wires_authentication_dependencies: true
+      configures_lifecycle: true
+    router:
+      directory: "router"
+      file_per_domain: true
+      controller_layer: "merged_into_router"
+      owns_http_boundary: true
+    service:
+      directory: "service"
+      file_per_domain: true
+      owns_api_operations: true
+      depends_on: "Logic Public Interface"
+      depends_on_transport_or_framework: false
+  runtime:
+    executable: true
+    entrypoint_source: "Development API runtime entrypoint"
+    host_source: "Platform Runtime Binding"
+    port_source: "Platform Runtime Binding"
+  contract:
+    application:
+      title: "Target API"
+      description: ""
+      version: "v1"
+      values_source: "Target or API Runtime Configuration"
+    documentation:
+      enabled: true
+      contract_standard: "OpenAPI"
+      contract_endpoint: "/openapi.json"
+      interactive_reference_endpoint: "/docs"
+    versioning:
+      enabled: true
+      strategy: "path"
+      initial_version: "v1"
+    expose_standard_model_operations: true
+  interfaces:
+    model_access:
+      via: "Model Public Interface"
+    logic_access:
+      via: "Logic Public Interface"
+    direct_database_access: false
+    transport_schemas: "Create only when input or output shape differs; never create a competing Domain Definition."
+  credentials:
+    input_only: true
+    output: "excluded"
+    documentation_values: "non-secret placeholders only"
+  requests:
+    request_id:
+      required: true
+      accept_valid_incoming: true
+      generate_when_absent: true
+      include_in_error_response: true
+      sensitive_data: false
+  queries:
+    strategy: "cursor"
+    default_limit: 50
+    maximum_limit: 100
+    filtering: "explicitly allowlisted Fields only"
+    sorting: "explicitly allowlisted Fields with stable ordering"
+  http:
+    root_path:
+      source: "Platform Runtime Binding"
+      default: ""
+    cors:
+      allowed_origins:
+        - "*"
+      allow_credentials: true
+      allowed_methods:
+        - "*"
+      allowed_headers:
+        - "*"
+  lifecycle:
+    health:
+      enabled: true
+      path: "/health"
+    readiness:
+      enabled: true
+      path: "/ready"
+    startup_validation: true
+    graceful_shutdown: true
+  cross_cutting:
+    authentication:
+      owner: "API Interface"
+    error_handling:
+      expected_failures: "Application Outcomes from Logic"
+      unexpected_failures: "safe generic response"
+      expose_internal_details: false
+    logging:
+      request_id_only: true
+  idempotency:
+    enabled_when: "A Target operation is selected as sensitive to repeated execution."
+    key: "idempotency_key"
+    atomic_result_recording: true

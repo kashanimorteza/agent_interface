@@ -1,0 +1,668 @@
+# Trading Assistant
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Navigation --->
+## Navigation
+
+Use this document in the following order:
+
+1. **[Introduction](#introduction)** — understand the Target and its purpose.
+2. **[Architecture](#architecture)** — see the Target's primary structural areas.
+3. **[Models](#models)** — review the models, fields, relationships, rules, and initial data.
+4. **[Trading](#trading)** — review the Target's platforms and operations.
+5. **[Behaviour](#behaviour)** — review what the Target must enable users to do.
+6. **[Development](#development)** — review the development scope and explicit exclusions.
+7. **[Phases](#phases)** — follow the intended implementation order.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Introduction --->
+## Introduction
+<!-------------------------- Overview -->
+### Overview
+
+Defines what the Target is and the main parts that make up the system.
+
+**Name:** Trading Assistant  
+**Description:**  A platform for defining and managing trading information, strategies, actions, and related data.  
+**Goals:** Trade
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+```text
+Architecture
+├── Models
+├── Trading
+├── Behaviour
+├── Development
+└── Phases
+```
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Models --->
+## Models
+
+Defines the project's models.
+
+```text
+Models
+├── User
+├── Trading Platform
+├── Instance
+├── Currency
+├── Broker
+├── Asset
+├── Account Group
+├── Account
+├── Trailing Group
+├── Trailing Rule
+├── Partial Group
+├── Partial Rule
+├── Action Group
+├── Action
+└── Position
+```
+
+<!-------------------------- User -->
+### User
+
+**Purpose:** Defines an independent user of the system and enables multi-user operation. Each user can have a separate set of settings, allowing new users to be added with configurations that remain distinct from those of existing users.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The user's display name.
+- `username` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The username used to identify the user.
+- `password` — Type: `string`; Nullable: `false`; Purpose: The password credential used by the user.
+- `api_key` — Type: `string`; Nullable: `false`; Purpose: The API key assigned to the user.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the user is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the user.
+
+**Rules:**
+
+- `password` is a credential and must use `hash` storage at rest.
+- `api_key` is a credential and must use `hash` storage at rest.
+
+**Initial Data:**
+
+- `name`: `Admin`; `username`: `admin`; `password`: Generate securely; `api_key`: Generate securely.
+
+<!-------------------------- Trading Platform -->
+### Trading Platform
+
+**Purpose:** Defines a supported trading API standard, such as MetaTrader 5 or Binance, while keeping the system independent of any specific exchange or broker. Every trading platform implementation exposes the same application-facing trading functions through a dedicated class, while handling communication with its destination API according to that platform's own mechanism. Additional platform implementations can be added without changing the system's common trading interface.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The platform's display name.
+- `code` — Type: `string`; Nullable: `false`; Purpose: Identifies the implementation class the application must use for this trading platform, such as `binance` or `metatrader_5`.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the platform is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the platform.
+
+**Initial Data:**
+
+- `name`: `MetaTrader 5`; `code`: `metatrader_5`.
+- `name`: `Binance`; `code`: `binance`.
+
+<!-------------------------- Instance -->
+### Instance
+
+**Purpose:** Defines a user-owned connection instance through which the system accesses a supported Trading Platform.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns this instance.
+- `trading_platform_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the trading platform used by this instance.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The instance's display name.
+- `ip` — Type: `string`; Nullable: `true`; Purpose: Identifies the technical network address used to reach the Trading Platform when required.
+- `username` — Type: `string`; Nullable: `true`; Purpose: Defines the technical username used to establish the Instance connection when required.
+- `password` — Type: `string`; Nullable: `true`; Purpose: Defines the technical password used to establish the Instance connection when required.
+- `api_key` — Type: `string`; Nullable: `true`; Purpose: Defines the technical API credential used to establish the Instance connection when required.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the instance is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the instance.
+
+**Relationships:**
+
+- Belongs to one User through `user_id`.
+- Uses one Trading Platform through `trading_platform_id`.
+
+**Rules:**
+
+- `password` and `api_key` are credentials and must use `encrypted` storage at rest.
+- The Trading Platform selected through `trading_platform_id` defines which connection fields are required; every field it requires must be present before the Instance can be used.
+- The combination of `user_id` and `name` must be unique.
+
+**Initial Data:**
+
+- `name`: `MetaTrader`; `user_id`: `1`; `trading_platform_id`: `1`; `ip`: `127.0.0.1`; `username`: `test`; `password`: Generate securely; `api_key`: Generate securely.
+
+<!-------------------------- Currency -->
+### Currency
+
+**Purpose:** Defines a currency that can be used by the trading system and identifies its standard code, display symbol, associated country or region, and monetary decimal precision.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns this currency.
+- `code` — Type: `string`; Size: `3`; Nullable: `false`; Purpose: The currency's standard three-letter code, such as `USD` or `EUR`.
+- `symbol` — Type: `string`; Nullable: `true`; Purpose: The currency's display symbol, such as `$`, `€`, or `£`.
+- `country` — Type: `string`; Nullable: `true`; Purpose: Identifies the country or region associated with the currency.
+- `decimal_digits` — Type: `integer`; Nullable: `false`; Default: `2`; Purpose: Defines the number of decimal digits normally used for monetary values in the currency.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the currency is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the currency.
+
+**Relationships:**
+
+- Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `code` must be unique.
+
+**Initial Data:**
+
+- `user_id`: `1`; `code`: `USD`; `symbol`: `$`; `country`: `United States`; `decimal_digits`: `2`.
+- `user_id`: `1`; `code`: `EUR`; `symbol`: `€`; `country`: `Eurozone`; `decimal_digits`: `2`.
+- `user_id`: `1`; `code`: `GBP`; `symbol`: `£`; `country`: `United Kingdom`; `decimal_digits`: `2`.
+- `user_id`: `1`; `code`: `JPY`; `symbol`: `¥`; `country`: `Japan`; `decimal_digits`: `0`.
+- `user_id`: `1`; `code`: `CHF`; `symbol`: `CHF`; `country`: `Switzerland`; `decimal_digits`: `2`.
+- `user_id`: `1`; `code`: `CAD`; `symbol`: `C$`; `country`: `Canada`; `decimal_digits`: `2`.
+- `user_id`: `1`; `code`: `AUD`; `symbol`: `A$`; `country`: `Australia`; `decimal_digits`: `2`.
+- `user_id`: `1`; `code`: `NZD`; `symbol`: `NZ$`; `country`: `New Zealand`; `decimal_digits`: `2`.
+
+<!-------------------------- Broker -->
+### Broker
+
+**Purpose:** Defines a broker supported by the system and identifies the user who owns its configuration without coupling the Broker definition to one Trading Platform.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The broker's display name.
+- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the broker configuration.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the broker is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the broker.
+
+**Relationships:**
+
+- Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `name` must be unique.
+
+**Initial Data:**
+
+- `name`: `FxPro`; `user_id`: `1`.
+
+<!-------------------------- Asset -->
+### Asset
+
+**Purpose:** Defines an asset that can be selected for trading. It provides the system with the complete set of available tradable assets and identifies the category of each asset so the system knows exactly what is being traded.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker that provides this asset.
+- `symbol` — Type: `string`; Nullable: `false`; Purpose: Identifies the tradable asset, such as `EUR/USD`, `XAU/USD`, or `USOil`.
+- `category` — Type: `string`; Nullable: `false`; Purpose: Identifies the asset category, such as `Currency`, `Commodity`, or `Cryptocurrency`.
+- `point_size` — Type: `float`; Nullable: `false`; Default: `0.0`; Purpose: Stores the size of one point for the asset.
+- `digits` — Type: `integer`; Nullable: `false`; Default: `0`; Purpose: Stores the number of decimal digits used for the asset's price.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the asset is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the asset.
+
+**Relationships:**
+
+- Belongs to one Broker through `broker_id`.
+
+**Rules:**
+
+- The combination of `broker_id` and `symbol` must be unique.
+
+**Initial Data:**
+
+- `broker_id`: `1`; `symbol`: `EUR/USD`; `category`: `Currency`; `point_size`: `0.0001`; `digits`: `5`.
+- `broker_id`: `1`; `symbol`: `EUR/GBP`; `category`: `Currency`; `point_size`: `0.001`; `digits`: `5`.
+- `broker_id`: `1`; `symbol`: `XAU/USD`; `category`: `Commodity`; `point_size`: `0.01`; `digits`: `2`.
+- `broker_id`: `1`; `symbol`: `USOil`; `category`: `Commodity`; `point_size`: `0.01`; `digits`: `3`.
+
+<!-------------------------- Account Group -->
+### Account Group
+
+**Purpose:** Defines an independent group for organizing trading accounts owned by one user.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the account group.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The account group's display name.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account group is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the account group.
+
+**Relationships:**
+
+- Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `name` must be unique.
+
+**Initial Data:**
+
+- `user_id`: `1`; `name`: `Default`.
+
+<!-------------------------- Account -->
+### Account
+
+**Purpose:** Defines a funded trading account through which the system executes trades and launches positions. Each Account identifies the trading account and its account-level login credentials, while its selected Instance owns the separate technical connection to the Trading Platform.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The account's display name.
+- `group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the account group that contains the account.
+- `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker that owns the account.
+- `instance_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the trading-platform instance used to connect this account.
+- `base_currency_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the base currency used by the account.
+- `username` — Type: `string`; Nullable: `false`; Purpose: The username identifier used to access the trading account.
+- `password` — Type: `string`; Nullable: `false`; Purpose: The credential used to access the trading account.
+- `leverage` — Type: `integer`; Nullable: `false`; Purpose: Defines the account's leverage multiplier.
+- `balance` — Type: `decimal`; Nullable: `false`; Default: `0`; Purpose: Stores the account's current balance.
+- `account_type` — Type: `string`; Nullable: `false`; Purpose: Identifies the account model, such as `cfd` or `spread_betting`.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the account is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the account.
+
+**Relationships:**
+
+- Belongs to one Account Group through `group_id`.
+- Belongs to one Broker through `broker_id`.
+- Uses one Instance through `instance_id`.
+- Uses one Currency as its base currency through `base_currency_id`.
+
+**Rules:**
+
+- `password` is a credential and must use `encrypted` storage at rest.
+- Instance credentials authenticate the technical Trading Platform connection; Account credentials authenticate this specific trading account. The same credential must not be duplicated across both Models unless the selected Trading Platform explicitly requires it in both roles.
+- The combination of `group_id`, `broker_id`, and `instance_id` must be unique.
+
+**Initial Data:**
+
+- `name`: `Acc-1`; `group_id`: `1`; `broker_id`: `1`; `instance_id`: `1`; `base_currency_id`: `1`; `username`: `test`; `password`: Generate securely; `leverage`: `100`; `account_type`: `CFD`.
+
+<!-------------------------- Trailing Group -->
+### Trailing Group
+
+**Purpose:** Defines an independent group for organizing the rules that manage Stop Loss and Take Profit during a trade. The group identifies the rule set, while each rule separately defines its activation condition and the changes to apply.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the trailing group.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The trailing group's display name.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the trailing group is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the trailing group.
+
+**Relationships:**
+
+- Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `name` must be unique.
+
+**Initial Data:**
+
+- `user_id`: `1`; `name`: `Default`.
+
+<!-------------------------- Trailing Rule -->
+### Trailing Rule
+
+**Purpose:** Defines an individual rule within a Trailing Group that tells the system when and how to manage Take Profit and Stop Loss. Each rule provides the activation condition and the parameters used to apply the required adjustments.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The trailing rule's display name.
+- `trailing_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the trailing group that contains the rule.
+- `trigger_percentage` — Type: `decimal`; Nullable: `false`; Purpose: Defines the profit percentage of the take-profit target that activates the rule.
+- `take_profit_adjustment` — Type: `decimal`; Nullable: `true`; Purpose: Defines the take-profit adjustment applied when the rule is activated.
+- `stop_loss_adjustment` — Type: `decimal`; Nullable: `true`; Purpose: Defines the stop-loss adjustment applied when the rule is activated.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the trailing rule is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the trailing rule.
+
+**Relationships:**
+
+- Belongs to one Trailing Group through `trailing_group_id`.
+
+**Rules:**
+
+- The combination of `trailing_group_id` and `trigger_percentage` must be unique.
+
+<!-------------------------- Partial Group -->
+### Partial Group
+
+**Purpose:** Defines an independent group of rules for managing portions of an open trade. Its rules determine how much of the trade volume must be closed when profit or loss reaches specified thresholds.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the partial group.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The partial group's display name.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the partial group is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the partial group.
+
+**Relationships:**
+
+- Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `name` must be unique.
+
+**Initial Data:**
+
+- `user_id`: `1`; `name`: `Default`.
+
+<!-------------------------- Partial Rule -->
+### Partial Rule
+
+**Purpose:** Defines an individual Partial Close rule that tells the system under which condition part of an open position must be closed and how much of its volume must be closed.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The partial rule's display name.
+- `partial_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the partial group that contains the rule.
+- `profit_percentage` — Type: `decimal`; Nullable: `false`; Purpose: Defines the profit percentage that activates the rule.
+- `close_percentage` — Type: `decimal`; Nullable: `false`; Purpose: Defines the percentage of the position closed when the rule is activated.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the partial rule is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the partial rule.
+
+**Relationships:**
+
+- Belongs to one Partial Group through `partial_group_id`.
+
+**Rules:**
+
+- The combination of `partial_group_id` and `profit_percentage` must be unique.
+
+<!-------------------------- Action Group -->
+### Action Group
+
+**Purpose:** Defines an independent grouping for trading actions based on their risk profile, such as high risk, normal risk, or low risk. Actions are assigned to these groups so trades can be organized and selected by their intended risk level.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the action group.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The action group's display name.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action group is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the action group.
+
+**Relationships:**
+
+- Belongs to one User through `user_id`.
+
+**Rules:**
+
+- The combination of `user_id` and `name` must be unique.
+
+**Initial Data:**
+
+- `user_id`: `1`; `name`: `Default`.
+
+<!-------------------------- Action -->
+### Action
+
+**Purpose:** Defines how a position must be opened. An action selects the asset and account and provides the risk, Take Profit, Stop Loss, Partial Group, and Trailing Group settings that determine the position's parameters and execution behavior.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `name` — Type: `string`; Nullable: `false`; Purpose: The action's display name.
+- `action_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the action group that contains the action.
+- `asset_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the asset traded by the action.
+- `account_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the account used to execute the action.
+- `partial_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the Partial Group used by the action.
+- `trailing_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the Trailing Group used by the action.
+- `risk_by_reward` — Type: `decimal`; Nullable: `false`; Purpose: Defines the numeric risk-to-reward value used by the action.
+- `take_profit` — Type: `decimal`; Nullable: `false`; Purpose: Defines the Take Profit value used by the action.
+- `stop_loss` — Type: `decimal`; Nullable: `false`; Purpose: Defines the Stop Loss value used by the action.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the action is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the action.
+
+**Relationships:**
+
+- Belongs to one Action Group through `action_group_id`.
+- Uses one Asset through `asset_id`.
+- Uses one Account through `account_id`.
+- Uses one Partial Group through `partial_group_id`.
+- Uses one Trailing Group through `trailing_group_id`.
+
+**Rules:**
+
+- The combination of `action_group_id` and `name` must be unique.
+
+**Initial Data:**
+
+- `name`: `Default`; `action_group_id`: `1`; `asset_id`: `1`; `account_id`: `1`; `partial_group_id`: `1`; `trailing_group_id`: `1`; `risk_by_reward`: `1`; `take_profit`: `1`; `stop_loss`: `1`.
+
+<!-------------------------- Position -->
+### Position
+
+**Purpose:** Stores the complete information for every position created by the system. It allows the system to identify and track positions that have been opened as well as positions that are still pending execution.
+
+**Fields:**
+
+- `id` — Type: `integer`; Nullable: `false`; Auto Increment: `true`; Primary Key: `true`.
+- `user_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the user who owns the position.
+- `name` — Type: `string`; Nullable: `false`; Unique: `true`; Purpose: The position's display name.
+- `trading_platform_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the trading platform used to execute the position.
+- `broker_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the broker through which the position is executed.
+- `account_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the trading account used for the position.
+- `trailing_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the Trailing Group applied to the position.
+- `partial_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the Partial Group applied to the position.
+- `action_group_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the Action Group associated with the position.
+- `action_id` — Type: `integer`; Nullable: `false`; Purpose: Identifies the action from which the position is created.
+- `date` — Type: `datetime`; Nullable: `false`; Purpose: Stores the position's date and time.
+- `volume` — Type: `decimal`; Nullable: `false`; Purpose: Stores the position's trading volume.
+- `profit` — Type: `decimal`; Nullable: `false`; Default: `0`; Purpose: Stores the position's current profit or loss.
+- `is_executed` — Type: `boolean`; Nullable: `false`; Default: `false`; Purpose: Indicates whether the position has been executed.
+- `order_type` — Type: `string`; Nullable: `false`; Purpose: Stores the position's order type.
+- `base_tp` — Type: `decimal`; Nullable: `false`; Purpose: Stores the position's initial Take Profit value.
+- `base_sl` — Type: `decimal`; Nullable: `false`; Purpose: Stores the position's initial Stop Loss value.
+- `real_tp` — Type: `decimal`; Nullable: `false`; Purpose: Stores the position's current Take Profit value.
+- `real_sl` — Type: `decimal`; Nullable: `false`; Purpose: Stores the position's current Stop Loss value.
+- `is_active` — Type: `boolean`; Nullable: `false`; Default: `true`; Purpose: Indicates whether the position is active.
+- `description` — Type: `string`; Nullable: `true`; Purpose: Describes the position.
+
+**Relationships:**
+
+- Belongs to one User through `user_id`.
+- Uses one Trading Platform through `trading_platform_id`.
+- Uses one Broker through `broker_id`.
+- Uses one Account through `account_id`.
+- Uses one Trailing Group through `trailing_group_id`.
+- Uses one Partial Group through `partial_group_id`.
+- Uses one Action Group through `action_group_id`.
+- Belongs to one Action through `action_id`.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Trading --->
+## Trading
+
+```text
+Trading
+├── Platform
+│   ├── MetaTrader 5
+│   └── Binance
+└── Operation
+    ├── Open Position
+    └── Close Position
+```
+
+<!-------------------------- Platform -->
+### Platform
+
+The Target connects to supported trading platforms through the Platform boundary.
+
+<!-------------------------- MetaTrader 5 -->
+#### MetaTrader 5
+
+Connects the Target to MetaTrader 5 through the applicable MetaTrader 5 libraries and packages.
+
+<!-------------------------- Binance -->
+#### Binance
+
+Connects the Target to Binance through the Binance API.
+
+
+<!-------------------------- Operation -->
+### Operation
+
+The Target performs its trading operations through the Operation boundary.
+
+<!-------------------------- Open Position -->
+#### Open Position
+
+<!-------------------------- Close Position -->
+#### Close Position
+
+
+
+
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Behaviour --->
+## Behaviour
+
+<!-------------------------- Part 1 -->
+### Part 1
+
+- Enable users to add data for every defined Model.
+- Enable users to edit and update data for every defined Model.
+- Enable users to list data for every defined Model.
+- Enable users to retrieve an individual item by its ID for every defined Model.
+- Enable users to enable data for every defined Model.
+- Enable users to disable data for every defined Model.
+- Enable users to delete data for every defined Model.
+
+<!-------------------------- Part 2 -->
+### Part 2
+
+Reserved for future Behaviour definitions.
+
+<!-------------------------- Part 3 -->
+### Part 3
+
+Reserved for future Behaviour definitions.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Development --->
+## Development
+
+Defines the development scope and explicit technical exclusions for the Target.
+
+
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Phases --->
+## Phases
+
+Defines the project's implementation phases. Phases are executed step by step in their defined order, with each phase representing the next intended stage of project development.
+
+<!-------------------------- Phase 1 -->
+### Phase 1
+
+```text
+id = P1
+title = Model
+target = Model
+is_active = Enabled
+readiness = Ready
+goal = Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
+```
+
+<!-------------------------- Phase 2 -->
+### Phase 2
+
+```text
+id = P2
+title = Database
+target = Database
+is_active = Enabled
+readiness = Ready
+goal = Implement the database using the shared Model package and insert the defined initial data.
+```
+
+<!-------------------------- Phase 3 -->
+### Phase 3
+
+```text
+id = P3
+title = Logic
+target = Logic
+is_active = Enabled
+readiness = Ready
+goal = Implement the reusable Logic library for operating on the defined models.
+```
+
+<!-------------------------- Phase 4 -->
+### Phase 4
+
+```text
+id = P4
+title = API
+target = API
+is_active = Enabled
+readiness = Ready
+goal = Implement the separate API executable over the Logic library for operating on the defined models.
+```
+
+<!-------------------------- Phase 5 -->
+### Phase 5
+
+```text
+id = P5
+title = Presentation
+target = Presentation
+is_active = Enabled
+readiness = Ready
+goal = Implement the Presentation Component based on the separate API Component.
+```
+
+<!-------------------------- Phase 6 -->
+### Phase 6
+
+```text
+id = P6
+title = MetaTrader 5 Platform Module
+target = Platform
+is_active = Disabled
+readiness = Not Designed
+goal = Implement the MetaTrader 5 platform module through the common Trading Platform boundary.
+```
+
+<!-------------------------- Phase 7 -->
+### Phase 7
+
+```text
+id = P7
+title = Trading Operations
+target = Logic
+is_active = Disabled
+readiness = Not Designed
+goal = Implement the execution of the defined trading operations through the selected Trading Platform and Instance.
+```

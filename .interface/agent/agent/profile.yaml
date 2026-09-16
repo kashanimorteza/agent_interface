@@ -1,0 +1,77 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/agent/profile.yaml"
+  path_note: "The Profile layer of the Agent Component."
+  purpose: "Agent Native selection plus General and Specialized Agent Instance identities, Role assignments, capability configuration, lifecycle defaults, and native realizations."
+  standard: "Agent Project Interface"
+  version: "1.2"
+  updated: "2026-09-12"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; runtime-discovered Agent Natives and Agent Instances are observed without being adopted as required declarations."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  consumption: "Use the selected Agent Native, instantiate the General Agent Instance, and expose each required Specialized Agent Instance through its declared native realization."
+  selection: "An undeclared Agent Native or Agent Instance remains an optional runtime capability and never becomes part of the required Agent Profile automatically."
+  version_resolution: "Agent Native behavior and Native Instance Realization formats resolve from the selected Agent Runtime."
+  matching: "Match the Agent Native by runtime identity and Agent Instance Definitions by stable identity and assigned Role reference; resolve native realization details through Agent Sync."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["selected", "options", "settings"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The selected Agent Native and General Agent Instance."
+  options: "Selectable Agent Natives and General Agent Instance definitions."
+  settings: "Project, runtime, user, managed, extension, and built-in Agent Instance definitions plus inherited defaults."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    agent_native: "runtime-primary"
+    general_instance: "general"
+  options:
+    agent_natives:
+      runtime-primary:
+        runtime: "selected Agent Runtime"
+        native_identity: "runtime primary agent"
+        realization: "runtime-provided"
+    general_instances:
+      general:
+        resource: "project_instances.general"
+  settings:
+    project_instances:
+      general:
+        kind: "general"
+        role: "role.project_roles.primary-execution"
+        native_identity: "runtime primary agent"
+        native_definition: "runtime-provided"
+        configuration: "inherits instance_defaults materialized into the synchronized Runtime by explicit Agent Sync"
+        required: true
+      interface-reader:
+        kind: "specialized"
+        role: "role.project_roles.interface-reader"
+        native_identity: "interface-reader"
+        native_definition: "resolved by Agent Sync from the selected Agent Native"
+        allowed_tools: ["Read", "Grep", "Glob"]
+        write_authority: "none"
+        configuration: "inherits instance_defaults with allowed_tools and write_authority overridden by this definition"
+        required: true
+    runtime_instances: {}
+    user_instances: {}
+    managed_instances: {}
+    extension_instances: {}
+    built_in_instances: {}
+    instance_defaults:
+      model: null
+      effort: null
+      max_turns: null
+      background: false
+      isolation: null
+      memory: null
+      skills: []
+      allowed_tools: []
+      disallowed_tools: []
+    overrides: {}
