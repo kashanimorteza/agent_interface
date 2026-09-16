@@ -133,13 +133,13 @@ sections:
           recursion: "The agent_skills rules defined for an option entry apply identically to every embedded subordinate profile."
       agent_skills:
         required: false
-        purpose: "Agent Skills associated with work on this option, resolved by ordinary operations from the synchronized Runtime capability catalog rather than defined or installed here. Only Agent Sync reads their Agent Module declarations."
+        purpose: "Agent Skills associated with work on this option, not defined or installed here."
         shape:
           type: "list"
           item:
             resource:
               required: true
-              purpose: "Stable dotted capability identifier projected by Agent Sync into the Runtime capability catalog."
+              purpose: "The associated Skill's name, resolved by ordinary operations against currently discoverable and usable Runtime Skills."
             requirement:
               required: true
               values:

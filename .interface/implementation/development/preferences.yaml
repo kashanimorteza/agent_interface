@@ -137,7 +137,7 @@ content:
             package: "pydantic"
             version: "2.x"
             agent_skills:
-              - resource: "project_skills.contextual.pydantic"
+              - resource: "pydantic"
                 requirement: "required"
                 activation: "when_selected"
                 purpose: "Apply the complete applicable Pydantic guidance while implementing and independently reviewing the selected data validation framework."
@@ -169,7 +169,7 @@ content:
               settings: "pydantic-settings"
               http_testing: "httpx"
             agent_skills:
-              - resource: "project_skills.contextual.fastapi"
+              - resource: "fastapi"
                 requirement: "required"
                 activation: "when_selected"
                 purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
@@ -178,7 +178,7 @@ content:
             package: "typer"
             version: "latest-compatible"
             agent_skills:
-              - resource: "project_skills.contextual.typer"
+              - resource: "typer"
                 requirement: "required"
                 activation: "when_selected"
                 purpose: "Apply the complete applicable Typer guidance while implementing and independently reviewing the selected command-line interface."

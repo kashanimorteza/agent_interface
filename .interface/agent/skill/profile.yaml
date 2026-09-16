@@ -13,7 +13,7 @@ policy:
   rule: "This file is human-owned; Skill execution and activation state are observed without writing here."
   changed_by: "The human, directly."
   precedence: "An explicit project decision and every applicable Principle take precedence over this file."
-  consumption: "Only explicit Agent Sync reads this Profile to resolve portable Contracts and provider declarations, then materializes self-contained native Skills and a Runtime capability catalog for every other consumer."
+  consumption: "Only explicit Agent Sync reads this Profile to resolve portable Contracts and provider declarations, then materializes self-contained native Skills for every other consumer."
   selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
   version_resolution: "Runtime and extension Skills resolve from their active providers."
   matching: "During explicit Agent Sync, match a prepared Markdown Skill file by the declared Skill's exact stable key, match Interface-owned Skills by portable Contract, and match external Skills by stable key and provider declaration; then resolve Native identifiers and mappings from the selected Agent Native."
@@ -122,25 +122,6 @@ content:
           delegated_invocation: "disabled"
           automated_invocation: "disabled"
           required: true
-      contextual:
-        fastapi:
-          name: "fastapi"
-          path: "resolved by Agent Sync from the selected Agent Native"
-          architecture_contract: "Skill Profile and shared Agent Skill Principles"
-          activation: "implicit when relevant"
-          required: false
-        typer:
-          name: "typer"
-          path: "resolved by Agent Sync from the selected Agent Native"
-          architecture_contract: "Skill Profile and shared Agent Skill Principles"
-          activation: "implicit when relevant"
-          required: false
-        library-skills:
-          name: "library-skills"
-          path: "resolved by Agent Sync from the selected Agent Native"
-          architecture_contract: "Skill Profile and shared Agent Skill Principles"
-          activation: "implicit when package capability discovery is relevant"
-          required: false
     user_skills: {}
     managed_skills: {}
     runtime_skills: {}

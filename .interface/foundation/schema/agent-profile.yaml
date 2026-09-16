@@ -15,7 +15,7 @@ frame:
 purpose:
   answers: "Which Agent Module configuration. An Agent Profile records the current desired Agent Native, Agent Instance, and capability declarations used to realize the portable Agent Principles in a selected Runtime."
   relation_to_principles: "Agent Principles define mandatory portable philosophy, responsibility, and boundaries. The Agent Profile records current selections, resources, native mappings, and explicit absence. A Profile never weakens a Principle."
-  relation_to_implementation: "Implementation Preferences may carry a stable logical capability identifier. Agent Sync projects that identifier into the Runtime capability catalog; ordinary operations resolve it there without reading this Profile. The reference never transfers ownership of that capability to Implementation."
+  relation_to_implementation: "Implementation Preferences may carry a stable logical capability identifier, resolved by ordinary operations against currently discoverable and usable Runtime Skills without reading this Profile. The reference never transfers ownership of that capability to Implementation."
   relation_to_runtime: "A declaration is desired Profile state, not proof of installation, activation, availability, authentication, or usability. Current runtime evidence establishes realization."
 
 # <!--------------------------------------------------------------------------------- Scope -->
