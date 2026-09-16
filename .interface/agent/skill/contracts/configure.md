@@ -2,11 +2,11 @@
 
 ## Purpose
 
-Prepare the project for the Interface workflow.
+Prepare the operational Config records and the declared technical environment that the Interface workflow depends on.
 
 ## Responsibility
 
-Establish Interface and Target Understanding, generate or reconcile the four operational Config files from their Schemas, install declared technical requirements, provision the Agent Skills named by applicable `agent_skills` associations through the declared ecosystem mechanism, and prepare the selected project Environment for Development. It owns no planning, implementation, review, launch, reset, or Target interpretation beyond the limited facts required for configuration.
+Establish Interface and Target Understanding, generate or reconcile the four operational Config files from their Schemas, install declared technical requirements, provision the Agent Skills named by applicable `agent_skills` associations through the declared ecosystem mechanism, and prepare the selected Platform Environment. It owns no planning, implementation, review, launch, reset, or Target interpretation beyond the limited facts required for configuration, and performs none of them.
 
 ## Trigger
 
@@ -30,11 +30,12 @@ Establish Interface Understanding and only the Target Understanding needed for C
 
 ## Authority
 
-Write the four Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item, including the skill-provisioning mechanism declared by an applicable Language Item. Never modify other Interface sources or product implementation.
+Write the four Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item, including the skill-provisioning mechanism declared by an applicable Language Item. Never create or modify other Interface sources or any product implementation. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing.
 
 ## Workflow Invariants
 
 - Generate or reconcile all four Config files from their current Schemas rather than a remembered structure; `application.yaml` follows the same process as the other three files.
+- Record only the public metadata a Component already publishes. When a declared Component does not yet exist, leave its Manifest section at its Schema default and report it as not yet generated; never create the Component to obtain its metadata.
 - Preserve meaningful operational records through structural reconciliation; surface a conflict rather than discard information that has no other owner.
 - Add missing phase records at current initial values and preserve progress while generating `state.yaml`; remove a stale record only while it contains initialization defaults, otherwise preserve and report it.
 - Never copy Target meaning into Config.
