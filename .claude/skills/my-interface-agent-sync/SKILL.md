@@ -55,7 +55,7 @@ Verify that the selected Agent Native is available and compatible with the compl
 
 A selected desired state is standing project authorization for additive, project-scoped reconciliation of that exact declaration. Still honor runtime permission prompts and stop for Human action when provisioning needs credentials, trust of an external service, broader scope, destructive replacement, an irreversible action, or authority not already expressed by the declaration.
 
-When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
+When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Compare an existing adapter's own instruction content against its current Contract, not only its presence or its declared metadata fields. When the Contract no longer matches what the adapter instructs, regenerate that adapter's content rather than classifying it as `no change`. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
 For each declared capability, resolve its Capability Realization Kind before acting.
 
@@ -71,7 +71,7 @@ After reconciliation, discard pre-change observations, rediscover and re-read th
 
 Verify at least that:
 
-- the selected Agent Native is active, every required Agent Instance is invocable, every required Role and Skill is discoverable by its intended Role, and each native Skill invocation control matches its declared Human and coordinator Invocation Policy;
+- the selected Agent Native is active, every required Agent Instance is invocable, every required Role and Skill is discoverable by its intended Role, each native Skill invocation control matches its declared Human and coordinator Invocation Policy, and each Skill realized from a portable Contract instructs what that Contract currently requires;
 - every Skill materialized from a matched prepared Markdown file or prepared directory exactly preserves that file's or directory tree's instruction content and meaning, including internal relative paths;
 - every Custom Command resolves to its declared owner and argument contract;
 - effective settings, permissions, rules, and hooks match their owners;
