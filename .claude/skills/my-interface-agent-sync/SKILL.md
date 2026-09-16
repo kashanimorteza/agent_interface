@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # Synchronize the Agent Module
 
-This file is the Claude Code adapter for the portable `agent-sync` Skill Contract and the sole Runtime exception permitted to read Agent Module sources. Resolve and read that Contract through Agent Skill Profile only after explicit Human invocation; the Contract is authoritative for behavior and this adapter supplies runtime execution details.
+This file is the Claude Code adapter for the portable `agent-sync` Skill Contract and the sole Runtime exception permitted to read Agent Module sources. Resolve and read that Contract through Agent Skill Profile only after explicit Human invocation; the Contract is authoritative for behavior and this adapter supplies runtime execution details. This adapter never depends on the prior presence of another vendor's Agent Sync adapter.
 
 ## Modes
 
@@ -24,7 +24,11 @@ The stale-adapter check exists because a running instance cannot load a definiti
 
 Understand the complete Agent Module, then make the active Agent Native and its Agent Instances conform to it through the Native Runtime's own documented conventions. Materialize missing native resources, reconcile drift where ownership is unambiguous, provision already-selected project Extensions and Integrations, and prove that every Module declaration is usable.
 
-This Skill applies existing Human-owned decisions. It never runs implicitly, at startup, or through another Skill. It does not discover or select new capabilities; it translates the complete Agent Module into the Native Runtime. Use the capability-installation Skill when the Module does not already declare the needed choice.
+This Skill applies existing Human-owned decisions. It never runs implicitly, at startup, or through another Skill. It does not discover or select new capabilities; it translates the complete Agent Module into the Native Runtime. When the Module does not already declare a needed capability choice, report that gap and instruct the Human to run `/my-interface-skill-installer`; never select or adopt a new capability here.
+
+## Trigger
+
+Activate only on direct Human invocation of `/my-interface-agent-sync`. No Agent Native, Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, or model-generated action may invoke, chain, trigger, or simulate this Skill. A Human request to change Agent Module declarations authorizes only that source change; it is not an Agent Sync invocation unless the Human separately invokes this entry point. Treat every Agent Module change as dormant desired state until this explicit synchronization completes — never trigger it from another Skill, a startup or resume routine, or ordinary Interface Understanding.
 
 ## Understanding
 
@@ -51,7 +55,7 @@ Resolve ownership before proposing a write. Preserve compatible native values th
 
 ## Reconcile
 
-Verify that the selected Agent Native is available and compatible with the complete Agent Module. Derive reconciliation order from current Module relationships and Native capabilities, then process every inventory row while preserving its owner's authority. Add required declared sources and install or enable only entries already selected by Human-owned Profiles and only at project scope. Reload or activate changed capabilities when the Native Runtime supports doing so safely.
+Verify that the selected Agent Native is available and compatible with the complete Agent Module. Derive reconciliation order from current Module relationships and Native capabilities, then process every inventory row while preserving its owner's authority. Add required declared sources and install or enable only entries already selected by Human-owned Profiles and only at project scope. Reload or activate changed capabilities when the Native Runtime supports doing so safely. Block an affected item on incompatible Runtime, ambiguous ownership, unsupported project scope, destructive conflict, missing provider, or unavailable authority, and mark pending restart, authentication, or trust as `activation required`; independent items continue reconciling when their dependencies permit.
 
 A selected desired state is standing project authorization for additive, project-scoped reconciliation of that exact declaration. Still honor runtime permission prompts and stop for Human action when provisioning needs credentials, trust of an external service, broader scope, destructive replacement, an irreversible action, or authority not already expressed by the declaration.
 
