@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every phase eligible un
 
 ## Outputs
 
-Produce authorized implementation and durable checks, Development-owned Task progress and evidence, aggregate Development State and History, prerequisite actions, Blockers or Open Questions permitted by their owners, and a phase-by-phase report.
+Produce authorized implementation and durable checks, Development-owned Task progress and evidence, aggregate Development State and History, prerequisite actions, Blockers or Open Questions permitted by their owners, the associated Skills applied and those reported unavailable, and a phase-by-phase report.
 
 ## Required Understanding
 

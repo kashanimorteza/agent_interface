@@ -70,7 +70,8 @@ Report in this order:
 1. **Phases** — every resolved phase identifier, title, and target, in Target order.
 2. **Work executed** — by phase, each Task attempted, its outcome, and the check that proved it.
 3. **Work not executed** — by phase, each eligible Task left undone and why, and each ineligible Task with the condition that held it back.
-4. **Prerequisites handled** — by phase, runtimes, tools, or dependencies installed or configured during the run.
-5. **Blockers and questions** — by phase, anything raised during the run, with what it prevents.
-6. **State** — each phase's aggregate progress and the History outcomes recorded for this run.
-7. **Next step** — the single most useful next action supported by the result.
+4. **Associated Skills** — by phase, each Skill applied while performing the work, and each declared association that was not usable.
+5. **Prerequisites handled** — by phase, runtimes, tools, or dependencies installed or configured during the run.
+6. **Blockers and questions** — by phase, anything raised during the run, with what it prevents.
+7. **State** — each phase's aggregate progress and the History outcomes recorded for this run.
+8. **Next step** — the single most useful next action supported by the result.

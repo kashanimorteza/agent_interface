@@ -45,7 +45,7 @@ Set a newly created phase Plan's `revision` to `1`. When reconciliation changes 
 
 Prefer stable decomposition over stylistic regeneration. Preserve an existing valid Group and Task boundary, identifier, dependency, and wording when its meaning and coverage remain current. When no Plan exists, derive boundaries from distinct responsibilities and real dependencies rather than document layout or arbitrary batch size.
 
-Validate the complete candidate against the transient coverage ledger and the current authorities before writing it. Every clause of a Task's expected result and acceptance must be covered by its verification condition; one representative example does not prove a compound requirement. Write only to the authorized destination.
+Validate the complete candidate against the transient coverage ledger and the current authorities before writing it. Every clause of a Task's expected result and acceptance must be covered by its verification condition; one representative example does not prove a compound requirement. Write only to the authorized destination. Prove that every selected technical option's declared `agent_skills` associations were resolved and recorded, either as a shaped acceptance condition or as a reported unavailability.
 
 On every run, rebuild the candidate from current sources and reconcile it with existing planning output according to the current ownership and reconciliation rules. Preserve information outside Planning's authority and surface conflicts as the live policies require, because planning runs repeatedly over the life of a phase and work already recorded is the most expensive thing the file holds.
 
@@ -62,6 +62,7 @@ Report in this order:
 1. **Phases** — every resolved phase identifier, title, order, and target, in Target order.
 2. **Plan results** — for each phase, created, reconciled, or already current, with its resulting Plan Revision and the counts the Plan Component defines.
 3. **What changed** — by phase, work added, work reconciled, and work left untouched because it lies outside Planning's authority.
-4. **Conflicts and unresolved decisions** — by phase, anything that could not be planned safely, and any Blocker or Open Question raised, each with what it prevents.
-5. **State** — each phase's aggregate progress and the History outcomes recorded for this run.
-6. **Next step** — the single most useful next action supported by the result.
+4. **Associated Skills** — by phase, each `agent_skills` association a selected option declared, whether it resolved to a usable Runtime Skill, and where its conformance was written into acceptance.
+5. **Conflicts and unresolved decisions** — by phase, anything that could not be planned safely, and any Blocker or Open Question raised, each with what it prevents.
+6. **State** — each phase's aggregate progress and the History outcomes recorded for this run.
+7. **Next step** — the single most useful next action supported by the result.

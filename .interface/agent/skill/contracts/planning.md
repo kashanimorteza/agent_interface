@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every enabled phase. Re
 
 ## Outputs
 
-Produce or reconcile only Planning-owned Plan content and Plan Revision, Planning aggregate State and History outcomes, conflicts, Blockers or Open Questions permitted by their owners, and a phase-by-phase report.
+Produce or reconcile only Planning-owned Plan content and Plan Revision, Planning aggregate State and History outcomes, conflicts, Blockers or Open Questions permitted by their owners, the resolution of every selected option's `agent_skills` associations, and a phase-by-phase report.
 
 ## Required Understanding
 
@@ -42,7 +42,7 @@ Write only Planning-owned Plan fields and Planning-owned aggregate State and His
 
 ## Verification
 
-Validate the complete candidate against the transient coverage ledger, current Plan authorities, and applicable Schemas before writing. Planning is complete only when the selected phase Plan is complete and valid.
+Validate the complete candidate against the transient coverage ledger, current Plan authorities, and applicable Schemas before writing. Prove that every selected technical option's declared `agent_skills` associations were resolved and that each resolution is recorded, either as a shaped acceptance condition or as a reported unavailability. Planning is complete only when the selected phase Plan is complete and valid.
 
 ## Idempotency
 
