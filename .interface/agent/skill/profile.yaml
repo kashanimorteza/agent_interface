@@ -2,10 +2,10 @@
 meta:
   path: ".interface/agent/skill/profile.yaml"
   path_note: "The Profile layer of the Agent Skill Component."
-  purpose: "Interface-owned Skill Contracts, optional prepared Markdown Skill files, and contextual, built-in, user, managed, and extension provider Skill declarations. Native mappings are resolved by Agent Sync."
+  purpose: "Interface-owned Skill Contracts, optional prepared Skill files or directories, and prepared, installed, built-in, user, managed, and extension provider Skill declarations. Native mappings are resolved by Agent Sync."
   standard: "Agent Project Interface"
-  version: "1.3"
-  updated: "2026-09-12"
+  version: "1.4"
+  updated: "2026-09-16"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -16,8 +16,8 @@ policy:
   consumption: "Only explicit Agent Sync reads this Profile to resolve portable Contracts and provider declarations, then materializes self-contained native Skills for every other consumer."
   selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
   version_resolution: "Runtime and extension Skills resolve from their active providers."
-  matching: "During explicit Agent Sync, match a prepared Markdown Skill file by the declared Skill's exact stable key, match Interface-owned Skills by portable Contract, and match external Skills by stable key and provider declaration; then resolve Native identifiers and mappings from the selected Agent Native."
-  realization: "Every declared Skill resolves to one Capability Realization Kind: a Skill with a matching prepared Markdown file is Prepared, a remaining Interface-owned Skill with a portable Contract is Constructed, and a Skill under an external provider declaration is Installed."
+  matching: "During explicit Agent Sync, match a prepared Skill file or directory by the declared Skill's exact stable key, match Interface-owned Skills by portable Contract, and match external Skills by stable key and provider declaration; then resolve Native identifiers and mappings from the selected Agent Native."
+  realization: "Every declared Skill resolves to one Capability Realization Kind: a Skill with a matching prepared Markdown file or prepared directory is Prepared, a remaining Interface-owned Skill with a portable Contract is Constructed, and a Skill under an external provider declaration is Installed."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]
@@ -26,7 +26,7 @@ read_order: ["selected", "options", "settings"]
 content_map:
   selected: "Selected coordinating implementation Skill."
   options: "Selectable implementation coordinators."
-  settings: "Prepared Markdown Skill-file convention and the complete Skill map grouped by ownership, with Contracts for Interface-owned Skills and provider mappings for external Skills."
+  settings: "Prepared Skill file and directory convention and the complete Skill map grouped by Capability Realization Kind, with Contracts for Interface-owned Skills and provider mappings for external Skills."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -123,15 +123,7 @@ content:
           delegated_invocation: "disabled"
           automated_invocation: "disabled"
           required: true
-      prepared:
-        fastapi:
-          name: "fastapi"
-          activation: "implicit when relevant"
-          required: false
-        typer:
-          name: "typer"
-          activation: "implicit when relevant"
-          required: false
+      prepared: {}
       installed:
         pydantic:
           name: "pydantic"
@@ -141,13 +133,6 @@ content:
             claude:
               marketplace: {source: "github", repository: "pydantic/skills"}
               plugin: "pydantic@pydantic-skills"
-        library-skills:
-          name: "library-skills"
-          activation: "implicit when package capability discovery is relevant"
-          required: false
-          native:
-            claude:
-              package_tool: "uvx library-skills"
     user_skills: {}
     managed_skills: {}
     runtime_skills: {}

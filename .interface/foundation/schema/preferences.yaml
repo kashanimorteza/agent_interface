@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-preferences"
-  version: "3.0"
+  version: "3.1"
   purpose: "The common structure every Implementation Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, and optional Agent Skill associations without deciding Target-specific meaning."
 
 # <!--------------------------------------------------------------------------------- Frame -->
@@ -154,10 +154,11 @@ sections:
               required: true
               purpose: "The bounded guidance this Skill contributes while work on the selected option is performed."
         rules:
-          association_only: "An association neither defines nor installs a Skill and never proves Activation. Agent Sync owns translation from the Human-owned declaration to the Runtime catalog, and current Runtime evidence proves whether it is usable."
+          association_only: "An association neither defines nor installs a Skill and never proves Activation. A declared Skill reaches the Runtime through Agent Sync or through its own ecosystem's provisioning mechanism, and current Runtime evidence proves whether it is usable."
+          order: "When more than one Skill is associated, list order expresses the Human's preference order. Order never makes a later Skill optional or an earlier one required; each entry keeps its own declared requirement."
           authority: "An associated Skill supplies guidance only. It never selects this option, expands Target scope, or overrides Target, Principles, Preferences, Plan, Role, Permission, or another owning authority."
           optional: "Use an optional associated Skill when it is declared, discoverable, and usable. If it is unavailable, continue without it and report the unavailable aid when consequential."
-          required: "A required associated Skill that is not usable blocks the affected work and is handled through the Agent capability lifecycle rather than silently approximated. When usable, it is invoked through its synchronized Runtime mechanism and its complete applicable guidance is applied and verified under the owning Component's Principles before affected work is complete."
+          required: "A required associated Skill is a completion gate on conformance, not on availability. When it is usable, it is invoked through its synchronized Runtime mechanism and its complete applicable guidance is applied and verified under the owning Component's Principles before affected work is complete. When it is not usable, the work continues and the unavailability is reported, so provisioning can be retried by preparing the project again or through the Agent capability lifecycle."
     rules:
       no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
       no_project_data: "An option entry carries no Models, fields, records, or other project data."

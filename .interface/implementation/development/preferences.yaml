@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
   purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
-  version: "5.4"
-  updated: "2026-09-14"
+  version: "5.5"
+  updated: "2026-09-16"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -96,6 +96,7 @@ content:
           version: "latest-compatible"
           lockfile: "uv.lock"
           isolated_environment_directory: ".venv"
+          skill_provisioning: "uvx library-skills --claude"
         naming:
           variables: "snake_case"
           functions: "snake_case"

@@ -6,7 +6,7 @@ Prepare the project for the Interface workflow.
 
 ## Responsibility
 
-Establish Interface and Target Understanding, generate or reconcile the four operational Config files from their Schemas, install declared technical requirements, and prepare the selected project Environment for Development. It owns no planning, implementation, review, launch, reset, or Target interpretation beyond the limited facts required for configuration.
+Establish Interface and Target Understanding, generate or reconcile the four operational Config files from their Schemas, install declared technical requirements, provision the Agent Skills named by applicable `agent_skills` associations through the declared ecosystem mechanism, and prepare the selected project Environment for Development. It owns no planning, implementation, review, launch, reset, or Target interpretation beyond the limited facts required for configuration.
 
 ## Trigger
 
@@ -30,7 +30,7 @@ Establish Interface Understanding and only the Target Understanding needed for C
 
 ## Authority
 
-Write the four Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item. Never modify other Interface sources or product implementation.
+Write the four Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item, including the skill-provisioning mechanism declared by an applicable Language Item. Never modify other Interface sources or product implementation.
 
 ## Workflow Invariants
 
@@ -40,6 +40,7 @@ Write the four Config records owned by Configure and perform technical dependenc
 - Never copy Target meaning into Config.
 - Resolve every applicable language, package-management, package, database, tool, platform, and version selection from Implementation and Platform authorities before installation.
 - Install or reconcile every required resolved technical item and record its concrete version and verification result.
+- After resolving and installing the declared technical requirements, run the skill-provisioning mechanism the applicable Language Item declares, so Skills named by Implementation's `agent_skills` associations become usable before later operations need them. Resolve those names from the applicable Implementation authorities only; never enter or resolve an Agent Module source. Report a named Skill that remains unavailable; never adopt a Skill that no association names, and never remove an existing Skill. An unavailable Skill never blocks Configure or fails its verification; preparation continues and the unavailability is reported for the later operation that needs it.
 - Inspect every applicable Platform Component definition and apply its declared system requirements for the selected Launch Item.
 - Inspect the Environment before changing it and apply only missing declared requirements.
 - Record active Configure position and append the outcome under State ownership.
