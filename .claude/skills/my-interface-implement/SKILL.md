@@ -43,7 +43,7 @@ Execute this fixed sequence; do not derive it from a mutable Target workflow:
 8. If Review Findings remain, let Review route each Finding through its owning Skill, then invoke Reviewing again.
 9. Repeat step 8 only while the cycle closes or materially advances at least one Finding. Stop on repetition, no observable progress, an inconclusive assurance, failed dependency or gate, or required Human decision.
 10. Advance to the next selected phase only when the current Review proves its required assurances satisfied. Otherwise withhold every later phase in this invocation.
-12. After all selected phases pass, invoke Launch only if every currently enabled and ready Target phase—not merely the requested subset—has completed Planning and Development and satisfied Review.
+11. After all selected phases pass, invoke Launch only if every currently enabled and ready Target phase—not merely the requested subset—has completed Planning and Development and satisfied Review.
 
 Locate each operation through the current Interface and invoke its implementation directly; do not depend on nested Slash Command invocation. Every operation retains its own write authority. Implement writes only its Implementation State and History.
 

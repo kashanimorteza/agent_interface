@@ -12,9 +12,11 @@ This file is the self-contained Claude Code realization of the portable `skill-i
 
 Identify where the current Target could benefit from an additional Agent capability, search the environment's supported sources for compatible options, and present the findings for human approval before installing anything.
 
-This operation may consider Skills, plugins, MCP integrations, agents, or another extension type supported by the active Agent environment. It equips the Agent; it does not install application runtime dependencies or develop the Target.
+This operation may consider Skills, plugins, MCP integrations, agents, or another extension type supported by the active Agent environment. It equips the Agent; it does not install application runtime dependencies or develop the Target. Already Human-declared capabilities in the Agent Module are Agent Sync's responsibility to provision and verify during synchronization; this Skill instead discovers and provisions capability needs that are not yet declared.
 
 Read the shared Agent Interface rules at the start of the operation and follow them throughout, including their project-scope requirement.
+
+Because Agent Module sources are unreadable here, an absent capability may still be an already-declared capability awaiting synchronization. Report that possibility together with the need and let the Human choose between running `/my-interface-agent-sync module` and provisioning through this Skill, rather than assuming the need is undeclared.
 
 ## Workflow
 

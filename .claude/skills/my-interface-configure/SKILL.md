@@ -12,7 +12,7 @@ This file is the self-contained Claude Code realization of the portable `configu
 
 Configure prepares the project for the remaining Interface workflow. It first establishes the required Interface and Target Understanding, then creates or reconciles the four operational Config files from their Schemas, and finally installs declared technical requirements and prepares the selected project Environment for Development.
 
-Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements.
+Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements. After installing technical requirements, Configure also runs the declared skill-provisioning mechanism so Skills named by Implementation's `agent_skills` associations become usable before later operations need them.
 
 ## Workflow
 
@@ -38,7 +38,11 @@ Read the applicable Implementation and Platform Preferences and public Component
 
 Use the selected Environment definition and compatible explicit Target requirements as the authority for system preparation. Record any unresolved preparation condition as a blocker through State.
 
-### 4. Validation and outcome
+### 4. Skill provisioning
+
+After resolving and installing the declared technical requirements, run the skill-provisioning mechanism the applicable Language Item declares, so Skills named by Implementation's `agent_skills` associations become usable before later operations need them. Resolve those names from the applicable Implementation authorities only; never enter or resolve an Agent Module source. Report a named Skill that remains unavailable; never adopt a Skill that no association names, and never remove an existing Skill. An unavailable Skill never blocks Configure or fails its verification — preparation continues and the unavailability is reported for the later operation that needs it.
+
+### 5. Validation and outcome
 
 Validate all four Config files against their applicable Schemas. Record this invocation's active position and append its operational outcome according to State. Report created, updated, preserved, conflicted, installed, removed, already-satisfied, and blocked results.
 
@@ -55,5 +59,6 @@ Report in this order:
 1. **Config** — the status of all four files, including `application.yaml`, and any records created, updated, or already valid.
 2. **Phase synchronization** — phase records added, preserved, or left as conflicts.
 3. **Environment and requirements** — the selected Environment, each requirement's resolved version and preparation status, and any removal performed.
-4. **Preserved records** — existing operational information carried through unchanged.
-5. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.
+4. **Skill provisioning** — Skills named by applicable `agent_skills` associations that became usable, and any named Skill that remains unavailable.
+5. **Preserved records** — existing operational information carried through unchanged.
+6. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.

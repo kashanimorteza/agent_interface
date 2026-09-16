@@ -21,7 +21,7 @@ It is a reference projection, not a gate: a Skill is resolved against whatever i
 | `project_skills.supporting.implement` | `/my-interface-implement [phase-number ...]` | Explicit Human only |
 | `project_skills.supporting.reset` | `/my-interface-reset [phase-number ... \| config \| complete]` | Explicit Human only |
 | `project_skills.supporting.skill-installer` | `/my-interface-skill-installer` | Explicit Human only |
-| `project_skills.supporting.agent-sync` | `/my-interface-agent-sync` | Explicit Human only; sole Agent Module reader |
+| `project_skills.supporting.agent-sync` | `/my-interface-agent-sync <self \| module>` | Explicit Human only; sole Agent Module reader |
 
 ## Contextual Skills
 
