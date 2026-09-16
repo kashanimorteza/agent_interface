@@ -12,7 +12,7 @@ This file is the self-contained Claude Code realization of the portable `configu
 
 Configure prepares the operational Config records and the declared technical environment that the remaining Interface workflow depends on. It first establishes the required Interface and Target Understanding, then creates or reconciles the four operational Config files from their Schemas, and finally installs declared technical requirements and prepares the selected Platform Environment.
 
-Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements. After installing technical requirements, Configure also runs the declared skill-provisioning mechanism so Skills named by Implementation's `agent_skills` associations become usable before later operations need them.
+Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements. Configure never provisions, transfers, or installs an Agent Skill, plugin, or other Agent capability — that belongs entirely to the Skill Installer operation.
 
 ## Workflow
 
@@ -31,27 +31,25 @@ For each of the four operational Schemas (`plan.yaml`, `state.yaml`, `review.yam
   5. Introduce only Schema-defined initial values and structures. Do not invent operational work, project facts, Target meaning, or technical decisions.
   6. For `application.yaml`, record only the public metadata a Component already publishes. When a declared Component does not yet exist, leave its Manifest section at its Schema default and report it as not yet generated. Never create, scaffold, or populate that Component to obtain its metadata.
 
-State phase records are synchronized as part of generating `state.yaml`: create missing records from stable Target phase identifiers and Schema defaults, preserve existing progress, and report stale records that contain meaningful provenance instead of silently deleting them. The same Schema-driven process applies to `application.yaml`; its component sections are part of that Schema and are created or reconciled in the same way.
+State phase records are synchronized as part of generating `state.yaml`: create missing records from stable Target phase identifiers and Schema defaults, preserve existing progress, remove a stale record only while it contains nothing but initialization defaults, and otherwise preserve and report it. The same Schema-driven process applies to `application.yaml`; its component sections are part of that Schema and are created or reconciled in the same way.
 
 ### 3. Requirements and Environment preparation
 
-Read the applicable Implementation and Platform Preferences and public Component requirements exposed through the Interface. Resolve declared packages, languages, tools, versions, and Environment requirements. Install or remove only explicitly declared project-scoped requirements, preserve requirements already satisfied, and report each result. Never infer or invent a dependency or removal.
+Read the applicable Implementation and Platform Preferences and public Component requirements exposed through the Interface. Resolve every applicable language, package-management, package, database, tool, platform, and version selection from those authorities before installation. Inspect every applicable Platform Component definition and apply its declared system requirements for the selected Launch Item.
+
+Inspect the Environment before changing it and apply only missing declared requirements. Install or remove only explicitly declared project-scoped requirements, preserve requirements already satisfied, record each resolved item's concrete version, and report each result. Never infer or invent a dependency or removal, and never provision, transfer, or install an Agent Skill, plugin, or other Agent capability.
 
 Use the selected Environment definition and compatible explicit Target requirements as the authority for system preparation. Record any unresolved preparation condition as a blocker through State.
 
-### 4. Skill provisioning
+### 4. Validation and outcome
 
-After resolving and installing the declared technical requirements, run the skill-provisioning mechanism the applicable Language Item declares, so Skills named by Implementation's `agent_skills` associations become usable before later operations need them. Resolve those names from the applicable Implementation authorities only; never enter or resolve an Agent Module source. Report a named Skill that remains unavailable; never adopt a Skill that no association names, and never remove an existing Skill. An unavailable Skill never blocks Configure or fails its verification — preparation continues and the unavailability is reported for the later operation that needs it. Match the declared name against the Skill's own name within a Runtime's namespaced identifier rather than requiring an exact string match.
-
-### 5. Validation and outcome
-
-Validate all four Config files against their applicable Schemas. Record this invocation's active position and append its operational outcome according to State. Report created, updated, preserved, conflicted, installed, removed, already-satisfied, and blocked results.
+Validate all four Config files against their applicable Schemas, verify phase identity reconciliation, verify every resolved technical item and its concrete version, and observe every Platform Environment requirement claimed as satisfied. Record this invocation's active position and append its operational outcome according to State. Report created, updated, preserved, conflicted, installed, removed, already-satisfied, and blocked results.
 
 Repeating Configure against unchanged valid sources is idempotent: it makes no unnecessary structural or Environment changes while still recording the current invocation according to State.
 
 ## Boundaries
 
-Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or create or modify any other Interface source or product implementation. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing. System preparation is limited to the selected Environment; it grants no authority over product implementation. Configure writes only the four operational Config files and the project-scoped technical or Environment state authorized by their sources.
+Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or create or modify any other Interface source or product implementation. Never provision, transfer, or install an Agent Skill, plugin, or other Agent capability; the Skill Installer operation owns all of that. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing. System preparation is limited to the selected Environment; it grants no authority over product implementation. Configure writes only the four operational Config files and the project-scoped technical or Environment state authorized by their sources.
 
 ## Report
 
@@ -60,6 +58,5 @@ Report in this order:
 1. **Config** — the status of all four files, including `application.yaml`, and any records created, updated, or already valid.
 2. **Phase synchronization** — phase records added, preserved, or left as conflicts.
 3. **Environment and requirements** — the selected Environment, each requirement's resolved version and preparation status, and any removal performed.
-4. **Skill provisioning** — Skills named by applicable `agent_skills` associations that became usable, and any named Skill that remains unavailable.
-5. **Preserved records** — existing operational information carried through unchanged.
-6. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.
+4. **Preserved records** — existing operational information carried through unchanged.
+5. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.

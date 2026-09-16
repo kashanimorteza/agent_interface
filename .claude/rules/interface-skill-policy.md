@@ -2,7 +2,7 @@
 
 These synchronized Runtime Rules apply to every Agent Interface Skill and supporting Agent Instance, including one written later. Each reads them at the start of its own Workflow. Agent Sync owns reconciliation with the Human-owned Agent Module; ordinary operations treat these Runtime Rules as their Agent-side contract.
 
-Never read, search, resolve, or use `.interface/agent/` or another Agent Module source while performing an ordinary operation or Understanding workflow. Only explicit Human invocation of `/my-interface-agent-sync` may enter that module. Do not invoke Agent Sync automatically. If a required Runtime Rule, Skill, Agent Instance, mapping, or capability is missing or unusable, report Runtime drift and ask the Human to run Agent Sync; do not consult its source declaration.
+Never read, search, resolve, or use `.interface/agent/` or another Agent Module source while performing an ordinary operation or Understanding workflow. Only explicit Human invocation of `/my-interface-agent-sync` or `/my-interface-skill-installer` may enter that module, each strictly within the exact prompt created by its own direct invocation. Do not invoke Agent Sync or Skill Installer automatically. If a required Runtime Rule, Skill, Agent Instance, mapping, or capability is missing or unusable, report Runtime drift and ask the Human to run Agent Sync; do not consult its source declaration.
 
 ## README authority
 

@@ -70,15 +70,36 @@ Inspect the resolved targets for the selected scope and show the exact changes w
 
 The initial invocation is not approval. Apply the resolved changes only after the user explicitly accepts that preview. Deletion is permanent for untracked files unless they are separately backed up, which is why the preview exists and why it is never skipped.
 
-For Config and Complete scopes, confirmation authorizes only the exact Config targets validated in the preview. If that list changes, preview again and obtain renewed confirmation.
+Confirmation authorizes only the exact targets validated in the preview, for every scope. If that list changes for any reason, preview again and obtain renewed confirmation before applying anything.
 
 Do not invoke another workflow operation after resetting.
+
+## Verification
+
+After confirmation and application, verify every previewed target's actual outcome and confirm that no target outside the preview changed. For Config and Complete scopes, additionally verify that every previewed Config path is physically absent and that every protected Interface source observed during preview remains present and unchanged. A remaining, empty, initialized, or recreated Config file makes the Reset failed, regardless of scope. Reconcile surviving State with surviving outputs only when a State record remains after the applied removal.
+
+## Idempotency
+
+Preview is always safe to repeat and never mutates anything. Re-running Reset against a scope that is already fully realized (its previewed targets are already absent or already reset) produces no additional deletion beyond whatever the newly resolved and confirmed preview still names; do not re-delete, re-clear, or otherwise touch a target that is no longer present.
 
 ## Boundaries
 
 Perform only the selected Reset scope. Do not perform another Interface Operation, reinterpret Target intent, reverse Environment preparation, or remove anything outside the resolved targets shown in the preview.
 
-Never remove or modify an Interface source outside `.interface/foundation/config/`. Before reporting Complete success, verify that every protected Interface source observed during preview still exists and is unchanged.
+Never remove or modify an Interface source outside `.interface/foundation/config/`. Before reporting success for any scope, verify that every protected Interface source observed during preview still exists and is unchanged; this verification is mandatory for Config and Complete scopes.
+
+## Stopping Conditions
+
+Stop before any mutation, and report why, when any of the following holds:
+
+- the scope input is missing, ambiguous, mixes named modes with phase identifiers, or names a duplicate or unknown phase;
+- a phase selection cannot be validated against the current Target and Config catalogs;
+- implementation attribution or code-path ownership cannot be resolved unambiguously;
+- a resolved target cannot be safely established (for example, an untracked or unattributable path);
+- an affected runtime part cannot be stopped safely in its declared order; or
+- explicit Human confirmation of the exact previewed targets has not been given.
+
+If the resolved target list changes for any reason after a preview was shown, treat any prior confirmation as void and require renewed confirmation against the new preview before applying anything.
 
 ## Report
 

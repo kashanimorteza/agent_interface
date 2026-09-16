@@ -22,7 +22,7 @@ The stale-adapter check exists because a running instance cannot load a definiti
 
 ## Self realization
 
-This is the complete workflow for `self` mode. The Reconciliation plan, Reconcile, and Verification sections below apply to `module` mode only.
+This is the complete workflow for `self` mode. The Module realization, Reconciliation plan, Reconcile, and Verification sections below apply to `module` mode only.
 
 1. Read `.interface/agent/skill/contracts/agent-sync.md` in full. This is the only Agent Module source a `self` run needs.
 2. Read this file, `.claude/skills/my-interface-agent-sync/SKILL.md`, in full.
@@ -36,6 +36,27 @@ This is the complete workflow for `self` mode. The Reconciliation plan, Reconcil
 7. Report the outcome as a mapping record naming this Contract, this adapter path, and what re-reading proved.
 
 A `self` run that found a difference and left this file unwritten has failed, not succeeded. Report it as failed.
+
+## Module realization
+
+This is the mandatory per-declaration procedure for `module` mode. Run it once for every declaration the Agent Module enumeration produced, one at a time, in the reconciliation order derived below. No declaration is exempt, and none may be skipped because it looks current.
+
+For each declaration:
+
+1. Read every Agent Module source that declaration owns, in full. For a Skill, that is its portable Contract at `.interface/agent/skill/contracts/<name>.md`.
+2. Read the installed native artifact that realizes it, in full. For a Skill, that is `.claude/skills/<native-name>/SKILL.md`. When no artifact exists, record `create` and go to step 4.
+3. Compare them section by section and record every difference of these three kinds:
+   - the artifact instructs something the declaration no longer requires;
+   - the artifact omits something the declaration requires;
+   - the artifact states a rule the declaration has changed.
+4. When no difference is recorded, classify the row `☑️ already synchronized` and go to step 7. When any difference is recorded, rewrite the whole artifact so every section carries what the declaration currently requires, keeping the frontmatter fields the Runtime needs and the native execution detail the declaration deliberately leaves to the adapter. Write the whole file; do not patch around a difference.
+5. Re-read the written artifact and prove each recorded difference is gone.
+6. Report as `❌ blocked` any difference that survived the rewrite. Never report it as resolved.
+7. Record this declaration's mapping row naming the sources read, the artifact path, and what re-reading proved.
+
+Then run the Verification pass below across the whole Module.
+
+Never claim `no change` or `☑️ already synchronized` for a declaration from anything other than a comparison performed in this run against both files read in full. The artifact's presence, its frontmatter fields, its modification time, its apparent recency, and the absence of a remembered edit are not evidence of conformance. A run that leaves any declaration unread, or classifies one as unchanged without that recorded comparison, has not realized the Module: report `Agent Module not fully synchronized` and name every declaration that was not examined this way.
 
 ## Role
 
@@ -76,7 +97,7 @@ Verify that the selected Agent Native is available and compatible with the compl
 
 A selected desired state is standing project authorization for additive, project-scoped reconciliation of that exact declaration. Still honor runtime permission prompts and stop for Human action when provisioning needs credentials, trust of an external service, broader scope, destructive replacement, an irreversible action, or authority not already expressed by the declaration.
 
-When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Compare an existing adapter's own instruction content against its current Contract, not only its presence or its declared metadata fields. When the Contract no longer matches what the adapter instructs, regenerate that adapter's content rather than classifying it as `no change`. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
+Process each row through the Module realization procedure above; it is the only permitted way to reach a per-declaration outcome, and nothing in this section relaxes it. When a required native resource is missing or drifted, construct the smallest implementation that faithfully realizes its owning Principle and declared Profile. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
 Realize only **Constructed** capabilities: an Interface-owned declaration defined by a portable Contract is built into the smallest self-contained native realization of that Contract.
 

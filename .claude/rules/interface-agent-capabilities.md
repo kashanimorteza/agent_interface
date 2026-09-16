@@ -20,9 +20,15 @@ It is a reference projection, not a gate: a Skill is resolved against whatever i
 |---|---|---|
 | `project_skills.supporting.implement` | `/my-interface-implement [phase-number ...]` | Explicit Human only |
 | `project_skills.supporting.reset` | `/my-interface-reset [phase-number ... \| config \| complete]` | Explicit Human only |
-| `project_skills.supporting.skill-installer` | `/my-interface-skill-installer` | Explicit Human only |
-| `project_skills.supporting.agent-sync` | `/my-interface-agent-sync <self \| module>` | Explicit Human only; sole Agent Module reader |
+| `project_skills.supporting.skill-installer` | `/my-interface-skill-installer` | Explicit Human only; one of two Agent Module readers, scoped to resolving Prepared/Installed capabilities |
+| `project_skills.supporting.agent-sync` | `/my-interface-agent-sync <self \| module>` | Explicit Human only; one of two Agent Module readers, and the only one that repairs Runtime drift |
 
 ## Contextual Skills
 
-The Agent Module currently declares none. Implementation Preferences name an associated Skill directly (for example `pydantic`, `fastapi`, `typer`), and operations resolve that name against the Skills currently discoverable and usable in this Runtime — whether project-scoped, plugin-provided, or runtime-provided.
+Implementation Preferences name an associated Skill directly on the technical option that requires it. This table is a reference only: operations resolve the name against the Skills currently discoverable and usable in this Runtime — whether project-scoped, plugin-provided, or runtime-provided — never through this catalog, and a listed name is not itself proof that its option is currently selected or that the Skill is currently usable.
+
+| Skill name | Named by | Activates | Requirement |
+|---|---|---|---|
+| `pydantic` | `development` Preferences, Python `modeling` package | when the modeling package is selected | required |
+| `fastapi` | `development` Preferences, Python `api` package | when the api package is selected | required |
+| `typer` | `development` Preferences, Python `cli` package | when the cli package is selected | required |

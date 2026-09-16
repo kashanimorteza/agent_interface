@@ -1,6 +1,6 @@
 ---
 name: my-interface-developing
-description: Execute and verify eligible planned work for selected Target phases, or every enabled phase when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Never plans or reviews.
+description: Execute and verify eligible planned work for selected Target phases, or every phase eligible under its current Plan when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Never plans or reviews.
 argument-hint: "[phase-number ...]"
 disable-model-invocation: true
 ---
@@ -25,7 +25,7 @@ Accept zero or more whitespace-separated positive integers from `$ARGUMENTS`: `1
 
 The numbers are input conveniences; the Human does not need to type phase identifiers' `P` prefixes, and a number never renames a phase or changes stored identifiers or references.
 
-If `$ARGUMENTS` is empty, select every phase whose current Target status marks it enabled. If no phase is enabled, make no changes and report that there is no phase to develop.
+If `$ARGUMENTS` is empty, select every phase eligible under its current Plan, as current Implementation and operational Component authorities define eligibility. If no phase is eligible, make no changes and report that there is no phase to develop.
 
 If arguments are present, validate the complete selection before changing any files. Every token must be a positive integer that resolves to an available phase. Deduplicate repeated numbers and process the selected phases in Target order, regardless of argument order. If any token is invalid, enumerate all available phases in Target order with their input number, stable identifier, title, status, and readiness, identify every invalid token, and ask the Human for a corrected list; do not begin development until the entire selection is valid.
 
