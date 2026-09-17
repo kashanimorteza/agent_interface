@@ -105,7 +105,7 @@ Resolve ownership before proposing a write. Preserve compatible native values th
 
 Verify first that the selected Agent Native is available and compatible with the complete Agent Module. Derive dependency-safe reconciliation order from current Module relationships and Native capabilities, then process every inventory row while preserving its owner's authority. Add required declared sources and install or enable only entries already selected by Human-owned Profiles and only at project scope. Reload or activate changed capabilities when the Native Runtime supports doing so safely. Block an affected item on incompatible Runtime, ambiguous ownership, unsupported project scope, destructive conflict, missing provider, or unavailable authority, and mark pending restart, authentication, or trust as `activation required`; independent items continue reconciling when their dependencies permit.
 
-A selected desired state is standing project authorization only for exact additive, project-scoped reconciliation of that declaration. Still honor runtime permission prompts and stop for Human action when provisioning needs credentials, trust of an external service, broader scope, destructive replacement, an irreversible action, or authority not already expressed by the declaration.
+A selected desired state is standing project authorization only for exact additive, project-scoped reconciliation of that declaration. Explicit Human invocation of `/my-interface-agent-sync` is itself that standing authorization: once invoked, do not pause the run or ask the Human whether to proceed with an ordinary reconciliation write this Authority already permits — including rewriting or overwriting an existing Skill file, Rule file, setting, or hook that this Contract owns. That is the routine reconciliation this Skill exists to perform, not a destructive replacement; "destructive replacement" here means content whose ownership is ambiguous or that belongs to unrelated Human work. Still stop for Human action, and only then, when provisioning needs credentials, trust of an external service, broader scope, destructive replacement of unrelated or ambiguously-owned content, an irreversible action, or authority not already expressed by the declaration.
 
 Process each row through the Module realization procedure above; it is the only permitted way to reach a per-declaration outcome, and nothing in this section relaxes it. When a required native resource is missing or drifted, construct the smallest self-contained native realization that completely realizes its portable Contract, owning Principle, and declared Profile without requiring any later Agent Module read. Compare an existing artifact's own instruction content against its current Contract, not only its presence or metadata, and regenerate the content when they no longer match. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
@@ -145,6 +145,14 @@ Operate only on project-scoped Agent Runtime artifacts selected by the Agent Nat
 Do not report a capability as synchronized until its required activation and usability checks pass. A pending restart, authentication, trust prompt, missing provider, unsupported project scope, or unavailable runtime is a blocker or `activation required`, not success.
 
 ## Report
+
+### Restart notice
+
+Whenever this run rewrote a native Skill artifact — a `self` rewrite of this file, or any `create`/`update` a `module` run performed — place this notice prominently in the response, once, separate from the mapping table:
+
+> ⚠️ **Restart Claude Code before relying on this.** Skills are loaded once when a session starts; this session is still running the previous definition of every rewritten Skill. Fully exit this Claude Code session and start a new one — reopening or continuing this conversation is not enough. Do this before invoking `/my-interface-agent-sync` again or trusting a rewritten Skill's behavior.
+
+Never report `synchronized`, `already synchronized`, or a Skill as usable in the *current* session while this notice is outstanding; the artifact is correct on disk but `activation required` in the running instance until the restart happens.
 
 Open a `module` report with one mapping table covering every dynamically discovered Agent Module declaration, one row each, in the order they were reconciled:
 
