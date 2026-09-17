@@ -2,6 +2,10 @@
 name: my-interface-launch
 description: Bring the completed Target online and prove it is reachable, activated explicitly by the Human or a declared coordinator, or after end-to-end orchestration establishes every current launch prerequisite; verify readiness and report access points.
 argument-hint: "[api|logic|presentation|complete|all]"
+metadata:
+  contract: ".interface/agent/skill/contracts/launch.md"
+  contract_sha256: "sha256:ef7a88d86731cd7caa0500b3b58beb2a74a29ceb12f07252d376487ef9befd5c"
+  synced_at: "2026-09-17T12:24:58Z"
 ---
 
 # Launch the Target

@@ -2,6 +2,10 @@
 name: my-interface-skill-installer
 description: Discover and, after human approval, install project-scoped Agent capabilities relevant to the current Target, including Skills, plugins, MCP integrations, and equivalent supported extensions. Never changes application dependencies or code.
 disable-model-invocation: true
+metadata:
+  contract: ".interface/agent/skill/contracts/skill-installer.md"
+  contract_sha256: "sha256:290d21586f5b3f035b8ec08b4451586eb89cf38089c70821bd248bde4b1cdab2"
+  synced_at: "2026-09-17T12:24:58Z"
 ---
 
 # Install Agent capabilities

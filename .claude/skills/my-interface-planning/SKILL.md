@@ -2,6 +2,10 @@
 name: my-interface-planning
 description: Create or reconcile Task Plans for selected Target phases, or every enabled phase when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Plans only; never implements.
 argument-hint: "[phase-number ...]"
+metadata:
+  contract: ".interface/agent/skill/contracts/planning.md"
+  contract_sha256: "sha256:7a25f56def74f950ba75b2f805e0990b02175db59c3fdf0b87db16acea909623"
+  synced_at: "2026-09-17T12:24:58Z"
 ---
 
 # Plan project phases

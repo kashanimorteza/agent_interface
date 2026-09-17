@@ -1,6 +1,10 @@
 ---
 name: my-interface-configure
 description: Generate or refresh operational Config, synchronize phase State, and prepare the selected Platform Environment when explicitly requested by the Human or delegated by a declared Interface coordinator.
+metadata:
+  contract: ".interface/agent/skill/contracts/configure.md"
+  contract_sha256: "sha256:b738066915cf6cc641dc6db610214725d946793ecf6d39701fc9fb4770764a0c"
+  synced_at: "2026-09-17T12:24:58Z"
 ---
 
 # Configure the Interface

@@ -2,6 +2,10 @@
 name: my-interface-developing
 description: Execute and verify eligible planned work for selected Target phases, or every phase eligible under its current Plan when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Never plans or reviews.
 argument-hint: "[phase-number ...]"
+metadata:
+  contract: ".interface/agent/skill/contracts/developing.md"
+  contract_sha256: "sha256:71a186904e3ff78c9b85ff9e42379dfbe320062e96d0ac619fd946b6541ce898"
+  synced_at: "2026-09-17T12:24:58Z"
 ---
 
 # Develop project phases

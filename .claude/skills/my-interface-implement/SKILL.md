@@ -3,6 +3,10 @@ name: my-interface-implement
 description: Implement selected Target phases, or every enabled and ready phase when none is specified, by running Configure once only when no phase is specified, and then Planning, Developing, and Review sequentially for each phase before eligible Launch.
 argument-hint: "[phase-number ...]"
 disable-model-invocation: true
+metadata:
+  contract: ".interface/agent/skill/contracts/implement.md"
+  contract_sha256: "sha256:fc43267d5952bfc0274eccfc066fd18acb8c7806657cb23800ab468fcb7a1b20"
+  synced_at: "2026-09-17T12:24:58Z"
 ---
 
 # Implement the Target

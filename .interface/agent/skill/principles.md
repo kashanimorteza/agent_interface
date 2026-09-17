@@ -50,7 +50,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 **Why:** Skills are routinely resumed and rerun across sessions.
 
-**Boundary:** Repeatability never authorizes destructive replacement of meaningful work.
+**Boundary:** Repeatability never authorizes destructive replacement of meaningful work. A native Skill realization may carry a fingerprint of the portable source it was realized from; a changed fingerprint proves staleness and requires reconciliation, and an unchanged fingerprint never proves conformance, which is established only by comparing the current source with the realization in full.
 
 <br>
 
@@ -81,6 +81,7 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 - **Never** — let coordinator invocation expand a delegated Skill's authority or permit unrelated automatic execution *(2)*
 - **Must** — make repeated execution preserve valid work *(3)*
 - **Never** — use repeatability to justify destructive regeneration *(3)*
+- **Must** — treat a changed source fingerprint as proof of staleness and an unchanged one as no proof of conformance *(3)*
 - **Must** — materialize an exact matching prepared Skill file or directory tree into the selected Agent Native's required Skill folder while preserving its instruction meaning and internal relative paths *(4)*
 - **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file *(4)*
 - **Never** — infer a Skill from an unmatched file or directory, treat its presence as proof of Activation, or rewrite the Human-owned prepared source *(4)*

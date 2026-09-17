@@ -3,6 +3,10 @@ name: my-interface-reset
 description: Preview and, after explicit confirmation, reset selected Target phases, every phase with generated work, operational Config only, or the complete Interface-generated system. Use phase identifiers, no argument for all generated phases, config, or complete.
 argument-hint: "[phase-number ... | config | complete]"
 disable-model-invocation: true
+metadata:
+  contract: ".interface/agent/skill/contracts/reset.md"
+  contract_sha256: "sha256:041fa73ad6e9cdafdb0340184e32a067f06c4e309dee6e5781254c3548908878"
+  synced_at: "2026-09-17T12:24:58Z"
 ---
 
 # Reset the project workflow

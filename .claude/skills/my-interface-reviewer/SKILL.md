@@ -2,6 +2,10 @@
 name: my-interface-reviewer
 description: Assure selected Target phase implementations, or every enabled phase with existing implementation when none is specified, by independently reconciling current Interface and Target Understanding against the Plan, implementation, and evidence, recording every misalignment as a Finding naming its owning operation and invoking Configure, Planning, or Developing to reconcile it, when explicitly requested by the Human or delegated by a declared Interface coordinator.
 argument-hint: "[phase-number ...]"
+metadata:
+  contract: ".interface/agent/skill/contracts/reviewing.md"
+  contract_sha256: "sha256:85b34a45d7d2fc68e2464297a59fbd3dcf598cfeada3b480284ee4aaa586cc0e"
+  synced_at: "2026-09-17T12:24:58Z"
 ---
 
 # Review Target phases
