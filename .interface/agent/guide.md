@@ -275,6 +275,21 @@ Recorded on 2026-09-17 and written into `contracts/agent-native.md` the same day
 
 <br>
 
+## Understanding record — Configure
+
+Reviewed with the Human on 2026-09-17 for problems and unnecessary work. Three questions were raised and answered; the Contract was left unchanged on all three.
+
+**Should Configure install the whole technical environment up front, before any phase is planned?**
+Yes. One Configure run installs everything the Implementation and Platform Preferences declare, so no later phase is surprised and the environment has one point of truth. The cost — tools installed for phases that may change, and a Launch-host Blocker seen early — is accepted; seeing the Launch requirement early is itself useful.
+
+**Should Configure create `application.yaml` even though every Component section is empty at that point?**
+Yes. Configure creates all four Config files; an empty section is an explicit "declared, not yet published" record, consistent with the rule that empty categories are explicit. Developing fills the sections as Components come into existence.
+
+**Does Configure read too much by reading every Implementation Principles file?**
+The technical selections it needs live in Preferences, so narrowing to Preferences would be possible; the Human chose to keep the current reading scope because the difference is a few file reads and the risk of missing a Preference that points back to a Principle is not worth it.
+
+<br>
+
 ## Decisions taken
 
 Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then written into the Module in the Component that owns it; the Agent Native was changed only through Agent Sync, except for the one-time hand bootstrap of the Agent Sync adapter.

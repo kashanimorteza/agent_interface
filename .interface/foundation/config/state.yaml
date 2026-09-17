@@ -1,0 +1,103 @@
+meta:
+  path: ".interface/foundation/config/state.yaml"
+  path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+read_order: ["active", "phases", "implementation", "launch", "history", "blockers", "open_questions"]
+content_map:
+  active: "Current or most recently recorded Workflow position."
+  phases: "Aggregate Planning, Development, and Review progress by phase identifier."
+  implementation: "Latest end-to-end Implement result."
+  launch: "Current runtime result and verified access points."
+  history: "Append-only State-changing Workflow events."
+  blockers: "Unresolved critical conditions."
+  open_questions: "Unresolved critical questions."
+content:
+  active:
+    mode: "configuring"
+    phase: null
+    mode_reason: "Configure generated operational Config, synchronized phase State, and resolved technical requirements."
+    set_by: "configure"
+    set_at: "2026-09-17T17:31:16Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P7:
+      id: "P7"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+  implementation:
+    status: "not started"
+    started_at: null
+    completed_at: null
+    updated_by: "initialization"
+    updated_at: null
+  launch:
+    status: "not launched"
+    environment: null
+    method: null
+    access_points: []
+    updated_by: "initialization"
+    updated_at: null
+  history:
+    - id: "H-0001"
+      operation: "configure"
+      phase: null
+      event: "Created the four operational Config files from their Schemas, synchronized seven phase records, and resolved declared technical requirements to concrete versions."
+      outcome: "Completed with one Blocker: all four Config files match their Schema templates and language toolchains are verified; the Application Manifest template lacks three sections of the common YAML frame (reported to the Human); selected Platform Environment not prepared (B-0001)."
+      recorded_by: "configure"
+      recorded_at: "2026-09-17T17:31:16Z"
+  blockers:
+    B-0001:
+      id: "B-0001"
+      blocks: "Platform Environment preparation for the selected Launch Item, and Launch through it."
+      what_is_missing: "A host satisfying the selected Launch Item's declared operating system and web server. The current host runs a different operating system, the declared web server is absent, and no destination host for the Launch Item is declared or reachable."
+      consequence: "Configure cannot observe or prepare the selected Environment's system requirements, so Launch through this Launch Item cannot be verified. Planning, Development, and Review are not affected."
+      resolution_owner: "Human"
+      raised_by: "configure"
+      raised_at: "2026-09-17T17:31:16Z"
+  open_questions: {}
