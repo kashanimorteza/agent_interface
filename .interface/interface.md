@@ -26,104 +26,16 @@ Use this document as the entry point and follow its sections in this order:
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
-<!-------------------------- Overview -->
-### Overview
 
-**Agent Interface** is a implementation-oriented interface for AI-assisted software development.
+The Introduction states what Agent Interface is: an implementation-oriented interface for AI-assisted software development that separates Target, Implementation, and Agent so any one can be replaced without redesigning the others, its purpose, how it works, its independence, its core idea, and its design goals.
 
-The core idea is to create a structured layer between a **Implementation**, an **AI Agent**, and a **Target** so that software can be understood, planned, developed, configured, and reviewed according to a consistent set of concepts.
-
-The Interface is not intended to be tied to:
-
-- one specific AI model,
-- one specific coding agent,
-- one specific implementation,
-- or one specific software project.
-
-Instead, these concepts are intentionally separated.
-
-A different **Target** can be provided without changing the Implementation or Agent definitions.
-
-A different **Implementation** can provide a different programming philosophy without changing the Target.
-
-A different **Agent** can execute the same Interface using its own native capabilities.
-
-The long-term implementation may eventually use technologies such as skills, MCP, hooks, plugins, memory systems, multiple agents, tools, or other future agent capabilities.
-
-Those technologies are implementation mechanisms.
-
-The primary concern of the Interface is the **conceptual contract** between the Implementation, Agent, and Target.
-
-<!-------------------------- Purpose -->
-### Purpose
-
-Agent Interface is an independent interface between **Humans** and **AI Agents** for establishing a common protocol, structure, and standard for software development.
-
-Its purpose is to let a Human define a Target in natural language, provide common Implementation Principles and Preferences for planning and developing it, and define a portable Agent Module that explicit Agent Sync realizes in the active Runtime.
-
-<!-------------------------- How It Works -->
-### How It Works
-
-The Human states the Target in the Non-Technical Definition. Acting as the implementation, the Human translates that intent into the Technical Definition without changing its meaning. Skills then read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks; Review evaluates the result; and Launch brings the completed Target online. Mechanical actions such as Config initialization do not interpret the Target.
-
-Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format.
-
-<!-------------------------- Independence -->
-### Independence
-
-The core Interface Structure is independent of any specific AI model, Agent Native, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their self-contained native implementations remain outside `.interface/` as synchronized Runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Preferences. Only explicit Agent Sync reads Agent Module sources; every other Runtime operation consumes their last synchronized realization.
-
-Human project definitions remain flexible, while the Interface gives Agents stable responsibilities, rules, defaults, and operational records. Agent Interface is the communication boundary between those two forms.
-
-<!-------------------------- Core Idea -->
-### Core Idea
-
-Modern AI coding agents can generate and modify software, but an agent still needs to understand several independent things before it can reliably act:
-
-1. **What is being built?**
-2. **How does the implementation want software to be built?**
-3. **What agent is performing the work and what capabilities or restrictions does it have?**
-4. **What Mode or supporting action is currently active?**
-
-Agent Interface gives these concerns explicit structure.
-
-Conceptually:
-
-```text
-Target ─────┐
-Implementation ──┼── together with Understanding, Modes, and Workflow ──> Implementation
-Agent ──────┘
+```yaml
+name: Introduction
+path: .interface/foundation/introduction.md
+responsibility: Overview, purpose, how it works, independence, core idea, and design goals of Agent Interface; part of every Skill's required Interface Understanding
 ```
 
-The resulting software is therefore influenced by all three primary entities:
-
-```text
-Target
-   +
-Implementation
-   +
-Agent
-   ↓
-Execution
-```
-
-
-<!-------------------------- Design Goals -->
-### Design Goals
-
-The Interface should make the following substitutions possible without redesigning the entire system:
-
-```text
-Target A     → Target B
-Implementation A  → Implementation B
-Agent A      → Agent B
-```
-
-Changing one should not unnecessarily redefine the others.
-
-This separation is one of the central architectural principles of the project.
-
-
+→ [Introduction](foundation/introduction.md)
 
 
 
@@ -132,43 +44,15 @@ This separation is one of the central architectural principles of the project.
 <!--------------------------------------------------------------------------------- Terminology --->
 ## Terminology
 
-- **Interface** — the complete system described by this document; it contains the Target, Implementation, and Agent Modules together with Understanding, Operations, Foundation Files, Modes, Authority, and Workflow.
-- **Human** — the person who defines the Target and owns every authored Interface source.
-- **Module** — a primary conceptual boundary with a distinct responsibility inside the Interface. Target, Implementation, and Agent are the Interface Modules.
-- **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
-- **Implementation** — the implementation's reusable programming philosophy and engineering perspective, independent of a particular Target or Agent.
-- **Agent** — an AI coding system or execution unit that interacts with the Interface and maps its concepts to native capabilities.
-- **Component** — one named part of the Implementation or Agent Module perspective that owns a responsibility and is described through Principles together with Implementation Preferences or Agent Preferences; some Implementation Components also own operational records.
-- **Implementation Module** — the Module that defines the reusable programming philosophy, Principles, Preferences, and Component composition applied to a Target.
-- **Implementation Component** — one independent Component inside the Implementation Module with a defined responsibility, Public Interface, Principles, and Implementation Preferences.
-- **Logic Component** — the reusable library Component that implements application Behaviour and publishes a Public Logic Interface.
-- **API Component** — the executable Component that starts the API process, owns transport concerns, and invokes Logic through its Public Interface.
-- **Presentation Component** — the executable Component that presents the application to users and consumes the API Component.
-- **Public Logic Interface** — the provider-owned public library surface through which API invokes application Behaviour.
-- **API Contract** — the public description of API operations, transport schemas, versions, and approved outcomes.
-- **Technical Purpose** — a language-level use such as modeling, API delivery, database access, ORM, or migration that may be shared by compatible Components.
-- **Principles** — mandatory portable philosophy, responsibilities, rules, and boundaries owned by an Implementation or Agent Component.
-- **Implementation Preferences** — preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations used when the Target leaves a choice unspecified.
-- **Schema** — the structure a file follows: either a standard for a Human-authored file or an operational format and initial template for a generated record.
-- **Config** — mutable operational records that coordinate the Workflow and record where work stands; Config does not store what the Target means.
-- **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
-- **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
-- **Understanding** — the current context an Agent Native or Agent Instance establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
-- **Operation** — one defined action performed through an Agent Skill to configure, plan, develop, review, launch, implement, or reset work.
-- **Workflow** — the ordered path from the Human's Target definition to running software: Define Target, Configure, Plan, Develop, Review, and Launch.
-- **Workflow Path** — the Human's selected level of direct orchestration over that same Workflow: Default, Normal, or Detailed; it is an invocation style, not a State Mode.
-- **Mode** — an operational position in the Workflow, recorded by State.
-- **Skill** — an Agent capability that performs a Workflow action or provides a supporting utility; it is part of the Agent Module's integration surface, while its implementation remains outside `.interface/`.
-- **Agent Module** — the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate. Bare `Agent` is never used as a substitute for this term.
-- **Agent Native** — the core operational Agent supplied by the selected Agent Runtime and currently responsible for receiving the Human's request, applying synchronized Agent Module behavior, and hosting or coordinating Agent Instances.
-- **Agent Instance** — one primary or specialized executable identity operating within an Agent Native, with an assigned Agent Role and bounded capabilities. One Agent Native may expose several Agent Instances.
-- **Agent Preferences** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, portable realization requirements, and validation expectations; Native-specific paths and formats are resolved by Agent Sync.
-- **Agent Role** — one bounded execution responsibility within the Agent Preferences, including the primary role and specialized delegated roles.
-- **Capability** — one declared Agent facility, such as a Skill, Rule, Command, Tool, Hook, Integration, or Extension, with an owning Component and bounded contract.
-- **Agent Native Skill** — the Interface-owned Skill `/my-interface-agent-native <1=sync self | 2=sync component | 3=install>`: modes `1` (sync self) and `2` (sync component) perform Agent Sync; mode `3` performs install (the former Skill Installer). It is named for what it does — the Agent Native configuring itself from the Agent Module — and does not change the meaning of Agent Native above.
-- **Capability Realization Kind** — how a declared Agent capability becomes usable in the active Runtime: **Constructed**, built by the Agent Native from a portable specification such as a Skill Contract; **Prepared**, transferred into the Runtime unchanged from a complete Human-authored artifact; or **Installed**, provisioned by the Agent Native's own native mechanism from an external source such as a marketplace, package registry, or MCP server, using per-Agent-Native identity so the Native can find and install it.
+Terminology defines the shared vocabulary used throughout the Interface — Interface, Human, Module, Target, Implementation, Agent, Component, Principles, Preferences, Schema, Config, Plan, Task, Understanding, Operation, Workflow, Mode, Skill, the Agent Module and its Native, Instances, Preferences, Roles, and capabilities, the Agent Native Skill, and Capability Realization Kinds.
 
+```yaml
+name: Terminology
+path: .interface/foundation/terminology.md
+responsibility: Defines every capitalized term the Interface uses; read before any other section; part of every Skill's required Interface Understanding
+```
 
+→ [Terminology](foundation/terminology.md)
 
 
 
@@ -177,24 +61,15 @@ This separation is one of the central architectural principles of the project.
 <!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
-The current conceptual architecture is:
+Architecture shows the high-level shape of Agent Interface as one tree — the three Modules (Target, Implementation, Agent), Foundation Files, Understanding, Operations, Modes, Authority and Ownership, and Workflow — and states what each part contributes.
 
-```text
-Architecture
-│
-├── Modules
-│   ├── Target
-│   ├── Implementation
-│   └── Agent
-├── Foundation Files
-├── Understanding
-├── Operations
-├── Modes
-├── Authority and Ownership
-└── Workflow
+```yaml
+name: Architecture
+path: .interface/foundation/architecture.md
+responsibility: The conceptual architecture tree of Agent Interface and one sentence on what each part contributes; part of every Skill's required Interface Understanding
 ```
 
-Each Module owns one Structure that shows its concepts together with their repository files. Understanding establishes the context used by a Skill, Operations define the actions Skills perform, Foundation Files remain shared resources, Modes record operational position, Authority and Ownership control writes, and Workflow defines execution order.
+→ [Architecture](foundation/architecture.md)
 
 
 

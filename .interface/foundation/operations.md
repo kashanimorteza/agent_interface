@@ -26,9 +26,9 @@ Operations
 
 **Agent Skill:** `/my-interface-configure`
 
-This Operation is performed through `/my-interface-configure` to initialize and reconcile operational Config, synchronize phase State, resolve and install applicable Implementation and Platform technical requirements with concrete versions, and prepare the selected Platform Environment.
+This Operation is performed through `/my-interface-configure` to initialize and reconcile the four operational Config files and synchronize phase State. It installs nothing and prepares no Environment: Developing installs the technical requirements of the phase it implements, and Launch prepares the Environment of the selected Launch Item.
 
-A Skill named by an `agent_skills` association reaches the Runtime through its ecosystem's own provisioning mechanism when the environment is prepared, and through Configure when Configure prepares the project. Planning, Developing, and every other operation use such a Skill when it is discoverable and usable, and never install it. The separation exists because a package-provided Skill cannot exist before its package does, and because provisioning one never makes it an Agent Module declaration.
+A Skill named by an `agent_skills` association reaches the Runtime through its ecosystem's own provisioning mechanism when the environment is prepared, and through Developing when Developing installs the packages that bundle it. Planning, Developing, and every other operation use such a Skill when it is discoverable and usable, and never install it. The separation exists because a package-provided Skill cannot exist before its package does, and because provisioning one never makes it an Agent Module declaration.
 
 <!-------------------------- Planning Operation -->
 ### Planning

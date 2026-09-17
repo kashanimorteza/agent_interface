@@ -6,7 +6,7 @@ Bring the completed Target online and prove that it is reachable.
 
 ## Responsibility
 
-Verify the selected Environment, start and connect completed parts through the selected Launch definition, verify readiness, and record usable Access Points. Configure owns Environment preparation and Development owns product repair.
+Prepare and verify the selected Environment for the selected Launch Item, start and connect completed parts through the selected Launch definition, verify readiness, and record usable Access Points. Launch owns Environment preparation within project scope; a system-level requirement it cannot satisfy is a Blocker for the Human. Development owns product repair.
 
 ## Trigger
 
@@ -26,7 +26,7 @@ Establish Interface Understanding and current Target Understanding. Read Platfor
 
 ## Authority
 
-Control only project runtime startup, connection, readiness, and shutdown actions required by the selected Launch Scope and Launch definition. Read the applicable Platform Component Runtime Requirements and perform the declared launch actions in their required order. Write Launch-owned State and History. Never prepare the runtime requirements, repair code, or redefine a part's internals.
+Control only project runtime startup, connection, readiness, and shutdown actions required by the selected Launch Scope and Launch definition. Read the applicable Platform Component Runtime Requirements and perform the declared launch actions in their required order. Write Launch-owned State and History. Prepare only the declared, project-scoped runtime requirements of the selected Launch Item; never repair code or redefine a part's internals.
 
 ## Workflow Invariants
 
@@ -34,7 +34,7 @@ Control only project runtime startup, connection, readiness, and shutdown action
 - Launch only the parts included by the selected Launch Scope: `api`, `presentation`, `logic`, or `complete`/`all`.
 - Require Development completion for every phase currently enabled and ready. Review is an additional prerequisite only when Target, Platform, or the invoking coordinator requires it.
 - Mark Launch as launching before mutation and record the final truthful state afterward.
-- Verify Environment preparation before startup without performing preparation.
+- Inspect the Environment before startup, apply only the missing declared project-scoped requirements of the selected Launch Item, record a Blocker for any system-level requirement the Human must provide, and verify preparation before starting anything.
 - Follow declared dependency order and stop dependent startup after a failed prerequisite.
 - Preserve a running part that already satisfies readiness.
 - Deliver required bindings through public boundaries without recording secrets.
@@ -50,7 +50,7 @@ Repeated Launch preserves healthy running parts and changes only runtime element
 
 ## Stopping Conditions
 
-Stop when Environment or Launch is unresolved or incompatible, preparation is unverified, required Development is incomplete, a prerequisite startup fails, readiness fails, or a required binding cannot be delivered safely.
+Stop when Environment or Launch is unresolved or incompatible, a required system-level preparation is missing, preparation is unverified, required Development is incomplete, a prerequisite startup fails, readiness fails, or a required binding cannot be delivered safely.
 
 ## Runtime Realization
 

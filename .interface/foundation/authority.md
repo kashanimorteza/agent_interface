@@ -27,7 +27,7 @@ Review = owns recorded Findings and their state
 Write authority answers which Skill may change a record, and every write happens under the rules of the Component that owns it:
 
 ```text
-Configure = creates and reconciles the persistent Application Manifest, writes every operational Config, synchronizes phase records, resolves technical requirements, records its State outcome, and prepares the selected Platform runtime
+Configure = creates and reconciles the persistent Application Manifest, writes every operational Config, synchronizes phase records, and records its State outcome
 Planning = writes Plans, Groups, and Tasks under Plan, and Planning progress and History under State
 Developing = writes implementation and Task status and history under Plan, and Development progress and History under State
 Reviewer = writes Findings under Review, and Review progress and History under State

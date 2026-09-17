@@ -173,7 +173,7 @@ content:
       interface-bootstrap:
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
-        responsibility: Enter through the canonical Interface file and the Foundation section files it links (understanding, operations, modes, authority, workflow) while reserving Agent Module sources
+        responsibility: Enter through the canonical Interface file and the Foundation section files it links (introduction, terminology, architecture, understanding, operations, modes, authority, workflow) while reserving Agent Module sources
           exclusively for explicit Agent Sync.
         required: true
       interface-skill-policy:

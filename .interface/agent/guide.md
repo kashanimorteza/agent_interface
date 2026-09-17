@@ -280,12 +280,13 @@ Recorded on 2026-09-17 and written into `contracts/agent-native.md` the same day
 Reviewed with the Human on 2026-09-17 for problems and unnecessary work. Three questions were raised and answered; the Contract was left unchanged on all three.
 
 **Should Configure install the whole technical environment up front, before any phase is planned?**
-Yes. One Configure run installs everything the Implementation and Platform Preferences declare, so no later phase is surprised and the environment has one point of truth. The cost — tools installed for phases that may change, and a Launch-host Blocker seen early — is accepted; seeing the Launch requirement early is itself useful.
+*Revised on 2026-09-18:* No. Configure creates and reconciles the four Config files and nothing else. Every operation prepares what it needs: Developing installs the technical requirements of the phase it implements; Launch prepares the Environment of its Launch Item and raises a Blocker for what only the Human can provide. The earlier answer, kept for the record: Yes. One Configure run installs everything the Implementation and Platform Preferences declare, so no later phase is surprised and the environment has one point of truth. The cost — tools installed for phases that may change, and a Launch-host Blocker seen early — is accepted; seeing the Launch requirement early is itself useful.
 
 **Should Configure create `application.yaml` even though every Component section is empty at that point?**
 Yes. Configure creates all four Config files; an empty section is an explicit "declared, not yet published" record, consistent with the rule that empty categories are explicit. Developing fills the sections as Components come into existence.
 
 **Does Configure read too much by reading every Implementation Principles file?**
+*Revised on 2026-09-18:* moot — Configure no longer reads Implementation or Platform authorities at all; it reads Schemas, existing Config, Target phase identifiers, and published Component metadata. The earlier answer, kept for the record:
 The technical selections it needs live in Preferences, so narrowing to Preferences would be possible; the Human chose to keep the current reading scope because the difference is a few file reads and the risk of missing a Preference that points back to a Principle is not worth it.
 
 <br>
@@ -324,6 +325,7 @@ Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then w
 - The `agent-sync` Skill became `agent-native` with three numeric modes — `1` sync self, `2` sync component, `3` install — and the separate `skill-installer` Skill was merged into mode `3`. The Operation is named Agent Native; the activity of modes 1–2 is still called Agent Sync.
 - Personality refers to models by the names declared in Runtime; an Agent Instance may name an optional `personality`.
 - Implement keeps a step-by-step log of every run under State's `implementation.runs` (selection, Configure run or skipped, every phase's cycles with Planning/Developing/Reviewing outcomes, stop reason, Launch decision, result). State stays the owner; no fifth Config file.
+- Configure is Config-only (2026-09-18): no installation, no Environment preparation, no reading of Implementation or Platform Preferences. Developing prepares its phase's technical requirements; Launch prepares its Environment and raises a Blocker for system-level needs; Review names the right owner for each kind of drift.
 - Implement enters an already-implemented phase through Review first (`entry: review-first` in the run log) and a never-implemented phase through Planning first; a satisfied first Review ends the phase without rework.
 - The Planning → Developing → Reviewing loop belongs to Implement. Reviewing records Findings with their owning operation and invokes nothing; its `coordination` declaration moved to Implement, which may invoke Configure, Planning, Developing, Reviewing, and Launch. The Detailed workflow path no longer runs Review before Developing.
 - Output Style is owned by the enabled plugin `adhd-output-style`; Rule Preferences select `ADHD Explanatory`, the style that plugin provides.

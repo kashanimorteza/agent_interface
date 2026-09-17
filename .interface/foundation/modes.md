@@ -21,9 +21,9 @@ output = Active State with no selected work scope
 
 ```text
 state = configuring
-responsibility = Create and reconcile the persistent Application Manifest, reconcile operational Config, synchronize phase State, resolve technical requirements, and prepare the selected Platform requirements
-inputs = Operational Schemas, existing Config, Target phase identities, Implementation Preferences, Platform selections, and Platform authorities
-output = Persistent Application Manifest, current operational Config, resolved technical selections, and a prepared selected Platform runtime
+responsibility = Create and reconcile the persistent Application Manifest, reconcile operational Config, and synchronize phase State
+inputs = Operational Schemas, existing Config, and Target phase identities
+output = Persistent Application Manifest and current operational Config
 ```
 
 <!-------------------------- Planning -->
