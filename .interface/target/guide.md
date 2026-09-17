@@ -27,6 +27,29 @@ The Target is defined through two complementary, Human-owned sources:
 
 Target definitions are intentionally not Foundation Files: they belong to the Target concept itself.
 
+The Interface file's own statement of the Target, moved here verbatim on 2026-09-17:
+
+The Target describes **what the Interface is working on**.
+
+
+```text
+Target Structure
+├── Non-Technical Definition
+│   └── .interface/target/non-technical.md
+└── Technical Definition
+    └── .interface/target/technical.md
+```
+
+The Target is defined through two complementary, human-owned sources:
+
+- **Non-Technical Definition:** The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information.
+- **Technical Definition:** The Human, acting as the implementation, translates the Non-Technical Definition into this technical form. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
+
+Each Target definition has a direct link to its authoritative file:
+
+- [Non-Technical Definition](non-technical.md)
+- [Technical Definition](technical.md)
+
 <br>
 
 ## How the Target is used

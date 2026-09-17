@@ -14,11 +14,11 @@ Use this document as the entry point and follow its sections in this order:
    - **[Target](#target)** — understand what is being built through its non-technical and technical definitions.
    - **[Implementation](#implementation)** — understand the engineering philosophy through Components and their Principles and Implementation Preferences.
    - **[Agent](#agent)** — understand the executing system, its capabilities, restrictions, and Skills.
-5. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
-6. **[Operations](#operations)** — understand the one-to-one actions performed through every Interface-owned Skill.
-7. **[Modes](#modes)** — understand the operational positions recorded by State.
-8. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
-9. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
+5. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
+6. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
+7. **[Operations](#operations)** — understand the one-to-one actions performed through every Interface-owned Skill.
+8. **[Modes](#modes)** — understand the operational positions recorded by State.
+9. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
 10. **[Workflow](#workflow)** — choose Default, Normal, or Detailed control while following the path from Target definition through launch.
 
 
@@ -185,11 +185,11 @@ Architecture
 │   ├── Target
 │   ├── Implementation
 │   └── Agent
+├── Foundation Files
 ├── Understanding
 ├── Operations
 ├── Modes
 ├── Authority and Ownership
-├── Foundation Files
 └── Workflow
 ```
 
@@ -207,358 +207,59 @@ Target, Implementation, and Agent are the three primary Modules of Agent Interfa
 <!-------------------------- Target -->
 ### Target
 
-The Target describes **what the Interface is working on**.
+The Target describes **what the Interface is working on**, through a Human Definition and a Technical Definition that takes precedence on conflict. Its structure and files are in the [Target Module Guide](../target/guide.md).
 
-Its fuller explanation is in the [Target Module Guide](../target/guide.md).
-
-```text
-Target Structure
-├── Non-Technical Definition
-│   └── .interface/target/non-technical.md
-└── Technical Definition
-    └── .interface/target/technical.md
+```yaml
+name: Target Module Guide
+path: .interface/target/guide.md
+responsibility: Explains the Target Module and maps its files; the Understanding sources remain the two definition files it points to
 ```
-
-The Target is defined through two complementary, human-owned sources:
-
-- **Non-Technical Definition:** The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information.
-- **Technical Definition:** The Human, acting as the implementation, translates the Non-Technical Definition into this technical form. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
-
-Each Target definition has a direct link to its authoritative file:
-
-- [Non-Technical Definition](../target/non-technical.md)
-- [Technical Definition](../target/technical.md)
 
 <!-------------------------- Implementation -->
 ### Implementation
 
-The Implementation module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Logic, Presentation, Platform, Plan, Review, and State Components.
+The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its ten Components. Its philosophy, Component structure, and every Component's files are in the [Implementation Module Guide](../implementation/guide.md).
 
-Its fuller explanation is in the [Implementation Module Guide](../implementation/guide.md).
-
-```text
-Implementation Components
-├── Development
-│   ├── Principles  → .interface/implementation/development/principles.md
-│   ├── Preferences → .interface/implementation/development/preferences.yaml
-├── Model
-│   ├── Principles  → .interface/implementation/model/principles.md
-│   └── Preferences → .interface/implementation/model/preferences.yaml
-├── Database
-│   ├── Principles  → .interface/implementation/database/principles.md
-│   └── Preferences → .interface/implementation/database/preferences.yaml
-├── Logic
-│   ├── Principles  → .interface/implementation/logic/principles.md
-│   └── Preferences → .interface/implementation/logic/preferences.yaml
-├── API
-│   ├── Principles  → .interface/implementation/api/principles.md
-│   └── Preferences → .interface/implementation/api/preferences.yaml
-├── Presentation
-│   ├── Principles  → .interface/implementation/presentation/principles.md
-│   └── Preferences → .interface/implementation/presentation/preferences.yaml
-├── Platform
-│   ├── Principles  → .interface/implementation/platform/principles.md
-│   └── Preferences → .interface/implementation/platform/preferences.yaml
-├── Plan
-│   ├── Principles  → .interface/implementation/plan/principles.md
-│   └── Preferences → .interface/implementation/plan/preferences.yaml
-├── Review
-│   ├── Principles  → .interface/implementation/review/principles.md
-│   └── Preferences → .interface/implementation/review/preferences.yaml
-└── State
-    ├── Principles  → .interface/implementation/state/principles.md
-    └── Preferences → .interface/implementation/state/preferences.yaml
+```yaml
+name: Implementation Module Guide
+path: .interface/implementation/guide.md
+responsibility: Explains the Implementation Module and maps every Component's Principles and Preferences; each Component's Principles remain the authority
 ```
-
-Each Component below has its own Principles and Preferences. Principles are the authoritative expression of the Component's philosophy and view; Preferences contain its preferred choices and default settings. Follow the links to open the authoritative file for that Component.
-
-#### Development
-
-Defines the layered architecture and how independent layers are composed into one system.
-
-- [Principles](../implementation/development/principles.md)
-- [Preferences](../implementation/development/preferences.yaml)
-
-#### Model
-
-Describes the domain entities and provides one shared logical meaning for domain data.
-
-- [Principles](../implementation/model/principles.md)
-- [Preferences](../implementation/model/preferences.yaml)
-
-#### Database
-
-Owns the persistence layer and publishes one generic interface for reading and writing.
-
-- [Principles](../implementation/database/principles.md)
-- [Preferences](../implementation/database/preferences.yaml)
-
-#### Logic
-
-Implements application Behaviour as reusable Logic.
-
-- [Principles](../implementation/logic/principles.md)
-- [Preferences](../implementation/logic/preferences.yaml)
-
-#### API
-
-Runs the external API process and publishes the application's public contract through Logic.
-
-- [Principles](../implementation/api/principles.md)
-- [Preferences](../implementation/api/preferences.yaml)
-
-#### Presentation
-
-Presents the application to users and consumes the capabilities Logic publishes.
-
-- [Principles](../implementation/presentation/principles.md)
-- [Preferences](../implementation/presentation/preferences.yaml)
-
-#### Platform
-
-Prepares a completed Target for operation and brings it online.
-
-- [Principles](../implementation/platform/principles.md)
-- [Preferences](../implementation/platform/preferences.yaml)
-
-#### Plan
-
-Turns phases into bounded, verifiable activities organized as Plans, Groups, and Tasks.
-
-- [Principles](../implementation/plan/principles.md)
-- [Preferences](../implementation/plan/preferences.yaml)
-
-#### Review
-
-Establishes whether implemented work satisfies what was asked, and records what it found.
-
-- [Principles](../implementation/review/principles.md)
-- [Preferences](../implementation/review/preferences.yaml)
-
-#### State
-
-Records active position, aggregate phase progress, implementation, launch, History, Blockers, and Open Questions.
-
-- [Principles](../implementation/state/principles.md)
-- [Preferences](../implementation/state/preferences.yaml)
-
-The Component's own Principles remain the authority: when this summary and a Component's Principles disagree, the Principles are correct.
-
 
 <!-------------------------- Agent -->
 ### Agent
-The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent Native and its Agent Instances should operate. The Human declares that view once through its Components—including the Agent Native, Agent Instance identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, portable realization requirements, and explicit empty categories.
 
-The Agent Module expresses our general understanding, philosophy, rules, responsibilities, boundaries, and desired behavior for an Agent. It is an independent declaration and is not written for Claude Code, Codex, or any other specific Agent Native. It does not define the Target and does not prescribe a vendor's files, directories, command names, configuration format, or implementation mechanism. An Agent Native reads this portable Module through explicit Agent Sync, understands its own runtime documentation and capabilities, and translates the Module into the native structures it supports. The meaning and authority come from the Agent Module; the concrete runtime form comes from the Agent Native.
+The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Sync. Its philosophy, Component structure, and every Component's files are in the [Agent Module Guide](../agent/guide.md). Only Agent Sync and Skill Installer follow this route; every other role treats the Agent Module as closed and uses the synchronized Runtime realization.
 
-Every capability the Module declares has exactly one Capability Realization Kind, and that Kind decides what Agent Sync does with it. A Constructed capability is built by the Agent Native from a portable specification such as a Skill Contract. A Prepared capability is transferred into the Runtime unchanged from a complete Human-authored artifact. An Installed capability is provisioned by the Agent Native through its own native mechanism from an external source such as a marketplace, package registry, or MCP server, and is never built or transferred. This distinction applies to every Component, not only to Skills, so a newly declared capability of any kind has a defined place and a defined realization path. Because external sources differ by Agent Native, a declaration may carry optional per-Agent-Native identity for an Installed capability so the selected Native can locate and provision it. That identity helps the Native find an external artifact; it never prescribes the Native's own structure, format, or mechanism, and Agent Sync treats it as an aid rather than an authority.
-
-Together, these Components form the Agent Profile within the complete Agent Module. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Agent Module, learns the Native Runtime's own conventions, realizes the Module through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
-
-The Human's own explanation of this Module, with its change flow, success criteria, and recorded understanding, is in the [Agent Module Guide](../agent/guide.md).
-
-```text
-Agent Components
-├── Runtime
-│   ├── Principles  → .interface/agent/runtime/principles.md
-│   └── Profile     → .interface/agent/runtime/profile.yaml
-├── Settings
-│   ├── Principles  → .interface/agent/settings/principles.md
-│   └── Profile     → .interface/agent/settings/profile.yaml
-├── Context
-│   ├── Principles  → .interface/agent/context/principles.md
-│   └── Profile     → .interface/agent/context/profile.yaml
-├── Role
-│   ├── Principles  → .interface/agent/role/principles.md
-│   └── Profile     → .interface/agent/role/profile.yaml
-├── Agent
-│   ├── Principles  → .interface/agent/agent/principles.md
-│   └── Profile     → .interface/agent/agent/profile.yaml
-├── Coordination
-│   ├── Principles  → .interface/agent/coordination/principles.md
-│   └── Profile     → .interface/agent/coordination/profile.yaml
-├── Skill
-│   ├── Principles  → .interface/agent/skill/principles.md
-│   ├── Profile     → .interface/agent/skill/profile.yaml
-│   ├── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
-│   └── Files       → .interface/agent/skill/files/<declared-skill-stable-key>[.md | /]
-├── Command
-│   ├── Principles  → .interface/agent/command/principles.md
-│   └── Profile     → .interface/agent/command/profile.yaml
-├── Rule
-│   ├── Principles  → .interface/agent/rule/principles.md
-│   └── Profile     → .interface/agent/rule/profile.yaml
-├── Tool
-│   ├── Principles  → .interface/agent/tool/principles.md
-│   └── Profile     → .interface/agent/tool/profile.yaml
-├── Hook
-│   ├── Principles  → .interface/agent/hook/principles.md
-│   └── Profile     → .interface/agent/hook/profile.yaml
-├── Integration
-│   ├── Principles  → .interface/agent/integration/principles.md
-│   └── Profile     → .interface/agent/integration/profile.yaml
-├── Extension
-│   ├── Principles  → .interface/agent/extension/principles.md
-│   └── Profile     → .interface/agent/extension/profile.yaml
-├── Interaction
-│   ├── Principles  → .interface/agent/interaction/principles.md
-│   └── Profile     → .interface/agent/interaction/profile.yaml
-├── Permission
-│   ├── Principles  → .interface/agent/permission/principles.md
-│   └── Profile     → .interface/agent/permission/profile.yaml
-├── Session
-│   ├── Principles  → .interface/agent/session/principles.md
-│   └── Profile     → .interface/agent/session/profile.yaml
-├── Observability
-│   ├── Principles  → .interface/agent/observability/principles.md
-│   └── Profile     → .interface/agent/observability/profile.yaml
-└── Personality
-    ├── Principles  → .interface/agent/personality/principles.md
-    ├── Profile     → .interface/agent/personality/profile.yaml
-    └── Definitions → .interface/agent/personality/definitions/<personality>.md
+```yaml
+name: Agent Module Guide
+path: .interface/agent/guide.md
+responsibility: Explains the Agent Module and maps every Component's Principles, Profile, and definition files; read only within an explicit Agent Sync or Skill Installer invocation
 ```
 
-The complete Agent Module is read exclusively during an explicit Agent Sync or Skill Installer invocation. Agent Sync first learns the selected Agent Native's own documentation, conventions, capabilities, and limitations, then reads every Module source and Interface-owned Skill Contract, and realizes each required Rule, Constructed Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. Skill Installer resolves any optional prepared Skill file by exact declared stable key: a matching prepared Markdown file supplies that Skill's preserved native instruction content and is materialized as a Prepared Skill, and a Skill under an external provider declaration is provisioned as an Installed Skill; a Skill with neither follows its Contract-based realization path through Agent Sync. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
 
-Each Agent Component below has its own Principles and Profile. Principles define the Component's mandatory philosophy, responsibilities, rules, and boundaries; Profiles define its current selections, resources, portable realization requirements, and default settings.
 
-#### Runtime
+<br><br>
 
-Runtime identity, provider, model, compatibility, and native capability mapping.
+<!--------------------------------------------------------------------------------- Foundation Files --->
+## Foundation Files
 
-- [Principles](../agent/runtime/principles.md)
-- [Profile](../agent/runtime/profile.yaml)
+Foundation Files are the shared resources every Module and Skill depends on: this Interface file, the Config records that coordinate the Workflow, and the Schemas that shape authored and generated files. They are not a Module. Their structure and every file's responsibility are in the [Foundation Guide](guide.md).
 
-#### Settings
+```yaml
+name: Foundation Guide
+path: .interface/foundation/guide.md
+responsibility: Explains the Foundation directory and maps the Interface file, every Config record, and every Schema; Config records remain owned by Plan, State, and Review
+```
 
-Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation.
 
-- [Principles](../agent/settings/principles.md)
-- [Profile](../agent/settings/profile.yaml)
-
-#### Context
-
-Persistent instructions, Understanding, Memory, imports, loading, and compaction.
-
-- [Principles](../agent/context/principles.md)
-- [Profile](../agent/context/profile.yaml)
-
-#### Role
-
-Primary and specialized Agent Role contracts.
-
-- [Principles](../agent/role/principles.md)
-- [Profile](../agent/role/profile.yaml)
-
-#### Agent
-
-The selected Agent Native and its General and Specialized Agent Instances.
-
-- [Principles](../agent/agent/principles.md)
-- [Profile](../agent/agent/profile.yaml)
-
-#### Coordination
-
-Delegation, teams, tasks, messaging, concurrency, and worktree isolation.
-
-- [Principles](../agent/coordination/principles.md)
-- [Profile](../agent/coordination/profile.yaml)
-
-#### Skill
-
-Reusable knowledge and workflows, including core, supporting, and contextual Skills.
-
-- [Principles](../agent/skill/principles.md)
-- [Profile](../agent/skill/profile.yaml)
-- [Contracts directory](../agent/skill/contracts/)
-- [Files directory](../agent/skill/files/)
-
-#### Command
-
-Named and slash invocation entry points, arguments, aliases, and routing.
-
-- [Principles](../agent/command/principles.md)
-- [Profile](../agent/command/profile.yaml)
-
-#### Rule
-
-Persistent global and scoped behavioral instructions.
-
-- [Principles](../agent/rule/principles.md)
-- [Profile](../agent/rule/profile.yaml)
-
-#### Tool
-
-Atomic built-in and externally provided executable capabilities.
-
-- [Principles](../agent/tool/principles.md)
-- [Profile](../agent/tool/profile.yaml)
-
-#### Hook
-
-Deterministic event-driven lifecycle automation.
-
-- [Principles](../agent/hook/principles.md)
-- [Profile](../agent/hook/profile.yaml)
-
-#### Integration
-
-MCP, LSP, channels, application connectors, and external services.
-
-- [Principles](../agent/integration/principles.md)
-- [Profile](../agent/integration/profile.yaml)
-
-#### Extension
-
-Plugins, marketplaces, capability packages, monitors, and extension lifecycle.
-
-- [Principles](../agent/extension/principles.md)
-- [Profile](../agent/extension/profile.yaml)
-
-#### Interaction
-
-Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior.
-
-- [Principles](../agent/interaction/principles.md)
-- [Profile](../agent/interaction/profile.yaml)
-
-#### Permission
-
-Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets.
-
-- [Principles](../agent/permission/principles.md)
-- [Profile](../agent/permission/profile.yaml)
-
-#### Session
-
-Lifecycle, resume, history, background work, isolation, checkpoints, and termination.
-
-- [Principles](../agent/session/principles.md)
-- [Profile](../agent/session/profile.yaml)
-
-#### Observability
-
-Validation, status, diagnostics, evidence, logs, telemetry, health, and usage.
-
-- [Principles](../agent/observability/principles.md)
-- [Profile](../agent/observability/profile.yaml)
-
-#### Personality
-
-The personalities an Agent can take on: who it is during a kind of work, the Actions each performs, and the models each prefers in priority order.
-
-- [Principles](../agent/personality/principles.md)
-- [Profile](../agent/personality/profile.yaml)
-- [Definitions directory](../agent/personality/definitions/)
-
-Every Agent Component's Principles and Profile are authoritative for that Component only. A runtime artifact not declared in the owning Profile is an optional runtime capability; a required declaration not usable by the selected runtime is an Agent Profile gap.
 
 <br><br>
 
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent Native or Agent Instance establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. For every operation except Agent Sync, the Interface routes the Skill only to applicable Target, Implementation, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope. Agent Sync alone may follow the Agent Structure into Agent Module sources and does so only after explicit Human invocation.
+Understanding is the current context an Agent Native or Agent Instance establishes before performing a Skill's role. Interface Understanding is required by every Skill and starts exclusively from this canonical Interface file. For every operation except Agent Sync, the Interface routes the Skill only to applicable Target, Implementation, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in the Agent Module Guide never authorizes entry into the Agent Module. Target Understanding is separate and, when the role needs Target meaning, is established from both Human Definition and Technical Definition under Target's declared precedence. Configure uses only the phase identities and Platform selections required for its role; Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope. Agent Sync alone may follow the Agent Structure into Agent Module sources and does so only after explicit Human invocation.
 
 - **Interface Understanding:** Read `.interface/foundation/interface.md` as the sole Foundation Source, then follow only the non-Agent-Module routes it provides for the active role. Agent Sync is the sole explicit exception.
 - **Target Understanding:** When required, read both Target definitions located by the Interface. Human Definition provides the Human's stated intent and context; Technical Definition is the primary Target authority and takes precedence wherever they conflict.
@@ -760,203 +461,6 @@ Every Skill = may record its own Blockers and Open Questions under State's rules
 Each Skill writes only the records it has authority over, and always under the rules of the Component that owns them. Operational records follow their source authorities and must not redefine them.
 
 The complete `.interface/` tree is read-only to every Agent Role and Skill by default. The only mutable exception is `.interface/foundation/config/`, and a Skill may change files there only within the write authority stated above and the owning Component's rules. No other Interface path becomes writable because it is added later, discovered by a Tool, or named by a Plan.
-
-<br><br>
-
-<!--------------------------------------------------------------------------------- Foundation Files --->
-## Foundation Files
-Foundation Files provide foundational definitions and schemas required by the Interface.
-
-Their fuller explanation is in the [Foundation Guide](guide.md).
-
-<!-------------------------- Foundation Structure -->
-### Structure
-
-```text
-.interface/foundation/
-├── interface.md
-├── guide.md
-├── config/
-└── schema/
-```
-
-Target Definitions are intentionally **not** considered Foundation Files because they belong to the Target concept itself.
-
-
-<!-------------------------- Interface Foundation File -->
-### Interface File
-
-```text
-name = Interface
-path = .interface/foundation/interface.md
-responsibility = Canonical definition, navigation entry point, and complete file map of Agent Interface
-```
-
-
-<!-------------------------- Config Foundation Files -->
-### Config Files
-
-Config stores mutable operational information used while executing the Interface.
-
-```text
-.interface/foundation/config/
-├── application.yaml
-├── state.yaml
-├── plan.yaml
-└── review.yaml
-```
-
-
-#### Application Manifest Config
-
-```text
-name = Application Manifest Config
-path = .interface/foundation/config/application.yaml
-responsibility = Stores one public metadata section for every Implementation Component; sections may remain empty until their owners publish metadata
-```
-
-
-#### State Config
-
-```text
-name = State Config
-path = .interface/foundation/config/state.yaml
-responsibility = Stores active Workflow position, aggregate phase progress, Implement and Launch results, access points, History, Blockers, and Open Questions
-```
-
-
-#### Plan Config
-
-```text
-name = Plan Config
-path = .interface/foundation/config/plan.yaml
-responsibility = Stores Plans, Groups, Tasks, their dependencies, status, and history
-```
-
-
-#### Review Config
-
-```text
-name = Review Config
-path = .interface/foundation/config/review.yaml
-responsibility = Stores reviewed phases, outcomes, Findings, evidence, and Finding status
-```
-
-
-<!-------------------------- Schema Foundation Files -->
-### Schema Files
-
-Schemas define the structure followed by authored Interface files and generated operational records.
-
-```text
-.interface/foundation/schema/
-├── application.yaml
-├── yaml.yaml
-├── principles.md
-├── preferences.yaml
-├── agent-profile.yaml
-├── skill-contract.md
-├── state.yaml
-├── plan.yaml
-└── review.yaml
-```
-
-
-#### Application Manifest Schema
-
-```text
-name = Application Manifest Schema
-path = .interface/foundation/schema/application.yaml
-kind = Operational format
-generates = .interface/foundation/config/application.yaml
-responsibility = Defines the shared Component metadata sections and their empty initial structure
-```
-
-
-#### YAML Schema
-
-```text
-name = YAML Schema
-path = .interface/foundation/schema/yaml.yaml
-kind = Structure standard
-responsibility = Defines the common outer structure followed by Implementation Preferences, Agent Profiles, and Config files
-scope = Schema definition files use their own formats and do not follow this outer structure
-```
-
-
-#### Principles Schema
-
-```text
-name = Principles Schema
-path = .interface/foundation/schema/principles.md
-kind = Structure standard
-responsibility = Defines the common Markdown structure followed by every Implementation and Agent Component principles.md file
-```
-
-
-#### Preferences Schema
-
-```text
-name = Preferences Schema
-path = .interface/foundation/schema/preferences.yaml
-kind = Structure standard
-responsibility = Defines the four-section structure followed by every Implementation Component preferences.yaml file
-```
-
-
-#### Agent Profile Schema
-
-```text
-name = Agent Profile Schema
-path = .interface/foundation/schema/agent-profile.yaml
-kind = Structure standard
-responsibility = Defines the three-section structure followed by every Agent Component profile.yaml file
-```
-
-
-#### Skill Contract Schema
-
-```text
-name = Skill Contract Schema
-path = .interface/foundation/schema/skill-contract.md
-kind = Structure standard
-responsibility = Defines the portable, runtime-independent structure followed by every declared Agent Skill Contract
-```
-
-
-#### State Schema
-
-```text
-name = State Schema
-path = .interface/foundation/schema/state.yaml
-kind = Operational format
-responsibility = Defines the stored structure and initial values of State Config
-generates = .interface/foundation/config/state.yaml
-```
-
-
-#### Plan Schema
-
-```text
-name = Plan Schema
-path = .interface/foundation/schema/plan.yaml
-kind = Operational format
-responsibility = Defines the stored structure and initial values of Plan Config
-generates = .interface/foundation/config/plan.yaml
-```
-
-
-#### Review Schema
-
-```text
-name = Review Schema
-path = .interface/foundation/schema/review.yaml
-kind = Operational format
-responsibility = Defines the stored structure and initial values of Review Config
-generates = .interface/foundation/config/review.yaml
-```
-
-
 
 <br><br>
 

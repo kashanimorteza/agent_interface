@@ -10,6 +10,14 @@ Agent Interface is the interface between a developer and an AI Agent. The Agent 
 
 The Module does not know the Agent Native. A separate Skill, Agent Sync, establishes an Understanding of the complete Module and configures the Agent Native's own structure from that Understanding. Because Agent Sync itself runs inside the Agent Native, the Native already knows where a rule belongs, where a skill belongs, and what documentation a skill must be built with. The Module owns *what* the Agent is; the Agent Native, through Agent Sync, owns *where and how* that is realized.
 
+
+The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent Native and its Agent Instances should operate. The Human declares that view once through its Components—including the Agent Native, Agent Instance identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, portable realization requirements, and explicit empty categories.
+
+The Agent Module expresses our general understanding, philosophy, rules, responsibilities, boundaries, and desired behavior for an Agent. It is an independent declaration and is not written for Claude Code, Codex, or any other specific Agent Native. It does not define the Target and does not prescribe a vendor's files, directories, command names, configuration format, or implementation mechanism. An Agent Native reads this portable Module through explicit Agent Sync, understands its own runtime documentation and capabilities, and translates the Module into the native structures it supports. The meaning and authority come from the Agent Module; the concrete runtime form comes from the Agent Native.
+
+Every capability the Module declares has exactly one Capability Realization Kind, and that Kind decides what Agent Sync does with it. A Constructed capability is built by the Agent Native from a portable specification such as a Skill Contract. A Prepared capability is transferred into the Runtime unchanged from a complete Human-authored artifact. An Installed capability is provisioned by the Agent Native through its own native mechanism from an external source such as a marketplace, package registry, or MCP server, and is never built or transferred. This distinction applies to every Component, not only to Skills, so a newly declared capability of any kind has a defined place and a defined realization path. Because external sources differ by Agent Native, a declaration may carry optional per-Agent-Native identity for an Installed capability so the selected Native can locate and provision it. That identity helps the Native find an external artifact; it never prescribes the Native's own structure, format, or mechanism, and Agent Sync treats it as an aid rather than an authority.
+
+Together, these Components form the Agent Profile within the complete Agent Module. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Agent Module, learns the Native Runtime's own conventions, realizes the Module through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 <br>
 
 ## What belongs here
@@ -34,6 +42,202 @@ When the Agent Native changes, Principles stay as they are. Only the Native-spec
 ## Components
 
 The Module currently has seventeen Components: Runtime, Settings, Context, Role, Agent, Coordination, Skill, Command, Rule, Tool, Hook, Integration, Extension, Interaction, Permission, Observability, and Personality. Personality was added on 2026-09-17; it absorbs what were briefly separate Action and Route ideas: each personality declares who it is, the Actions it performs, and the models it prefers in priority order. This set is the Human's default structure — the set that was sufficient to hold every view the Human had about an Agent. It is not a requirement that every Agent Native supports every Component. Agent Sync takes the Understanding of each Component and places it into whatever the selected Agent Native actually offers; a Component the Native cannot realize is reported, and an explicitly empty category stays empty.
+
+```text
+Agent Components
+├── Runtime
+│   ├── Principles  → .interface/agent/runtime/principles.md
+│   └── Profile     → .interface/agent/runtime/profile.yaml
+├── Settings
+│   ├── Principles  → .interface/agent/settings/principles.md
+│   └── Profile     → .interface/agent/settings/profile.yaml
+├── Context
+│   ├── Principles  → .interface/agent/context/principles.md
+│   └── Profile     → .interface/agent/context/profile.yaml
+├── Role
+│   ├── Principles  → .interface/agent/role/principles.md
+│   └── Profile     → .interface/agent/role/profile.yaml
+├── Agent
+│   ├── Principles  → .interface/agent/agent/principles.md
+│   └── Profile     → .interface/agent/agent/profile.yaml
+├── Coordination
+│   ├── Principles  → .interface/agent/coordination/principles.md
+│   └── Profile     → .interface/agent/coordination/profile.yaml
+├── Skill
+│   ├── Principles  → .interface/agent/skill/principles.md
+│   ├── Profile     → .interface/agent/skill/profile.yaml
+│   ├── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
+│   └── Files       → .interface/agent/skill/files/<declared-skill-stable-key>[.md | /]
+├── Command
+│   ├── Principles  → .interface/agent/command/principles.md
+│   └── Profile     → .interface/agent/command/profile.yaml
+├── Rule
+│   ├── Principles  → .interface/agent/rule/principles.md
+│   └── Profile     → .interface/agent/rule/profile.yaml
+├── Tool
+│   ├── Principles  → .interface/agent/tool/principles.md
+│   └── Profile     → .interface/agent/tool/profile.yaml
+├── Hook
+│   ├── Principles  → .interface/agent/hook/principles.md
+│   └── Profile     → .interface/agent/hook/profile.yaml
+├── Integration
+│   ├── Principles  → .interface/agent/integration/principles.md
+│   └── Profile     → .interface/agent/integration/profile.yaml
+├── Extension
+│   ├── Principles  → .interface/agent/extension/principles.md
+│   └── Profile     → .interface/agent/extension/profile.yaml
+├── Interaction
+│   ├── Principles  → .interface/agent/interaction/principles.md
+│   └── Profile     → .interface/agent/interaction/profile.yaml
+├── Permission
+│   ├── Principles  → .interface/agent/permission/principles.md
+│   └── Profile     → .interface/agent/permission/profile.yaml
+├── Session
+│   ├── Principles  → .interface/agent/session/principles.md
+│   └── Profile     → .interface/agent/session/profile.yaml
+├── Observability
+│   ├── Principles  → .interface/agent/observability/principles.md
+│   └── Profile     → .interface/agent/observability/profile.yaml
+└── Personality
+    ├── Principles  → .interface/agent/personality/principles.md
+    ├── Profile     → .interface/agent/personality/profile.yaml
+    └── Definitions → .interface/agent/personality/definitions/<personality>.md
+```
+
+The complete Agent Module is read exclusively during an explicit Agent Sync or Skill Installer invocation. Agent Sync first learns the selected Agent Native's own documentation, conventions, capabilities, and limitations, then reads every Module source and Interface-owned Skill Contract, and realizes each required Rule, Constructed Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. Skill Installer resolves any optional prepared Skill file by exact declared stable key: a matching prepared Markdown file supplies that Skill's preserved native instruction content and is materialized as a Prepared Skill, and a Skill under an external provider declaration is provisioned as an Installed Skill; a Skill with neither follows its Contract-based realization path through Agent Sync. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
+
+Each Agent Component below has its own Principles and Profile. Principles define the Component's mandatory philosophy, responsibilities, rules, and boundaries; Profiles define its current selections, resources, portable realization requirements, and default settings.
+
+### Runtime
+
+Runtime identity, provider, model, compatibility, and native capability mapping.
+
+- [Principles](runtime/principles.md)
+- [Profile](runtime/profile.yaml)
+
+### Settings
+
+Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation.
+
+- [Principles](settings/principles.md)
+- [Profile](settings/profile.yaml)
+
+### Context
+
+Persistent instructions, Understanding, Memory, imports, loading, and compaction.
+
+- [Principles](context/principles.md)
+- [Profile](context/profile.yaml)
+
+### Role
+
+Primary and specialized Agent Role contracts.
+
+- [Principles](role/principles.md)
+- [Profile](role/profile.yaml)
+
+### Agent
+
+The selected Agent Native and its General and Specialized Agent Instances.
+
+- [Principles](agent/principles.md)
+- [Profile](agent/profile.yaml)
+
+### Coordination
+
+Delegation, teams, tasks, messaging, concurrency, and worktree isolation.
+
+- [Principles](coordination/principles.md)
+- [Profile](coordination/profile.yaml)
+
+### Skill
+
+Reusable knowledge and workflows, including core, supporting, and contextual Skills.
+
+- [Principles](skill/principles.md)
+- [Profile](skill/profile.yaml)
+- [Contracts directory](skill/contracts/)
+- [Files directory](skill/files/)
+
+### Command
+
+Named and slash invocation entry points, arguments, aliases, and routing.
+
+- [Principles](command/principles.md)
+- [Profile](command/profile.yaml)
+
+### Rule
+
+Persistent global and scoped behavioral instructions.
+
+- [Principles](rule/principles.md)
+- [Profile](rule/profile.yaml)
+
+### Tool
+
+Atomic built-in and externally provided executable capabilities.
+
+- [Principles](tool/principles.md)
+- [Profile](tool/profile.yaml)
+
+### Hook
+
+Deterministic event-driven lifecycle automation.
+
+- [Principles](hook/principles.md)
+- [Profile](hook/profile.yaml)
+
+### Integration
+
+MCP, LSP, channels, application connectors, and external services.
+
+- [Principles](integration/principles.md)
+- [Profile](integration/profile.yaml)
+
+### Extension
+
+Plugins, marketplaces, capability packages, monitors, and extension lifecycle.
+
+- [Principles](extension/principles.md)
+- [Profile](extension/profile.yaml)
+
+### Interaction
+
+Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior.
+
+- [Principles](interaction/principles.md)
+- [Profile](interaction/profile.yaml)
+
+### Permission
+
+Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets.
+
+- [Principles](permission/principles.md)
+- [Profile](permission/profile.yaml)
+
+### Session
+
+Lifecycle, resume, history, background work, isolation, checkpoints, and termination.
+
+- [Principles](session/principles.md)
+- [Profile](session/profile.yaml)
+
+### Observability
+
+Validation, status, diagnostics, evidence, logs, telemetry, health, and usage.
+
+- [Principles](observability/principles.md)
+- [Profile](observability/profile.yaml)
+
+### Personality
+
+The personalities an Agent can take on: who it is during a kind of work, the Actions each performs, and the models each prefers in priority order.
+
+- [Principles](personality/principles.md)
+- [Profile](personality/profile.yaml)
+- [Definitions directory](personality/definitions/)
+
+Every Agent Component's Principles and Profile are authoritative for that Component only. A runtime artifact not declared in the owning Profile is an optional runtime capability; a required declaration not usable by the selected runtime is an Agent Profile gap.
 
 <br>
 

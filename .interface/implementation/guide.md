@@ -50,6 +50,119 @@ Implementation Components
 
 The first seven Components describe the software being built; Plan, Review, and State are operational Components that also own records in Config (`plan.yaml`, `review.yaml`, `state.yaml`) whose storage shape is defined by the matching Schema.
 
+The Interface file's own statement of the Implementation Module, moved here verbatim on 2026-09-17:
+
+The Implementation module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Logic, Presentation, Platform, Plan, Review, and State Components.
+
+
+```text
+Implementation Components
+├── Development
+│   ├── Principles  → .interface/implementation/development/principles.md
+│   ├── Preferences → .interface/implementation/development/preferences.yaml
+├── Model
+│   ├── Principles  → .interface/implementation/model/principles.md
+│   └── Preferences → .interface/implementation/model/preferences.yaml
+├── Database
+│   ├── Principles  → .interface/implementation/database/principles.md
+│   └── Preferences → .interface/implementation/database/preferences.yaml
+├── Logic
+│   ├── Principles  → .interface/implementation/logic/principles.md
+│   └── Preferences → .interface/implementation/logic/preferences.yaml
+├── API
+│   ├── Principles  → .interface/implementation/api/principles.md
+│   └── Preferences → .interface/implementation/api/preferences.yaml
+├── Presentation
+│   ├── Principles  → .interface/implementation/presentation/principles.md
+│   └── Preferences → .interface/implementation/presentation/preferences.yaml
+├── Platform
+│   ├── Principles  → .interface/implementation/platform/principles.md
+│   └── Preferences → .interface/implementation/platform/preferences.yaml
+├── Plan
+│   ├── Principles  → .interface/implementation/plan/principles.md
+│   └── Preferences → .interface/implementation/plan/preferences.yaml
+├── Review
+│   ├── Principles  → .interface/implementation/review/principles.md
+│   └── Preferences → .interface/implementation/review/preferences.yaml
+└── State
+    ├── Principles  → .interface/implementation/state/principles.md
+    └── Preferences → .interface/implementation/state/preferences.yaml
+```
+
+Each Component below has its own Principles and Preferences. Principles are the authoritative expression of the Component's philosophy and view; Preferences contain its preferred choices and default settings. Follow the links to open the authoritative file for that Component.
+
+### Development
+
+Defines the layered architecture and how independent layers are composed into one system.
+
+- [Principles](development/principles.md)
+- [Preferences](development/preferences.yaml)
+
+### Model
+
+Describes the domain entities and provides one shared logical meaning for domain data.
+
+- [Principles](model/principles.md)
+- [Preferences](model/preferences.yaml)
+
+### Database
+
+Owns the persistence layer and publishes one generic interface for reading and writing.
+
+- [Principles](database/principles.md)
+- [Preferences](database/preferences.yaml)
+
+### Logic
+
+Implements application Behaviour as reusable Logic.
+
+- [Principles](logic/principles.md)
+- [Preferences](logic/preferences.yaml)
+
+### API
+
+Runs the external API process and publishes the application's public contract through Logic.
+
+- [Principles](api/principles.md)
+- [Preferences](api/preferences.yaml)
+
+### Presentation
+
+Presents the application to users and consumes the capabilities Logic publishes.
+
+- [Principles](presentation/principles.md)
+- [Preferences](presentation/preferences.yaml)
+
+### Platform
+
+Prepares a completed Target for operation and brings it online.
+
+- [Principles](platform/principles.md)
+- [Preferences](platform/preferences.yaml)
+
+### Plan
+
+Turns phases into bounded, verifiable activities organized as Plans, Groups, and Tasks.
+
+- [Principles](plan/principles.md)
+- [Preferences](plan/preferences.yaml)
+
+### Review
+
+Establishes whether implemented work satisfies what was asked, and records what it found.
+
+- [Principles](review/principles.md)
+- [Preferences](review/preferences.yaml)
+
+### State
+
+Records active position, aggregate phase progress, implementation, launch, History, Blockers, and Open Questions.
+
+- [Principles](state/principles.md)
+- [Preferences](state/preferences.yaml)
+
+The Component's own Principles remain the authority: when this summary and a Component's Principles disagree, the Principles are correct.
+
 <br>
 
 ## How the Implementation is used
