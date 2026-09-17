@@ -229,7 +229,7 @@ responsibility: Explains the Implementation Module and maps every Component's Pr
 <!-------------------------- Agent -->
 ### Agent
 
-The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Sync. Its philosophy, Component structure, and every Component's files are in the [Agent Module Guide](../agent/guide.md). Only Agent Sync and Skill Installer follow this route; every other role treats the Agent Module as closed and uses the synchronized Runtime realization.
+The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Sync; only Agent Sync and Skill Installer enter it, and every other role uses the synchronized Runtime realization. Its philosophy, Component structure, and every Component's files are in the [Agent Module Guide](../agent/guide.md).
 
 ```yaml
 name: Agent Module Guide

@@ -247,6 +247,8 @@ Every decision about the Agent is first written into the Agent Module, in the Co
 
 There is exactly one exception. The native Agent Sync adapter must exist before Agent Sync can run at all, so the first time — and only the first time — it is written by hand from its Contract. After that bootstrap, Agent Sync updates its own adapter and every other native artifact; no further manual native change is made.
 
+Agent Sync leaves two traces in the Agent Native so that later runs and later readers can tell where synchronization stands: every realized Skill carries a fingerprint of the Module source it was built from, and one project-scoped synchronization record lists every declaration with its source, fingerprint, native artifact, status, mode, and time. A changed fingerprint proves that a realization is stale; an unchanged one never proves that it conforms — only a full comparison of source and realization does. Where those traces live and how they are written is a native detail owned by the Agent Sync adapter, not a Module declaration.
+
 Only Agent Sync and Skill Installer read this Module. Every other Skill, Agent Instance, coordinator, and startup routine consumes the last synchronized native realization and never enters `.interface/agent/`.
 
 <br>
@@ -276,11 +278,26 @@ It is a rule between the Human and the Agent, and it can also be a rule inside t
 **What is the difference between Principles and Profile?**
 Principles express the view and philosophy of a Component and say nothing about technology, packages, or the kind of Agent. Profiles hold supporting parameters, including helpers for a specific Agent Native such as Claude, Copilot, or Codex; they are in effect preferences. The Human noted that the Implementation Module calls the equivalent file `preferences.yaml` and that the name `profile.yaml` is historical.
 
-**Are the sixteen Components required for every Agent?**
+**Are the sixteen Components required for every Agent?** *(sixteen at the time of the answer; Personality became the seventeenth later the same day)*
 No. They are the structure that was sufficient to hold every view the Human had. Agent Sync places the Understanding into whatever the selected Agent Native offers; the sixteen are a default, not an obligation on every Native.
 
 **What does "Agent Sync succeeded" mean?**
 That Agent Sync, from a precise Understanding of the Module, transferred everything into the Native's configuration and mechanisms as well as that Native allows — the Skills exist there, the concept and view reached it — and that in the end the Agent works the way the Human wants and has understood how it must be configured.
+
+<br>
+
+## Decisions taken
+
+Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then written into the Module in the Component that owns it; the Agent Native was changed only through Agent Sync, except for the one-time hand bootstrap of the Agent Sync adapter.
+
+- The `agent-sync` Skill Contract keeps the thirteen sections of the Skill Contract Schema in order; its former separate Understanding section was merged into Required Understanding.
+- Prepared and Installed Skills belong to Skill Installer; Agent Sync realizes only Constructed Skills. The Interface file was aligned to say so.
+- Every realized Skill carries a fingerprint of its source; a changed fingerprint proves staleness and an unchanged one never proves conformance (Agent Skill Principle 3, `agent-sync` Contract). The Agent Sync adapter may own a bounded helper that hashes, stamps, and writes the synchronization record but never judges conformance.
+- Agent Sync records every run in one project-scoped synchronization record (`agent-sync` Contract, Outputs and Authority).
+- The Agent Sync adapter carries each rule once; duplication inside the adapter is removed on the next `self` run.
+- Rejected: a runtime-identity check in Agent Sync's Stopping Conditions, and declaring Codex as a second Runtime option now — both left for later.
+- Personality is a Component of this Module (not of Foundation, not inside Runtime); it absorbs Action (what a personality does) and Route (which models it prefers, in order).
+- Hook Profile follows Permission on who may read the Module: the `agent-sync-read-grant` matcher and responsibility name both `agent-sync` and `skill-installer`. Confirmed; applied when the current review round is complete.
 
 <br>
 
@@ -289,11 +306,12 @@ That Agent Sync, from a precise Understanding of the Module, transferred everyth
 Recorded on 2026-09-17 from the same review. Each is a Human decision that has not yet been taken; nothing here changes the Module until the Human decides.
 
 - The boundary between Personality and Role: both name bounded execution identities (Role: `primary-execution`, `interface-reader`; Personality: `developer`, `planner`, `analyst`, `reviewer`, `architect`). Whether they are one concept or two is undecided.
+- Personality, carried over from its first draft under Foundation: the full content and common structure of a definition file; whether every Personality pairs with one Action and whether the Interface-owned Skills (Planning, Developing, Reviewing, …) are the executors of Actions or something separate; the exact shape of a `models` entry (model identity, provider, fallback rule, conditions); whether routing is by Personality alone or by Personality and Action; and how Personality Model Preference relates to `runtime/profile.yaml` (`models`, `fallback_models`, `effort_levels`), which is currently empty. Who reads personalities is settled by placement: only Agent Sync, which realizes them in the Native.
 - Whether `profile.yaml` keeps its name or becomes `preferences.yaml` to match the Implementation Module.
 - Whether the third success condition — observed behavior — should become an explicit obligation in Agent Observability Principles or in the `agent-sync` Verification, with a stated form of evidence.
 - Whether an explanatory Agent Rule about git commit and push should exist alongside the enforcing Permission `ask` rules.
 - Native names that leaked into Profiles: `hook/profile.yaml` (event names, tool-name matchers, the `lifecycle_events` list), `agent/profile.yaml` (`allowed_tools` of `interface-reader`), and `settings/profile.yaml` (`source_precedence`). Either make them portable or move them under a `native.<agent-native>` block.
-- Hook and Permission disagree about Skill Installer: Permission Principle 3 grants Agent Module reads to both `agent-sync` and `skill-installer`; the `agent-sync-read-grant` Hook declaration names only `agent-sync`.
+- Hook and Permission disagree about Skill Installer: Permission Principle 3 grants Agent Module reads to both `agent-sync` and `skill-installer`; the `agent-sync-read-grant` Hook declaration names only `agent-sync`. *Decided 2026-09-17 (see Decisions taken); pending application.*
 - Permission Principle 3's At a Glance line names only `agent-sync`, while the Rule names both `agent-sync` and `skill-installer`.
 - Output Style is selected in two places: `interaction/profile.yaml` selects `ADHD` as required, and `extension/profile.yaml` enables the `adhd-output-style` plugin that imposes its own style. One owner must be chosen.
 - `context/profile.yaml` `target_precedence` does not state that the Technical Definition takes precedence on conflict, as `interface.md` does.
