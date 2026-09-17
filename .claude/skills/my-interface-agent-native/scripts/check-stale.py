@@ -21,6 +21,11 @@ A changed fingerprint proves staleness. An unchanged fingerprint never proves
 conformance; only a full section-by-section comparison does. This script
 therefore never emits a status on its own: the status it records is the one
 Agent Sync passes in.
+
+`--mode` is the resolved Agent Native mode of the run: 1 (sync self) or 2 (sync
+component). Mode 3 (install) writes no record entry. `--supersedes` retires the
+record entries of declarations the Module removed, renamed, or merged; it acts
+only on the declarations Agent Sync names, never by inference.
 """
 
 from __future__ import annotations
@@ -35,7 +40,7 @@ from pathlib import Path
 import yaml
 
 RECORD = Path(".claude/interface-sync.yaml")
-SKILL_PROFILE = Path(".interface/agent/skill/preferences.yaml")
+SKILL_PREFERENCES = Path(".interface/agent/skill/preferences.yaml")
 SKILLS_DIR = Path(".claude/skills")
 SKILL_MECHANISM = "Claude Code project Skill"
 
@@ -98,12 +103,12 @@ def write_metadata(path: Path, meta: dict) -> None:
 
 # ---------------------------------------------------------------- declarations
 def constructed_skills(root: Path) -> list[dict]:
-    """Every Skill the Human-owned Skill Profile declares with a Contract and no prepared file.
+    """Every Skill the Human-owned Skill Preferences declare with a Contract and no prepared file.
 
-    Groups are discovered from the Profile on every call, never from a fixed list.
+    Groups are discovered from the Preferences on every call, never from a fixed list.
     """
-    prof = yaml.safe_load((root / SKILL_PROFILE).read_text())
-    settings = prof["content"]["settings"]
+    prefs = yaml.safe_load((root / SKILL_PREFERENCES).read_text())
+    settings = prefs["content"]["settings"]
     files_dir = root / (settings.get("skill_files") or {}).get("directory", "")
     found = []
     for group in (settings.get("project_skills") or {}).values():
@@ -113,7 +118,7 @@ def constructed_skills(root: Path) -> list[dict]:
             if not isinstance(decl, dict) or "contract" not in decl or "name" not in decl:
                 continue
             if (files_dir / f"{key}.md").is_file() or (files_dir / key).is_dir():
-                print(f"skip {decl['name']}: Prepared (owned by Skill Installer)")
+                print(f"skip {decl['name']}: Prepared (owned by mode 3, install)")
                 continue
             found.append({"key": key, "name": decl["name"], "contract": decl["contract"]})
     return found
@@ -129,11 +134,14 @@ def entry_sources(entry: dict) -> list[dict]:
     return []
 
 
-def write_record(root: Path, entries: list[dict], mode: str, ts: str, result: str) -> None:
+def write_record(root: Path, entries: list[dict], mode: str, ts: str, result: str, supersedes: list[str]) -> None:
     rec_path = root / RECORD
     previous = (yaml.safe_load(rec_path.read_text()) if rec_path.exists() else {}) or {}
     replaced = {e["declaration"] for e in entries}
-    kept = [e for e in previous.get("declarations", []) if e["declaration"] not in replaced]
+    recorded = {e["declaration"] for e in previous.get("declarations", [])}
+    for name in supersedes:
+        print(f"superseded {name}" if name in recorded else f"supersedes: no recorded entry for {name}")
+    kept = [e for e in previous.get("declarations", []) if e["declaration"] not in replaced | set(supersedes)]
     last_run = {"mode": mode, "at": ts, "result": result or (previous.get("last_run") or {}).get("result", "")}
     record = {
         "meta": {
@@ -185,7 +193,7 @@ def cmd_check(root: Path) -> int:
     return 1 if bad else 0
 
 
-def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: list[str]) -> int:
+def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: list[str], supersedes: list[str]) -> int:
     ts = now()
     entries = []
     for d in constructed_skills(root):
@@ -209,7 +217,7 @@ def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: 
             **({"note": note} if note else {}),
         })
         print(f"stamped {art.relative_to(root)}")
-    write_record(root, entries, mode, ts, result)
+    write_record(root, entries, mode, ts, result, supersedes)
     return 0
 
 
@@ -231,7 +239,7 @@ def cmd_record(root: Path, args: argparse.Namespace) -> int:
         "at": ts,
         **({"note": args.note} if args.note else {}),
     }
-    write_record(root, [entry], args.mode, ts, args.result)
+    write_record(root, [entry], args.mode, ts, args.result, args.supersedes)
     return 0
 
 
@@ -242,10 +250,11 @@ def main() -> int:
     st = sub.add_parser("stamp")
     rc = sub.add_parser("record")
     for p in (st, rc):
-        p.add_argument("--mode", required=True, choices=["self", "module"])
+        p.add_argument("--mode", required=True, choices=["1", "2"], help="resolved Agent Native mode: 1 sync self, 2 sync component")
         p.add_argument("--status", required=True)
         p.add_argument("--note", default="")
         p.add_argument("--result", default="")
+        p.add_argument("--supersedes", nargs="*", default=[], help="recorded declarations the Module removed, renamed, or merged; their entries leave the record")
     st.add_argument("--only", nargs="*", default=[], help="native skill names to stamp; default every Constructed Skill")
     rc.add_argument("--declaration", required=True, help="Module declaration, e.g. agent/rule/preferences.yaml#project_rules.interface-bootstrap")
     rc.add_argument("--source", nargs="+", required=True, help="every Module source read for this declaration")
@@ -255,7 +264,7 @@ def main() -> int:
     args = ap.parse_args()
     root = project_root()
     if args.cmd == "stamp":
-        return cmd_stamp(root, args.mode, args.status, args.note, args.result, args.only)
+        return cmd_stamp(root, args.mode, args.status, args.note, args.result, args.only, args.supersedes)
     if args.cmd == "record":
         return cmd_record(root, args)
     return cmd_check(root)

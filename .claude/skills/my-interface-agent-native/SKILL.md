@@ -6,34 +6,38 @@ arguments: [mode]
 disable-model-invocation: true
 metadata:
   contract: ".interface/agent/skill/contracts/agent-native.md"
+  contract_sha256: "sha256:5da18d5ae8b9f15b463db7970f92599ea7416b6091bfcff6c53b0fbfbd4cc45d"
+  synced_at: "2026-09-17T16:27:06Z"
 ---
 
 # Agent Native — sync self · sync component · install
 
-This file is the Claude Code adapter for the portable `agent-native` Skill Contract and the sole Runtime artifact permitted to read Agent Module sources, only within the prompt created by the Human's direct invocation. Resolve and read that Contract through the Agent Skill Preferences after invocation; the Contract is authoritative for behavior and this adapter supplies only Claude Code execution details. It never depends on the prior presence of another vendor's adapter. In Interface prose, *Agent Native* still means the core operational Agent supplied by the Runtime — the one running this Skill; `agent-native` is only this Skill's name.
+This file is the Claude Code adapter for the portable `agent-native` Skill Contract and the sole Runtime artifact permitted to read Agent Module sources, only within the prompt created by the Human's direct invocation. Resolve and read that Contract through the Agent Skill Preferences after invocation; the Contract is authoritative for behavior and this adapter supplies only Claude Code execution details. It never depends on the prior presence of another vendor's adapter. In Interface prose, *Agent Native* still means the core operational Agent supplied by the Runtime — the one running this Skill; `agent-native` is only this Skill's name. Modes 1 and 2 are **Agent Sync**; mode 3 is **install**. Every rule below is stated once and applies to every mode unless it names one.
 
 ## Trigger
 
-Activate only on direct Human invocation of `/my-interface-agent-native`, while setting up, repairing, migrating, updating, or auditing an Agent Runtime — or, in mode 3, when the Human requests capability discovery or a declared Prepared or Installed capability is absent from the Runtime. No Agent Native, Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, or model-generated action may invoke, chain, trigger, or simulate this Skill. A Human request to change Agent Module declarations authorizes only that source change; it is not an invocation of this Skill. Every Agent Module change is dormant desired state until this explicit synchronization completes.
+Activate only on direct Human invocation of `/my-interface-agent-native`, while setting up, repairing, migrating, updating, or auditing an Agent Runtime — or, in mode 3, when the Human requests capability discovery, a declared Prepared or Installed capability is not present and usable in the Runtime, or a required capability is absent from the synchronized Runtime. No Agent Native, Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, or model-generated action may invoke, chain, trigger, or simulate this Skill. A Human request to change Agent Module declarations authorizes only that source change; it is not an invocation of this Skill. Every Agent Module change is dormant desired state until this explicit synchronization completes.
 
 ## Modes
 
 The invoked mode arrives as `$mode`. Resolve it before any mutation; accept exactly one mode, and no capability selection in modes 1 and 2.
 
-- `1` (sync self) — run the Realization procedure below on this adapter only — this file and the helper beside it — against the current `agent-native` Contract. Reconcile nothing else, and never report the complete Module as synchronized from a mode 1 run.
+- `1` (sync self) — run the Realization procedure below on this adapter only — this file and the helper beside it — against the current `agent-native` Contract; its steps 5 and 6 are this mode's Verification phase. Reconcile nothing else, and never report the complete Module as synchronized from a mode 1 run.
 - `2` (sync component) — first re-read the current `agent-native` Contract and this file in full and compare them; if they differ, mutate nothing, report the exact difference, and stop with the instruction to run `/my-interface-agent-native 1` first. Otherwise run the Realization procedure on every other declaration, then Verification.
-- `3` (install) — run the Install procedure at the end of this file; it reconciles no Constructed Skill and never writes this adapter.
+- `3` (install) — run the Install procedure at the end of this file; it reconciles no Constructed Skill, never writes this adapter, and never repairs drift in an artifact realized from a portable Contract.
 - no mode — mutate nothing; report all three modes and whether this adapter still matches its current Contract.
 
 A running instance cannot load a definition it did not start with, so never claim to have executed a Contract this adapter does not currently implement.
 
 ## Progress narration
 
-Print one short line to the Human at the start of each phase — **Understanding**, **Comparison**, **Reconciliation**, **Verification** — in every mode and again at the start of every repeated cycle. Never hold announcements for the final report.
+Print one short line to the Human at the start of each phase — **Understanding**, **Comparison**, **Reconciliation**, **Verification** — in modes 1 and 2 alike and again at the start of every repeated cycle. Never hold announcements for the final report.
 
 ## Understanding
 
 Establish Interface Understanding from `.interface/interface.md` and the Foundation section files it links, then read the complete Agent Module beginning with the Agent Module Guide at `.interface/agent/guide.md`, which carries the Agent Structure, and continuing through every current source that Structure names: each Component's `principles.md` and `preferences.yaml`, every Skill Contract under `skill/contracts/`, every Personality definition under `personality/definitions/`, and the prepared-file directory `skill/files/` when present. Discover every declaration, resource, and explicit empty category dynamically on every invocation — never from a hardcoded list or one remembered by the Contract, this adapter, or an earlier run. Consume the Agent Preferences, native project artifacts, and runtime-reported activation state. A matched prepared file only identifies that Skill as Prepared rather than Constructed; an unmatched one is reported and never installed by inference. Treat Principles as mandatory contracts and Preferences as Human-owned desired state; never modify either. Use no Target Understanding (mode 3 excepted) and no other Interface Module.
+
+Claude Code binds the Agent Module read grant to this exact expanded prompt: a `UserPromptExpansion` hook writes a per-prompt marker and the `PreToolUse` boundary guard honors only that marker. The grant does not transfer, so perform every Agent Module read in this prompt yourself and never delegate one to a subagent. The same guard fails closed on any Bash command that names `.interface` together with a mutation verb or an output redirection (`>`, `>>`, including `2>/dev/null`); keep shell commands that name Interface paths free of both, and use the Read tool for Interface sources.
 
 Before choosing any realization, establish Native Runtime Understanding from Claude Code's own documentation: project Skills (`.claude/skills/<name>/SKILL.md`, frontmatter, `$name` argument substitution, `disable-model-invocation`, `user-invocable`), Rules (`.claude/rules/*.md`), agents (`.claude/agents/*.md`), `settings.json` (permissions allow/ask/deny, hooks by event and matcher, enabled plugins and marketplaces, output style), MCP declarations, output-style files, and what each of these loads only at session start. Never require a project-side realization map or predeclared native path, and never infer a destination from a familiar layout. When a declaration carries a `settings.native.claude` block, use it as an aid that narrows discovery — a suggested mechanism, event, matcher, or probe — never as an authority over Claude Code's own mechanism; ignore blocks declared for other Natives; fall back to Claude Code's documentation when no block exists or the block conflicts with the actual mechanism. If Claude Code cannot realize a required declaration exactly, realize it through the nearest Claude Code mechanism, classify it `approximated` with the exact difference stated, and continue; classify it `blocked` only when no Claude Code equivalent exists or a stopping condition applies. The run never stops because one declaration is approximated or blocked.
 
@@ -42,7 +46,7 @@ Before choosing any realization, establish Native Runtime Understanding from Cla
 This is the only permitted way to reach a per-declaration outcome. Apply it to one declaration at a time, none exempted, no shortcut for one that looks current:
 
 1. Read every Agent Module source the declaration owns, in full. For a Skill that is its Contract at `.interface/agent/skill/contracts/<name>.md`; for a Rule, Agent Instance, guarantee, Extension, Integration, or setting it is the owning `preferences.yaml` entry and the Principles that govern it.
-2. Read the installed native artifact in full. For a Skill that is `.claude/skills/<native-name>/SKILL.md`; for a Rule `.claude/rules/<name>.md`; for an Agent Instance `.claude/agents/<name>.md`; for a guarantee, permission, plugin, or output style the relevant part of `.claude/settings.json` and any hook script. If none exists, record `create` and go to step 4.
+2. Read the installed native artifact in full. For a Skill that is `.claude/skills/<native-name>/SKILL.md` and any helper beside it; for a Rule `.claude/rules/<name>.md`; for an Agent Instance `.claude/agents/<name>.md`; for a guarantee, permission, plugin, or output style the relevant part of `.claude/settings.json` and any hook script. If none exists, record `create` and go to step 4.
 3. Compare section by section and record every difference of three kinds: the artifact instructs something the declaration no longer requires; omits something it requires; or states a rule it has changed.
 4. No difference → classify `already synchronized` and go to step 7. Any difference → rewrite the whole artifact so every section carries what the declaration currently requires, keeping the frontmatter or keys Claude Code needs and the native detail the declaration leaves to the adapter; never patch around a difference and never invent content for an empty category.
 5. Re-read the written artifact and prove each recorded difference is gone.
@@ -50,7 +54,7 @@ This is the only permitted way to reach a per-declaration outcome. Apply it to o
 7. Record the fingerprint of every source read for this declaration — in the artifact's frontmatter `metadata` when it has one, otherwise in the synchronization record only (see Synchronization record).
 8. Record the mapping row: sources read, artifact path, Native mechanism, verification gate, and what re-reading proved.
 
-Claim `no change` or `already synchronized` only from this comparison with both files read in full. Presence, frontmatter, modification time, apparent recency, and the absence of a remembered edit are never evidence of conformance. A changed source fingerprint proves staleness and forces step 4; an unchanged one proves nothing. Recorded fingerprints may be consulted first so the report names provably stale artifacts; they never skip, defer, or shorten any declaration's procedure. A mode 1 run that found a difference and left this file unwritten has failed. A run that leaves any declaration unread, or classifies one unchanged without this comparison, reports `Agent Module not fully synchronized` and names every unexamined declaration.
+Claim `no change` or `already synchronized` only from this comparison with both files read in full. Presence, frontmatter, modification time, apparent recency, and the absence of a remembered edit are never evidence of conformance. A changed source fingerprint proves staleness and forces step 4; an unchanged one proves nothing. Recorded fingerprints may be consulted first so the report names provably stale artifacts; they never skip, defer, or shorten any declaration's procedure. A mode 1 run that found a difference and left this adapter unwritten has failed. A run that leaves any declaration unread, or classifies one unchanged without this comparison, reports `Agent Module not fully synchronized` and names every unexamined declaration.
 
 ## Module reconciliation (mode 2)
 
@@ -68,19 +72,29 @@ When this pass finds a required item unrealized or unverified for a reason other
 
 ## Synchronization record
 
-`scripts/check-stale.py` beside this file is the bounded fingerprint helper: it hashes sources, records fingerprints in frontmatter `metadata` (`stamp`, for Skills) or in the record only (`record`, for every other declaration), and reads or writes `.claude/interface-sync.yaml`. It never compares instruction content and never decides conformance. Step 7 of the Realization procedure is `python3 .claude/skills/my-interface-agent-native/scripts/check-stale.py stamp --mode <mode> --status <status this run proved for it> --note "<evidence>" --only <native-name>` for a Skill, or `... record --mode <mode> --declaration <source#key> --artifact <path> --status <status> --note "<evidence>"` for anything else, so the record holds one entry per declaration: source, fingerprint, artifact, status, mode, and time. The last helper call of a run also passes `--result "<overall result>"`. `check` re-hashes the sources and reports provable staleness; it may run first so the report names stale artifacts, never as a substitute for, or a shortcut through, the Realization procedure.
+`scripts/check-stale.py` beside this file is the bounded fingerprint helper: it hashes sources, records fingerprints in frontmatter `metadata` (`stamp`, for Skills) or in the record only (`record`, for every other declaration), and reads or writes `.claude/interface-sync.yaml`. It never compares instruction content and never decides conformance. The record holds one entry per examined declaration — sources, fingerprints, realization, artifact, status, resolved mode (`1` or `2`), and time — so a later run can prove idempotency and a non-Sync consumer can learn the last synchronized state without entering the Agent Module. Mode 3 writes no record entry.
+
+Step 7 of the Realization procedure is, for a Skill:
+
+`python3 .claude/skills/my-interface-agent-native/scripts/check-stale.py stamp --mode <1|2> --status "<status this run proved>" --note "<evidence>" --only <native-name>`
+
+and for anything else:
+
+`python3 .claude/skills/my-interface-agent-native/scripts/check-stale.py record --mode <1|2> --declaration <source#key> --source <every Module source read> --realized-as "<Claude Code mechanism, or none>" [--artifact <path>] [--provider <identity>] --status "<status>" --note "<evidence>"`
+
+The last helper call of a run also passes `--result "<overall result>"`. When the Module has removed, renamed, or merged a declaration, pass `--supersedes <old declaration> [...]` on the call that records its successor so the retired entry leaves the record; the helper never retires an entry by inference. `check` re-hashes the sources and reports provable staleness; it may run first so the report names stale artifacts, never as a substitute for, or a shortcut through, the Realization procedure.
 
 ## Stopping conditions
 
-Block the affected item — and only that item — on an incompatible Runtime, ambiguous ownership, unsupported project scope, destructive conflict, missing provider, or unavailable authority, naming the exact reason. Mark a pending restart, authentication, or trust prompt `activation required`. Independent items continue when their dependencies permit. Stop a mode 2 run before any mutation when this adapter no longer matches its Contract, and report that a mode 1 run is required first.
+Block the affected item — and only that item — on an incompatible Runtime, ambiguous ownership, unsupported project scope, destructive conflict, missing provider, or unavailable authority, naming the exact reason. Mark a pending restart, authentication, or trust prompt `activation required`. Independent items continue when their dependencies permit. Stop a mode 2 run before any mutation when this adapter no longer matches its Contract, and report that a mode 1 run is required first. In mode 3, stop before provisioning without explicit candidate approval; block a candidate that is incompatible, untrusted, a duplicate, unavailable at project scope, or would require unauthorized access; and pause for Human trust, authentication, or another external activation step.
 
 ## Boundaries
 
-Write only to a project-scoped destination that Claude Code documents for the realized declaration and that the owning declaration authorizes, never one inferred from a familiar directory layout; `.claude/interface-sync.yaml`, the Skill metadata stamp, and the helper are such artifacts owned by this Skill. Never modify Interface sources, Config, Target code, application dependencies, user- or machine-scoped configuration, credentials, or unrelated Human work. In modes 1 and 2 never discover or adopt a new marketplace, plugin, Skill, MCP server, Agent, or capability; when the Module lacks a needed choice, report the gap and instruct the Human to declare it and run `/my-interface-agent-native 3`. A pending restart, authentication, trust prompt, missing provider, or unavailable runtime is `activation required` or `blocked`, never success.
+Write only to a project-scoped destination that Claude Code documents for the realized declaration and that the owning declaration authorizes, never one inferred from a familiar directory layout; `.claude/interface-sync.yaml`, the Skill metadata stamp, and the helper are such artifacts owned by this Skill. Never modify Interface sources, Agent Module sources, Config, Target code, architecture, manifests, lockfiles, application or runtime dependencies, user- or machine-scoped configuration, credentials, or unrelated Human work, and never place a credential or token in a repository-tracked declaration. In modes 1 and 2 never discover or adopt a new marketplace, plugin, Skill, MCP server, Agent, or capability; when the Module lacks a needed choice, report the gap and instruct the Human to declare it and run `/my-interface-agent-native 3`. In mode 3 perform only Agent-capability discovery, Prepared and Installed materialization declared by the Module, and approved project-scoped installation of undeclared needs; perform no Interface Operation, remove no compatible capability, and install no duplicate. A pending restart, authentication, trust prompt, missing provider, or unavailable runtime is `activation required` or `blocked`, never success.
 
 ## Report (modes 1 and 2)
 
-State the resolved mode in every report. Whenever this run wrote any native artifact — a mode 1 rewrite of this file or any `create`, `update`, `install`, or `enable` in mode 2 — classify each written artifact `activation required` and place this notice once, prominently, visually set apart from the surrounding text as a box, outside the table, even when everything else succeeded:
+State the resolved mode in every report. Whenever this run wrote any native artifact — a mode 1 rewrite of this adapter or any `create`, `update`, `install`, or `enable` in mode 2 — classify each written artifact `activation required` and place this notice once, prominently, visually set apart from the surrounding text as a box, outside the table, even when everything else succeeded:
 
 > ⚠️ **Restart Claude Code before relying on this.** This session is still running the previous definition of every native artifact this run wrote — Skills, Rules, settings, hooks, agents, and enabled capabilities alike. Fully exit this Claude Code session and start a new one — reopening or continuing this conversation is not enough. Do this before invoking `/my-interface-agent-native` again or trusting any rewritten artifact's behavior.
 
@@ -101,31 +115,17 @@ Open a mode 2 report with one mapping table, one row per declaration in reconcil
 
 ## Mode 3 — install
 
-This mode is the former `my-interface-skill-installer` adapter, merged here on 2026-09-17 and kept whole. It runs only when `$mode` is `3`, reads the Agent Module through the same grant as the sync modes, and never reconciles a Constructed Skill or touches this adapter.
+This procedure runs only when `$mode` is `3`, under the Trigger, Stopping conditions, and Boundaries above and the same read grant as the sync modes. It materializes every capability the Agent Module declares as Prepared or Installed, and separately discovers and provisions additional Agent capabilities the current Target could use — always through an explicit, auditable Human decision. A capability is a Skill, plugin, MCP integration, agent, or any other provider-supplied extension type Claude Code supports. It equips the Agent; it never installs application runtime dependencies or develops the Target. It transfers a declared Prepared capability's content into the Runtime unchanged, provisions a declared Installed capability through its owning provider declaration, and never materializes a Constructed capability.
 
-This file is the self-contained Claude Code realization of the portable `agent-native` (mode 3) contract synchronized by Agent Sync. Together with Agent Sync, it is one of the two Runtime exceptions permitted to read Agent Module sources, and only strictly within the exact prompt created by this Skill's own direct Human invocation. Follow this adapter and synchronized Runtime rules.
-
-### Role
-
-Materialize every capability the Agent Module declares as Prepared or Installed, and separately discover and provision additional Agent capabilities the current Target could use — always through an explicit, auditable Human decision.
-
-This operation may consider Skills, plugins, MCP integrations, agents, or another extension type supported by the active Agent environment. It equips the Agent; it does not install application runtime dependencies or develop the Target. Agent Sync builds only Constructed Skills — those defined completely by a portable Skill Contract — and never materializes a Prepared or Installed capability. This Skill owns both of those kinds instead: it transfers a declared Prepared capability's content into the Runtime unchanged, and it provisions a declared Installed capability through its owning provider declaration. It also discovers and, after approval, provisions capability needs the Module does not yet declare.
-
-Read the shared Agent Interface rules at the start of the operation and follow them throughout, including their project-scope requirement.
-
-### Trigger
-
-Activate only through explicit Human invocation of `/my-interface-agent-native 3` — when the Human requests capability discovery, when a capability the Agent Module declares as Prepared or Installed is not present and usable in the Runtime, or when a required capability is absent from the synchronized Runtime. No Agent Native, Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, or model-generated action may invoke, chain, trigger, or simulate this Skill.
-
-### Workflow
+Read the synchronized Agent Interface rules under `.claude/rules/` at the start of the operation and follow them throughout, including their project-scope requirement.
 
 ### Understand
 
 Establish Interface Understanding from the canonical Interface document, then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Read every applicable Implementation Principle and Preference together with synchronized Runtime capabilities and rules, including selected defaults and applicable alternatives. Use dependency manifests, lockfiles, runtime-version files, existing implementation, and installed Agent capabilities as supporting evidence.
 
-Read the complete Agent Module — every Component's Principles and Preferences, every Skill Contract, and the prepared-file directory at `.interface/agent/skill/files/` — so every declared capability and its Capability Realization Kind (Constructed, Prepared, or Installed) is known. This read is authorized only inside this Skill's own direct Human invocation and is never carried into, or repeated from, another operation. Never modify an Agent Module source: a candidate that should become part of the portable Agent definition is reported for Human declaration rather than written here, and repairing drift in a Rule, Skill, or other Runtime artifact realized from a Skill Contract remains Agent Sync's job alone.
+Read the complete Agent Module as the Understanding section above describes, so every declared capability and its Capability Realization Kind (Constructed, Prepared, or Installed) is known. This read is never carried into, or repeated from, another operation. A candidate that should become part of the portable Agent definition is reported for Human declaration rather than written anywhere.
 
-Derive undeclared capability needs from current evidence on every run. A technology, framework, platform, protocol, service, data source, development activity, or preferred default may indicate that a relevant Agent capability exists. Do not keep a hardcoded technology or capability list in this Skill.
+Derive undeclared capability needs from current evidence on every run. A technology, framework, platform, protocol, service, data source, development activity, or preferred default may indicate that a relevant Agent capability exists. Keep no hardcoded technology, vendor, provider-command, or capability list: discover current provider commands and catalogs from Claude Code's own runtime and the declared provider mappings on every run.
 
 ### Identify
 
@@ -141,7 +141,7 @@ Every declared Prepared or Installed capability in the Agent Skill Preferences i
 For each identified item:
 
 1. Check whether an adequate capability is already available to the Agent, matching a declared name against the capability's own name within the Runtime's namespaced identifier rather than requiring an exact string match, so an already-present capability is recognized instead of provisioned again.
-2. For a declared Prepared capability, locate its exact matching file or directory under `.interface/agent/skill/files/` by the declared Skill's exact stable key. For a declared Installed capability, resolve its owning provider declaration and any per-Agent-Native identity it names.
+2. For a declared Prepared capability, locate its exact matching file or directory under `.interface/agent/skill/files/` by the declared Skill's exact stable key. For a declared Installed capability, resolve its owning provider declaration and any `native.claude` identity it names.
 3. After the project's packages are installed, use the skill-provisioning mechanism the applicable Language Item declares when one exists, so capabilities bundled by installed packages become discoverable. The absence of a declared mechanism never means none exists, and a declared mechanism never replaces the environment's own current capability.
 4. For an undeclared need, search every relevant discovery route supported by the current environment for Skills, plugins, MCP integrations, agents, or equivalent extensions.
 5. Verify each candidate by its declared purpose, source, included components, permissions, dependencies, installation scope, and compatibility with the detected technology and version.
@@ -149,7 +149,7 @@ For each identified item:
 7. Reject duplicates and options that cannot satisfy the shared project-scope rule.
 8. Record a negative result only after the applicable discovery routes have been checked. State where the search was performed instead of claiming broadly that no capability exists.
 
-Discovery is read-only. Adding a catalog, connecting an external service, or changing an installation source is a separate external change and requires approval.
+Discovery is read-only. Adding a marketplace or catalog, trusting or connecting an external service, or changing an installation source is itself provisioning and requires the approval described under Preview before it happens.
 
 ### Preview
 
@@ -158,39 +158,30 @@ After Discovery and before installing, transferring, or updating anything, prese
 | Item | Capability Realization Kind | Evidence | Capability type | Candidate | Source | Compatibility | Project scope | Included components and permissions | Search result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
-Use **not found** for a need with no verified candidate and identify the discovery routes checked. Use **already available** when the current Agent already has an adequate capability.
+Use **not found** for a need with no verified candidate and identify the discovery routes checked. Use **already available** when the current Agent already has an adequate capability. Report a candidate the Stopping conditions block as **rejected** or **blocked**.
 
-Block, and report as **rejected** or **blocked**, a candidate that is incompatible, untrusted, a duplicate, unavailable at project scope, or would require unauthorized access.
-
-After the table, state exactly which candidates are proposed for installation, transfer, or update and ask the human to approve or reject them. Do not install, transfer, update, connect, or add a source before receiving that decision. Adding a marketplace, trusting a service, connecting an external integration, or changing an installation source is itself provisioning and requires this same approval before it happens.
+After the table, state exactly which candidates are proposed for installation, transfer, or update and ask the Human to approve or reject them. Do not install, transfer, update, connect, or add a source before receiving that decision.
 
 ### Install
 
-Materialize or update only the items explicitly approved by the human, and only through a project-scoped mechanism allowed by the shared rules:
+Materialize or update only the items the Human explicitly approved, and only through a project-scoped mechanism:
 
-- **Prepared** — create the Skill folder and entrypoint required by the selected Agent Native, preserve the prepared content and its meaning exactly as authored — the single Markdown file's instructions, or every file of a prepared directory tree with its internal relative paths intact — and add or adapt only the minimum native metadata needed for discovery and invocation. Never rewrite the Human-owned source file or change its semantic instructions.
+- **Prepared** — create the `.claude/skills/<name>/` folder and `SKILL.md` entrypoint, preserve the prepared content and its meaning exactly as authored — the single Markdown file's instructions, or every file of a prepared directory tree with its internal relative paths intact — and add or adapt only the minimum frontmatter needed for discovery and invocation. Never rewrite the Human-owned source file or change its semantic instructions.
 - **Installed** — provision through the native mechanism its owning provider declaration names (marketplace, package registry, MCP server, or equivalent).
 - **Undeclared** — install or update only through a project-scoped mechanism; a candidate that should become a Module declaration is reported for Human declaration rather than adopted silently.
 
 Preserve rejected and already adequate capabilities unchanged.
 
-Verify the installed capability, its project location or declaration, its included components and permissions, and its activation state. A capability is not `installed` for reporting purposes until the active Agent can discover and use it in this project:
+Verify the installed capability, its project location or declaration, its included components and permissions, and its activation state. File presence or an installation receipt is insufficient; a capability is not `installed` for reporting purposes until the active Agent can discover and use it in this project:
 
-- verify that a Skill — Prepared or newly discovered — is discoverable;
+- verify that a Skill — Prepared or newly discovered — is discoverable by its intended Role;
 - verify that an installed plugin is project-enabled and its contributed capabilities are loaded; and
 - verify that an installed MCP integration is project-declared, trusted, connected, and exposes its expected capabilities.
 
-Complete a supported activation or reload during the installation when possible. When human trust, authentication, restart, or another external activation step remains, report `activation required` and the exact remaining action instead of reporting `installed`. Never place credentials or tokens in a repository-tracked declaration.
+Complete a supported activation or reload during the installation when possible. When Human trust, authentication, restart, or another external activation step remains, report `activation required` and the exact remaining action instead of reporting `installed`. If project-scoped installation is unavailable, report the candidate as blocked instead of installing it at user or machine scope.
 
-If project-scoped installation is unavailable, report the candidate as blocked instead of installing it at user or machine scope.
+The operation is idempotent: repeating it against unchanged Target evidence, Module declarations, installed capabilities, and available releases makes no changes and provisions no duplicate.
 
-### Boundaries
-
-Perform only Agent-capability discovery, Prepared and Installed materialization declared by the Module, and approved project-scoped installation of undeclared needs. Do not perform an Interface Operation or change Interface sources, Target application code, architecture, manifests, lockfiles, runtime dependencies, credentials, or user- or machine-scoped state. Do not remove a compatible capability or install a duplicate. Never repair Runtime drift in a Rule, Skill, or other artifact realized from a portable Contract; that reconciliation belongs only to Agent Sync.
-
-The operation is idempotent: repeating it against unchanged Target evidence, Module declarations, installed capabilities, and available releases makes no changes.
-
-### Report
+### Report (mode 3)
 
 Report the final status of every identified item as **installed**, **updated**, **already available**, **activation required**, **not found**, **rejected**, or **blocked**. Include its Capability Realization Kind, evidence, capability type, selected candidate and source, compatibility evidence, verified project scope and repository location or declaration, included components and permissions, discovery and usability check, and any remaining activation step.
-
