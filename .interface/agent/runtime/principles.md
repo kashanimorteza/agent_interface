@@ -1,10 +1,10 @@
 # Agent Runtime Principles
 
-Agent Runtime is the Component that supplies the Agent Native, lets it instantiate Agent Instance Definitions and execute their assigned Roles, and exposes the native mechanisms used to realize the Agent Profile. It keeps the Interface independent of one model, provider, client, or capability format.
+Agent Runtime is the Component that supplies the Agent Native, lets it instantiate Agent Instance Definitions and execute their assigned Roles, and exposes the native mechanisms used to realize the Agent Preferences. It keeps the Interface independent of one model, provider, client, or capability format.
 
 It owns runtime identity, compatibility, the models available on the selected Runtime, and how that Runtime's own configuration sources combine. It does not own behavioral instructions, project intent, permissions, or the capabilities implemented through the runtime.
 
-*Absorbed from the former Agent Settings Component on 2026-09-17 — its introduction, kept verbatim:* Agent Settings is the Component that declares how Agent configuration sources are scoped, combined, selected, and reconciled. It makes the effective configuration explainable without turning runtime files into a second source of project intent. It owns configuration source precedence and reconciliation. It does not own the choices governed by other Agent Components. Technical source scopes, merge behavior, and native locations belong to Agent Settings Profile.
+*Absorbed from the former Agent Settings Component on 2026-09-17 — its introduction, kept verbatim:* Agent Settings is the Component that declares how Agent configuration sources are scoped, combined, selected, and reconciled. It makes the effective configuration explainable without turning runtime files into a second source of project intent. It owns configuration source precedence and reconciliation. It does not own the choices governed by other Agent Components. Technical source scopes, merge behavior, and native locations belong to Agent Settings Preferences.
 
 ## Terms
 
@@ -25,9 +25,9 @@ It owns runtime identity, compatibility, the models available on the selected Ru
 - **Consumed by Agent Runtime** — provides the configuration that the runtime applies. *(formerly Agent Settings)*
 - **Consumed by Agent Observability** — provides expected values for diagnostics. *(formerly Agent Settings)*
 
-The selected runtime and compatibility choice belong to Agent Runtime Profile; Native-specific realization details are learned by Agent Sync from the selected Agent Native.
+The selected runtime and compatibility choice belong to Agent Runtime Preferences; Native-specific realization details are learned by Agent Sync from the selected Agent Native.
 
-Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -59,7 +59,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 **Boundary:** This Component explains resolution but does not override a stricter authority owned elsewhere.
 
-*Formerly Settings Principle 1; the other Settings Principles became rules of every Agent Profile in the Agent Profile Schema on 2026-09-17.*
+*Formerly Settings Principle 1; the other Settings Principles became rules of every Agent Preferences in the Agent Preferences Schema on 2026-09-17.*
 
 <br>
 

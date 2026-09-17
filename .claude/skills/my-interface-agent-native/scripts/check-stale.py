@@ -35,7 +35,7 @@ from pathlib import Path
 import yaml
 
 RECORD = Path(".claude/interface-sync.yaml")
-SKILL_PROFILE = Path(".interface/agent/skill/profile.yaml")
+SKILL_PROFILE = Path(".interface/agent/skill/preferences.yaml")
 SKILLS_DIR = Path(".claude/skills")
 SKILL_MECHANISM = "Claude Code project Skill"
 
@@ -247,7 +247,7 @@ def main() -> int:
         p.add_argument("--note", default="")
         p.add_argument("--result", default="")
     st.add_argument("--only", nargs="*", default=[], help="native skill names to stamp; default every Constructed Skill")
-    rc.add_argument("--declaration", required=True, help="Module declaration, e.g. agent/rule/profile.yaml#project_rules.interface-bootstrap")
+    rc.add_argument("--declaration", required=True, help="Module declaration, e.g. agent/rule/preferences.yaml#project_rules.interface-bootstrap")
     rc.add_argument("--source", nargs="+", required=True, help="every Module source read for this declaration")
     rc.add_argument("--realized-as", required=True, help="Claude Code mechanism, or 'none' for an empty or blocked declaration")
     rc.add_argument("--artifact", default="", help="project path of the native artifact, when one exists")

@@ -30,7 +30,7 @@ scope:
     - "Project data such as Models, fields, phases, or initial data, which belong to the human project definition."
     - "Operational records such as Plans, Tasks, progress, or Workflow position, which belong to Config."
     - "A choice owned by another Component; that Component's own Preferences hold it."
-  empty_component: "A Component with no technical choices still has a Preferences file with the full frame and all four content sections present and empty. The absence of choices is stated, never implied by a missing file or section."
+  empty_component: "A Component with no technical choices still has a Preferences file file with the full frame and all four content sections present and empty. The absence of choices is stated, never implied by a missing file or section."
 
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
@@ -43,13 +43,13 @@ meta:
       purpose: "The location, layer, and role of the file, naming the Component and stating that this is its Preferences layer."
     purpose:
       required: true
-      purpose: "What this Preferences owner's choices cover, in one sentence."
+      purpose: "What these Preferences owner's choices cover, in one sentence."
     standard:
       required: true
       purpose: "The Interface standard the file belongs to."
     version:
       required: true
-      purpose: "The version of this Preferences file, raised whenever its content changes meaning."
+      purpose: "The version of these Preferences file, raised whenever its content changes meaning."
     updated:
       required: true
       purpose: "The date the file last changed."
@@ -111,7 +111,7 @@ sections:
   options:
     required: true
     default: {}
-    purpose: "What this Preferences owner supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
+    purpose: "What these Preferences owner supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
     shape: "One mapping per kind of top-level alternative, named in the plural, each holding entries keyed by the option's name. An option may contain embedded subordinate profiles when those choices exist only within that parent, such as one language's environment or API framework."
     entry:
       version:
@@ -193,4 +193,4 @@ conventions:
   placeholders: "A value that is completed at resolution time is written in angle brackets, such as `<project>` or `<role>`. A key in angle brackets describes the shape of future entries rather than one real entry."
   unresolved: "A choice that the project must make and this file cannot supply is written as `to be defined`, and the operation that meets it raises an Open Question rather than inventing a value."
   read_order: "`read_order` lists all four content sections in their structural order: selected, options, settings, implementation."
-  content_map: "`content_map` carries exactly one line per content section, naming what that section holds for this Preferences owner."
+  content_map: "`content_map` carries exactly one line per content section, naming what that section holds for these Preferences owner."

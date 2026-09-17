@@ -28,11 +28,11 @@ It owns extension identity, provenance, contents, lifecycle, and expected capabi
 - **Consumes Agent Permission** — performs Provisioning within authorization.
 - **Consumed by Agent Runtime and Settings** — supplies runtime-loadable capability bundles and declarations.
 
-Technical MCP, LSP, channel, application, transport, and authentication-reference choices belong to Agent Integration Profile.
+Technical MCP, LSP, channel, application, transport, and authentication-reference choices belong to Agent Integration Preferences.
 
-Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Extension Profile.
+Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Extension Preferences.
 
-Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

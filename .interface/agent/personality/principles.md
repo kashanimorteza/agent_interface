@@ -15,9 +15,9 @@ It owns personality identity, stance, and the actions each personality performs.
 - **Consumes Agent Role, Context, Skill, Tool, and Permission** — a Personality acts within their contracts.
 - **Consumed by Agent and Coordination** — supplies the stance an Agent Instance takes and the way delegated work is performed.
 
-Personality definitions, their Actions, and Model Preferences belong to Agent Personality Profile and its definition files; Native realization is resolved by Agent Sync from the selected Agent Native.
+Personality definitions, their Actions, and Model Preferences belong to Agent Personality Preferences and its definition files; Native realization is resolved by Agent Sync from the selected Agent Native.
 
-Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -31,9 +31,9 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
-## 2. Model Preference is a Profile choice
+## 2. Model Preference is a Preferences file choice
 
-**Rule:** Which models a Personality runs on, and in what order, is declared in its Profile as an ordered list of model names that the Agent Runtime Profile declares, never in its Principles or definition prose.
+**Rule:** Which models a Personality runs on, and in what order, is declared in its Preferences as an ordered list of model names that the Agent Runtime Preferences declare, never in its Principles or definition prose.
 
 **Why:** Model and provider names are runtime-specific and change independently of the Personality's meaning.
 
@@ -45,5 +45,5 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 - **Must** — give every Personality one identity, stance, and declared set of Actions *(1)*
 - **Never** — let a Personality perform an undeclared Action or gain authority from one *(1)*
-- **Must** — declare Model Preference in the Profile, in priority order *(2)*
+- **Must** — declare Model Preference in the Preferences, in priority order *(2)*
 - **Never** — place model or provider names in Principles or definition prose *(2)*

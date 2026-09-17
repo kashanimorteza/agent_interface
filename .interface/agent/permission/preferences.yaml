@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: .interface/agent/permission/profile.yaml
-  path_note: The Profile layer of the Agent Permission Component.
+  path: .interface/agent/permission/preferences.yaml
+  path_note: The Preferences layer of the Agent Permission Component.
   purpose: Permission mode, allow/ask/deny rules, sandboxing, protected sources, enforced guarantees (formerly Hooks), trust, authentication, and secrets.
   standard: Agent Project Interface
   version: '2.0'
@@ -17,12 +17,12 @@ policy:
   selection: Request authorization only when an applicable ask boundary or material undecided action requires it.
   version_resolution: Permission syntax and sandbox facilities resolve from the selected runtime.
   matching: Match portable Tool and resource capability patterns; Agent Sync resolves their Native syntax, and deny and stricter rules win conflicts.
-  absorbed: 'hook/profile.yaml (v1.1), merged on 2026-09-17: its project Hooks became settings.enforced guarantees, and its Claude-specific events, handler types, and hook mechanics moved under settings.native.claude.hooks.'
-  absorbed_profiles:
+  absorbed: 'hook/preferences.yaml (v1.1), merged on 2026-09-17: its project Hooks became settings.enforced guarantees, and its Claude-specific events, handler types, and hook mechanics moved under settings.native.claude.hooks.'
+  absorbed_preferences:
     hook:
       meta:
-        path: .interface/agent/hook/profile.yaml
-        path_note: The Profile layer of the Agent Hook Component.
+        path: .interface/agent/hook/preferences.yaml
+        path_note: The Preferences layer of the Agent Hook Component.
         purpose: Lifecycle events, matchers, handlers, failure policies, and Hook catalogs.
         standard: Agent Project Interface
         version: '1.1'
@@ -40,14 +40,16 @@ policy:
         selected: Empty; no Hook handler is globally selected.
         options: Supported handler types.
         settings: Complete event and Hook catalogs, including explicit empty project declarations.
-      note: Kept verbatim from the former hook Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former hook Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
   superseded_on_2026_09_17:
     meta_purpose: Permission mode, allow/ask/deny rules, sandboxing, protected sources, trust, authentication, and secrets.
     content_map:
       selected: Current permission mode and sandbox choice.
       options: Supported permission modes.
       settings: Rules, protected sources, sandbox, trust, authentication references, secrets, and external authorization.
-    note: Previous descriptions of this Profile, kept verbatim; the merged descriptions above replace them.
+    note: Previous descriptions of these Preferences, kept verbatim; the merged descriptions above replace them.
+  probes: Each enforced guarantee carries, per Agent Native, at least one behavioral probe (native.<agent>.probe) that Agent Sync runs during Verification; a failed probe means the guarantee is not realized.
+    Decided 2026-09-17.
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -135,6 +137,10 @@ content:
             event: PreToolUse
             matcher: Read|Glob|Grep|Edit|Write|NotebookEdit|Bash|Skill
             path: resolved by Agent Sync from the selected Agent Native
+            probe:
+              action: From an ordinary subagent (not the Agent Native Skill prompt), attempt to Read .interface/agent/guide.md and to Grep inside .interface/agent/.
+              expect: Both are blocked by the PreToolUse hook with the boundary message; no content is returned.
+              also: 'Attempt to Edit .interface/interface.md from any role; expect: blocked (Interface mutation outside the Config boundary).'
       agent-native-read-grant:
         guarantee: Grant Agent Module read access only to the prompt created by the Human's direct explicit invocation of the Agent Native Skill (sync and install modes); a model, Agent Native, Agent Instance,
           Skill, coordinator, Hook, lifecycle routine, or automation can never create, inherit, or borrow this grant.
@@ -146,6 +152,9 @@ content:
             event: UserPromptExpansion
             matcher: my-interface-agent-native
             path: resolved by Agent Sync from the selected Agent Native
+            probe:
+              action: Within the prompt created by the Human's /my-interface-agent-native invocation, Read .interface/agent/guide.md; then, from a subagent spawned by that prompt, attempt the same Read.
+              expect: The first Read succeeds; the subagent's Read is blocked (the grant is non-transferable).
     native:
       claude:
         hooks:

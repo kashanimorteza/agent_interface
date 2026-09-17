@@ -45,15 +45,15 @@ It owns session lifecycle and transient execution continuity. It does not own pr
 - **Consumes Agent Runtime, Agent, Context, Role, and Permission** — hosts an Agent Instance executing with current context and authority.
 - **Consumed by Agent Coordination, Hook, Interaction, and Observability** — supplies lifecycle events and execution identity.
 
-Technical Rule files, scopes, load order, and native locations belong to Agent Rule Profile.
+Technical Rule files, scopes, load order, and native locations belong to Agent Rule Preferences.
 
-Technical styles, status lines, themes, artifact facilities, and interface selections belong to Agent Interaction Profile.
+Technical styles, status lines, themes, artifact facilities, and interface selections belong to Agent Interaction Preferences.
 
-Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting belong to Agent Observability Profile.
+Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting belong to Agent Observability Preferences.
 
-Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Session Profile.
+Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Session Preferences.
 
-Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

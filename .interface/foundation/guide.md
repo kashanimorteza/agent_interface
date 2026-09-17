@@ -33,8 +33,9 @@ Foundation Files provide the foundational definitions and schemas required by th
     ├── yaml.yaml
     ├── principles.md
     ├── preferences.yaml
-    ├── agent-profile.yaml
+    ├── agent-preferences.yaml
     ├── skill-contract.md
+    ├── personality.md
     ├── state.yaml
     ├── plan.yaml
     └── review.yaml
@@ -79,10 +80,11 @@ Schemas define the structure followed by authored Interface files and generated 
 
 **Structure standards** — the shape a Human-authored file follows:
 
-- [`schema/yaml.yaml`](schema/yaml.yaml) — the common outer frame (meta, policy, read_order, content_map, content) followed by Implementation Preferences, Agent Profiles, and Config files.
+- [`schema/yaml.yaml`](schema/yaml.yaml) — the common outer frame (meta, policy, read_order, content_map, content) followed by Implementation Preferences, Agent Preferences, and Config files.
 - [`schema/principles.md`](schema/principles.md) — the common Markdown structure of every Implementation and Agent Component `principles.md`.
 - [`schema/preferences.yaml`](schema/preferences.yaml) — the four-section structure of every Implementation `preferences.yaml`.
-- [`schema/agent-profile.yaml`](schema/agent-profile.yaml) — the three-section structure of every Agent `profile.yaml`.
+- [`schema/agent-preferences.yaml`](schema/agent-preferences.yaml) — the three-section structure of every Agent `preferences.yaml`.
+- [`schema/personality.md`](schema/personality.md) — the structure of every Personality definition file under `agent/personality/definitions/`.
 - [`schema/skill-contract.md`](schema/skill-contract.md) — the portable, runtime-independent structure of every Agent Skill Contract.
 
 **Operational formats** — the stored structure and initial template of a generated record:
@@ -184,7 +186,7 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── yaml.yaml
 ├── principles.md
 ├── preferences.yaml
-├── agent-profile.yaml
+├── agent-preferences.yaml
 ├── skill-contract.md
 ├── state.yaml
 ├── plan.yaml
@@ -209,7 +211,7 @@ responsibility = Defines the shared Component metadata sections and their empty 
 name = YAML Schema
 path = .interface/foundation/schema/yaml.yaml
 kind = Structure standard
-responsibility = Defines the common outer structure followed by Implementation Preferences, Agent Profiles, and Config files
+responsibility = Defines the common outer structure followed by Implementation Preferences, Agent Preferences, and Config files
 scope = Schema definition files use their own formats and do not follow this outer structure
 ```
 
@@ -234,13 +236,13 @@ responsibility = Defines the four-section structure followed by every Implementa
 ```
 
 
-#### Agent Profile Schema
+#### Agent Preferences Schema
 
 ```text
-name = Agent Profile Schema
-path = .interface/foundation/schema/agent-profile.yaml
+name = Agent Preferences Schema
+path = .interface/foundation/schema/agent-preferences.yaml
 kind = Structure standard
-responsibility = Defines the three-section structure followed by every Agent Component profile.yaml file
+responsibility = Defines the three-section structure followed by every Agent Component preferences.yaml file
 ```
 
 

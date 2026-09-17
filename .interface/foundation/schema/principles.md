@@ -24,8 +24,8 @@ A Principles file contains only mandatory philosophy, responsibilities, and boun
 
 A Principles file never contains:
 
-- a specific tool, library, framework, engine, third-party package, or version selection; Implementation choices belong to Implementation Preferences and Agent declarations belong to the owning Agent Profile, except that Agent Skill Principles may name a required or conditional Skill and the technology category that activates it without making the technology selection;
-- a technical default or resolved technical choice, which belongs to Implementation Preferences or the owning Agent Profile;
+- a specific tool, library, framework, engine, third-party package, or version selection; Implementation choices belong to Implementation Preferences and Agent declarations belong to the owning Agent Preferences, except that Agent Skill Principles may name a required or conditional Skill and the technology category that activates it without making the technology selection;
+- a technical default or resolved technical choice, which belongs to Implementation Preferences or the owning Agent Preferences;
 - the shape of a generated file, which belongs to the Component's Schema when one exists; or
 - instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.
 
@@ -119,11 +119,11 @@ Relationships are stated between Components and Modules only. No Skill, operatio
 
 One paragraph placing the Component's technical choices outside this file, and naming what holds them:
 
-- Implementation technical choices and defaults belong to the Component's Preferences, while Agent declarations and runtime mappings belong to the Component's Profile;
+- Implementation technical choices and defaults belong to the Component's Preferences, while Agent declarations and runtime mappings belong to the Component's Preferences;
 - implementation applies those choices to the current project definition; and
 - when the Component owns a generated file, the shape of that file belongs to its Schema.
 
-A Component still states where its technical choices or declarations belong even when its Implementation Preferences or Agent Profile contains no entries. Explicit absence is not a reason to omit the layering statement.
+A Component still states where its technical choices or declarations belong even when its Implementation Preferences or Agent Preferences contain no entries. Explicit absence is not a reason to omit the layering statement.
 
 
 <!--------------------------------------------------------------------------------- Authority --->
@@ -134,7 +134,7 @@ A Component still states where its technical choices or declarations belong even
 One paragraph, stating all three of:
 
 - every statement in the file is mandatory;
-- an Implementation Preference or Agent Profile can never override a Principle; and
+- an Implementation Preference or Agent Preferences can never override a Principle; and
 - a project may only add stricter rules, never looser ones.
 
 No Principles file omits or weakens any of the three.
@@ -227,9 +227,9 @@ what it is independent of, and what it does not own.>
 - **Consumed by <Component>** — <what it provides and why>
 
 <Layering: Implementation technical choices and defaults belong to <Component> Preferences;
-Agent declarations and mappings belong to <Component> Profile; implementation realizes them.>
+Agent declarations and mappings belong to <Component> Preferences; implementation realizes them.>
 
-Every statement here is mandatory. A Implementation Preference or Agent Profile can never override
+Every statement here is mandatory. A Implementation Preference or Agent Preferences can never override
 a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>

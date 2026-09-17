@@ -4,7 +4,7 @@ Agent Permission is the Component that governs what Agent Roles and capabilities
 
 It owns enforceable access decisions. It does not own Human intent, external account authority, or a capability's functional contract.
 
-On 2026-09-17 the former Hook Component was merged into this Component: a Hook is one native way of guaranteeing a boundary, and the guarantee — a behavior that must happen deterministically, without the model's discretion — is a Permission concern. The Agent Native chooses whether to realize a declared guarantee with a hook, a deny rule, a sandbox, or another mechanism; the Profile may suggest one per Native. Nothing was dropped; each absorbed Principle keeps its former number in a note.
+On 2026-09-17 the former Hook Component was merged into this Component: a Hook is one native way of guaranteeing a boundary, and the guarantee — a behavior that must happen deterministically, without the model's discretion — is a Permission concern. The Agent Native chooses whether to realize a declared guarantee with a hook, a deny rule, a sandbox, or another mechanism; the Preferences may suggest one per Native. Nothing was dropped; each absorbed Principle keeps its former number in a note.
 
 *Absorbed from the former Agent Hook Component on 2026-09-17 — its introduction, kept verbatim:* Agent Hook is the Component that performs deterministic automation at declared lifecycle events. A Hook may observe, validate, block, transform, notify, or trigger a bounded capability independently of an Agent Native's or Agent Instance's discretionary reasoning.
 
@@ -27,11 +27,11 @@ It owns event matching, handler order, inputs, effects, and failure behavior. It
 - **Consumes Agent Session, Tool, Integration, and Permission** — reacts to events using authorized handlers.
 - **Consumed by Agent Rule and Observability** — enforces guarantees and emits lifecycle evidence.
 
-Technical modes, permission rules, sandbox settings, trust policy, and credential references belong to Agent Permission Profile.
+Technical modes, permission rules, sandbox settings, trust policy, and credential references belong to Agent Permission Preferences.
 
-Technical events, matchers, handlers, timeouts, and native configuration belong to Agent Hook Profile.
+Technical events, matchers, handlers, timeouts, and native configuration belong to Agent Hook Preferences.
 
-Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

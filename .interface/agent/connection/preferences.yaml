@@ -1,9 +1,9 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: .interface/agent/connection/profile.yaml
-  path_note: The Profile layer of the Agent Connection Component.
+  path: .interface/agent/connection/preferences.yaml
+  path_note: The Preferences layer of the Agent Connection Component.
   purpose: External services (MCP, LSP, channels, application connectors) and installable packages (plugins, marketplaces, capability packages), their trust, and their lifecycle. Absorbs the former Integration
-    and Extension Profiles.
+    and Extension Preferences.
   standard: Agent Project Interface
   version: '2.0'
   updated: '2026-09-17'
@@ -18,12 +18,12 @@ policy:
   selection: Do not connect, trust, authenticate, or mutate an external system without applicable authorization. Preview provenance, permissions, dependencies, and capability changes before Provisioning.
   version_resolution: Protocol and provider versions resolve from compatible declared entries. Unpinned Extensions resolve to the latest compatible provider version at activation time.
   matching: Match provider-qualified integration identities and exact server or channel keys. Match plugins by full plugin-at-marketplace identity and marketplaces by stable source key.
-  absorbed: integration/profile.yaml (v1.0) under settings.services and extension/profile.yaml (v1.0) under settings.packages, merged verbatim on 2026-09-17.
-  absorbed_profiles:
+  absorbed: integration/preferences.yaml (v1.0) under settings.services and extension/preferences.yaml (v1.0) under settings.packages, merged verbatim on 2026-09-17.
+  absorbed_preferences:
     integration:
       meta:
-        path: .interface/agent/integration/profile.yaml
-        path_note: The Profile layer of the Agent Integration Component.
+        path: .interface/agent/integration/preferences.yaml
+        path_note: The Preferences layer of the Agent Integration Component.
         purpose: MCP, LSP, channel, application, transport, trust, and external-service connection declarations.
         standard: Agent Project Interface
         version: '1.0'
@@ -41,11 +41,11 @@ policy:
         selected: Empty; no external Integration is selected.
         options: Supported Integration protocols.
         settings: Complete connection categories; all are currently explicitly empty.
-      note: Kept verbatim from the former integration Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former integration Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
     extension:
       meta:
-        path: .interface/agent/extension/profile.yaml
-        path_note: The Profile layer of the Agent Extension Component.
+        path: .interface/agent/extension/preferences.yaml
+        path_note: The Preferences layer of the Agent Extension Component.
         purpose: Plugin, marketplace, package, monitor, theme, and extension lifecycle declarations.
         standard: Agent Project Interface
         version: '1.0'
@@ -63,7 +63,7 @@ policy:
         selected: Enabled Extension set.
         options: Declared Extension marketplaces.
         settings: Plugins and every supported extension category, including explicit empty categories.
-      note: Kept verbatim from the former extension Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former extension Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

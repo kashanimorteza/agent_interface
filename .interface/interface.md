@@ -71,7 +71,7 @@ Config contains only the mutable operational records used to coordinate this wor
 <!-------------------------- Independence -->
 ### Independence
 
-The core Interface Structure is independent of any specific AI model, Agent Native, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their self-contained native implementations remain outside `.interface/` as synchronized Runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Profile. Only explicit Agent Sync reads Agent Module sources; every other Runtime operation consumes their last synchronized realization.
+The core Interface Structure is independent of any specific AI model, Agent Native, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their self-contained native implementations remain outside `.interface/` as synchronized Runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Preferences. Only explicit Agent Sync reads Agent Module sources; every other Runtime operation consumes their last synchronized realization.
 
 Human project definitions remain flexible, while the Interface gives Agents stable responsibilities, rules, defaults, and operational records. Agent Interface is the communication boundary between those two forms.
 
@@ -138,7 +138,7 @@ This separation is one of the central architectural principles of the project.
 - **Target** — the application, platform, service, API, module, package, subsystem, or other development subject the Interface works on. The term is preferred over Target Project because the subject does not have to be an entire project.
 - **Implementation** — the implementation's reusable programming philosophy and engineering perspective, independent of a particular Target or Agent.
 - **Agent** — an AI coding system or execution unit that interacts with the Interface and maps its concepts to native capabilities.
-- **Component** — one named part of the Implementation or Agent Module perspective that owns a responsibility and is described through Principles together with Implementation Preferences or an Agent Profile; some Implementation Components also own operational records.
+- **Component** — one named part of the Implementation or Agent Module perspective that owns a responsibility and is described through Principles together with Implementation Preferences or Agent Preferences; some Implementation Components also own operational records.
 - **Implementation Module** — the Module that defines the reusable programming philosophy, Principles, Preferences, and Component composition applied to a Target.
 - **Implementation Component** — one independent Component inside the Implementation Module with a defined responsibility, Public Interface, Principles, and Implementation Preferences.
 - **Logic Component** — the reusable library Component that implements application Behaviour and publishes a Public Logic Interface.
@@ -162,10 +162,10 @@ This separation is one of the central architectural principles of the project.
 - **Agent Module** — the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate. Bare `Agent` is never used as a substitute for this term.
 - **Agent Native** — the core operational Agent supplied by the selected Agent Runtime and currently responsible for receiving the Human's request, applying synchronized Agent Module behavior, and hosting or coordinating Agent Instances.
 - **Agent Instance** — one primary or specialized executable identity operating within an Agent Native, with an assigned Agent Role and bounded capabilities. One Agent Native may expose several Agent Instances.
-- **Agent Profile** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, portable realization requirements, and validation expectations; Native-specific paths and formats are resolved by Agent Sync.
-- **Agent Role** — one bounded execution responsibility within the Agent Profile, including the primary role and specialized delegated roles.
+- **Agent Preferences** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, portable realization requirements, and validation expectations; Native-specific paths and formats are resolved by Agent Sync.
+- **Agent Role** — one bounded execution responsibility within the Agent Preferences, including the primary role and specialized delegated roles.
 - **Capability** — one declared Agent facility, such as a Skill, Rule, Command, Tool, Hook, Integration, or Extension, with an owning Component and bounded contract.
-- **Agent Native Skill** — the Interface-owned Skill `/my-interface-agent-native <1|2|3>`: modes `1` (sync self) and `2` (sync component) perform Agent Sync; mode `3` performs install (the former Skill Installer). It is named for what it does — the Agent Native configuring itself from the Agent Module — and does not change the meaning of Agent Native above.
+- **Agent Native Skill** — the Interface-owned Skill `/my-interface-agent-native <1=sync self | 2=sync component | 3=install>`: modes `1` (sync self) and `2` (sync component) perform Agent Sync; mode `3` performs install (the former Skill Installer). It is named for what it does — the Agent Native configuring itself from the Agent Module — and does not change the meaning of Agent Native above.
 - **Capability Realization Kind** — how a declared Agent capability becomes usable in the active Runtime: **Constructed**, built by the Agent Native from a portable specification such as a Skill Contract; **Prepared**, transferred into the Runtime unchanged from a complete Human-authored artifact; or **Installed**, provisioned by the Agent Native's own native mechanism from an external source such as a marketplace, package registry, or MCP server, using per-Agent-Native identity so the Native can find and install it.
 
 
@@ -239,7 +239,7 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 ```yaml
 name: Agent Module Guide
 path: .interface/agent/guide.md
-responsibility: Explains the Agent Module and maps every Component's Principles, Profile, and definition files; read only within an explicit Agent Native Skill invocation
+responsibility: Explains the Agent Module and maps every Component's Principles, Preferences, and definition files; read only within an explicit Agent Native Skill invocation
 ```
 
 → [Agent Module Guide](agent/guide.md)

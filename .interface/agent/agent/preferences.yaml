@@ -1,9 +1,9 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: .interface/agent/agent/profile.yaml
-  path_note: The Profile layer of the Agent Component.
+  path: .interface/agent/agent/preferences.yaml
+  path_note: The Preferences layer of the Agent Component.
   purpose: Agent Native selection, General and Specialized Agent Instance definitions, Role contracts, Coordination policy, capability configuration, lifecycle defaults, and native realizations. Absorbs
-    the former Role and Coordination Profiles.
+    the former Role and Coordination Preferences.
   standard: Agent Project Interface
   version: '2.0'
   updated: '2026-09-17'
@@ -16,15 +16,15 @@ policy:
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
   consumption: Use the selected Agent Native, instantiate the General Agent Instance, and expose each required Specialized Agent Instance through its declared native realization. Roles are assigned by stable
     key; coordination uses the smallest mechanism sufficient for the authorized work.
-  selection: An undeclared Agent Native or Agent Instance remains an optional runtime capability and never becomes part of the required Agent Profile automatically.
+  selection: An undeclared Agent Native or Agent Instance remains an optional runtime capability and never becomes part of the required Agent Preferences automatically.
   version_resolution: Agent Native behavior and Native Instance Realization formats resolve from the selected Agent Runtime.
   matching: Match the Agent Native by runtime identity and Agent Instance Definitions by stable identity and assigned Role reference; resolve native realization details through Agent Sync.
-  absorbed: role/profile.yaml (v1.2) and coordination/profile.yaml (v1.2), merged verbatim under settings.roles and settings.coordination on 2026-09-17.
-  absorbed_profiles:
+  absorbed: role/preferences.yaml (v1.2) and coordination/preferences.yaml (v1.2), merged verbatim under settings.roles and settings.coordination on 2026-09-17.
+  absorbed_preferences:
     role:
       meta:
-        path: .interface/agent/role/profile.yaml
-        path_note: The Profile layer of the Agent Role Component.
+        path: .interface/agent/role/preferences.yaml
+        path_note: The Preferences layer of the Agent Role Component.
         purpose: Primary and specialized responsibility contracts available for assignment to Agent Instance Definitions.
         standard: Agent Project Interface
         version: '1.2'
@@ -37,16 +37,16 @@ policy:
         consumption: Select the declared primary role and use specialized roles only within their contracts.
         selection: An undeclared role may be used only as optional runtime capability when compatible with current authority.
         version_resolution: Role contracts are portable; any native realization resolves through its owning Agent Instance Definition, Agent Native, and selected Runtime.
-        matching: Match Roles by stable profile key and architecture contract.
+        matching: Match Roles by stable preferences key and architecture contract.
       content_map:
         selected: The current Primary Role.
         options: Selectable primary roles.
         settings: Complete role catalogs and role defaults, with unused sources explicit.
-      note: Kept verbatim from the former role Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former role Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
     coordination:
       meta:
-        path: .interface/agent/coordination/profile.yaml
-        path_note: The Profile layer of the Agent Coordination Component.
+        path: .interface/agent/coordination/preferences.yaml
+        path_note: The Preferences layer of the Agent Coordination Component.
         purpose: Delegation, teams, tasks, messaging, concurrency, worktree isolation, and conflict handling.
         standard: Agent Project Interface
         version: '1.2'
@@ -64,14 +64,14 @@ policy:
         selected: Default coordination and isolation strategy.
         options: Supported coordination mechanisms.
         settings: Delegation, teams, tasks, messaging, concurrency, worktrees, and conflict policy.
-      note: Kept verbatim from the former coordination Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former coordination Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
   superseded_on_2026_09_17:
     meta_purpose: Agent Native selection plus General and Specialized Agent Instance identities, Role assignments, capability configuration, lifecycle defaults, and native realizations.
     content_map:
       selected: The selected Agent Native and General Agent Instance.
       options: Selectable Agent Natives and General Agent Instance definitions.
       settings: Project, runtime, user, managed, extension, and built-in Agent Instance definitions plus inherited defaults.
-    note: Previous descriptions of this Profile, kept verbatim; the merged descriptions above replace them.
+    note: Previous descriptions of these Preferences, kept verbatim; the merged descriptions above replace them.
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

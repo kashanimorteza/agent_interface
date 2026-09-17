@@ -60,4 +60,4 @@ Stop before mutation for missing or ambiguous scope input, an invalid phase sele
 
 ## Runtime Realization
 
-A native adapter exposes explicit phases, argument-free all-generated phases, config, and complete scopes through Agent Command Profile, separates preview from apply, and uses recoverable deletion where practical while truthfully warning when recovery is unavailable.
+A native adapter exposes explicit phases, argument-free all-generated phases, config, and complete scopes through Agent Command Preferences, separates preview from apply, and uses recoverable deletion where practical while truthfully warning when recovery is unavailable.

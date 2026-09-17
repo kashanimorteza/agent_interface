@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/agent/context/profile.yaml"
-  path_note: "The Profile layer of the Agent Context Component."
+  path: ".interface/agent/context/preferences.yaml"
+  path_note: "The Preferences layer of the Agent Context Component."
   purpose: "Persistent instructions, memory, imports, context loading, compaction, and context-budget choices."
   standard: "Agent Project Interface"
   version: "1.1"
@@ -68,4 +68,4 @@ content:
       target:
         - ".interface/target/non-technical.md"
         - ".interface/target/technical.md"
-      target_precedence: "non-technical definition establishes Human intent; technical definition records its corresponding technical definition without changing that intent"
+      target_precedence: "non-technical definition establishes Human intent; technical definition records its corresponding technical definition without changing that intent; the technical definition takes precedence wherever the two conflict"

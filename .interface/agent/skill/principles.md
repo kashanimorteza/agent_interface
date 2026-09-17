@@ -1,6 +1,6 @@
 # Agent Skill Principles
 
-Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Every declared Skill has exactly one Capability Realization Kind. An Interface-owned Skill is Constructed: its portable Skill Contract defines it completely, and runtime implementations translate that Contract into focused, discoverable instructions. A declared Skill with a matching prepared Markdown file is Prepared: that file's instruction content is transferred into the Runtime unchanged. Externally provided Skills are Installed: they remain provider-owned capabilities declared by the Agent Profile and provisioned through Agent Extension or Agent Integration, never built from a Skill Contract.
+Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Every declared Skill has exactly one Capability Realization Kind. An Interface-owned Skill is Constructed: its portable Skill Contract defines it completely, and runtime implementations translate that Contract into focused, discoverable instructions. A declared Skill with a matching prepared Markdown file is Prepared: that file's instruction content is transferred into the Runtime unchanged. Externally provided Skills are Installed: they remain provider-owned capabilities declared by the Agent Preferences and provisioned through Agent Extension or Agent Integration, never built from a Skill Contract.
 
 It owns Skill contracts and activation boundaries. It does not own the project facts, Component policies, or runtime tools it consumes.
 
@@ -18,9 +18,9 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 - **Consumes Implementation Components and Target** — reads current authorities required by its responsibility.
 - **Consumed by Agent, Command, and Coordination** — provides assignable, invocable, and delegable workflows.
 
-Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, and provider resources belong to Agent Skill Profile; Native implementation mappings are resolved by Agent Sync from the selected Agent Native. Command names and argument forms belong to Agent Command Profile.
+Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, and provider resources belong to Agent Skill Preferences; Native implementation mappings are resolved by Agent Sync from the selected Agent Native. Command names and argument forms belong to Agent Command Preferences.
 
-Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -36,7 +36,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 2. Skill availability is proven
 
-**Rule:** A Skill is available only when its intended Agent Role can discover and invoke it in the current project. A Skill delegated by another Skill is available only when the selected Runtime permits that declared coordinator to invoke it. Core Workflow Skills used by Implement are invocable both directly by the Human and by declared coordinators; top-level or sensitive coordinating Skills remain explicit-Human entry points unless the Skill Profile states otherwise. A file, installation record, or declaration alone does not prove Activation.
+**Rule:** A Skill is available only when its intended Agent Role can discover and invoke it in the current project. A Skill delegated by another Skill is available only when the selected Runtime permits that declared coordinator to invoke it. Core Workflow Skills used by Implement are invocable both directly by the Human and by declared coordinators; top-level or sensitive coordinating Skills remain explicit-Human entry points unless the Skill Preferences state otherwise. A file, installation record, or declaration alone does not prove Activation.
 
 **Why:** Planning around nominal Skills fails when the runtime cannot actually load them.
 
@@ -62,11 +62,11 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 ## 4. A prepared file or directory may supply a Skill's native instruction body
 
-**Rule:** The Agent Skill Profile declares one optional prepared-file directory and an exact naming convention keyed by declared Skill identity, satisfied either by a single Markdown file or by a directory holding that Skill's complete artifact. When a matching prepared file or directory exists, the install mode of the Agent Native Skill creates the Skill folder and entrypoint required by the selected Agent Native, preserves the prepared content and its meaning - every file of a prepared directory tree, with its internal relative paths intact - and adds or adapts only the minimum native metadata needed for discovery and invocation. When no match exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
+**Rule:** The Agent Skill Preferences declare one optional prepared-file directory and an exact naming convention keyed by declared Skill identity, satisfied either by a single Markdown file or by a directory holding that Skill's complete artifact. When a matching prepared file or directory exists, the install mode of the Agent Native Skill creates the Skill folder and entrypoint required by the selected Agent Native, preserves the prepared content and its meaning - every file of a prepared directory tree, with its internal relative paths intact - and adds or adapts only the minimum native metadata needed for discovery and invocation. When no match exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
 
 **Why:** A complete Human-authored Skill should be reusable without forcing every Skill to have a prepared file or turning Runtime output into its source.
 
-**Boundary:** The presence of a prepared file or directory never declares a new Skill, selects a provider, proves Activation, or authorizes an unmatched artifact to be installed. A prepared file or directory must match exactly one Skill already declared by the Profile and must conform to that Skill's Contract and applicable Principles. Only Agent Sync reads it; ordinary Runtime Skills consume the synchronized native copy. Agent Sync never rewrites the Human-owned source file or silently changes its semantic instructions.
+**Boundary:** The presence of a prepared file or directory never declares a new Skill, selects a provider, proves Activation, or authorizes an unmatched artifact to be installed. A prepared file or directory must match exactly one Skill already declared by the Preferences and must conform to that Skill's Contract and applicable Principles. Only Agent Sync reads it; ordinary Runtime Skills consume the synchronized native copy. Agent Sync never rewrites the Human-owned source file or silently changes its semantic instructions.
 
 <br>
 

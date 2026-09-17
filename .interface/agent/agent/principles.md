@@ -1,12 +1,12 @@
 # Agent Principles
 
-The `Agent` Component declares the selected Agent Native and the executable Agent Instances it hosts in an Agent Profile. Each Agent Instance realizes an Agent Role through the Agent Native with bounded capabilities and configuration.
+The `Agent` Component declares the selected Agent Native and the executable Agent Instances it hosts in Agent Preferences. Each Agent Instance realizes an Agent Role through the Agent Native with bounded capabilities and configuration.
 
 It owns Agent Native selection, Agent Instance identity, kind, Role assignment, capability assignment, native realization, and lifecycle defaults. It does not own Role responsibilities, Skill behavior, Runtime implementation, coordination protocol, or Permission policy.
 
 On 2026-09-17 the former Role and Coordination Components were merged into this Component: an Agent Instance, the responsibility it executes, and the way several Instances share work are three answers to one question — which Agents the Human has. Nothing was dropped; each absorbed Principle keeps its former number in a note.
 
-*Absorbed from the former Agent Role Component on 2026-09-17 — its introduction, kept verbatim:* Agent Role is the Component that defines the execution responsibilities available to Agent Instances within an Agent Profile, including the primary role and specialized delegated roles. It gives each role a stable contract independent of the Agent Native that hosts its Instance.
+*Absorbed from the former Agent Role Component on 2026-09-17 — its introduction, kept verbatim:* Agent Role is the Component that defines the execution responsibilities available to Agent Instances within Agent Preferences, including the primary role and specialized delegated roles. It gives each role a stable contract independent of the Agent Native that hosts its Instance.
 
 It owns role responsibilities and boundaries. It does not own Agent Instance identities, native realizations, capability configuration, workflow content, runtime configuration, or coordination state.
 
@@ -39,13 +39,13 @@ It owns coordination protocol and conflict boundaries. It does not own role cont
 - **Consumes Agent, Role, Context, Permission, and Session** — coordinates eligible Agent Instances while preserving Role, authority, and lifecycle boundaries.
 - **Consumed by Agent Observability** — provides attribution and coordination outcomes.
 
-Agent Native selection, Agent Instance declarations, primary Instance selection, Role assignments, models, tools, Skills, permissions, memory, isolation, and portable realization requirements belong to Agent Profile. Native paths, file formats, and runtime-specific mappings are resolved by Agent Sync from the selected Agent Native.
+Agent Native selection, Agent Instance declarations, primary Instance selection, Role assignments, models, tools, Skills, permissions, memory, isolation, and portable realization requirements belong to Agent Preferences. Native paths, file formats, and runtime-specific mappings are resolved by Agent Sync from the selected Agent Native.
 
-Technical Role catalogs and primary Role selection belong to Agent Role Profile. Agent Instance identities, native realizations, models, tools, Skills, and per-Instance configuration belong to Agent Profile.
+Technical Role catalogs and primary Role selection belong to Agent Role Preferences. Agent Instance identities, native realizations, models, tools, Skills, and per-Instance configuration belong to Agent Preferences.
 
-Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Coordination Profile.
+Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Coordination Preferences.
 
-Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -71,7 +71,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 3. `general` is the General Agent Instance
 
-**Rule:** The Agent Profile requires one General Agent Instance with the stable identity `general`. It realizes the primary execution Role, remains accountable to the Human, activates applicable capabilities, delegates bounded work when useful, integrates delegated evidence, and makes the final outcome claim.
+**Rule:** The Agent Preferences requires one General Agent Instance with the stable identity `general`. It realizes the primary execution Role, remains accountable to the Human, activates applicable capabilities, delegates bounded work when useful, integrates delegated evidence, and makes the final outcome claim.
 
 **Why:** Every request needs one concrete accountable Agent Instance even when several Specialized Agent Instances contribute.
 

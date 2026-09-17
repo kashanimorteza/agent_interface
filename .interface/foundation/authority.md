@@ -4,21 +4,21 @@ This file carries the Authority and Ownership section of the Interface, moved he
 
 <br>
 
-Explicit Target intent and applicable Implementation Principles guide operational Skills. Implementation Preferences supply engineering defaults where the Target leaves a choice unstated. Agent Profiles declare desired portable execution capabilities solely for Agent Sync, which learns Native-specific mappings and materializes the synchronized Runtime rules and capabilities consumed by every other Skill. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Implementation Preferences, and Agent Profiles, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
+Explicit Target intent and applicable Implementation Principles guide operational Skills. Implementation Preferences supply engineering defaults where the Target leaves a choice unstated. Agent Preferences declare desired portable execution capabilities solely for Agent Sync, which learns Native-specific mappings and materializes the synchronized Runtime rules and capabilities consumed by every other Skill. Operational Schemas define the shape of operational records, authored-source Schemas define Principles, Implementation Preferences, and Agent Preferences, and the general YAML Schema supplies their common YAML frame together with Config files. Schema definition files use their own formats. Config stores operational records and does not define the Target.
 
 ```text
 Target = human-defined intent
 Principles = mandatory philosophy, responsibilities, and boundaries
 Implementation Preferences = engineering defaults for unspecified Target choices
-Agent Profiles = current Agent Module selections, resources, portable realization requirements, and explicit empty categories
-Schema = common YAML frame for Implementation Preferences, Agent Profiles, and Config, authored-source structure, and the storage structure of every operational record
+Agent Preferences = current Agent Module selections, resources, portable realization requirements, and explicit empty categories
+Schema = common YAML frame for Implementation Preferences, Agent Preferences, and Config, authored-source structure, and the storage structure of every operational record
 Config = the mutable operational records
 ```
 
 Ownership answers who a record belongs to, and it belongs to the Human or to a Component:
 
 ```text
-Human = owns Interface, Target, Principles, Implementation Preferences, Agent Profiles, and Schema sources
+Human = owns Interface, Target, Principles, Implementation Preferences, Agent Preferences, and Schema sources
 Plan = owns Plans, Groups, Tasks, their status, and their history
 State = owns active Workflow position, aggregate phase progress, Implement and Launch results, operational History, Blockers, and Open Questions
 Review = owns recorded Findings and their state

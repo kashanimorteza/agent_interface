@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: .interface/agent/runtime/profile.yaml
-  path_note: The Profile layer of the Agent Runtime Component.
+  path: .interface/agent/runtime/preferences.yaml
+  path_note: The Preferences layer of the Agent Runtime Component.
   purpose: The selected runtime, provider, models, effort, compatibility choices, and the selected Runtime's own configuration-source precedence (formerly Settings).
   standard: Agent Project Interface
   version: '2.0'
@@ -17,13 +17,13 @@ policy:
   selection: Use a listed compatible runtime; report incompatibility rather than inventing equivalent behavior.
   version_resolution: Runtime-provided values resolve from the active installation without changing this file.
   matching: Runtime identity matches the selected Runtime exactly.
-  absorbed: 'settings/profile.yaml (v1.1) merged on 2026-09-17: its source precedence, merge behavior, and reconcile policy are Claude Code mechanics and live under settings.native.claude.configuration;
-    its general Principles 2-5 became Agent Profile Schema rules.'
-  absorbed_profiles:
+  absorbed: 'settings/preferences.yaml (v1.1) merged on 2026-09-17: its source precedence, merge behavior, and reconcile policy are Claude Code mechanics and live under settings.native.claude.configuration;
+    its general Principles 2-5 became Agent Preferences Schema rules.'
+  absorbed_preferences:
     settings:
       meta:
-        path: .interface/agent/settings/profile.yaml
-        path_note: The Profile layer of the Agent Settings Component.
+        path: .interface/agent/settings/preferences.yaml
+        path_note: The Preferences layer of the Agent Settings Component.
         purpose: Configuration sources, scopes, precedence, merge behavior, environment values, and reconciliation policy.
         standard: Agent Project Interface
         version: '1.1'
@@ -41,14 +41,14 @@ policy:
         selected: The shared project settings source and reconciliation behavior.
         options: Supported configuration source scopes.
         settings: Precedence, merge policy, environment, flags, and complete configuration categories.
-      note: Kept verbatim from the former settings Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former settings Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
   superseded_on_2026_09_17:
     meta_purpose: The selected runtime, provider, model, effort, and compatibility choices.
     content_map:
       selected: The current Agent Runtime.
       options: Supported runtime alternatives.
       settings: Provider, model, effort, and compatibility declarations. Native paths, formats, mappings, and capability limits are discovered by Agent Sync from the selected Agent Native.
-    note: Previous descriptions of this Profile, kept verbatim; the merged descriptions above replace them.
+    note: Previous descriptions of these Preferences, kept verbatim; the merged descriptions above replace them.
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -76,10 +76,9 @@ content:
     models: {}
     effort_levels: {}
     fallback_models: {}
-    compatibility:
-      required_profile_version: '1.0'
-      status: compatible
-    _models_note: Declare each model the selected Runtime offers, keyed by a stable name; Personality Profiles refer to these names in priority order.
+    compatibility: {}
+    _models_note: 'Declare each model the selected Runtime offers under models, keyed by a stable name, e.g. models: {opus: {provider: anthropic, id: <model-id>}, sonnet: {provider: anthropic, id: <model-id>}}.
+      Personality Preferences refer to these stable names in priority order; the first is primary, the rest are fallbacks.'
     native:
       claude:
         configuration:
@@ -125,4 +124,5 @@ content:
               write_resolved_values_back: false
               missing_required: report
               undeclared_native: optional unless incompatible
+    _compatibility_note: Explicit empty category. The former required_profile_version/status pair had no defined meaning and was removed on 2026-09-17.
 

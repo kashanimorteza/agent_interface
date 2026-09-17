@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: .interface/agent/rule/profile.yaml
-  path_note: The Profile layer of the Agent Rule Component.
+  path: .interface/agent/rule/preferences.yaml
+  path_note: The Preferences layer of the Agent Rule Component.
   purpose: Project, user, managed, extension, global, and path-scoped Agent Rule declarations, plus the conduct settings of the former Interaction, Observability, and Session Components.
   standard: Agent Project Interface
   version: '2.0'
@@ -17,12 +17,12 @@ policy:
   selection: Add a Rule only for stable recurring guidance; task-specific procedures belong to Skills.
   version_resolution: Rule format follows the selected runtime mapping.
   matching: Match Rules by stable key and exact scope conditions.
-  absorbed: interaction/profile.yaml (v1.0), observability/profile.yaml (v1.0), session/profile.yaml (v1.0), merged verbatim under settings.interaction, settings.observability, settings.session on 2026-09-17.
-  absorbed_profiles:
+  absorbed: interaction/preferences.yaml (v1.0), observability/preferences.yaml (v1.0), session/preferences.yaml (v1.0), merged verbatim under settings.interaction, settings.observability, settings.session on 2026-09-17.
+  absorbed_preferences:
     interaction:
       meta:
-        path: .interface/agent/interaction/profile.yaml
-        path_note: The Profile layer of the Agent Interaction Component.
+        path: .interface/agent/interaction/preferences.yaml
+        path_note: The Preferences layer of the Agent Interaction Component.
         purpose: Output style, progress, prompts, status presentation, artifacts, themes, and interface behavior.
         standard: Agent Project Interface
         version: '1.0'
@@ -35,16 +35,16 @@ policy:
         consumption: Apply the selected Output Style while preserving all required technical substance.
         selection: Use the selected style when available; otherwise use the runtime default and report the missing style.
         version_resolution: Runtime-provided interaction facilities resolve from the active runtime.
-        matching: Match custom Output Styles by exact frontmatter name and stable profile key.
+        matching: Match custom Output Styles by exact frontmatter name and stable preferences key.
       content_map:
         selected: Current Output Style and progress behavior.
         options: Available Output Styles.
         settings: Progress, prompts, status line, artifacts, themes, UI surfaces, and accessibility.
-      note: Kept verbatim from the former interaction Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former interaction Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
     observability:
       meta:
-        path: .interface/agent/observability/profile.yaml
-        path_note: The Profile layer of the Agent Observability Component.
+        path: .interface/agent/observability/preferences.yaml
+        path_note: The Preferences layer of the Agent Observability Component.
         purpose: Validation, status, diagnostics, evidence, logs, telemetry, health, and usage reporting.
         standard: Agent Project Interface
         version: '1.0'
@@ -62,11 +62,11 @@ policy:
         selected: Default validation depth.
         options: Supported validation depths.
         settings: Required checks, statuses, diagnostics, evidence, logs, telemetry, health, and usage.
-      note: Kept verbatim from the former observability Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former observability Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
     session:
       meta:
-        path: .interface/agent/session/profile.yaml
-        path_note: The Profile layer of the Agent Session Component.
+        path: .interface/agent/session/preferences.yaml
+        path_note: The Preferences layer of the Agent Session Component.
         purpose: Session lifecycle, resume, persistence, background work, isolation, checkpoints, and termination.
         standard: Agent Project Interface
         version: '1.0'
@@ -84,14 +84,14 @@ policy:
         selected: Default resume and background-work behavior.
         options: Supported resume behaviors.
         settings: Complete lifecycle, persistence, background, isolation, checkpoint, and termination categories.
-      note: Kept verbatim from the former session Component Profile; its content now lives under this Profile as described in policy.absorbed.
+      note: Kept verbatim from the former session Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
   superseded_on_2026_09_17:
     meta_purpose: Project, user, managed, extension, global, and path-scoped Agent Rule declarations.
     content_map:
       selected: Empty; all applicable required Rules load by scope.
       options: Empty; Rules are declarations rather than alternatives.
       settings: Complete Rule catalogs by source and scope.
-    note: Previous descriptions of this Profile, kept verbatim; the merged descriptions above replace them.
+    note: Previous descriptions of these Preferences, kept verbatim; the merged descriptions above replace them.
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -108,14 +108,16 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    output_style: ADHD
+    output_style: ADHD Explanatory
     progress_behavior: material_updates
     validation_depth: proportional
     resume_behavior: revalidate
+    output_style_note: Provided by the enabled plugin adhd-output-style@claude-settings (see connection Preferences); the plugin owns the style, this selection names what it provides. Decided 2026-09-17.
   options:
     output_styles:
       ADHD:
-        required: true
+        required: false
+        note: Local style file; superseded as the selected style by the plugin-provided ADHD Explanatory on 2026-09-17.
       Analogy Engine:
         required: false
       Bedtime Story:
@@ -154,6 +156,9 @@ content:
         required: false
       Yoda:
         required: false
+      ADHD Explanatory:
+        required: true
+        provided_by: plugin adhd-output-style@claude-settings
     progress_behaviors:
       material_updates:
         meaning: Report meaningful progress and blockers without narrating routine internals.
@@ -180,6 +185,12 @@ content:
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Expose the synchronized Runtime capability identifiers and native mappings without requiring Agent Module reads.
+        required: true
+      git-discipline:
+        path: resolved by Agent Sync from the selected Agent Native
+        scope: global
+        responsibility: Never run git commit or git push unless the Human explicitly asks for it in the current message; 'save it' means write files to disk, not commit. Explains the boundary that Permission
+          enforces through its ask rules on git commit, push, reset, restore, checkout, rebase, and clean.
         required: true
     path_scoped_rules: {}
     user_rules: {}

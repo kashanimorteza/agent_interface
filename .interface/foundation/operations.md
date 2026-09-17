@@ -75,7 +75,7 @@ This Operation is performed through `/my-interface-reset [phase-number ...]` to 
 <!-------------------------- Agent Native Operation -->
 ### Agent Native
 
-**Agent Skill:** `/my-interface-agent-native <1|2|3>`
+**Agent Skill:** `/my-interface-agent-native <1=sync self | 2=sync component | 3=install>`
 
 One Skill, three modes. Modes `1` and `2` are **Agent Sync**; mode `3` is **install**, the former Skill Installer operation merged into this Skill on 2026-09-17. The Skill is named for what it does — the Agent Native configuring itself from the Agent Module — while *Agent Native* in Interface prose keeps its meaning of the core operational Agent supplied by the Runtime.
 

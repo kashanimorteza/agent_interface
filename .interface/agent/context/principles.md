@@ -16,15 +16,15 @@ It owns context composition and freshness. It does not own the meaning of Target
 - **Consumes Agent Rule** — loads applicable persistent and scoped instructions.
 - **Consumed by Agent, Role, Skill, and Session** — supplies the current information they use.
 
-Technical loading sources, memory behavior, imports, and limits belong to Agent Context Profile.
+Technical loading sources, memory behavior, imports, and limits belong to Agent Context Preferences.
 
-Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
 ## 1. Every action begins from current Understanding
 
-**Rule:** An Agent Role establishes current Interface Understanding before acting and current Target Understanding whenever its responsibility requires it. It resolves the starting sources and their precedence from the Context Profile's `understanding_sources` settings. Memory, operational records, conversation history, and prior summaries never substitute for current authoritative sources.
+**Rule:** An Agent Role establishes current Interface Understanding before acting and current Target Understanding whenever its responsibility requires it. It resolves the starting sources and their precedence from the Context Preferences's `understanding_sources` settings. Memory, operational records, conversation history, and prior summaries never substitute for current authoritative sources.
 
 **Why:** Long-lived or resumed sessions otherwise act on stale assumptions.
 
