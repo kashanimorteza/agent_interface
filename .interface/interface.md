@@ -207,7 +207,7 @@ Target, Implementation, and Agent are the three primary Modules of Agent Interfa
 <!-------------------------- Target -->
 ### Target
 
-The Target describes **what the Interface is working on**, through a Human Definition and a Technical Definition that takes precedence on conflict. Its structure and files are in the [Target Module Guide](target/guide.md).
+The Target describes **what the Interface is working on**, through a Human Definition and a Technical Definition that takes precedence on conflict.
 
 ```yaml
 name: Target Module Guide
@@ -215,10 +215,12 @@ path: .interface/target/guide.md
 responsibility: Explains the Target Module and maps its files; the Understanding sources remain the two definition files it points to
 ```
 
+→ [Target Module Guide](target/guide.md)
+
 <!-------------------------- Implementation -->
 ### Implementation
 
-The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its ten Components. Its philosophy, Component structure, and every Component's files are in the [Implementation Module Guide](implementation/guide.md).
+The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its ten Components.
 
 ```yaml
 name: Implementation Module Guide
@@ -226,16 +228,20 @@ path: .interface/implementation/guide.md
 responsibility: Explains the Implementation Module and maps every Component's Principles and Preferences; each Component's Principles remain the authority
 ```
 
+→ [Implementation Module Guide](implementation/guide.md)
+
 <!-------------------------- Agent -->
 ### Agent
 
-The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Sync; only Agent Sync and Skill Installer enter it, and every other role uses the synchronized Runtime realization. Its philosophy, Component structure, and every Component's files are in the [Agent Module Guide](agent/guide.md).
+The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Sync; only Agent Sync and Skill Installer enter it, and every other role uses the synchronized Runtime realization.
 
 ```yaml
 name: Agent Module Guide
 path: .interface/agent/guide.md
 responsibility: Explains the Agent Module and maps every Component's Principles, Profile, and definition files; read only within an explicit Agent Sync or Skill Installer invocation
 ```
+
+→ [Agent Module Guide](agent/guide.md)
 
 
 
@@ -244,13 +250,15 @@ responsibility: Explains the Agent Module and maps every Component's Principles,
 <!--------------------------------------------------------------------------------- Foundation Files --->
 ## Foundation Files
 
-Foundation Files are the shared resources every Module and Skill depends on: the section files of this Interface, the Config records that coordinate the Workflow, and the Schemas that shape authored and generated files. They are not a Module. Their structure and every file's responsibility are in the [Foundation Guide](foundation/guide.md).
+Foundation Files are the shared resources every Module and Skill depends on: the section files of this Interface, the Config records that coordinate the Workflow, and the Schemas that shape authored and generated files. They are not a Module.
 
 ```yaml
 name: Foundation Guide
 path: .interface/foundation/guide.md
 responsibility: Explains the Foundation directory and maps the Interface section files, every Config record, and every Schema; Config records remain owned by Plan, State, and Review
 ```
+
+→ [Foundation Guide](foundation/guide.md)
 
 
 
@@ -259,13 +267,15 @@ responsibility: Explains the Foundation directory and maps the Interface section
 <!--------------------------------------------------------------------------------- Understanding --->
 ## Understanding
 
-Understanding is the current context an Agent Native or Agent Instance establishes from authoritative sources before performing a Skill's role: Interface Understanding starts from this file and its linked Foundation files, Target Understanding from the two Target definitions, and only Agent Sync may enter the Agent Module. The complete section is in [Understanding](foundation/understanding.md), which every Skill reads as part of Interface Understanding.
+Understanding is the current context an Agent Native or Agent Instance establishes from authoritative sources before performing a Skill's role: Interface Understanding starts from this file and its linked Foundation files, Target Understanding from the two Target definitions, and only Agent Sync may enter the Agent Module.
 
 ```yaml
 name: Understanding
 path: .interface/foundation/understanding.md
 responsibility: Defines Interface Understanding and Target Understanding, their sources, precedence, and the Agent Module exception; part of every Skill's required Interface Understanding
 ```
+
+→ [Understanding](foundation/understanding.md)
 
 
 
@@ -274,13 +284,15 @@ responsibility: Defines Interface Understanding and Target Understanding, their 
 <!--------------------------------------------------------------------------------- Operations --->
 ## Operations
 
-Operations are the defined actions performed through the nine Interface-owned Skills — Configure, Planning, Developing, Reviewing, Launch, Implement, Reset, Skill Installer, and Agent Sync — each with exactly one Skill and one summarized outcome. The complete section is in [Operations](foundation/operations.md), which every Skill reads as part of Interface Understanding.
+Operations are the defined actions performed through the nine Interface-owned Skills — Configure, Planning, Developing, Reviewing, Launch, Implement, Reset, Skill Installer, and Agent Sync — each with exactly one Skill and one summarized outcome.
 
 ```yaml
 name: Operations
 path: .interface/foundation/operations.md
 responsibility: Defines every Operation, its Skill entry point, and the outcome that Skill is responsible for; part of every Skill's required Interface Understanding
 ```
+
+→ [Operations](foundation/operations.md)
 
 
 
@@ -289,13 +301,15 @@ responsibility: Defines every Operation, its Skill entry point, and the outcome 
 <!--------------------------------------------------------------------------------- Modes --->
 ## Modes
 
-Modes are the operational positions recorded by State — Not Set, Configuring, Planning, Development — each with its responsibility, inputs, and output. The complete section is in [Modes](foundation/modes.md), which every Skill reads as part of Interface Understanding.
+Modes are the operational positions recorded by State — Not Set, Configuring, Planning, Development — each with its responsibility, inputs, and output.
 
 ```yaml
 name: Modes
 path: .interface/foundation/modes.md
 responsibility: Defines every Mode State may record, with its responsibility, inputs, and output; part of every Skill's required Interface Understanding
 ```
+
+→ [Modes](foundation/modes.md)
 
 
 
@@ -304,13 +318,15 @@ responsibility: Defines every Mode State may record, with its responsibility, in
 <!--------------------------------------------------------------------------------- Authority and Ownership --->
 ## Authority and Ownership
 
-Authority and Ownership state who owns each record (Human, Plan, State, Review) and which Skill may change it; the complete `.interface/` tree is read-only except for authorized Config records. The complete section is in [Authority and Ownership](foundation/authority.md), which every Skill reads as part of Interface Understanding.
+Authority and Ownership state who owns each record (Human, Plan, State, Review) and which Skill may change it; the complete `.interface/` tree is read-only except for authorized Config records.
 
 ```yaml
 name: Authority and Ownership
 path: .interface/foundation/authority.md
 responsibility: Defines record ownership and every Skill's write authority, including the read-only rule for the Interface tree; part of every Skill's required Interface Understanding
 ```
+
+→ [Authority and Ownership](foundation/authority.md)
 
 
 
@@ -319,13 +335,15 @@ responsibility: Defines record ownership and every Skill's write authority, incl
 <!--------------------------------------------------------------------------------- Workflow --->
 ## Workflow
 
-Workflow is the ordered path from Target definition to running software — Define Target, Configure, Plan, Develop, Review, Launch — followed through the Default, Normal, or Detailed path. The complete section is in [Workflow](foundation/workflow.md), which every Skill reads as part of Interface Understanding.
+Workflow is the ordered path from Target definition to running software — Define Target, Configure, Plan, Develop, Review, Launch — followed through the Default, Normal, or Detailed path.
 
 ```yaml
 name: Workflow
 path: .interface/foundation/workflow.md
 responsibility: Defines the Workflow and the Default, Normal, and Detailed invocation paths; part of every Skill's required Interface Understanding
 ```
+
+→ [Workflow](foundation/workflow.md)
 
 
 
