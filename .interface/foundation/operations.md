@@ -49,7 +49,7 @@ This Operation is performed through `/my-interface-developing [phase-number ...]
 
 **Agent Skill:** `/my-interface-reviewer`
 
-This Operation is performed through `/my-interface-reviewer [phase-number ...]` to assure each selected phase's Plan against current Interface and Target Understanding, coordinate Planning and independently recheck it when reconciliation is required, and then evaluate existing implementation without repairing it. With no phase input, it reviews every enabled phase.
+This Operation is performed through `/my-interface-reviewer [phase-number ...]` to assure each selected phase's Plan and existing implementation against current Interface and Target Understanding, recording every misalignment as a Finding owned by Configure, Planning, or Developing, without invoking them or repairing anything; Implement (or the Human) reruns those operations and Review until it is satisfied. With no phase input, it reviews every enabled phase.
 
 <!-------------------------- Launch Operation -->
 ### Launch
@@ -63,7 +63,7 @@ This Operation is performed through `/my-interface-launch [api|logic|presentatio
 
 **Agent Skill:** `/my-interface-implement`
 
-This Operation is performed through `/my-interface-implement [phase-number ...]` to execute Configure once, then Planning, Developing, and Review for each selected phase in Target order, advancing only after the phase is satisfied, and finally perform eligible Launch. With no phase input, it processes every enabled and ready phase.
+This Operation is performed through `/my-interface-implement [phase-number ...]` to execute Configure once when no phase was selected, then Planning, Developing, and Review for each selected phase in Target order — repeating that cycle for a phase while Review records Findings and progress continues — advancing only after the phase is satisfied, and finally perform eligible Launch. With no phase input, it processes every enabled and ready phase.
 
 <!-------------------------- Reset Operation -->
 ### Reset

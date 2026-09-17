@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every phase currently e
 
 ## Outputs
 
-Produce the integrated ordered outcomes of Configure when it ran, and of every per-phase Planning, Developing, Review, and reconciliation cycle; Implementation State and History owned by Implement; withheld phase results; all Blockers and Open Questions; eligible Launch; and a truthful distinction between selected-scope completion and whole-Target completion.
+Produce the integrated ordered outcomes of Configure when it ran, and of every per-phase Planning, Developing, Review, and reconciliation cycle; Implementation State and History owned by Implement, including one step-by-step run entry under State's implementation record that lists the selection, whether Configure ran, and for every phase each Planning → Developing → Reviewing cycle with its outcome, the stop reason when the loop stopped, and the Launch decision; withheld phase results; all Blockers and Open Questions; eligible Launch; and a truthful distinction between selected-scope completion and whole-Target completion.
 
 ## Required Understanding
 
@@ -26,7 +26,7 @@ Establish Interface Understanding and current Target Understanding. Resolve the 
 
 ## Authority
 
-Coordinate operation Skills directly and write only Implementation State and its History independently. Every delegated mutation remains under the invoked Skill and owning Component. Never bypass Human approval or combine operation ownership.
+Coordinate operation Skills directly and write only Implementation State — its status and the step-by-step run log — and its History independently. Every delegated mutation remains under the invoked Skill and owning Component. Never bypass Human approval or combine operation ownership.
 
 ## Workflow Invariants
 
@@ -36,8 +36,8 @@ Coordinate operation Skills directly and write only Implementation State and its
 4. Process selected implementable phases strictly in Target order, one complete phase at a time.
 5. Execute Planning for the current phase even when a Plan exists; Planning's reconciliation and idempotency preserve valid current work.
 6. Execute Developing for the current phase, including durable checks and its completion gate.
-7. Execute Reviewing after implementation exists. Reviewing may coordinate Configure, Planning, or Developing when current authorities or evidence require reconciliation, then re-review the resulting state.
-8. When Review is not satisfied, route each Finding through its owning Skill and run Review again. Continue only while a cycle closes or materially advances at least one Finding.
+7. Execute Reviewing after implementation exists. Reviewing invokes nothing; it judges the current Plan and implementation against current Understanding and records every Finding with its owning operation.
+8. When Review is not satisfied, rerun the cycle for the same phase: Configure when a Finding names it, then Planning, then Developing, then Reviewing. Planning and Developing read the recorded Findings and reconcile them; Review judges again from fresh Understanding. Continue only while a cycle closes or materially advances at least one Finding.
 9. Stop on a repeated unresolved Finding, no observable progress, inconclusive assurance, unmet dependency, failed operation gate, or required Human decision.
 10. Advance to the next selected phase only after the current phase has satisfied Plan and Implementation Assurance. An incomplete phase withholds every later phase in this invocation.
 11. Launch only when every currently enabled and ready phase—not merely the selected subset—has completed Planning and Development and has satisfied both Review assurances.
@@ -58,4 +58,4 @@ Stop before all mutation on invalid input or an empty implementable selection. S
 
 ## Runtime Realization
 
-A native adapter exposes optional multi-phase input, resolves operation implementations through synchronized Runtime capabilities, invokes Configure once and then Planning → Developing → Review for each phase in fixed Contract order, and reports every operation and reconciliation outcome in execution order without reading Agent Module sources.
+A native adapter exposes optional multi-phase input, resolves operation implementations through synchronized Runtime capabilities, invokes Configure once when no phase was selected and then Planning → Developing → Review for each phase in fixed Contract order, repeating that cycle for a phase while Review records Findings and progress continues, and reports every operation and reconciliation outcome in execution order without reading Agent Module sources.

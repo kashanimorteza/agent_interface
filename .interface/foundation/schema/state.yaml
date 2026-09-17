@@ -59,6 +59,34 @@ sections:
       completed_at: {required: true, default: null, nullable: true}
       updated_by: {required: true, default: "initialization"}
       updated_at: {required: true, default: null, nullable: true}
+      runs:
+        required: true
+        default: []
+        purpose: "Step-by-step log of every Implement invocation, appended by Implement only, so a reader can see what Implement did, phase by phase and cycle by cycle. Added 2026-09-17."
+        item:
+          id: {required: true, purpose: "Stable run identifier, e.g. R1, R2."}
+          started_at: {required: true}
+          completed_at: {required: true, nullable: true}
+          selection: {required: true, purpose: "Phase identifiers the invocation resolved; empty list means every enabled and ready phase."}
+          configure: {required: true, allowed: ["run", "skipped"], purpose: "run when no phase was selected, otherwise skipped."}
+          phases:
+            required: true
+            purpose: "One entry per processed phase, in Target order."
+            item:
+              id: {required: true}
+              cycles:
+                required: true
+                purpose: "One entry per Planning -> Developing -> Reviewing cycle for this phase."
+                item:
+                  number: {required: true}
+                  planning: {required: true, purpose: "Outcome and Plan revision produced or preserved."}
+                  developing: {required: true, purpose: "Outcome: tasks completed, withheld, checks run."}
+                  reviewing: {required: true, purpose: "Outcome: satisfied, not satisfied, or inconclusive, with Findings closed and remaining."}
+                  configure: {required: false, purpose: "Present only when a Finding named Configure and it was rerun in this cycle."}
+              outcome: {required: true, allowed: ["satisfied", "stopped", "withheld"]}
+              stop_reason: {required: false, purpose: "Why the loop stopped when outcome is stopped: repeated Finding, no progress, inconclusive, unmet dependency, failed gate, Human decision."}
+          launch: {required: true, allowed: ["run", "not eligible", "skipped"]}
+          result: {required: true, purpose: "One truthful sentence: selected-scope completion versus whole-Target completion."}
   launch:
     required: true
     default: {}
@@ -140,7 +168,7 @@ initial:
   content_map:
     active: "Current or most recently recorded Workflow position."
     phases: "Aggregate Planning, Development, and Review progress by phase identifier."
-    implementation: "Latest end-to-end Implement result."
+    implementation: "Latest end-to-end Implement result and the step-by-step log of every Implement run."
     launch: "Current runtime result and verified access points."
     history: "Append-only State-changing Workflow events."
     blockers: "Unresolved critical conditions."
@@ -159,6 +187,7 @@ initial:
       completed_at: null
       updated_by: "initialization"
       updated_at: null
+      runs: []
     launch:
       status: "not launched"
       environment: null

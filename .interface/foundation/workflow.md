@@ -56,9 +56,9 @@ For direct control over every operation:
 ```text
 /my-interface-configure
 /my-interface-planning 1
-/my-interface-reviewer 1
 /my-interface-developing 1
 /my-interface-reviewer 1
+If Review is not satisfied: run planning 1, developing 1, reviewer 1 again until it is
 Repeat Planning, Developing, and Review for each remaining phase
 /my-interface-launch
 ```

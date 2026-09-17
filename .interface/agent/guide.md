@@ -290,6 +290,21 @@ The technical selections it needs live in Preferences, so narrowing to Preferenc
 
 <br>
 
+## Understanding record — Implement, Planning, Developing, Reviewing
+
+Discussed with the Human on 2026-09-17.
+
+**How do the four fit together?**
+Planning defines the work for a phase. Developing generates the output from that Plan. Reviewing judges: it compares the generated output with the Understanding it has of the project and of that phase, using the rules its Contract already carries. If everything matches, it confirms; if not, it records what is wrong in the Review record (`review.yaml`), each Finding naming the operation that must fix it — and does nothing else. Implement watches Review's answer: not confirmed means run Planning and Developing again (they read the recorded Findings and correct their work; a changed Plan is re-implemented), then Review again, and so on until Review confirms; then Implement moves to the next phase and finally leaves the loop reporting the work done.
+
+**Where is the loop?**
+In Implement, not in Reviewing. Reviewing keeps every rule it had and loses only the right to invoke other Skills and to repeat within its own run. Implement must therefore be permitted to invoke Configure, Planning, Developing, Reviewing, and Launch through the Native's own Skill mechanism.
+
+**When does Implement run Configure?**
+Only when it was invoked without a phase number. With a phase number, Configure is skipped.
+
+<br>
+
 ## Decisions taken
 
 Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then written into the Module in the Component that owns it; the Agent Native was changed only through Agent Sync, except for the one-time hand bootstrap of the Agent Sync adapter.
@@ -305,6 +320,8 @@ Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then w
 - The Agent Module was restructured from seventeen to ten Components (see Components): a Component is a general capability; native mechanisms are Preferences hints under `settings.native.<agent-native>` or left to the Native.
 - The `agent-sync` Skill became `agent-native` with three numeric modes — `1` sync self, `2` sync component, `3` install — and the separate `skill-installer` Skill was merged into mode `3`. The Operation is named Agent Native; the activity of modes 1–2 is still called Agent Sync.
 - Personality refers to models by the names declared in Runtime; an Agent Instance may name an optional `personality`.
+- Implement keeps a step-by-step log of every run under State's `implementation.runs` (selection, Configure run or skipped, every phase's cycles with Planning/Developing/Reviewing outcomes, stop reason, Launch decision, result). State stays the owner; no fifth Config file.
+- The Planning → Developing → Reviewing loop belongs to Implement. Reviewing records Findings with their owning operation and invokes nothing; its `coordination` declaration moved to Implement, which may invoke Configure, Planning, Developing, Reviewing, and Launch. The Detailed workflow path no longer runs Review before Developing.
 - Output Style is owned by the enabled plugin `adhd-output-style`; Rule Preferences select `ADHD Explanatory`, the style that plugin provides.
 - Context Preferences state that the Technical Definition takes precedence over the Non-Technical Definition wherever they conflict.
 - Runtime Preferences drop the undefined `required_profile_version`/`status` pair; `compatibility` is an explicit empty category.
