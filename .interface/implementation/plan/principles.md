@@ -120,7 +120,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 ## 9. Completion must be demonstrable
 
-**Rule:** Every Task states an acceptance criterion and a verification condition, both expressed as observable behaviour. Acceptance states what makes the result correct. Verification states what must be observed to prove it, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that observes it. The concrete executable check that satisfies the verification condition is constructed and run at implementation time, and the check used and its outcome are recorded in the Task's log. A Task is complete only when that check has passed.
+**Rule:** Every Task states an acceptance criterion and a verification condition, both expressed as observable behaviour. Acceptance states what makes the result correct. Verification states what must be observed to prove it, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that observes it. The concrete executable check that satisfies the verification condition is constructed and run at implementation time, and the check used and its outcome are recorded in the Task's log. A Task is complete only when that check has passed. The form of that check is governed by the declared cross-cutting testing scope, which is read before the check is constructed. A Task whose target Component is within that scope proves its verification condition through a test that persists as part of that Component. A Task whose target Component is outside that scope proves it through a transient check that leaves no test artifact behind: the check is run, its outcome is recorded in the log, and nothing it created remains in the Component. Availability of a test tool in the declared toolchain never widens the testing scope, and a Component outside that scope never acquires a test suite, a test directory, a test configuration, or a test dependency as a side effect of demonstrating completion.
 
 **Why:** Writing code or changing a file is never sufficient evidence of completion, and a proof expressed as behaviour survives every rearrangement of the implementation that produces it.
 
@@ -187,6 +187,8 @@ When a blocking condition is verified as resolved, an operation authorized to up
 - **Must** — every Task states acceptance and a verification condition, both as observable behaviour *(9)*
 - **Must** — the executable check used and its outcome are recorded in the Task's log, and the Task is complete only once it passes *(9)*
 - **Never** — verification names the command, tool, path, or code that observes it, or doubles as an implementation procedure *(9)*
+- **Must** — the check's form follows the declared cross-cutting testing scope: a persisted test only inside it, a transient check outside it *(9)*
+- **Never** — a Component outside the declared testing scope acquires a test suite, test directory, test configuration, or test dependency *(9)*
 - **Must** — an executor claims eligible work before modifying it and preserves an append-only Task log *(10)*
 - **Must** — authorized Task progress updates record verified Blocker resolution, reconcile its reference and pending status, and recheck dependencies and remaining conditions before claiming work *(10)*
 - **Never** — Blocker removal alone proves resolution, or resolution marks a Task complete *(10)*
