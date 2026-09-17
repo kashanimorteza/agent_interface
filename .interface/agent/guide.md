@@ -8,7 +8,7 @@ This document explains the Agent Module: what it is, why it exists, how its part
 
 Agent Interface is the interface between a developer and an AI Agent. The Agent Module is the layer inside it that holds everything about the Agent itself: its behaviors, skills, rules, restrictions, responsibilities, and view of the world. It is written once, independently of which Agent Native will run it — Claude Code, Codex, Copilot, or any other engine.
 
-The Module does not know the Agent Native. A separate Skill, Agent Sync, establishes an Understanding of the complete Module and configures the Agent Native's own structure from that Understanding. Because Agent Sync itself runs inside the Agent Native, the Native already knows where a rule belongs, where a skill belongs, and what documentation a skill must be built with. The Module owns *what* the Agent is; the Agent Native, through Agent Sync, owns *where and how* that is realized.
+The Module does not know the Agent Native. A separate Skill, Agent Sync, establishes an Understanding of the complete Module and configures the Agent Native's own structure from that Understanding — Agent Sync is, in effect, the Native configuring itself, since it runs inside the Native. Because Agent Sync itself runs inside the Agent Native, the Native already knows where a rule belongs, where a skill belongs, and what documentation a skill must be built with. The Module owns *what* the Agent is; the Agent Native, through Agent Sync, owns *where and how* that is realized.
 
 
 The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent Native and its Agent Instances should operate. The Human declares that view once through its Components—including the Agent Native, Agent Instance identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Profile for its current choices, resources, portable realization requirements, and explicit empty categories.
@@ -297,6 +297,7 @@ Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then w
 - The Agent Sync adapter carries each rule once; duplication inside the adapter is removed on the next `self` run.
 - Rejected: a runtime-identity check in Agent Sync's Stopping Conditions, and declaring Codex as a second Runtime option now — both left for later.
 - Personality is a Component of this Module (not of Foundation, not inside Runtime); it absorbs Action (what a personality does) and Route (which models it prefers, in order).
+- Agent Sync, discussed in its own right (see `skill/guide.md`): Module Understanding starts from this guide; a declaration the Native cannot realize exactly is realized through the nearest equivalent, reported as `approximated`, and the run continues; unmanaged native capabilities are only reported; the restart notice is boxed; the two modes and the verify-until-converged loop stay.
 - Hook Profile follows Permission on who may read the Module: the `agent-sync-read-grant` matcher and responsibility name both `agent-sync` and `skill-installer`. Confirmed; applied when the current review round is complete.
 
 <br>
