@@ -103,6 +103,6 @@
       }
     }
   },
-  "outputStyle": "ADHD",
+  "outputStyle": "adhd-output-style:ADHD Explanatory",
   "autoMemoryEnabled": false
 }

@@ -4,11 +4,278 @@ meta:
     conformance.
   owner: my-interface-agent-native
 last_run:
-  mode: '1'
-  at: '2026-09-17T16:27:06Z'
-  result: 'mode 1: adapter rewritten and verified against its Contract; activation required (restart); every other declaration
-    left unreconciled - run mode 2 after restart'
+  mode: '2'
+  at: '2026-09-17T17:02:25Z'
+  result: 'mode 2: Agent Module not fully synchronized. 7 artifacts written and awaiting restart, 1 approximation, read-grant
+    non-transferability probe unverified'
 declarations:
+- declaration: agent/agent/preferences.yaml#project_instances.general
+  sources:
+  - path: .interface/agent/agent/preferences.yaml
+    fingerprint: sha256:44711a673619a16a10ccd63cffe1499f97ac1b8cd67dfc3563c8e75c9dd8e123
+  - path: .interface/agent/agent/principles.md
+    fingerprint: sha256:ab958816c84b4cad2c7b45891b80acc92c4b5b0d074f311009a27b1f79738c06
+  realized_as: Claude Code primary agent, runtime-provided, observation only
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: runtime-primary Agent Native is the agent running this Skill. Primary execution Role and delegation contract carried
+    by .claude/rules/interface-skill-policy.md. single_agent and scope_partition are conduct, carried by the same Rule.
+- declaration: agent/agent/preferences.yaml#project_instances.interface-reader
+  sources:
+  - path: .interface/agent/agent/preferences.yaml
+    fingerprint: sha256:44711a673619a16a10ccd63cffe1499f97ac1b8cd67dfc3563c8e75c9dd8e123
+  - path: .interface/agent/agent/principles.md
+    fingerprint: sha256:ab958816c84b4cad2c7b45891b80acc92c4b5b0d074f311009a27b1f79738c06
+  realized_as: Claude Code project subagent
+  artifact: .claude/agents/interface-reader.md
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: 'Definition and agent file read in full and compared. tools Read, Grep, Glob and no write authority match. Instantiated
+    this run: it listed exactly those three tools, Glob and Grep calls worked, it reported the State position and stayed out
+    of the Agent Module.'
+- declaration: agent/command/preferences.yaml#custom_commands
+  sources:
+  - path: .interface/agent/command/preferences.yaml
+    fingerprint: sha256:104c1cc8950956d96a37322c962a13d4aa1ef2537012d60caa9bd45e17bd132d
+  - path: .interface/agent/command/principles.md
+    fingerprint: sha256:54316745cc960bea71e6cb3ef3bf18542e2de52aef38413ad184c4b60cd296cb
+  realized_as: Claude Code Skill slash commands with argument-hint frontmatter
+  artifact: .claude/skills
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:03Z'
+  note: '8 commands each resolve to exactly one owning project Skill, no collision, no alias, no legacy command file. Argument
+    hints match. Observation: the launch command is declared without arguments while the launch Contract and the Interface
+    Operations file give it a scope argument, the Skill follows the Contract.'
+- declaration: agent/connection/preferences.yaml#packages
+  sources:
+  - path: .interface/agent/connection/preferences.yaml
+    fingerprint: sha256:463fbd6dd5a0af4be715e5f4f5ac0ba41aa0f939f1cef75325b7d0667e4fb537
+  - path: .interface/agent/connection/principles.md
+    fingerprint: sha256:1b307ac776d519aeb3e34d0ba70c2b906ebebf3c8b8e3a020d479965ec10d08d
+  realized_as: Claude Code enabledPlugins and extraKnownMarketplaces
+  artifact: .claude/settings.json
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:03Z'
+  note: '13 declared plugins all present in enabledPlugins and reported installed, project scope, enabled by the plugin list.
+    5 declared marketplaces present with matching repositories. Unmanaged and preserved: logfire, ai and pydantic-ai-harness
+    from pydantic-skills.'
+- declaration: agent/connection/preferences.yaml#services
+  sources:
+  - path: .interface/agent/connection/preferences.yaml
+    fingerprint: sha256:463fbd6dd5a0af4be715e5f4f5ac0ba41aa0f939f1cef75325b7d0667e4fb537
+  - path: .interface/agent/connection/principles.md
+    fingerprint: sha256:1b307ac776d519aeb3e34d0ba70c2b906ebebf3c8b8e3a020d479965ec10d08d
+  realized_as: none
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:03Z'
+  note: 'report only: mcp_servers, lsp_servers, channels, application_connectors and every other service category are explicit
+    empty categories. No project .mcp.json exists. MCP servers seen this session come from user scope or plugins and are unmanaged.'
+- declaration: agent/context/preferences.yaml#context
+  sources:
+  - path: .interface/agent/context/preferences.yaml
+    fingerprint: sha256:6e5791ab29befdbea373231221d660f4d938230ac76c96637ac90bc7e05975f2
+  - path: .interface/agent/context/principles.md
+    fingerprint: sha256:da13029a44a3e7e8836ee69db88c0d6b22b9ed3e7128dea8ed96aebdc88f60f3
+  realized_as: Claude Code autoMemoryEnabled setting plus global project Rules
+  artifact: .claude/settings.json
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:03Z'
+  note: auto_memory disabled matches autoMemoryEnabled false. project_instructions is empty and no CLAUDE.md exists. understanding_sources,
+    the README derived-source rule and reload after compaction are carried by the bootstrap and policy Rules, recorded under
+    those Rules.
+- declaration: agent/permission/preferences.yaml#enforced.agent-native-read-grant
+  sources:
+  - path: .interface/agent/permission/preferences.yaml
+    fingerprint: sha256:fa163ff4614f2b4048ee34cc59fe55cc544c1a3f2e14caaabc8dadd425c9603e
+  - path: .interface/agent/permission/principles.md
+    fingerprint: sha256:8b7fdef25c4cfe57e3e7be35f665451b3840946fed4ea2a4be23a00b223df8a6
+  realized_as: Claude Code UserPromptExpansion command hook writing a per-prompt marker
+  artifact: .claude/hooks/interface-boundary-guard.py
+  status: blocked
+  mode: '2'
+  at: '2026-09-17T17:02:25Z'
+  note: 'Artifact read in full and compared, no difference. Probe leg 1 matched: Reads of the Module inside this directly
+    invoked prompt succeeded, and an expansion of any other command is refused a grant. Probe leg 2, a subagent of this prompt
+    is blocked, is unverified: both subagents declined to attempt the Read, so non-transferability of the marker was never
+    observed live. Human action: run the subagent probe after restart.'
+- declaration: agent/permission/preferences.yaml#enforced.interface-boundary-guard
+  sources:
+  - path: .interface/agent/permission/preferences.yaml
+    fingerprint: sha256:fa163ff4614f2b4048ee34cc59fe55cc544c1a3f2e14caaabc8dadd425c9603e
+  - path: .interface/agent/permission/principles.md
+    fingerprint: sha256:8b7fdef25c4cfe57e3e7be35f665451b3840946fed4ea2a4be23a00b223df8a6
+  realized_as: Claude Code PreToolUse command hook, fail closed
+  artifact: .claude/hooks/interface-boundary-guard.py
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:25Z'
+  note: 'Guarantee, settings hook entry and handler read in full and compared, no difference. Matcher and fail-closed exit
+    match. Probes: live Bash redirection naming the protected tree was blocked with the boundary message. Handler given the
+    exact payloads blocked an Edit of interface.md, a Module Read without a grant and a Skill-tool call of agent-native, and
+    allowed a Config write. Malformed payload exits nonzero, hence closed. Not observed live: the declared subagent Read and
+    Grep, because two subagents declined to attempt them under the loaded Rules, and the declared Edit, because Claude Code
+    validates Edit input before hooks run and a matching Edit was judged unsafe.'
+- declaration: agent/permission/preferences.yaml#rules-and-mode
+  sources:
+  - path: .interface/agent/permission/preferences.yaml
+    fingerprint: sha256:fa163ff4614f2b4048ee34cc59fe55cc544c1a3f2e14caaabc8dadd425c9603e
+  - path: .interface/agent/permission/principles.md
+    fingerprint: sha256:8b7fdef25c4cfe57e3e7be35f665451b3840946fed4ea2a4be23a00b223df8a6
+  realized_as: Claude Code settings permissions allow, ask, deny and defaultMode
+  artifact: .claude/settings.json
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: edit_authorized maps to defaultMode acceptEdits. 11 portable allow capabilities map to Bash, Read, Glob, Grep, Edit,
+    Write, NotebookEdit, Agent, Task tools plus TodoWrite, WebFetch, WebSearch. 7 git ask rules present, deny empty. sandbox,
+    trust, authentication_references, credential_helpers, external_authorizations, managed_restrictions are explicit empty
+    categories. No secret pattern found under .claude.
+- declaration: agent/personality/preferences.yaml#personalities
+  sources:
+  - path: .interface/agent/personality/preferences.yaml
+    fingerprint: sha256:4d911b8dba633aab73e236ca020ef076b440ef77223564cfb912cd816253ae61
+  - path: .interface/agent/personality/principles.md
+    fingerprint: sha256:80adfe6350cf3d7a96984a457154a1d6036dab4f233f42655b0af983bb77bc6c
+  - path: .interface/agent/personality/definitions/analyst.md
+    fingerprint: sha256:2cc9fb52864a3e20053547faea78e95040d7850e14704302c822b1fe6385494d
+  - path: .interface/agent/personality/definitions/architect.md
+    fingerprint: sha256:7f0bc326d3ab42211fc29eb37ecbf93b988a3f9444f03a17fb0ee8e846f49895
+  - path: .interface/agent/personality/definitions/developer.md
+    fingerprint: sha256:a5600f009ef18a5056d1c33378facf5416753770d3dfa590e23ac100e7fdd2e8
+  - path: .interface/agent/personality/definitions/planner.md
+    fingerprint: sha256:04575dd696014522088df847fa887e8e86fbbecc9fc5ec4e0e05d0dd85276a28
+  - path: .interface/agent/personality/definitions/reviewer.md
+    fingerprint: sha256:95aa577e64fb51730646c5f6ea10b6ca497bdc547017120d8c07879112a3e185
+  realized_as: none
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: 'report only: 5 optional Personalities declared, default null, every models list empty, no core Skill or Agent Instance
+    names one, so no definition is carried into any native artifact. Nothing invented.'
+- declaration: agent/rule/preferences.yaml#project_rules.git-discipline
+  sources:
+  - path: .interface/agent/rule/preferences.yaml
+    fingerprint: sha256:8ab65a43e01b626573e26e40c15c698c7ea8f67f72baf2719aa60ba9870b79ff
+  - path: .interface/agent/rule/principles.md
+    fingerprint: sha256:090c1d9a4a23a138a76e0b7b6e1728ac05a5cf789bbf1517441efd1cf8f3dbae
+  - path: .interface/agent/permission/preferences.yaml
+    fingerprint: sha256:fa163ff4614f2b4048ee34cc59fe55cc544c1a3f2e14caaabc8dadd425c9603e
+  realized_as: Claude Code project Rule, global
+  artifact: .claude/rules/git-discipline.md
+  status: activation required
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: 'create: no artifact existed. Rule written and re-read, it explains the ask boundary that settings permissions enforce.
+    Restart required.'
+- declaration: agent/rule/preferences.yaml#project_rules.interface-agent-capabilities
+  sources:
+  - path: .interface/agent/rule/preferences.yaml
+    fingerprint: sha256:8ab65a43e01b626573e26e40c15c698c7ea8f67f72baf2719aa60ba9870b79ff
+  - path: .interface/agent/rule/principles.md
+    fingerprint: sha256:090c1d9a4a23a138a76e0b7b6e1728ac05a5cf789bbf1517441efd1cf8f3dbae
+  - path: .interface/agent/skill/preferences.yaml
+    fingerprint: sha256:af3dd073fd1d13b487ecfb6248d7d1de8e5326845058538fa3cffe97d78ba5a9
+  - path: .interface/agent/command/preferences.yaml
+    fingerprint: sha256:104c1cc8950956d96a37322c962a13d4aa1ef2537012d60caa9bd45e17bd132d
+  - path: .interface/agent/agent/preferences.yaml
+    fingerprint: sha256:44711a673619a16a10ccd63cffe1499f97ac1b8cd67dfc3563c8e75c9dd8e123
+  realized_as: Claude Code project Rule, global
+  artifact: .claude/rules/interface-agent-capabilities.md
+  status: activation required
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: 'Differences: catalog listed retired agent-sync and skill-installer rows, omitted agent-native and the Agent Instances.
+    Whole Rule rewritten from the current Skill, Command and Agent Preferences, re-read proved them gone. Restart required.'
+- declaration: agent/rule/preferences.yaml#project_rules.interface-bootstrap
+  sources:
+  - path: .interface/agent/rule/preferences.yaml
+    fingerprint: sha256:8ab65a43e01b626573e26e40c15c698c7ea8f67f72baf2719aa60ba9870b79ff
+  - path: .interface/agent/rule/principles.md
+    fingerprint: sha256:090c1d9a4a23a138a76e0b7b6e1728ac05a5cf789bbf1517441efd1cf8f3dbae
+  - path: .interface/agent/context/preferences.yaml
+    fingerprint: sha256:6e5791ab29befdbea373231221d660f4d938230ac76c96637ac90bc7e05975f2
+  - path: .interface/agent/context/principles.md
+    fingerprint: sha256:da13029a44a3e7e8836ee69db88c0d6b22b9ed3e7128dea8ed96aebdc88f60f3
+  realized_as: Claude Code project Rule, global
+  artifact: .claude/rules/interface-bootstrap.md
+  status: activation required
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: '3 differences: entry point was the old foundation path, Foundation section files were omitted, and two retired Skills
+    were named as Module readers. Whole Rule rewritten, re-read proved all three gone. Restart required.'
+- declaration: agent/rule/preferences.yaml#project_rules.interface-skill-policy
+  sources:
+  - path: .interface/agent/rule/preferences.yaml
+    fingerprint: sha256:8ab65a43e01b626573e26e40c15c698c7ea8f67f72baf2719aa60ba9870b79ff
+  - path: .interface/agent/rule/principles.md
+    fingerprint: sha256:090c1d9a4a23a138a76e0b7b6e1728ac05a5cf789bbf1517441efd1cf8f3dbae
+  - path: .interface/agent/permission/principles.md
+    fingerprint: sha256:8b7fdef25c4cfe57e3e7be35f665451b3840946fed4ea2a4be23a00b223df8a6
+  - path: .interface/agent/agent/principles.md
+    fingerprint: sha256:ab958816c84b4cad2c7b45891b80acc92c4b5b0d074f311009a27b1f79738c06
+  - path: .interface/agent/connection/principles.md
+    fingerprint: sha256:1b307ac776d519aeb3e34d0ba70c2b906ebebf3c8b8e3a020d479965ec10d08d
+  - path: .interface/agent/context/preferences.yaml
+    fingerprint: sha256:6e5791ab29befdbea373231221d660f4d938230ac76c96637ac90bc7e05975f2
+  realized_as: Claude Code project Rule, global
+  artifact: .claude/rules/interface-skill-policy.md
+  status: activation required
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: 'Differences: retired Skills named as Module readers, no scope statement, delegation contract, secrets and unrelated-work
+    boundaries, status vocabulary and conduct rules omitted. Whole Rule rewritten, re-read proved them gone. Restart required.'
+- declaration: agent/rule/preferences.yaml#selected.conduct
+  sources:
+  - path: .interface/agent/rule/preferences.yaml
+    fingerprint: sha256:8ab65a43e01b626573e26e40c15c698c7ea8f67f72baf2719aa60ba9870b79ff
+  - path: .interface/agent/rule/principles.md
+    fingerprint: sha256:090c1d9a4a23a138a76e0b7b6e1728ac05a5cf789bbf1517441efd1cf8f3dbae
+  realized_as: instruction text in a global Claude Code project Rule
+  artifact: .claude/rules/interface-skill-policy.md
+  status: approximated
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: 'approximated: material_updates, proportional validation and revalidate on resume have no dedicated Claude Code setting,
+    so they are carried as the Conduct section of the policy Rule. They guide behavior and are not deterministically enforced.
+    All other interaction, observability and session categories are explicit empty categories.'
+- declaration: agent/rule/preferences.yaml#selected.output_style
+  sources:
+  - path: .interface/agent/rule/preferences.yaml
+    fingerprint: sha256:8ab65a43e01b626573e26e40c15c698c7ea8f67f72baf2719aa60ba9870b79ff
+  - path: .interface/agent/rule/principles.md
+    fingerprint: sha256:090c1d9a4a23a138a76e0b7b6e1728ac05a5cf789bbf1517441efd1cf8f3dbae
+  - path: .interface/agent/connection/preferences.yaml
+    fingerprint: sha256:463fbd6dd5a0af4be715e5f4f5ac0ba41aa0f939f1cef75325b7d0667e4fb537
+  realized_as: Claude Code outputStyle setting naming the plugin-provided style
+  artifact: .claude/settings.json
+  provider: adhd-output-style@claude-settings
+  status: activation required
+  mode: '2'
+  at: '2026-09-17T17:02:02Z'
+  note: 'Difference: outputStyle selected the local ADHD file, the Module selects ADHD Explanatory. Setting rewritten to the
+    namespaced identifier the runtime reports, re-read proved it. The plugin style carries force-for-plugin and is the style
+    observed active this session. 20 optional local style files present. Restart required.'
+- declaration: agent/runtime/preferences.yaml#selected.agent_runtime
+  sources:
+  - path: .interface/agent/runtime/preferences.yaml
+    fingerprint: sha256:f2c89f410c5bf56b3d5b9ef70257406bde09c892da204ecd91371452a2cfc3e9
+  - path: .interface/agent/runtime/principles.md
+    fingerprint: sha256:ebca8b69c00aec28506b0d722bf6ccb77c94215ce5e5f1a8b8c9178bc2ca0805
+  realized_as: Claude Code runtime with shared project settings source
+  artifact: .claude/settings.json
+  provider: Claude Code 2.1.274
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:01Z'
+  note: Claude Code 2.1.274 is the running Agent Native. shared_project source resolves to .claude/settings.json. providers,
+    models, effort_levels, fallback_models and compatibility are explicit empty categories, nothing invented. No settings.local.json,
+    resolved values not written back.
 - declaration: agent/skill/contracts/agent-native.md
   sources:
   - path: .interface/agent/skill/contracts/agent-native.md
@@ -23,72 +290,107 @@ declarations:
     command omitted --source/--realized-as; mode 3 stopping and no-hardcoded-catalog rules not stated once; no way to retire
     merged predecessors from the record); adapter rewritten whole; re-read proved all six gone; restart required'
 - declaration: agent/skill/contracts/configure.md
-  source: .interface/agent/skill/contracts/configure.md
-  fingerprint: sha256:b738066915cf6cc641dc6db610214725d946793ecf6d39701fc9fb4770764a0c
+  sources:
+  - path: .interface/agent/skill/contracts/configure.md
+    fingerprint: sha256:39f03a0e748aea091b98ebe5dd6823b318a43acd9179d597cebaac91f2c8d6a0
   realized_as: Claude Code project Skill
   artifact: .claude/skills/my-interface-configure/SKILL.md
-  status: already synchronized
-  mode: module
-  at: '2026-09-17T12:58:42Z'
-  note: 'module run: Contract and native Skill both read in full and compared section by section; no difference found; body
-    not rewritten'
+  status: activation required
+  mode: '2'
+  at: '2026-09-17T17:02:01Z'
+  note: 'mode 2: Contract and Skill read in full and compared section by section. 1 difference, stated twice: Skill named
+    the retired Skill Installer operation where the Contract names the install mode of the Agent Native Skill. Both statements
+    rewritten, re-read proved the difference gone. Restart required.'
 - declaration: agent/skill/contracts/developing.md
-  source: .interface/agent/skill/contracts/developing.md
-  fingerprint: sha256:71a186904e3ff78c9b85ff9e42379dfbe320062e96d0ac619fd946b6541ce898
+  sources:
+  - path: .interface/agent/skill/contracts/developing.md
+    fingerprint: sha256:71a186904e3ff78c9b85ff9e42379dfbe320062e96d0ac619fd946b6541ce898
   realized_as: Claude Code project Skill
   artifact: .claude/skills/my-interface-developing/SKILL.md
   status: already synchronized
-  mode: module
-  at: '2026-09-17T12:58:42Z'
-  note: 'module run: Contract and native Skill both read in full and compared section by section; no difference found; body
-    not rewritten'
+  mode: '2'
+  at: '2026-09-17T17:02:01Z'
+  note: 'mode 2: Contract and Skill read in full and compared section by section. No difference found, body not rewritten.
+    Invocation controls match the declared policy.'
 - declaration: agent/skill/contracts/implement.md
-  source: .interface/agent/skill/contracts/implement.md
-  fingerprint: sha256:fc43267d5952bfc0274eccfc066fd18acb8c7806657cb23800ab468fcb7a1b20
+  sources:
+  - path: .interface/agent/skill/contracts/implement.md
+    fingerprint: sha256:fc43267d5952bfc0274eccfc066fd18acb8c7806657cb23800ab468fcb7a1b20
   realized_as: Claude Code project Skill
   artifact: .claude/skills/my-interface-implement/SKILL.md
   status: already synchronized
-  mode: module
-  at: '2026-09-17T12:58:42Z'
-  note: 'module run: Contract and native Skill both read in full and compared section by section; no difference found; body
-    not rewritten'
+  mode: '2'
+  at: '2026-09-17T17:02:01Z'
+  note: 'mode 2: Contract and Skill read in full and compared section by section. No difference found, body not rewritten.
+    Invocation controls match the declared policy.'
 - declaration: agent/skill/contracts/launch.md
-  source: .interface/agent/skill/contracts/launch.md
-  fingerprint: sha256:ef7a88d86731cd7caa0500b3b58beb2a74a29ceb12f07252d376487ef9befd5c
+  sources:
+  - path: .interface/agent/skill/contracts/launch.md
+    fingerprint: sha256:ef7a88d86731cd7caa0500b3b58beb2a74a29ceb12f07252d376487ef9befd5c
   realized_as: Claude Code project Skill
   artifact: .claude/skills/my-interface-launch/SKILL.md
   status: already synchronized
-  mode: module
-  at: '2026-09-17T12:58:42Z'
-  note: 'module run: Contract and native Skill both read in full and compared section by section; no difference found; body
-    not rewritten'
+  mode: '2'
+  at: '2026-09-17T17:02:01Z'
+  note: 'mode 2: Contract and Skill read in full and compared section by section. No difference found, body not rewritten.
+    Invocation controls match the declared policy.'
 - declaration: agent/skill/contracts/planning.md
-  source: .interface/agent/skill/contracts/planning.md
-  fingerprint: sha256:7a25f56def74f950ba75b2f805e0990b02175db59c3fdf0b87db16acea909623
+  sources:
+  - path: .interface/agent/skill/contracts/planning.md
+    fingerprint: sha256:7a25f56def74f950ba75b2f805e0990b02175db59c3fdf0b87db16acea909623
   realized_as: Claude Code project Skill
   artifact: .claude/skills/my-interface-planning/SKILL.md
   status: already synchronized
-  mode: module
-  at: '2026-09-17T12:58:42Z'
-  note: 'module run: Contract and native Skill both read in full and compared section by section; no difference found; body
-    not rewritten'
+  mode: '2'
+  at: '2026-09-17T17:02:01Z'
+  note: 'mode 2: Contract and Skill read in full and compared section by section. No difference found, body not rewritten.
+    Invocation controls match the declared policy.'
 - declaration: agent/skill/contracts/reset.md
-  source: .interface/agent/skill/contracts/reset.md
-  fingerprint: sha256:041fa73ad6e9cdafdb0340184e32a067f06c4e309dee6e5781254c3548908878
+  sources:
+  - path: .interface/agent/skill/contracts/reset.md
+    fingerprint: sha256:fc85966236367706382051177df70c6f89c7a57aa220a80420365f142040ebef
   realized_as: Claude Code project Skill
   artifact: .claude/skills/my-interface-reset/SKILL.md
   status: already synchronized
-  mode: module
-  at: '2026-09-17T12:58:42Z'
-  note: 'module run: Contract and native Skill both read in full and compared section by section; no difference found; body
-    not rewritten'
+  mode: '2'
+  at: '2026-09-17T17:02:01Z'
+  note: 'mode 2: recorded fingerprint was stale, so Contract and Skill plus helper were read in full and compared section
+    by section. No instruction difference found, body not rewritten, fingerprint refreshed.'
 - declaration: agent/skill/contracts/reviewing.md
-  source: .interface/agent/skill/contracts/reviewing.md
-  fingerprint: sha256:85b34a45d7d2fc68e2464297a59fbd3dcf598cfeada3b480284ee4aaa586cc0e
+  sources:
+  - path: .interface/agent/skill/contracts/reviewing.md
+    fingerprint: sha256:85b34a45d7d2fc68e2464297a59fbd3dcf598cfeada3b480284ee4aaa586cc0e
   realized_as: Claude Code project Skill
   artifact: .claude/skills/my-interface-reviewer/SKILL.md
+  status: activation required
+  mode: '2'
+  at: '2026-09-17T17:02:01Z'
+  note: 'mode 2: Contract and Skill read in full and compared section by section. 1 difference: never-invokes list named the
+    retired Agent Sync and Skill Installer Skills, now the Agent Native Skill in any mode. Re-read proved it gone. Restart
+    required.'
+- declaration: agent/skill/preferences.yaml#installed.pydantic
+  sources:
+  - path: .interface/agent/skill/preferences.yaml
+    fingerprint: sha256:af3dd073fd1d13b487ecfb6248d7d1de8e5326845058538fa3cffe97d78ba5a9
+  - path: .interface/agent/skill/principles.md
+    fingerprint: sha256:a5950543e4c2aa8edaeeecdb7cbab4f62cfea4877758a147bdf8fe8bca779914
+  realized_as: observed only, owned by mode 3
+  provider: pydantic@pydantic-skills
   status: already synchronized
-  mode: module
-  at: '2026-09-17T12:58:42Z'
-  note: 'module run: Contract and native Skill both read in full and compared section by section; no difference found; body
-    not rewritten'
+  mode: '2'
+  at: '2026-09-17T17:02:03Z'
+  note: 'report only: Installed Skill observed, not modified. Discoverable this session as pydantic:pydantic, plugin enabled
+    at project scope. prepared is an explicit empty category and the skill files directory is absent, which is not an error.'
+- declaration: agent/tool/preferences.yaml#runtime_tools
+  sources:
+  - path: .interface/agent/tool/preferences.yaml
+    fingerprint: sha256:cd7db9877aad88878f84d06f71c77149a92cda77b91b18cf27e4bcc57831c7e8
+  - path: .interface/agent/tool/principles.md
+    fingerprint: sha256:ffc2619cdf675ec28dc4eb84bb9f94fd51e92f571af2d3359bbb47a4ebfb5bf4
+  realized_as: Claude Code built-in tools, runtime-provided, observation only
+  status: already synchronized
+  mode: '2'
+  at: '2026-09-17T17:02:03Z'
+  note: Required file_read, file_edit, file_write, agent_delegate called successfully by the primary agent this run. file_discover
+    and text_search called successfully as Glob and Grep by interface-reader. The primary agent in this build has no dedicated
+    Glob or Grep tool and performs discovery and search through Bash. All other tool catalogs are explicit empty categories.

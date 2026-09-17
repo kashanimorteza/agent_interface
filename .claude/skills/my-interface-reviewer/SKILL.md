@@ -5,7 +5,7 @@ argument-hint: "[phase-number ...]"
 metadata:
   contract: ".interface/agent/skill/contracts/reviewing.md"
   contract_sha256: "sha256:85b34a45d7d2fc68e2464297a59fbd3dcf598cfeada3b480284ee4aaa586cc0e"
-  synced_at: "2026-09-17T12:58:42Z"
+  synced_at: "2026-09-17T17:02:01Z"
 ---
 
 # Review Target phases
@@ -25,7 +25,7 @@ Bring each selected phase's current Understanding, Plan, implementation, and gen
 
 Review never edits what it judges. When current Config, Plan, or implementation is no longer aligned, record the exact Finding naming Configure, Planning, or Developing as the operation that owns its resolution, then invoke that Skill to reconcile it, and independently recheck the result. Reviewing records Findings and exact outcomes and never edits another operation's records or Source directly.
 
-Review may invoke only Configure, Planning, and Developing, and only to reconcile a Finding that Skill owns within the phase under review; Configure may additionally reconcile project-wide Config or Environment prerequisites. Invoke each one with Claude Code's `Skill` tool, naming `my-interface-configure`, `my-interface-planning`, or `my-interface-developing`, so the invoked Skill loads and executes its own SKILL.md. Never read another Skill's SKILL.md and execute its workflow inline, and never delegate one to a forked or subordinate agent that inherits this Skill's context: neither runs that Skill's own definition, so neither is an invocation. Review never invokes Implement, Launch, Reset, Agent Sync, or Skill Installer. Each invoked Skill retains authority over its own records and outputs.
+Review may invoke only Configure, Planning, and Developing, and only to reconcile a Finding that Skill owns within the phase under review; Configure may additionally reconcile project-wide Config or Environment prerequisites. Invoke each one with Claude Code's `Skill` tool, naming `my-interface-configure`, `my-interface-planning`, or `my-interface-developing`, so the invoked Skill loads and executes its own SKILL.md. Never read another Skill's SKILL.md and execute its workflow inline, and never delegate one to a forked or subordinate agent that inherits this Skill's context: neither runs that Skill's own definition, so neither is an invocation. Review never invokes Implement, Launch, Reset, or the Agent Native Skill in any of its modes. Each invoked Skill retains authority over its own records and outputs.
 
 ## Input
 

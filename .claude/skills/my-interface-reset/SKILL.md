@@ -5,8 +5,8 @@ argument-hint: "[phase-number ... | config | complete]"
 disable-model-invocation: true
 metadata:
   contract: ".interface/agent/skill/contracts/reset.md"
-  contract_sha256: "sha256:041fa73ad6e9cdafdb0340184e32a067f06c4e309dee6e5781254c3548908878"
-  synced_at: "2026-09-17T12:58:42Z"
+  contract_sha256: "sha256:fc85966236367706382051177df70c6f89c7a57aa220a80420365f142040ebef"
+  synced_at: "2026-09-17T17:02:01Z"
 ---
 
 # Reset the project workflow

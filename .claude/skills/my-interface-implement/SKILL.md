@@ -6,7 +6,7 @@ disable-model-invocation: true
 metadata:
   contract: ".interface/agent/skill/contracts/implement.md"
   contract_sha256: "sha256:fc43267d5952bfc0274eccfc066fd18acb8c7806657cb23800ab468fcb7a1b20"
-  synced_at: "2026-09-17T12:58:42Z"
+  synced_at: "2026-09-17T17:02:01Z"
 ---
 
 # Implement the Target

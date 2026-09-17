@@ -3,8 +3,8 @@ name: my-interface-configure
 description: Generate or refresh operational Config, synchronize phase State, and prepare the selected Platform Environment when explicitly requested by the Human or delegated by a declared Interface coordinator.
 metadata:
   contract: ".interface/agent/skill/contracts/configure.md"
-  contract_sha256: "sha256:b738066915cf6cc641dc6db610214725d946793ecf6d39701fc9fb4770764a0c"
-  synced_at: "2026-09-17T12:58:42Z"
+  contract_sha256: "sha256:39f03a0e748aea091b98ebe5dd6823b318a43acd9179d597cebaac91f2c8d6a0"
+  synced_at: "2026-09-17T17:02:01Z"
 ---
 
 # Configure the Interface
@@ -19,7 +19,7 @@ Run only when the Human invokes `/my-interface-configure` or a declared coordina
 
 Configure prepares the operational Config records and the declared technical environment that the remaining Interface workflow depends on. It first establishes the required Interface and Target Understanding, then creates or reconciles the four operational Config files from their Schemas, and finally installs declared technical requirements and prepares the selected Platform Environment.
 
-Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements. Configure never provisions, transfers, or installs an Agent Skill, plugin, or other Agent capability — that belongs entirely to the Skill Installer operation.
+Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements. Configure never provisions, transfers, or installs an Agent Skill, plugin, or other Agent capability — that belongs entirely to the install mode of the Agent Native Skill (`/my-interface-agent-native 3`).
 
 ## Input
 
@@ -71,7 +71,7 @@ Record each such condition as a Blocker through State and report it. Independent
 
 ## Boundaries
 
-Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or create or modify any other Interface source or product implementation. Never provision, transfer, or install an Agent Skill, plugin, or other Agent capability; the Skill Installer operation owns all of that. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing. System preparation is limited to the selected Launch Item's declared requirements; it grants no authority over product implementation. Configure writes only the four operational Config files and the project-scoped technical or Environment state authorized by their sources.
+Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or create or modify any other Interface source or product implementation. Never provision, transfer, or install an Agent Skill, plugin, or other Agent capability; the install mode of the Agent Native Skill owns all of that. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing. System preparation is limited to the selected Launch Item's declared requirements; it grants no authority over product implementation. Configure writes only the four operational Config files and the project-scoped technical or Environment state authorized by their sources.
 
 ## Report
 
