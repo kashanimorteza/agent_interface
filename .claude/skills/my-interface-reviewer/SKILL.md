@@ -5,7 +5,7 @@ argument-hint: "[phase-number ...]"
 metadata:
   contract: ".interface/agent/skill/contracts/reviewing.md"
   contract_sha256: "sha256:85b34a45d7d2fc68e2464297a59fbd3dcf598cfeada3b480284ee4aaa586cc0e"
-  synced_at: "2026-09-17T12:48:12Z"
+  synced_at: "2026-09-17T12:58:42Z"
 ---
 
 # Review Target phases

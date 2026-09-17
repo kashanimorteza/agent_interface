@@ -6,8 +6,8 @@ arguments: [mode]
 disable-model-invocation: true
 metadata:
   contract: ".interface/agent/skill/contracts/agent-sync.md"
-  contract_sha256: "sha256:055a49d54009f1fed515029f2faaf8607e43cb29cabe53a9d57939b0584c0ef5"
-  synced_at: "2026-09-17T12:48:12Z"
+  contract_sha256: "sha256:7f7f15108e1de194a53ae843dfd1784337ab139319c68fd116c7d257a192ea5f"
+  synced_at: "2026-09-17T12:54:29Z"
 ---
 
 # Synchronize the Agent Module

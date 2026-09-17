@@ -5,7 +5,7 @@ argument-hint: "[phase-number ...]"
 metadata:
   contract: ".interface/agent/skill/contracts/developing.md"
   contract_sha256: "sha256:71a186904e3ff78c9b85ff9e42379dfbe320062e96d0ac619fd946b6541ce898"
-  synced_at: "2026-09-17T12:48:12Z"
+  synced_at: "2026-09-17T12:58:42Z"
 ---
 
 # Develop project phases

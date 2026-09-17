@@ -5,7 +5,7 @@ argument-hint: "[phase-number ...]"
 metadata:
   contract: ".interface/agent/skill/contracts/planning.md"
   contract_sha256: "sha256:7a25f56def74f950ba75b2f805e0990b02175db59c3fdf0b87db16acea909623"
-  synced_at: "2026-09-17T12:48:12Z"
+  synced_at: "2026-09-17T12:58:42Z"
 ---
 
 # Plan project phases

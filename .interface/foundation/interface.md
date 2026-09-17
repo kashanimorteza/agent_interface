@@ -351,6 +351,13 @@ Every capability the Module declares has exactly one Capability Realization Kind
 
 Together, these Components form the Agent Profile within the complete Agent Module. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Agent Module, learns the Native Runtime's own conventions, realizes the Module through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 
+The Human's own explanation of this Module — its purpose, what belongs in it, the meaning of Principles and Profiles, the change flow through Agent Sync, the success criteria, and the recorded questions and answers behind them — is kept in the [Agent Module Guide](../agent/module.md). Read it to understand the Module; read the Component files below to apply it.
+
+```text
+Agent Module Guide
+└── .interface/agent/module.md
+```
+
 ```text
 Agent Components
 ├── Runtime
