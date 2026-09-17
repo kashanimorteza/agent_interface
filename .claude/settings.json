@@ -9,6 +9,10 @@
       "Write",
       "NotebookEdit",
       "Agent",
+      "TaskCreate",
+      "TaskGet",
+      "TaskList",
+      "TaskUpdate",
       "TodoWrite",
       "WebFetch",
       "WebSearch"
@@ -32,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-boundary-guard.py\""
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-boundary-guard.py\" || exit 2"
           }
         ]
       }
@@ -43,7 +47,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-boundary-guard.py\""
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-boundary-guard.py\" || exit 2"
           }
         ]
       }

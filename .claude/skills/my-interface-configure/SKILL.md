@@ -17,11 +17,15 @@ Configure prepares the operational Config records and the declared technical env
 
 Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements. Configure never provisions, transfers, or installs an Agent Skill, plugin, or other Agent capability — that belongs entirely to the Skill Installer operation.
 
+## Input
+
+Accept no phase selection. Configure always operates on the complete operational Config and the selected Environment. When `$ARGUMENTS` is not empty, make no changes, report that Configure accepts no phase or scope input, and ask the Human to invoke it without arguments.
+
 ## Workflow
 
 ### 1. Understanding
 
-Establish Interface Understanding from the canonical Interface document and follow its routes to the shared Runtime rules, operational Schemas, Config destinations, Implementation authorities, and Platform authorities. Then establish the limited Target Understanding required by this role from the Target sources located by the Interface under their declared precedence. Resolve the selected Environment from explicit Target choices first and Platform defaults second.
+Establish Interface Understanding from the canonical Interface document and follow its routes to the shared Runtime rules, operational Schemas, Config destinations, Implementation authorities, and Platform authorities. Then establish the limited Target Understanding required by this role from the Target sources located by the Interface under their declared precedence: stable phase identifiers and explicit Target and Platform selections. Resolve the selected Environment and Launch Item from explicit Target choices first and Platform defaults second.
 
 ### 2. Config generation
 
@@ -34,32 +38,43 @@ For each of the four operational Schemas (`plan.yaml`, `state.yaml`, `review.yam
   5. Introduce only Schema-defined initial values and structures. Do not invent operational work, project facts, Target meaning, or technical decisions.
   6. For `application.yaml`, record only the public metadata a Component already publishes. When a declared Component does not yet exist, leave its Manifest section at its Schema default and report it as not yet generated. Never create, scaffold, or populate that Component to obtain its metadata.
 
-State phase records are synchronized as part of generating `state.yaml`: create missing records from stable Target phase identifiers and Schema defaults, preserve existing progress, remove a stale record only while it contains nothing but initialization defaults, and otherwise preserve and report it. The same Schema-driven process applies to `application.yaml`; its component sections are part of that Schema and are created or reconciled in the same way.
+State phase records are synchronized as part of generating `state.yaml`: create missing records from stable Target phase identifiers and current initial values, preserve existing progress, remove a stale record only while it contains nothing but initialization defaults, and otherwise preserve and report it. The same Schema-driven process applies to `application.yaml`; its component sections are part of that Schema and are created or reconciled in the same way. None of the four files is a temporary or optional side file.
 
 ### 3. Requirements and Environment preparation
 
-Read the applicable Implementation and Platform Preferences and public Component requirements exposed through the Interface. Resolve every applicable language, package-management, package, database, tool, platform, and version selection from those authorities before installation. Inspect every applicable Platform Component definition and apply its declared system requirements for the selected Launch Item.
+Read all applicable Implementation Component Principles and Preferences, the selected Platform Preferences and Launch Item, and the public Component requirements exposed through the Interface. Resolve every applicable language, package-management, package, database, tool, platform, and version selection from those authorities before installation. Inspect every applicable Platform Component definition and apply its declared system requirements for the selected Launch Item.
 
-Inspect the Environment before changing it and apply only missing declared requirements. Install or remove only explicitly declared project-scoped requirements, preserve requirements already satisfied, record each resolved item's concrete version, and report each result. Never infer or invent a dependency or removal, and never provision, transfer, or install an Agent Skill, plugin, or other Agent capability.
+Inspect the Environment before changing it and apply only missing declared requirements. Install or reconcile every required resolved technical item at project scope, preserve requirements already satisfied, and record each resolved item's concrete version and verification result. Never infer or invent a dependency, never remove or reverse existing Environment preparation, and never provision, transfer, or install an Agent Skill, plugin, or other Agent capability.
 
-Use the selected Environment definition and compatible explicit Target requirements as the authority for system preparation. Record any unresolved preparation condition as a blocker through State.
+Use the selected Environment definition and compatible explicit Target requirements as the authority for system preparation.
 
 ### 4. Validation and outcome
 
-Validate all four Config files against their applicable Schemas, verify phase identity reconciliation, verify every resolved technical item and its concrete version, and observe every Platform Environment requirement claimed as satisfied. Record this invocation's active position and append its operational outcome according to State. Report created, updated, preserved, conflicted, installed, removed, already-satisfied, and blocked results.
+Validate all four Config files against their applicable Schemas, verify phase identity reconciliation, verify every resolved technical item and its concrete version, and observe every Platform Environment requirement claimed as satisfied. Record this invocation's active Configure position and append its operational outcome under State ownership. Report created, installed, reconciled, preserved, already-satisfied, conflicted, and blocked results.
 
-Repeating Configure against unchanged valid sources is idempotent: it makes no unnecessary structural or Environment changes while still recording the current invocation according to State.
+Repeating Configure against unchanged Schemas, Target identity, Config, resolved technical selections, and Platform Environment is idempotent: it makes no structural or installation mutation while still recording the current invocation as State permits.
+
+## Stopping conditions
+
+Stop, or preserve the affected item unchanged, when:
+
+- reconciliation would lose meaningful operational records;
+- a required Environment choice is unresolved;
+- preparation would exceed Configure's authority; or
+- a genuine preparation condition cannot be resolved safely.
+
+Record each such condition as a Blocker through State and report it. Independently valid items continue to be generated, reconciled, or prepared.
 
 ## Boundaries
 
-Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or create or modify any other Interface source or product implementation. Never provision, transfer, or install an Agent Skill, plugin, or other Agent capability; the Skill Installer operation owns all of that. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing. System preparation is limited to the selected Environment; it grants no authority over product implementation. Configure writes only the four operational Config files and the project-scoped technical or Environment state authorized by their sources.
+Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or create or modify any other Interface source or product implementation. Never provision, transfer, or install an Agent Skill, plugin, or other Agent capability; the Skill Installer operation owns all of that. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing. System preparation is limited to the selected Launch Item's declared requirements; it grants no authority over product implementation. Configure writes only the four operational Config files and the project-scoped technical or Environment state authorized by their sources.
 
 ## Report
 
 Report in this order:
 
-1. **Config** — the status of all four files, including `application.yaml`, and any records created, updated, or already valid.
+1. **Config** — the status of all four files, including `application.yaml`, and any records created, reconciled, or already valid.
 2. **Phase synchronization** — phase records added, preserved, or left as conflicts.
-3. **Environment and requirements** — the selected Environment, each requirement's resolved version and preparation status, and any removal performed.
+3. **Environment and requirements** — the selected Environment and Launch Item, and each requirement's resolved concrete version, installation or preparation status, and verification result.
 4. **Preserved records** — existing operational information carried through unchanged.
-5. **Conflicts and blockers** — anything that could not be reconciled or prepared safely.
+5. **Conflicts and blockers** — anything that could not be reconciled or prepared safely, and what it prevents.
