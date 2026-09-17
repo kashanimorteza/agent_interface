@@ -18,6 +18,7 @@ policy:
   version_resolution: "Runtime and extension Skills resolve from their active providers."
   matching: "During explicit Agent Sync, match Interface-owned Skills by portable Contract. During explicit Skill Installer, match a prepared Skill file or directory by the declared Skill's exact stable key and match external Skills by stable key and provider declaration. Either operation resolves Native identifiers and mappings from the selected Agent Native."
   realization: "Every declared Skill resolves to one Capability Realization Kind: a Skill with a matching prepared Markdown file or prepared directory is Prepared, a remaining Interface-owned Skill with a portable Contract is Constructed, and a Skill under an external provider declaration is Installed."
+  invocation_realization: "Realize each declared Skill's invocation policy with the Native mechanism that permits exactly the invocation paths it declares. A Skill declaring human-or-declared-coordinator must remain invocable both by the Human and by a declared coordinator Skill through the Native's own Skill invocation mechanism; never realize it with a Native control that withholds coordinator invocation. A coordinator invokes a Child Skill only through that mechanism, so the Child Skill loads and executes its own native definition; reading a Child Skill's file and executing its workflow inline, or delegating it to a forked or subordinate agent that inherits the coordinator's context, is never a realization of invocation. When the Native offers no control that separates autonomous activation from coordinator invocation, realize the declared autonomous_invocation state as an explicit instruction inside the Skill's own native definition."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]
@@ -52,6 +53,9 @@ content:
           contract: ".interface/agent/skill/contracts/configure.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
+          human_invocation: "enabled"
+          coordinator_invocation: "enabled for declared coordinators"
+          autonomous_invocation: "disabled"
           required: true
         planning:
           name: "my-interface-planning"
@@ -59,6 +63,9 @@ content:
           contract: ".interface/agent/skill/contracts/planning.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
+          human_invocation: "enabled"
+          coordinator_invocation: "enabled for declared coordinators"
+          autonomous_invocation: "disabled"
           required: true
         developing:
           name: "my-interface-developing"
@@ -66,6 +73,9 @@ content:
           contract: ".interface/agent/skill/contracts/developing.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
+          human_invocation: "enabled"
+          coordinator_invocation: "enabled for declared coordinators"
+          autonomous_invocation: "disabled"
           required: true
         reviewing:
           name: "my-interface-reviewer"
@@ -90,6 +100,9 @@ content:
           contract: ".interface/agent/skill/contracts/launch.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "human-or-declared-coordinator"
+          human_invocation: "enabled"
+          coordinator_invocation: "enabled for declared coordinators"
+          autonomous_invocation: "disabled"
           required: true
       supporting:
         implement:

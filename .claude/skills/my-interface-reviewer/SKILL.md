@@ -2,12 +2,15 @@
 name: my-interface-reviewer
 description: Assure selected Target phase implementations, or every enabled phase with existing implementation when none is specified, by independently reconciling current Interface and Target Understanding against the Plan, implementation, and evidence, recording every misalignment as a Finding naming its owning operation for Implement to route.
 argument-hint: "[phase-number ...]"
-disable-model-invocation: true
 ---
 
 # Review Target phases
 
 This file is the self-contained Claude Code realization of the portable `reviewing` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
+
+## Invocation
+
+Run only when the Human invokes `/my-interface-reviewer` or a declared coordinator Skill invokes this Skill through Claude Code's own `Skill` tool. Never activate yourself because a request merely looks relevant, and never run from a startup, resume, or automation routine. When a coordinator invokes this Skill, that invocation loads and executes this file as the Skill's own definition; it is never satisfied by another Skill reading this file and executing these steps inline, and never by delegating this Skill to a forked or subordinate agent that inherits the caller's context.
 
 ## Role
 
@@ -16,9 +19,9 @@ Provide two independent gates for every selected phase with existing implementat
 1. **Plan Assurance** — establish that its Plan completely and correctly represents current Interface and Target Understanding.
 2. **Implementation Assurance** — when implementation exists, establish that the result and evidence satisfy the assured Plan and the same current authorities.
 
-An individual Review pass never edits what it judges and never invokes another Skill. When current Config, Plan, or implementation is no longer aligned, record the exact Finding naming Configure, Planning, or Developing as the operation that owns its resolution, and report that reconciliation is required; routing that Finding to its owning operation belongs to Implement. Reviewing records Findings and exact outcomes and never edits another operation's records or Source directly.
+An individual Review pass never edits what it judges. When current Config, Plan, or implementation is no longer aligned, record the exact Finding naming Configure, Planning, or Developing as the operation that owns its resolution, then invoke that Skill to reconcile it. Reviewing records Findings and exact outcomes and never edits another operation's records or Source directly.
 
-This Skill's own `disable-model-invocation: true` withholds only the autonomous, relevance-triggered Skill-tool dispatch surface, matching the Contract's `autonomous_invocation: disabled` requirement; it does not withhold invocation by a declared coordinator such as Implement, which invokes this Skill by reading this file directly and executing its Workflow inline, nor invocation by the Human through the `/my-interface-reviewer` command. Review itself never invokes Configure, Planning, Developing, or any other Skill, under any invocation path.
+Review may invoke only Configure, Planning, and Developing, and only to reconcile a Finding that Skill owns within the phase under review. Invoke each one with Claude Code's `Skill` tool, naming `my-interface-configure`, `my-interface-planning`, or `my-interface-developing`, so the invoked Skill loads and executes its own SKILL.md. Never read another Skill's SKILL.md and execute its workflow inline, and never delegate one to a forked or subordinate agent that inherits this Skill's context: neither runs that Skill's own definition, so neither is an invocation. Review never invokes Implement, Launch, Reset, Agent Sync, or Skill Installer.
 
 ## Input
 
@@ -36,7 +39,7 @@ Never introduce a third `Project Understanding`. Plan, State, Review Config, imp
 
 ## Workflow
 
-Resolve the current synchronized Review, Plan, and State authorities, applicable Implementation Component authorities, operational records, implementation, generated Source, public interfaces, and Runtime verification capabilities. Resolve Configure, Planning, and Developing records only to read them as evidence of a delegation Implement already routed — never in order to invoke them.
+Resolve the current synchronized Review, Plan, and State authorities, applicable Implementation Component authorities, operational records, implementation, generated Source, public interfaces, and Runtime verification capabilities. Resolve Configure, Planning, and Developing as invocable Runtime Skills, and resolve their records as evidence of reconciliation that has actually occurred.
 
 Process each selected phase as follows. Before beginning assurance, verify that implementation and generated Source exist; if they do not, stop Review for that phase and report that Developing or Implement must create it first.
 
@@ -52,7 +55,7 @@ Process each selected phase as follows. Before beginning assurance, verify that 
 10. If current Config or Environment readiness is stale or insufficient for the current phase, record a Finding naming Configure as its owning operation and report that both assurances are withheld until Implement routes it to Configure and it is resolved.
 11. If current authorities declare changed Component paths, packages, versions, tools, public metadata, connections, or Platform requirements, record a Finding naming Configure as its owning operation and report that the phase cannot be reassessed until it is resolved.
 12. If implementation or generated Source no longer satisfies the assured Plan, record a Finding naming Developing as its owning operation and report that the phase cannot be assured until Implement routes it to Developing and Developing resolves it.
-13. Only after fresh observation shows a delegated reconciliation has actually occurred (an invocation elsewhere changed Config, Plan revision, or implementation), discard prior observations and rerun the relevant assurance stages against fresh Understanding and evidence.
+13. After each delegated reconciliation returns, confirm by fresh observation that it actually changed Config, Plan revision, or implementation, then discard prior observations and rerun the relevant assurance stages against fresh Understanding and evidence. A delegated Skill reporting success is not itself evidence of change.
 14. Continue the reconciliation cycle only while it closes or materially advances a Finding across invocations. Stop and report a blocker when a cycle repeats, makes no observable progress, remains inconclusive, or requires Human judgment. Mark an affected assurance `inconclusive` when required evidence cannot be observed or authorities conflict; never convert uncertainty into satisfaction.
 15. Record aggregate Review State as `satisfied` only when both Plan Assurance and Implementation Assurance are satisfied and every applicable mandatory obligation has exactly one supported classification with no Finding; coverage counts alone never prove satisfaction. Otherwise record the exact `not satisfied` or `inconclusive` result.
 
@@ -60,14 +63,14 @@ Complete one selected phase's assurance result before processing the next select
 
 ## Boundaries
 
-Review observes and independently verifies; it never invokes another Skill, under any invocation path, and coordinator invocation never expands this scope. Review writes only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History, naming the owning operation in each Finding instead of invoking it. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode. Configure, Planning, and Developing write their own records and outputs under their own Contracts once Implement routes a Finding to them; each retains authority over its own records and outputs. Do not modify Source, Target, Plan content, Task progress, or another operation's records directly.
+Review observes and independently verifies, and reconciles only by invoking the Skill that owns a Finding. Being invoked by a coordinator never widens that set beyond Configure, Planning, and Developing. Review writes only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode. Configure, Planning, and Developing write their own records and outputs under their own Contracts; each retains authority over its own records and outputs. Do not modify Source, Target, Plan content, Task progress, or another operation's records directly.
 
 ## Report
 
 Report in this order:
 
 1. **Phases** — resolved phase identifiers, titles, targets, and order.
-2. **Plan Assurance** — result and assured Plan Revision, Findings naming Planning where applicable, and the independent result of any later pass after fresh evidence shows Planning was invoked elsewhere.
+2. **Plan Assurance** — result and assured Plan Revision, Findings naming Planning where applicable, any delegated Planning outcome, and the independent result of each later pass bound to the new Plan Revision.
 3. **Implementation Assurance** — skipped and reported when implementation is absent; otherwise conditions observed, independent evidence, and result.
 4. **Findings and missing evidence** — grouped by phase and assurance stage, each naming its owning operation (Configure, Planning, or Developing), ordered by severity.
 5. **Obligation coverage** — summary of the obligation inventory and its classification counts for the phase.

@@ -2,12 +2,15 @@
 name: my-interface-developing
 description: Execute and verify eligible planned work for selected Target phases, or every phase eligible under its current Plan when none is specified, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Never plans or reviews.
 argument-hint: "[phase-number ...]"
-disable-model-invocation: true
 ---
 
 # Develop project phases
 
 This file is the self-contained Claude Code realization of the portable `developing` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
+
+## Invocation
+
+Run only when the Human invokes `/my-interface-developing` or a declared coordinator Skill invokes this Skill through Claude Code's own `Skill` tool. Never activate yourself because a request merely looks relevant, and never run from a startup, resume, or automation routine. When a coordinator invokes this Skill, that invocation loads and executes this file as the Skill's own definition; it is never satisfied by another Skill reading this file and executing these steps inline, and never by delegating this Skill to a forked or subordinate agent that inherits the caller's context.
 
 ## Role
 

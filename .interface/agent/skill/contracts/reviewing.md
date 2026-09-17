@@ -6,7 +6,7 @@ Bring the selected phase's current understanding, Plan, implementation, and gene
 
 ## Responsibility
 
-Reconstruct current Interface Understanding and Target Understanding; compare the current Plan, implementation, generated Source, and evidence with those authorities; and record every misalignment as a Finding owned by the Skill that must resolve it. Reviewing never invokes another Skill; routing a Finding to its owning operation belongs to Implement. Independently recheck current state and report whether the authorities and outputs are aligned or progress is blocked. Reviewing records Findings and exact outcomes and never edits another operation's records or Source directly.
+Reconstruct current Interface Understanding and Target Understanding; compare the current Plan, implementation, generated Source, and evidence with those authorities; and record every misalignment as a Finding owned by the Skill that must resolve it, then invoke that owning Skill to reconcile the gap when reconciliation is required. Independently recheck current state and report whether the authorities and outputs are aligned or progress is blocked. Reviewing records Findings and exact outcomes and never edits another operation's records or Source directly.
 
 ## Trigger
 
@@ -30,7 +30,7 @@ Reconstruct Interface Understanding and current Target Understanding on every in
 
 ## Authority
 
-Observe and independently verify. Never invoke another Skill; name the owning operation in each Finding instead. Write only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History. Each invoked Skill retains authority over its own records and outputs. Never modify implementation, Target, Plan content, Task progress, or another operation's records directly.
+Observe and independently verify. Invoke only Configure, Planning, or Developing, and only to reconcile a Finding that Skill owns within the current phase, through the Native Runtime's own Skill invocation mechanism so the invoked Skill loads and executes its own native definition. Never execute another Skill's instructions inline and never delegate one to a forked or subordinate agent that inherits this Skill's context. Write only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History. Each invoked Skill retains authority over its own records and outputs. Never modify implementation, Target, Plan content, Task progress, or another operation's records directly.
 
 ## Workflow Invariants
 
@@ -39,7 +39,7 @@ Observe and independently verify. Never invoke another Skill; name the owning op
 - For each selected phase, read the complete applicable authorities rather than relying on `At a Glance`, indexes, prior Findings, or other summaries. Build a complete obligation inventory containing every applicable normative Principle Rule and Boundary, every obligation represented as `Must`, every `Never` expressed as its prohibited condition, every resolved Preference with `requirement: required`, every conditional requirement whose activation condition is true, every applicable instruction of a required synchronized Skill, and every applicable Target requirement.
 - For each assurance stage, classify every inventoried obligation exactly once as `satisfied`, `not applicable` with an explicit applicability reason, or `finding` with expected condition, actual observation, and evidence. For Plan Assurance, `satisfied` means the current Plan gives the obligation valid, observable coverage; for Implementation Assurance, it means current implementation and evidence prove the obligation. Never infer `not applicable` from silence, and never use it merely because a selected required technology, capability, implementation, or proof is absent.
 - Rebuild the transient Plan Assurance ledger directly from that inventory and current authorities under the synchronized Runtime rules, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness. An omitted, unclassified, unsupported, or merely asserted obligation is a Plan Finding.
-- If the Plan is absent or Plan Assurance is not satisfied, record the exact Plan Findings naming Planning as their owning operation, and report that the phase cannot be assured until they are resolved.
+- If the Plan is absent or Plan Assurance is not satisfied, record the exact Plan Findings naming Planning as their owning operation, invoke Planning to reconcile them, and report that the phase cannot be assured until they are resolved.
 - Record the current positive Plan Revision with every Plan Assurance outcome. Never carry an outcome forward to a different revision; after Planning changes the revision, perform a new independent Plan Assurance pass and bind its result to that new revision.
 - Repeat Plan reconciliation only while a pass closes or materially advances a Plan Finding. Stop the affected phase on a repeated unresolved Finding, no observable progress, inconclusive Plan Assurance, or required Human decision.
 - Do not begin Implementation Assurance until Plan Assurance is satisfied.
@@ -48,9 +48,9 @@ Observe and independently verify. Never invoke another Skill; name the owning op
 - Reconcile prior Findings only through current observation. A Finding persists until Review proves it resolved or the Human accepts it.
 - Complete one phase's assurance result before processing the next selected phase. A standalone Review may continue to later independent phases when one phase is unsatisfied or inconclusive; a coordinating Skill may impose a stricter stopping gate.
 - When current authorities or evidence changed since the last assurance, do not carry forward a prior outcome merely because the Plan revision is unchanged; rebuild Understanding and reassess the affected phase.
-- If Config or Environment readiness is stale or insufficient for the current phase, record a Finding naming Configure as its owning operation and report that both assurances are withheld until it is resolved.
-- If current authorities declare changed Component paths, packages, versions, tools, public metadata, connections, or Platform requirements, record a Finding naming Configure as its owning operation and report that the phase cannot be reassessed until it is resolved.
-- If Plan coverage is stale or incomplete, record a Finding owned by Planning; if implementation or generated Source no longer satisfies the current Plan, record a Finding owned by Developing.
+- If Config or Environment readiness is stale or insufficient for the current phase, record a Finding naming Configure as its owning operation, invoke Configure to reconcile it, and withhold both assurances until it is resolved.
+- If current authorities declare changed Component paths, packages, versions, tools, public metadata, connections, or Platform requirements, record a Finding naming Configure as its owning operation, invoke Configure to reconcile it, and do not reassess the phase until it is resolved.
+- If Plan coverage is stale or incomplete, record a Finding owned by Planning and invoke Planning; if implementation or generated Source no longer satisfies the current Plan, record a Finding owned by Developing and invoke Developing.
 - After every delegated reconciliation, discard prior observations and rerun the relevant assurance stages against fresh Understanding and evidence.
 - Continue the reconciliation cycle only while it closes or materially advances a Finding. Stop and report a blocker when a cycle repeats, makes no observable progress, remains inconclusive, or requires Human judgment.
 
@@ -68,4 +68,4 @@ Stop the complete run before observation or delegation on invalid input. Stop an
 
 ## Runtime Realization
 
-A native adapter exposes optional multi-phase input, invokes no other Skill, and reports phase selection, both assurances, every Finding with its owning operation, missing evidence, convergence status, aggregate outcomes, and records changed.
+A native adapter exposes optional multi-phase input, invokes Configure, Planning, or Developing through the Native Runtime's own Skill invocation mechanism when a Finding they own requires reconciliation, never inline and never through a forked agent, and reports phase selection, both assurances, every Finding with its owning operation, missing evidence, convergence status, aggregate outcomes, and records changed.
