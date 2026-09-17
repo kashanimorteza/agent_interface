@@ -1,0 +1,35 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/foundation/route/route.yaml"
+  path_note: "Routing table: which models, in priority order, receive each Action."
+  purpose: "Declare, per Action, the ordered list of models to try. Skeleton; no routes declared yet."
+  standard: "Agent Project Interface"
+  version: "0.1"
+  updated: "2026-09-17"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned; routing is a declared preference, never written from observed runtime behavior."
+  changed_by: "The human, directly."
+  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["routes"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  routes: "One entry per Action (see ../action/), each an ordered list of models from highest to lowest priority."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  routes:
+    # Example shape — not a declaration:
+    # develop:
+    #   models:
+    #     - {name: "<model-a>", provider: "<provider>"}
+    #     - {name: "<model-b>", provider: "<provider>"}
+    develop: {models: []}
+    analyze: {models: []}
+    review: {models: []}
+    plan: {models: []}

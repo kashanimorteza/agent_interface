@@ -209,6 +209,8 @@ Target, Implementation, and Agent are the three primary Modules of Agent Interfa
 
 The Target describes **what the Interface is working on**.
 
+Its fuller explanation is in the [Target Module Guide](../target/guide.md).
+
 ```text
 Target Structure
 ├── Non-Technical Definition
@@ -231,6 +233,8 @@ Each Target definition has a direct link to its authoritative file:
 ### Implementation
 
 The Implementation module defines the reusable programming personality, standards, and engineering perspective applied to a Target. It expresses them through the Development, Model, Database, Logic, Presentation, Platform, Plan, Review, and State Components.
+
+Its fuller explanation is in the [Implementation Module Guide](../implementation/guide.md).
 
 ```text
 Implementation Components
@@ -351,12 +355,7 @@ Every capability the Module declares has exactly one Capability Realization Kind
 
 Together, these Components form the Agent Profile within the complete Agent Module. Explicit Agent Sync is the only bridge from that reusable declaration to the currently selected compatible Runtime: it understands the complete Agent Module, learns the Native Runtime's own conventions, realizes the Module through that Runtime's Agent Native, Agent Instances, Rules, Skills, settings, and other capabilities, and verifies the result. The active Agent Native and its Agent Instances then operate from the synchronized Runtime realization without requiring the Human to restate the Agent philosophy.
 
-The Human's own explanation of this Module — its purpose, what belongs in it, the meaning of Principles and Profiles, the change flow through Agent Sync, the success criteria, and the recorded questions and answers behind them — is kept in the [Agent Module Guide](../agent/module.md). Read it to understand the Module; read the Component files below to apply it.
-
-```text
-Agent Module Guide
-└── .interface/agent/module.md
-```
+The Human's own explanation of this Module, with its change flow, success criteria, and recorded understanding, is in the [Agent Module Guide](../agent/guide.md).
 
 ```text
 Agent Components
@@ -756,14 +755,20 @@ The complete `.interface/` tree is read-only to every Agent Role and Skill by de
 ## Foundation Files
 Foundation Files provide foundational definitions and schemas required by the Interface.
 
+Their fuller explanation is in the [Foundation Guide](guide.md).
+
 <!-------------------------- Foundation Structure -->
 ### Structure
 
 ```text
 .interface/foundation/
 ├── interface.md
+├── guide.md
 ├── config/
-└── schema/
+├── schema/
+├── personality/
+├── action/
+└── route/
 ```
 
 Target Definitions are intentionally **not** considered Foundation Files because they belong to the Target concept itself.
@@ -940,6 +945,29 @@ path = .interface/foundation/schema/review.yaml
 kind = Operational format
 responsibility = Defines the stored structure and initial values of Review Config
 generates = .interface/foundation/config/review.yaml
+```
+
+<!-------------------------- Personality, Action, and Route Foundation Files -->
+### Personality, Action, and Route
+
+Three shared Human-owned definition sets live under Foundation beside Config and Schema. Their structure exists; their content and how they are read are still being defined. Each directory explains itself in its own guide.
+
+```text
+name = Personality
+path = .interface/foundation/personality/
+responsibility = The personalities an Agent can take on, one Markdown file each; see personality/guide.md
+```
+
+```text
+name = Action
+path = .interface/foundation/action/
+responsibility = The kinds of work an Agent can be asked to do, one Markdown file each; see action/guide.md
+```
+
+```text
+name = Route
+path = .interface/foundation/route/
+responsibility = For each Action, the ordered list of models by priority, declared in route/route.yaml; see route/guide.md
 ```
 
 
