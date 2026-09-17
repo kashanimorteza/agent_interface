@@ -15,8 +15,10 @@ Operations
 ├── Launch
 ├── Implement
 ├── Reset
-├── Skill Installer
-└── Agent Sync
+└── Agent Native
+    ├── 1 — sync self
+    ├── 2 — sync component
+    └── 3 — install
 ```
 
 <!-------------------------- Configure Operation -->
@@ -70,18 +72,15 @@ This Operation is performed through `/my-interface-implement [phase-number ...]`
 
 This Operation is performed through `/my-interface-reset [phase-number ...]` to reset selected phases; with no phase input it resets every phase with generated work. `/my-interface-reset config` physically removes only operational Config files, while `/my-interface-reset complete` physically removes those Config files and the implementation outputs of all phases. Emptying or reinitializing a Config file is not removal. Every mode previews its exact impact and requires separate Human confirmation before mutation.
 
-<!-------------------------- Skill Installer Operation -->
-### Skill Installer
+<!-------------------------- Agent Native Operation -->
+### Agent Native
 
-**Agent Skill:** `/my-interface-skill-installer`
+**Agent Skill:** `/my-interface-agent-native <1|2|3>`
 
-This Operation is performed through `/my-interface-skill-installer` to derive Agent capability needs, discover compatible project-scoped candidates, obtain Human approval, provision only approved capabilities, and verify their activation.
+One Skill, three modes. Modes `1` and `2` are **Agent Sync**; mode `3` is **install**, the former Skill Installer operation merged into this Skill on 2026-09-17. The Skill is named for what it does — the Agent Native configuring itself from the Agent Module — while *Agent Native* in Interface prose keeps its meaning of the core operational Agent supplied by the Runtime.
 
-<!-------------------------- Agent Sync Operation -->
-### Agent Sync
-
-**Agent Skill:** `/my-interface-agent-sync <self | module>`
-
-This Operation is performed only through explicit Human invocation of `/my-interface-agent-sync` in one of two modes: `self` realizes the Agent Sync adapter itself from its current Contract, and `module` realizes every other declaration. It is the sole operation permitted to inspect Agent Module sources, understands the complete Module and the selected Agent Native's own conventions, translates the Module into that Native Runtime, and certifies synchronization only after all required declarations pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
+**Modes `1` and `2` — Agent Sync.** This Operation is performed only through explicit Human invocation of `/my-interface-agent-native` in one of two sync modes: mode `1` (sync self) realizes the Agent Sync adapter itself from its current Contract, and mode `2` (sync component) realizes every other declaration. It is the sole operation permitted to inspect Agent Module sources, understands the complete Module and the selected Agent Native's own conventions, translates the Module into that Native Runtime, and certifies synchronization only after all required declarations pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
 
 Agent Sync works only between the Agent Module and the Agent Native, so it needs no Target Understanding and no other Interface Module: it never decides what the product should do, only how the selected Agent Native must be shaped to match the Human's declared view of the Agent. It realizes its own adapter before the rest of the Module because a running adapter cannot load a definition it did not start with.
+
+**Mode `3` — install.** Mode `3` is performed through `/my-interface-agent-native 3` to derive Agent capability needs, discover compatible project-scoped candidates, obtain Human approval, provision only approved capabilities, and verify their activation.

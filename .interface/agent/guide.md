@@ -41,28 +41,23 @@ When the Agent Native changes, Principles stay as they are. Only the Native-spec
 
 ## Components
 
-The Module currently has seventeen Components: Runtime, Settings, Context, Role, Agent, Coordination, Skill, Command, Rule, Tool, Hook, Integration, Extension, Interaction, Permission, Observability, and Personality. Personality was added on 2026-09-17; it absorbs what were briefly separate Action and Route ideas: each personality declares who it is, the Actions it performs, and the models it prefers in priority order. This set is the Human's default structure — the set that was sufficient to hold every view the Human had about an Agent. It is not a requirement that every Agent Native supports every Component. Agent Sync takes the Understanding of each Component and places it into whatever the selected Agent Native actually offers; a Component the Native cannot realize is reported, and an explicitly empty category stays empty.
+The Module has ten Components: Runtime, Agent, Personality, Rule, Skill, Command, Tool, Permission, Connection, and Context. On 2026-09-17 the Human reduced the earlier seventeen to these ten so that every Component is a general capability any Agent must honor, rather than a mechanism of one particular Agent Native. Role and Coordination merged into Agent; Interaction, Observability, and Session merged into Rule; Integration and Extension merged into Connection; Hook merged into Permission; Settings dissolved into the Agent Profile Schema (its general rules) and Runtime (its Claude-specific mechanics). Nothing was dropped: every absorbed Principle keeps its former number in a note, and every absorbed Profile lives under a named key of its new Profile. The Agent Native chooses how to realize each concept with its own mechanisms; where the Human knows a particular Native well, the Profile may suggest a realization under `settings.native.<agent-native>` — a hint that narrows discovery, never an authority. This set is the Human's default structure — the set that was sufficient to hold every view the Human had about an Agent. It is not a requirement that every Agent Native supports every Component. Agent Sync takes the Understanding of each Component and places it into whatever the selected Agent Native actually offers; a Component the Native cannot realize exactly is realized through the nearest equivalent and reported as approximated, and an explicitly empty category stays empty.
 
 ```text
 Agent Components
 ├── Runtime
 │   ├── Principles  → .interface/agent/runtime/principles.md
 │   └── Profile     → .interface/agent/runtime/profile.yaml
-├── Settings
-│   ├── Principles  → .interface/agent/settings/principles.md
-│   └── Profile     → .interface/agent/settings/profile.yaml
-├── Context
-│   ├── Principles  → .interface/agent/context/principles.md
-│   └── Profile     → .interface/agent/context/profile.yaml
-├── Role
-│   ├── Principles  → .interface/agent/role/principles.md
-│   └── Profile     → .interface/agent/role/profile.yaml
 ├── Agent
 │   ├── Principles  → .interface/agent/agent/principles.md
 │   └── Profile     → .interface/agent/agent/profile.yaml
-├── Coordination
-│   ├── Principles  → .interface/agent/coordination/principles.md
-│   └── Profile     → .interface/agent/coordination/profile.yaml
+├── Personality
+│   ├── Principles  → .interface/agent/personality/principles.md
+│   ├── Profile     → .interface/agent/personality/profile.yaml
+│   └── Definitions → .interface/agent/personality/definitions/<personality>.md
+├── Rule
+│   ├── Principles  → .interface/agent/rule/principles.md
+│   └── Profile     → .interface/agent/rule/profile.yaml
 ├── Skill
 │   ├── Principles  → .interface/agent/skill/principles.md
 │   ├── Profile     → .interface/agent/skill/profile.yaml
@@ -71,84 +66,52 @@ Agent Components
 ├── Command
 │   ├── Principles  → .interface/agent/command/principles.md
 │   └── Profile     → .interface/agent/command/profile.yaml
-├── Rule
-│   ├── Principles  → .interface/agent/rule/principles.md
-│   └── Profile     → .interface/agent/rule/profile.yaml
 ├── Tool
 │   ├── Principles  → .interface/agent/tool/principles.md
 │   └── Profile     → .interface/agent/tool/profile.yaml
-├── Hook
-│   ├── Principles  → .interface/agent/hook/principles.md
-│   └── Profile     → .interface/agent/hook/profile.yaml
-├── Integration
-│   ├── Principles  → .interface/agent/integration/principles.md
-│   └── Profile     → .interface/agent/integration/profile.yaml
-├── Extension
-│   ├── Principles  → .interface/agent/extension/principles.md
-│   └── Profile     → .interface/agent/extension/profile.yaml
-├── Interaction
-│   ├── Principles  → .interface/agent/interaction/principles.md
-│   └── Profile     → .interface/agent/interaction/profile.yaml
 ├── Permission
 │   ├── Principles  → .interface/agent/permission/principles.md
 │   └── Profile     → .interface/agent/permission/profile.yaml
-├── Session
-│   ├── Principles  → .interface/agent/session/principles.md
-│   └── Profile     → .interface/agent/session/profile.yaml
-├── Observability
-│   ├── Principles  → .interface/agent/observability/principles.md
-│   └── Profile     → .interface/agent/observability/profile.yaml
-└── Personality
-    ├── Principles  → .interface/agent/personality/principles.md
-    ├── Profile     → .interface/agent/personality/profile.yaml
-    └── Definitions → .interface/agent/personality/definitions/<personality>.md
+├── Connection
+│   ├── Principles  → .interface/agent/connection/principles.md
+│   └── Profile     → .interface/agent/connection/profile.yaml
+└── Context
+    ├── Principles  → .interface/agent/context/principles.md
+    └── Profile     → .interface/agent/context/profile.yaml
 ```
 
-The complete Agent Module is read exclusively during an explicit Agent Sync or Skill Installer invocation. Agent Sync first learns the selected Agent Native's own documentation, conventions, capabilities, and limitations, then reads every Module source and Interface-owned Skill Contract, and realizes each required Rule, Constructed Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. Skill Installer resolves any optional prepared Skill file by exact declared stable key: a matching prepared Markdown file supplies that Skill's preserved native instruction content and is materialized as a Prepared Skill, and a Skill under an external provider declaration is provisioned as an Installed Skill; a Skill with neither follows its Contract-based realization path through Agent Sync. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
+The complete Agent Module is read exclusively during an explicit Agent Native Skill invocation. Agent Sync first learns the selected Agent Native's own documentation, conventions, capabilities, and limitations, then reads every Module source and Interface-owned Skill Contract, and realizes each required Rule, Constructed Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. the install mode of the Agent Native Skill resolves any optional prepared Skill file by exact declared stable key: a matching prepared Markdown file supplies that Skill's preserved native instruction content and is materialized as a Prepared Skill, and a Skill under an external provider declaration is provisioned as an Installed Skill; a Skill with neither follows its Contract-based realization path through Agent Sync. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
 
-Each Agent Component below has its own Principles and Profile. Principles define the Component's mandatory philosophy, responsibilities, rules, and boundaries; Profiles define its current selections, resources, portable realization requirements, and default settings.
+Each Agent Component below has its own Principles and Profile. Principles define the Component's mandatory philosophy, responsibilities, rules, and boundaries; Profiles define its current selections, resources, portable realization requirements, default settings, and optional per-Native realization hints.
 
 ### Runtime
 
-Runtime identity, provider, model, compatibility, and native capability mapping.
+Runtime identity, provider, model, compatibility, and native capability mapping. Absorbs the former Settings Component (2026-09-17): Settings — Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation.
 
 - [Principles](runtime/principles.md)
 - [Profile](runtime/profile.yaml)
 
-### Settings
-
-Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation.
-
-- [Principles](settings/principles.md)
-- [Profile](settings/profile.yaml)
-
-### Context
-
-Persistent instructions, Understanding, Memory, imports, loading, and compaction.
-
-- [Principles](context/principles.md)
-- [Profile](context/profile.yaml)
-
-### Role
-
-Primary and specialized Agent Role contracts.
-
-- [Principles](role/principles.md)
-- [Profile](role/profile.yaml)
-
 ### Agent
 
-The selected Agent Native and its General and Specialized Agent Instances.
+The selected Agent Native and its General and Specialized Agent Instances. Absorbs the former Role, Coordination Components (2026-09-17): Role — Primary and specialized Agent Role contracts. Coordination — Delegation, teams, tasks, messaging, concurrency, and worktree isolation.
 
 - [Principles](agent/principles.md)
 - [Profile](agent/profile.yaml)
 
-### Coordination
+### Personality
 
-Delegation, teams, tasks, messaging, concurrency, and worktree isolation.
+The personalities an Agent can take on: who it is during a kind of work, the Actions each performs, and the models each prefers in priority order.
 
-- [Principles](coordination/principles.md)
-- [Profile](coordination/profile.yaml)
+- [Principles](personality/principles.md)
+- [Profile](personality/profile.yaml)
+- [Definitions directory](personality/definitions/)
+
+### Rule
+
+Persistent global and scoped behavioral instructions. Absorbs the former Interaction, Observability, Session Components (2026-09-17): Interaction — Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior. Observability — Validation, status, diagnostics, evidence, logs, telemetry, health, and usage. Session — Lifecycle, resume, history, background work, isolation, checkpoints, and termination.
+
+- [Principles](rule/principles.md)
+- [Profile](rule/profile.yaml)
 
 ### Skill
 
@@ -166,13 +129,6 @@ Named and slash invocation entry points, arguments, aliases, and routing.
 - [Principles](command/principles.md)
 - [Profile](command/profile.yaml)
 
-### Rule
-
-Persistent global and scoped behavioral instructions.
-
-- [Principles](rule/principles.md)
-- [Profile](rule/profile.yaml)
-
 ### Tool
 
 Atomic built-in and externally provided executable capabilities.
@@ -180,62 +136,26 @@ Atomic built-in and externally provided executable capabilities.
 - [Principles](tool/principles.md)
 - [Profile](tool/profile.yaml)
 
-### Hook
-
-Deterministic event-driven lifecycle automation.
-
-- [Principles](hook/principles.md)
-- [Profile](hook/profile.yaml)
-
-### Integration
-
-MCP, LSP, channels, application connectors, and external services.
-
-- [Principles](integration/principles.md)
-- [Profile](integration/profile.yaml)
-
-### Extension
-
-Plugins, marketplaces, capability packages, monitors, and extension lifecycle.
-
-- [Principles](extension/principles.md)
-- [Profile](extension/profile.yaml)
-
-### Interaction
-
-Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior.
-
-- [Principles](interaction/principles.md)
-- [Profile](interaction/profile.yaml)
-
 ### Permission
 
-Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets.
+Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets. Absorbs the former Hook Component (2026-09-17): Hook — Deterministic event-driven lifecycle automation.
 
 - [Principles](permission/principles.md)
 - [Profile](permission/profile.yaml)
 
-### Session
+### Connection
 
-Lifecycle, resume, history, background work, isolation, checkpoints, and termination.
+External services and installable packages the Agent obtains from outside the project, with their trust boundaries and lifecycle. Absorbs the former Integration, Extension Components (2026-09-17): Integration — MCP, LSP, channels, application connectors, and external services. Extension — Plugins, marketplaces, capability packages, monitors, and extension lifecycle.
 
-- [Principles](session/principles.md)
-- [Profile](session/profile.yaml)
+- [Principles](connection/principles.md)
+- [Profile](connection/profile.yaml)
 
-### Observability
+### Context
 
-Validation, status, diagnostics, evidence, logs, telemetry, health, and usage.
+Persistent instructions, Understanding, Memory, imports, loading, and compaction.
 
-- [Principles](observability/principles.md)
-- [Profile](observability/profile.yaml)
-
-### Personality
-
-The personalities an Agent can take on: who it is during a kind of work, the Actions each performs, and the models each prefers in priority order.
-
-- [Principles](personality/principles.md)
-- [Profile](personality/profile.yaml)
-- [Definitions directory](personality/definitions/)
+- [Principles](context/principles.md)
+- [Profile](context/profile.yaml)
 
 Every Agent Component's Principles and Profile are authoritative for that Component only. A runtime artifact not declared in the owning Profile is an optional runtime capability; a required declaration not usable by the selected runtime is an Agent Profile gap.
 
@@ -249,7 +169,7 @@ There is exactly one exception. The native Agent Sync adapter must exist before 
 
 Agent Sync leaves two traces in the Agent Native so that later runs and later readers can tell where synchronization stands: every realized Skill carries a fingerprint of the Module source it was built from, and one project-scoped synchronization record lists every declaration with its source, fingerprint, native artifact, status, mode, and time. A changed fingerprint proves that a realization is stale; an unchanged one never proves that it conforms — only a full comparison of source and realization does. Where those traces live and how they are written is a native detail owned by the Agent Sync adapter, not a Module declaration.
 
-Only Agent Sync and Skill Installer read this Module. Every other Skill, Agent Instance, coordinator, and startup routine consumes the last synchronized native realization and never enters `.interface/agent/`.
+Only the Agent Native Skill reads this Module. Every other Skill, Agent Instance, coordinator, and startup routine consumes the last synchronized native realization and never enters `.interface/agent/`.
 
 <br>
 
@@ -278,7 +198,7 @@ It is a rule between the Human and the Agent, and it can also be a rule inside t
 **What is the difference between Principles and Profile?**
 Principles express the view and philosophy of a Component and say nothing about technology, packages, or the kind of Agent. Profiles hold supporting parameters, including helpers for a specific Agent Native such as Claude, Copilot, or Codex; they are in effect preferences. The Human noted that the Implementation Module calls the equivalent file `preferences.yaml` and that the name `profile.yaml` is historical.
 
-**Are the sixteen Components required for every Agent?** *(sixteen at the time of the answer; Personality became the seventeenth later the same day)*
+**Are the sixteen Components required for every Agent?** *(sixteen at the time of the answer; Personality became the seventeenth later the same day, and the set was then reduced to ten — see Components)*
 No. They are the structure that was sufficient to hold every view the Human had. Agent Sync places the Understanding into whatever the selected Agent Native offers; the sixteen are a default, not an obligation on every Native.
 
 **What does "Agent Sync succeeded" mean?**
@@ -290,15 +210,18 @@ That Agent Sync, from a precise Understanding of the Module, transferred everyth
 
 Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then written into the Module in the Component that owns it; the Agent Native was changed only through Agent Sync, except for the one-time hand bootstrap of the Agent Sync adapter.
 
-- The `agent-sync` Skill Contract keeps the thirteen sections of the Skill Contract Schema in order; its former separate Understanding section was merged into Required Understanding.
-- Prepared and Installed Skills belong to Skill Installer; Agent Sync realizes only Constructed Skills. The Interface file was aligned to say so.
-- Every realized Skill carries a fingerprint of its source; a changed fingerprint proves staleness and an unchanged one never proves conformance (Agent Skill Principle 3, `agent-sync` Contract). The Agent Sync adapter may own a bounded helper that hashes, stamps, and writes the synchronization record but never judges conformance.
-- Agent Sync records every run in one project-scoped synchronization record (`agent-sync` Contract, Outputs and Authority).
+- The `agent-native` Skill Contract keeps the thirteen sections of the Skill Contract Schema in order; its former separate Understanding section was merged into Required Understanding.
+- Prepared and Installed Skills belong to the install mode of the Agent Native Skill; its sync modes realize only Constructed Skills. The Interface file was aligned to say so.
+- Every realized Skill carries a fingerprint of its source; a changed fingerprint proves staleness and an unchanged one never proves conformance (Agent Skill Principle 3, `agent-native` Contract). The Agent Sync adapter may own a bounded helper that hashes, stamps, and writes the synchronization record but never judges conformance.
+- Agent Sync records every run in one project-scoped synchronization record (`agent-native` Contract, Outputs and Authority).
 - The Agent Sync adapter carries each rule once; duplication inside the adapter is removed on the next `self` run.
 - Rejected: a runtime-identity check in Agent Sync's Stopping Conditions, and declaring Codex as a second Runtime option now — both left for later.
 - Personality is a Component of this Module (not of Foundation, not inside Runtime); it absorbs Action (what a personality does) and Route (which models it prefers, in order).
 - Agent Sync, discussed in its own right (see `skill/guide.md`): Module Understanding starts from this guide; a declaration the Native cannot realize exactly is realized through the nearest equivalent, reported as `approximated`, and the run continues; unmanaged native capabilities are only reported; the restart notice is boxed; the two modes and the verify-until-converged loop stay.
-- Hook Profile follows Permission on who may read the Module: the `agent-sync-read-grant` matcher and responsibility name both `agent-sync` and `skill-installer`. Confirmed; applied when the current review round is complete.
+- The Agent Module was restructured from seventeen to ten Components (see Components): a Component is a general capability; native mechanisms are Profile hints under `settings.native.<agent-native>` or left to the Native.
+- The `agent-sync` Skill became `agent-native` with three numeric modes — `1` sync self, `2` sync component, `3` install — and the separate `skill-installer` Skill was merged into mode `3`. The Operation is named Agent Native; the activity of modes 1–2 is still called Agent Sync.
+- Personality refers to models by the names declared in Runtime; an Agent Instance may name an optional `personality`.
+- The former Hook `read-grant` follows Permission on who may read the Module: it names the single Agent Native Skill. Applied on 2026-09-17 within the Permission Component.
 
 <br>
 
@@ -306,14 +229,10 @@ Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then w
 
 Recorded on 2026-09-17 from the same review. Each is a Human decision that has not yet been taken; nothing here changes the Module until the Human decides.
 
-- The boundary between Personality and Role: both name bounded execution identities (Role: `primary-execution`, `interface-reader`; Personality: `developer`, `planner`, `analyst`, `reviewer`, `architect`). Whether they are one concept or two is undecided.
 - Personality, carried over from its first draft under Foundation: the full content and common structure of a definition file; whether every Personality pairs with one Action and whether the Interface-owned Skills (Planning, Developing, Reviewing, …) are the executors of Actions or something separate; the exact shape of a `models` entry (model identity, provider, fallback rule, conditions); whether routing is by Personality alone or by Personality and Action; and how Personality Model Preference relates to `runtime/profile.yaml` (`models`, `fallback_models`, `effort_levels`), which is currently empty. Who reads personalities is settled by placement: only Agent Sync, which realizes them in the Native.
 - Whether `profile.yaml` keeps its name or becomes `preferences.yaml` to match the Implementation Module.
-- Whether the third success condition — observed behavior — should become an explicit obligation in Agent Observability Principles or in the `agent-sync` Verification, with a stated form of evidence.
+- Whether the third success condition — observed behavior — should become an explicit obligation in Agent Observability Principles or in the `agent-native` Verification, with a stated form of evidence.
 - Whether an explanatory Agent Rule about git commit and push should exist alongside the enforcing Permission `ask` rules.
-- Native names that leaked into Profiles: `hook/profile.yaml` (event names, tool-name matchers, the `lifecycle_events` list), `agent/profile.yaml` (`allowed_tools` of `interface-reader`), and `settings/profile.yaml` (`source_precedence`). Either make them portable or move them under a `native.<agent-native>` block.
-- Hook and Permission disagree about Skill Installer: Permission Principle 3 grants Agent Module reads to both `agent-sync` and `skill-installer`; the `agent-sync-read-grant` Hook declaration names only `agent-sync`. *Decided 2026-09-17 (see Decisions taken); pending application.*
-- Permission Principle 3's At a Glance line names only `agent-sync`, while the Rule names both `agent-sync` and `skill-installer`.
 - Output Style is selected in two places: `interaction/profile.yaml` selects `ADHD` as required, and `extension/profile.yaml` enables the `adhd-output-style` plugin that imposes its own style. One owner must be chosen.
 - `context/profile.yaml` `target_precedence` does not state that the Technical Definition takes precedence on conflict, as `interface.md` does.
 - `runtime/profile.yaml` `compatibility.required_profile_version: "1.0"` has no stated meaning while Profiles carry versions from 1.0 to 1.4.

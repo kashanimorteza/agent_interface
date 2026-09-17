@@ -4,8 +4,8 @@ meta:
   path_note: "The Profile layer of the Agent Skill Component."
   purpose: "Interface-owned Skill Contracts, optional prepared Skill files or directories, and prepared, installed, built-in, user, managed, and extension provider Skill declarations. Native mappings are resolved by Agent Sync."
   standard: "Agent Project Interface"
-  version: "1.4"
-  updated: "2026-09-16"
+  version: "2.0"
+  updated: "2026-09-17"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -13,10 +13,10 @@ policy:
   rule: "This file is human-owned; Skill execution and activation state are observed without writing here."
   changed_by: "The human, directly."
   precedence: "An explicit project decision and every applicable Principle take precedence over this file."
-  consumption: "Only explicit Agent Sync and explicit Skill Installer read this Profile. Agent Sync resolves portable Contracts and materializes self-contained native Constructed Skills; Skill Installer resolves prepared content and provider declarations and materializes Prepared and Installed Skills. Every other consumer uses the resulting Runtime artifacts."
+  consumption: "Only the explicit Agent Native Skill reads this Profile: in its sync modes it resolves portable Contracts and materializes self-contained native Constructed Skills; in its install mode it resolves prepared content and provider declarations and materializes Prepared and Installed Skills. Every other consumer uses the resulting Runtime artifacts."
   selection: "Use an undeclared optional Skill only when relevant, compatible, and within current authority."
   version_resolution: "Runtime and extension Skills resolve from their active providers."
-  matching: "During explicit Agent Sync, match Interface-owned Skills by portable Contract. During explicit Skill Installer, match a prepared Skill file or directory by the declared Skill's exact stable key and match external Skills by stable key and provider declaration. Either operation resolves Native identifiers and mappings from the selected Agent Native."
+  matching: "During explicit Agent Sync, match Interface-owned Skills by portable Contract. During explicit the install mode of the Agent Native Skill, match a prepared Skill file or directory by the declared Skill's exact stable key and match external Skills by stable key and provider declaration. Either operation resolves Native identifiers and mappings from the selected Agent Native."
   realization: "Every declared Skill resolves to one Capability Realization Kind: a Skill with a matching prepared Markdown file or prepared directory is Prepared, a remaining Interface-owned Skill with a portable Contract is Constructed, and a Skill under an external provider declaration is Installed."
   invocation_realization: "Realize each declared Skill's invocation policy with the Native mechanism that permits exactly the invocation paths it declares. A Skill declaring human-or-declared-coordinator must remain invocable both by the Human and by a declared coordinator Skill through the Native's own Skill invocation mechanism; never realize it with a Native control that withholds coordinator invocation. A coordinator invokes a Child Skill only through that mechanism, so the Child Skill loads and executes its own native definition; reading a Child Skill's file and executing its workflow inline, or delegating it to a forked or subordinate agent that inherits the coordinator's context, is never a realization of invocation. When the Native offers no control that separates autonomous activation from coordinator invocation, realize the declared autonomous_invocation state as an explicit instruction inside the Skill's own native definition."
 
@@ -119,18 +119,12 @@ content:
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
           invocation: "explicit-human"
           required: true
-        skill-installer:
-          name: "my-interface-skill-installer"
+        agent-native:
+          name: "my-interface-agent-native"
           path: "resolved by Agent Sync from the selected Agent Native"
-          contract: ".interface/agent/skill/contracts/skill-installer.md"
+          contract: ".interface/agent/skill/contracts/agent-native.md"
           architecture_contract: "Skill Contract and shared Agent Skill Principles"
-          invocation: "explicit-human"
-          required: true
-        agent-sync:
-          name: "my-interface-agent-sync"
-          path: "resolved by Agent Sync from the selected Agent Native"
-          contract: ".interface/agent/skill/contracts/agent-sync.md"
-          architecture_contract: "Skill Contract and shared Agent Skill Principles"
+          modes: {1: "sync self", 2: "sync component", 3: "install (formerly the skill-installer Skill, merged 2026-09-17)"}
           invocation: "direct-explicit-human-only"
           model_invocation: "disabled"
           delegated_invocation: "disabled"

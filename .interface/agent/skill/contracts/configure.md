@@ -30,7 +30,7 @@ Establish Interface Understanding and only the Target Understanding needed for C
 
 ## Authority
 
-Write the four Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item. Never provision, transfer, or install an Agent Skill, plugin, or capability; the Skill Installer operation owns all of that. Never create or modify other Interface sources or any product implementation. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing.
+Write the four Config records owned by Configure and perform technical dependency installation and system preparation required by the selected Platform Launch Item. Never provision, transfer, or install an Agent Skill, plugin, or capability; the install mode of the Agent Native Skill owns all of that. Never create or modify other Interface sources or any product implementation. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing.
 
 ## Workflow Invariants
 

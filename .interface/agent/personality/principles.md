@@ -33,7 +33,7 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 ## 2. Model Preference is a Profile choice
 
-**Rule:** Which models a Personality runs on, and in what order, is declared in its Profile, never in its Principles or definition prose.
+**Rule:** Which models a Personality runs on, and in what order, is declared in its Profile as an ordered list of model names that the Agent Runtime Profile declares, never in its Principles or definition prose.
 
 **Why:** Model and provider names are runtime-specific and change independently of the Personality's meaning.
 

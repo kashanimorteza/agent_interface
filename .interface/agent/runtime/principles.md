@@ -2,7 +2,9 @@
 
 Agent Runtime is the Component that supplies the Agent Native, lets it instantiate Agent Instance Definitions and execute their assigned Roles, and exposes the native mechanisms used to realize the Agent Profile. It keeps the Interface independent of one model, provider, client, or capability format.
 
-It owns runtime identity and compatibility. It does not own behavioral instructions, project intent, permissions, or the capabilities implemented through the runtime.
+It owns runtime identity, compatibility, the models available on the selected Runtime, and how that Runtime's own configuration sources combine. It does not own behavioral instructions, project intent, permissions, or the capabilities implemented through the runtime.
+
+*Absorbed from the former Agent Settings Component on 2026-09-17 — its introduction, kept verbatim:* Agent Settings is the Component that declares how Agent configuration sources are scoped, combined, selected, and reconciled. It makes the effective configuration explainable without turning runtime files into a second source of project intent. It owns configuration source precedence and reconciliation. It does not own the choices governed by other Agent Components. Technical source scopes, merge behavior, and native locations belong to Agent Settings Profile.
 
 ## Terms
 
@@ -11,11 +13,17 @@ It owns runtime identity and compatibility. It does not own behavioral instructi
 - **Agent Instance** — one primary or specialized executable identity instantiated within the Agent Native.
 - **Runtime Mapping** — the correspondence between an Interface capability and its native runtime mechanism.
 - **Compatibility** — the ability to preserve a Capability Contract in a particular runtime.
+- **Configuration Source** — one location or invocation layer that contributes Agent settings. *(formerly Agent Settings)*
+- **Effective Setting** — the value produced after all applicable sources and merge rules are resolved. *(formerly Agent Settings)*
+- **Reconciliation** — comparison of declared choices with observed runtime configuration. *(formerly Agent Settings)*
 
 ## Relationships
 
 - **Consumes Agent Settings** — receives the selected runtime configuration and source precedence.
 - **Consumed by Agent and every executing Agent Component** — provides the execution environment and native mechanisms in which their declarations are realized.
+- **Consumes every Agent Component** — receives the choices each Component owns. *(formerly Agent Settings)*
+- **Consumed by Agent Runtime** — provides the configuration that the runtime applies. *(formerly Agent Settings)*
+- **Consumed by Agent Observability** — provides expected values for diagnostics. *(formerly Agent Settings)*
 
 The selected runtime and compatibility choice belong to Agent Runtime Profile; Native-specific realization details are learned by Agent Sync from the selected Agent Native.
 
@@ -43,6 +51,18 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
+## 3. Every effective setting has an explainable source
+
+**Rule:** Configuration sources, their scopes, precedence, and merge behavior are explicit. Every Effective Setting can be traced to the sources that produced it.
+
+**Why:** Hidden precedence makes identical project files behave differently without an actionable explanation.
+
+**Boundary:** This Component explains resolution but does not override a stricter authority owned elsewhere.
+
+*Formerly Settings Principle 1; the other Settings Principles became rules of every Agent Profile in the Agent Profile Schema on 2026-09-17.*
+
+<br>
+
 ## At a Glance
 
 - **Must** — define Agent contracts independently of a concrete runtime *(1)*
@@ -51,3 +71,4 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Never** — require a predeclared realization record or native directory for a Module declaration *(2)*
 - **Never** — remove an undeclared native capability merely to realize an explicitly unused Component *(2)*
 - **Never** — silently approximate an incompatible requirement *(2)*
+- **Must** — make source scope, precedence, merge behavior, and effective origin explicit *(3)*

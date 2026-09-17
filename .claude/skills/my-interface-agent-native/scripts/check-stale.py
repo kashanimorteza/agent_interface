@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Source-fingerprint tooling for the my-interface-agent-sync adapter.
+"""Source-fingerprint tooling for the my-interface-agent-native adapter.
 
 Three commands:
 
@@ -138,8 +138,8 @@ def write_record(root: Path, entries: list[dict], mode: str, ts: str, result: st
     record = {
         "meta": {
             "path": str(RECORD),
-            "purpose": "Machine-readable synchronization record written by my-interface-agent-sync. Fingerprints prove staleness, never conformance.",
-            "owner": "my-interface-agent-sync",
+            "purpose": "Machine-readable synchronization record written by my-interface-agent-native. Fingerprints prove staleness, never conformance.",
+            "owner": "my-interface-agent-native",
         },
         "last_run": last_run,
         "declarations": sorted(kept + entries, key=lambda e: e["declaration"]),

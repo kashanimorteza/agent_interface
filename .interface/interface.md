@@ -165,6 +165,7 @@ This separation is one of the central architectural principles of the project.
 - **Agent Profile** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, portable realization requirements, and validation expectations; Native-specific paths and formats are resolved by Agent Sync.
 - **Agent Role** — one bounded execution responsibility within the Agent Profile, including the primary role and specialized delegated roles.
 - **Capability** — one declared Agent facility, such as a Skill, Rule, Command, Tool, Hook, Integration, or Extension, with an owning Component and bounded contract.
+- **Agent Native Skill** — the Interface-owned Skill `/my-interface-agent-native <1|2|3>`: modes `1` (sync self) and `2` (sync component) perform Agent Sync; mode `3` performs install (the former Skill Installer). It is named for what it does — the Agent Native configuring itself from the Agent Module — and does not change the meaning of Agent Native above.
 - **Capability Realization Kind** — how a declared Agent capability becomes usable in the active Runtime: **Constructed**, built by the Agent Native from a portable specification such as a Skill Contract; **Prepared**, transferred into the Runtime unchanged from a complete Human-authored artifact; or **Installed**, provisioned by the Agent Native's own native mechanism from an external source such as a marketplace, package registry, or MCP server, using per-Agent-Native identity so the Native can find and install it.
 
 
@@ -233,12 +234,12 @@ responsibility: Explains the Implementation Module and maps every Component's Pr
 <!-------------------------- Agent -->
 ### Agent
 
-The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Sync; only Agent Sync and Skill Installer enter it, and every other role uses the synchronized Runtime realization.
+The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Sync; only the Agent Native Skill enters it, and every other role uses the synchronized Runtime realization.
 
 ```yaml
 name: Agent Module Guide
 path: .interface/agent/guide.md
-responsibility: Explains the Agent Module and maps every Component's Principles, Profile, and definition files; read only within an explicit Agent Sync or Skill Installer invocation
+responsibility: Explains the Agent Module and maps every Component's Principles, Profile, and definition files; read only within an explicit Agent Native Skill invocation
 ```
 
 → [Agent Module Guide](agent/guide.md)
@@ -284,7 +285,7 @@ responsibility: Defines Interface Understanding and Target Understanding, their 
 <!--------------------------------------------------------------------------------- Operations --->
 ## Operations
 
-Operations are the defined actions performed through the nine Interface-owned Skills — Configure, Planning, Developing, Reviewing, Launch, Implement, Reset, Skill Installer, and Agent Sync — each with exactly one Skill and one summarized outcome.
+Operations are the defined actions performed through the eight Interface-owned Skills — Configure, Planning, Developing, Reviewing, Launch, Implement, Reset, and Agent Native (three modes: sync self, sync component, install) — each with exactly one Skill and one summarized outcome.
 
 ```yaml
 name: Operations

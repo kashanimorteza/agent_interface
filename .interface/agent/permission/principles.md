@@ -4,19 +4,32 @@ Agent Permission is the Component that governs what Agent Roles and capabilities
 
 It owns enforceable access decisions. It does not own Human intent, external account authority, or a capability's functional contract.
 
+On 2026-09-17 the former Hook Component was merged into this Component: a Hook is one native way of guaranteeing a boundary, and the guarantee — a behavior that must happen deterministically, without the model's discretion — is a Permission concern. The Agent Native chooses whether to realize a declared guarantee with a hook, a deny rule, a sandbox, or another mechanism; the Profile may suggest one per Native. Nothing was dropped; each absorbed Principle keeps its former number in a note.
+
+*Absorbed from the former Agent Hook Component on 2026-09-17 — its introduction, kept verbatim:* Agent Hook is the Component that performs deterministic automation at declared lifecycle events. A Hook may observe, validate, block, transform, notify, or trigger a bounded capability independently of an Agent Native's or Agent Instance's discretionary reasoning.
+
+It owns event matching, handler order, inputs, effects, and failure behavior. It does not own the workflow it observes or broader authority than the triggering event permits.
+
 ## Terms
 
 - **Permission** — an enforceable allow, ask, or deny decision for an action or resource.
 - **Authorization** — approval from the authority entitled to permit a scoped action.
 - **Sandbox** — an enforced execution boundary restricting filesystem, network, or process access.
+- **Hook** — an event-bound handler executed when a matching lifecycle event occurs.
+- **Event** — a named observable point in Agent or Tool execution.
+- **Blocking Hook** — a Hook authorized to prevent or reject the triggering action.
 
 ## Relationships
 
 - **Consumes Human authorization and Agent Role scope** — derives the maximum permitted action boundary.
 - **Consumed by every executing Agent Component** — constrains all reads, mutations, execution, and connections.
 - **Consumed by Agent Hook and Observability** — supplies enforceable decisions and auditable outcomes.
+- **Consumes Agent Session, Tool, Integration, and Permission** — reacts to events using authorized handlers.
+- **Consumed by Agent Rule and Observability** — enforces guarantees and emits lifecycle evidence.
 
 Technical modes, permission rules, sandbox settings, trust policy, and credential references belong to Agent Permission Profile.
+
+Technical events, matchers, handlers, timeouts, and native configuration belong to Agent Hook Profile.
 
 Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -42,9 +55,9 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
-## 3. Agent Module reads belong only to explicit Agent Sync and Skill Installer
+## 3. Agent Module reads belong only to the explicit Agent Native Skill
 
-**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-sync` or `skill-installer` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, and model-generated action can neither invoke Agent Sync nor create, inherit, borrow, or simulate its access grant. Agent Sync reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations, and Skill Installer reads them to resolve which capabilities must be transferred or provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
+**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-native` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, and model-generated action can neither invoke the Agent Native Skill nor create, inherit, borrow, or simulate its access grant. In its sync modes the Skill reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations; in its install mode it reads them to resolve which capabilities must be transferred or provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
 
 **Why:** The Agent Module defines how an Agent Native and its Agent Instances should be constructed; it is not their operational context after synchronization.
 
@@ -72,6 +85,42 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
+## 6. Hook behavior is deterministic and bounded
+
+**Rule:** Every Hook declares its Event, matcher, handler type, inputs, allowed effects, timeout, exit behavior, and whether it may block. Matching the same unchanged event produces the same policy outcome.
+
+**Why:** Hooks are used when behavior must occur reliably rather than at model discretion.
+
+**Boundary:** A prompt- or agent-backed handler may reason internally but remains bounded by the Hook contract.
+
+*Formerly Agent Hook Principle 1.*
+
+<br>
+
+## 7. Hooks fail visibly and safely
+
+**Rule:** Hook failure, timeout, malformed output, and denied execution have an explicit fail-open or fail-closed policy and become observable. Security and integrity controls fail closed unless a stricter authority explicitly defines otherwise.
+
+**Why:** Silent Hook failure creates the appearance of enforcement without the protection.
+
+**Boundary:** Notification-only Hooks may fail open when their failure cannot alter correctness or security.
+
+*Formerly Agent Hook Principle 2.*
+
+<br>
+
+## 8. Hook authority does not expand on trigger
+
+**Rule:** An Event authorizes only the effects declared for its Hook. A trigger never grants broader file, network, external-service, or workflow authority.
+
+**Why:** Automatic execution magnifies hidden scope expansion.
+
+**Boundary:** A Hook may request Human authorization and stop pending that decision.
+
+*Formerly Agent Hook Principle 3.*
+
+<br>
+
 ## At a Glance
 
 - **Never** — modify any Interface path outside the operational Config boundary *(1)*
@@ -79,8 +128,12 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Must** — obtain applicable authorization for materially consequential actions *(1)*
 - **Must** — grant every capability only its minimum required access *(2)*
 - **Never** — let a lower layer or delegate broaden a deny boundary *(2)*
-- **Must** — reserve every Agent Module read for the exact prompt created by direct Human invocation of `agent-sync` *(3)*
-- **Never** — let any non-Human mechanism invoke Agent Sync or create, inherit, borrow, or simulate its access grant *(3)*
+- **Must** — reserve every Agent Module read for the exact prompt created by direct Human invocation of `agent-native` *(3)*
+- **Never** — let any non-Human mechanism invoke the Agent Native Skill or create, inherit, borrow, or simulate its access grant *(3)*
 - **Never** — use Agent Module sources as ordinary Understanding or as a fallback for Runtime drift *(3)*
 - **Never** — store or expose secret values in project declarations, logs, or output *(4)*
 - **Must** — preserve unrelated Human work and resolve destructive targets exactly *(5)*
+- **Must** — declare every Hook's event, matcher, effects, timeout, and blocking behavior *(6)*
+- **Must** — make Hook failure visible and give it an explicit failure policy *(7)*
+- **Must** — fail closed for security and integrity controls *(7)*
+- **Never** — let an Event expand the Hook's authority *(8)*

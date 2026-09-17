@@ -36,7 +36,7 @@ def grant_path(payload: dict[str, object]) -> Path | None:
     return Path(scratchpad).resolve() / f"agent-module-read-{prompt_id}.grant"
 
 
-AGENT_MODULE_READERS = {"my-interface-agent-sync", "my-interface-skill-installer"}
+AGENT_MODULE_READERS = {"my-interface-agent-native"}
 
 
 def has_agent_sync_grant(payload: dict[str, object]) -> bool:
@@ -55,7 +55,7 @@ config = (interface / "foundation" / "config").resolve()
 
 if event == "UserPromptExpansion":
     if payload.get("expansion_type") != "slash_command" or payload.get("command_name") not in AGENT_MODULE_READERS:
-        block("Agent Module access can be granted only by explicit /my-interface-agent-sync or /my-interface-skill-installer expansion.")
+        block("Agent Module access can be granted only by explicit /my-interface-agent-native expansion.")
     marker = grant_path(payload)
     if marker is None:
         block("Cannot bind Agent Module access to this Agent Sync prompt.")
@@ -73,7 +73,7 @@ if tool == "Read":
         if not target.is_absolute():
             target = project / target
         if within(target.resolve(), agent_module) and not agent_sync_granted:
-            block("Agent Module reads are reserved for an explicit /my-interface-agent-sync or /my-interface-skill-installer prompt.")
+            block("Agent Module reads are reserved for an explicit /my-interface-agent-native prompt.")
     raise SystemExit(0)
 
 if tool in {"Glob", "Grep"}:
@@ -82,7 +82,7 @@ if tool in {"Glob", "Grep"}:
     if not target.is_absolute():
         target = project / target
     if overlaps(target.resolve(), agent_module) and not agent_sync_granted:
-        block("This search scope includes the Agent Module. Scope it outside .interface/agent/ or explicitly run /my-interface-agent-sync or /my-interface-skill-installer.")
+        block("This search scope includes the Agent Module. Scope it outside .interface/agent/ or explicitly run /my-interface-agent-native.")
     raise SystemExit(0)
 
 if tool in {"Edit", "Write", "NotebookEdit"}:
@@ -109,7 +109,7 @@ if tool == "Bash":
     agent_path_reference = re.search(r"(?:^|[\s'\"=])(?:\./)?\.interface/agent(?:/|\b)", command)
     absolute_agent_reference = str(agent_module) in command
     if (agent_path_reference or absolute_agent_reference) and not agent_sync_granted:
-        block("Shell access to the Agent Module is reserved for an explicit /my-interface-agent-sync or /my-interface-skill-installer prompt.")
+        block("Shell access to the Agent Module is reserved for an explicit /my-interface-agent-native prompt.")
     mutation = re.search(
         r"(?:^|[;&|]\s*)(?:rm|mv|cp|install|mkdir|rmdir|touch|truncate|chmod|chown|ln|tee|patch|rsync)\b"
         r"|\bsed\s+-i\b|\bperl\s+-pi\b|\bgit\s+(?:checkout|restore|clean|reset)\b|(?:^|[^<])>{1,2}(?!&)",

@@ -131,3 +131,46 @@ conventions:
   references: "A dotted resource reference resolves from content.settings unless its declaring field explicitly names another root."
   read_order: "read_order lists selected, options, and settings in that order."
   content_map: "content_map carries exactly one line for each of the three content sections."
+
+# <!--------------------------------------------------------------------------------- Profile_Rules -->
+profile_rules:
+  purpose: "Rules every Agent Profile obeys. They were the general Principles of the former Settings Component and were moved here verbatim on 2026-09-17 because they govern all Profiles rather than one Component."
+  rules:
+  - title: "Reconciliation preserves ownership"
+    rule: "Reconciliation compares current declarations with actual runtime state, reports drift, and changes only the runtime artifacts it is authorized to manage. Resolved runtime state is never written back as a new human-owned decision."
+    why: "Synchronization must not convert observations into policy."
+    boundary: "A runtime-provided default may be observed without being adopted as a project Profile."
+    at_a_glance:
+      - "**Must** — reconcile declarations with runtime state without changing ownership *(2)*"
+      - "**Never** — turn an observed runtime value into a human-owned decision *(2)*"
+    origin: "formerly Agent Settings Principle 2, moved here on 2026-09-17"
+  - title: "Empty configuration categories are explicit"
+    rule: "Every supported configuration category exists in the Agent Profile even when it currently contains no entries. Empty means declared and unused, not unknown or forgotten."
+    why: "A complete profile distinguishes absence from omission."
+    boundary: "Explicit emptiness does not require activating or configuring the category."
+    at_a_glance:
+      - "**Must** — represent every supported configuration category, including empty ones *(3)*"
+    origin: "formerly Agent Settings Principle 3, moved here on 2026-09-17"
+  - title: "Project capabilities travel with the project"
+    rule: "Every project-specific Agent Instance, Role, Skill, Command, Rule, Tool declaration, Hook, Integration, Extension, interaction choice, permission policy, and required configuration is stored in or declared by the project so a compatible Agent Runtime can reconstruct the same Agent Profile. Secret values and machine credentials never travel in that declaration."
+    why: "Agent Native and Agent Instance behavior must not depend on undocumented user configuration or one machine's hidden state."
+    boundary: "A project declaration may reference runtime- or user-provided infrastructure without claiming to own or transport it."
+    at_a_glance:
+      - "**Must** — store or declare every project-specific Agent capability and policy at project scope *(4)*"
+      - "**Never** — store secret values or machine credentials in the portable declaration *(4)*"
+    origin: "formerly Agent Settings Principle 4, moved here on 2026-09-17"
+  - title: "Every required capability has one owner and a provable status"
+    rule: "Every required Agent responsibility maps to one owning Component and one reachable Capability Contract. Its availability status is established from current runtime observation; missing, duplicate, contradictory, unreachable, inactive, or unverified mappings remain explicit and never become available by assumption."
+    why: "A complete catalog is useful only when responsibility and actual usability are unambiguous."
+    boundary: "Several capabilities may collaborate when exactly one contract remains accountable for the required responsibility."
+    at_a_glance:
+      - "**Must** — map every required responsibility to one owner and one reachable Capability Contract *(5)*"
+      - "**Never** — infer availability from a missing, conflicting, inactive, or unverified mapping *(5)*"
+    origin: "formerly Agent Settings Principle 5, moved here on 2026-09-17"
+
+# <!--------------------------------------------------------------------------------- Native_Blocks -->
+native_blocks:
+  path: "content.settings.native.<agent-native>"
+  purpose: "Optional per-Agent-Native realization suggestions and Native-only mechanics. A Component states its portable concept in Principles and its portable selections in selected, options, and settings; when the Human knows how a particular Native realizes that concept best, the suggestion goes here, keyed by that Native."
+  authority: "A native block is an aid that narrows Agent Sync's discovery, never an authority that overrides the Native's own mechanism. When no block exists, the Agent Native decides the realization itself."
+  scope: "Also holds declarations that exist only for one Native (for example Claude Code hook events or configuration-source precedence)."

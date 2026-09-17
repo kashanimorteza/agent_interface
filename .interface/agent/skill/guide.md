@@ -24,7 +24,7 @@ skill/
 └── files/               ← optional prepared Skill files, keyed by stable Skill key (declared; currently absent)
 ```
 
-A Skill has exactly one Capability Realization Kind. An Interface-owned Skill is **Constructed**: its Contract defines it completely and Agent Sync builds the native Skill from it. A Skill with a matching prepared file is **Prepared** and a Skill from an external provider is **Installed**; both belong to Skill Installer.
+A Skill has exactly one Capability Realization Kind. An Interface-owned Skill is **Constructed**: its Contract defines it completely and Agent Sync builds the native Skill from it. A Skill with a matching prepared file is **Prepared** and a Skill from an external provider is **Installed**; both belong to the install mode of the Agent Native Skill.
 
 <br>
 
@@ -48,7 +48,7 @@ The following questions were put to the Human and answered on 2026-09-17.
 Agent Sync is the Agent Native configuring itself. It runs inside the selected Native — Claude Code, Codex, Copilot — establishes an Understanding of the complete Agent Module, starting from the Agent Module Guide, and then, following the Native's own principles and standards, shapes the Native to match: the concepts, skills, rules, and limits declared in the Module are carried into the Native's own configuration. The Human does not know, and does not need to know, where a given Native keeps a rule or a skill; what matters is that Sync recognizes "here is a Skill that must exist", "here are rules", and the Native, being the one that runs Sync, knows where those go.
 
 **Does Sync install anything?**
-No. Sync gains an Understanding of the declared Skills and does whatever that Understanding requires, which for an Interface-owned Skill is to create it from its Contract. Nothing is installed by Sync; Prepared and Installed Skills remain with Skill Installer.
+No. Sync gains an Understanding of the declared Skills and does whatever that Understanding requires, which for an Interface-owned Skill is to create it from its Contract. Nothing is installed by Sync; Prepared and Installed Skills remain with the install mode of the Agent Native Skill.
 
 **Why two modes, `self` and `module`?**
 Because a Skill that is already running cannot load a new definition of itself. So Sync first realizes its own adapter from its Contract (`self`), the Human restarts the Native, and only then does Sync realize the rest of the Module (`module`). The Human considered collapsing the two modes and updating the adapter by hand every time, and decided against it: the two modes stay, and the adapter is written by hand only once, at bootstrap.
@@ -69,7 +69,9 @@ Sync follows a loop: do the work, check it, and if the check finds a gap, do it 
 
 ## Decisions taken — Agent Sync
 
-Recorded on 2026-09-17 and written into `contracts/agent-sync.md` the same day:
+Recorded on 2026-09-17 and written into `contracts/agent-native.md` the same day:
+
+- Later the same day the Skill was renamed `agent-native` with three numeric modes — `1` sync self, `2` sync component, `3` install — and the separate `skill-installer` Skill was merged into mode `3`; both Contracts were merged into `contracts/agent-native.md` with nothing dropped.
 
 - Module Understanding starts from the Agent Module Guide (`.interface/agent/guide.md`), where the Agent Structure now lives.
 - A new result status `approximated`: realized through the nearest native mechanism, with the exact difference stated; Sync continues. `blocked` is reserved for declarations with no native equivalent or a genuine stopping condition.
@@ -81,4 +83,4 @@ Recorded on 2026-09-17 and written into `contracts/agent-sync.md` the same day:
 ## Open decisions
 
 - The prepared-file directory `files/` is declared in `profile.yaml` but does not exist; whether to create it empty or leave it absent until a prepared Skill exists.
-- Understanding records for the other eight Interface-owned Skills are not yet captured.
+- Understanding records for the other seven Interface-owned Skills, and for the install mode of Agent Native, are not yet captured.

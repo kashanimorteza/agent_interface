@@ -4,20 +4,46 @@ The `Agent` Component declares the selected Agent Native and the executable Agen
 
 It owns Agent Native selection, Agent Instance identity, kind, Role assignment, capability assignment, native realization, and lifecycle defaults. It does not own Role responsibilities, Skill behavior, Runtime implementation, coordination protocol, or Permission policy.
 
+On 2026-09-17 the former Role and Coordination Components were merged into this Component: an Agent Instance, the responsibility it executes, and the way several Instances share work are three answers to one question — which Agents the Human has. Nothing was dropped; each absorbed Principle keeps its former number in a note.
+
+*Absorbed from the former Agent Role Component on 2026-09-17 — its introduction, kept verbatim:* Agent Role is the Component that defines the execution responsibilities available to Agent Instances within an Agent Profile, including the primary role and specialized delegated roles. It gives each role a stable contract independent of the Agent Native that hosts its Instance.
+
+It owns role responsibilities and boundaries. It does not own Agent Instance identities, native realizations, capability configuration, workflow content, runtime configuration, or coordination state.
+
+*Absorbed from the former Agent Coordination Component on 2026-09-17 — its introduction, kept verbatim:* Agent Coordination is the Component that organizes work across multiple Agent Instance Definitions and their Roles, sessions, tasks, and isolated workspaces within an Agent Native. It defines delegation, communication, synchronization, and integration without redefining the Agent Instances or Roles being coordinated.
+
+It owns coordination protocol and conflict boundaries. It does not own role contracts, project Plans, or implementation decisions.
+
 ## Terms
 
 - **Agent Native** — the core operational Agent supplied by the selected Agent Runtime; it receives the Human's request and hosts or coordinates its Agent Instances.
 - **Agent Instance Definition** — one portable declaration of an executable Agent Instance identity and the Role and capabilities it realizes.
 - **General Agent Instance** — the primary Agent Instance accountable to the Human for the complete authorized request.
 - **Specialized Agent Instance** — an Agent Instance that realizes a bounded supporting Role under delegation or direct invocation.
+- **Agent Role** — one bounded execution responsibility with defined authority, inputs, outputs, and stopping conditions.
+- **Primary Role** — the role accountable to the Human for the active request.
+- **Specialized Role** — a role delegated a focused responsibility within the parent's authority.
+- **Delegation** — assignment of a bounded objective from one Agent to another under their declared Roles.
+- **Team** — multiple independently executing Agents coordinated toward one authorized outcome.
+- **Coordination Record** — transient runtime state used to assign, synchronize, and collect work.
 
 ## Relationships
 
 - **Consumes Agent Runtime, Role, Context, Skill, Tool, Permission, and Session** — selects the Agent Native and combines their contracts into executable Agent Instances without redefining them.
 - **Consumed by Agent Coordination** — supplies the concrete Agent Instances that may be delegated, teamed, or isolated.
 - **Consumed by Agent Observability** — supplies the declarations against which the Agent Native and every Agent Instance realization are validated.
+- **Consumes Agent Context, Skill, Tool, and Permission** — receives knowledge, workflow, capabilities, and authority needed to act.
+- **Consumed by Agent** — supplies responsibilities that executable Agent Instance Definitions realize.
+- **Consumed by Agent Coordination** — supplies the responsibility boundaries preserved during delegation and teams.
+- **Consumed by Agent Observability** — supplies the contract against which role outcomes are reported.
+- **Consumes Agent, Role, Context, Permission, and Session** — coordinates eligible Agent Instances while preserving Role, authority, and lifecycle boundaries.
+- **Consumed by Agent Observability** — provides attribution and coordination outcomes.
 
 Agent Native selection, Agent Instance declarations, primary Instance selection, Role assignments, models, tools, Skills, permissions, memory, isolation, and portable realization requirements belong to Agent Profile. Native paths, file formats, and runtime-specific mappings are resolved by Agent Sync from the selected Agent Native.
+
+Technical Role catalogs and primary Role selection belong to Agent Role Profile. Agent Instance identities, native realizations, models, tools, Skills, and per-Instance configuration belong to Agent Profile.
+
+Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Coordination Profile.
 
 Every statement here is mandatory. A Profile can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -73,6 +99,102 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 
 <br>
 
+## 6. Every Agent Role has one bounded responsibility
+
+**Rule:** Every Agent Role declares one responsibility, scope, authority, required inputs, expected outputs, and stopping conditions. A role never performs an adjacent responsibility or acquires authority merely because it discovers additional work.
+
+**Why:** Bounded roles make behavior predictable and delegation reviewable.
+
+**Boundary:** One role may coordinate several capabilities when coordination is its declared responsibility.
+
+*Formerly Agent Role Principle 1.*
+
+<br>
+
+## 7. Role ownership is unambiguous
+
+**Rule:** Each required responsibility maps to one primary Agent Role. Missing, duplicate, contradictory, or unreachable role ownership is invalid.
+
+**Why:** Shared primary ownership makes accountability disappear.
+
+**Boundary:** Supporting roles may contribute evidence without becoming co-owners of the final claim.
+
+*Formerly Agent Role Principle 2.*
+
+<br>
+
+## 8. The Primary Role remains accountable
+
+**Rule:** The Primary Role remains accountable for integrating delegated results, resolving conflicts, preserving the Human's scope, and making the final outcome claim.
+
+**Why:** Delegation must not leave the Human responsible for assembling unverified fragments.
+
+**Boundary:** Accountability does not grant the Primary Role authority excluded by the active request or policy.
+
+*Formerly Agent Role Principle 3.*
+
+<br>
+
+## 9. The primary execution role owns the requested outcome
+
+**Rule:** The architecture requires one primary execution role whose purpose is accountable request completion, whose responsibility is to establish required Understanding, activate and coordinate applicable capabilities, preserve authority, and report an evidence-backed outcome, and whose task coverage is the complete authorized request.
+
+**Why:** The Human needs one role accountable for the integrated result even when work is delegated.
+
+**Boundary:** The primary execution role gains no authority beyond the request, applicable Permissions, and owning Component contracts.
+
+*Formerly Agent Role Principle 4.*
+
+<br>
+
+## 10. `interface-reader` reports without changing the observed state
+
+**Rule:** The architecture requires the `interface-reader` specialized role whose purpose is current Interface status reporting, whose responsibility is to derive Workflow position, phase progress, plans, implementation, launch, blockers, questions, and Findings from current authorities and records, and whose task coverage is read-only observation and explanation.
+
+**Why:** Status is trustworthy only when the reporter cannot change what it is observing.
+
+**Boundary:** `interface-reader` never reads Agent Module sources, writes files, executes project work, repairs discrepancies, or invents missing facts. It consumes synchronized Runtime rules for Agent-side behavior.
+
+*Formerly Agent Role Principle 5.*
+
+<br>
+
+## 11. Delegation preserves scope and authority
+
+**Rule:** A delegation carries a bounded objective, minimum necessary context, expected result, evidence requirements, and no authority broader than the parent task permits. Delegation never bypasses ownership or approval.
+
+**Why:** Parallel execution is safe only when every worker's mandate is explicit.
+
+**Boundary:** A delegate may choose ordinary implementation details inside its assigned contract.
+
+*Formerly Agent Coordination Principle 1.*
+
+<br>
+
+## 12. Concurrent work has exclusive mutation ownership
+
+**Rule:** Concurrent roles receive non-overlapping mutation scopes or an explicit coordination rule for shared records. Conflicting results are reconciled by the accountable parent before integration.
+
+**Why:** Uncoordinated writers create nondeterministic loss and false completion.
+
+**Boundary:** Read-only investigation may overlap freely when it does not mutate shared state.
+
+*Formerly Agent Coordination Principle 2.*
+
+<br>
+
+## 13. Runtime coordination state is not project intent
+
+**Rule:** Team membership, task queues, mailboxes, process identifiers, and other Coordination Records remain runtime state and are never treated as authored Interface definitions.
+
+**Why:** Ephemeral execution mechanics must not become accidental project policy.
+
+**Boundary:** Durable evidence and outcomes may be written to the record that owns them.
+
+*Formerly Agent Coordination Principle 3.*
+
+<br>
+
 ## At a Glance
 
 - **Must** — select one Agent Native supplied by the selected Agent Runtime *(1, 5)*
@@ -85,3 +207,17 @@ Every statement here is mandatory. A Profile can never override a Principle, and
 - **Never** — let delegation turn a Specialized Agent Instance into the General Agent Instance *(4)*
 - **Must** — prove the Agent Native and every required Agent Instance are usable in the selected Runtime *(5)*
 - **Never** — approximate an unavailable Agent Native or Agent Instance with broader authority *(5)*
+- **Must** — give every Agent Role one complete bounded contract *(6)*
+- **Never** — let discovered work expand a role's authority *(6)*
+- **Must** — assign each required responsibility one primary owner *(7)*
+- **Never** — accept missing, duplicate, contradictory, or unreachable ownership *(7)*
+- **Must** — keep the Primary Role accountable for integration and the final claim *(8)*
+- **Must** — provide one primary execution role accountable for the authorized request *(9)*
+- **Never** — let primary accountability expand authority *(9)*
+- **Must** — provide `interface-reader` for read-only current status reporting *(10)*
+- **Never** — let `interface-reader` mutate, execute, repair, or invent project state *(10)*
+- **Never** — let `interface-reader` enter or inspect the Agent Module *(10)*
+- **Must** — delegate bounded objectives, context, outputs, evidence, and authority *(11)*
+- **Never** — use delegation to bypass ownership or approval *(11)*
+- **Must** — coordinate mutation scopes and reconcile conflicts before integration *(12)*
+- **Never** — treat transient coordination state as project intent *(13)*

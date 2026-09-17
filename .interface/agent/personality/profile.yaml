@@ -4,7 +4,7 @@ meta:
   path_note: "The Profile layer of the Agent Personality Component."
   purpose: "Declared personalities, their definition files, the Actions each performs, and the models each prefers in priority order."
   standard: "Agent Project Interface"
-  version: "0.1"
+  version: "0.2"
   updated: "2026-09-17"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -36,10 +36,7 @@ content:
   settings:
     definitions_directory: "definitions/"
     personalities:
-      # Example shape for models — not a declaration:
-      #   models:
-      #     - {name: "<model-a>", provider: "<provider>"}
-      #     - {name: "<model-b>", provider: "<provider>"}
+      # models: an ordered list of model names declared in agent/runtime/profile.yaml (settings.models), highest priority first.
       developer:
         definition: "definitions/developer.md"
         actions: ["develop"]
