@@ -148,11 +148,11 @@ Do not report a capability as synchronized until its required activation and usa
 
 ### Restart notice
 
-Whenever this run rewrote a native Skill artifact — a `self` rewrite of this file, or any `create`/`update` a `module` run performed — place this notice prominently in the response, once, separate from the mapping table:
+Claude Code cannot apply every realized artifact change inside the running session: an executing Skill keeps the definition it started with, and project Rules, memory files, settings, hooks, Agent Instance definitions, and plugin or MCP enablement are read when a session starts. Treat every native artifact this run wrote as one the running instance may not have applied. Whenever this run wrote any native artifact — a `self` rewrite of this file, or any `create`, `update`, `install`, or `enable` a `module` run performed on a Skill, Rule, setting, permission, hook, Agent Instance, Command, Extension, Integration, or other native resource — classify each written artifact `activation required` with an instance restart as the Human action, and place this notice prominently in the response, once, separate from the mapping table, even when the overall Module status is otherwise a success:
 
-> ⚠️ **Restart Claude Code before relying on this.** Skills are loaded once when a session starts; this session is still running the previous definition of every rewritten Skill. Fully exit this Claude Code session and start a new one — reopening or continuing this conversation is not enough. Do this before invoking `/my-interface-agent-sync` again or trusting a rewritten Skill's behavior.
+> ⚠️ **Restart Claude Code before relying on this.** This session is still running the previous definition of every native artifact this run wrote — Skills, Rules, settings, hooks, agents, and enabled capabilities alike. Fully exit this Claude Code session and start a new one — reopening or continuing this conversation is not enough. Do this before invoking `/my-interface-agent-sync` again or trusting any rewritten artifact's behavior.
 
-Never report `synchronized`, `already synchronized`, or a Skill as usable in the *current* session while this notice is outstanding; the artifact is correct on disk but `activation required` in the running instance until the restart happens.
+Never report `synchronized`, `already synchronized`, or a written artifact as usable in the *current* session while this notice is outstanding; the artifact is correct on disk but `activation required` in the running instance until the restart happens.
 
 Open a `module` report with one mapping table covering every dynamically discovered Agent Module declaration, one row each, in the order they were reconciled:
 
