@@ -48,9 +48,10 @@ This is the only permitted way to reach a per-declaration outcome. Apply it to o
 4. No difference → classify `already synchronized` and go to step 7. Any difference → rewrite the whole artifact so every section carries what the declaration currently requires, keeping the frontmatter Claude Code needs and the native detail the declaration leaves to the adapter; never patch around a difference and never invent content for an empty category.
 5. Re-read the written artifact and prove each recorded difference is gone.
 6. Report `blocked` any difference that survives; never report it resolved.
-7. Record the mapping row: sources read, artifact path, Native mechanism, verification gate, and what re-reading proved.
+7. Record the fingerprint of every source read for this declaration in the artifact's frontmatter `metadata` (see Synchronization record).
+8. Record the mapping row: sources read, artifact path, Native mechanism, verification gate, and what re-reading proved.
 
-Claim `no change` or `already synchronized` only from this comparison with both files read in full. Presence, frontmatter, modification time, apparent recency, and the absence of a remembered edit are never evidence of conformance. A changed source fingerprint (see Synchronization record) proves staleness and forces step 4; an unchanged one proves nothing. A `self` run that found a difference and left this file unwritten has failed. A run that leaves any declaration unread, or classifies one unchanged without this comparison, reports `Agent Module not fully synchronized` and names every unexamined declaration.
+Claim `no change` or `already synchronized` only from this comparison with both files read in full. Presence, frontmatter, modification time, apparent recency, and the absence of a remembered edit are never evidence of conformance. A changed source fingerprint (see Synchronization record) proves staleness and forces step 4; an unchanged one proves nothing. Recorded fingerprints may be consulted first so the report names provably stale artifacts; they never skip, defer, or shorten any declaration's procedure. A `self` run that found a difference and left this file unwritten has failed. A run that leaves any declaration unread, or classifies one unchanged without this comparison, reports `Agent Module not fully synchronized` and names every unexamined declaration.
 
 ## Module reconciliation
 
@@ -68,7 +69,7 @@ When this pass finds a required item unrealized or unverified for a reason other
 
 ## Synchronization record
 
-`scripts/check-stale.py` beside this file owns the fingerprint mechanism. After reconciliation and before the final report, run `python3 .claude/skills/my-interface-agent-sync/scripts/check-stale.py stamp --mode <mode> --status <status> --result "<overall result>"` (add `--only <native-name>` in `self` mode) so every realized Skill carries `metadata.contract_sha256` in its frontmatter and `.claude/interface-sync.yaml` records one entry per declaration: source, fingerprint, artifact, status, mode, and time. Pass only a status this run actually proved. `check` re-hashes the sources and reports provable staleness; it is a fast gate before Understanding, never a substitute for the Realization procedure.
+`scripts/check-stale.py` beside this file is the bounded fingerprint helper: it hashes sources, records fingerprints in frontmatter `metadata`, and reads or writes `.claude/interface-sync.yaml`. It never compares instruction content and never decides conformance. Step 7 of the Realization procedure is `python3 .claude/skills/my-interface-agent-sync/scripts/check-stale.py stamp --mode <mode> --status <status this run proved for it> --note "<evidence>" --only <native-name>`, so every realized Skill carries `metadata.contract_sha256` and the record holds one entry per declaration: source, fingerprint, artifact, status, mode, and time. The last `stamp` call of a run also passes `--result "<overall result>"`. `check` re-hashes the sources and reports provable staleness; it may run first so the report names stale artifacts, never as a substitute for, or a shortcut through, the Realization procedure.
 
 ## Stopping conditions
 
