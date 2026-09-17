@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
 """Source-fingerprint tooling for the my-interface-agent-sync adapter.
 
-Two commands:
+Three commands:
 
   check   (default) Read .claude/interface-sync.yaml, re-hash every recorded
           source, and report which native artifacts are provably stale.
           Exit 1 when any entry is stale or missing, else 0.
 
-  stamp   Used by Agent Sync after reconciliation. Re-hash every Interface-owned
-          Skill Contract, write the fingerprint into each native SKILL.md
-          frontmatter `metadata` block, and rewrite the synchronization record.
+  stamp   Used by Agent Sync for Constructed Skills. Re-hash each Interface-owned
+          Skill Contract, write the fingerprint into the native SKILL.md
+          frontmatter `metadata` block, and update the synchronization record.
+
+  record  Used by Agent Sync for every other declaration (Rule, Hook, Permission,
+          Agent Instance, Extension, Integration, setting, empty category, ...).
+          Hash the sources Agent Sync names and update the synchronization
+          record. Their native artifacts offer no free-form metadata field, so
+          the fingerprint lives in the record only.
 
 A changed fingerprint proves staleness. An unchanged fingerprint never proves
 conformance; only a full section-by-section comparison does. This script
-therefore never emits "synchronized" on its own: the status it records is the
-one Agent Sync passes in.
+therefore never emits a status on its own: the status it records is the one
+Agent Sync passes in.
 """
 
 from __future__ import annotations
@@ -31,7 +37,7 @@ import yaml
 RECORD = Path(".claude/interface-sync.yaml")
 SKILL_PROFILE = Path(".interface/agent/skill/profile.yaml")
 SKILLS_DIR = Path(".claude/skills")
-MECHANISM = "Claude Code project Skill"
+SKILL_MECHANISM = "Claude Code project Skill"
 
 
 def project_root() -> Path:
@@ -91,16 +97,55 @@ def write_metadata(path: Path, meta: dict) -> None:
 
 
 # ---------------------------------------------------------------- declarations
-def declared_skills(root: Path) -> list[dict]:
-    """name -> contract mapping from the Human-owned Skill Profile (read only by Agent Sync)."""
+def constructed_skills(root: Path) -> list[dict]:
+    """Every Skill the Human-owned Skill Profile declares with a Contract and no prepared file.
+
+    Groups are discovered from the Profile on every call, never from a fixed list.
+    """
     prof = yaml.safe_load((root / SKILL_PROFILE).read_text())
-    groups = prof["content"]["settings"]["project_skills"]
+    settings = prof["content"]["settings"]
+    files_dir = root / (settings.get("skill_files") or {}).get("directory", "")
     found = []
-    for group in ("core_workflow", "supporting"):
-        for key, decl in (groups.get(group) or {}).items():
-            if "contract" in decl and "name" in decl:
-                found.append({"key": key, "name": decl["name"], "contract": decl["contract"]})
+    for group in (settings.get("project_skills") or {}).values():
+        if not isinstance(group, dict):
+            continue
+        for key, decl in group.items():
+            if not isinstance(decl, dict) or "contract" not in decl or "name" not in decl:
+                continue
+            if (files_dir / f"{key}.md").is_file() or (files_dir / key).is_dir():
+                print(f"skip {decl['name']}: Prepared (owned by Skill Installer)")
+                continue
+            found.append({"key": key, "name": decl["name"], "contract": decl["contract"]})
     return found
+
+
+# ---------------------------------------------------------------- record
+def entry_sources(entry: dict) -> list[dict]:
+    """Sources of a record entry, reading the older single-source shape too."""
+    if "sources" in entry:
+        return entry["sources"]
+    if "source" in entry:
+        return [{"path": entry["source"], "fingerprint": entry.get("fingerprint")}]
+    return []
+
+
+def write_record(root: Path, entries: list[dict], mode: str, ts: str, result: str) -> None:
+    rec_path = root / RECORD
+    previous = (yaml.safe_load(rec_path.read_text()) if rec_path.exists() else {}) or {}
+    replaced = {e["declaration"] for e in entries}
+    kept = [e for e in previous.get("declarations", []) if e["declaration"] not in replaced]
+    last_run = {"mode": mode, "at": ts, "result": result or (previous.get("last_run") or {}).get("result", "")}
+    record = {
+        "meta": {
+            "path": str(RECORD),
+            "purpose": "Machine-readable synchronization record written by my-interface-agent-sync. Fingerprints prove staleness, never conformance.",
+            "owner": "my-interface-agent-sync",
+        },
+        "last_run": last_run,
+        "declarations": sorted(kept + entries, key=lambda e: e["declaration"]),
+    }
+    rec_path.write_text(yaml.safe_dump(record, sort_keys=False, allow_unicode=True, width=120))
+    print(f"wrote {RECORD} ({len(entries)} updated, {len(kept)} kept)")
 
 
 # ---------------------------------------------------------------- commands
@@ -112,22 +157,26 @@ def cmd_check(root: Path) -> int:
     rec = yaml.safe_load(rec_path.read_text()) or {}
     rows, bad = [], 0
     for d in rec.get("declarations", []):
-        src = root / d["source"]
-        art = root / d["artifact"]
-        if not src.exists():
-            state, bad = "missing source", bad + 1
-        elif not art.exists():
+        sources = entry_sources(d)
+        artifact = d.get("artifact") or ""
+        missing = [s["path"] for s in sources if not (root / s["path"]).exists()]
+        changed = [s["path"] for s in sources if s["path"] not in missing and sha256(root / s["path"]) != s.get("fingerprint")]
+        if missing:
+            state, bad = f"missing source: {', '.join(missing)}", bad + 1
+        elif artifact and not (root / artifact).exists():
             state, bad = "missing artifact", bad + 1
-        elif sha256(src) != d.get("fingerprint"):
-            state, bad = "STALE (source changed since last sync)", bad + 1
-        else:
-            _, fm = read_frontmatter(art.read_text())
+        elif changed:
+            state, bad = f"STALE (source changed since last sync: {', '.join(changed)})", bad + 1
+        elif d.get("realized_as") == SKILL_MECHANISM:
+            _, fm = read_frontmatter((root / artifact).read_text())
             stamped = (fm.get("metadata") or {}).get("contract_sha256")
-            if stamped != d.get("fingerprint"):
+            if stamped != sources[0].get("fingerprint"):
                 state, bad = "STALE (artifact stamp differs from record)", bad + 1
             else:
                 state = "fingerprint unchanged (not proof of conformance)"
-        rows.append((d["artifact"], d.get("status", "?"), state))
+        else:
+            state = "fingerprint unchanged (not proof of conformance)"
+        rows.append((artifact or d["declaration"], d.get("status", "?"), state))
     width = max(len(r[0]) for r in rows) if rows else 10
     print(f"last run: {rec.get('last_run', {})}")
     for a, s, st in rows:
@@ -139,7 +188,7 @@ def cmd_check(root: Path) -> int:
 def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: list[str]) -> int:
     ts = now()
     entries = []
-    for d in declared_skills(root):
+    for d in constructed_skills(root):
         if only and d["name"] not in only:
             continue
         src = root / d["contract"]
@@ -151,9 +200,8 @@ def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: 
         write_metadata(art, {"contract": d["contract"], "contract_sha256": fp, "synced_at": ts})
         entries.append({
             "declaration": f"agent/skill/contracts/{Path(d['contract']).name}",
-            "source": d["contract"],
-            "fingerprint": fp,
-            "realized_as": MECHANISM,
+            "sources": [{"path": d["contract"], "fingerprint": fp}],
+            "realized_as": SKILL_MECHANISM,
             "artifact": str(SKILLS_DIR / d["name"] / "SKILL.md"),
             "status": status,
             "mode": mode,
@@ -161,20 +209,29 @@ def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: 
             **({"note": note} if note else {}),
         })
         print(f"stamped {art.relative_to(root)}")
-    rec_path = root / RECORD
-    previous = yaml.safe_load(rec_path.read_text()) if rec_path.exists() else {}
-    kept = [e for e in (previous or {}).get("declarations", []) if e["artifact"] not in {n["artifact"] for n in entries}]
-    record = {
-        "meta": {
-            "path": str(RECORD),
-            "purpose": "Machine-readable synchronization record written by my-interface-agent-sync. Fingerprints prove staleness, never conformance.",
-            "owner": "my-interface-agent-sync",
-        },
-        "last_run": {"mode": mode, "at": ts, "result": result},
-        "declarations": sorted(kept + entries, key=lambda e: e["artifact"]),
+    write_record(root, entries, mode, ts, result)
+    return 0
+
+
+def cmd_record(root: Path, args: argparse.Namespace) -> int:
+    ts = now()
+    sources = []
+    for s in args.source:
+        if not (root / s).is_file():
+            sys.exit(f"record: source not found: {s}")
+        sources.append({"path": s, "fingerprint": sha256(root / s)})
+    entry = {
+        "declaration": args.declaration,
+        "sources": sources,
+        "realized_as": args.realized_as,
+        **({"artifact": args.artifact} if args.artifact else {}),
+        **({"provider": args.provider} if args.provider else {}),
+        "status": args.status,
+        "mode": args.mode,
+        "at": ts,
+        **({"note": args.note} if args.note else {}),
     }
-    rec_path.write_text(yaml.safe_dump(record, sort_keys=False, allow_unicode=True, width=120))
-    print(f"wrote {RECORD} ({len(entries)} updated, {len(kept)} kept)")
+    write_record(root, [entry], args.mode, ts, args.result)
     return 0
 
 
@@ -183,15 +240,24 @@ def main() -> int:
     sub = ap.add_subparsers(dest="cmd")
     sub.add_parser("check")
     st = sub.add_parser("stamp")
-    st.add_argument("--mode", required=True, choices=["self", "module"])
-    st.add_argument("--status", default="activation required")
-    st.add_argument("--note", default="")
-    st.add_argument("--result", default="")
-    st.add_argument("--only", nargs="*", default=[], help="native skill names to stamp; default all declared")
+    rc = sub.add_parser("record")
+    for p in (st, rc):
+        p.add_argument("--mode", required=True, choices=["self", "module"])
+        p.add_argument("--status", required=True)
+        p.add_argument("--note", default="")
+        p.add_argument("--result", default="")
+    st.add_argument("--only", nargs="*", default=[], help="native skill names to stamp; default every Constructed Skill")
+    rc.add_argument("--declaration", required=True, help="Module declaration, e.g. agent/rule/profile.yaml#project_rules.interface-bootstrap")
+    rc.add_argument("--source", nargs="+", required=True, help="every Module source read for this declaration")
+    rc.add_argument("--realized-as", required=True, help="Claude Code mechanism, or 'none' for an empty or blocked declaration")
+    rc.add_argument("--artifact", default="", help="project path of the native artifact, when one exists")
+    rc.add_argument("--provider", default="", help="provider identity when the realization is not a project file")
     args = ap.parse_args()
     root = project_root()
     if args.cmd == "stamp":
         return cmd_stamp(root, args.mode, args.status, args.note, args.result, args.only)
+    if args.cmd == "record":
+        return cmd_record(root, args)
     return cmd_check(root)
 
 

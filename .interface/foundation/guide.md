@@ -1,6 +1,6 @@
 # Foundation Files
 
-This document explains the Foundation directory: what it holds, why those files are shared by the whole Interface, and who may change them. It is Human-owned and explains; it does not redefine. The canonical definition remains `interface.md` in this same directory, which describes the complete system; this document describes only this directory and its contents.
+This document explains the Foundation directory: what it holds, why those files are shared by the whole Interface, and who may change them. It is Human-owned and explains; it does not redefine. The canonical definition remains `interface.md`, one level above this directory, which describes the complete system; this document describes only this directory and its contents.
 
 Foundation is not one of the three Modules (Target, Implementation, Agent). It is the set of shared resources those Modules and every Skill depend on.
 
@@ -15,9 +15,14 @@ Foundation Files provide the foundational definitions and schemas required by th
 ## Structure
 
 ```text
+.interface/interface.md          ← the Interface file, one level above
 .interface/foundation/
-├── interface.md
 ├── guide.md
+├── understanding.md
+├── operations.md
+├── modes.md
+├── authority.md
+├── workflow.md
 ├── config/
 │   ├── application.yaml
 │   ├── state.yaml
@@ -39,7 +44,19 @@ Foundation Files provide the foundational definitions and schemas required by th
 
 ## Interface file
 
-[`interface.md`](interface.md) is the canonical definition, navigation entry point, and complete file map of Agent Interface. Interface Understanding — required by every Skill — starts exclusively from this file and follows only the routes it provides for the active role. For every operation except Agent Sync, those routes lead to Target, Implementation, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module.
+[`interface.md`](../interface.md), one level above this directory, is the canonical definition, navigation entry point, and complete file map of Agent Interface. Interface Understanding — required by every Skill — starts exclusively from this file and follows only the routes it provides for the active role. For every operation except Agent Sync, those routes lead to Target, Implementation, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module.
+
+<br>
+
+## Interface sections kept as separate files
+
+Five sections of the Interface were moved out of `interface.md` verbatim on 2026-09-17 so that the entry file stays a map. Each is part of Interface Understanding: a Skill reads `interface.md` and then these files before acting. Introduction and Terminology remain inside `interface.md`.
+
+- [`understanding.md`](understanding.md) — Interface Understanding and Target Understanding, their sources and precedence, and the Agent Module exception.
+- [`operations.md`](operations.md) — the nine Operations and the Skill that performs each.
+- [`modes.md`](modes.md) — the Modes State may record.
+- [`authority.md`](authority.md) — record ownership and each Skill's write authority.
+- [`workflow.md`](workflow.md) — the Workflow and its Default, Normal, and Detailed paths.
 
 <br>
 
@@ -101,7 +118,7 @@ Target Definitions are intentionally **not** considered Foundation Files because
 
 ```text
 name = Interface
-path = .interface/foundation/interface.md
+path = .interface/interface.md
 responsibility = Canonical definition, navigation entry point, and entry point to the complete file map of Agent Interface; each Module's own files are mapped in its guide
 ```
 
@@ -273,7 +290,7 @@ generates = .interface/foundation/config/review.yaml
 
 ## Ownership
 
-The Human owns `interface.md`, this document, and every Schema. Config records belong to the Components that own them — Plan, State, and Review — and are written only by the Skills the Interface authorizes for each record. Target definitions are intentionally not Foundation Files; they belong to the Target Module.
+The Human owns `interface.md`, this document, the five section files, and every Schema. Config records belong to the Components that own them — Plan, State, and Review — and are written only by the Skills the Interface authorizes for each record. Target definitions are intentionally not Foundation Files; they belong to the Target Module.
 
 <br>
 

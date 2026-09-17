@@ -4,8 +4,8 @@ meta:
   path_note: "The Profile layer of the Agent Context Component."
   purpose: "Persistent instructions, memory, imports, context loading, compaction, and context-budget choices."
   standard: "Agent Project Interface"
-  version: "1.0"
-  updated: "2026-09-12"
+  version: "1.1"
+  updated: "2026-09-17"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -58,7 +58,13 @@ content:
         authority: "non-authoritative"
         use: "Orientation, public usage, and consistency verification only; current Interface and Target owning sources take precedence."
     understanding_sources:
-      interface: ".interface/foundation/interface.md"
+      interface: ".interface/interface.md"
+      interface_sections:
+        - ".interface/foundation/understanding.md"
+        - ".interface/foundation/operations.md"
+        - ".interface/foundation/modes.md"
+        - ".interface/foundation/authority.md"
+        - ".interface/foundation/workflow.md"
       target:
         - ".interface/target/non-technical.md"
         - ".interface/target/technical.md"

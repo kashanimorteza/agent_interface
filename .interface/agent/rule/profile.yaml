@@ -4,8 +4,8 @@ meta:
   path_note: "The Profile layer of the Agent Rule Component."
   purpose: "Project, user, managed, extension, global, and path-scoped Agent Rule declarations."
   standard: "Agent Project Interface"
-  version: "1.1"
-  updated: "2026-09-12"
+  version: "1.2"
+  updated: "2026-09-17"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -36,7 +36,7 @@ content:
       interface-bootstrap:
         path: "resolved by Agent Sync from the selected Agent Native"
         scope: "global"
-        responsibility: "Enter through the canonical Interface while reserving Agent Module sources exclusively for explicit Agent Sync."
+        responsibility: "Enter through the canonical Interface file and the Foundation section files it links (understanding, operations, modes, authority, workflow) while reserving Agent Module sources exclusively for explicit Agent Sync."
         required: true
       interface-skill-policy:
         path: "resolved by Agent Sync from the selected Agent Native"

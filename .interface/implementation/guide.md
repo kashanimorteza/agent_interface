@@ -1,6 +1,6 @@
 # Implementation
 
-This document explains the Implementation Module: what it is, what its Components are, how Principles and Preferences divide its content, and how the rest of the Interface reads it. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/foundation/interface.md`, and each Component's Principles are the authority for that Component; where this document disagrees with either, they are correct.
+This document explains the Implementation Module: what it is, what its Components are, how Principles and Preferences divide its content, and how the rest of the Interface reads it. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/interface.md`, and each Component's Principles are the authority for that Component; where this document disagrees with either, they are correct.
 
 <br>
 

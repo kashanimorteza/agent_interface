@@ -1,0 +1,87 @@
+# Operations
+
+This file carries the Operations section of the Interface, moved here verbatim from `interface.md` on 2026-09-17. It is part of Interface Understanding: every Skill reads `interface.md` and this file before acting. The Interface file remains the canonical entry point; this file is one of its sections.
+
+<br>
+
+Operations are the defined actions performed through Interface-owned Skills. Every Interface-owned Skill has exactly one corresponding Operation; the Operation names its Skill and summarizes the outcome that Skill is responsible for. An Operation remains separate from the Mode recorded while work is in progress, and external provider Skills do not create Interface Operations.
+
+```text
+Operations
+├── Configure
+├── Planning
+├── Developing
+├── Reviewing
+├── Launch
+├── Implement
+├── Reset
+├── Skill Installer
+└── Agent Sync
+```
+
+<!-------------------------- Configure Operation -->
+### Configure
+
+**Agent Skill:** `/my-interface-configure`
+
+This Operation is performed through `/my-interface-configure` to initialize and reconcile operational Config, synchronize phase State, resolve and install applicable Implementation and Platform technical requirements with concrete versions, and prepare the selected Platform Environment.
+
+A Skill named by an `agent_skills` association reaches the Runtime through its ecosystem's own provisioning mechanism when the environment is prepared, and through Configure when Configure prepares the project. Planning, Developing, and every other operation use such a Skill when it is discoverable and usable, and never install it. The separation exists because a package-provided Skill cannot exist before its package does, and because provisioning one never makes it an Agent Module declaration.
+
+<!-------------------------- Planning Operation -->
+### Planning
+
+**Agent Skill:** `/my-interface-planning`
+
+This Operation is performed through `/my-interface-planning` to convert the current Target and applicable Implementation guidance into bounded, understandable, and verifiable Tasks.
+
+<!-------------------------- Developing Operation -->
+### Developing
+
+**Agent Skill:** `/my-interface-developing`
+
+This Operation is performed through `/my-interface-developing [phase-number ...]` to implement and verify eligible Tasks from a valid current Plan. Review evaluates the resulting implementation afterward.
+
+<!-------------------------- Reviewing Operation -->
+### Reviewing
+
+**Agent Skill:** `/my-interface-reviewer`
+
+This Operation is performed through `/my-interface-reviewer [phase-number ...]` to assure each selected phase's Plan against current Interface and Target Understanding, coordinate Planning and independently recheck it when reconciliation is required, and then evaluate existing implementation without repairing it. With no phase input, it reviews every enabled phase.
+
+<!-------------------------- Launch Operation -->
+### Launch
+
+**Agent Skill:** `/my-interface-launch`
+
+This Operation is performed through `/my-interface-launch [api|logic|presentation|complete|all]` to read the selected Launch definition and its Component Runtime Requirements, start only the requested scope (or all developed parts for `complete`/`all`), verify readiness, and report access points. When no scope is supplied, the Launch Skill asks the Human to choose one.
+
+<!-------------------------- Implement Operation -->
+### Implement
+
+**Agent Skill:** `/my-interface-implement`
+
+This Operation is performed through `/my-interface-implement [phase-number ...]` to execute Configure once, then Planning, Developing, and Review for each selected phase in Target order, advancing only after the phase is satisfied, and finally perform eligible Launch. With no phase input, it processes every enabled and ready phase.
+
+<!-------------------------- Reset Operation -->
+### Reset
+
+**Agent Skill:** `/my-interface-reset`
+
+This Operation is performed through `/my-interface-reset [phase-number ...]` to reset selected phases; with no phase input it resets every phase with generated work. `/my-interface-reset config` physically removes only operational Config files, while `/my-interface-reset complete` physically removes those Config files and the implementation outputs of all phases. Emptying or reinitializing a Config file is not removal. Every mode previews its exact impact and requires separate Human confirmation before mutation.
+
+<!-------------------------- Skill Installer Operation -->
+### Skill Installer
+
+**Agent Skill:** `/my-interface-skill-installer`
+
+This Operation is performed through `/my-interface-skill-installer` to derive Agent capability needs, discover compatible project-scoped candidates, obtain Human approval, provision only approved capabilities, and verify their activation.
+
+<!-------------------------- Agent Sync Operation -->
+### Agent Sync
+
+**Agent Skill:** `/my-interface-agent-sync <self | module>`
+
+This Operation is performed only through explicit Human invocation of `/my-interface-agent-sync` in one of two modes: `self` realizes the Agent Sync adapter itself from its current Contract, and `module` realizes every other declaration. It is the sole operation permitted to inspect Agent Module sources, understands the complete Module and the selected Agent Native's own conventions, translates the Module into that Native Runtime, and certifies synchronization only after all required declarations pass post-change verification and no non-Sync Runtime instruction routes back into the Agent Module.
+
+Agent Sync works only between the Agent Module and the Agent Native, so it needs no Target Understanding and no other Interface Module: it never decides what the product should do, only how the selected Agent Native must be shaped to match the Human's declared view of the Agent. It realizes its own adapter before the rest of the Module because a running adapter cannot load a definition it did not start with.

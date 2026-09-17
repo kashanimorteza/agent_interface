@@ -1,6 +1,6 @@
 # Target
 
-This document explains the Target Module: what it is, what its files hold, who owns them, and how the rest of the Interface reads them. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/foundation/interface.md`, and where the two disagree the Interface file is correct.
+This document explains the Target Module: what it is, what its files hold, who owns them, and how the rest of the Interface reads them. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/interface.md`, and where the two disagree the Interface file is correct.
 
 <br>
 

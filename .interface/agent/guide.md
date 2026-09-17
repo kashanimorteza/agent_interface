@@ -1,6 +1,6 @@
 # Agent Module
 
-This document explains the Agent Module: what it is, why it exists, how its parts relate, how it changes, and how its success is judged. It is Human-owned and records the Human's stated understanding so that this understanding is not lost between sessions or Agent Runtimes. The canonical Interface definition remains `.interface/foundation/interface.md`; this document explains, it does not redefine. Where the two disagree, the Interface file and each Component's Principles are correct.
+This document explains the Agent Module: what it is, why it exists, how its parts relate, how it changes, and how its success is judged. It is Human-owned and records the Human's stated understanding so that this understanding is not lost between sessions or Agent Runtimes. The canonical Interface definition remains `.interface/interface.md`; this document explains, it does not redefine. Where the two disagree, the Interface file and each Component's Principles are correct.
 
 <br>
 
