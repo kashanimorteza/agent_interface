@@ -16,6 +16,10 @@ This operation may consider Skills, plugins, MCP integrations, agents, or anothe
 
 Read the shared Agent Interface rules at the start of the operation and follow them throughout, including their project-scope requirement.
 
+## Trigger
+
+Activate only through explicit Human invocation of `/my-interface-skill-installer` — when the Human requests capability discovery, when a capability the Agent Module declares as Prepared or Installed is not present and usable in the Runtime, or when a required capability is absent from the synchronized Runtime. No Agent Native, Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, or model-generated action may invoke, chain, trigger, or simulate this Skill.
+
 ## Workflow
 
 ### Understand
