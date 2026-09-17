@@ -72,7 +72,7 @@ When this pass finds a required item unrealized or unverified for a reason other
 
 ## Synchronization record
 
-`scripts/check-stale.py` beside this file is the bounded fingerprint helper: it hashes sources, records fingerprints in frontmatter `metadata` (`stamp`, for Skills) or in the record only (`record`, for every other declaration), and reads or writes `.claude/interface-sync.yaml`. It never compares instruction content and never decides conformance. The record holds one entry per examined declaration — sources, fingerprints, realization, artifact, status, resolved mode (`1` or `2`), and time — so a later run can prove idempotency and a non-Sync consumer can learn the last synchronized state without entering the Agent Module. Mode 3 writes no record entry.
+`scripts/check-stale.py` beside this file is the bounded fingerprint helper: it hashes sources, records fingerprints in frontmatter `metadata` (`stamp`, for Skills) or in the record only (`record`, for every other declaration), and reads or writes `.claude/interface-sync.yaml`. It never compares instruction content and never decides conformance. `stamp` leaves a `SKILL.md` untouched when its recorded Contract path and fingerprint already match, so a run that found no difference mutates no Skill file; the record entry is still written, because every mode 1 and mode 2 run is recorded. The record holds one entry per examined declaration — sources, fingerprints, realization, artifact, status, resolved mode (`1` or `2`), and time — so a later run can prove idempotency and a non-Sync consumer can learn the last synchronized state without entering the Agent Module. Mode 3 writes no record entry.
 
 Step 7 of the Realization procedure is, for a Skill:
 

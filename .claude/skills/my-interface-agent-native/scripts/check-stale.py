@@ -9,7 +9,10 @@ Three commands:
 
   stamp   Used by Agent Sync for Constructed Skills. Re-hash each Interface-owned
           Skill Contract, write the fingerprint into the native SKILL.md
-          frontmatter `metadata` block, and update the synchronization record.
+          frontmatter `metadata` block when it is absent or differs, and update
+          the synchronization record. A SKILL.md whose recorded Contract path and
+          fingerprint already match is left untouched, so an unchanged run
+          mutates no Skill file.
 
   record  Used by Agent Sync for every other declaration (Rule, Hook, Permission,
           Agent Instance, Extension, Integration, setting, empty category, ...).
@@ -205,7 +208,13 @@ def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: 
             print(f"skip {d['name']}: missing {'contract' if not src.exists() else 'SKILL.md'}")
             continue
         fp = sha256(src)
-        write_metadata(art, {"contract": d["contract"], "contract_sha256": fp, "synced_at": ts})
+        _, fm = read_frontmatter(art.read_text())
+        stamped = fm.get("metadata") or {}
+        if stamped.get("contract") == d["contract"] and stamped.get("contract_sha256") == fp:
+            print(f"stamp unchanged {art.relative_to(root)}")
+        else:
+            write_metadata(art, {"contract": d["contract"], "contract_sha256": fp, "synced_at": ts})
+            print(f"stamped {art.relative_to(root)}")
         entries.append({
             "declaration": f"agent/skill/contracts/{Path(d['contract']).name}",
             "sources": [{"path": d["contract"], "fingerprint": fp}],
@@ -216,7 +225,6 @@ def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: 
             "at": ts,
             **({"note": note} if note else {}),
         })
-        print(f"stamped {art.relative_to(root)}")
     write_record(root, entries, mode, ts, result, supersedes)
     return 0
 
