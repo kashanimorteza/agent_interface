@@ -20,9 +20,18 @@ The invoked mode arrives as `$mode`. Resolve it before any mutation, and when it
 
 The stale-adapter check exists because a running instance cannot load a definition it did not start with. Never claim to have executed a Contract this adapter does not currently implement.
 
+## Progress narration
+
+Report the current phase to the Human as this run moves through it; never hold every announcement until the final report. Print one short line at the start of each phase, in `self` mode and in `module` mode alike, and again at the start of every repeated cycle:
+
+- **Understanding** — reading the current Contract, or in `module` mode the complete Agent Module.
+- **Comparison** — comparing that Understanding against the installed native artifact.
+- **Reconciliation** — writing or rewriting native configuration.
+- **Verification** — re-reading the result and proving conformance.
+
 ## Self realization
 
-This is the complete workflow for `self` mode. The Module realization, Reconciliation plan, Reconcile, and Verification sections below apply to `module` mode only.
+This is the complete workflow for `self` mode. The Module realization, Reconciliation plan, Reconcile, and Verification sections below apply to `module` mode only. Narrate each phase as described in Progress narration above while performing the steps below.
 
 1. Establish Interface Understanding from `.interface/foundation/interface.md`, then establish Native Runtime Understanding of Claude Code's project Skill mechanism: its file location, frontmatter fields, argument substitution, and invocation controls. This governs which frontmatter and native execution detail the adapter must keep.
 2. Read `.interface/agent/skill/contracts/agent-sync.md` in full. This is the only Agent Module source a `self` run needs.
@@ -40,7 +49,7 @@ A `self` run that found a difference and left this file unwritten has failed, no
 
 ## Module realization
 
-This is the mandatory per-declaration procedure for `module` mode. Run it once for every declaration the Agent Module enumeration produced, one at a time, in the reconciliation order derived below. No declaration is exempt, and none may be skipped because it looks current.
+This is the mandatory per-declaration procedure for `module` mode. Run it once for every declaration the Agent Module enumeration produced, one at a time, in the reconciliation order derived below. No declaration is exempt, and none may be skipped because it looks current. Narrate each phase as described in Progress narration above for every declaration processed.
 
 For each declaration:
 
@@ -123,7 +132,11 @@ Verify at least that:
 - each Prepared and Installed Skill's current Runtime condition is observed and reported, without modification; and
 - no secret was written to a project artifact.
 
-The second pass must account for every current Agent Module declaration. Any blocked, missing, conflicting, inactive, unsupported, or unverified required item prevents the success claim, even when every other declaration passes. Repeating this Skill against unchanged declarations and runtime state must produce no mutation; a newly added or changed declaration, Principle, Profile, Contract, resource, category, or mechanism anywhere in the Module must be detected and reconciled on the next run without editing this adapter.
+The second pass must account for every current Agent Module declaration. Any blocked, missing, conflicting, inactive, unsupported, or unverified required item prevents the success claim, even when every other declaration passes.
+
+When this pass finds a required item unrealized, incompletely realized, or unverified for a reason other than a genuine Stopping Condition, do not stop at reporting it. Return to Understanding, reconcile that item again through Module realization and Reconcile above, and perform a new complete Verification pass, narrating each phase again as you go. Repeat this Understanding-Reconcile-Verify cycle within the same invocation until every required item is realized and verified, or a cycle changes nothing from the previous cycle's outcome — the same items realized, the same items blocked for the same reason. A cycle that only reproduces its own last outcome has converged, not stalled; report that as the final result rather than repeating again.
+
+Repeating this Skill against unchanged declarations and runtime state must produce no mutation; a newly added or changed declaration, Principle, Profile, Contract, resource, category, or mechanism anywhere in the Module must be detected and reconciled on the next run without editing this adapter.
 
 ## Boundaries
 
