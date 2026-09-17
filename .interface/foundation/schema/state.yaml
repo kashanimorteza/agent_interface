@@ -74,14 +74,15 @@ sections:
             purpose: "One entry per processed phase, in Target order."
             item:
               id: {required: true}
+              entry: {required: true, allowed: ["review-first", "planning-first"], purpose: "review-first when the phase already had an implementation and Review ran before any Planning; planning-first when the phase had none."}
               cycles:
                 required: true
                 purpose: "One entry per Planning -> Developing -> Reviewing cycle for this phase."
                 item:
                   number: {required: true}
-                  planning: {required: true, purpose: "Outcome and Plan revision produced or preserved."}
-                  developing: {required: true, purpose: "Outcome: tasks completed, withheld, checks run."}
-                  reviewing: {required: true, purpose: "Outcome: satisfied, not satisfied, or inconclusive, with Findings closed and remaining."}
+                  planning: {required: false, purpose: "Outcome and Plan revision produced or preserved. Absent only in cycle 0 of a review-first entry."}
+                  developing: {required: false, purpose: "Outcome: tasks completed, withheld, checks run. Absent only in cycle 0 of a review-first entry."}
+                  reviewing: {required: true, purpose: "Outcome: satisfied, not satisfied, or inconclusive, with Findings closed and remaining. In a review-first entry, cycle 0 holds only this field."}
                   configure: {required: false, purpose: "Present only when a Finding named Configure and it was rerun in this cycle."}
               outcome: {required: true, allowed: ["satisfied", "stopped", "withheld"]}
               stop_reason: {required: false, purpose: "Why the loop stopped when outcome is stopped: repeated Finding, no progress, inconclusive, unmet dependency, failed gate, Human decision."}

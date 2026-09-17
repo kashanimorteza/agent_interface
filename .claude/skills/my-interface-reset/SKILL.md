@@ -6,7 +6,7 @@ disable-model-invocation: true
 metadata:
   contract: ".interface/agent/skill/contracts/reset.md"
   contract_sha256: "sha256:fc85966236367706382051177df70c6f89c7a57aa220a80420365f142040ebef"
-  synced_at: "2026-09-17T17:02:01Z"
+  synced_at: "2026-09-17T18:39:11Z"
 ---
 
 # Reset the project workflow

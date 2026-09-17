@@ -300,6 +300,9 @@ Planning defines the work for a phase. Developing generates the output from that
 **Where is the loop?**
 In Implement, not in Reviewing. Reviewing keeps every rule it had and loses only the right to invoke other Skills and to repeat within its own run. Implement must therefore be permitted to invoke Configure, Planning, Developing, Reviewing, and Launch through the Native's own Skill mechanism.
 
+**What if the phase was already generated and the Target changed since — say four models were added?**
+Implement enters that phase through Review first. Review compares the existing Plan and implementation with the current Understanding of the Target, so the new models appear as Findings (owned by Planning, and Developing where code no longer satisfies the Plan). Then the usual loop runs — Planning, Developing, Review — until Review is satisfied. If Review is satisfied on that first pass, nothing changed and the phase is done without any rework. A phase that was never implemented still starts with Planning, because Review has nothing to judge yet.
+
 **When does Implement run Configure?**
 Only when it was invoked without a phase number. With a phase number, Configure is skipped.
 
@@ -321,6 +324,7 @@ Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then w
 - The `agent-sync` Skill became `agent-native` with three numeric modes — `1` sync self, `2` sync component, `3` install — and the separate `skill-installer` Skill was merged into mode `3`. The Operation is named Agent Native; the activity of modes 1–2 is still called Agent Sync.
 - Personality refers to models by the names declared in Runtime; an Agent Instance may name an optional `personality`.
 - Implement keeps a step-by-step log of every run under State's `implementation.runs` (selection, Configure run or skipped, every phase's cycles with Planning/Developing/Reviewing outcomes, stop reason, Launch decision, result). State stays the owner; no fifth Config file.
+- Implement enters an already-implemented phase through Review first (`entry: review-first` in the run log) and a never-implemented phase through Planning first; a satisfied first Review ends the phase without rework.
 - The Planning → Developing → Reviewing loop belongs to Implement. Reviewing records Findings with their owning operation and invokes nothing; its `coordination` declaration moved to Implement, which may invoke Configure, Planning, Developing, Reviewing, and Launch. The Detailed workflow path no longer runs Review before Developing.
 - Output Style is owned by the enabled plugin `adhd-output-style`; Rule Preferences select `ADHD Explanatory`, the style that plugin provides.
 - Context Preferences state that the Technical Definition takes precedence over the Non-Technical Definition wherever they conflict.

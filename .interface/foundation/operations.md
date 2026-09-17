@@ -63,7 +63,7 @@ This Operation is performed through `/my-interface-launch [api|logic|presentatio
 
 **Agent Skill:** `/my-interface-implement`
 
-This Operation is performed through `/my-interface-implement [phase-number ...]` to execute Configure once when no phase was selected, then Planning, Developing, and Review for each selected phase in Target order — repeating that cycle for a phase while Review records Findings and progress continues — advancing only after the phase is satisfied, and finally perform eligible Launch. With no phase input, it processes every enabled and ready phase.
+This Operation is performed through `/my-interface-implement [phase-number ...]` to execute Configure once when no phase was selected, then, for each selected phase in Target order, Review first when the phase already has an implementation (so a changed Target surfaces as Findings, and an unchanged phase is confirmed without rework) or Planning first when it has none, then the Planning, Developing, and Review cycle repeated while Review records Findings and progress continues — advancing only after the phase is satisfied, and finally perform eligible Launch. With no phase input, it processes every enabled and ready phase.
 
 <!-------------------------- Reset Operation -->
 ### Reset

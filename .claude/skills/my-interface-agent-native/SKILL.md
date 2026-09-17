@@ -7,7 +7,7 @@ disable-model-invocation: true
 metadata:
   contract: ".interface/agent/skill/contracts/agent-native.md"
   contract_sha256: "sha256:5da18d5ae8b9f15b463db7970f92599ea7416b6091bfcff6c53b0fbfbd4cc45d"
-  synced_at: "2026-09-17T16:27:06Z"
+  synced_at: "2026-09-17T18:31:04Z"
 ---
 
 # Agent Native — sync self · sync component · install

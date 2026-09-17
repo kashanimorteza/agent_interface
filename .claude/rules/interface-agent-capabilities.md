@@ -13,18 +13,20 @@ It is a reference projection, not a gate: a Skill is resolved against whatever i
 | `project_skills.core_workflow.configure` | `/my-interface-configure` | Human or declared coordinator |
 | `project_skills.core_workflow.planning` | `/my-interface-planning [phase-number ...]` | Human or declared coordinator |
 | `project_skills.core_workflow.developing` | `/my-interface-developing [phase-number ...]` | Human or declared coordinator |
-| `project_skills.core_workflow.reviewing` | `/my-interface-reviewer [phase-number ...]` | Human or declared coordinator; may itself invoke Configure, Planning, and Developing |
+| `project_skills.core_workflow.reviewing` | `/my-interface-reviewer [phase-number ...]` | Human or declared coordinator; records Findings with their owning operation and invokes no other Skill |
 | `project_skills.core_workflow.launch` | `/my-interface-launch` | Human or declared coordinator |
 
-Core workflow Skills never activate autonomously merely because a request looks relevant. A coordinator invokes one only through Claude Code's own `Skill` tool, so the invoked Skill loads and executes its own definition; reading its file and running it inline, or handing it to a forked or subordinate agent, is never an invocation.
+Core workflow Skills never activate autonomously merely because a request looks relevant. A coordinator invokes one only through Claude Code's own `Skill` tool, so the invoked Skill loads and executes its own definition; reading its file and running it inline, or handing it to a forked or subordinate agent, is never an invocation. Coordinator invocation never expands the invoked Skill's scope, authority, or stopping conditions.
 
 ## Interface-owned supporting Skills
 
 | Capability identifier | Native Skill | Invocation |
 |---|---|---|
-| `project_skills.supporting.implement` | `/my-interface-implement [phase-number ...]` | Explicit Human only; the selected implementation coordinator of Configure, Planning, Developing, Reviewing, and Launch |
+| `project_skills.supporting.implement` | `/my-interface-implement [phase-number ...]` | Explicit Human only. The selected implementation coordinator and the only declared coordinator: it owns the Planning → Developing → Reviewing loop and may invoke Configure, Planning, Developing, Reviewing, and Launch, each retaining ownership of its own records and outputs |
 | `project_skills.supporting.reset` | `/my-interface-reset [phase-number ... \| config \| complete]` | Explicit Human only |
 | `project_skills.supporting.agent-native` | `/my-interface-agent-native <1=sync self \| 2=sync component \| 3=install>` | Direct explicit Human only — never by a model, Skill, coordinator, Hook, or automation. The only Agent Module reader: modes `1` and `2` are Agent Sync and the only path that repairs Runtime drift; mode `3` installs Prepared and Installed capabilities and never repairs drift |
+
+Implement's coordination scope: Configure once when no phase was selected or when a Finding names it; Planning, Developing, and Reviewing per selected phase, repeated while Review records Findings and progress continues; Launch when every enabled and ready phase is assured.
 
 ## Agent Instances
 
