@@ -5,7 +5,7 @@ disable-model-invocation: true
 metadata:
   contract: ".interface/agent/skill/contracts/skill-installer.md"
   contract_sha256: "sha256:290d21586f5b3f035b8ec08b4451586eb89cf38089c70821bd248bde4b1cdab2"
-  synced_at: "2026-09-17T12:24:58Z"
+  synced_at: "2026-09-17T12:48:12Z"
 ---
 
 # Install Agent capabilities

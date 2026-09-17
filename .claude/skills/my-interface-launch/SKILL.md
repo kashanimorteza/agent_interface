@@ -5,7 +5,7 @@ argument-hint: "[api|logic|presentation|complete|all]"
 metadata:
   contract: ".interface/agent/skill/contracts/launch.md"
   contract_sha256: "sha256:ef7a88d86731cd7caa0500b3b58beb2a74a29ceb12f07252d376487ef9befd5c"
-  synced_at: "2026-09-17T12:24:58Z"
+  synced_at: "2026-09-17T12:48:12Z"
 ---
 
 # Launch the Target

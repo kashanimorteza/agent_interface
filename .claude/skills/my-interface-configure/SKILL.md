@@ -4,7 +4,7 @@ description: Generate or refresh operational Config, synchronize phase State, an
 metadata:
   contract: ".interface/agent/skill/contracts/configure.md"
   contract_sha256: "sha256:b738066915cf6cc641dc6db610214725d946793ecf6d39701fc9fb4770764a0c"
-  synced_at: "2026-09-17T12:24:58Z"
+  synced_at: "2026-09-17T12:48:12Z"
 ---
 
 # Configure the Interface
