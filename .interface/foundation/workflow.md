@@ -2,9 +2,9 @@
 
 This file carries the Workflow section of the Interface, moved here verbatim from `interface.md` on 2026-09-17. It is part of Interface Understanding: every Skill reads `interface.md` and this file before acting. The Interface file remains the canonical entry point; this file is one of its sections.
 
-<br>
+<br><br>
 
-### Define the Project
+## Define the Project
 
 Define the Target before selecting a Workflow Path:
 
@@ -17,7 +17,11 @@ The Human states the intended outcome in Human Definition, then records its corr
 
 After the Project is defined, select Default, Normal, or Detailed. The path controls only how much of the Workflow the Human invokes directly; it does not change any operation contract or verification gate.
 
-### Default
+
+
+<br><br>
+
+## Default
 
 For the simplest complete run:
 
@@ -27,7 +31,11 @@ For the simplest complete run:
 
 Implement processes all enabled and ready phases and performs Launch when every required gate is satisfied.
 
-### Normal
+
+
+<br><br>
+
+## Normal
 
 For complete orchestration with phase selection:
 
@@ -49,7 +57,11 @@ Or run several phases together:
 
 Launch runs after all required phases are complete.
 
-### Detailed
+
+
+<br><br>
+
+## Detailed
 
 For direct control over every operation:
 
