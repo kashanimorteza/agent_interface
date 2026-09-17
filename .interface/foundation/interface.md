@@ -409,9 +409,13 @@ Agent Components
 ├── Session
 │   ├── Principles  → .interface/agent/session/principles.md
 │   └── Profile     → .interface/agent/session/profile.yaml
-└── Observability
-    ├── Principles  → .interface/agent/observability/principles.md
-    └── Profile     → .interface/agent/observability/profile.yaml
+├── Observability
+│   ├── Principles  → .interface/agent/observability/principles.md
+│   └── Profile     → .interface/agent/observability/profile.yaml
+└── Personality
+    ├── Principles  → .interface/agent/personality/principles.md
+    ├── Profile     → .interface/agent/personality/profile.yaml
+    └── Definitions → .interface/agent/personality/definitions/<personality>.md
 ```
 
 The complete Agent Module is read exclusively during an explicit Agent Sync or Skill Installer invocation. Agent Sync first learns the selected Agent Native's own documentation, conventions, capabilities, and limitations, then reads every Module source and Interface-owned Skill Contract, and realizes each required Rule, Constructed Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. Skill Installer resolves any optional prepared Skill file by exact declared stable key: a matching prepared Markdown file supplies that Skill's preserved native instruction content and is materialized as a Prepared Skill, and a Skill under an external provider declaration is provisioned as an Installed Skill; a Skill with neither follows its Contract-based realization path through Agent Sync. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
@@ -538,6 +542,14 @@ Validation, status, diagnostics, evidence, logs, telemetry, health, and usage.
 
 - [Principles](../agent/observability/principles.md)
 - [Profile](../agent/observability/profile.yaml)
+
+#### Personality
+
+The personalities an Agent can take on: who it is during a kind of work, the Actions each performs, and the models each prefers in priority order.
+
+- [Principles](../agent/personality/principles.md)
+- [Profile](../agent/personality/profile.yaml)
+- [Definitions directory](../agent/personality/definitions/)
 
 Every Agent Component's Principles and Profile are authoritative for that Component only. A runtime artifact not declared in the owning Profile is an optional runtime capability; a required declaration not usable by the selected runtime is an Agent Profile gap.
 
@@ -765,10 +777,7 @@ Their fuller explanation is in the [Foundation Guide](guide.md).
 ├── interface.md
 ├── guide.md
 ├── config/
-├── schema/
-├── personality/
-├── action/
-└── route/
+└── schema/
 ```
 
 Target Definitions are intentionally **not** considered Foundation Files because they belong to the Target concept itself.
@@ -945,29 +954,6 @@ path = .interface/foundation/schema/review.yaml
 kind = Operational format
 responsibility = Defines the stored structure and initial values of Review Config
 generates = .interface/foundation/config/review.yaml
-```
-
-<!-------------------------- Personality, Action, and Route Foundation Files -->
-### Personality, Action, and Route
-
-Three shared Human-owned definition sets live under Foundation beside Config and Schema. Their structure exists; their content and how they are read are still being defined. Each directory explains itself in its own guide.
-
-```text
-name = Personality
-path = .interface/foundation/personality/
-responsibility = The personalities an Agent can take on, one Markdown file each; see personality/guide.md
-```
-
-```text
-name = Action
-path = .interface/foundation/action/
-responsibility = The kinds of work an Agent can be asked to do, one Markdown file each; see action/guide.md
-```
-
-```text
-name = Route
-path = .interface/foundation/route/
-responsibility = For each Action, the ordered list of models by priority, declared in route/route.yaml; see route/guide.md
 ```
 
 

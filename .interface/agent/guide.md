@@ -33,7 +33,7 @@ When the Agent Native changes, Principles stay as they are. Only the Native-spec
 
 ## Components
 
-The Module currently has sixteen Components: Runtime, Settings, Context, Role, Agent, Coordination, Skill, Command, Rule, Tool, Hook, Integration, Extension, Interaction, Permission, and Observability. This set is the Human's default structure — the set that was sufficient to hold every view the Human had about an Agent. It is not a requirement that every Agent Native supports every Component. Agent Sync takes the Understanding of each Component and places it into whatever the selected Agent Native actually offers; a Component the Native cannot realize is reported, and an explicitly empty category stays empty.
+The Module currently has seventeen Components: Runtime, Settings, Context, Role, Agent, Coordination, Skill, Command, Rule, Tool, Hook, Integration, Extension, Interaction, Permission, Observability, and Personality. Personality was added on 2026-09-17; it absorbs what were briefly separate Action and Route ideas: each personality declares who it is, the Actions it performs, and the models it prefers in priority order. This set is the Human's default structure — the set that was sufficient to hold every view the Human had about an Agent. It is not a requirement that every Agent Native supports every Component. Agent Sync takes the Understanding of each Component and places it into whatever the selected Agent Native actually offers; a Component the Native cannot realize is reported, and an explicitly empty category stays empty.
 
 <br>
 
@@ -84,6 +84,7 @@ That Agent Sync, from a precise Understanding of the Module, transferred everyth
 
 Recorded on 2026-09-17 from the same review. Each is a Human decision that has not yet been taken; nothing here changes the Module until the Human decides.
 
+- The boundary between Personality and Role: both name bounded execution identities (Role: `primary-execution`, `interface-reader`; Personality: `developer`, `planner`, `analyst`, `reviewer`, `architect`). Whether they are one concept or two is undecided.
 - Whether `profile.yaml` keeps its name or becomes `preferences.yaml` to match the Implementation Module.
 - Whether the third success condition — observed behavior — should become an explicit obligation in Agent Observability Principles or in the `agent-sync` Verification, with a stated form of evidence.
 - Whether an explanatory Agent Rule about git commit and push should exist alongside the enforcing Permission `ask` rules.

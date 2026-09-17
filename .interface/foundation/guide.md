@@ -18,9 +18,6 @@ Foundation Files provide the foundational definitions and schemas required by th
 .interface/foundation/
 ├── interface.md
 ├── guide.md
-├── personality/
-├── action/
-├── route/
 ├── config/
 │   ├── application.yaml
 │   ├── state.yaml
@@ -82,19 +79,9 @@ Schema definition files use their own formats and do not follow the outer YAML f
 
 <br>
 
-## Personality, Action, and Route
-
-Three further directories hold shared Human-owned definitions that are neither Config nor Schema. Their structure exists; their content and use are still being defined with the Human.
-
-- [`personality/`](personality/guide.md) — the personalities an Agent can take on (Developer, Planner, Analyst, Reviewer, Architect), one Markdown file each.
-- [`action/`](action/guide.md) — the kinds of work an Agent can be asked to do (Develop, Analyze, Review, Plan), one Markdown file each, defining for the model what that work means.
-- [`route/`](route/guide.md) — routing: for each Action, the ordered list of models by priority, declared in [`route/route.yaml`](route/route.yaml).
-
-<br>
-
 ## Ownership
 
-The Human owns `interface.md`, this document, every Schema, and every file under `personality/`, `action/`, and `route/`. Config records belong to the Components that own them — Plan, State, and Review — and are written only by the Skills the Interface authorizes for each record. Target definitions are intentionally not Foundation Files; they belong to the Target Module.
+The Human owns `interface.md`, this document, and every Schema. Config records belong to the Components that own them — Plan, State, and Review — and are written only by the Skills the Interface authorizes for each record. Target definitions are intentionally not Foundation Files; they belong to the Target Module.
 
 <br>
 
