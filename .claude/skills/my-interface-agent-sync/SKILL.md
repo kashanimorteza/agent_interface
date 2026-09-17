@@ -100,9 +100,9 @@ A selected desired state is standing project authorization only for exact additi
 
 Process each row through the Module realization procedure above; it is the only permitted way to reach a per-declaration outcome, and nothing in this section relaxes it. When a required native resource is missing or drifted, construct the smallest self-contained native realization that completely realizes its portable Contract, owning Principle, and declared Profile without requiring any later Agent Module read. Compare an existing artifact's own instruction content against its current Contract, not only its presence or metadata, and regenerate the content when they no longer match. Every non-Sync Skill and Agent Instance must be self-contained or refer only to other synchronized Runtime artifacts; never leave a Runtime instruction that points back into the Agent Module. Never invent content for an explicit empty category.
 
-Realize only **Constructed** capabilities: an Interface-owned declaration defined by a portable Contract is built into the smallest self-contained native realization of that Contract.
+Realize only **Constructed** Skills: an Interface-owned Skill defined by a portable Contract is built from that Contract into the smallest self-contained native Claude Code project Skill.
 
-A **Prepared** capability and an **Installed** capability are outside this operation. Do not create, transfer, install, rewrite, or remove either one; the Skill Installer operation owns both. Observe them only so the mapping table can state their current Runtime condition.
+A **Prepared** Skill and an **Installed** Skill are outside this operation. Do not create, transfer, install, rewrite, or remove either one; the Skill Installer operation owns both. Observe them only so the mapping table can state their current Runtime condition. This restriction applies to Skills; already-selected Extensions and Integrations are still provisioned and verified under the rules above.
 
 When any synchronized Runtime instruction, mapping, or Skill realization directs its consumer to enter, read, search, resolve, or use an Agent Module source, treat this as required reconciliation, not merely a verification failure: replace that routing with the corresponding synchronized Runtime Rule, capability, Agent Instance, or Skill realization so no non-Sync consumer depends on an Agent Module source.
 
@@ -120,7 +120,7 @@ Verify at least that:
 - effective settings, permissions, rules, hooks, and their enforcement match their owners;
 - each selected Extension is installed, project-enabled, and exposes its expected capabilities;
 - each selected Integration is project-declared, trusted, connected, and usable, or is truthfully marked as requiring activation;
-- each Prepared and Installed capability's current Runtime condition is observed and reported, without modification; and
+- each Prepared and Installed Skill's current Runtime condition is observed and reported, without modification; and
 - no secret was written to a project artifact.
 
 The second pass must account for every current Agent Module declaration. Any blocked, missing, conflicting, inactive, unsupported, or unverified required item prevents the success claim, even when every other declaration passes. Repeating this Skill against unchanged declarations and runtime state must produce no mutation; a newly added or changed declaration, Principle, Profile, Contract, resource, category, or mechanism anywhere in the Module must be detected and reconciled on the next run without editing this adapter.
