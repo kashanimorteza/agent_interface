@@ -1,84 +1,88 @@
 ---
 name: my-interface-configure
-description: Generate or refresh operational Config, synchronize phase State, and prepare the selected Platform Environment when explicitly requested by the Human or delegated by a declared Interface coordinator.
+description: Prepare the four operational Config records (plan, state, review, application) from their Schemas and synchronize phase State, only when explicitly requested by the Human or delegated by a declared Interface coordinator. Installs nothing and prepares no Environment.
 metadata:
   contract: ".interface/agent/skill/contracts/configure.md"
-  contract_sha256: "sha256:c6d42cfc44196b9cb3d872e4b608effe9fe9e3c60434878efbbddfab26b2a9a1"
-  synced_at: "2026-09-17T18:39:10Z"
+  contract_sha256: "sha256:eb92955042e47ed6c10e605bc001370fb4afac3ad20b1b53e4b9f132b5a365e8"
+  synced_at: "2026-09-18T13:46:48Z"
 ---
 
 # Configure the Interface
 
-This file is the self-contained Claude Code realization of the portable `configure` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
+This file is the self-contained Claude Code realization of the portable `configure` Skill Contract, placed here by Agent Sync as the Human authored it. Follow this file and the synchronized Runtime Rules under `.claude/rules/`; never read or resolve Agent Module sources.
 
 ## Invocation
 
 Run only when the Human invokes `/my-interface-configure` or a declared coordinator Skill invokes this Skill through Claude Code's own `Skill` tool. Never activate yourself because a request merely looks relevant, and never run from a startup, resume, or automation routine. When a coordinator invokes this Skill, that invocation loads and executes this file as the Skill's own definition; it is never satisfied by another Skill reading this file and executing these steps inline, and never by delegating this Skill to a forked or subordinate agent that inherits the caller's context.
 
-## Role
+## Purpose
 
-Configure prepares the operational Config records and the declared technical environment that the remaining Interface workflow depends on. It first establishes the required Interface and Target Understanding, then creates or reconciles the four operational Config files from their Schemas, and finally installs declared technical requirements and prepares the selected Platform Environment.
+Prepare the four operational Config records that the Interface workflow depends on.
 
-Configure never stores Target interpretation in Config and never performs product implementation. Its Target Understanding is limited to the information needed by Config generation and by the declared technical and Environment requirements. Configure never provisions, transfers, or installs an Agent Skill, plugin, or other Agent capability — that belongs entirely to the install mode of the Agent Native Skill (`/my-interface-agent-native 3`).
+## Responsibility
 
-## Input
+Establish Interface Understanding and the minimal Target Understanding needed for Config, and generate or reconcile the four operational Config files from their Schemas. It owns no planning, implementation, review, launch, reset, technical-requirement installation, Environment preparation, or Target interpretation beyond the limited facts required for configuration, and performs none of them. Each operation installs or prepares what its own work needs: Developing the technical requirements of the phase it implements, Launch the Environment of the selected Launch Item.
 
-Accept no phase selection. Configure always operates on the complete operational Config and the selected Environment. When `$ARGUMENTS` is not empty, make no changes, report that Configure accepts no phase or scope input, and ask the Human to invoke it without arguments.
+## Trigger
 
-## Workflow
+Activate when operational Config must be created, validated, repaired, or refreshed, and once at the start of end-to-end implementation orchestration.
 
-### 1. Understanding
+## Inputs
 
-Establish Interface Understanding from the canonical Interface document and follow its routes to the shared Runtime rules, operational Schemas, Config destinations, Implementation authorities, and Platform authorities. Then establish the limited Target Understanding required by this role from the Target sources located by the Interface under their declared precedence: stable phase identifiers and explicit Target and Platform selections. Resolve the selected Environment and Launch Item from explicit Target choices first and Platform defaults second.
+Accept no phase selection. Consume current operational Schemas, existing Config, stable Target phase identifiers, and the public metadata already published by existing Implementation Components.
 
-### 2. Config generation
+Claude Code input handling: when `$ARGUMENTS` is not empty, make no changes, report that Configure accepts no phase or scope input, and ask the Human to invoke it without arguments.
 
-For each of the four operational Schemas (`plan.yaml`, `state.yaml`, `review.yaml`, and `application.yaml`):
+## Outputs
 
-  1. Read its current structure, initialization instructions, defaults, and update requirements. Derive the initialization method from those instructions rather than assuming a template key or record structure.
-  2. When its Config file is absent, generate it according to those instructions.
-  3. When its Config file exists, validate it and reconcile only the structural differences required by the Schema.
-  4. Preserve every meaningful operational record already held by the file. If a change would discard information that exists nowhere else, leave it in place and report a conflict.
-  5. Introduce only Schema-defined initial values and structures. Do not invent operational work, project facts, Target meaning, or technical decisions.
-  6. For `application.yaml`, record only the public metadata a Component already publishes. When a declared Component does not yet exist, leave its Manifest section at its Schema default and report it as not yet generated. Never create, scaffold, or populate that Component to obtain its metadata.
+Produce or reconcile Schema-valid `plan.yaml`, `state.yaml`, `review.yaml`, and `application.yaml` Config files, truthful State position and History, and a report of created, reconciled, preserved, conflicted, and blocked results.
 
-State phase records are synchronized as part of generating `state.yaml`: create missing records from stable Target phase identifiers and current initial values, preserve existing progress, remove a stale record only while it contains nothing but initialization defaults, and otherwise preserve and report it. The same Schema-driven process applies to `application.yaml`; its component sections are part of that Schema and are created or reconciled in the same way. None of the four files is a temporary or optional side file.
+## Required Understanding
 
-### 3. Requirements and Environment preparation
+Configure first understands the Interface and the current Target context needed for configuration — its stable phase identifiers — and then the Config Schemas. Its work has two connected purposes: create the operational Config records from their Schemas, and reconcile and preserve those records. The four Config files, including `application.yaml`, follow the same schema-driven generation process; none is a temporary or optional side file. Configure does not implement product behavior, decide Target meaning, install anything, or prepare any Environment.
 
-Read all applicable Implementation Component Principles and Preferences, the selected Platform Preferences and Launch Item, and the public Component requirements exposed through the Interface. Resolve every applicable language, package-management, package, database, tool, platform, and version selection from those authorities before installation. Inspect every applicable Platform Component definition and apply its declared system requirements for the selected Launch Item.
+Establish Interface Understanding and only the Target Understanding needed for Config generation. Read current Config Schemas.
 
-Inspect the Environment before changing it and apply only missing declared requirements. Install or reconcile every required resolved technical item at project scope, preserve requirements already satisfied, and record each resolved item's concrete version and verification result. Never infer or invent a dependency, never remove or reverse existing Environment preparation, and never provision, transfer, or install an Agent Skill, plugin, or other Agent capability.
+Claude Code routes: establish Interface Understanding from `.interface/interface.md` and the Foundation section files it links, follow its routes to the operational Schemas and the Config destination under `.interface/foundation/`, and take stable phase identifiers from the Target definitions it locates under their declared precedence.
 
-Use the selected Environment definition and compatible explicit Target requirements as the authority for system preparation.
+## Authority
 
-### 4. Validation and outcome
+Write the four Config records owned by Configure. Never install a technical dependency, prepare a system or Environment, or provision, transfer, or install an Agent Skill, plugin, or capability; Developing installs what its phase needs, Launch prepares its Environment, and the install mode of the Agent Native Skill owns Agent capabilities. Never create or modify other Interface sources or any product implementation. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing.
 
-Validate all four Config files against their applicable Schemas, verify phase identity reconciliation, verify every resolved technical item and its concrete version, and observe every Platform Environment requirement claimed as satisfied. Record this invocation's active Configure position and append its operational outcome under State ownership. Report created, installed, reconciled, preserved, already-satisfied, conflicted, and blocked results.
+## Workflow Invariants
 
-Repeating Configure against unchanged Schemas, Target identity, Config, resolved technical selections, and Platform Environment is idempotent: it makes no structural or installation mutation while still recording the current invocation as State permits.
+- Generate or reconcile all four Config files from their current Schemas rather than a remembered structure; `application.yaml` follows the same process as the other three files.
+- Record only the public metadata a Component already publishes.
+- When a declared Component does not yet exist, leave its Manifest section at its Schema default and report it as not yet generated; never create the Component to obtain its metadata.
+- Preserve meaningful operational records through structural reconciliation; surface a conflict rather than discard information that has no other owner.
+- Add missing phase records at current initial values and preserve progress while generating `state.yaml`; remove a stale record only while it contains initialization defaults, otherwise preserve and report it.
+- Never copy Target meaning into Config.
+- Record active Configure position and append the outcome under State ownership.
 
-## Stopping conditions
+Claude Code execution detail: for each Schema, read its current structure, initialization instructions, defaults, and update requirements, and derive the initialization method from those instructions rather than assuming a template key or record structure. When a Config file is absent, generate it according to those instructions; when it exists, validate it and reconcile only the structural differences the Schema requires.
 
-Stop, or preserve the affected item unchanged, when:
+## Verification
 
-- reconciliation would lose meaningful operational records;
-- a required Environment choice is unresolved;
-- preparation would exceed Configure's authority; or
-- a genuine preparation condition cannot be resolved safely.
+- Validate every Config record against its applicable Schemas and verify phase identity reconciliation.
 
-Record each such condition as a Blocker through State and report it. Independently valid items continue to be generated, reconciled, or prepared.
+## Idempotency
 
-## Boundaries
+Repeating against unchanged Schemas, Target identity, and Config produces no structural mutation while still recording invocation outcomes as State permits.
 
-Perform only Configure's role. Do not launch the Target, plan, develop, review, reset, store Target Understanding, or create or modify any other Interface source or product implementation. Never provision, transfer, or install an Agent Skill, plugin, or other Agent capability; the install mode of the Agent Native Skill owns all of that. Never create, scaffold, or populate an Implementation Component root, package, source file, test, or lockfile; Component generation belongs to Developing. System preparation is limited to the selected Launch Item's declared requirements; it grants no authority over product implementation. Configure writes only the four operational Config files and the project-scoped technical or Environment state authorized by their sources.
+## Stopping Conditions
 
-## Report
+- Stop or preserve the affected item when reconciliation would lose meaningful records or a Schema cannot be applied safely.
+- Independently valid items may continue.
 
-Report in this order:
+Record each such condition as a Blocker through State and report it.
+
+## Runtime Realization
+
+A native adapter exposes one project-scoped Configure capability, resolves all paths and native mechanisms through the current Interface and Runtime mapping, and reports Config, phase synchronization, preserved records, and blockers.
+
+In Claude Code this adapter reports, in this order:
 
 1. **Config** — the status of all four files, including `application.yaml`, and any records created, reconciled, or already valid.
 2. **Phase synchronization** — phase records added, preserved, or left as conflicts.
-3. **Environment and requirements** — the selected Environment and Launch Item, and each requirement's resolved concrete version, installation or preparation status, and verification result.
-4. **Preserved records** — existing operational information carried through unchanged.
-5. **Conflicts and blockers** — anything that could not be reconciled or prepared safely, and what it prevents.
+3. **Preserved records** — existing operational information carried through unchanged.
+4. **Conflicts and blockers** — anything that could not be reconciled safely, and what it prevents.

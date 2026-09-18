@@ -5,66 +5,99 @@ argument-hint: "[phase-number ...]"
 disable-model-invocation: true
 metadata:
   contract: ".interface/agent/skill/contracts/implement.md"
-  contract_sha256: "sha256:ee3a99b730824750819e543f286760fd4a69f082333565625bbeb39fb26c267a"
-  synced_at: "2026-09-17T21:07:35Z"
+  contract_sha256: "sha256:0ac23fa7758cd6882f697b27cb8a1add4bd116a1f58cf9f63bbd356c9df916ae"
+  synced_at: "2026-09-18T13:46:49Z"
 ---
 
 # Implement the Target
 
-This file is the self-contained Claude Code realization of the portable `implement` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
+This file is the self-contained Claude Code realization of the portable `implement` Skill Contract, placed here by Agent Sync as the Human authored it. Follow this file and the synchronized Runtime Rules under `.claude/rules/`; never read or resolve Agent Module sources.
 
-## Role
+## Invocation
 
-Provide one trustworthy sequential path from operational readiness through independently assured implementation and eligible Launch, while preserving the ownership and gates of Configure, Planning, Developing, Reviewing, and Launch. Implement coordinates those Skills, owns the Planning → Developing → Reviewing loop, reconciles Findings through their owning operations, advances only after the current phase is satisfied, and performs no product operation of its own.
+Run only on explicit Human invocation of `/my-interface-implement`. Model, delegated, and automated invocation are disabled (`disable-model-invocation: true`); no Skill, coordinator, Hook, or automation may start this Skill.
 
-Run only on explicit Human invocation of `/my-interface-implement`, when the Human wants complete orchestration rather than operation-by-operation control. The individual operation Skills remain available when the Human wants to work step by step. A successful Implement result means every processed phase's current Review record proves both Plan Assurance and Implementation Assurance satisfied — reached through Review alone for an already-implemented phase that is still aligned, and otherwise through Planning, Development, and Review in that order.
+## Purpose
 
-## Input
+Provide one trustworthy sequential path from operational readiness through independently assured implementation and eligible launch.
 
-Accept zero or more whitespace-separated positive integers from `$ARGUMENTS`: `1` selects the first phase, `2` the second, and so on. Resolve numbers against current Target phase order and use stable identifiers throughout orchestration.
+## Responsibility
 
-If `$ARGUMENTS` is empty, select every phase the current Target marks both enabled and ready for implementation.
+Validate phase selection, coordinate Configure once, then execute Planning, Developing, and Review for each phase in Target order. Reconcile Findings through their owning operations and advance only after the current phase is satisfied. Implement performs no product operation of its own.
 
-Validate the complete selection before changing any file or invoking any operation. Every token must be a positive integer resolving to an available phase. Deduplicate repeats and retain Target order. Report disabled or unready selected phases as outside executable scope. For any invalid token, enumerate available phases with number, stable identifier, title, status, and readiness, identify every invalid token, and request a corrected list without running Configure or another operation.
+## Trigger
 
-If no implementable phase remains, make no changes and report why.
+Activate explicitly for zero or more phase selections when the Human wants complete orchestration rather than operation-by-operation control.
 
-## Understanding
+## Inputs
 
-Establish Interface Understanding from the canonical Interface document, then Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Without entering the Agent Module, resolve phase eligibility, dependencies, operational records, implementation, Review evidence, and the synchronized Runtime implementations, owned records, and gates of Configure, Planning, Developing, Reviewing, and Launch.
+Accept zero or more phase positions. Empty input selects every phase currently enabled and ready. Resolve positions to stable identifiers, validate all tokens before mutation, deduplicate them, and retain Target order. Consume current operation Contracts, Target eligibility, operational records, dependencies, implementation, and Review evidence.
 
-## Workflow
+Claude Code input handling: the positions arrive as whitespace-separated positive integers in `$ARGUMENTS` — `1` selects the first phase, `2` the second, and so on. Resolve numbers against current Target phase order and use stable identifiers throughout orchestration. Report disabled or unready selected phases as outside executable scope. For any invalid token, enumerate available phases with number, stable identifier, title, status, and readiness, identify every invalid token, and request a corrected list without running Configure or another operation. If no implementable phase remains, make no changes and report why.
 
-Execute this fixed sequence; never derive it from a mutable Target workflow:
+## Outputs
 
-1. Resolve Configure, Planning, Reviewing, Developing, and Launch through the synchronized Runtime capability catalog (`.claude/rules/interface-agent-capabilities.md`) and the Skills currently discoverable in this Runtime. Before mutation, prove that each is discoverable and that its native invocation controls permit invocation by Implement as the declared coordinator. Invoke a Child Skill with Claude Code's `Skill` tool, naming its synchronized Skill name, so that Skill loads and executes its own SKILL.md. This is what "invoke directly" and "do not depend on nested Slash Command invocation" mean throughout this Skill. Never read a Child Skill's SKILL.md and execute its workflow inline, and never delegate one to a forked or subordinate agent that inherits this Skill's context: neither runs that Skill's own definition, so neither is an invocation and neither may be reported as one. If any Child Skill is unavailable or does not permit this coordinator, stop before Configure and report Runtime drift; never inspect Agent Module sources or invoke the Agent Native Skill automatically.
-2. Execute Configure exactly once when the invocation carried no phase selection. When the invocation selected specific phases, do not execute Configure. When Configure ran, continue only when its required operational records and Environment preparation pass their gates.
-3. Record Implementation State as `in progress` under its owner and open this run's step-by-step entry under State's implementation record, as the current State authorities define it: the requested and resolved selection and whether Configure ran or was skipped.
-4. Process selected implementable phases strictly in Target order, completing the entire sequence for one phase before touching the next.
-5. Choose the current phase's entry from current records and record it in the run entry. When the phase already has an implementation — its State record shows Development completed, or a Review record exists for it — enter through Reviewing first: invoke Reviewing so it judges the existing Plan and implementation against current Understanding, and a changed Target (new models, changed fields, new requirements) surfaces as Findings before any work is redone. When that first Review is satisfied, the phase is complete as it stands: invoke neither Planning nor Developing for it and go to step 10. When it is not satisfied, continue with step 8. When the phase has no implementation, enter through Planning and continue with step 6.
-6. Invoke Planning for the current phase even when a Plan exists, reading any recorded Findings. An existing valid Plan is reconciled idempotently rather than regenerated for style.
-7. Invoke Developing for the phase, including its durable checks and completion gate, reading any recorded Findings. Then invoke Reviewing, which runs only after implementation exists. Reviewing invokes nothing: it judges the current Plan and implementation against current Understanding and records every Finding with its owning operation.
-8. When Review is not satisfied, rerun the cycle for the same phase in this order: Configure when a Finding names it, then Planning, then Developing, then Reviewing. Planning and Developing read the recorded Findings and reconcile them under their own definitions; Review judges again from fresh Understanding. Record each cycle and the outcome of each operation in it in the run entry.
-9. Continue only while a cycle closes or materially advances at least one Finding. Stop on a repeated unresolved Finding, no observable progress, an inconclusive assurance, an unmet dependency, a failed operation gate, or a required Human decision, and record the stop reason in the run entry.
-10. Advance to the next selected phase only when the current Review record proves both Plan Assurance and Implementation Assurance satisfied. Otherwise withhold every later phase in this invocation.
-11. After all selected phases pass, invoke Launch only if every currently enabled and ready Target phase—not merely the requested subset—has completed Planning and Development and satisfied both Review assurances. Record the Launch decision and its result in the run entry.
+Produce the integrated ordered outcomes of Configure when it ran, and of every per-phase Planning, Developing, Review, and reconciliation cycle; Implementation State and History owned by Implement, including one step-by-step run entry under State's implementation record that lists the selection, whether Configure ran, and for every phase each Planning → Developing → Reviewing cycle with its outcome, the stop reason when the loop stopped, and the Launch decision; withheld phase results; all Blockers and Open Questions; eligible Launch; and a truthful distinction between selected-scope completion and whole-Target completion.
 
-No incomplete or missing gate is passed. Every operation retains its own write authority and every delegated mutation remains under the invoked Skill and its owning Component. Implement writes only its Implementation State — its status and the step-by-step run log — and its History, verifies every delegated operation's own success evidence and gate, and never bypasses Human approval or combines operation ownership.
+## Required Understanding
 
-Repeated invocation reruns the same ordered gates against current sources. An already-implemented phase is revalidated through Review first; Planning and Developing, when they run, preserve valid current output, while Reviewing independently re-establishes assurance. A satisfied unchanged phase may produce no product change but is still revalidated before advancement; never skip a gate merely because an earlier run recorded success.
+Establish Interface Understanding and current Target Understanding. Resolve the synchronized active Runtime implementations for Configure, Planning, Developing, Reviewing, and Launch, their owned records, and their gates. Never enter the Agent Module to resolve them or their Contracts.
 
-## Stopping and state
+Claude Code routes: establish Interface Understanding from `.interface/interface.md` and the Foundation section files it links, then Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Resolve the operation Skills through the synchronized Runtime capability catalog (`.claude/rules/interface-agent-capabilities.md`) and the Skills currently discoverable in this Runtime.
 
-Stop before all mutation on invalid input or an empty implementable selection. Stop the entire run at the first selected phase that cannot pass an operation or assurance gate, makes no reconciliation progress, reaches an inconclusive condition, has an unmet dependency, or requires a Human decision. Record truthful phase and Implementation State, every delegated outcome, Blocker or Open Question, and the exact later phases withheld. An incomplete implementable phase prevents Launch and prevents overall Implementation State from becoming `completed`.
+## Authority
 
-The run entry under State's implementation record lists, step by step: the selection; whether Configure ran; for every phase its entry (Review first or Planning first) and each Planning → Developing → Reviewing cycle with its outcome; the stop reason when the loop stopped; the Launch decision; and the run's result. State stays the owner of that record; write it only in the shape the current State authorities define.
+Coordinate operation Skills directly and write only Implementation State — its status and the step-by-step run log — and its History independently. Every delegated mutation remains under the invoked Skill and owning Component. Never bypass Human approval or combine operation ownership.
 
-After every currently implementable phase is independently satisfied and Launch completes, record Implementation State as `completed`, its completion time, and the outcome History Event. Completion of a selected subset never implies whole-Target completion.
+## Workflow Invariants
 
-## Boundaries
+1. Resolve and validate the complete phase selection before any mutation.
+   - Invalid input runs no operation.
+2. Resolve Configure, Planning, Reviewing, Developing, and Launch through the synchronized Runtime capability catalog and prove that the Runtime permits Implement to invoke each one as the declared coordinator.
+   - Never read Agent Module sources.
+   - An unavailable or coordinator-incompatible Child Skill blocks the run before mutation.
+3. Execute Configure exactly once when the invocation carried no phase selection, then confirm its required readiness before phase work.
+   - When the invocation selected specific phases, do not execute Configure.
+4. Process selected implementable phases strictly in Target order, one complete phase at a time.
+5. Choose the phase's entry from current records.
+   - When the phase already has an implementation — its State record shows Development completed or a Review record exists for it — enter through Reviewing first: Review judges the existing Plan and implementation against current Understanding, so that a changed Target (new models, changed fields, new requirements) surfaces as Findings before any work is redone.
+   - When Review is satisfied, the phase is complete as it stands and no Planning or Developing runs.
+   - When the phase has no implementation, enter through Planning.
+6. Execute Planning for the current phase — even when a Plan exists — reading any recorded Findings; Planning's reconciliation and idempotency preserve valid current work.
+7. Execute Developing for the current phase, including durable checks and its completion gate, reading any recorded Findings.
+8. Execute Reviewing after implementation exists.
+   - Reviewing invokes nothing; it judges the current Plan and implementation against current Understanding and records every Finding with its owning operation.
+   - When Review is not satisfied, rerun the cycle for the same phase: Configure when a Finding names it, then Planning, then Developing, then Reviewing.
+   - Continue only while a cycle closes or materially advances at least one Finding.
+9. Stop on a repeated unresolved Finding, no observable progress, inconclusive assurance, unmet dependency, failed operation gate, or required Human decision.
+10. Advance to the next selected phase only after the current phase has satisfied Plan and Implementation Assurance.
+   - An incomplete phase withholds every later phase in this invocation.
+11. Launch only when every currently enabled and ready phase—not merely the selected subset—has completed Planning and Development and has satisfied both Review assurances.
 
-Implement coordinates operation roles and performs no product operation itself. It does not define Target, write Plan or Source, perform Review judgment, combine ownership boundaries, bypass a gate, or infer Human approval.
+Implementation never derives its sequence from a mutable Target workflow. It locates and executes operation Skills directly rather than depending on nested command invocation. No incomplete or missing gate is passed.
 
-## Report
+Claude Code execution detail: invoke a Child Skill with Claude Code's `Skill` tool, naming its synchronized Skill name (`my-interface-configure`, `my-interface-planning`, `my-interface-developing`, `my-interface-reviewer`, `my-interface-launch`), so that Skill loads and executes its own SKILL.md. This is what "execute", "invoke", and "locate and execute directly" mean throughout this Skill. Never read a Child Skill's SKILL.md and execute its workflow inline, and never delegate one to a forked or subordinate agent that inherits this Skill's context: neither runs that Skill's own definition, so neither is an invocation and neither may be reported as one. If any Child Skill is unavailable or does not permit this coordinator, stop before Configure and report Runtime drift; never inspect Agent Module sources or invoke the Agent Native Skill automatically. Record Implementation State as `in progress` under its owner and open this run's step-by-step entry under State's implementation record, in the shape the current State authorities define, before the first phase; record the phase entry (Review first or Planning first), each cycle and the outcome of each operation in it, the stop reason, and the Launch decision as they occur.
 
-Report the requested and resolved phase selection, the Configure outcome when Configure ran, and for each phase its entry and every Planning, Development, and Review cycle and reconciliation outcome in execution order. Then report withheld phases, Blockers and Open Questions, selected-scope completion, whole-Target completion, and the Launch result, keeping selected-scope completion truthfully distinct from whole-Target completion.
+## Verification
+
+- Verify every delegated operation's own success evidence and gate.
+- A phase passes only when its current Review record proves both Plan Assurance and Implementation Assurance are satisfied.
+- Overall completion additionally requires every currently implementable phase to pass and Launch to complete.
+
+## Idempotency
+
+Repeated invocation reruns the ordered gates against current authorities while each delegated Skill preserves valid completed work and avoids unnecessary mutation. A satisfied unchanged phase may produce no product change but is still revalidated before advancement.
+
+## Stopping Conditions
+
+- Stop before all mutation on invalid input or an empty implementable selection.
+- Stop the run on the first selected phase that cannot pass an operation or assurance gate, makes no reconciliation progress, reaches an inconclusive condition, has an unmet dependency, or requires a Human decision.
+- Any incomplete implementable phase prevents Launch and overall completion.
+
+Claude Code execution detail: on a stop, record truthful phase and Implementation State, every delegated outcome, Blocker or Open Question, and the exact later phases withheld. After every currently implementable phase is independently satisfied and Launch completes, record Implementation State as `completed`, its completion time, and the outcome History Event. Completion of a selected subset never implies whole-Target completion.
+
+## Runtime Realization
+
+A native adapter exposes optional multi-phase input, resolves operation implementations through synchronized Runtime capabilities, invokes Configure once when no phase was selected and then, for each phase, either Review first when an implementation already exists or Planning first when none does, followed by the Planning → Developing → Review cycle repeated while Review records Findings and progress continues, and reports every operation and reconciliation outcome in execution order without reading Agent Module sources.
+
+In Claude Code this adapter reports the requested and resolved phase selection, the Configure outcome when Configure ran, and for each phase its entry and every Planning, Development, and Review cycle and reconciliation outcome in execution order. Then it reports withheld phases, Blockers and Open Questions, selected-scope completion, whole-Target completion, and the Launch result, keeping selected-scope completion truthfully distinct from whole-Target completion.

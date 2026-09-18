@@ -40,6 +40,13 @@ AGENT_MODULE_READERS = {"my-interface-agent-native"}
 
 
 def has_agent_sync_grant(payload: dict[str, object]) -> bool:
+    """The grant belongs to the main thread of the exact Agent Sync prompt only.
+
+    Claude Code adds `agent_id` to hook input whenever the hook fires inside a
+    subagent, so a subagent spawned by that prompt never inherits the marker.
+    """
+    if payload.get("agent_id"):
+        return False
     marker = grant_path(payload)
     return marker is not None and marker.is_file()
 

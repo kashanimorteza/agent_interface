@@ -4,84 +4,117 @@ description: Assure selected Target phase implementations, or every enabled phas
 argument-hint: "[phase-number ...]"
 metadata:
   contract: ".interface/agent/skill/contracts/reviewing.md"
-  contract_sha256: "sha256:ba7419e6361a9048af74e345a7a6bcde662ee4c0b3c2eebfbe39d240d4288ef1"
-  synced_at: "2026-09-17T18:39:11Z"
+  contract_sha256: "sha256:e27ea1e754cc60354c223c96f19e2b554945b09249cd5a09e977fc2d8ae3beb4"
+  synced_at: "2026-09-18T13:46:48Z"
 ---
 
 # Review Target phases
 
-This file is the self-contained Claude Code realization of the portable `reviewing` contract synchronized by Agent Sync. Follow this adapter and synchronized Runtime rules; never read or resolve Agent Module sources.
+This file is the self-contained Claude Code realization of the portable `reviewing` Skill Contract, placed here by Agent Sync as the Human authored it. Follow this file and the synchronized Runtime Rules under `.claude/rules/`; never read or resolve Agent Module sources.
 
 ## Invocation
 
 Run only when the Human invokes `/my-interface-reviewer` or a declared coordinator Skill invokes this Skill through Claude Code's own `Skill` tool. Never activate yourself because a request merely looks relevant, and never run from a startup, resume, or automation routine. When a coordinator invokes this Skill, that invocation loads and executes this file as the Skill's own definition; it is never satisfied by another Skill reading this file and executing these steps inline, and never by delegating this Skill to a forked or subordinate agent that inherits the caller's context.
 
-Activate for zero or more phase selections after an implementation exists, including after Development, after a Component or Target change, or as a final convergence gate. Never start Review for a phase with no implementation.
+## Purpose
 
-## Role
+Bring the selected phase's current understanding, Plan, implementation, and generated Source into alignment through independent review; reconciliation is performed by the owning operations, rerun by Implement or the Human.
 
-Bring each selected phase's current Understanding, Plan, implementation, and generated Source into alignment through independent review. Provide two independent gates for every selected phase with existing implementation:
+## Responsibility
 
-1. **Plan Assurance** — establish that its Plan completely and correctly represents current Interface and Target Understanding.
-2. **Implementation Assurance** — establish that the implementation and evidence satisfy the assured Plan and the same current authorities.
+Reconstruct current Interface Understanding and Target Understanding; compare the current Plan, implementation, generated Source, and evidence with those authorities; and record every misalignment as a Finding owned by the Skill that must resolve it, so that the owning Skill reconciles it on its next run. Report whether the authorities and outputs are aligned or progress is blocked. Reviewing invokes no other Skill; the loop that reruns Planning, Developing, and Review belongs to Implement, or to the Human in the Detailed path. Reviewing records Findings and exact outcomes and never edits another operation's records or Source directly.
 
-Review is one assurance pass. It records every misalignment as a Finding owned by the operation that must resolve it — Configure, Planning, or Developing — so that the owning Skill reconciles it on its next run, and it reports whether the authorities and outputs are aligned or progress is blocked. Review invokes no other Skill, executes no other Skill's instructions inline, and repeats nothing within its own run: the loop that reruns Planning, Developing, and Review belongs to Implement, or to the Human in the Detailed path. Review never edits what it judges, never repairs another operation's records or Source, and never starts implementation for a phase that has none.
+## Trigger
 
-## Input
+Activate explicitly for zero or more phase selections after an implementation exists, including after Development, a Component or Target change, or as a final convergence gate. Do not start Review for a phase with no implementation.
 
-Accept zero or more whitespace-separated positive integers from `$ARGUMENTS`: `1` selects phase one, `2` selects phase two, and so on. Resolve every number against current Target phase order and use each phase's stable identifier throughout Review.
+## Inputs
 
-If `$ARGUMENTS` is empty, select every enabled phase that has an existing implementation. If no such phase exists, make no changes and report that there is no implemented phase to review.
+Accept zero or more phase positions. Empty input selects every enabled phase that has an implementation. Resolve positions to stable identifiers, deduplicate them, and process them in Target order. Consume current Interface Understanding, Target Understanding, applicable Implementation Principles and Preferences, synchronized Runtime rules, Plans, State, prior Review records, implementation, generated Source, public interfaces, and recorded evidence. Never read Agent Module sources.
 
-If arguments are present, validate the complete selection before changing records or running verification. Every token must be a positive integer resolving to an available phase. Deduplicate repeated numbers and process selected phases in Target order regardless of argument order. For invalid input, stop the complete run before observation: enumerate all available phases with number, stable identifier, title, status, and readiness, identify every invalid token, and request a corrected list without beginning Review.
+Claude Code input handling: the positions arrive as whitespace-separated positive integers in `$ARGUMENTS` — `1` selects phase one, `2` phase two, and so on. Resolve every number against current Target phase order and use each phase's stable identifier throughout Review. If `$ARGUMENTS` is empty and no enabled phase has an implementation, make no changes and report that there is no implemented phase to review. If any token is not a positive integer resolving to an available phase, stop the complete run before observation: enumerate all available phases with number, stable identifier, title, status, and readiness, identify every invalid token, and request a corrected list without beginning Review.
 
-## Understanding
+## Outputs
 
-On every invocation, establish fresh Interface Understanding from the canonical Interface document and follow its authorized routes to synchronized Runtime rules and current Implementation Component authorities. Never enter or inspect the Agent Module. Then establish Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Read the Review, Plan, and State authorities and every Component applicable to each selected phase.
+Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase with an implementation, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, an obligation-coverage summary, and an evidence-first phase report. A phase without implementation is reported as not reviewable and receives no assurance outcome. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
 
-Every Review run starts from fresh Understanding and evidence and discards the observations of earlier runs. Never introduce a third `Project Understanding`. Plan, State, Review Config, implementation, prior Review records, and earlier conversation are evidence to assess; none substitutes for current Interface Understanding or Target Understanding.
+## Required Understanding
 
-## Workflow
+Review establishes fresh Interface and Target Understanding on every invocation. It then compares the current authorities, Plan, implementation, generated Source, public boundaries, and evidence as one connected result. Review is one assurance pass: it assures the Plan, assures existing implementation when present, and records a Finding naming Configure, Planning, or Developing when a gap requires one of them. It invokes nothing and repeats nothing within its run; Implement reruns the owning operations and Review again until Review is satisfied, and in the Detailed path the Human does. Review never repairs another operation's records or Source directly and never starts implementation for a phase that has no implementation.
 
-Resolve the current Review, Plan, and State authorities and Schemas, every Implementation Component applicable to each selected phase, operational records, implementation, generated Source, public interfaces, recorded evidence, and Runtime verification capabilities. Compare the current authorities, Plan, implementation, generated Source, public boundaries, and evidence as one connected result.
+Reconstruct Interface Understanding and current Target Understanding on every invocation. Read Review, Plan, and State authorities and every Component applicable to each selected phase. Existing Plan, State, implementation, and Review records are evidence to assess and never substitutes for either Understanding.
 
-Process each selected phase as follows, completing one phase's assurance result before processing the next.
+Claude Code routes: establish Interface Understanding from `.interface/interface.md` and the Foundation section files it links, then Target Understanding from the Human and Technical Definitions it locates under their declared precedence. Follow its routes to the Review, Plan, and State authorities, their Schemas and Config files, and the Implementation Components applicable to each selected phase. Never introduce a third `Project Understanding`.
 
-1. Before any assurance, verify that implementation and generated Source exist. If they do not, stop Review for that phase, record no assurance outcome, and report that it is not reviewable until Developing or Implement creates the implementation.
-2. Build a complete obligation inventory for the phase by reading the complete applicable authorities rather than relying on `At a Glance`, indexes, prior Findings, or other summaries: every applicable normative Principle Rule and Boundary, every obligation expressed as `Must`, every `Never` expressed as its prohibited condition, every resolved Preference with `requirement: required`, every conditional requirement whose activation condition is true, every applicable instruction of a required synchronized Skill, and every applicable Target requirement.
-3. If Config or Environment readiness is stale or insufficient for the phase, or current authorities declare changed Component paths, packages, versions, tools, public metadata, connections, or Platform requirements, record a Finding naming Configure as its owning operation, withhold both assurances, and do not assess the phase until Configure has resolved it.
-4. Build a transient Plan Assurance ledger directly from that inventory and current authorities under the synchronized Runtime rules — never derived from the Plan it will judge. Classify every inventoried obligation exactly once as `satisfied` (the current Plan gives it valid, observable coverage), `not applicable` with an explicit applicability reason, or `finding` with expected condition, actual observation, and evidence. Never infer `not applicable` from silence or merely because a selected required technology, capability, implementation, or proof is absent.
-5. Compare the current Plan against the ledger for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance clauses, verification conditions, dependencies, and currentness. An omitted, unclassified, unsupported, or merely asserted obligation is a Plan Finding, never a passing condition.
-6. If the Plan is absent, stale, incomplete, or Plan Assurance is otherwise not satisfied, record the exact Plan Findings naming Planning as their owning operation and report that the phase cannot be assured until Planning has resolved them.
-7. Record the exact positive Plan `revision` examined with every Plan Assurance outcome. Never carry an outcome forward to a different revision; after Planning changes the revision, a later Review run performs a new independent Plan Assurance pass bound to that new revision. When current authorities or evidence changed since the last assurance, do not carry forward a prior outcome merely because the revision is unchanged; rebuild Understanding and reassess.
-8. Report a Plan Finding that is unchanged since the previous Review record as repeated, so the coordinating loop can stop on no observable progress, inconclusive Plan Assurance, or a required Human decision.
-9. Do not begin Implementation Assurance until Plan Assurance is `satisfied` for that exact revision.
-10. Build a separate transient Implementation Assurance ledger covering the complete obligation inventory, every Plan acceptance clause, and every recorded verification condition. Classify every obligation exactly once, where `satisfied` means current implementation and evidence prove it. Observe each condition independently and judge whether the implementer's check actually establishes it, using adversarial or independent cases where practical. An omitted, unclassified, unsupported, or merely asserted obligation is an Implementation Finding or a missing-evidence record, never a passing condition.
-11. If implementation or generated Source no longer satisfies the assured Plan, record a Finding naming Developing as its owning operation and report that the phase cannot be assured until Developing has resolved it.
-12. Ground every Finding in the expected condition, actual observation, and exact location or observable result. Record absent Plan coverage as a Gap and absent observable proof as missing evidence. Reconcile prior Findings only through current observation; a Finding persists until Review proves it resolved or the Human accepts it.
-13. Report a blocker when a Finding repeats unchanged across runs, when evidence remains inconclusive, or when a decision requires Human judgment, so the coordinating loop stops instead of cycling. Mark an affected assurance `inconclusive` when required evidence cannot be observed or authorities conflict; never convert uncertainty into satisfaction.
-14. Record aggregate Review State as `satisfied` only when both Plan Assurance and Implementation Assurance are satisfied and every applicable mandatory obligation has exactly one supported classification with no Finding; coverage counts alone never prove satisfaction. Otherwise record the exact `not satisfied` or `inconclusive` result. Every conclusion must be traceable to current observable evidence.
+## Authority
 
-In a standalone invocation, an unsatisfied or inconclusive phase does not prevent reviewing a later phase whose evidence is independent. A coordinator such as Implement may impose a stricter stopping gate.
+Observe and independently verify. Invoke no other Skill and execute no other Skill's instructions inline. Write only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History. Never modify implementation, Target, Plan content, Task progress, or another operation's records directly.
 
-Repeated Review reconstructs both Understandings, preserves stable Findings and outcomes when sources and evidence are unchanged, records no new Finding for an already assured current Plan, and appends only the History required by State.
+## Workflow Invariants
 
-## Stopping conditions
+- Validate all phase input before changing records or running verification.
+- Before beginning any assurance for a phase, verify that implementation and generated Source exist.
+- If they do not, stop Review for that phase and report that Developing or Implement must create the implementation first.
+- For each selected phase, read the complete applicable authorities rather than relying on `At a Glance`, indexes, prior Findings, or other summaries.
+- Build a complete obligation inventory containing every applicable normative Principle Rule and Boundary, every obligation represented as `Must`, every `Never` expressed as its prohibited condition, every resolved Preference with `requirement: required`, every conditional requirement whose activation condition is true, every applicable instruction of a required synchronized Skill, and every applicable Target requirement.
+- For each assurance stage, classify every inventoried obligation exactly once as `satisfied`, `not applicable` with an explicit applicability reason, or `finding` with expected condition, actual observation, and evidence.
+- For Plan Assurance, `satisfied` means the current Plan gives the obligation valid, observable coverage; for Implementation Assurance, it means current implementation and evidence prove the obligation.
+- Never infer `not applicable` from silence, and never use it merely because a selected required technology, capability, implementation, or proof is absent.
+- Rebuild the transient Plan Assurance ledger directly from that inventory and current authorities under the synchronized Runtime rules, then compare the current Plan against it for complete, non-duplicated, non-contradictory coverage, valid boundaries, acceptance, verification conditions, dependencies, and currentness.
+- An omitted, unclassified, unsupported, or merely asserted obligation is a Plan Finding.
+- If the Plan is absent or Plan Assurance is not satisfied, record the exact Plan Findings naming Planning as their owning operation and report that the phase cannot be assured until Planning has resolved them.
+- Record the current positive Plan Revision with every Plan Assurance outcome.
+- Never carry an outcome forward to a different revision; after Planning changes the revision, perform a new independent Plan Assurance pass and bind its result to that new revision.
+- Report a Plan Finding that is unchanged since the previous Review record as repeated, so the coordinating loop can stop on no observable progress, inconclusive Plan Assurance, or a required Human decision.
+- Do not begin Implementation Assurance until Plan Assurance is satisfied.
+- When implementation exists, build a transient Implementation Assurance ledger covering the complete obligation inventory, every Plan acceptance clause, and every recorded verification condition.
+- Observe each condition independently and judge whether the implementer's checks actually establish it.
+- An omitted, unclassified, unsupported, or merely asserted obligation is an Implementation Finding or missing-evidence record, never a passing condition.
+- Ground every Finding in the expected condition, actual observation, and exact location or observable result.
+- Record absent Plan coverage as a Gap and absent observable proof as missing evidence.
+- Reconcile prior Findings only through current observation.
+- A Finding persists until Review proves it resolved or the Human accepts it.
+- Complete one phase's assurance result before processing the next selected phase.
+- A standalone Review may continue to later independent phases when one phase is unsatisfied or inconclusive; a coordinating Skill may impose a stricter stopping gate.
+- When current authorities or evidence changed since the last assurance, do not carry forward a prior outcome merely because the Plan revision is unchanged; rebuild Understanding and reassess the affected phase.
+- If Config is stale or invalid for the current phase, record a Finding naming Configure as its owning operation and withhold both assurances until Configure has resolved it.
+- If the phase's technical Environment is insufficient, record a Finding naming Developing.
+- If current authorities declare changed public metadata or Config structure, record a Finding naming Configure; if they declare changed Component paths, packages, versions, tools, or connections, record a Finding naming Developing; if they declare changed Platform requirements, record a Finding naming Launch.
+- Do not assess the phase until the owning operation has resolved it.
+- If Plan coverage is stale or incomplete, record a Finding owned by Planning; if implementation or generated Source no longer satisfies the current Plan, record a Finding owned by Developing.
+- Every Review run starts from fresh Understanding and evidence and discards observations of earlier runs; a Finding recorded earlier is reconciled only through current observation.
+- Report a blocker when a Finding repeats unchanged across runs, when evidence remains inconclusive, or when a decision requires Human judgment, so the coordinating loop stops instead of cycling.
 
-Stop the complete run before observation on invalid input. Stop an affected phase before Implementation Assurance when Plan Assurance cannot be satisfied. Mark an affected assurance inconclusive when required evidence cannot be observed or authorities conflict. Never invoke another Skill, and never directly edit another operation's records or implementation.
+Claude Code execution detail: the Plan Assurance ledger is built from the obligation inventory and current authorities, never derived from the Plan it will judge. Where practical, observe Implementation Assurance conditions with adversarial or independent cases rather than only the implementer's own checks.
 
-## Boundaries
+## Verification
 
-Review observes and independently verifies. It invokes no other Skill — not Configure, Planning, Developing, Implement, Launch, Reset, or the Agent Native Skill in any mode — and being invoked by a coordinator never changes that. Review writes only Review-owned Findings, assurance outcomes, aggregate Review State, and Review History. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode. Do not modify implementation, Source, Target, Plan content, Task progress, or another operation's records directly. Configure, Planning, and Developing reconcile the Findings they own on their own next run, invoked by Implement or the Human.
+- Plan Assurance is `satisfied` only when the current Plan completely and correctly covers the current Interface and Target authorities and every applicable mandatory obligation has exactly one supported classification with no Finding.
+- Implementation Assurance is `satisfied` only when existing implementation and evidence satisfy that assured Plan and the same current authorities and every applicable mandatory obligation has exactly one supported classification with no Finding.
+- Aggregate outcome is `satisfied` when both applicable assurances pass, and otherwise the exact `not satisfied` or `inconclusive` result.
+- A phase without implementation has no Review assurance outcome.
+- Every conclusion must be traceable to current observable evidence; coverage counts alone never prove satisfaction.
 
-## Report
+## Idempotency
 
-Report evidence first, in this order:
+Repeated Review reconstructs both Understandings, preserves stable Findings and outcomes when sources and evidence are unchanged, records no new Finding for an already assured current Plan, and appends only History required by State.
+
+## Stopping Conditions
+
+- Stop the complete run before observation on invalid input.
+- Stop an affected phase before Implementation Assurance when Plan Assurance cannot be satisfied.
+- Mark an affected assurance inconclusive when required evidence cannot be observed or authorities conflict; never convert uncertainty into satisfaction, never invoke another Skill, and never directly edit another operation's records or implementation.
+
+## Runtime Realization
+
+A native adapter exposes optional multi-phase input, invokes no other Skill, and reports phase selection, both assurances, every Finding with its owning operation, missing evidence, convergence status, aggregate outcomes, and records changed.
+
+In Claude Code this adapter invokes no Skill — not Configure, Planning, Developing, Implement, Launch, Reset, or the Agent Native Skill in any mode — and being invoked by a coordinator never changes that. It reports evidence first, in this order:
 
 1. **Phases** — resolved phase identifiers, titles, targets, and order; phases without implementation reported as not reviewable.
 2. **Plan Assurance** — result and the exact Plan Revision assured.
 3. **Implementation Assurance** — conditions observed, independent evidence, and result.
-4. **Findings and missing evidence** — grouped by phase and assurance stage, each naming its owning operation (Configure, Planning, or Developing), marked repeated when unchanged since the previous Review record, ordered by severity.
+4. **Findings and missing evidence** — grouped by phase and assurance stage, each naming its owning operation (Configure, Planning, Developing, or Launch), marked repeated when unchanged since the previous Review record, ordered by severity.
 5. **Obligation coverage** — summary of the obligation inventory and its classification counts for the phase.
 6. **Convergence and recorded outcomes** — whether Findings repeated, advanced, or closed since the previous record, any blocker, Plan outcome, Implementation outcome, aggregate Review State, reconciled Findings, records changed, and History.
 7. **Next step** — the single most useful next action supported by the result, naming the owning operation the Human or Implement must rerun before Review runs again.
