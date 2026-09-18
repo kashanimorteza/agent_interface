@@ -44,13 +44,15 @@ Every Principles file contains these parts, in this order:
 1. **Title** — the file's single first-level heading.
 2. **Introduction** — what the Component is and what it contributes.
 3. **Terms** — the vocabulary the Component owns.
-4. **Relationships** — what it consumes and what consumes it.
-5. **Layering** — where the Component's technical choices live instead.
-6. **Authority** — the binding force of the file and its precedence.
-7. **Principles** — the numbered mandatory rules.
-8. **At a Glance** — the derived list of every obligation in the file.
+4. **Architecture** — the named parts the Component is formed from, when it has them.
+5. **Relationships** — what it consumes and what consumes it.
+6. **Layering** — where the Component's technical choices live instead.
+7. **Documentation** — what this Component's own documentation must convey, when it has something to add.
+8. **Authority** — the binding force of the file and its precedence.
+9. **Principles** — the numbered mandatory rules.
+10. **At a Glance** — the derived list of every obligation in the file.
 
-Introduction, Layering, and Authority are unheaded prose. Terms, Relationships, and At a Glance carry their own second-level heading. Every numbered second-level heading in the file is a Principle. A `<br>` separates each part from the next and each Principle from the next.
+Architecture and Documentation are the optional parts: each is carried by a Component that has something to say there and omitted — not left empty — by one that does not. Introduction, Layering, and Authority are unheaded prose. Terms, Architecture, Documentation, Relationships, and At a Glance carry their own second-level heading. Every numbered second-level heading in the file is a Principle. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -95,6 +97,34 @@ A short definition list of the terms the Principles owner owns — the capitaliz
 A term is listed only when this Principles owner owns it. A term owned by another Component or Module is used as that owner defines it and is not redefined here. Terms defined by the Interface itself, such as Component, Principle, and Preference, are not repeated in an owner's list.
 
 
+<!--------------------------------------------------------------------------------- Architecture --->
+<br>
+
+## Architecture
+
+The named parts the Component is formed from, and how they stand in relation to one another. It answers, in one view, what is inside this Component — before Relationships answers what is outside it.
+
+The section opens with a tree naming the parts, followed by one short paragraph per part stating what it owns and, where it matters, what it never does:
+
+```markdown
+## Architecture
+
+```text
+<Component>
+├── <Part>
+│   └── <Sub-part>
+└── <Part>
+    └── <Sub-part>
+```
+
+<One paragraph per part: what it owns, and the limit that keeps it distinct from the others.>
+```
+
+The tree names concepts the Component owns, not files, directories, classes, or packages: a repository layout belongs to the Component's Preferences, and the shape of a generated file belongs to its Schema. A part named here is defined in Terms and governed by a Principle; Architecture shows how the parts fit together and introduces no obligation of its own.
+
+This part is optional. A Component formed from named parts — internal layers, services, foundations, a public boundary — carries it. A Component with no internal structure worth naming omits the section entirely rather than carrying an empty one.
+
+
 <!--------------------------------------------------------------------------------- Relationships --->
 <br>
 
@@ -124,6 +154,25 @@ One paragraph placing the Component's technical choices outside this file, and n
 - when the Component owns a generated file, the shape of that file belongs to its Schema.
 
 A Component still states where its technical choices or declarations belong even when its Implementation Preferences or Agent Preferences contain no entries. Explicit absence is not a reason to omit the layering statement.
+
+
+<!--------------------------------------------------------------------------------- Documentation --->
+<br>
+
+## Documentation
+
+What this Component's own documentation must convey, beyond the shared documentation rules that Development states for every Component.
+
+The section is short prose, and it says what a reader of that Component's documentation must come away with — never how the documentation file is laid out, which belongs to Development Preferences:
+
+```markdown
+## Documentation
+
+<What a reader must understand from this Component's documentation, and what its
+documentation must therefore cover that the shared rules do not already require.>
+```
+
+This part is optional, and it is not the place to restate the shared rules. A Component carries it when its documentation has a demand of its own — a surface that must be shown a particular way, a concept a reader cannot use the Component without — and omits the section entirely when the shared rules are enough.
 
 
 <!--------------------------------------------------------------------------------- Authority --->
@@ -221,6 +270,17 @@ what it is independent of, and what it does not own.>
 
 - **<Term>** — <definition within this Principles owner>
 
+## Architecture
+
+```text
+<Component>
+├── <Part>
+└── <Part>
+```
+
+<One paragraph per part: what it owns and the limit that keeps it distinct. Omit this
+whole section when the Component has no internal structure worth naming.>
+
 ## Relationships
 
 - **Consumes <Component>** — <what it takes and why>
@@ -228,6 +288,11 @@ what it is independent of, and what it does not own.>
 
 <Layering: Implementation technical choices and defaults belong to <Component> Preferences;
 Agent declarations and mappings belong to <Component> Preferences; implementation realizes them.>
+
+## Documentation
+
+<What a reader must understand from this Component's documentation. Omit this whole section
+when the shared documentation rules are enough.>
 
 Every statement here is mandatory. A Implementation Preference or Agent Preferences can never override
 a Principle, and a project may only add stricter rules, never looser ones.
