@@ -223,7 +223,25 @@ The Human owns every Principles and Preferences file. Plan, Review, and State ow
 
 ## Understanding record
 
-Not yet recorded. The Human's own explanation of the Implementation Module — the engineering philosophy behind the layered architecture, why these ten Components, and how Preferences are meant to be chosen — will be captured here in a later session, in the same form as the Agent Module Guide.
+Not yet recorded in full. The Human's own explanation of the Implementation Module — the engineering philosophy behind the layered architecture, why these ten Components, and how Preferences are meant to be chosen — will be captured here in a later session, in the same form as the Agent Module Guide.
+
+### Model (recorded 2026-09-18)
+
+**What is the Model for, in the Human's words?** When the Agent has an Understanding of the Target, the Target has already declared its Models with their primary keys, auto-increment, nullability, defaults, relationships, and uniqueness, in its own language. Model must express those same parameters in one standard vocabulary that belongs to no technology and no database — type, size, relationships, generated identity — so that the Model can always be understood and built. Which type or size a field gets is Model's own decision from the Target; the Interface does not fix a closed list for it. Database using that vocabulary to build storage is one of Model's uses, not its main purpose; the main purpose is that Models are the shared language between every Component of the application. There is one definition, not a Model for code and a separate schema for storage. Because Model is also a Development Component, it takes its programming language, modeling package, and Agent Skills from its Component Profile in Development.
+
+**Decisions taken on 2026-09-18 (reviewed item by item):**
+
+1. The introduction and its Note already state this goal — unchanged.
+2. Logical field type was missing from the published metadata (Principle 9 and the field vocabulary in Preferences); added as a technology-independent value type, never a language or Engine type.
+3. Principle 9 now states explicitly that the metadata is carried by the same Domain Definition application code uses, with no second schema artifact; Database reads it through the Model Public Interface.
+4. Former Principle 6 (field presence and absence semantics) overlapped with Principle 10 and was merged into it; Principles 7–10 became 6–9. Nothing was dropped.
+5. `preferences.yaml`: `settings` made an explicit empty map; version 3.4.
+6. Terms, Relationships, and the remaining Principles — unchanged.
+7. Must line added: Model takes its language, modeling package, Agent Skills, and Platform Reference from its Component Profile in Development (Principle 3).
+8. Introduction and Note reframed: every Component reads the same definition; Database is one consumer.
+9. Principle 9 reframed from "storage-relevant constraints" to "one standard, technology-independent vocabulary".
+10. `persistence_contract` renamed `declaration_vocabulary`; `length` and `precision` added; no closed list of types — Model decides type and size from the Target.
+11. A rule forcing unexpressible Target properties through State was proposed and rejected as limiting Model; Principle 2 already covers preservation.
 
 <br>
 
