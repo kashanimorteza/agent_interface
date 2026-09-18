@@ -35,10 +35,12 @@ After confirmation, remove or reset only exact targets shown in the preview and 
 - When an argument-free invocation discovers no generated phase, produce a no-op preview and perform no mutation.
 - Recalculate Plan and Review aggregate counts after removing selected phase records.
 - Reconcile active, Implementation, and Launch State with surviving outputs; preserve State History and append one reset outcome for each selected phase.
-- Remove an entire Component code path only when selected phases own it exclusively. For a path shared with preserved phases, remove only safely attributable selected-phase changes; unresolved attribution stops mutation.
+- Remove an entire Component code path only when selected phases own it exclusively.
+- For a path shared with preserved phases, remove only safely attributable selected-phase changes; unresolved attribution stops mutation.
 - A Config reset removes all operational Config files while preserving developed implementation outputs, the Config container, and Environment preparation; report that implementation records must later be reconciled.
 - A Complete reset is the union of Config reset and all-phase reset: remove all operational Config and all developed implementation outputs owned by Target phases, while preserving Interface and Target sources, the Config container, and Environment preparation.
-- Config and Complete scope require physical file absence. Emptying, truncating, initializing, rewriting, or recreating a Config file does not satisfy removal.
+- Config and Complete scope require physical file absence.
+- Emptying, truncating, initializing, rewriting, or recreating a Config file does not satisfy removal.
 - Complete scope resolves and removes implementation outputs first and deletes Config files last so ownership evidence remains available throughout execution.
 - Use the native adapter's bounded Config-removal helper for both preview and apply; it may unlink only individually listed files below the exact Config directory and must never recursively remove that directory.
 - Resolve every target before mutation and disclose whether untracked deletion is unrecoverable.
@@ -48,7 +50,10 @@ After confirmation, remove or reset only exact targets shown in the preview and 
 
 ## Verification
 
-After confirmation, verify every previewed target's actual outcome and confirm no unlisted target changed. For Config and Complete scopes, verify every previewed Config path is absent and every protected Interface source observed during preview remains present and unchanged. A remaining or recreated Config file makes the Reset failed. Reconcile surviving State with surviving outputs only when State remains.
+- After confirmation, verify every previewed target's actual outcome and confirm no unlisted target changed.
+- For Config and Complete scopes, verify every previewed Config path is absent and every protected Interface source observed during preview remains present and unchanged.
+- A remaining or recreated Config file makes the Reset failed.
+- Reconcile surviving State with surviving outputs only when State remains.
 
 ## Idempotency
 
@@ -56,7 +61,8 @@ Preview is always safe to repeat. Applying an already-realized scope produces no
 
 ## Stopping Conditions
 
-Stop before mutation for missing or ambiguous scope input, an invalid phase selection, unresolved attribution or ownership, unsafe target resolution, inability to stop an affected runtime safely, or absent explicit confirmation. A changed preview requires renewed confirmation.
+- Stop before mutation for missing or ambiguous scope input, an invalid phase selection, unresolved attribution or ownership, unsafe target resolution, inability to stop an affected runtime safely, or absent explicit confirmation.
+- A changed preview requires renewed confirmation.
 
 ## Runtime Realization
 

@@ -2,10 +2,10 @@
 meta:
   path: .interface/agent/rule/preferences.yaml
   path_note: The Preferences layer of the Agent Rule Component.
-  purpose: Project, user, managed, extension, global, and path-scoped Agent Rule declarations, plus the conduct settings of the former Interaction, Observability, and Session Components.
+  purpose: The declared Agent Rules, each with its complete definition file, plus the conduct settings of the former Interaction, Observability, and Session Components.
   standard: Agent Project Interface
-  version: '2.0'
-  updated: '2026-09-17'
+  version: '2.1'
+  updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -101,64 +101,22 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: Selected Output Style, progress behavior, validation depth, and resume behavior.
-  options: Available Output Styles, progress behaviors, validation depths, and resume behaviors.
-  settings: Rule catalogs by source and scope, plus interaction, observability, and session conduct settings and optional per-Native realization hints.
+  selected: Selected response style, progress behavior, validation depth, and resume behavior.
+  options: Available response styles, progress behaviors, validation depths, and resume behaviors.
+  settings: The declared Rules and their definition files, plus interaction, observability, and session conduct settings and optional per-Native realization hints.
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    output_style: ADHD Explanatory
+    response_style: explanatory_structured
     progress_behavior: material_updates
     validation_depth: proportional
     resume_behavior: revalidate
-    output_style_note: Provided by the enabled plugin adhd-output-style@claude-settings (see connection Preferences); the plugin owns the style, this selection names what it provides. Decided 2026-09-17.
   options:
-    output_styles:
-      ADHD:
-        required: false
-        note: Local style file; superseded as the selected style by the plugin-provided ADHD Explanatory on 2026-09-17.
-      Analogy Engine:
-        required: false
-      Bedtime Story:
-        required: false
-      Caveman:
-        required: false
-      Coach:
-        required: false
-      ELI15:
-        required: false
-      Executive:
-        required: false
-      Feynman:
-        required: false
-      Gen Z:
-        required: false
-      Ladder:
-        required: false
-      No AI Slop:
-        required: false
-      No Slop:
-        required: false
-      Plain English:
-        required: false
-      Smart Brevity:
-        required: false
-      Sportscaster:
-        required: false
-      Street:
-        required: false
-      Thing Explainer:
-        required: false
-      Unslop:
-        required: false
-      Wait What:
-        required: false
-      Yoda:
-        required: false
-      ADHD Explanatory:
-        required: true
-        provided_by: plugin adhd-output-style@claude-settings
+    response_styles:
+      explanatory_structured:
+        meaning: Explanatory, structured responses that keep the technical substance exact (Rule Principle 4); realized in Claude Code by the Output Style named under settings.native.claude.
+        former_key: output_style = ADHD Explanatory (renamed 2026-09-18; the Output Style catalog moved to settings.native.claude.output_styles)
     progress_behaviors:
       material_updates:
         meaning: Report meaningful progress and blockers without narrating routine internals.
@@ -169,34 +127,37 @@ content:
       revalidate:
         meaning: Re-establish context, scope, permissions, files, and outstanding work before mutation.
   settings:
-    project_rules:
+    definitions_directory: .interface/agent/rule/definitions/
+    definitions_note: "One Markdown file per Rule holds the complete Rule text as the Human wrote it; Agent Sync places that content where the selected Agent Native reads Rules, adding only the Native's own wrapper (scope header, frontmatter, file name). A Rule whose text is derived by Sync from other Preferences declares `definition: derived` and names its sources instead of a file."
+    rules:
       interface-bootstrap:
+        definition: .interface/agent/rule/definitions/interface-bootstrap.md
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Enter through the canonical Interface file and the Foundation section files it links (introduction, terminology, architecture, understanding, operations, modes, authority, workflow) while reserving Agent Module sources
           exclusively for explicit Agent Sync.
         required: true
       interface-skill-policy:
+        definition: .interface/agent/rule/definitions/interface-skill-policy.md
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Apply shared human-owned boundaries and capability policy.
         required: true
       interface-agent-capabilities:
+        definition: derived
+        derived_from: [.interface/agent/skill/preferences.yaml, .interface/agent/command/preferences.yaml]
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Expose the synchronized Runtime capability identifiers and native mappings without requiring Agent Module reads.
         required: true
       git-discipline:
+        definition: .interface/agent/rule/definitions/git-discipline.md
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Never run git commit or git push unless the Human explicitly asks for it in the current message; 'save it' means write files to disk, not commit. Explains the boundary that Permission
           enforces through its ask rules on git commit, push, reset, restore, checkout, rebase, and clean.
         required: true
-    path_scoped_rules: {}
-    user_rules: {}
-    managed_rules: {}
-    extension_rules: {}
-    runtime_rules: {}
+    placement_note: "Where a Rule lives in the Native (project, user, managed, extension, path-scoped) is Agent Sync's decision from the Native's own layout; the former categories project_rules, path_scoped_rules, user_rules, managed_rules, extension_rules, and runtime_rules were collapsed into `rules` on 2026-09-18 because they mirrored one Native's layout. A Rule that must land in a particular place may say so in its own `native.<agent-native>` hint."
     conflicts: {}
     interaction:
       output_style_defaults:
@@ -276,6 +237,53 @@ content:
         project_authority: false
     native:
       claude:
+        output_style: ADHD Explanatory
+        output_style_note: Provided by the enabled plugin adhd-output-style@claude-settings (see connection Preferences); the plugin owns the style, this selection names what it provides. Decided 2026-09-17.
+        output_styles:
+          ADHD:
+            required: false
+            note: Local style file; superseded as the selected style by the plugin-provided ADHD Explanatory on 2026-09-17.
+          Analogy Engine:
+            required: false
+          Bedtime Story:
+            required: false
+          Caveman:
+            required: false
+          Coach:
+            required: false
+          ELI15:
+            required: false
+          Executive:
+            required: false
+          Feynman:
+            required: false
+          Gen Z:
+            required: false
+          Ladder:
+            required: false
+          No AI Slop:
+            required: false
+          No Slop:
+            required: false
+          Plain English:
+            required: false
+          Smart Brevity:
+            required: false
+          Sportscaster:
+            required: false
+          Street:
+            required: false
+          Thing Explainer:
+            required: false
+          Unslop:
+            required: false
+          Wait What:
+            required: false
+          Yoda:
+            required: false
+          ADHD Explanatory:
+            required: true
+            provided_by: plugin adhd-output-style@claude-settings
         realization_hints:
           output_style: Claude Code outputStyle setting or an output-styles file; a plugin that forces a style conflicts with this selection
           session: Claude Code session resume, checkpoints, and compaction

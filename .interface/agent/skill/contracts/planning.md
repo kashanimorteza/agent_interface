@@ -30,20 +30,30 @@ Write only Planning-owned Plan fields and Planning-owned aggregate State and His
 
 ## Workflow Invariants
 
-- Validate the complete input before mutation. Any invalid token prevents the whole planning run and produces the available phase list.
+- Validate the complete input before mutation.
+- Any invalid token prevents the whole planning run and produces the available phase list.
 - Build a transient coverage ledger mapping every selected phase requirement, applicable Principle obligation, and unresolved Review Finding to exactly one owning Task or inherited phase context.
 - A Plan is incomplete while coverage is missing, duplicated, contradictory, or represented only by a narrower example.
 - Preserve valid identities, boundaries, dependencies, wording, progress, and history; prefer stable decomposition over stylistic regeneration.
-- Set a new Plan's revision to `1`. Increment an existing Plan's revision exactly once when any Planning-owned semantic content changes during the run; preserve it when only Development-owned progress or logs changed or when reconciliation is semantically idempotent.
+- Set a new Plan's revision to `1`.
+- Increment an existing Plan's revision exactly once when any Planning-owned semantic content changes during the run; preserve it when only Development-owned progress or logs changed or when reconciliation is semantically idempotent.
 - Derive new Task boundaries from responsibilities and real dependencies, never document layout or arbitrary batch size.
 - Keep planning content implementation-independent and require verification conditions to cover every acceptance clause.
-- Read the Cross-cutting Capability applicability lists the Implementation authorities declare before stating any verification condition, and treat the testing list as the authority over which Components carry a testing concern. A Task whose target Component is listed may state a verification condition whose proof persists as a test belonging to that Component. A Task whose target Component is not listed states a verification condition satisfiable by a transient check, and never one that can only be satisfied by a persisted test. Availability of a test tool in the declared toolchain is not applicability; an unlisted Component stays unlisted.
+- Read the Cross-cutting Capability applicability lists the Implementation authorities declare before stating any verification condition, and treat the testing list as the authority over which Components carry a testing concern.
+- A Task whose target Component is listed may state a verification condition whose proof persists as a test belonging to that Component.
+- A Task whose target Component is not listed states a verification condition satisfiable by a transient check, and never one that can only be satisfied by a persisted test.
+- Availability of a test tool in the declared toolchain is not applicability; an unlisted Component stays unlisted.
 - Process phases independently in Target order unless an owned dependency or Blocker prevents continuation.
-- For every technical option a selected phase resolves, resolve its declared `agent_skills` associations against currently discoverable and usable Runtime Skills. Match the declared name against the Skill's own name within a Runtime's namespaced identifier rather than requiring an exact string match. When an associated Skill is required and currently discoverable and usable, shape the governed Task's acceptance and verification to require observable conformance with that Skill's applicable guidance, not only completion of the underlying requirement. Record the unavailability and continue when an associated Skill is not currently usable; an unavailable associated Skill never blocks planning.
+- For every technical option a selected phase resolves, resolve its declared `agent_skills` associations against currently discoverable and usable Runtime Skills.
+- Match the declared name against the Skill's own name within a Runtime's namespaced identifier rather than requiring an exact string match.
+- When an associated Skill is required and currently discoverable and usable, shape the governed Task's acceptance and verification to require observable conformance with that Skill's applicable guidance, not only completion of the underlying requirement.
+- Record the unavailability and continue when an associated Skill is not currently usable; an unavailable associated Skill never blocks planning.
 
 ## Verification
 
-Validate the complete candidate against the transient coverage ledger, current Plan authorities, and applicable Schemas before writing. Prove that every selected technical option's declared `agent_skills` associations were resolved and that each resolution is recorded, either as a shaped acceptance condition or as a reported unavailability. Planning is complete only when the selected phase Plan is complete and valid.
+- Validate the complete candidate against the transient coverage ledger, current Plan authorities, and applicable Schemas before writing.
+- Prove that every selected technical option's declared `agent_skills` associations were resolved and that each resolution is recorded, either as a shaped acceptance condition or as a reported unavailability.
+- Planning is complete only when the selected phase Plan is complete and valid.
 
 ## Idempotency
 
@@ -51,7 +61,8 @@ Rebuild from current authorities and reconcile rather than regenerate. Unchanged
 
 ## Stopping Conditions
 
-Stop before mutation on any invalid input. Leave an affected phase incomplete when required intent cannot be resolved safely, coverage cannot be completed, a conflict crosses ownership, or a genuine Blocker applies; continue independent selected phases.
+- Stop before mutation on any invalid input.
+- Leave an affected phase incomplete when required intent cannot be resolved safely, coverage cannot be completed, a conflict crosses ownership, or a genuine Blocker applies; continue independent selected phases.
 
 ## Runtime Realization
 

@@ -4,8 +4,8 @@ meta:
   path_note: The Preferences layer of the Agent Personality Component.
   purpose: Declared personalities, their definition files, the Actions each performs, and the models each prefers in priority order.
   standard: Agent Project Interface
-  version: '0.2'
-  updated: '2026-09-17'
+  version: '0.3'
+  updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -70,8 +70,6 @@ content:
         - structure
         models: []
         required: false
-    user_personalities: {}
-    managed_personalities: {}
-    extension_personalities: {}
+    placement_note: "Where a declared Personality lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (personalities, user_personalities, managed_personalities, extension_personalities) were collapsed into `personalities` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     disabled_personalities: {}
 

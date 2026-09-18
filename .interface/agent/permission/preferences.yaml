@@ -59,18 +59,21 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: Current permission mode and sandbox choice.
-  options: Supported permission modes.
+  selected: Current file-edit approval choice and sandbox choice.
+  options: Supported file-edit approval choices.
   settings: Rules, protected sources, enforced guarantees with optional per-Native realization, sandbox, trust, authentication references, secrets, external authorization, and Claude-specific hook mechanics.
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    permission_mode: edit_authorized
+    file_edit_approval: not_required
   options:
-    permission_modes:
-      edit_authorized:
+    file_edit_approvals:
+      not_required:
         meaning: Apply ordinary project file edits without per-edit confirmation while preserving explicit ask and deny rules.
+        former_key: edit_authorized (renamed 2026-09-18; the Native mechanism name moved to settings.native.claude.permission_mode)
+      per_edit:
+        meaning: Confirm every project file edit before it is applied.
   settings:
     rules:
       allow:
@@ -107,7 +110,7 @@ content:
           path: .interface/agent/
           default: deny
           consumers:
-          - skill.project_skills.supporting.agent-native
+          - skill.skills.supporting.agent-native
           invocation: direct-explicit-human-only
           grant_scope: exact expanded Human prompt only; non-transferable
           effect: The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, model-generated action, and Understanding workflow consumes synchronized Runtime artifacts
@@ -157,6 +160,8 @@ content:
               expect: The first Read succeeds; the subagent's Read is blocked (the grant is non-transferable).
     native:
       claude:
+        permission_mode: acceptEdits
+        permission_mode_note: Claude Code's realization of selected.file_edit_approval = not_required; a hint, never the authority.
         hooks:
           handler_types:
             command: {}

@@ -2,10 +2,10 @@
 meta:
   path: ".interface/agent/tool/preferences.yaml"
   path_note: "The Preferences layer of the Agent Tool Component."
-  purpose: "Built-in, project, integration, extension, user, and managed Tool catalogs and availability expectations."
+  purpose: "Declared Tool requirements, integration Tools, disabled Tools, and availability expectations."
   standard: "Agent Project Interface"
-  version: "1.1"
-  updated: "2026-09-12"
+  version: '1.2'
+  updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -32,7 +32,7 @@ content:
   selected: {}
   options: {}
   settings:
-    runtime_tools:
+    tools:
       shell_execute: {required: false}
       file_read: {required: true}
       file_discover: {required: true}
@@ -44,10 +44,7 @@ content:
       task_record: {required: false}
       web_fetch: {required: false}
       web_search: {required: false}
-    project_tools: {}
+    placement_note: "Where a declared Tool lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (runtime_tools, project_tools, extension_tools, user_tools, managed_tools) were collapsed into `tools` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     integration_tools: {}
-    extension_tools: {}
-    user_tools: {}
-    managed_tools: {}
     disabled_tools: {}
     availability_checks: {}

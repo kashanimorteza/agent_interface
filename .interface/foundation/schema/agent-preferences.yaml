@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-agent-preferences"
-  version: "1.0"
+  version: "1.1"
   purpose: "The common structure every Agent Component Preferences follow. It defines current Agent Module selections, supported alternatives, declared capabilities, resources, mappings, and explicit empty categories without turning runtime choices into portable Principles."
 
 # <!--------------------------------------------------------------------------------- Frame -->
@@ -23,7 +23,7 @@ scope:
   contains:
     - "The selected Agent Module option for each decision owned by the Component."
     - "Supported Agent Native, Agent Instance, and Runtime alternatives."
-    - "Project, runtime, built-in, user, managed, and extension capability declarations where applicable."
+    - "The capability declarations the Human makes, in one generic category per kind (rules, skills, instances, roles, tools, commands, personalities); where each lands in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision, or an item-level native.<agent-native> hint, never a structural category (decided 2026-09-18)."
     - "Native resources, paths, provider identities, mappings, activation intent, requirement status, and verification expectations."
     - "Explicit empty categories when the Preferences currently declares no entry of that kind."
   excludes:
@@ -119,7 +119,9 @@ sections:
     default: {}
     purpose: "Declared Agent resources, capability categories, mappings, defaults, overrides, and explicit empty categories owned by the Component."
     rules:
-      grouping: "Entries are grouped by the capability categories and ownership sources defined by the Component."
+      grouping: "Entries are grouped by the capability kinds the Component defines, never by the source or location a particular Native would file them under."
+      definition_files: "A declaration whose content is prose the Native must carry as written — a Rule, a Skill Contract, a Personality — keeps that prose in its own Markdown file under the Component (rule/definitions/, skill/contracts/, personality/definitions/) and points to it; Agent Sync places the file's content and adds only the Native's wrapper."
+      generic_selections: "A selected value names the Human's view in general terms; the Native mechanism that realizes it (a mode name, a feature name, a style file) belongs under settings.native.<agent-native> as a hint."
       explicit_absence: "A supported category with no declaration remains present as an empty mapping when absence must be distinguishable from omission."
       no_secrets: "Preferences may identify an authentication or secret reference but never stores its value."
       observed_state: "Installation, activation, health, and usability are verified from runtime evidence and never written back as declarations."
@@ -145,7 +147,7 @@ profile_rules:
       - "**Never** — turn an observed runtime value into a human-owned decision *(2)*"
     origin: "formerly Agent Settings Principle 2, moved here on 2026-09-17"
   - title: "Empty configuration categories are explicit"
-    rule: "Every supported configuration category exists in the Agent Preferences even when it currently contains no entries. Empty means declared and unused, not unknown or forgotten."
+    rule: "Every supported configuration category exists in the Agent Preferences even when it currently contains no entries. Empty means declared and unused, not unknown or forgotten. A supported category is one the Component defines by kind; a Native's own filing locations are not categories (2026-09-18)."
     why: "A complete profile distinguishes absence from omission."
     boundary: "Explicit emptiness does not require activating or configuring the category."
     at_a_glance:
@@ -173,4 +175,4 @@ native_blocks:
   path: "content.settings.native.<agent-native>"
   purpose: "Optional per-Agent-Native realization suggestions and Native-only mechanics. A Component states its portable concept in Principles and its portable selections in selected, options, and settings; when the Human knows how a particular Native realizes that concept best, the suggestion goes here, keyed by that Native."
   authority: "A native block is an aid that narrows Agent Sync's discovery, never an authority that overrides the Native's own mechanism. When no block exists, the Agent Native decides the realization itself."
-  scope: "Also holds declarations that exist only for one Native (for example Claude Code hook events or configuration-source precedence)."
+  scope: "Also holds declarations that exist only for one Native (for example Claude Code hook events, configuration-source precedence, permission mode names, or an Output Style catalog) and the Native mechanism name behind a generic selected value."

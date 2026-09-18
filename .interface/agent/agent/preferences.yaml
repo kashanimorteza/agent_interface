@@ -5,8 +5,8 @@ meta:
   purpose: Agent Native selection, General and Specialized Agent Instance definitions, Role contracts, Coordination policy, capability configuration, lifecycle defaults, and native realizations. Absorbs
     the former Role and Coordination Preferences.
   standard: Agent Project Interface
-  version: '2.0'
-  updated: '2026-09-17'
+  version: '2.1'
+  updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -70,7 +70,7 @@ policy:
     content_map:
       selected: The selected Agent Native and General Agent Instance.
       options: Selectable Agent Natives and General Agent Instance definitions.
-      settings: Project, runtime, user, managed, extension, and built-in Agent Instance definitions plus inherited defaults.
+      settings: Declared Agent Instance definitions plus inherited defaults.
     note: Previous descriptions of these Preferences, kept verbatim; the merged descriptions above replace them.
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -83,7 +83,7 @@ read_order:
 content_map:
   selected: Selected Agent Native, General Agent Instance, Primary Role, and default coordination and isolation strategy.
   options: Selectable Agent Natives, General Agent Instances, primary roles, and coordination mechanisms.
-  settings: Agent Instance definitions by source, inherited defaults (including optional personality), Role catalogs, coordination policy, and optional per-Native realization hints.
+  settings: Declared Agent Instance definitions, inherited defaults (including optional personality), Role catalogs, coordination policy, and optional per-Native realization hints.
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -101,10 +101,10 @@ content:
         realization: runtime-provided
     general_instances:
       general:
-        resource: project_instances.general
+        resource: instances.general
     primary_roles:
       primary-execution:
-        resource: project_roles.primary-execution
+        resource: roles.primary-execution
     default_coordinations:
       single_agent:
         meaning: The General Agent Instance executes the work directly.
@@ -118,17 +118,17 @@ content:
       worktree:
         meaning: Concurrent writers operate in isolated worktrees.
   settings:
-    project_instances:
+    instances:
       general:
         kind: general
-        role: roles.project_roles.primary-execution
+        role: roles.primary-execution
         native_identity: runtime primary agent
         native_definition: runtime-provided
         configuration: inherits instance_defaults materialized into the synchronized Runtime by explicit Agent Sync
         required: true
       interface-reader:
         kind: specialized
-        role: roles.project_roles.interface-reader
+        role: roles.interface-reader
         native_identity: interface-reader
         native_definition: resolved by Agent Sync from the selected Agent Native
         allowed_tools:
@@ -138,11 +138,7 @@ content:
         write_authority: none
         configuration: inherits instance_defaults with allowed_tools and write_authority overridden by this definition
         required: true
-    runtime_instances: {}
-    user_instances: {}
-    managed_instances: {}
-    extension_instances: {}
-    built_in_instances: {}
+    placement_note: "Where a declared Agent Instance or Role lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (project_instances, runtime_instances, user_instances, managed_instances, extension_instances, built_in_instances and the matching *_roles) were collapsed into `instances` and `roles` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     instance_defaults:
       model: null
       effort: null
@@ -156,18 +152,12 @@ content:
       personality: null
     overrides: {}
     roles:
-      project_roles:
-        primary-execution:
-          architecture_contract: Agent Role Principle 4
-          required: true
-        interface-reader:
-          architecture_contract: Agent Role Principle 5
-          required: true
-      runtime_roles: {}
-      user_roles: {}
-      managed_roles: {}
-      extension_roles: {}
-      built_in_roles: {}
+      primary-execution:
+        architecture_contract: Agent Role Principle 4
+        required: true
+      interface-reader:
+        architecture_contract: Agent Role Principle 5
+        required: true
     coordination:
       delegation:
         required_contract_fields:

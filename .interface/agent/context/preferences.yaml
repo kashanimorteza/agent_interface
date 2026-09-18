@@ -26,18 +26,19 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: Selected persistent-context and memory behavior.
-  options: Supported memory behaviors.
+  selected: Selected reliance on runtime-maintained memory.
+  options: Supported reliance choices.
   settings: Complete instruction, memory, import, compaction, and context-budget declarations.
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    auto_memory_behavior: disabled
+    runtime_memory_reliance: none
   options:
-    auto_memory_behaviors:
-      disabled:
+    runtime_memory_reliances:
+      none:
         meaning: Do not rely on runtime-maintained cross-session memory for project authority.
+        former_key: auto_memory_behavior = disabled (renamed 2026-09-18; the Native feature name moved to settings.native.claude.auto_memory)
       runtime_default:
         meaning: Use the runtime default while retaining Memory's non-authoritative status.
   settings:
@@ -76,4 +77,7 @@ content:
       - .interface/target/technical.md
       target_precedence: non-technical definition establishes Human intent; technical definition records its corresponding technical definition without changing that intent; the technical definition takes
         precedence wherever the two conflict
-
+    native:
+      claude:
+        auto_memory: disabled
+        auto_memory_note: Claude Code's realization of selected.runtime_memory_reliance = none; a hint, never the authority.

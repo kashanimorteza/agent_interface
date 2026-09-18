@@ -70,6 +70,16 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 <br>
 
+## 5. Sync places Module content; it translates only where translation serves the Native
+
+**Rule:** Agent Sync's first job is placement: it takes each declaration as the Human authored it and decides where, in the selected Agent Native's own configuration, that content belongs. The content itself is carried as written. Sync may restate a declaration in the Native's idiom only when doing so makes that concept land better in the Native's own configuration — and then the meaning, scope, and every obligation stay exactly what the Module gives them. A restatement that changes scope ("applicable" to "owning", "every" to "selected", a named Component to a category) is not a translation but a deviation, and is reported as approximated with both wordings side by side, never as synchronized.
+
+**Why:** The Module is written once, general and standard, so that any Agent can work from it; the Human's effort goes into its structure and content alone. After Sync the Human must be able to trust that every concept and rule was carried over unchanged — so that when behavior is wrong, the fault is a rule the Human wrote badly, never a translation the Human never saw.
+
+**Boundary:** Native mechanics — commands, paths, formats, invocation controls, frontmatter — are the Native's own and are always added by Sync; this Principle governs the Module's content, not the wrapper around it. Restating an obligation in the Native's idiom is allowed when its scope is provably unchanged; this Principle does not require copying Contract prose verbatim.
+
+<br>
+
 ## At a Glance
 
 - **Must** — give every Interface-owned Skill exactly one complete portable Contract conforming to the Skill Contract Schema *(1)*
@@ -85,3 +95,6 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 - **Must** — materialize an exact matching prepared Skill file or directory tree into the selected Agent Native's required Skill folder while preserving its instruction meaning and internal relative paths *(4)*
 - **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file *(4)*
 - **Never** — infer a Skill from an unmatched file or directory, treat its presence as proof of Activation, or rewrite the Human-owned prepared source *(4)*
+- **Must** — place each Module declaration as the Human authored it, adding only the Native's own mechanics around it *(5)*
+- **Must** — restate a declaration in the Native's idiom only where that makes the concept land better in the Native, and only with its scope and obligations unchanged *(5)*
+- **Never** — narrow, widen, or re-scope an obligation while realizing it; report such a difference as approximated with both wordings, never as synchronized *(5)*

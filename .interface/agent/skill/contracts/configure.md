@@ -33,7 +33,8 @@ Write the four Config records owned by Configure. Never install a technical depe
 ## Workflow Invariants
 
 - Generate or reconcile all four Config files from their current Schemas rather than a remembered structure; `application.yaml` follows the same process as the other three files.
-- Record only the public metadata a Component already publishes. When a declared Component does not yet exist, leave its Manifest section at its Schema default and report it as not yet generated; never create the Component to obtain its metadata.
+- Record only the public metadata a Component already publishes.
+- When a declared Component does not yet exist, leave its Manifest section at its Schema default and report it as not yet generated; never create the Component to obtain its metadata.
 - Preserve meaningful operational records through structural reconciliation; surface a conflict rather than discard information that has no other owner.
 - Add missing phase records at current initial values and preserve progress while generating `state.yaml`; remove a stale record only while it contains initialization defaults, otherwise preserve and report it.
 - Never copy Target meaning into Config.
@@ -41,7 +42,7 @@ Write the four Config records owned by Configure. Never install a technical depe
 
 ## Verification
 
-Validate every Config record against its applicable Schemas and verify phase identity reconciliation.
+- Validate every Config record against its applicable Schemas and verify phase identity reconciliation.
 
 ## Idempotency
 
@@ -49,7 +50,8 @@ Repeating against unchanged Schemas, Target identity, and Config produces no str
 
 ## Stopping Conditions
 
-Stop or preserve the affected item when reconciliation would lose meaningful records or a Schema cannot be applied safely. Independently valid items may continue.
+- Stop or preserve the affected item when reconciliation would lose meaningful records or a Schema cannot be applied safely.
+- Independently valid items may continue.
 
 ## Runtime Realization
 

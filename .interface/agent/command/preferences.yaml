@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Agent Command Component."
   purpose: "Built-in and custom command concepts, arguments, aliases, scope, and owning capability declarations. Native command realization is resolved by Agent Sync."
   standard: "Agent Project Interface"
-  version: "1.3"
-  updated: "2026-09-17"
+  version: '1.4'
+  updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -25,29 +25,26 @@ read_order: ["selected", "options", "settings"]
 content_map:
   selected: "Empty; no command is globally selected."
   options: "Empty; Commands are entry points rather than alternatives."
-  settings: "Built-in, custom, legacy, user, managed, and extension command catalogs."
+  settings: "Declared commands, legacy command files, and aliases."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected: {}
   options: {}
   settings:
-    custom_commands:
-      configure: {invocation: "/my-interface-configure", owner: "skill.project_skills.core_workflow.configure"}
-      planning: {invocation: "/my-interface-planning [phase-number ...]", owner: "skill.project_skills.core_workflow.planning"}
-      developing: {invocation: "/my-interface-developing [phase-number ...]", owner: "skill.project_skills.core_workflow.developing"}
-      reviewing: {invocation: "/my-interface-reviewer [phase-number ...]", owner: "skill.project_skills.core_workflow.reviewing"}
-      launch: {invocation: "/my-interface-launch", owner: "skill.project_skills.core_workflow.launch"}
-      implement: {invocation: "/my-interface-implement [phase-number ...]", owner: "skill.project_skills.supporting.implement"}
-      reset: {invocation: "/my-interface-reset [phase-number ... | config | complete]", owner: "skill.project_skills.supporting.reset"}
+    commands:
+      configure: {invocation: "/my-interface-configure", owner: "skill.skills.core_workflow.configure"}
+      planning: {invocation: "/my-interface-planning [phase-number ...]", owner: "skill.skills.core_workflow.planning"}
+      developing: {invocation: "/my-interface-developing [phase-number ...]", owner: "skill.skills.core_workflow.developing"}
+      reviewing: {invocation: "/my-interface-reviewer [phase-number ...]", owner: "skill.skills.core_workflow.reviewing"}
+      launch: {invocation: "/my-interface-launch", owner: "skill.skills.core_workflow.launch"}
+      implement: {invocation: "/my-interface-implement [phase-number ...]", owner: "skill.skills.supporting.implement"}
+      reset: {invocation: "/my-interface-reset [phase-number ... | config | complete]", owner: "skill.skills.supporting.reset"}
       agent-native:
         invocation: "/my-interface-agent-native <1=sync self | 2=sync component | 3=install>"
         modes: {1: "sync self", 2: "sync component", 3: "install"}
-        owner: "skill.project_skills.supporting.agent-native"
+        owner: "skill.skills.supporting.agent-native"
         invocation_scope: "direct-explicit-human-only"
-    built_in_commands: {}
+    placement_note: "Where a declared Command lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (custom_commands, built_in_commands, user_commands, managed_commands, extension_commands) were collapsed into `commands` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     legacy_command_files: {}
-    user_commands: {}
-    managed_commands: {}
-    extension_commands: {}
     aliases: {}

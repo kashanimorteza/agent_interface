@@ -114,7 +114,7 @@ def constructed_skills(root: Path) -> list[dict]:
     settings = prefs["content"]["settings"]
     files_dir = root / (settings.get("skill_files") or {}).get("directory", "")
     found = []
-    for group in (settings.get("project_skills") or {}).values():
+    for group in (settings.get("skills") or settings.get("project_skills") or {}).values():
         if not isinstance(group, dict):
             continue
         for key, decl in group.items():

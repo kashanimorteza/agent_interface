@@ -30,3 +30,4 @@ Every Skill Contract contains these sections in this order:
 - Source formats, status vocabularies, and storage shapes remain owned by their Components and Schemas; the Contract points to those owners rather than copying them.
 - External framework, package, extension, built-in, user, and managed Skills remain provider-owned resources declared in Skill Preferences. They follow applicable Agent Principles and the active Role but do not receive Interface-owned Skill Contracts.
 - Every obligation appears once. Shared obligations remain in Agent Skill Principles or another owning Component and are referenced, not copied.
+- Each Workflow Invariant, Verification requirement, and Stopping Condition is one obligation on one bullet, complete in itself. A bullet that states two obligations is split. This lets a native realization carry each obligation as one unit and lets the Human see, line by line, that nothing was narrowed.

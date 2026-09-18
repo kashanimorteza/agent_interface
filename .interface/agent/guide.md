@@ -27,8 +27,9 @@ This document explains the Agent Module: what it is, why it exists, how its part
 9. **[Decisions taken — Agent Native Skill](#decisions-taken--agent-native-skill)**
 10. **[Understanding record — Configure](#understanding-record--configure)**
 11. **[Understanding record — Implement, Planning, Developing, Reviewing](#understanding-record--implement-planning-developing-reviewing)**
-12. **[Decisions taken](#decisions-taken)**
-13. **[Open decisions](#open-decisions)**
+12. **[Understanding record — Sync places, it does not translate](#understanding-record--sync-places-it-does-not-translate)**
+13. **[Decisions taken](#decisions-taken)**
+14. **[Open decisions](#open-decisions)**
 
 <br>
 
@@ -41,7 +42,7 @@ The Module does not know the Agent Native. A separate Skill, Agent Sync, establi
 
 The Agent Module is the Human-owned, Runtime-independent home for the complete reusable view of how an Agent Native and its Agent Instances should operate. The Human declares that view once through its Components—including the Agent Native, Agent Instance identities, Roles, Rules, Skills, settings, capabilities, boundaries, and every other supported mechanism—rather than explaining the same expectations separately to Claude Code, Codex, or each later Agent Runtime. Each Agent Component owns one responsibility and has Principles for its mandatory portable contract and a Preferences file for its current choices, resources, portable realization requirements, and explicit empty categories.
 
-The Agent Module expresses our general understanding, philosophy, rules, responsibilities, boundaries, and desired behavior for an Agent. It is an independent declaration and is not written for Claude Code, Codex, or any other specific Agent Native. It does not define the Target and does not prescribe a vendor's files, directories, command names, configuration format, or implementation mechanism. An Agent Native reads this portable Module through explicit Agent Sync, understands its own runtime documentation and capabilities, and translates the Module into the native structures it supports. The meaning and authority come from the Agent Module; the concrete runtime form comes from the Agent Native.
+The Agent Module expresses our general understanding, philosophy, rules, responsibilities, boundaries, and desired behavior for an Agent. It is an independent declaration and is not written for Claude Code, Codex, or any other specific Agent Native. It does not define the Target and does not prescribe a vendor's files, directories, command names, configuration format, or implementation mechanism. An Agent Native reads this portable Module through explicit Agent Sync, understands its own runtime documentation and capabilities, and places the Module's content into the native structures it supports. Placement comes first: Sync carries each declaration as the Human wrote it and decides only where it belongs in the Native's own configuration. It restates a declaration in the Native's idiom only where that makes the concept land better there — and never in a way that shifts its scope or meaning (decided 2026-09-18, Skill Principle 5). The meaning and authority come from the Agent Module; the concrete runtime form comes from the Agent Native. This is why the Module must be general and standard: all of the Human's effort goes into its structure and content, and after Sync the Human can trust that every concept and rule arrived unchanged — so if the Agent behaves wrongly, the cause is a rule the Human wrote badly, never a translation the Human never saw.
 
 Every capability the Module declares has exactly one Capability Realization Kind, and that Kind decides what Agent Sync does with it. A Constructed capability is built by the Agent Native from a portable specification such as a Skill Contract. A Prepared capability is transferred into the Runtime unchanged from a complete Human-authored artifact. An Installed capability is provisioned by the Agent Native through its own native mechanism from an external source such as a marketplace, package registry, or MCP server, and is never built or transferred. This distinction applies to every Component, not only to Skills, so a newly declared capability of any kind has a defined place and a defined realization path. Because external sources differ by Agent Native, a declaration may carry optional per-Agent-Native identity for an Installed capability so the selected Native can locate and provision it. That identity helps the Native find an external artifact; it never prescribes the Native's own structure, format, or mechanism, and Agent Sync treats it as an aid rather than an authority.
 
@@ -52,7 +53,7 @@ Together, these Components form the Agent Preferences within the complete Agent 
 
 Every view, rule, limit, and responsibility that concerns the Agent, and would remain true if the Target or the Implementation were replaced. A rule such as "never commit or push until the Human explicitly asks" is an Agent rule: it is a rule between the Human and the Agent, not a property of any project. The Module records it, and the Agent Native enforces it through whichever native mechanism it has (a permission rule, a hook, a persistent instruction).
 
-What does not belong here: the meaning of the Target, the engineering philosophy of the Implementation, the shape of generated Config, and any vendor's file layout, command names, or configuration format.
+What does not belong here: the meaning of the Target, the engineering philosophy of the Implementation, the shape of generated Config, and any vendor's file layout, command names, or configuration format. That includes structure in disguise: a Preferences category named after where one Native files things (project, user, managed, extension), or a selection named after one Native's mechanism (a permission mode, a memory feature, a style file). Such names are kept out of the general structure and, where the Human wants to hint at them, live only under `native.<agent-native>` (decided 2026-09-18).
 
 <br>
 
@@ -62,6 +63,12 @@ Each Agent Component has two files.
 
 - `principles.md` states the Human's view and philosophy of that Component. It contains no technology, package, provider, or Agent Native. It is portable: the same file can be handed to another project or another Agent unchanged.
 - `preferences.yaml` holds the parameters that support that view: current selections, declared resources, explicit empty categories, and — when a view needs a helper for one Agent Native — a block declared for that Native only (for example `native.claude`). Preferences are in effect a preferences file; it never weakens a Principle.
+
+Three conventions keep Preferences ready for placement rather than rewriting (decided 2026-09-18):
+
+- **Definition files.** Content the Native must carry as written — a Rule's text, a Skill Contract, a Personality — lives in its own Markdown file under the Component (`rule/definitions/`, `skill/contracts/`, `personality/definitions/`), and Preferences point to it. Sync places the file's content and adds only the Native's wrapper.
+- **Categories by kind, not by location.** Preferences group declarations by what they are (`rules`, `skills`, `instances`, `roles`, `tools`, `commands`, `personalities`), never by where a particular Native would file them. Where an item lands is Sync's decision, or an item-level `native.<agent-native>` hint.
+- **Generic selections.** A `selected` value names the Human's view in general terms; the Native mechanism that realizes it is a hint under `settings.native.<agent-native>`.
 
 When the Agent Native changes, Principles stay as they are. Only the Native-specific helper blocks in Preferences may change.
 
@@ -142,11 +149,13 @@ Persistent global and scoped behavioral instructions. Absorbs the former Interac
 name: Rule
 principles: .interface/agent/rule/principles.md
 preferences: .interface/agent/rule/preferences.yaml
+definitions: .interface/agent/rule/definitions/<rule>.md
 responsibility: Persistent global and scoped behavioral instructions; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
 ```
 
 → [Principles](rule/principles.md)<br>
-→ [Preferences](rule/preferences.yaml)
+→ [Preferences](rule/preferences.yaml)<br>
+→ [Definitions](rule/definitions/)
 
 ### Skill
 
@@ -286,7 +295,7 @@ Only the Agent Native Skill reads this Module. Every other Skill, Agent Instance
 Agent Sync has succeeded when three things are true together:
 
 1. it established a precise Understanding of the complete Module;
-2. it transferred that Understanding into the Agent Native's configuration and mechanisms — the declared Skills exist there, the rules and limits are in force there, and the concept and view the Module expresses reached the Native in the best form the Native allows; and
+2. it transferred that Understanding into the Agent Native's configuration and mechanisms — the declared Skills exist there, the rules and limits are in force there, and the concept and view the Module expresses reached the Native in the best form the Native allows, placed as the Human wrote it and restated only where that served the Native, with any change of scope reported as approximated rather than hidden; and
 3. the Agent then works the way the Human intended: it has understood how it must be configured and behaves accordingly.
 
 The third condition is about behavior, not only about artifacts. A file that exists and a rule that is loaded are evidence for the second condition; only observed conduct is evidence for the third.
@@ -388,6 +397,31 @@ Only when it was invoked without a phase number. With a phase number, Configure 
 
 <br>
 
+## Understanding record — Sync places, it does not translate
+
+Recorded on 2026-09-18, after a README that Development Principle 8 requires for every generated Component was found missing from `model/` and `database/`.
+
+**What went wrong, in the Human's words?** The Agent Module said everything correctly, but the translation and interpretation in the Agent Native went wrong. The Planning Contract says "applicable Principle obligation"; the synchronized Planning adapter says "obligation from the *owning* Implementation Component". One scope word changed, Development's obligations fell out of the coverage ledger, and the README was never a Task. Sync reported this as synchronized, not approximated, because from its point of view it had only reworded.
+
+**What is Sync for, in the Human's words?** Its main purpose in sync is to take the content we authored in the Agent Module and decide, from the Native's own configuration, where to place it — and to stay away from translation or interpretation as far as it can, except where a translation would let the Native's own configuration carry the concept better. The priority is placement as written; translation is the exception, used only when it makes the concept land better in the Native.
+
+**Why does that matter?** We put all our effort into making the Agent Module general and standard, so any Agent can work from it. Our focus must stay on the Module's structure and content alone. When we sync, we must be able to trust that every concept and rule was transferred — so that if something is wrong, it is because we wrote a bad rule, not because it was mistranslated or misinterpreted.
+
+**So where is the fix?** Not in Planning, which was written correctly, and not in Foundation or Understanding: in the Agent Module's own standard for Principles and Preferences, so that Sync has fewer openings for this kind of misunderstanding. Structure that hands Sync finished content to place beats structure that hands it a summary to rewrite.
+
+**Decisions taken on 2026-09-18:**
+
+1. Skill Principle 5 — "Sync places Module content; it translates only where translation serves the Native" — with the Why above. A restatement that changes scope is a deviation and is reported as approximated with both wordings, never as synchronized.
+2. The Agent Native Contract no longer says Sync "translates between these two sides"; it places the Module's content as authored, restating only where that helps the Native, and realizes each adapter "completely and faithfully".
+3. Skill Contract Schema: each Workflow Invariant, Verification requirement, and Stopping Condition is one obligation on one bullet. All eight Contracts were split accordingly on 2026-09-18 without any change of text — verified sentence for sentence — so Sync carries one obligation as one unit and the Human can see line by line that nothing was narrowed.
+4. Rules get definition files: `rule/definitions/<rule>.md` holds each Rule's complete text as the Human wrote it, as Skill Contracts and Personality definitions already do; Preferences point to the file. `interface-agent-capabilities` stays `derived`, because its content is a catalog Sync builds from Skill and Command Preferences. The four definitions were seeded from the synchronized `.claude/rules/*.md` files, with Native names generalized (the Agent Native Skill and its modes instead of a command name; Permission's guarantees instead of "hook"); ownership returns to the Module.
+5. Settings categories that mirrored Claude Code's filing locations — `project_`, `user_`, `managed_`, `extension_`, `path_scoped_`, `runtime_`, `built_in_` — were collapsed into one generic category per kind (`rules`, `skills`, `instances`, `roles`, `tools`, `commands`, `personalities`) in Rule, Agent, Skill, Tool, Command, and Personality Preferences. Where an item lands in the Native is Sync's decision, or an item-level `native.<agent-native>` hint. Every former category except the one holding content was empty; each file carries a `placement_note` naming what it replaced. Capability identifiers changed with it: `project_skills.core_workflow.configure` is now `skills.core_workflow.configure`, `roles.project_roles.primary-execution` is now `roles.primary-execution`.
+6. Selections that named a Claude mechanism now name the Human's view, with the mechanism under `native.claude`: Permission `permission_mode: edit_authorized` → `file_edit_approval: not_required` (+ `native.claude.permission_mode: acceptEdits`); Context `auto_memory_behavior: disabled` → `runtime_memory_reliance: none` (+ `native.claude.auto_memory: disabled`); Rule `output_style: ADHD Explanatory` → `response_style: explanatory_structured`, with the whole Output Style catalog and the plugin note moved under `native.claude`. Each option keeps a `former_key` so the rename is traceable.
+7. The Agent Preferences Schema records these rules: grouping by kind never by Native location, definition files for prose the Native must carry as written, generic selections with the mechanism name under `native.<agent-native>`.
+8. Rejected: a proposal to patch the Planning Contract's wording ("applicable → the phase's Component and every Component it consumes"). Planning was right; the Module standard was the gap.
+
+<br>
+
 ## Decisions taken
 
 Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then written into the Module in the Component that owns it; the Agent Native was changed only through Agent Sync, except for the one-time hand bootstrap of the Agent Sync adapter.
@@ -407,7 +441,7 @@ Recorded on 2026-09-17. Each was discussed with the Human, confirmed, and then w
 - Configure is Config-only (2026-09-18): no installation, no Environment preparation, no reading of Implementation or Platform Preferences. Developing prepares its phase's technical requirements; Launch prepares its Environment and raises a Blocker for system-level needs; Review names the right owner for each kind of drift.
 - Implement enters an already-implemented phase through Review first (`entry: review-first` in the run log) and a never-implemented phase through Planning first; a satisfied first Review ends the phase without rework.
 - The Planning → Developing → Reviewing loop belongs to Implement. Reviewing records Findings with their owning operation and invokes nothing; its `coordination` declaration moved to Implement, which may invoke Configure, Planning, Developing, Reviewing, and Launch. The Detailed workflow path no longer runs Review before Developing.
-- Output Style is owned by the enabled plugin `adhd-output-style`; Rule Preferences select `ADHD Explanatory`, the style that plugin provides.
+- Output Style is owned by the enabled plugin `adhd-output-style`; Rule Preferences select `ADHD Explanatory`, the style that plugin provides. (Since 2026-09-18 the generic selection is `response_style: explanatory_structured` and `ADHD Explanatory` is named under `native.claude`.)
 - Context Preferences state that the Technical Definition takes precedence over the Non-Technical Definition wherever they conflict.
 - Runtime Preferences drop the undefined `required_profile_version`/`status` pair; `compatibility` is an explicit empty category.
 - The Agent Module's second file is `preferences.yaml`, as in the Implementation Module; the schema is `agent-preferences.yaml`; "Preferences" replaces "Profile" throughout the Module. Implementation's own term "Component Profile" is unrelated and unchanged.

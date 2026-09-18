@@ -32,7 +32,8 @@ Control only project runtime startup, connection, readiness, and shutdown action
 
 - Resolve Environment and Launch from explicit Target decisions first and Platform defaults second; never invent a missing definition.
 - Launch only the parts included by the selected Launch Scope: `api`, `presentation`, `logic`, or `complete`/`all`.
-- Require Development completion for every phase currently enabled and ready. Review is an additional prerequisite only when Target, Platform, or the invoking coordinator requires it.
+- Require Development completion for every phase currently enabled and ready.
+- Review is an additional prerequisite only when Target, Platform, or the invoking coordinator requires it.
 - Mark Launch as launching before mutation and record the final truthful state afterward.
 - Inspect the Environment before startup, apply only the missing declared project-scoped requirements of the selected Launch Item, record a Blocker for any system-level requirement the Human must provide, and verify preparation before starting anything.
 - Follow declared dependency order and stop dependent startup after a failed prerequisite.
@@ -42,7 +43,7 @@ Control only project runtime startup, connection, readiness, and shutdown action
 
 ## Verification
 
-Observe readiness for every launched or preserved part and verify the composed result and every reported Access Point.
+- Observe readiness for every launched or preserved part and verify the composed result and every reported Access Point.
 
 ## Idempotency
 
@@ -50,7 +51,7 @@ Repeated Launch preserves healthy running parts and changes only runtime element
 
 ## Stopping Conditions
 
-Stop when Environment or Launch is unresolved or incompatible, a required system-level preparation is missing, preparation is unverified, required Development is incomplete, a prerequisite startup fails, readiness fails, or a required binding cannot be delivered safely.
+- Stop when Environment or Launch is unresolved or incompatible, a required system-level preparation is missing, preparation is unverified, required Development is incomplete, a prerequisite startup fails, readiness fails, or a required binding cannot be delivered safely.
 
 ## Runtime Realization
 

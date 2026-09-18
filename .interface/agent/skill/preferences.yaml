@@ -2,11 +2,11 @@
 meta:
   path: .interface/agent/skill/preferences.yaml
   path_note: The Preferences layer of the Agent Skill Component.
-  purpose: Interface-owned Skill Contracts, optional prepared Skill files or directories, and prepared, installed, built-in, user, managed, and extension provider Skill declarations. Native mappings are
+  purpose: Interface-owned Skill Contracts, optional prepared Skill files or directories, and prepared and installed provider Skill declarations. Native mappings are
     resolved by Agent Sync.
   standard: Agent Project Interface
-  version: '2.0'
-  updated: '2026-09-17'
+  version: '2.1'
+  updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -50,7 +50,7 @@ content:
   options:
     implementation_skills:
       implement:
-        resource: project_skills.supporting.implement
+        resource: skills.supporting.implement
   settings:
     skill_files:
       directory: .interface/agent/skill/files/
@@ -60,7 +60,7 @@ content:
         tree with its internal relative paths intact - and add or adapt only metadata required by that Runtime without changing meaning.
       absent: Realize the Skill from its portable Contract or provider declaration using the selected Agent Native's conventions; absence is never an error by itself.
       unmatched: A prepared file or directory that does not match exactly one declared Skill is reported and never installed by inference.
-    project_skills:
+    skills:
       core_workflow:
         configure:
           name: my-interface-configure
@@ -127,15 +127,15 @@ content:
           required: true
           coordination:
             allowed_skills:
-            - project_skills.core_workflow.configure
-            - project_skills.core_workflow.planning
-            - project_skills.core_workflow.developing
-            - project_skills.core_workflow.reviewing
-            - project_skills.core_workflow.launch
+            - skills.core_workflow.configure
+            - skills.core_workflow.planning
+            - skills.core_workflow.developing
+            - skills.core_workflow.reviewing
+            - skills.core_workflow.launch
             scope: Configure once when no phase was selected or when a Finding names it; Planning, Developing, and Reviewing per selected phase, repeated while Review records Findings and progress continues;
               Launch when every enabled and ready phase is assured
             authority: delegated invocation only through the Native's own Skill invocation mechanism; each Skill retains ownership of its records and outputs
-            moved_from: 'reviewing.coordination on 2026-09-17 (was: {allowed_skills: [project_skills.core_workflow.configure, project_skills.core_workflow.planning, project_skills.core_workflow.developing],
+            moved_from: 'reviewing.coordination on 2026-09-17 (was: {allowed_skills: [skills.core_workflow.configure, skills.core_workflow.planning, skills.core_workflow.developing],
               authority: delegated invocation only; each Skill retains ownership of its records and outputs, scope: same selected phase and current reconciliation Finding; Configure may also reconcile project-wide
               Config or Environment prerequisites})'
         reset:
@@ -171,10 +171,7 @@ content:
                 source: github
                 repository: pydantic/skills
               plugin: pydantic@pydantic-skills
-    user_skills: {}
-    managed_skills: {}
-    runtime_skills: {}
-    extension_skills: {}
+    placement_note: "Where a declared Skill lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (project_skills, user_skills, managed_skills, runtime_skills, extension_skills) were collapsed into `skills` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     disabled_skills: {}
     overrides: {}
 
