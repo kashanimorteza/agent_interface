@@ -5,19 +5,19 @@
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
-1. **[Introduction](#introduction)** — understand the purpose, workflow, independence, and boundaries of Agent Interface.
-2. **[Terminology](#terminology)** — learn the shared vocabulary used throughout the Interface.
-3. **[Architecture](#architecture)** — see the high-level structure and its primary sections.
-4. **[Modules](#modules)** — locate the three primary conceptual boundaries of the Interface.
-   - **[Target](#target)** — understand what is being built through its non-technical and technical definitions.
-   - **[Implementation](#implementation)** — understand the engineering philosophy through Components and their Principles and Implementation Preferences.
-   - **[Agent](#agent)** — understand the executing system, its capabilities, restrictions, and Skills.
-5. **[Foundation Files](#foundation-files)** — locate the Interface document, Config, and shared Schema definitions.
-6. **[Understanding](#understanding)** — distinguish knowledge of Agent Interface from knowledge of the current Target.
-7. **[Operations](#operations)** — understand the one-to-one actions performed through every Interface-owned Skill.
-8. **[Modes](#modes)** — understand the operational positions recorded by State.
-9. **[Authority and Ownership](#authority-and-ownership)** — understand who owns each record and which Skill may change it.
-10. **[Workflow](#workflow)** — choose Default, Normal, or Detailed control while following the path from Target definition through launch.
+1. **[Introduction](#introduction)**
+2. **[Terminology](#terminology)**
+3. **[Architecture](#architecture)**
+4. **[Modules](#modules)**
+   - **[Target](#target)**
+   - **[Implementation](#implementation)**
+   - **[Agent](#agent)**
+5. **[Foundation Files](#foundation-files)**
+6. **[Understanding](#understanding)**
+7. **[Operations](#operations)**
+8. **[Modes](#modes)**
+9. **[Authority and Ownership](#authority-and-ownership)**
+10. **[Workflow](#workflow)**
 
 
 <br><br>

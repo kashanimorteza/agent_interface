@@ -8,19 +8,39 @@ Foundation is not one of the three Modules (Target, Implementation, Agent). It i
 
 ## Navigation
 
-1. **[Purpose](#purpose)** — what Foundation provides to every Module and Skill.
-2. **[Structure](#structure)** — the full directory tree.
-3. **[Interface file](#interface-file)** — `interface.md`, the single entry point one level above.
-4. **[Interface sections kept as separate files](#interface-sections-kept-as-separate-files)** — the eight sections moved out of `interface.md`.
-   - **[Introduction](#introduction)** · **[Terminology](#terminology)** · **[Architecture](#architecture)** · **[Understanding](#understanding)** · **[Operations](#operations)** · **[Modes](#modes)** · **[Authority and Ownership](#authority-and-ownership)** · **[Workflow](#workflow)**
-5. **[Config](#config)** — the four mutable operational records.
-   - **[Application Manifest](#application-manifest-config)** · **[State](#state-config)** · **[Plan](#plan-config)** · **[Review](#review-config)**
-6. **[Schema](#schema)** — the structure every authored file and generated record follows.
-   - **[Structure standards](#structure-standards)** — **[YAML](#yaml-schema)** · **[Principles](#principles-schema)** · **[Preferences](#preferences-schema)** · **[Agent Preferences](#agent-preferences-schema)** · **[Skill Contract](#skill-contract-schema)** · **[Personality](#personality-schema)**
-   - **[Operational formats](#operational-formats)** — **[Application Manifest](#application-manifest-schema)** · **[State](#state-schema)** · **[Plan](#plan-schema)** · **[Review](#review-schema)**
-7. **[Ownership](#ownership)** — who owns each Foundation file and each Config record.
-8. **[Understanding record](#understanding-record)** — the Human's own explanation, once recorded.
-9. **[Open decisions](#open-decisions)** — what is still undecided.
+1. **[Purpose](#purpose)**
+2. **[Structure](#structure)**
+3. **[Interface file](#interface-file)**
+4. **[Interface sections kept as separate files](#interface-sections-kept-as-separate-files)**
+   - **[Introduction](#introduction)**
+   - **[Terminology](#terminology)**
+   - **[Architecture](#architecture)**
+   - **[Understanding](#understanding)**
+   - **[Operations](#operations)**
+   - **[Modes](#modes)**
+   - **[Authority and Ownership](#authority-and-ownership)**
+   - **[Workflow](#workflow)**
+5. **[Config](#config)**
+   - **[Application Manifest](#application-manifest-config)**
+   - **[State](#state-config)**
+   - **[Plan](#plan-config)**
+   - **[Review](#review-config)**
+6. **[Schema](#schema)**
+   - **[Structure standards](#structure-standards)**
+     - **[YAML](#yaml-schema)**
+     - **[Principles](#principles-schema)**
+     - **[Preferences](#preferences-schema)**
+     - **[Agent Preferences](#agent-preferences-schema)**
+     - **[Skill Contract](#skill-contract-schema)**
+     - **[Personality](#personality-schema)**
+   - **[Operational formats](#operational-formats)**
+     - **[Application Manifest](#application-manifest-schema)**
+     - **[State](#state-schema)**
+     - **[Plan](#plan-schema)**
+     - **[Review](#review-schema)**
+7. **[Ownership](#ownership)**
+8. **[Understanding record](#understanding-record)**
+9. **[Open decisions](#open-decisions)**
 
 <br>
 

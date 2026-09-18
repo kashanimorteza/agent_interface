@@ -6,14 +6,23 @@ This document explains the Implementation Module: what it is, what its Component
 
 ## Navigation
 
-1. **[Purpose](#purpose)** — what the Implementation is and how it stays independent of the Target and the Agent.
-2. **[Principles and Preferences](#principles-and-preferences)** — how each Component divides its content between `principles.md` and `preferences.yaml`.
-3. **[Components](#components)** — the ten Components, each with its Principles, Preferences, and responsibility.
-   - **[Development](#development)** · **[Model](#model)** · **[Database](#database)** · **[Logic](#logic)** · **[API](#api)** · **[Presentation](#presentation)** · **[Platform](#platform)** · **[Plan](#plan)** · **[Review](#review)** · **[State](#state)**
-4. **[How the Implementation is used](#how-the-implementation-is-used)** — how Skills read the Components while working on the Target.
-5. **[Ownership](#ownership)** — who owns the Components and their records.
-6. **[Understanding record](#understanding-record)** — the Human's own explanation, once recorded.
-7. **[Open decisions](#open-decisions)** — what is still undecided about this Module.
+1. **[Purpose](#purpose)**
+2. **[Principles and Preferences](#principles-and-preferences)**
+3. **[Components](#components)**
+   - **[Development](#development)**
+   - **[Model](#model)**
+   - **[Database](#database)**
+   - **[Logic](#logic)**
+   - **[API](#api)**
+   - **[Presentation](#presentation)**
+   - **[Platform](#platform)**
+   - **[Plan](#plan)**
+   - **[Review](#review)**
+   - **[State](#state)**
+4. **[How the Implementation is used](#how-the-implementation-is-used)**
+5. **[Ownership](#ownership)**
+6. **[Understanding record](#understanding-record)**
+7. **[Open decisions](#open-decisions)**
 
 <br>
 
@@ -67,7 +76,8 @@ preferences: .interface/implementation/development/preferences.yaml
 responsibility: Defines the layered architecture and how independent layers are composed into one system; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](development/principles.md) · [Preferences](development/preferences.yaml)
+→ [Principles](development/principles.md)<br>
+→ [Preferences](development/preferences.yaml)
 
 ### Model
 
@@ -80,7 +90,8 @@ preferences: .interface/implementation/model/preferences.yaml
 responsibility: Describes the domain entities and provides one shared logical meaning for domain data; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](model/principles.md) · [Preferences](model/preferences.yaml)
+→ [Principles](model/principles.md)<br>
+→ [Preferences](model/preferences.yaml)
 
 ### Database
 
@@ -93,7 +104,8 @@ preferences: .interface/implementation/database/preferences.yaml
 responsibility: Owns the persistence layer and publishes one generic interface for reading and writing; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](database/principles.md) · [Preferences](database/preferences.yaml)
+→ [Principles](database/principles.md)<br>
+→ [Preferences](database/preferences.yaml)
 
 ### Logic
 
@@ -106,7 +118,8 @@ preferences: .interface/implementation/logic/preferences.yaml
 responsibility: Implements application Behaviour as reusable Logic; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](logic/principles.md) · [Preferences](logic/preferences.yaml)
+→ [Principles](logic/principles.md)<br>
+→ [Preferences](logic/preferences.yaml)
 
 ### API
 
@@ -119,7 +132,8 @@ preferences: .interface/implementation/api/preferences.yaml
 responsibility: Runs the external API process and publishes the application's public contract through Logic; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](api/principles.md) · [Preferences](api/preferences.yaml)
+→ [Principles](api/principles.md)<br>
+→ [Preferences](api/preferences.yaml)
 
 ### Presentation
 
@@ -132,7 +146,8 @@ preferences: .interface/implementation/presentation/preferences.yaml
 responsibility: Presents the application to users and consumes the capabilities Logic publishes; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](presentation/principles.md) · [Preferences](presentation/preferences.yaml)
+→ [Principles](presentation/principles.md)<br>
+→ [Preferences](presentation/preferences.yaml)
 
 ### Platform
 
@@ -145,7 +160,8 @@ preferences: .interface/implementation/platform/preferences.yaml
 responsibility: Prepares a completed Target for operation and brings it online; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](platform/principles.md) · [Preferences](platform/preferences.yaml)
+→ [Principles](platform/principles.md)<br>
+→ [Preferences](platform/preferences.yaml)
 
 ### Plan
 
@@ -158,7 +174,8 @@ preferences: .interface/implementation/plan/preferences.yaml
 responsibility: Turns phases into bounded, verifiable activities organized as Plans, Groups, and Tasks; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](plan/principles.md) · [Preferences](plan/preferences.yaml)
+→ [Principles](plan/principles.md)<br>
+→ [Preferences](plan/preferences.yaml)
 
 ### Review
 
@@ -171,7 +188,8 @@ preferences: .interface/implementation/review/preferences.yaml
 responsibility: Establishes whether implemented work satisfies what was asked, and records what it found; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](review/principles.md) · [Preferences](review/preferences.yaml)
+→ [Principles](review/principles.md)<br>
+→ [Preferences](review/preferences.yaml)
 
 ### State
 
@@ -184,7 +202,8 @@ preferences: .interface/implementation/state/preferences.yaml
 responsibility: Records active position, aggregate phase progress, implementation, launch, History, Blockers, and Open Questions; the Principles are the authority, the Preferences supply defaults where the Target is silent
 ```
 
-→ [Principles](state/principles.md) · [Preferences](state/preferences.yaml)
+→ [Principles](state/principles.md)<br>
+→ [Preferences](state/preferences.yaml)
 
 The Component's own Principles remain the authority: when this summary and a Component's Principles disagree, the Principles are correct.
 

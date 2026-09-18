@@ -6,14 +6,14 @@ This document explains the Target Module: what it is, what its files hold, who o
 
 ## Navigation
 
-1. **[Purpose](#purpose)** — what the Target is and why it is separated from Implementation and Agent.
-2. **[Structure](#structure)** — the two definitions that make up the Target and where each lives.
-   - **[Non-Technical Definition](#non-technical-definition)** — the Human's statement of intent, context, and requirements.
-   - **[Technical Definition](#technical-definition)** — the authoritative technical form, including the Phases.
-3. **[How the Target is used](#how-the-target-is-used)** — Target Understanding, precedence, and Phases.
-4. **[Ownership](#ownership)** — who owns the definitions and who may not write to them.
-5. **[Understanding record](#understanding-record)** — the Human's own explanation, once recorded.
-6. **[Open decisions](#open-decisions)** — what is still undecided about this Target.
+1. **[Purpose](#purpose)**
+2. **[Structure](#structure)**
+   - **[Non-Technical Definition](#non-technical-definition)**
+   - **[Technical Definition](#technical-definition)**
+3. **[How the Target is used](#how-the-target-is-used)**
+4. **[Ownership](#ownership)**
+5. **[Understanding record](#understanding-record)**
+6. **[Open decisions](#open-decisions)**
 
 <br>
 
