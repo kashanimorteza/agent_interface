@@ -1,0 +1,586 @@
+meta:
+  path: ".interface/foundation/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+read_order:
+  - "task_count"
+  - "plans"
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+content:
+  task_count: 17
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      revision: 2
+      target: "Model"
+      does: "Implement the independent Model layer as one reusable package expressing every domain concept, field, relationship, rule, and credential meaning the Target declares."
+      constraints:
+        - "Every Domain Definition's acceptance additionally requires demonstrating serialization and schema-generation behavior through the Foundation's shared mechanism, per Model Preferences' declared verification checks (public interface, validation behavior, serialization and schema generation)."
+      task_count: 17
+      groups:
+        P1.G1:
+          id: "P1.G1"
+          title: "Model Foundation"
+          description: "The shared technology-independent foundation every Domain Definition builds on for validation, serialization, and metadata publishing."
+          area: "Model Foundation"
+          does: "Every Domain Definition can obtain shared validation, serialization, and metadata-publishing mechanisms without inheriting Fields or relationships from the Foundation."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1.G1.T1:
+              id: "P1.G1.T1"
+              title: "Establish the shared Model Foundation"
+              description: "Provide the technology-independent common foundation through which every concrete Domain Definition receives shared validation, serialization, and metadata-publishing mechanisms, without the Foundation owning, injecting, or requiring any Field or Domain Relationship."
+              reason: "Model Principles require every concrete Model realization to receive applicable shared mechanisms through one Model Foundation so cross-Model behavior stays consistent without imposing domain meaning on any Domain Definition."
+              kind: "code"
+              inputs: ["Model Principles' Model Foundation requirement", "the resolved Model technical profile"]
+              expected_result: "A shared foundation exists that every later Domain Definition can build on for validation, serialization, and metadata publishing, and the Foundation itself declares no Field or relationship."
+              depends_on: []
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "A Domain Definition built on the Foundation can obtain validation, serialization, and metadata-publishing behavior without redeclaring it, the Foundation declares no Field or relationship of its own, and its use demonstrates observable conformance with the associated modeling Skill's applicable guidance."
+              verify: "A representative Domain Definition built on the Foundation deterministically validates its own data, serializes itself, and publishes its declared vocabulary through the Foundation's shared mechanism, without the Foundation contributing a Field or relationship."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Ran a transient check (uv run python -c ...): built a representative Domain Definition on DomainModel with a primary-key field and a unique field; construction with valid data succeeded, wrong-type and missing-required-field data were deterministically rejected (ValidationError), declaration() published the field vocabulary, and model_dump_json() serialized correctly. DomainModel.model_fields == {} confirmed the Foundation declares no Field of its own. No artifact left in the component."
+                  outcome: "passed"
+        P1.G2:
+          id: "P1.G2"
+          title: "Identity"
+          description: "The independent user of the system."
+          area: "Identity"
+          does: "The User Domain Definition exists as the shared identity every user-owned Domain Definition references."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1.G2.T1:
+              id: "P1.G2.T1"
+              title: "Define the User Domain Definition"
+              description: "Express the User domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, constraint, and credential meaning the Target declares for it, and declaring whether it is persistent."
+              reason: "User is a distinct domain concept required by the Target, and every other user-owned Domain Definition depends on its authoritative identity meaning."
+              kind: "code"
+              inputs: ["Target's User definition", "the Model Foundation"]
+              expected_result: "One authoritative User Domain Definition publishes its complete declared vocabulary, including credential classification and required at-rest treatment for its credential fields, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G1.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one User Domain Definition whose declared vocabulary (fields, nullability, uniqueness, defaults, generated identity, and credential treatment) matches the Target's User definition, with no invented or missing property."
+              verify: "Constructing a User instance with data satisfying the Target's declared constraints succeeds deterministically; data violating a declared constraint is observably rejected; the declared vocabulary is inspectable through the Public Interface and matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed User with valid data (including hash-treatment credential fields password/api_key); rejected a wrong-typed is_active; confirmed declaration() publishes password/api_key credential classification+treatment as {classification: credential, treatment: hash}; confirmed the omitted-with-no-Target-default description field defaults to None; verified model_dump_json() serializes correctly. Exposed via the model package Public Interface (model.User)."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed User instance, satisfying the Plan-level serialization/schema-generation constraint added in Plan revision 2."
+                  outcome: "passed"
+        P1.G3:
+          id: "P1.G3"
+          title: "Trading Infrastructure"
+          description: "The supported trading platforms, connection instances, currencies, brokers, and tradable assets."
+          area: "Trading Infrastructure"
+          does: "The Trading Platform, Instance, Currency, Broker, and Asset Domain Definitions exist, giving the system its supported platforms, connections, currencies, brokers, and tradable assets."
+          constraints: []
+          task_count: 5
+          tasks:
+            P1.G3.T1:
+              id: "P1.G3.T1"
+              title: "Define the Trading Platform Domain Definition"
+              description: "Express the Trading Platform domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Trading Platform is a distinct domain concept required by the Target, independent of any other Domain Definition."
+              kind: "code"
+              inputs: ["Target's Trading Platform definition", "the Model Foundation"]
+              expected_result: "One authoritative Trading Platform Domain Definition publishes its complete declared vocabulary through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G1.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Trading Platform Domain Definition whose declared vocabulary matches the Target's definition, with no invented or missing property."
+              verify: "Constructing a Trading Platform instance with data satisfying the Target's declared constraints succeeds deterministically; data violating a declared constraint is observably rejected; the declared vocabulary is inspectable through the Public Interface and matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed TradingPlatform with valid data; constructing without the required code field raised ValidationError; verified via model.TradingPlatform Public Interface export."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed TradingPlatform instance."
+                  outcome: "passed"
+            P1.G3.T2:
+              id: "P1.G3.T2"
+              title: "Define the Instance Domain Definition"
+              description: "Express the Instance domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, constraint, and credential meaning the Target declares for it, and declaring whether it is persistent."
+              reason: "Instance is a distinct domain concept required by the Target and depends on the User and Trading Platform Domain Definitions it relates to."
+              kind: "code"
+              inputs: ["Target's Instance definition", "the User Domain Definition", "the Trading Platform Domain Definition"]
+              expected_result: "One authoritative Instance Domain Definition publishes its complete declared vocabulary, including its relationships to User and Trading Platform and its credential classification and required at-rest treatment, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G2.T1", "P1.G3.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Instance Domain Definition whose declared vocabulary, relationships, and credential treatment match the Target's definition, with no invented or missing property."
+              verify: "Constructing an Instance with data satisfying the Target's declared constraints and relationships succeeds deterministically; data violating a declared constraint or relationship requirement is observably rejected; the declared vocabulary, including its composite uniqueness metadata, is inspectable through the Public Interface and matches the Target definition, without Model enforcing uniqueness across persisted records."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed Instance with valid data including its User and Trading Platform relationships and encrypted-treatment credential fields; confirmed declaration() publishes user_id's foreign_key as {references: User, field: id, cardinality: many_to_one, optional: false} and password/api_key credential treatment as encrypted; confirmed unique_sets == [[user_id, name]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed Instance instance."
+                  outcome: "passed"
+            P1.G3.T3:
+              id: "P1.G3.T3"
+              title: "Define the Currency Domain Definition"
+              description: "Express the Currency domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Currency is a distinct domain concept required by the Target and depends on the User Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Currency definition", "the User Domain Definition"]
+              expected_result: "One authoritative Currency Domain Definition publishes its complete declared vocabulary, including its relationship to User, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G2.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Currency Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing a Currency instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed Currency with valid data and its User relationship; passing an undeclared field raised ValidationError (extra=forbid); confirmed declaration() publishes code's length as 3 and unique_sets == [[user_id, code]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed Currency instance."
+                  outcome: "passed"
+            P1.G3.T4:
+              id: "P1.G3.T4"
+              title: "Define the Broker Domain Definition"
+              description: "Express the Broker domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Broker is a distinct domain concept required by the Target and depends on the User Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Broker definition", "the User Domain Definition"]
+              expected_result: "One authoritative Broker Domain Definition publishes its complete declared vocabulary, including its relationship to User, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G2.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Broker Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing a Broker instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed Broker with valid data and its User relationship; serialized via model_dump() and model_dump_json(), both verified in the README example run; confirmed declaration() publishes unique_sets == [[user_id, name]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed Broker instance."
+                  outcome: "passed"
+            P1.G3.T5:
+              id: "P1.G3.T5"
+              title: "Define the Asset Domain Definition"
+              description: "Express the Asset domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Asset is a distinct domain concept required by the Target and depends on the Broker Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Asset definition", "the Broker Domain Definition"]
+              expected_result: "One authoritative Asset Domain Definition publishes its complete declared vocabulary, including its relationship to Broker, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G3.T4"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Asset Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing an Asset instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed Asset with valid data and its Broker relationship; confirmed declaration() publishes unique_sets == [[broker_id, symbol]] and point_size/digits defaults (0.0 / 0) apply when the Target-declared Default is not overridden."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed Asset instance."
+                  outcome: "passed"
+        P1.G4:
+          id: "P1.G4"
+          title: "Account Structure"
+          description: "The organized, fundable trading accounts of the system."
+          area: "Account Structure"
+          does: "The Account Group and Account Domain Definitions exist, giving the system its organized, fundable trading accounts."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1.G4.T1:
+              id: "P1.G4.T1"
+              title: "Define the Account Group Domain Definition"
+              description: "Express the Account Group domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Account Group is a distinct domain concept required by the Target and depends on the User Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Account Group definition", "the User Domain Definition"]
+              expected_result: "One authoritative Account Group Domain Definition publishes its complete declared vocabulary, including its relationship to User, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G2.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Account Group Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing an Account Group instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed AccountGroup with valid data and its User relationship; confirmed declaration() publishes unique_sets == [[user_id, name]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed AccountGroup instance."
+                  outcome: "passed"
+            P1.G4.T2:
+              id: "P1.G4.T2"
+              title: "Define the Account Domain Definition"
+              description: "Express the Account domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, constraint, and credential meaning the Target declares for it, and declaring whether it is persistent."
+              reason: "Account is a distinct domain concept required by the Target and depends on the Account Group, Broker, Instance, and Currency Domain Definitions it relates to."
+              kind: "code"
+              inputs: ["Target's Account definition", "the Account Group Domain Definition", "the Broker Domain Definition", "the Instance Domain Definition", "the Currency Domain Definition"]
+              expected_result: "One authoritative Account Domain Definition publishes its complete declared vocabulary, including its relationships to Account Group, Broker, Instance, and Currency and its credential classification and required at-rest treatment, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G4.T1", "P1.G3.T4", "P1.G3.T2", "P1.G3.T3"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Account Domain Definition whose declared vocabulary, relationships, and credential treatment match the Target's definition, with no invented or missing property."
+              verify: "Constructing an Account with data satisfying the Target's declared constraints and relationships succeeds deterministically; data violating a declared constraint or relationship requirement is observably rejected; the declared vocabulary, including its composite uniqueness metadata, is inspectable through the Public Interface and matches the Target definition, without Model enforcing uniqueness across persisted records."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed Account with valid data and all four relationships (Account Group, Broker, Instance, Currency) and its encrypted-treatment password credential; confirmed declaration() publishes unique_sets == [[group_id, broker_id, instance_id]] and the balance default (0) applies when unspecified."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed Account instance."
+                  outcome: "passed"
+        P1.G5:
+          id: "P1.G5"
+          title: "Trailing Management"
+          description: "The Stop Loss and Take Profit trailing rule sets."
+          area: "Trailing Management"
+          does: "The Trailing Group and Trailing Rule Domain Definitions exist, giving the system its Stop Loss/Take Profit trailing rule sets."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1.G5.T1:
+              id: "P1.G5.T1"
+              title: "Define the Trailing Group Domain Definition"
+              description: "Express the Trailing Group domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Trailing Group is a distinct domain concept required by the Target and depends on the User Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Trailing Group definition", "the User Domain Definition"]
+              expected_result: "One authoritative Trailing Group Domain Definition publishes its complete declared vocabulary, including its relationship to User, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G2.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Trailing Group Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing a Trailing Group instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed TrailingGroup with valid data and its User relationship; confirmed declaration() publishes unique_sets == [[user_id, name]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed TrailingGroup instance."
+                  outcome: "passed"
+            P1.G5.T2:
+              id: "P1.G5.T2"
+              title: "Define the Trailing Rule Domain Definition"
+              description: "Express the Trailing Rule domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Trailing Rule is a distinct domain concept required by the Target and depends on the Trailing Group Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Trailing Rule definition", "the Trailing Group Domain Definition"]
+              expected_result: "One authoritative Trailing Rule Domain Definition publishes its complete declared vocabulary, including its relationship to Trailing Group, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G5.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Trailing Rule Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing a Trailing Rule instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed TrailingRule with valid data and its Trailing Group relationship, exact-decimal trigger_percentage; confirmed declaration() publishes unique_sets == [[trailing_group_id, trigger_percentage]] and the nullable take_profit_adjustment/stop_loss_adjustment default to None when omitted."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed TrailingRule instance."
+                  outcome: "passed"
+        P1.G6:
+          id: "P1.G6"
+          title: "Partial Management"
+          description: "The partial-close rule sets."
+          area: "Partial Management"
+          does: "The Partial Group and Partial Rule Domain Definitions exist, giving the system its partial-close rule sets."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1.G6.T1:
+              id: "P1.G6.T1"
+              title: "Define the Partial Group Domain Definition"
+              description: "Express the Partial Group domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Partial Group is a distinct domain concept required by the Target and depends on the User Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Partial Group definition", "the User Domain Definition"]
+              expected_result: "One authoritative Partial Group Domain Definition publishes its complete declared vocabulary, including its relationship to User, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G2.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Partial Group Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing a Partial Group instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed PartialGroup with valid data and its User relationship; confirmed declaration() publishes unique_sets == [[user_id, name]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed PartialGroup instance."
+                  outcome: "passed"
+            P1.G6.T2:
+              id: "P1.G6.T2"
+              title: "Define the Partial Rule Domain Definition"
+              description: "Express the Partial Rule domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Partial Rule is a distinct domain concept required by the Target and depends on the Partial Group Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Partial Rule definition", "the Partial Group Domain Definition"]
+              expected_result: "One authoritative Partial Rule Domain Definition publishes its complete declared vocabulary, including its relationship to Partial Group, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G6.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Partial Rule Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing a Partial Rule instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed PartialRule with valid data and its Partial Group relationship; confirmed declaration() publishes unique_sets == [[partial_group_id, profit_percentage]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed PartialRule instance."
+                  outcome: "passed"
+        P1.G7:
+          id: "P1.G7"
+          title: "Action Management"
+          description: "The reusable position-opening configurations."
+          area: "Action Management"
+          does: "The Action Group and Action Domain Definitions exist, giving the system its reusable position-opening configurations."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1.G7.T1:
+              id: "P1.G7.T1"
+              title: "Define the Action Group Domain Definition"
+              description: "Express the Action Group domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Action Group is a distinct domain concept required by the Target and depends on the User Domain Definition it relates to."
+              kind: "code"
+              inputs: ["Target's Action Group definition", "the User Domain Definition"]
+              expected_result: "One authoritative Action Group Domain Definition publishes its complete declared vocabulary, including its relationship to User, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G2.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Action Group Domain Definition whose declared vocabulary and relationship match the Target's definition, with no invented or missing property."
+              verify: "Constructing an Action Group instance with data satisfying the Target's declared constraints succeeds deterministically; the declared composite uniqueness metadata is inspectable through the Public Interface, without Model enforcing it across persisted records; the declared vocabulary matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed ActionGroup with valid data and its User relationship; confirmed declaration() publishes unique_sets == [[user_id, name]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed ActionGroup instance."
+                  outcome: "passed"
+            P1.G7.T2:
+              id: "P1.G7.T2"
+              title: "Define the Action Domain Definition"
+              description: "Express the Action domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Action is a distinct domain concept required by the Target and depends on the Action Group, Asset, Account, Partial Group, and Trailing Group Domain Definitions it relates to."
+              kind: "code"
+              inputs: ["Target's Action definition", "the Action Group Domain Definition", "the Asset Domain Definition", "the Account Domain Definition", "the Partial Group Domain Definition", "the Trailing Group Domain Definition"]
+              expected_result: "One authoritative Action Domain Definition publishes its complete declared vocabulary, including its relationships to Action Group, Asset, Account, Partial Group, and Trailing Group, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G7.T1", "P1.G3.T5", "P1.G4.T2", "P1.G6.T1", "P1.G5.T1"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Action Domain Definition whose declared vocabulary and relationships match the Target's definition, with no invented or missing property."
+              verify: "Constructing an Action with data satisfying the Target's declared constraints and relationships succeeds deterministically; data violating a declared constraint or relationship requirement is observably rejected; the declared vocabulary is inspectable through the Public Interface and matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed Action with valid data and all five relationships (Action Group, Asset, Account, Partial Group, Trailing Group); confirmed declaration() publishes unique_sets == [[action_group_id, name]]."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed Action instance."
+                  outcome: "passed"
+        P1.G8:
+          id: "P1.G8"
+          title: "Position Tracking"
+          description: "The complete information for every position created by the system."
+          area: "Position Tracking"
+          does: "The Position Domain Definition exists, giving the system one authoritative record of every opened or pending position."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1.G8.T1:
+              id: "P1.G8.T1"
+              title: "Define the Position Domain Definition"
+              description: "Express the Position domain concept as one authoritative Domain Definition in Model's standard vocabulary, preserving every field, relationship, and constraint the Target declares for it, and declaring whether it is persistent."
+              reason: "Position is a distinct domain concept required by the Target and depends on the User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action Domain Definitions it relates to."
+              kind: "code"
+              inputs: ["Target's Position definition", "the User Domain Definition", "the Trading Platform Domain Definition", "the Broker Domain Definition", "the Account Domain Definition", "the Trailing Group Domain Definition", "the Partial Group Domain Definition", "the Action Group Domain Definition", "the Action Domain Definition"]
+              expected_result: "One authoritative Position Domain Definition publishes its complete declared vocabulary, including all of its declared relationships, through Model's Public Interface, exactly matching the Target's declaration."
+              depends_on: ["P1.G2.T1", "P1.G3.T1", "P1.G3.T4", "P1.G4.T2", "P1.G5.T1", "P1.G6.T1", "P1.G7.T1", "P1.G7.T2"]
+              constraints: []
+              agent_skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  resolved: true
+                  identifier: "pydantic:pydantic"
+              acceptance: "The Public Interface exposes exactly one Position Domain Definition whose declared vocabulary and relationships match the Target's definition, with no invented or missing property."
+              verify: "Constructing a Position with data satisfying the Target's declared constraints and relationships succeeds deterministically; data violating a declared constraint is observably rejected; the declared vocabulary is inspectable through the Public Interface and matches the Target definition."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:16:27Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "Transient check: constructed Position with valid data, a timezone-aware date (pydantic.AwareDatetime), and all eight relationships (User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, Action); confirmed defaults for profit (0) and is_executed (false) apply when unspecified."
+                  outcome: "passed"
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "reconciled (Plan revision 2, serialization/schema-generation constraint)"
+                  check: "Transient check: model_dump(), model_dump_json(), and declaration() all run successfully on a constructed Position instance."
+                  outcome: "passed"
+        P1.G9:
+          id: "P1.G9"
+          title: "Documentation"
+          description: "Complete, safe, operational documentation for the Model Component."
+          area: "Documentation"
+          does: "The Model Component has a complete README at its Profile's documentation path, so anyone who reads it understands how the Component works and can use it without inspecting private implementation."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1.G9.T1:
+              id: "P1.G9.T1"
+              title: "Write the Model Component README"
+              description: "Generate the Model Component's README at the path its Component Profile names, covering its public surface, setup, usage, capabilities with runnable examples, verification, and troubleshooting, in the order and conventions Development Preferences declare."
+              reason: "Development Principle 8 requires every Participating Component to be generated with a complete README as part of generating the Component, not as a later step; Model's Domain Definitions and Foundation are not complete without it."
+              kind: "documentation"
+              inputs: ["Model's Public Interface", "Model's Component Profile documentation path", "Development Preferences' documentation conventions"]
+              expected_result: "A README exists at the Model Component's documentation path, ordered general to specific per the declared conventions, with runnable examples using the resolved technology, stating explicitly where a part does not apply."
+              depends_on: ["P1.G1.T1", "P1.G2.T1", "P1.G3.T1", "P1.G3.T2", "P1.G3.T3", "P1.G3.T4", "P1.G3.T5", "P1.G4.T1", "P1.G4.T2", "P1.G5.T1", "P1.G5.T2", "P1.G6.T1", "P1.G6.T2", "P1.G7.T1", "P1.G7.T2", "P1.G8.T1"]
+              constraints: []
+              agent_skills: []
+              acceptance: "The README follows Development Preferences' declared order and secrets rule, covers the Component's actual current public surface with no invented capability, and every example it shows runs as written against the resolved technology."
+              verify: "Every example shown in the README is executed against the current implementation and produces the output the README documents; the README names no usable credential, token, or secret value."
+              status: "done"
+              log:
+                - at: "2026-09-18T17:28:33Z"
+                  by: "developing"
+                  transition: "done"
+                  check: "README at model/README.md follows Development Preferences' declared order (overview, structure, setup, run, capabilities, verify, troubleshooting). Every code example in Setup/Run/Capabilities/Verify was executed verbatim (uv sync; construct/reject/declaration/serialization examples; ruff format --check, ruff check, pyright) and produced exactly the documented output. Scanned for literal credential values: none found (only placeholders and environment-style values)."
+                  outcome: "passed"
