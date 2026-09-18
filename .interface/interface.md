@@ -5,8 +5,6 @@
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
-Use this document as the entry point and follow its sections in this order:
-
 1. **[Introduction](#introduction)** — understand the purpose, workflow, independence, and boundaries of Agent Interface.
 2. **[Terminology](#terminology)** — learn the shared vocabulary used throughout the Interface.
 3. **[Architecture](#architecture)** — see the high-level structure and its primary sections.

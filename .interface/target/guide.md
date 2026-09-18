@@ -4,6 +4,19 @@ This document explains the Target Module: what it is, what its files hold, who o
 
 <br>
 
+## Navigation
+
+1. **[Purpose](#purpose)** — what the Target is and why it is separated from Implementation and Agent.
+2. **[Structure](#structure)** — the two definitions that make up the Target and where each lives.
+   - **[Non-Technical Definition](#non-technical-definition)** — the Human's statement of intent, context, and requirements.
+   - **[Technical Definition](#technical-definition)** — the authoritative technical form, including the Phases.
+3. **[How the Target is used](#how-the-target-is-used)** — Target Understanding, precedence, and Phases.
+4. **[Ownership](#ownership)** — who owns the definitions and who may not write to them.
+5. **[Understanding record](#understanding-record)** — the Human's own explanation, once recorded.
+6. **[Open decisions](#open-decisions)** — what is still undecided about this Target.
+
+<br>
+
 ## Purpose
 
 The Target describes **what the Interface is working on** — the application, platform, service, API, module, package, subsystem, or other development subject. The term Target is preferred over "Target Project" because the subject does not have to be an entire project. A different Target can be provided without changing the Implementation or Agent definitions; that separation is one of the central principles of Agent Interface.
@@ -20,35 +33,35 @@ Target Structure
     └── .interface/target/technical.md
 ```
 
-The Target is defined through two complementary, Human-owned sources:
+The Target is defined through two complementary, Human-owned sources. Each Target definition has a direct link to its authoritative file.
 
-- **[Non-Technical Definition](non-technical.md)** — the Human's initial statement of intent, context, and requirements without requiring technical formulation. An empty file contributes no information.
-- **[Technical Definition](technical.md)** — the Human, acting as the implementation, translates the Non-Technical Definition into this technical form without changing its meaning. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
+### Non-Technical Definition
+
+The Human's initial statement of intent, context, and requirements without requiring technical formulation. An empty file contributes no information.
+
+```yaml
+name: Non-Technical Definition
+path: .interface/target/non-technical.md
+responsibility: The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information
+```
+
+→ [Non-Technical Definition](non-technical.md)
+
+### Technical Definition
+
+The Human, acting as the implementation, translates the Non-Technical Definition into this technical form without changing its meaning. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
+
+```yaml
+name: Technical Definition
+path: .interface/target/technical.md
+responsibility: The Human's technical translation of the Non-Technical Definition, without changing its meaning; the primary authority for the Target, taking precedence wherever the two definitions conflict
+```
+
+→ [Technical Definition](technical.md)
 
 Target definitions are intentionally not Foundation Files: they belong to the Target concept itself.
 
-The Interface file's own statement of the Target, moved here verbatim on 2026-09-17:
-
-The Target describes **what the Interface is working on**.
-
-
-```text
-Target Structure
-├── Non-Technical Definition
-│   └── .interface/target/non-technical.md
-└── Technical Definition
-    └── .interface/target/technical.md
-```
-
-The Target is defined through two complementary, human-owned sources:
-
-- **Non-Technical Definition:** The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information.
-- **Technical Definition:** The Human, acting as the implementation, translates the Non-Technical Definition into this technical form. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
-
-Each Target definition has a direct link to its authoritative file:
-
-- [Non-Technical Definition](non-technical.md)
-- [Technical Definition](technical.md)
+The Interface file's own statement of the Target — "The Target describes **what the Interface is working on**." — was moved here verbatim on 2026-09-17 and merged into the entries above on 2026-09-18.
 
 <br>
 

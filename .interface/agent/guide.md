@@ -4,6 +4,25 @@ This document explains the Agent Module: what it is, why it exists, how its part
 
 <br>
 
+## Navigation
+
+1. **[Purpose](#purpose)** — why the Agent Module exists and what it makes portable.
+2. **[What belongs here](#what-belongs-here)** — what is and is not Agent Module content.
+3. **[Principles and Preferences](#principles-and-preferences)** — how each Component divides its content between `principles.md` and `preferences.yaml`.
+4. **[Components](#components)** — the ten Components, each with its Principles, Preferences, and responsibility.
+   - **[Runtime](#runtime)** · **[Agent](#agent)** · **[Personality](#personality)** · **[Rule](#rule)** · **[Skill](#skill)** · **[Command](#command)** · **[Tool](#tool)** · **[Permission](#permission)** · **[Connection](#connection)** · **[Context](#context)**
+5. **[How the Module changes](#how-the-module-changes)** — the Module-first rule, fingerprints, and the bootstrap exception.
+6. **[What success means](#what-success-means)** — how the Module's success is judged.
+7. **[Understanding record](#understanding-record)** — the Human's explanation of the Module.
+8. **[Understanding record — Agent Native Skill](#understanding-record--agent-native-skill)** — the Human's explanation of the Agent Native Skill.
+9. **[Decisions taken — Agent Native Skill](#decisions-taken--agent-native-skill)** — decisions recorded for the Agent Native Skill.
+10. **[Understanding record — Configure](#understanding-record--configure)** — the Human's explanation of Configure.
+11. **[Understanding record — Implement, Planning, Developing, Reviewing](#understanding-record--implement-planning-developing-reviewing)** — the Human's explanation of the implementation loop.
+12. **[Decisions taken](#decisions-taken)** — every decision recorded for this Module.
+13. **[Open decisions](#open-decisions)** — what is still undecided.
+
+<br>
+
 ## Purpose
 
 Agent Interface is the interface between a developer and an AI Agent. The Agent Module is the layer inside it that holds everything about the Agent itself: its behaviors, skills, rules, restrictions, responsibilities, and view of the world. It is written once, independently of which Agent Native will run it — Claude Code, Codex, Copilot, or any other engine.
@@ -46,38 +65,15 @@ The Module has ten Components: Runtime, Agent, Personality, Rule, Skill, Command
 ```text
 Agent Components
 ├── Runtime
-│   ├── Principles  → .interface/agent/runtime/principles.md
-│   └── Preferences     → .interface/agent/runtime/preferences.yaml
 ├── Agent
-│   ├── Principles  → .interface/agent/agent/principles.md
-│   └── Preferences     → .interface/agent/agent/preferences.yaml
 ├── Personality
-│   ├── Principles  → .interface/agent/personality/principles.md
-│   ├── Preferences     → .interface/agent/personality/preferences.yaml
-│   └── Definitions → .interface/agent/personality/definitions/<personality>.md
 ├── Rule
-│   ├── Principles  → .interface/agent/rule/principles.md
-│   └── Preferences     → .interface/agent/rule/preferences.yaml
 ├── Skill
-│   ├── Principles  → .interface/agent/skill/principles.md
-│   ├── Preferences     → .interface/agent/skill/preferences.yaml
-│   ├── Contracts   → .interface/agent/skill/contracts/<interface-owned-skill>.md
-│   └── Files       → .interface/agent/skill/files/<declared-skill-stable-key>[.md | /]
 ├── Command
-│   ├── Principles  → .interface/agent/command/principles.md
-│   └── Preferences     → .interface/agent/command/preferences.yaml
 ├── Tool
-│   ├── Principles  → .interface/agent/tool/principles.md
-│   └── Preferences     → .interface/agent/tool/preferences.yaml
 ├── Permission
-│   ├── Principles  → .interface/agent/permission/principles.md
-│   └── Preferences     → .interface/agent/permission/preferences.yaml
 ├── Connection
-│   ├── Principles  → .interface/agent/connection/principles.md
-│   └── Preferences     → .interface/agent/connection/preferences.yaml
 └── Context
-    ├── Principles  → .interface/agent/context/principles.md
-    └── Preferences     → .interface/agent/context/preferences.yaml
 ```
 
 The complete Agent Module is read exclusively during an explicit Agent Native Skill invocation. Agent Sync first learns the selected Agent Native's own documentation, conventions, capabilities, and limitations, then reads every Module source and Interface-owned Skill Contract, and realizes each required Rule, Constructed Skill, Agent Instance, Command, Setting, Hook, permission, integration, and other capability as a self-contained Runtime artifact. the install mode of the Agent Native Skill resolves any optional prepared Skill file by exact declared stable key: a matching prepared Markdown file supplies that Skill's preserved native instruction content and is materialized as a Prepared Skill, and a Skill under an external provider declaration is provisioned as an Installed Skill; a Skill with neither follows its Contract-based realization path through Agent Sync. Every other Skill, supporting Agent Instance, coordinator, startup routine, and Understanding workflow is forbidden from entering, resolving, or using Agent Module sources and consumes only the last synchronized Runtime realization. A changed Agent Module declaration remains dormant until the Human explicitly invokes Agent Sync.
@@ -88,39 +84,70 @@ Each Agent Component below has its own Principles and Preferences. Principles de
 
 Runtime identity, provider, model, compatibility, and native capability mapping. Absorbs the former Settings Component (2026-09-17): Settings — Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation.
 
-- [Principles](runtime/principles.md)
-- [Preferences](runtime/preferences.yaml)
+```yaml
+name: Runtime
+principles: .interface/agent/runtime/principles.md
+preferences: .interface/agent/runtime/preferences.yaml
+responsibility: Runtime identity, provider, model, compatibility, and native capability mapping; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](runtime/principles.md) · [Preferences](runtime/preferences.yaml)
 
 ### Agent
 
 The selected Agent Native and its General and Specialized Agent Instances. Absorbs the former Role, Coordination Components (2026-09-17): Role — Primary and specialized Agent Role contracts. Coordination — Delegation, teams, tasks, messaging, concurrency, and worktree isolation.
 
-- [Principles](agent/principles.md)
-- [Preferences](agent/preferences.yaml)
+```yaml
+name: Agent
+principles: .interface/agent/agent/principles.md
+preferences: .interface/agent/agent/preferences.yaml
+responsibility: The selected Agent Native and its General and Specialized Agent Instances; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](agent/principles.md) · [Preferences](agent/preferences.yaml)
 
 ### Personality
 
 The personalities an Agent can take on: who it is during a kind of work, the Actions each performs, and the models each prefers in priority order.
 
-- [Principles](personality/principles.md)
-- [Preferences](personality/preferences.yaml)
-- [Definitions directory](personality/definitions/)
+```yaml
+name: Personality
+principles: .interface/agent/personality/principles.md
+preferences: .interface/agent/personality/preferences.yaml
+definitions: .interface/agent/personality/definitions/<personality>.md
+definition_schema: .interface/foundation/schema/personality.md
+responsibility: The personalities an Agent can take on: who it is during a kind of work, the Actions each performs, and the models each prefers in priority order; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](personality/principles.md) · [Preferences](personality/preferences.yaml) · [Definitions](personality/definitions/)
 
 ### Rule
 
 Persistent global and scoped behavioral instructions. Absorbs the former Interaction, Observability, Session Components (2026-09-17): Interaction — Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior. Observability — Validation, status, diagnostics, evidence, logs, telemetry, health, and usage. Session — Lifecycle, resume, history, background work, isolation, checkpoints, and termination.
 
-- [Principles](rule/principles.md)
-- [Preferences](rule/preferences.yaml)
+```yaml
+name: Rule
+principles: .interface/agent/rule/principles.md
+preferences: .interface/agent/rule/preferences.yaml
+responsibility: Persistent global and scoped behavioral instructions; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](rule/principles.md) · [Preferences](rule/preferences.yaml)
 
 ### Skill
 
 Reusable knowledge and workflows, including core, supporting, and contextual Skills.
 
-- [Principles](skill/principles.md)
-- [Preferences](skill/preferences.yaml)
-- [Contracts directory](skill/contracts/)
-- [Files directory](skill/files/)
+```yaml
+name: Skill
+principles: .interface/agent/skill/principles.md
+preferences: .interface/agent/skill/preferences.yaml
+contracts: .interface/agent/skill/contracts/<interface-owned-skill>.md
+files: .interface/agent/skill/files/<declared-skill-stable-key>[.md | /]
+responsibility: Reusable knowledge and workflows, including core, supporting, and contextual Skills; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](skill/principles.md) · [Preferences](skill/preferences.yaml) · [Contracts](skill/contracts/) · [Files](skill/files/)
 
 The Skill directory in detail (moved here verbatim from the former `skill/guide.md` on 2026-09-17):
 
@@ -155,36 +182,66 @@ When a conversation produces a new understanding of a Skill, the *why* is record
 
 Named and slash invocation entry points, arguments, aliases, and routing.
 
-- [Principles](command/principles.md)
-- [Preferences](command/preferences.yaml)
+```yaml
+name: Command
+principles: .interface/agent/command/principles.md
+preferences: .interface/agent/command/preferences.yaml
+responsibility: Named and slash invocation entry points, arguments, aliases, and routing; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](command/principles.md) · [Preferences](command/preferences.yaml)
 
 ### Tool
 
 Atomic built-in and externally provided executable capabilities.
 
-- [Principles](tool/principles.md)
-- [Preferences](tool/preferences.yaml)
+```yaml
+name: Tool
+principles: .interface/agent/tool/principles.md
+preferences: .interface/agent/tool/preferences.yaml
+responsibility: Atomic built-in and externally provided executable capabilities; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](tool/principles.md) · [Preferences](tool/preferences.yaml)
 
 ### Permission
 
 Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets. Absorbs the former Hook Component (2026-09-17): Hook — Deterministic event-driven lifecycle automation.
 
-- [Principles](permission/principles.md)
-- [Preferences](permission/preferences.yaml)
+```yaml
+name: Permission
+principles: .interface/agent/permission/principles.md
+preferences: .interface/agent/permission/preferences.yaml
+responsibility: Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](permission/principles.md) · [Preferences](permission/preferences.yaml)
 
 ### Connection
 
 External services and installable packages the Agent obtains from outside the project, with their trust boundaries and lifecycle. Absorbs the former Integration, Extension Components (2026-09-17): Integration — MCP, LSP, channels, application connectors, and external services. Extension — Plugins, marketplaces, capability packages, monitors, and extension lifecycle.
 
-- [Principles](connection/principles.md)
-- [Preferences](connection/preferences.yaml)
+```yaml
+name: Connection
+principles: .interface/agent/connection/principles.md
+preferences: .interface/agent/connection/preferences.yaml
+responsibility: External services and installable packages the Agent obtains from outside the project, with their trust boundaries and lifecycle; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](connection/principles.md) · [Preferences](connection/preferences.yaml)
 
 ### Context
 
 Persistent instructions, Understanding, Memory, imports, loading, and compaction.
 
-- [Principles](context/principles.md)
-- [Preferences](context/preferences.yaml)
+```yaml
+name: Context
+principles: .interface/agent/context/principles.md
+preferences: .interface/agent/context/preferences.yaml
+responsibility: Persistent instructions, Understanding, Memory, imports, loading, and compaction; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+```
+
+→ [Principles](context/principles.md) · [Preferences](context/preferences.yaml)
 
 Every Agent Component's Principles and Preferences are authoritative for that Component only. A runtime artifact not declared in the owning Preferences are an optional runtime capability; a required declaration not usable by the selected runtime is Agent Preferences gap.
 
