@@ -123,7 +123,8 @@ def constructed_skills(root: Path) -> list[dict]:
             if (files_dir / f"{key}.md").is_file() or (files_dir / key).is_dir():
                 print(f"skip {decl['name']}: Prepared (owned by mode 3, install)")
                 continue
-            found.append({"key": key, "name": decl["name"], "contract": decl["contract"]})
+            native_name = ((decl.get("native") or {}).get("claude") or {}).get("name") or decl["name"]
+            found.append({"key": key, "name": native_name, "contract": decl["contract"]})
     return found
 
 

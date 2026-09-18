@@ -4,12 +4,10 @@ meta:
     conformance.
   owner: my-interface-agent-native
 last_run:
-  mode: '2'
-  at: '2026-09-17T21:09:36Z'
-  result: 'mode 2: Agent Module not fully synchronized. 1 artifact rewritten and awaiting restart (implement Skill, review-first
-    entry), 1 approximated (conduct), 1 blocked (agent-native-read-grant subagent probe leg unverified, converged with the
-    previous two runs). Reviewer Skill and capability catalog Rule from the previous run are now active. Every other declaration
-    compared equal.'
+  mode: '1'
+  at: '2026-09-18T13:14:37Z'
+  result: 'mode 1 (manual bootstrap): adapter rewritten to match agent-native.md; every other declaration still awaits mode
+    2.'
 declarations:
 - declaration: agent/agent/preferences.yaml#project_instances.general
   sources:
@@ -281,17 +279,15 @@ declarations:
 - declaration: agent/skill/contracts/agent-native.md
   sources:
   - path: .interface/agent/skill/contracts/agent-native.md
-    fingerprint: sha256:5da18d5ae8b9f15b463db7970f92599ea7416b6091bfcff6c53b0fbfbd4cc45d
+    fingerprint: sha256:2daf5789d56ffc6d0e3143033494c6a7d940ef333d85b6eea0d9db41e672960f
   realized_as: Claude Code project Skill
   artifact: .claude/skills/my-interface-agent-native/SKILL.md
-  status: activation required
+  status: synchronized
   mode: '1'
-  at: '2026-09-17T21:04:44Z'
-  note: 'mode 1: Contract, SKILL.md and helper read in full and compared across all 13 Contract sections plus frontmatter
-    against Skill and Command Preferences. 1 difference: the helper''s stamp rewrote synced_at in an unchanged SKILL.md on
-    every run, while the Contract''s Idempotency requires no mutation against unchanged declarations. Helper now skips the
-    metadata write when Contract path and fingerprint already match, and the Synchronization record section of SKILL.md says
-    so. Re-read and a before/after hash of SKILL.md across this stamp proved the difference gone. Restart required.'
+  at: '2026-09-18T13:14:37Z'
+  note: 'Manual bootstrap update 2026-09-18: adapter aligned with Skill Principle 5 (placement before translation), rule definition
+    files, history.yaml exclusion, categories by kind, native.claude.name/invocation, one obligation per Contract bullet,
+    Enforced Guarantee wording. Written by hand as the bootstrap exception; not a Sync run.'
 - declaration: agent/skill/contracts/configure.md
   sources:
   - path: .interface/agent/skill/contracts/configure.md

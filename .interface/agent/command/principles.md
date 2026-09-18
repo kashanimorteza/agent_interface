@@ -12,8 +12,8 @@ It owns command names, arguments, routing, and discoverability. It does not own 
 
 ## Relationships
 
-- **Consumes Agent Skill, Role, Tool, and Runtime** — routes an invocation to its implementing capability.
-- **Consumed by Agent Interaction** — provides discoverable Human-facing actions.
+- **Consumes Agent Skill, Agent (formerly Role), Tool, and Runtime** — routes an invocation to its implementing capability.
+- **Consumed by Agent Rule (formerly Interaction)** — provides discoverable Human-facing actions.
 
 Portable command names, aliases, and argument forms belong to Agent Command Preferences; Native mappings are resolved by Agent Sync from the selected Agent Native.
 

@@ -19,11 +19,11 @@ It owns runtime identity, compatibility, the models available on the selected Ru
 
 ## Relationships
 
-- **Consumes Agent Settings** — receives the selected runtime configuration and source precedence.
+- **Consumes the Agent Preferences Schema's profile rules and its own `native.<agent-native>` configuration (formerly Agent Settings)** — receives the selected runtime configuration and source precedence.
 - **Consumed by Agent and every executing Agent Component** — provides the execution environment and native mechanisms in which their declarations are realized.
 - **Consumes every Agent Component** — receives the choices each Component owns. *(formerly Agent Settings)*
 - **Consumed by Agent Runtime** — provides the configuration that the runtime applies. *(formerly Agent Settings)*
-- **Consumed by Agent Observability** — provides expected values for diagnostics. *(formerly Agent Settings)*
+- **Consumed by Agent Rule (formerly Observability)** — provides expected values for diagnostics. *(formerly Agent Settings)*
 
 The selected runtime and compatibility choice belong to Agent Runtime Preferences; Native-specific realization details are learned by Agent Sync from the selected Agent Native.
 

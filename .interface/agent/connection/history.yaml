@@ -1,0 +1,57 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/agent/connection/history.yaml
+  path_note: History of the Agent Connection Component — the Preferences of the Components it absorbed and the declarations it superseded, kept verbatim.
+  purpose: Preserve, without loss, what earlier Components declared before their merge on 2026-09-17, so the merge remains auditable. Not read by Agent Sync; not an authority.
+  moved_from: "policy.absorbed_preferences and policy.superseded_on_2026_09_17 of .interface/agent/connection/preferences.yaml, on 2026-09-18"
+  standard: Agent Project Interface
+  version: '1.0'
+  updated: '2026-09-18'
+
+# <!--------------------------------------------------------------------------------- History -->
+absorbed_preferences:
+  integration:
+    meta:
+      path: .interface/agent/integration/preferences.yaml
+      path_note: The Preferences layer of the Agent Integration Component.
+      purpose: MCP, LSP, channel, application, transport, trust, and external-service connection declarations.
+      standard: Agent Project Interface
+      version: '1.0'
+      updated: '2026-09-12'
+    policy:
+      agent_may_edit: false
+      rule: This file is human-owned and contains references only, never credential values.
+      changed_by: The human, directly.
+      precedence: An explicit project decision and every applicable Principle take precedence over this file.
+      consumption: Validate declaration, trust, compatibility, authentication, connection, and usability before dependence.
+      selection: Do not connect, trust, authenticate, or mutate an external system without applicable authorization.
+      version_resolution: Protocol and provider versions resolve from compatible declared entries.
+      matching: Match provider-qualified integration identities and exact server or channel keys.
+    content_map:
+      selected: Empty; no external Integration is selected.
+      options: Supported Integration protocols.
+      settings: Complete connection categories; all are currently explicitly empty.
+    note: Kept verbatim from the former integration Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
+  extension:
+    meta:
+      path: .interface/agent/extension/preferences.yaml
+      path_note: The Preferences layer of the Agent Extension Component.
+      purpose: Plugin, marketplace, package, monitor, theme, and extension lifecycle declarations.
+      standard: Agent Project Interface
+      version: '1.0'
+      updated: '2026-09-12'
+    policy:
+      agent_may_edit: false
+      rule: This file is human-owned; discovery never authorizes Extension Provisioning.
+      changed_by: The human, directly.
+      precedence: An explicit project decision and every applicable Principle take precedence over this file.
+      consumption: Reconcile declared Extensions with runtime installation and activation state.
+      selection: Preview provenance, permissions, dependencies, and capability changes before Provisioning.
+      version_resolution: Unpinned Extensions resolve to the latest compatible provider version at activation time.
+      matching: Match plugins by full plugin-at-marketplace identity and marketplaces by stable source key.
+    content_map:
+      selected: Enabled Extension set.
+      options: Declared Extension marketplaces.
+      settings: Plugins and every supported extension category, including explicit empty categories.
+    note: Kept verbatim from the former extension Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
+

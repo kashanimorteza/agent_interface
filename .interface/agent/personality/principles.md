@@ -12,8 +12,8 @@ It owns personality identity, stance, and the actions each personality performs.
 
 ## Relationships
 
-- **Consumes Agent Role, Context, Skill, Tool, and Permission** — a Personality acts within their contracts.
-- **Consumed by Agent and Coordination** — supplies the stance an Agent Instance takes and the way delegated work is performed.
+- **Consumes Agent (formerly Role), Context, Skill, Tool, and Permission** — a Personality acts within their contracts.
+- **Consumed by Agent (including former Coordination)** — supplies the stance an Agent Instance takes and the way delegated work is performed.
 
 Personality definitions, their Actions, and Model Preferences belong to Agent Personality Preferences and its definition files; Native realization is resolved by Agent Sync from the selected Agent Native.
 

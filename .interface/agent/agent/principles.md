@@ -29,21 +29,21 @@ It owns coordination protocol and conflict boundaries. It does not own role cont
 
 ## Relationships
 
-- **Consumes Agent Runtime, Role, Context, Skill, Tool, Permission, and Session** — selects the Agent Native and combines their contracts into executable Agent Instances without redefining them.
-- **Consumed by Agent Coordination** — supplies the concrete Agent Instances that may be delegated, teamed, or isolated.
-- **Consumed by Agent Observability** — supplies the declarations against which the Agent Native and every Agent Instance realization are validated.
+- **Consumes Agent Runtime, Agent (formerly Role), Context, Skill, Tool, Permission, and Rule (formerly Session)** — selects the Agent Native and combines their contracts into executable Agent Instances without redefining them.
+- **Consumed by Agent (formerly Coordination)** — supplies the concrete Agent Instances that may be delegated, teamed, or isolated.
+- **Consumed by Agent Rule (formerly Observability)** — supplies the declarations against which the Agent Native and every Agent Instance realization are validated.
 - **Consumes Agent Context, Skill, Tool, and Permission** — receives knowledge, workflow, capabilities, and authority needed to act.
 - **Consumed by Agent** — supplies responsibilities that executable Agent Instance Definitions realize.
-- **Consumed by Agent Coordination** — supplies the responsibility boundaries preserved during delegation and teams.
-- **Consumed by Agent Observability** — supplies the contract against which role outcomes are reported.
-- **Consumes Agent, Role, Context, Permission, and Session** — coordinates eligible Agent Instances while preserving Role, authority, and lifecycle boundaries.
-- **Consumed by Agent Observability** — provides attribution and coordination outcomes.
+- **Consumed by Agent (formerly Coordination)** — supplies the responsibility boundaries preserved during delegation and teams.
+- **Consumed by Agent Rule (formerly Observability)** — supplies the contract against which role outcomes are reported.
+- **Consumes Agent (formerly Role), Context, Permission, and Rule (formerly Session)** — coordinates eligible Agent Instances while preserving Role, authority, and lifecycle boundaries.
+- **Consumed by Agent Rule (formerly Observability)** — provides attribution and coordination outcomes.
 
 Agent Native selection, Agent Instance declarations, primary Instance selection, Role assignments, models, tools, Skills, permissions, memory, isolation, and portable realization requirements belong to Agent Preferences. Native paths, file formats, and runtime-specific mappings are resolved by Agent Sync from the selected Agent Native.
 
-Technical Role catalogs and primary Role selection belong to Agent Role Preferences. Agent Instance identities, native realizations, models, tools, Skills, and per-Instance configuration belong to Agent Preferences.
+Technical Role catalogs and primary Role selection belong to Agent Preferences (formerly Role Preferences). Agent Instance identities, native realizations, models, tools, Skills, and per-Instance configuration belong to Agent Preferences.
 
-Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Coordination Preferences.
+Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Preferences (formerly Coordination Preferences).
 
 Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 

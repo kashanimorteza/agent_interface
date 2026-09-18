@@ -12,8 +12,8 @@ It owns tool identity, action boundaries, inputs, outputs, and availability. It 
 
 ## Relationships
 
-- **Consumes Agent Runtime, Integration, and Permission** — receives implementations, external capabilities, and execution authority.
-- **Consumed by Agent, Role, Skill, and Hook** — provides bounded actions they can invoke.
+- **Consumes Agent Runtime, Connection (formerly Integration), and Permission** — receives implementations, external capabilities, and execution authority.
+- **Consumed by Agent (formerly Role), Skill, and Permission (formerly Hook)** — provides bounded actions they can invoke.
 
 Portable tool requirements and availability expectations belong to Agent Tool Preferences; Native catalogs and mappings are resolved by Agent Sync from the selected Agent Native.
 

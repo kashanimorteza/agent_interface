@@ -22,15 +22,15 @@ It owns extension identity, provenance, contents, lifecycle, and expected capabi
 ## Relationships
 
 - **Consumes Agent Runtime and Permission** — connects through supported mechanisms within security policy.
-- **Consumed by Agent Tool, Hook, and Extension** — exposes external capabilities and package-provided connections.
-- **Consumed by Agent Observability** — supplies connection health and activation evidence.
-- **Consumes Agent Skill, Role, Hook, Integration, Tool, and Interaction** — packages capabilities owned by those Components.
+- **Consumed by Agent Tool, Permission (formerly Hook), and Connection (formerly Extension)** — exposes external capabilities and package-provided connections.
+- **Consumed by Agent Rule (formerly Observability)** — supplies connection health and activation evidence.
+- **Consumes Agent Skill, Agent (formerly Role), Permission (formerly Hook), Connection (formerly Integration), Tool, and Rule (formerly Interaction)** — packages capabilities owned by those Components.
 - **Consumes Agent Permission** — performs Provisioning within authorization.
-- **Consumed by Agent Runtime and Settings** — supplies runtime-loadable capability bundles and declarations.
+- **Consumed by Agent Runtime (including former Settings)** — supplies runtime-loadable capability bundles and declarations.
 
-Technical MCP, LSP, channel, application, transport, and authentication-reference choices belong to Agent Integration Preferences.
+Technical MCP, LSP, channel, application, transport, and authentication-reference choices belong to Agent Connection Preferences (formerly Integration Preferences).
 
-Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Extension Preferences.
+Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Connection Preferences (formerly Extension Preferences).
 
 Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 

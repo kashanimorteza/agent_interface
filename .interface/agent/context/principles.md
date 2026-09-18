@@ -14,7 +14,7 @@ It owns context composition and freshness. It does not own the meaning of Target
 
 - **Consumes Target and Implementation Modules for ordinary roles** — loads current authoritative sources required by the active role; Agent Module sources are loaded only for explicit Agent Sync.
 - **Consumes Agent Rule** — loads applicable persistent and scoped instructions.
-- **Consumed by Agent, Role, Skill, and Session** — supplies the current information they use.
+- **Consumed by Agent (formerly Role), Skill, and Rule (formerly Session)** — supplies the current information they use.
 
 Technical loading sources, memory behavior, imports, and limits belong to Agent Context Preferences.
 

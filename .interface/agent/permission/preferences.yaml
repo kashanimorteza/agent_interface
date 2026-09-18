@@ -18,36 +18,7 @@ policy:
   version_resolution: Permission syntax and sandbox facilities resolve from the selected runtime.
   matching: Match portable Tool and resource capability patterns; Agent Sync resolves their Native syntax, and deny and stricter rules win conflicts.
   absorbed: 'hook/preferences.yaml (v1.1), merged on 2026-09-17: its project Hooks became settings.enforced guarantees, and its Claude-specific events, handler types, and hook mechanics moved under settings.native.claude.hooks.'
-  absorbed_preferences:
-    hook:
-      meta:
-        path: .interface/agent/hook/preferences.yaml
-        path_note: The Preferences layer of the Agent Hook Component.
-        purpose: Lifecycle events, matchers, handlers, failure policies, and Hook catalogs.
-        standard: Agent Project Interface
-        version: '1.1'
-        updated: '2026-09-12'
-      policy:
-        agent_may_edit: false
-        rule: This file is human-owned; no Hook is activated from an undeclared runtime observation.
-        changed_by: The human, directly.
-        precedence: An explicit project decision and every applicable Principle take precedence over this file.
-        consumption: Register declared Hooks only after validating event, scope, handler, permission, and failure policy.
-        selection: A required deterministic control must be declared; an absent Hook is never inferred from a Rule.
-        version_resolution: Event and handler formats resolve against the selected runtime.
-        matching: Match Hooks by stable key, exact Event, matcher, and source.
-      content_map:
-        selected: Empty; no Hook handler is globally selected.
-        options: Supported handler types.
-        settings: Complete event and Hook catalogs, including explicit empty project declarations.
-      note: Kept verbatim from the former hook Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
-  superseded_on_2026_09_17:
-    meta_purpose: Permission mode, allow/ask/deny rules, sandboxing, protected sources, trust, authentication, and secrets.
-    content_map:
-      selected: Current permission mode and sandbox choice.
-      options: Supported permission modes.
-      settings: Rules, protected sources, sandbox, trust, authentication references, secrets, and external authorization.
-    note: Previous descriptions of these Preferences, kept verbatim; the merged descriptions above replace them.
+  history: .interface/agent/permission/history.yaml
   probes: Each enforced guarantee carries, per Agent Native, at least one behavioral probe (native.<agent>.probe) that Agent Sync runs during Verification; a failed probe means the guarantee is not realized.
     Decided 2026-09-17.
 

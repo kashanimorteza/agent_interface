@@ -1,0 +1,64 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/agent/agent/history.yaml
+  path_note: History of the Agent Agent Component — the Preferences of the Components it absorbed and the declarations it superseded, kept verbatim.
+  purpose: Preserve, without loss, what earlier Components declared before their merge on 2026-09-17, so the merge remains auditable. Not read by Agent Sync; not an authority.
+  moved_from: "policy.absorbed_preferences and policy.superseded_on_2026_09_17 of .interface/agent/agent/preferences.yaml, on 2026-09-18"
+  standard: Agent Project Interface
+  version: '1.0'
+  updated: '2026-09-18'
+
+# <!--------------------------------------------------------------------------------- History -->
+absorbed_preferences:
+  role:
+    meta:
+      path: .interface/agent/role/preferences.yaml
+      path_note: The Preferences layer of the Agent Role Component.
+      purpose: Primary and specialized responsibility contracts available for assignment to Agent Instance Definitions.
+      standard: Agent Project Interface
+      version: '1.2'
+      updated: '2026-09-12'
+    policy:
+      agent_may_edit: false
+      rule: This file is human-owned; runtime-discovered roles are not adopted as required roles automatically.
+      changed_by: The human, directly.
+      precedence: An explicit project decision and every applicable Principle take precedence over this file.
+      consumption: Select the declared primary role and use specialized roles only within their contracts.
+      selection: An undeclared role may be used only as optional runtime capability when compatible with current authority.
+      version_resolution: Role contracts are portable; any native realization resolves through its owning Agent Instance Definition, Agent Native, and selected Runtime.
+      matching: Match Roles by stable preferences key and architecture contract.
+    content_map:
+      selected: The current Primary Role.
+      options: Selectable primary roles.
+      settings: Complete role catalogs and role defaults, with unused sources explicit.
+    note: Kept verbatim from the former role Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
+  coordination:
+    meta:
+      path: .interface/agent/coordination/preferences.yaml
+      path_note: The Preferences layer of the Agent Coordination Component.
+      purpose: Delegation, teams, tasks, messaging, concurrency, worktree isolation, and conflict handling.
+      standard: Agent Project Interface
+      version: '1.2'
+      updated: '2026-09-12'
+    policy:
+      agent_may_edit: false
+      rule: This file is human-owned; generated team and task runtime state is never written into it.
+      changed_by: The human, directly.
+      precedence: An explicit project decision and every applicable Principle take precedence over this file.
+      consumption: Use the smallest coordination mechanism and declared Agent Instance set sufficient for the authorized work.
+      selection: Prefer the General Agent Instance for sequential work, delegated Specialized Agent Instances for focused isolation, and teams only for genuine peer coordination.
+      version_resolution: Experimental runtime mechanisms resolve against the active compatible runtime.
+      matching: Match coordination mechanisms and Agent Instance Definitions by exact declared keys.
+    content_map:
+      selected: Default coordination and isolation strategy.
+      options: Supported coordination mechanisms.
+      settings: Delegation, teams, tasks, messaging, concurrency, worktrees, and conflict policy.
+    note: Kept verbatim from the former coordination Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
+superseded_on_2026_09_17:
+  meta_purpose: Agent Native selection plus General and Specialized Agent Instance identities, Role assignments, capability configuration, lifecycle defaults, and native realizations.
+  content_map:
+    selected: The selected Agent Native and General Agent Instance.
+    options: Selectable Agent Natives and General Agent Instance definitions.
+    settings: Declared Agent Instance definitions plus inherited defaults.
+  note: Previous descriptions of these Preferences, kept verbatim; the merged descriptions above replace them.
+

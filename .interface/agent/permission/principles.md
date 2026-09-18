@@ -15,21 +15,21 @@ It owns event matching, handler order, inputs, effects, and failure behavior. It
 - **Permission** — an enforceable allow, ask, or deny decision for an action or resource.
 - **Authorization** — approval from the authority entitled to permit a scoped action.
 - **Sandbox** — an enforced execution boundary restricting filesystem, network, or process access.
-- **Hook** — an event-bound handler executed when a matching lifecycle event occurs.
+- **Enforced Guarantee** — a behavior that must happen deterministically, without the model's discretion; realized by the Native through its own mechanism (a hook, a permission rule, a sandbox rule). *(formerly Hook — an event-bound handler executed when a matching lifecycle event occurs)*
 - **Event** — a named observable point in Agent or Tool execution.
-- **Blocking Hook** — a Hook authorized to prevent or reject the triggering action.
+- **Blocking Guarantee** — an Enforced Guarantee authorized to prevent or reject the triggering action. *(formerly Blocking Hook)*
 
 ## Relationships
 
-- **Consumes Human authorization and Agent Role scope** — derives the maximum permitted action boundary.
+- **Consumes Human authorization and Agent (formerly Role) scope** — derives the maximum permitted action boundary.
 - **Consumed by every executing Agent Component** — constrains all reads, mutations, execution, and connections.
-- **Consumed by Agent Hook and Observability** — supplies enforceable decisions and auditable outcomes.
-- **Consumes Agent Session, Tool, Integration, and Permission** — reacts to events using authorized handlers.
-- **Consumed by Agent Rule and Observability** — enforces guarantees and emits lifecycle evidence.
+- **Consumed by Agent Permission (formerly Hook) and Rule (formerly Observability)** — supplies enforceable decisions and auditable outcomes.
+- **Consumes Agent Rule (formerly Session), Tool, Connection (formerly Integration), and Permission** — reacts to events using authorized handlers.
+- **Consumed by Agent Rule (including former Observability)** — enforces guarantees and emits lifecycle evidence.
 
 Technical modes, permission rules, sandbox settings, trust policy, and credential references belong to Agent Permission Preferences.
 
-Technical events, matchers, handlers, timeouts, and native configuration belong to Agent Hook Preferences.
+Technical events, matchers, handlers, timeouts, and native configuration belong to the `native.<agent-native>` block of each Enforced Guarantee in Agent Permission Preferences (formerly Hook Preferences).
 
 Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -57,7 +57,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 ## 3. Agent Module reads belong only to the explicit Agent Native Skill
 
-**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-native` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, and model-generated action can neither invoke the Agent Native Skill nor create, inherit, borrow, or simulate its access grant. In its sync modes the Skill reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations; in its install mode it reads them to resolve which capabilities must be transferred or provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
+**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-native` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, enforcement handler, lifecycle routine, automation, and model-generated action can neither invoke the Agent Native Skill nor create, inherit, borrow, or simulate its access grant. In its sync modes the Skill reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations; in its install mode it reads them to resolve which capabilities must be transferred or provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
 
 **Why:** The Agent Module defines how an Agent Native and its Agent Instances should be constructed; it is not their operational context after synchronization.
 
@@ -85,37 +85,37 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 6. Hook behavior is deterministic and bounded
+## 6. An Enforced Guarantee is deterministic and bounded
 
-**Rule:** Every Hook declares its Event, matcher, handler type, inputs, allowed effects, timeout, exit behavior, and whether it may block. Matching the same unchanged event produces the same policy outcome.
+**Rule:** Every Enforced Guarantee declares what it guarantees, the Event it binds to, its allowed effects, its failure policy, and whether it may block; the Native adds its own mechanics (matcher, handler type, inputs, timeout, exit behavior) under `native.<agent-native>`. Matching the same unchanged event produces the same policy outcome.
 
-**Why:** Hooks are used when behavior must occur reliably rather than at model discretion.
+**Why:** Enforced Guarantees are used when behavior must occur reliably rather than at model discretion.
 
-**Boundary:** A prompt- or agent-backed handler may reason internally but remains bounded by the Hook contract.
+**Boundary:** A prompt- or agent-backed handler may reason internally but remains bounded by the guarantee's declaration.
 
 *Formerly Agent Hook Principle 1.*
 
 <br>
 
-## 7. Hooks fail visibly and safely
+## 7. Guarantees fail visibly and safely
 
-**Rule:** Hook failure, timeout, malformed output, and denied execution have an explicit fail-open or fail-closed policy and become observable. Security and integrity controls fail closed unless a stricter authority explicitly defines otherwise.
+**Rule:** A guarantee's failure, timeout, malformed output, and denied execution have an explicit fail-open or fail-closed policy and become observable. Security and integrity controls fail closed unless a stricter authority explicitly defines otherwise.
 
-**Why:** Silent Hook failure creates the appearance of enforcement without the protection.
+**Why:** A guarantee that fails silently creates the appearance of enforcement without the protection.
 
-**Boundary:** Notification-only Hooks may fail open when their failure cannot alter correctness or security.
+**Boundary:** Notification-only guarantees may fail open when their failure cannot alter correctness or security.
 
 *Formerly Agent Hook Principle 2.*
 
 <br>
 
-## 8. Hook authority does not expand on trigger
+## 8. A guarantee's authority does not expand on trigger
 
-**Rule:** An Event authorizes only the effects declared for its Hook. A trigger never grants broader file, network, external-service, or workflow authority.
+**Rule:** An Event authorizes only the effects declared for its Enforced Guarantee. A trigger never grants broader file, network, external-service, or workflow authority.
 
 **Why:** Automatic execution magnifies hidden scope expansion.
 
-**Boundary:** A Hook may request Human authorization and stop pending that decision.
+**Boundary:** An Enforced Guarantee may request Human authorization and stop pending that decision.
 
 *Formerly Agent Hook Principle 3.*
 
@@ -133,7 +133,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 - **Never** — use Agent Module sources as ordinary Understanding or as a fallback for Runtime drift *(3)*
 - **Never** — store or expose secret values in project declarations, logs, or output *(4)*
 - **Must** — preserve unrelated Human work and resolve destructive targets exactly *(5)*
-- **Must** — declare every Hook's event, matcher, effects, timeout, and blocking behavior *(6)*
-- **Must** — make Hook failure visible and give it an explicit failure policy *(7)*
+- **Must** — declare every Enforced Guarantee's Event, effects, failure policy, and blocking behavior, leaving matcher, handler, and timeout to the Native block *(6)*
+- **Must** — make a guarantee's failure visible and give it an explicit failure policy *(7)*
 - **Must** — fail closed for security and integrity controls *(7)*
-- **Never** — let an Event expand the Hook's authority *(8)*
+- **Never** — let an Event expand a guarantee's authority *(8)*

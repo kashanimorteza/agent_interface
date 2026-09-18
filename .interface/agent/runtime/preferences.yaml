@@ -19,37 +19,7 @@ policy:
   matching: Runtime identity matches the selected Runtime exactly.
   absorbed: 'settings/preferences.yaml (v1.1) merged on 2026-09-17: its source precedence, merge behavior, and reconcile policy are Claude Code mechanics and live under settings.native.claude.configuration;
     its general Principles 2-5 became Agent Preferences Schema rules.'
-  absorbed_preferences:
-    settings:
-      meta:
-        path: .interface/agent/settings/preferences.yaml
-        path_note: The Preferences layer of the Agent Settings Component.
-        purpose: Configuration sources, scopes, precedence, merge behavior, environment values, and reconciliation policy.
-        standard: Agent Project Interface
-        version: '1.1'
-        updated: '2026-09-12'
-      policy:
-        agent_may_edit: false
-        rule: This file is human-owned; consumers reconcile declarations with runtime state without writing observations here.
-        changed_by: The human, directly.
-        precedence: An explicit project decision and every applicable Principle take precedence over this file.
-        consumption: Resolve sources in declared precedence and apply each setting owner's merge rule.
-        selection: Unlisted native settings remain runtime defaults unless another Agent Component declares a requirement.
-        version_resolution: Settings schema versions follow the selected Agent Runtime.
-        matching: Match settings by stable owner and exact native key.
-      content_map:
-        selected: The shared project settings source and reconciliation behavior.
-        options: Supported configuration source scopes.
-        settings: Precedence, merge policy, environment, flags, and complete configuration categories.
-      note: Kept verbatim from the former settings Component Preferences; its content now lives under these Preferences as described in policy.absorbed.
-  superseded_on_2026_09_17:
-    meta_purpose: The selected runtime, provider, model, effort, and compatibility choices.
-    content_map:
-      selected: The current Agent Runtime.
-      options: Supported runtime alternatives.
-      settings: Provider, model, effort, and compatibility declarations. Native paths, formats, mappings, and capability limits are discovered by Agent Sync from the selected Agent Native.
-    note: Previous descriptions of these Preferences, kept verbatim; the merged descriptions above replace them.
-
+  history: .interface/agent/runtime/history.yaml
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
 - selected

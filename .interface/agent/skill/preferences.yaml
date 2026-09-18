@@ -5,7 +5,7 @@ meta:
   purpose: Interface-owned Skill Contracts, optional prepared Skill files or directories, and prepared and installed provider Skill declarations. Native mappings are
     resolved by Agent Sync.
   standard: Agent Project Interface
-  version: '2.1'
+  version: '2.2'
   updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -63,7 +63,8 @@ content:
     skills:
       core_workflow:
         configure:
-          name: my-interface-configure
+          name: configure
+          native: {claude: {name: my-interface-configure}}
           path: resolved by Agent Sync from the selected Agent Native
           contract: .interface/agent/skill/contracts/configure.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
@@ -74,7 +75,8 @@ content:
           required: true
           personality: null
         planning:
-          name: my-interface-planning
+          name: planning
+          native: {claude: {name: my-interface-planning}}
           path: resolved by Agent Sync from the selected Agent Native
           contract: .interface/agent/skill/contracts/planning.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
@@ -85,7 +87,8 @@ content:
           required: true
           personality: null
         developing:
-          name: my-interface-developing
+          name: developing
+          native: {claude: {name: my-interface-developing}}
           path: resolved by Agent Sync from the selected Agent Native
           contract: .interface/agent/skill/contracts/developing.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
@@ -96,7 +99,8 @@ content:
           required: true
           personality: null
         reviewing:
-          name: my-interface-reviewer
+          name: reviewing
+          native: {claude: {name: my-interface-reviewer}}
           path: resolved by Agent Sync from the selected Agent Native
           contract: .interface/agent/skill/contracts/reviewing.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
@@ -107,7 +111,8 @@ content:
           required: true
           personality: null
         launch:
-          name: my-interface-launch
+          name: launch
+          native: {claude: {name: my-interface-launch}}
           path: resolved by Agent Sync from the selected Agent Native
           contract: .interface/agent/skill/contracts/launch.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
@@ -119,7 +124,8 @@ content:
           personality: null
       supporting:
         implement:
-          name: my-interface-implement
+          name: implement
+          native: {claude: {name: my-interface-implement}}
           path: resolved by Agent Sync from the selected Agent Native
           contract: .interface/agent/skill/contracts/implement.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
@@ -139,14 +145,16 @@ content:
               authority: delegated invocation only; each Skill retains ownership of its records and outputs, scope: same selected phase and current reconciliation Finding; Configure may also reconcile project-wide
               Config or Environment prerequisites})'
         reset:
-          name: my-interface-reset
+          name: reset
+          native: {claude: {name: my-interface-reset}}
           path: resolved by Agent Sync from the selected Agent Native
           contract: .interface/agent/skill/contracts/reset.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
           invocation: explicit-human
           required: true
         agent-native:
-          name: my-interface-agent-native
+          name: agent-native
+          native: {claude: {name: my-interface-agent-native}}
           path: resolved by Agent Sync from the selected Agent Native
           contract: .interface/agent/skill/contracts/agent-native.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
@@ -171,6 +179,7 @@ content:
                 source: github
                 repository: pydantic/skills
               plugin: pydantic@pydantic-skills
+    naming_note: "A Skill's portable name is its key; the Claude Code Skill directory name (the `my-interface-` prefix, and `reviewer` for `reviewing`) lives only under each Skill's native.claude.name (moved there 2026-09-18)."
     placement_note: "Where a declared Skill lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (project_skills, user_skills, managed_skills, runtime_skills, extension_skills) were collapsed into `skills` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     disabled_skills: {}
     overrides: {}

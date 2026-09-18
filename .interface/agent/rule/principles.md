@@ -37,21 +37,21 @@ It owns session lifecycle and transient execution continuity. It does not own pr
 
 - **Consumes Target and Implementation Modules during ordinary execution** — Agent Module authorities are consumed only by explicit Agent Sync and realized as Runtime Rules for every other operation.
 - **Consumed by Agent Context and Skill** — supplies persistent applicable guidance.
-- **Consumed by Agent Permission and Hook** — provides behavioral context while those Components supply enforceable controls.
-- **Consumes Agent Role, Command, Session, and Observability** — presents actions, progress, state, and outcomes.
+- **Consumed by Agent Permission (including former Hook)** — provides behavioral context while those Components supply enforceable controls.
+- **Consumes Agent (formerly Role), Command, Rule (formerly Session and Observability)** — presents actions, progress, state, and outcomes.
 - **Consumed by every Human-facing Agent capability** — supplies the selected communication contract.
 - **Consumes every Agent Component** — evaluates their declarations and runtime realization.
-- **Consumed by Agent Role, Interaction, and Session** — supplies diagnostics and evidence-backed outcome claims.
-- **Consumes Agent Runtime, Agent, Context, Role, and Permission** — hosts an Agent Instance executing with current context and authority.
-- **Consumed by Agent Coordination, Hook, Interaction, and Observability** — supplies lifecycle events and execution identity.
+- **Consumed by Agent (formerly Role), Rule (formerly Interaction and Session)** — supplies diagnostics and evidence-backed outcome claims.
+- **Consumes Agent Runtime, Agent, Context, Agent (formerly Role), and Permission** — hosts an Agent Instance executing with current context and authority.
+- **Consumed by Agent (formerly Coordination), Permission (formerly Hook), Rule (formerly Interaction and Observability)** — supplies lifecycle events and execution identity.
 
 Technical Rule files, scopes, load order, and native locations belong to Agent Rule Preferences.
 
-Technical styles, status lines, themes, artifact facilities, and interface selections belong to Agent Interaction Preferences.
+Technical styles, status lines, themes, artifact facilities, and interface selections belong to Agent Rule Preferences (formerly Interaction Preferences).
 
-Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting belong to Agent Observability Preferences.
+Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting belong to Agent Rule Preferences (formerly Observability Preferences).
 
-Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Session Preferences.
+Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Rule Preferences (formerly Session Preferences).
 
 Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
 

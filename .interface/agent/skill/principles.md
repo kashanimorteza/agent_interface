@@ -1,6 +1,6 @@
 # Agent Skill Principles
 
-Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Every declared Skill has exactly one Capability Realization Kind. An Interface-owned Skill is Constructed: its portable Skill Contract defines it completely, and runtime implementations translate that Contract into focused, discoverable instructions. A declared Skill with a matching prepared Markdown file is Prepared: that file's instruction content is transferred into the Runtime unchanged. Externally provided Skills are Installed: they remain provider-owned capabilities declared by the Agent Preferences and provisioned through Agent Extension or Agent Integration, never built from a Skill Contract.
+Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Every declared Skill has exactly one Capability Realization Kind. An Interface-owned Skill is Constructed: its portable Skill Contract defines it completely, and Agent Sync places that Contract's obligations, as written, into the Native's own Skill form, adding only the Native's discovery and invocation mechanics (Principle 5). A declared Skill with a matching prepared Markdown file is Prepared: that file's instruction content is transferred into the Runtime unchanged. Externally provided Skills are Installed: they remain provider-owned capabilities declared by the Agent Preferences and provisioned through Agent Extension or Agent Integration, never built from a Skill Contract.
 
 It owns Skill contracts and activation boundaries. It does not own the project facts, Component policies, or runtime tools it consumes.
 
@@ -14,9 +14,9 @@ It owns Skill contracts and activation boundaries. It does not own the project f
 
 ## Relationships
 
-- **Consumes Agent Role, Context, Rule, Tool, and Permission** — executes within their contracts.
+- **Consumes Agent (formerly Role), Context, Rule, Tool, and Permission** — executes within their contracts.
 - **Consumes Implementation Components and Target** — reads current authorities required by its responsibility.
-- **Consumed by Agent, Command, and Coordination** — provides assignable, invocable, and delegable workflows.
+- **Consumed by Agent, Command, and Agent (formerly Coordination)** — provides assignable, invocable, and delegable workflows.
 
 Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, and provider resources belong to Agent Skill Preferences; Native implementation mappings are resolved by Agent Sync from the selected Agent Native. Command names and argument forms belong to Agent Command Preferences.
 
