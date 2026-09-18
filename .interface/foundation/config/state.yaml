@@ -1,0 +1,122 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/foundation/config/state.yaml"
+  path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "implementation"
+  - "launch"
+  - "history"
+  - "blockers"
+  - "open_questions"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current or most recently recorded Workflow position."
+  phases: "Aggregate Planning, Development, and Review progress by phase identifier."
+  implementation: "Latest end-to-end Implement result and the step-by-step log of every Implement run."
+  launch: "Current runtime result and verified access points."
+  history: "Append-only State-changing Workflow events."
+  blockers: "Unresolved critical conditions."
+  open_questions: "Unresolved critical questions."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "configuring"
+    phase: null
+    mode_reason: "Configure initialized the four operational Config files and synchronized phase State from Target phase identities P1-P7."
+    set_by: "configure"
+    set_at: "2026-09-18T09:12:56Z"
+
+  phases:
+    P1:
+      id: "P1"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+    P7:
+      id: "P7"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "initialization"
+      updated_at: null
+
+  implementation:
+    status: "not started"
+    started_at: null
+    completed_at: null
+    updated_by: "initialization"
+    updated_at: null
+    runs: []
+
+  launch:
+    status: "not launched"
+    environment: null
+    method: null
+    access_points: []
+    updated_by: "initialization"
+    updated_at: null
+
+  history:
+    - id: "H1"
+      operation: "configure"
+      phase: null
+      event: "Created Application Manifest, State, Plan, and Review Config from their Schemas; synchronized 7 Target phase identities (P1-P7); verified project-scope tooling (uv, Node.js, npm) already present; no Environment change required."
+      outcome: "Config initialized; State phases synchronized; Environment already satisfied."
+      recorded_by: "configure"
+      recorded_at: "2026-09-18T09:12:56Z"
+
+  blockers: {}
+
+  open_questions: {}
