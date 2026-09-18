@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
   purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
-  version: "5.5"
-  updated: "2026-09-16"
+  version: "5.6"
+  updated: "2026-09-18"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -31,9 +31,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "One configurable profile per Participating Component, including identity, path, type, role, and applicable language, database, and Platform Launch Item references."
+  selected: "One configurable profile per Participating Component, including identity, path, documentation file, type, role, and applicable language, database, and Platform Launch Item references."
   options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
-  settings: "The declared Connection graph, package-publication default, and Cross-cutting Capability applicability."
+  settings: "The shared documentation conventions, the declared Connection graph, package-publication default, and Cross-cutting Capability applicability."
   implementation: "Empty. Component-specific conceptual realization remains owned by each Participating Component."
 
 
@@ -46,6 +46,7 @@ content:
       model:
         name: "model"
         path: "model"
+        documentation: "model/README.md"
         type: "library"
         role: "Defines the system's shared domain Model."
         language: "Python"
@@ -53,6 +54,7 @@ content:
       database:
         name: "database"
         path: "database"
+        documentation: "database/README.md"
         type: "library"
         role: "Owns persistence and access to stored data."
         language: "Python"
@@ -61,6 +63,7 @@ content:
       logic:
         name: "logic"
         path: "logic"
+        documentation: "logic/README.md"
         type: "library"
         role: "Implements server-side application Behaviour as reusable Logic."
         language: "Python"
@@ -68,6 +71,7 @@ content:
       api:
         name: "api"
         path: "api"
+        documentation: "api/README.md"
         type: "executable"
         role: "Publishes the external API and runs the API process."
         language: "Python"
@@ -75,6 +79,7 @@ content:
       presentation:
         name: "presentation"
         path: "presentation"
+        documentation: "presentation/README.md"
         type: "executable"
         role: "Provides the user-facing application."
         language: "TypeScript"
@@ -82,6 +87,7 @@ content:
       platform:
         name: "platform"
         path: "platform"
+        documentation: "platform/README.md"
         type: "guideline"
         role: "Defines Launch Items, per-Component runtime requirements, and supporting artifacts."
 
@@ -304,6 +310,25 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings:
+
+    documentation:
+      file: "README.md"
+      location: "the Component's path root, at the file its Profile's documentation key names"
+      format: "markdown"
+      purpose: "Anyone who reads it understands how this Component works and can use it."
+      order:
+        - overview          # what it is, what it does, where it sits
+        - structure         # public surface; main classes, objects, or modules, each explained
+        - setup             # install, configure
+        - run               # how to start or use it
+        - capabilities      # what it can do, each with a runnable example when executable
+        - verify            # how to check it works
+        - troubleshooting
+      examples: "required wherever something is executable; written for the Component's resolved technology so they run as written"
+      per_component: "each Component fills this order through its own mechanism; a part that does not apply says so rather than being omitted"
+      secrets: "placeholders, environment-variable names, or safe secret references only; never a usable credential"
+      authority: "derived, non-authoritative; never copies or overrides Principles, Preferences, the implemented Public Interface, or a Target source"
+      decided: "2026-09-18"
 
     connections:
       presentation_to_api:

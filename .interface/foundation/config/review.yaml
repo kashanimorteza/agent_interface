@@ -15,5 +15,115 @@ content_map:
   reviews: "The current review record for each reviewed phase."
 
 content:
-  finding_count: 0
-  reviews: {}
+  finding_count: 7
+  reviews:
+    P1:
+      id: "P1"
+      title: "Model"
+      target: "model"
+      scope: "Independent comparison of the P1 Model Plan (revision 1, 16 Tasks) and its implementation (the model/ Python package: Foundation plus 15 Domain Definitions) against current Interface Understanding, current Target Understanding (Technical Definition Models section), and applicable Model and Development Principles and Preferences. Covers the complete obligation inventory: Model's 'At a Glance' Must/Never list, Model Preferences' declaration vocabulary, validation, numeric precision, time, and verification conventions, Development's Application Manifest and Cross-cutting Capability obligations, and every Target-declared Field, relationship, and rule for all 15 Domain Definitions."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 1
+      implementation_outcome: "satisfied"
+      reviewed_by: "reviewer"
+      reviewed_at: "2026-09-18T15:45:00Z"
+      finding_count: 4
+      findings:
+        F1:
+          id: "F1"
+          kind: "defect"
+          severity: "major"
+          task: null
+          expected: "Model Principle 2: 'Model Preferences may complete only missing properties of existing Fields... A default never... invents... a relationship or behavior.' Model Principle 9's declaration vocabulary publishes length and precision only 'where the Target declares them.' The Target declares no precision or scale for any decimal Field (Trailing Rule's trigger_percentage/take_profit_adjustment/stop_loss_adjustment, Partial Rule's profit_percentage/close_percentage, Account.balance, Action's risk_by_reward/take_profit/stop_loss, Position's volume/profit/base_tp/base_sl/real_tp/real_sl), and Model Preferences defines no default digits/scale either — only that exact values use decimal.Decimal."
+          observed: "Independently re-checked: no Field in trailing_rule.py, partial_rule.py, account.py, action.py, or position.py publishes a 'precision' key any longer (`grep -rn '\"precision\"' model/src/` returns nothing)."
+          evidence: "model/src/model/{trailing_rule,partial_rule,account,action,position}.py; declaration_vocabulary() on each affected class carries no 'precision' entry."
+          state: "resolved"
+          raised_at: "2026-09-18T15:10:00Z"
+          settled_at: "2026-09-18T15:45:00Z"
+          settled_by: "reviewer"
+        F2:
+          id: "F2"
+          kind: "defect"
+          severity: "major"
+          task: "T4"
+          expected: "Model Principle 2 requires Model to preserve every explicit Target constraint. The Target declares Currency.code 'Size: 3', and Model Preferences directs 'declarative_constraints_first: true' — the constraint should be enforced through Pydantic's own declarative Field constraint, not only published as descriptive metadata."
+          observed: "Independently re-checked: code now declares max_length=3 on the Field itself; Currency(user_id=1, code='TOOLONG') raises ValidationError."
+          evidence: "model/src/model/currency.py code Field (max_length=3); fresh adversarial instantiation this Review pass confirmed rejection."
+          state: "resolved"
+          raised_at: "2026-09-18T15:10:00Z"
+          settled_at: "2026-09-18T15:45:00Z"
+          settled_by: "reviewer"
+        F3:
+          id: "F3"
+          kind: "gap"
+          severity: "minor"
+          task: null
+          expected: "Development Principle 6: when an Implementation Component is generated, it publishes its public composition metadata (package_name, path, public_entrypoint, public_interface) in the Application Manifest section keyed by its canonical identifier."
+          observed: "Independently re-checked: application.yaml's components.model section now publishes package_name='model', path='model', public_entrypoint='model', and the full 16-name public_interface list."
+          evidence: ".interface/foundation/config/application.yaml content.components.model"
+          state: "resolved"
+          raised_at: "2026-09-18T15:10:00Z"
+          settled_at: "2026-09-18T15:45:00Z"
+          settled_by: "reviewer"
+        F4:
+          id: "F4"
+          kind: "missing evidence"
+          severity: "minor"
+          task: null
+          expected: "Model Preferences' verification.checks requires serialization and schema-generation behavior to be established, and 'one passing example proves only that example' — so this needs observable proof for each of the 15 Domain Definitions, not just one."
+          observed: "Independently re-checked: the behavior script now exercises model_dump(), model_dump_json(), and model_json_schema() for all 15 Domain Definitions individually (45 additional passing assertions), not only Position."
+          evidence: "Task log for T1 in .interface/foundation/config/plan.yaml; full 68-assertion script re-run this Review pass, all PASS."
+          state: "resolved"
+          raised_at: "2026-09-18T15:10:00Z"
+          settled_at: "2026-09-18T15:45:00Z"
+          settled_by: "reviewer"
+    P2:
+      id: "P2"
+      title: "Database"
+      target: "database"
+      scope: "Independent comparison of the P2 Database Plan (revision 2, 7 Tasks) and its implementation (the database/ Python package: Storage Adapter, Migration Engine, Data Logic and Mapping, Database Interface, controlled command route, Initial Data importer, Observability) against current Interface Understanding, current Target Understanding, and applicable Database and Development Principles and Preferences. Covers the complete obligation inventory: Database's 'At a Glance' Must/Never list, Database Preferences' settings and implementation conventions, Development's Application Manifest and Cross-cutting Capability obligations, and the Target's declared Initial Data across all 12 applicable Domain Definitions."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 2
+      implementation_outcome: "satisfied"
+      reviewed_by: "reviewer"
+      reviewed_at: "2026-09-18T17:50:00Z"
+      finding_count: 3
+      findings:
+        F5:
+          id: "F5"
+          kind: "gap"
+          severity: "major"
+          task: null
+          expected: "Database Principle 16 (Must): 'Database applies least privilege to runtime identities, records security-relevant persistence outcomes without secrets, and provides signals for connection failure, Migration failure, constraint violation, Transaction conflict, and protected-data access.' Database Preferences implementation.observability declares the same five signal categories as required conventions. Development Principle 7 applies Logging and Error Handling to database by default."
+          observed: "Independently re-verified fresh: Plan revision 2 adds Group G5/Task T7; database/src/database/storage_adapter/observability.py implements all five record_* functions plus an observed() exception classifier, wired into database_interface.py, controlled_commands.py, and migration.py. Adversarial checks (not reused from Developing's own script) confirmed constraint_violation, protected_data_access, and migration_failure all log correctly through the real public entry points, with no credential value in any record."
+          evidence: "database/src/database/storage_adapter/observability.py; live re-run of a duplicate-key insert, a credential-bearing read, and a simulated apply_pending_migrations() failure, each producing the expected log record."
+          state: "resolved"
+          raised_at: "2026-09-18T17:00:00Z"
+          settled_at: "2026-09-18T17:50:00Z"
+          settled_by: "reviewer"
+        F6:
+          id: "F6"
+          kind: "gap"
+          severity: "minor"
+          task: null
+          expected: "Development Principle 6: when an Implementation Component is generated, it publishes its public composition metadata (package_name, path, public_entrypoint, public_interface) in the Application Manifest section keyed by its canonical identifier."
+          observed: "Independently re-checked: application.yaml's components.database section now publishes package_name='database', path='database', public_entrypoint='database', and a 24-name public_interface list."
+          evidence: ".interface/foundation/config/application.yaml content.components.database"
+          state: "resolved"
+          raised_at: "2026-09-18T17:00:00Z"
+          settled_at: "2026-09-18T17:50:00Z"
+          settled_by: "reviewer"
+        F7:
+          id: "F7"
+          kind: "missing evidence"
+          severity: "minor"
+          task: "T2"
+          expected: "Database Preferences implementation.migrations.integrity_marker: 'checksum' — Migration integrity is verified through a checksum, distinct from structural drift detection."
+          observed: "Independently re-verified fresh: verify_migration_integrity() computes SHA-256 checksums of every migrations/versions/*.py script against the committed migrations/checksums.json, called automatically by apply_pending_migrations(). A tampered manifest was rejected with MigrationIntegrityError; the correct manifest passed."
+          evidence: "database/src/database/storage_adapter/migration.py; database/migrations/checksums.json; live re-run of the tamper/restore adversarial check."
+          state: "resolved"
+          raised_at: "2026-09-18T17:00:00Z"
+          settled_at: "2026-09-18T17:50:00Z"
+          settled_by: "reviewer"

@@ -114,7 +114,7 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 ## 8. Every Component has complete, safe, and operational documentation
 
-**Rule:** Every Participating Component is generated with a README at the root selected by its Component Profile. The README briefly explains the Component, its actual public surface and structure, setup, installation, configuration, use, run procedure when applicable, verification, troubleshooting, and every active capability relevant to working with it. It uses the resolved technical selections to provide accurate executable examples. Documentation stays consistent with public behavior and enables a human or Agent to understand and use the Component without inspecting private implementation.
+**Rule:** Every Participating Component is generated with a README at its `path` root, at the file its Component Profile's `documentation` key names. Documentation is part of generating the Component, not a step after it: a Component whose README is missing or stale is not complete. The README moves from the general to the specific — first what the Component is, what it does, and where it sits; then its actual public surface and structure, with each main class, object, or module explained; then setup and configuration; how it is run or used; every capability relevant to working with it, each shown with an executable example wherever it can be executed; how to verify it works; and troubleshooting. Each Component fills that order through its own mechanism, and a part that does not apply says so rather than disappearing. Examples use the resolved technical selections so they run as written. Documentation stays consistent with public behavior, and its measure is one: anyone — human or Agent — who reads it understands how the Component works and can use it without inspecting private implementation. The shared conventions of that documentation — file name, order of parts, example policy — are declared once in Development Preferences and apply to every Participating Component.
 
 A README may show safe code and secret-supply mechanisms, but it uses placeholders, environment-variable names, or safe secret references and never includes a usable credential, token, or secret value. Public usage changes update the README.
 
@@ -193,7 +193,9 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component. *(7)*
 - **Must** — Apply Logging, Error Handling, Authentication, and Encryption by default to the five application Components: Model, Database, Logic, API, and Presentation. *(7)*
 - **May** — Override a default Cross-cutting Capability explicitly in the Target. *(7)*
-- **Must** — Generate a root README that explains actual structure, public use, setup, configuration, operation, verification, troubleshooting, and active capabilities with executable resolved-technology examples. *(8)*
+- **Must** — Generate a README at each Component's `path` root, named by its Profile's `documentation` key, as part of generating the Component. *(8)*
+- **Must** — Order the README from the general to the specific: overview, structure and main objects, setup, run, capabilities with executable examples, verification, troubleshooting — through each Component's own mechanism, stating explicitly when a part does not apply. *(8)*
+- **Must** — Write it so that anyone who reads it understands how the Component works, with examples that run on the resolved technology. *(8)*
 - **Must** — Keep every README consistent with public behavior and update it when public usage changes. *(8)*
 - **Never** — Expose a usable secret in documentation or let a README copy, replace, or override an authoritative source. *(8)*
 - **Must** — Resolve an unstated Development decision through Principles, Preferences, then compatible professional judgment. *(9)*

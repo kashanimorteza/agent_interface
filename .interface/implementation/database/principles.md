@@ -131,7 +131,7 @@ The Registry is derived from the configured Instance collection, and the number 
 
 **Why:** Named Instances let consumers choose a database by purpose without learning how it connects.
 
-**Boundary:** The Registry exposes no raw connection objects or secret values. Platform may deliver a Binding needed to select or reach an Instance without taking ownership of the Instance.
+**Boundary:** The Registry exposes no raw connection objects or secret values. Instances, their connection settings, and their credentials come from Database's runtime configuration file; Platform operates the result without owning or supplying them.
 
 <br>
 
@@ -157,11 +157,11 @@ The Registry is derived from the configured Instance collection, and the number 
 
 ## 12. Credential storage protects values at rest
 
-**Rule:** Connection credentials remain in runtime configuration outside committed files. Credential fields are classified before persistence and resolve to an approved at-rest treatment: verification-only credentials use a one-way transformation, recoverable secrets use authenticated protection or a managed secret store, and other sensitive data follows its declared protection.
+**Rule:** Connection credentials live in Database's runtime configuration file, beside the Instance they belong to, so that adding an Instance or changing a username or password is one edit in one file. Persisted credential fields — a credential the Target stores in a Model — are a separate concern: they are classified before persistence and resolve to an approved at-rest treatment: verification-only credentials use a one-way transformation, recoverable secrets use authenticated protection or a managed secret store, and other sensitive data follows its declared protection.
 
-**Why:** Committed secrets are exposed, and inconsistent per-caller treatment weakens storage protection.
+**Why:** One file holds every connection setting the operator changes, and inconsistent per-caller treatment of persisted credentials weakens storage protection.
 
-**Boundary:** Database never exposes credential representations, connection settings, keys, or secret values through its public interface, logs, exports, documentation, or Interface records. Platform delivers required secret Bindings without publishing them to other layers.
+**Boundary:** Database never exposes credential representations, connection settings, keys, or secret values through its public interface, logs, exports, documentation, or Interface records. Platform delivers required secret Bindings without publishing them to other layers. The key for an encrypted at-rest treatment is read from that same runtime configuration file. How the file itself is protected — and whether it is committed — is an open decision recorded in the Implementation Guide (2026-09-18); this Principle does not decide it.
 
 <br>
 
@@ -234,7 +234,8 @@ If the Target declares Initial Data, Database is not ready until the structure h
 - **Never** — Turn a non-persistent Model into stored structure or silently weaken a persistence rule. *(10)*
 - **Must** — Preserve resolved relationship cardinality, optionality, roles, and required physical enforcement. *(11)*
 - **Never** — Let physical mapping defaults override Model meaning. *(11)*
-- **Must** — Apply an approved protected at-rest treatment to every persisted credential. *(12)*
+- **Must** — Keep connection credentials in Database's runtime configuration file, beside the Instance that uses them. *(12)*
+- **Must** — Apply an approved protected at-rest treatment to every persisted credential field. *(12)*
 - **Never** — Expose credential representations, keys, connection settings, or secret values through Database outputs. *(12)*
 - **Must** — Import declared initial data repeatably and preserve its Model meaning. *(13)*
 - **Never** — Source initial data from Database Preferences. *(13)*

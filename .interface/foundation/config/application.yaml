@@ -15,8 +15,56 @@ content_map:
 content:
   components:
     development: {}
-    model: {}
-    database: {}
+    model:
+      package_name: "model"
+      path: "model"
+      public_entrypoint: "model"
+      public_interface:
+        - "model.Account"
+        - "model.AccountGroup"
+        - "model.Action"
+        - "model.ActionGroup"
+        - "model.Asset"
+        - "model.Broker"
+        - "model.Currency"
+        - "model.DomainModel"
+        - "model.Instance"
+        - "model.PartialGroup"
+        - "model.PartialRule"
+        - "model.Position"
+        - "model.TradingPlatform"
+        - "model.TrailingGroup"
+        - "model.TrailingRule"
+        - "model.User"
+    database:
+      package_name: "database"
+      path: "database"
+      public_entrypoint: "database"
+      public_interface:
+        - "database.ControlledCommandError"
+        - "database.InitialDataImportError"
+        - "database.InstanceIdentity"
+        - "database.SchemaDriftError"
+        - "database.UnknownInstanceError"
+        - "database.UnsupportedOperationError"
+        - "database.apply_pending_migrations"
+        - "database.command_log"
+        - "database.create"
+        - "database.default_instance"
+        - "database.delete"
+        - "database.disable"
+        - "database.enable"
+        - "database.ensure_ready"
+        - "database.execute_command"
+        - "database.get_by_id"
+        - "database.list_"
+        - "database.list_instances"
+        - "database.register_command"
+        - "database.resolve_instance"
+        - "database.search"
+        - "database.transaction"
+        - "database.update"
+        - "database.verify_no_drift"
     logic: {}
     api: {}
     presentation: {}

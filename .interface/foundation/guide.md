@@ -33,6 +33,7 @@ Foundation is not one of the three Modules (Target, Implementation, Agent). It i
      - **[Agent Preferences](#agent-preferences-schema)**
      - **[Skill Contract](#skill-contract-schema)**
      - **[Personality](#personality-schema)**
+     - **[Database Configuration](#database-configuration-schema)**
    - **[Operational formats](#operational-formats)**
      - **[Application Manifest](#application-manifest-schema)**
      - **[State](#state-schema)**
@@ -280,6 +281,7 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── agent-preferences.yaml
 ├── skill-contract.md
 ├── personality.md
+├── database.yaml
 ├── application.yaml
 ├── state.yaml
 ├── plan.yaml
@@ -368,6 +370,20 @@ responsibility: Defines the structure followed by every Personality definition f
 ```
 
 → [Personality Schema](schema/personality.md)
+
+#### Database Configuration Schema
+
+The structure of the Database Component's runtime configuration file — supported Engines, selectable Instances with their connection settings and credentials, and the default Instance. It is conditional: it applies when the Implementation declares a Database Component, and an Implementation without one ignores it.
+
+```yaml
+name: Database Configuration Schema
+path: .interface/foundation/schema/database.yaml
+kind: Structure standard (conditional)
+generates: <database component path>/database.yaml
+responsibility: Defines the shape of the Database Component's runtime configuration file, so that adding an Instance or changing a credential is one edit in one file and no value is hardcoded in source
+```
+
+→ [Database Configuration Schema](schema/database.yaml)
 
 ### Operational formats
 
