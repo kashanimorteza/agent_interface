@@ -24,5 +24,54 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  finding_count: 0
-  reviews: {}
+  finding_count: 3
+  reviews:
+    P1:
+      id: "P1"
+      title: "Model"
+      target: "model"
+      scope: "Third independent Review pass after Developing reconciled P1-F3. Re-verified Plan Assurance (unchanged, revision 1). Re-verified Implementation Assurance from fresh evidence: confirmed the UTC-normalization fix on disk and behaviorally, re-ran ruff/ruff format/pyright, and ran a comprehensive automated cross-check of every field, relationship, unique_sets entry, credential classification, and id metadata across all 15 Domain Definitions against an independent transcription of Target (not derived from the Plan or prior Review passes) — full match, no new Findings."
+      outcome: "satisfied"
+      plan_outcome: "satisfied"
+      plan_revision: 1
+      implementation_outcome: "satisfied"
+      reviewed_by: "reviewer"
+      reviewed_at: "2026-09-18T09:36:10Z"
+      finding_count: 3
+      findings:
+        P1-F1:
+          id: "P1-F1"
+          kind: "defect"
+          severity: "major"
+          task: null
+          expected: "Every Task in Phase 1's Plan records a required agent_skills association with pydantic:pydantic and an acceptance clause requiring 'observable conformance with the applicable Pydantic guidance for the selected modeling package.' Invoking that Skill this Review returned explicit guidance: 'If you are defining Pydantic models in a module, avoid using `from __future__ import annotations` if possible (which stringifies all annotations by default)... best avoided if possible.'"
+          observed: "Developing removed `from __future__ import annotations` from all 16 modules. Re-verified fresh: `grep -rl \"from __future__ import annotations\" model/src/model/` returns nothing; ruff check, ruff format --check, and pyright all still pass clean."
+          evidence: "model/src/model/foundation.py and every file under model/src/model/domain/, re-inspected this Review."
+          state: "resolved"
+          raised_at: "2026-09-18T09:28:26Z"
+          settled_at: "2026-09-18T09:33:20Z"
+          settled_by: "reviewer"
+        P1-F2:
+          id: "P1-F2"
+          kind: "defect"
+          severity: "minor"
+          task: "P1-T15"
+          expected: "Task P1-T15's acceptance clause requires observable conformance with the required Pydantic Skill's guidance, which states: 'As much as possible, use the built-in validation constraints, instead of defining custom validators.'"
+          observed: "Developing replaced the custom `@field_validator(\"date\")` with Pydantic's built-in `AwareDatetime` type on Position.date. Re-verified fresh: `grep -rn field_validator model/src/model/` returns nothing; a naive datetime is still rejected (via AwareDatetime, no custom validator)."
+          evidence: "model/src/model/domain/position.py, re-inspected this Review; `date: AwareDatetime = domain_field(...)`."
+          state: "resolved"
+          raised_at: "2026-09-18T09:28:26Z"
+          settled_at: "2026-09-18T09:33:20Z"
+          settled_by: "reviewer"
+        P1-F3:
+          id: "P1-F3"
+          kind: "defect"
+          severity: "minor"
+          task: "P1-T15"
+          expected: "Model Preferences (.interface/implementation/model/preferences.yaml, implementation.time) declares 'absolute_instants: timezone-aware' and 'canonical_timezone: UTC'. An absolute instant Position.date must therefore both be timezone-aware and represented in the canonical UTC timezone."
+          observed: "Developing typed Position.date as `Annotated[AwareDatetime, AfterValidator(_to_utc)]`, normalizing every accepted aware datetime to UTC. Re-verified fresh: a +05:00 input now returns tzinfo UTC and the correct converted instant; a UTC input is unaffected; a naive input is still rejected."
+          evidence: "model/src/model/domain/position.py, re-inspected this Review; instantiating Position with a +05:00 offset returns date.tzinfo == UTC and the correctly converted value."
+          state: "resolved"
+          raised_at: "2026-09-18T09:33:20Z"
+          settled_at: "2026-09-18T09:36:10Z"
+          settled_by: "reviewer"
