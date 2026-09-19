@@ -15,13 +15,13 @@ content_map:
   open_questions: "Unresolved critical questions."
 content:
   active:
-    mode: "configuring"
-    phase: null
-    mode_reason: "Configure created the operational Config records and synchronized phase State."
-    set_by: "configure"
-    set_at: "2026-09-19T14:11:20Z"
+    mode: "development"
+    phase: "P1"
+    mode_reason: "Developed P1 against Plan revision 3 (Finding P1-F5)."
+    set_by: "developing"
+    set_at: "2026-09-19T14:34:09Z"
   phases:
-    P1: {id: "P1", planning: "not started", development: "not started", review: "not started", updated_by: "configure", updated_at: "2026-09-19T14:11:20Z"}
+    P1: {id: "P1", planning: "completed", development: "completed", review: "satisfied", updated_by: "reviewer", updated_at: "2026-09-19T14:38:45Z"}
     P2: {id: "P2", planning: "not started", development: "not started", review: "not started", updated_by: "configure", updated_at: "2026-09-19T14:11:20Z"}
     P3: {id: "P3", planning: "not started", development: "not started", review: "not started", updated_by: "configure", updated_at: "2026-09-19T14:11:20Z"}
     P4: {id: "P4", planning: "not started", development: "not started", review: "not started", updated_by: "configure", updated_at: "2026-09-19T14:11:20Z"}
@@ -29,12 +29,37 @@ content:
     P6: {id: "P6", planning: "not started", development: "not started", review: "not started", updated_by: "configure", updated_at: "2026-09-19T14:11:20Z"}
     P7: {id: "P7", planning: "not started", development: "not started", review: "not started", updated_by: "configure", updated_at: "2026-09-19T14:11:20Z"}
   implementation:
-    status: "not started"
-    started_at: null
+    status: "in progress"
+    started_at: "2026-09-19T14:12:39Z"
     completed_at: null
-    updated_by: "initialization"
-    updated_at: null
-    runs: []
+    updated_by: "implement"
+    updated_at: "2026-09-19T14:38:55Z"
+    runs:
+      - id: "R1"
+        started_at: "2026-09-19T14:12:39Z"
+        completed_at: "2026-09-19T14:38:55Z"
+        selection: ["P1"]
+        configure: "skipped"
+        phases:
+          - id: "P1"
+            entry: "planning-first"
+            cycles:
+              - number: 1
+                planning: "Completed: P1 Plan created at revision 1 with 22 Tasks in 7 Groups."
+                developing: "Completed: 22 of 22 Tasks done, none withheld; fresh-environment gate passed (lint, format, type check, behaviour check, README check, no test artifacts)."
+                reviewing: "Not satisfied: Plan Assurance not satisfied at revision 1 (Implementation Assurance not begun); 4 Findings opened — 3 owned by Planning (P1-F1 gap, P1-F2, P1-F3), 1 by Configure (P1-F4); none closed."
+              - number: 2
+                configure: "Completed: Model section of the Application Manifest reconciled from Model's published metadata (P1-F4); no other Config changed."
+                planning: "Completed: P1 Plan reconciled to revision 2 (22 Tasks preserved with status and logs); Operation-level coverage added to the Public Interface and documentation Tasks, repeated statements removed from the 15 definition Tasks, structural wording removed."
+                developing: "Completed: 22 of 22 Tasks done, none withheld; P1-G7-T1 re-claimed and changed (Operations now state accepts, returns, and outcomes in the code's own documentation), 18 Tasks re-verified without change; fresh-environment gate passed."
+                reviewing: "Not satisfied: Plan Assurance satisfied at revision 2; Implementation Assurance not satisfied. Closed P1-F1, P1-F2, P1-F3, P1-F4; opened P1-F5 (Developing: deserialize accepts wrongly typed data that construction rejects); none repeated."
+              - number: 3
+                planning: "Completed: P1 Plan reconciled to revision 3 (22 Tasks preserved with status and logs); P1-G1-T3 acceptance and verification now require deserialize to accept and reject exactly what construction does."
+                developing: "Completed: 22 of 22 Tasks done, none withheld; P1-G1-T3 re-claimed and changed (deserialize strict, plain forms required; README updated), 18 Tasks re-verified; parity check of 2092 construct/deserialize pairs and fresh-environment gate passed."
+                reviewing: "Satisfied: Plan Assurance and Implementation Assurance satisfied at revision 3; Finding P1-F5 closed; no Finding open."
+            outcome: "satisfied"
+        launch: "not eligible"
+        result: "Selected scope complete: P1 (Model) is planned, developed, and satisfied on both Review assurances. Whole Target not complete: P2, P3, P4, and P5 are enabled and ready and not yet implemented, so Launch did not run."
   launch:
     status: "not launched"
     environment: null
@@ -50,5 +75,89 @@ content:
       outcome: "completed"
       recorded_by: "configure"
       recorded_at: "2026-09-19T14:11:20Z"
+    - id: "H2"
+      operation: "implement"
+      phase: "P1"
+      event: "Started run R1 for selection P1; Configure skipped; entry Planning-first."
+      outcome: "in progress"
+      recorded_by: "implement"
+      recorded_at: "2026-09-19T14:12:39Z"
+    - id: "H3"
+      operation: "planning"
+      phase: "P1"
+      event: "Created the P1 Plan at revision 1."
+      outcome: "completed"
+      recorded_by: "planning"
+      recorded_at: "2026-09-19T14:15:51Z"
+    - id: "H4"
+      operation: "developing"
+      phase: "P1"
+      event: "Developed P1: 22 of 22 Tasks done; completion gate passed from a fresh environment."
+      outcome: "completed"
+      recorded_by: "developing"
+      recorded_at: "2026-09-19T14:22:52Z"
+    - id: "H5"
+      operation: "reviewing"
+      phase: "P1"
+      event: "Reviewed P1 at Plan revision 1; Plan Assurance not satisfied; Implementation Assurance not begun."
+      outcome: "not satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-19T14:26:00Z"
+    - id: "H6"
+      operation: "configure"
+      phase: null
+      event: "Reconciled the Model section of the Application Manifest from Model's published metadata; plan, review, and state Config and phase records P1-P7 already valid and preserved."
+      outcome: "completed"
+      recorded_by: "configure"
+      recorded_at: "2026-09-19T14:26:07Z"
+    - id: "H7"
+      operation: "planning"
+      phase: "P1"
+      event: "Reconciled the P1 Plan to revision 2 against Findings P1-F1, P1-F2, and P1-F3; no Task added or removed."
+      outcome: "completed"
+      recorded_by: "planning"
+      recorded_at: "2026-09-19T14:28:04Z"
+    - id: "H8"
+      operation: "developing"
+      phase: "P1"
+      event: "Developed P1 against Plan revision 2: Public Interface now states each Operation's accepts, returns, and outcomes; 22 of 22 Tasks done; completion gate passed from a fresh environment."
+      outcome: "completed"
+      recorded_by: "developing"
+      recorded_at: "2026-09-19T14:30:03Z"
+    - id: "H9"
+      operation: "reviewing"
+      phase: "P1"
+      event: "Reviewed P1 at Plan revision 2; Plan Assurance satisfied; Implementation Assurance not satisfied; Findings P1-F1 to P1-F4 resolved, P1-F5 opened."
+      outcome: "not satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-19T14:32:30Z"
+    - id: "H10"
+      operation: "planning"
+      phase: "P1"
+      event: "Reconciled the P1 Plan to revision 3: one Task's acceptance and verification tightened after Finding P1-F5; no Task added or removed."
+      outcome: "completed"
+      recorded_by: "planning"
+      recorded_at: "2026-09-19T14:33:18Z"
+    - id: "H11"
+      operation: "developing"
+      phase: "P1"
+      event: "Developed P1 against Plan revision 3: deserialize now accepts and rejects exactly what construction does (Finding P1-F5); 22 of 22 Tasks done; completion gate passed from a fresh environment."
+      outcome: "completed"
+      recorded_by: "developing"
+      recorded_at: "2026-09-19T14:37:30Z"
+    - id: "H12"
+      operation: "reviewing"
+      phase: "P1"
+      event: "Reviewed P1 at Plan revision 3; Plan Assurance and Implementation Assurance satisfied; Finding P1-F5 resolved."
+      outcome: "satisfied"
+      recorded_by: "reviewer"
+      recorded_at: "2026-09-19T14:38:45Z"
+    - id: "H13"
+      operation: "implement"
+      phase: "P1"
+      event: "Run R1 finished for selection P1 after 3 cycles; P1 satisfied; Launch not eligible while P2-P5 are unimplemented."
+      outcome: "selected scope complete; whole Target not complete"
+      recorded_by: "implement"
+      recorded_at: "2026-09-19T14:38:55Z"
   blockers: {}
   open_questions: {}

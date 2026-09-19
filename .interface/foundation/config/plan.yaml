@@ -1,15 +1,1519 @@
 meta:
-  path: ".interface/foundation/config/plan.yaml"
-  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+  path: .interface/foundation/config/plan.yaml
+  path_note: Mutable Plans, Groups, Tasks, counts and progress.
 policy:
   agent_may_edit: true
-  rule: "Apply the current Plan Component and the active operation's ownership rules."
+  rule: Apply the current Plan Component and the active operation's ownership rules.
 read_order:
-  - "task_count"
-  - "plans"
+- task_count
+- plans
 content_map:
-  task_count: "Total number of stored Tasks."
-  plans: "Current phase Plans and their Groups and Tasks."
+  task_count: Total number of stored Tasks.
+  plans: Current phase Plans and their Groups and Tasks.
 content:
-  task_count: 0
-  plans: {}
+  task_count: 22
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      revision: 3
+      target: Model
+      does: Implement the independent Model layer and its reusable package from the defined models, fields, relationships, and rules, published through one explicit Public Interface.
+      constraints: []
+      task_count: 22
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Library and shared Foundation
+          description: The independent Model library boundary and the Model Foundation every Domain Definition shares.
+          area: Model library boundary and shared Model Foundation mechanisms
+          does: Model exists as an independent library whose Foundation supplies validation, the Declaration Vocabulary, and the Serialization pair to every Domain Definition.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              title: Establish Model as an independent library package
+              description: Make Model an independently installable and importable library with its own isolated environment and its own declared dependencies, resolved from its Component Profile and the language item it selects.
+              reason: Every later Task needs a package boundary to be added to, and consumers may reach Model only as an installed library through its Public Interface.
+              kind: configuration
+              inputs:
+              - Component Profile of Model
+              - Selected language item and its package management
+              - Selected modeling package
+              expected_result: A Model library that can be installed into a clean isolated environment and imported, whose declared dependencies include no other Participating Component.
+              depends_on: []
+              constraints: []
+              agent:
+                consider: []
+                avoid: []
+                overridden: []
+                skills: []
+              acceptance: 'A consumer environment that installs only Model can import its public entry point, Model''s declared dependencies name no other Participating Component, and the resolved versions are concrete. The check is transient: it is run, its outcome is recorded in the log, and nothing it created remains in the Component.'
+              verify: Observe that a fresh isolated environment containing only the Model library imports its public entry point without error, and that the library's declared dependencies name no other Participating Component.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: Created an empty isolated consumer environment outside the repository, installed only the Model library into it, imported the public entry point, and read Model's declared dependencies.
+                outcome: 'Passed: import succeeded (20 public names), only pydantic 2.13.5 and its own dependencies were installed, and no other Participating Component is declared. Toolchain resolved: Python 3.14.7, uv 0.12.10, pydantic 2.13.5, ruff 0.16.8, pyright 1.1.414. Library-skill provisioning found no bundled skills.'
+            P1-G1-T2:
+              id: P1-G1-T2
+              title: Provide the Declaration Vocabulary publishing mechanism in Model Foundation
+              description: Give every Domain Definition one shared way to state and publish, through the definition itself, its logical field type, length and precision, nullability, default, primary-key and generated identity, single and composite uniqueness, relationships with referenced definition, cardinality and optionality, persistence declaration, and any credential classification with its at-rest treatment, without the Foundation ever contributing a Field or relationship.
+              reason: Database and every other consumer read one declaration from the definition itself, so the mechanism must exist before any definition is written.
+              kind: code
+              inputs:
+              - Model Principles on the Declaration Vocabulary, persistence declaration, and credential treatment
+              - Model Preferences on declaration metadata
+              expected_result: A shared mechanism through which any Domain Definition declares and publishes the full vocabulary, readable by a consumer from the definition, with no second schema artifact.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: A definition that uses the mechanism publishes every vocabulary property it declares and only those; the Foundation adds no Field or relationship to it; the persistence declaration and credential classification are readable from the published declaration; and no property is inferred from a Field name. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe, on a definition exercised only by a transient check, that the declaration a consumer reads through the Public Interface lists exactly the declared types, sizes, nullability, defaults, identity, uniqueness sets, relationships, persistence declaration, and credential treatment, and that a definition declaring none of them publishes none.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check on the 15 real definitions: declarations compared with the Target; a definition missing persistence or a vocabulary entry, or naming an unknown unique-set field, is refused at class creation.'
+                outcome: 'Passed: every declared property published and nothing beyond it; Foundation adds no Field; persistence and credential treatment readable; generated identity published as non-nullable; an omitted nullable Field is not published as a Target default. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+            P1-G1-T3:
+              id: P1-G1-T3
+              title: Provide the Serialization pair in Model Foundation
+              description: 'Give every Domain Definition the two symmetric capabilities serialize and deserialize once through the Foundation: serialize yields the Plain Representation of an instance as simple named values, and deserialize yields an instance from a Plain Representation, applying the same Intrinsic Rules as any other construction and failing when they are not satisfied.'
+              reason: Every Domain Definition must convert out of and back into its boundary through one shared, validated mechanism rather than one rebuilt by each consumer.
+              kind: code
+              inputs:
+              - Model Principles on Serialization
+              - Model Preferences on Serialization
+              - Declaration Vocabulary mechanism
+              expected_result: 'One pair of conversions available on every Domain Definition without being redeclared: an instance to a JSON-compatible plain structure of its own Fields, and a plain structure back to a validated instance.'
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: For a definition using the Foundation, serialize returns a plain structure of named values that is JSON-compatible, never encoded text, containing every Field of the definition and no nested related definition; deserialize of that structure returns an equal instance; deserialize rejects every input that construction of the same definition would reject, including wrongly typed values, and fails when data breaks an Intrinsic Rule; both are deterministic and perform no external I/O; and no Field is withheld. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check that a round trip through serialize and deserialize returns an equal instance, that the output survives conversion to JSON text unchanged, that a Domain Relationship appears only as its foreign-key value, that over valid inputs and invalid inputs — wrongly typed, missing, unknown, and rule-violating data — deserialize accepts and rejects exactly what construction accepts and rejects, and that repeated calls with the same input give the same result.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check over all 15 definitions: serialize output JSON round-tripped unchanged, contains every Field and no nested value, decimals and datetimes survive; deserialize rejects unknown, missing, and rule-violating input; repeated calls equal.'
+                outcome: 'Passed. Credential whitespace preserved; ordinary text trimmed; construction strict, deserialize lax only for JSON-compatible forms. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:34:08Z'
+                transition: done -> claimed
+                by: developing
+                reason: Acceptance or verification changed at Plan revision 2; re-examining before any change.
+              - at: '2026-09-19T14:37:01Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Fixed Finding P1-F5: deserialize now validates the Plain Representation strictly (decimals and datetimes as strings; a number for a decimal, a non-ISO string for a datetime, and any wrongly typed value are rejected). Then ran a transient differential check: for all 15 definitions and every Field, 21 wrongly typed and edge candidates were given to construction and to deserialize (as their plain forms), comparing accept/reject and, where both accept, the resulting instance; plus structural inputs (unknown key, missing required, non-mapping, null, list, non-JSON value, bytes) and number-versus-string for every decimal Field. Also re-ran the reviewer''s original probe cases.'
+                outcome: 'Passed: 2092 construct/deserialize pairs compared (514 accepted by both) with no divergence; all six divergences recorded in the Finding now reject in both paths; every structural input rejected with ValidationError only. The check itself first exposed an extra looseness (a numeric string such as ''2'' read as epoch seconds for a datetime Field), which was fixed by requiring ISO 8601. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+        P1-G2:
+          id: P1-G2
+          title: Identity and connection definitions
+          description: The Domain Definitions that identify a user, a supported trading platform, and a user's connection to one.
+          area: Domain Definitions for user identity, trading platform, and instance
+          does: User, Trading Platform, and Instance are each published as one Domain Definition.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              title: Define the User Domain Definition
+              description: Declare User as its own authoritative Domain Definition, as the Target states it. Its credential Fields (password and api_key) carry the classification and at-rest treatment the Target states.
+              reason: User is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of User
+              - Model Foundation mechanisms
+              expected_result: User is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of User equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of User are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of User equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for User. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for User. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for User: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G2-T2:
+              id: P1-G2-T2
+              title: Define the Trading Platform Domain Definition
+              description: Declare Trading Platform as its own authoritative Domain Definition, as the Target states it.
+              reason: Trading Platform is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Trading Platform
+              - Model Foundation mechanisms
+              expected_result: Trading Platform is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Trading Platform equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Trading Platform are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Trading Platform equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Trading Platform. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Trading Platform. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Trading Platform: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G2-T3:
+              id: P1-G2-T3
+              title: Define the Instance Domain Definition
+              description: Declare Instance as its own authoritative Domain Definition, as the Target states it. It relates to the User that owns it and to the Trading Platform it uses. Its connection credential Fields (password and api_key) are stored under the at-rest treatment the Target states for them.
+              reason: Instance is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Instance
+              - Model Foundation mechanisms
+              expected_result: Instance is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G2-T1
+              - P1-G2-T2
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Instance equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Instance are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Instance equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Instance. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Instance. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Instance: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+        P1-G3:
+          id: P1-G3
+          title: Reference data definitions
+          description: The Domain Definitions for currencies, brokers, and the assets a broker provides.
+          area: Domain Definitions for currency, broker, and asset
+          does: Currency, Broker, and Asset are each published as one Domain Definition.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              title: Define the Currency Domain Definition
+              description: Declare Currency as its own authoritative Domain Definition, as the Target states it. It relates to its owning User.
+              reason: Currency is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Currency
+              - Model Foundation mechanisms
+              expected_result: Currency is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G2-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Currency equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Currency are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Currency equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Currency. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Currency. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Currency: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G3-T2:
+              id: P1-G3-T2
+              title: Define the Broker Domain Definition
+              description: Declare Broker as its own authoritative Domain Definition, as the Target states it. It relates to its owning User.
+              reason: Broker is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Broker
+              - Model Foundation mechanisms
+              expected_result: Broker is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G2-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Broker equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Broker are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Broker equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Broker. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Broker. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Broker: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G3-T3:
+              id: P1-G3-T3
+              title: Define the Asset Domain Definition
+              description: Declare Asset as its own authoritative Domain Definition, as the Target states it. It relates to the Broker that provides it.
+              reason: Asset is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Asset
+              - Model Foundation mechanisms
+              expected_result: Asset is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G3-T2
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Asset equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Asset are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Asset equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Asset. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Asset. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Asset: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+        P1-G4:
+          id: P1-G4
+          title: Account definitions
+          description: The Domain Definitions that group trading accounts and define an account itself.
+          area: Domain Definitions for account group and account
+          does: Account Group and Account are each published as one Domain Definition.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              title: Define the Account Group Domain Definition
+              description: Declare Account Group as its own authoritative Domain Definition, as the Target states it. It relates to its owning User.
+              reason: Account Group is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Account Group
+              - Model Foundation mechanisms
+              expected_result: Account Group is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G2-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Account Group equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Account Group are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Account Group equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Account Group. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Account Group. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Account Group: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G4-T2:
+              id: P1-G4-T2
+              title: Define the Account Domain Definition
+              description: Declare Account as its own authoritative Domain Definition, as the Target states it. It relates to its Account Group, Broker, Instance, and base Currency. Its credential Fields (password) carry the classification and at-rest treatment the Target states.
+              reason: Account is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Account
+              - Model Foundation mechanisms
+              expected_result: Account is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G4-T1
+              - P1-G3-T2
+              - P1-G2-T3
+              - P1-G3-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Account equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Account are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Account equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Account. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Account. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Account: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+        P1-G5:
+          id: P1-G5
+          title: Trade management rule definitions
+          description: The Domain Definitions that group and define the trailing and partial-close rules applied to a trade.
+          area: Domain Definitions for trailing groups and rules and partial groups and rules
+          does: Trailing Group, Trailing Rule, Partial Group, and Partial Rule are each published as one Domain Definition.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G5-T1:
+              id: P1-G5-T1
+              title: Define the Trailing Group Domain Definition
+              description: Declare Trailing Group as its own authoritative Domain Definition, as the Target states it. It relates to its owning User.
+              reason: Trailing Group is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Trailing Group
+              - Model Foundation mechanisms
+              expected_result: Trailing Group is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G2-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Trailing Group equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Trailing Group are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Trailing Group equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Trailing Group. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Trailing Group. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Trailing Group: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G5-T2:
+              id: P1-G5-T2
+              title: Define the Trailing Rule Domain Definition
+              description: Declare Trailing Rule as its own authoritative Domain Definition, as the Target states it. It relates to the Trailing Group that contains it.
+              reason: Trailing Rule is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Trailing Rule
+              - Model Foundation mechanisms
+              expected_result: Trailing Rule is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G5-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Trailing Rule equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Trailing Rule are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Trailing Rule equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Trailing Rule. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Trailing Rule. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Trailing Rule: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G5-T3:
+              id: P1-G5-T3
+              title: Define the Partial Group Domain Definition
+              description: Declare Partial Group as its own authoritative Domain Definition, as the Target states it. It relates to its owning User.
+              reason: Partial Group is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Partial Group
+              - Model Foundation mechanisms
+              expected_result: Partial Group is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G2-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Partial Group equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Partial Group are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Partial Group equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Partial Group. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Partial Group. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Partial Group: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G5-T4:
+              id: P1-G5-T4
+              title: Define the Partial Rule Domain Definition
+              description: Declare Partial Rule as its own authoritative Domain Definition, as the Target states it. It relates to the Partial Group that contains it.
+              reason: Partial Rule is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Partial Rule
+              - Model Foundation mechanisms
+              expected_result: Partial Rule is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G5-T3
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Partial Rule equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Partial Rule are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Partial Rule equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Partial Rule. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Partial Rule. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Partial Rule: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+        P1-G6:
+          id: P1-G6
+          title: Action and position definitions
+          description: The Domain Definitions that group and define how a position is opened and the position record itself.
+          area: Domain Definitions for action group, action, and position
+          does: Action Group, Action, and Position are each published as one Domain Definition.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G6-T1:
+              id: P1-G6-T1
+              title: Define the Action Group Domain Definition
+              description: Declare Action Group as its own authoritative Domain Definition, as the Target states it. It relates to its owning User.
+              reason: Action Group is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Action Group
+              - Model Foundation mechanisms
+              expected_result: Action Group is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G2-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Action Group equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Action Group are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Action Group equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Action Group. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Action Group. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Action Group: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G6-T2:
+              id: P1-G6-T2
+              title: Define the Action Domain Definition
+              description: Declare Action as its own authoritative Domain Definition, as the Target states it. It relates to its Action Group, Asset, Account, Partial Group, and Trailing Group.
+              reason: Action is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Action
+              - Model Foundation mechanisms
+              expected_result: Action is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G6-T1
+              - P1-G3-T3
+              - P1-G4-T2
+              - P1-G5-T3
+              - P1-G5-T1
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Action equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Action are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Action equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Action. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Action. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Action: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G6-T3:
+              id: P1-G6-T3
+              title: Define the Position Domain Definition
+              description: Declare Position as its own authoritative Domain Definition, as the Target states it. It relates to its User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action.
+              reason: Position is a domain concept the Target declares, so it needs exactly one authoritative definition that every Component reads.
+              kind: code
+              inputs:
+              - Target definition of Position
+              - Model Foundation mechanisms
+              expected_result: Position is published as one Domain Definition that a consumer can construct, validate, declare, serialize, and deserialize.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T3
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G3-T2
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T3
+              - P1-G6-T1
+              - P1-G6-T2
+              constraints: []
+              agent:
+                consider:
+                - 'standards.json_schema: Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+                - 'standards.typing: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+                - 'structure.field_declaration: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+                - 'structure.reusable_domain_type: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+                - 'structure.model_config: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+                - 'structure.single_field_rule: @field_validator'
+                - 'structure.cross_field_rule: @model_validator(mode=''after'')'
+                - 'structure.polymorphic_data: A discriminated union, with Field(discriminator=...)'
+                - 'structure.root_collection: RootModel[...]'
+                - 'structure.non_model_validation: TypeAdapter, for validating a type that is not a BaseModel'
+                - 'structure.derived_value: computed_field'
+                - 'structure.validator_order: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+                - 'api.base_model: pydantic.BaseModel'
+                - 'api.configuration: pydantic.ConfigDict'
+                - 'api.field_validation: pydantic.field_validator'
+                - 'api.model_validation: pydantic.model_validator'
+                - 'api.root_model: pydantic.RootModel'
+                - 'api.computed_field: pydantic.computed_field'
+                - 'api.field_serialization: pydantic.field_serializer'
+                - 'api.model_serialization: pydantic.model_serializer'
+                - 'api.serialization: model_dump, model_dump_json'
+                - 'api.schema: model_json_schema'
+                avoid:
+                - 'legacy_apis: validator, root_validator, parse_obj, dict, json'
+                - 'deprecated_constraint_helpers: constr, conint, confloat, condecimal — scheduled for removal in Pydantic 3; express the same constraint with Annotated instead.'
+                - 'plain_validator: PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.'
+                overridden:
+                - 'api.serialization: model_dump_json — overridden by Model Principle "Every Domain Definition converts to and from a Plain Representation", which requires serialize to return simple named values and never an encoded text form.'
+                skills:
+                - resource: pydantic
+                  requirement: required
+                  resolved: true
+                  identifier: pydantic:pydantic
+              acceptance: The published declaration of Position equals the Target's statement of it — Fields, properties, relationships, constraints, rules, and persistence declaration — and instances of Position are accepted or rejected exactly as that declaration requires. The result also conforms observably to every statement in agent.consider, contains none of the statements in agent.avoid, and follows the applicable guidance of the required pydantic Skill.
+              verify: Observe by a transient check, through the Public Interface, that the declaration of Position equals the Target's statement field by field, that valid and invalid instances are accepted and rejected as declared, that serializing then deserializing an instance returns an equal instance, and that deserializing data which breaks a rule fails.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check run through the public entry point (script kept outside the Component): declaration compared field by field with the Target (types, nullability, defaults, keys, uniqueness, composite sets, relationships, credential treatment, persistence); valid sample accepted; missing, unknown-field, and wrongly typed input rejected; serialize -> deserialize round trip equal, also via JSON text; serialize deterministic, JSON-compatible, no nested values, no withheld Field.'
+                outcome: 'Passed for Position. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the transient definition check (declaration against the Target field by field, valid and invalid instances, round trip including via JSON text) against the revision 2 acceptance and verification.
+                outcome: 'Passed for Position. Revision 2 removed only restated clauses; no implementation change. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the definition check and the construct/deserialize parity check for this definition after deserialize became strict.
+                outcome: 'Passed for Position: declaration, valid and invalid instances, and round trip (also via JSON text) unchanged. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+        P1-G7:
+          id: P1-G7
+          title: Public surface and documentation
+          description: The single Public Interface, the metadata Model publishes about itself, its documentation, and assurance of the boundary as a whole.
+          area: Model Public Interface, published metadata, documentation, and whole-boundary integrity
+          does: A consumer can use every Domain Definition through one stable Public Interface, Model's public metadata and README are current, and the boundary as a whole holds.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G7-T1:
+              id: P1-G7-T1
+              title: Publish every Domain Definition through the Public Interface
+              description: Expose all Domain Definitions through one explicit and stable Public Interface, each under its own unambiguous identity independent of where it is declared. The Interface offers its work as Operations — constructing an instance, reading a definition's declaration, serializing an instance, and deserializing a Plain Representation — and for every Operation states what it accepts, what it returns, and which outcomes it can produce.
+              reason: A consumer may reach Model only through this surface, and it must reach every definition by what it is.
+              kind: code
+              inputs:
+              - Every Domain Definition
+              - Model Foundation
+              expected_result: One public entry point through which a consumer obtains each Domain Definition and uses each of its Operations, every Operation stating what it accepts, returns, and the outcomes it can produce.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G5-T3
+              - P1-G5-T4
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              constraints: []
+              agent:
+                consider: []
+                avoid: []
+                overridden: []
+                skills: []
+              acceptance: Every Domain Definition is reachable through the public entry point under exactly one identity that expresses its domain meaning; each offers every Operation; for every Operation the Interface states what it accepts, what it returns, and the outcomes it can produce, including the failure of construction and of deserialization when an Intrinsic Rule is not met; and a consumer needs nothing outside that entry point to use them.
+              verify: Observe by a transient check that from the installed library a consumer imports each Domain Definition by its identity from the public entry point alone, uses each Operation, and that for a valid input and an invalid input the observed accepts, returns, and outcomes of every Operation match what the Interface states.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient check: imported each Domain Definition from the public entry point alone and exercised construct, declaration, serialize, and deserialize on each.'
+                outcome: 'Passed for all 15 definitions; published set equals the Target''s set exactly. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:28:54Z'
+                transition: done -> claimed
+                by: developing
+                reason: Acceptance or verification changed at Plan revision 2; re-examining before any change.
+              - at: '2026-09-19T14:30:03Z'
+                transition: claimed -> done
+                by: developing
+                check: Read the interface as a consumer sees it (class and method documentation) and found it did not state accepts, returns, or outcomes; added those statements to the four Operations; then ran a transient check over all 15 definitions comparing the stated accepts/returns/outcomes with observed behaviour for a valid input and several invalid inputs (unknown field, missing field, null for a required field, and non-mapping data) of every Operation.
+                outcome: 'Passed: construct and deserialize raise ValidationError, and only ValidationError, for every invalid input; declaration and serialize always succeed and return the stated types; class and method documentation state Operations, accepts, returns, and outcomes; README Operation table matches. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: 'Re-ran the Operations check after the deserialize change: stated accepts/returns/outcomes against observed behaviour for valid and invalid input of every Operation on all 15 definitions.'
+                outcome: 'Passed; the deserialize documentation now states strictness, plain forms, and the failure outcome. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
+            P1-G7-T2:
+              id: P1-G7-T2
+              title: Make Model's public composition metadata available for the Application Manifest
+              description: 'Publish, in a form Configure can reconcile without reading anything private, the non-secret public composition metadata of Model: its package identity, its public entry point, and the public interface it offers.'
+              reason: Development requires each generated Component to publish its public composition metadata so the shared Application Manifest can be reconciled from it.
+              kind: documentation
+              inputs:
+              - Public Interface of Model
+              - Development Principles on the Application Manifest
+              expected_result: Model's package identity, public entry point, and public interface are stated by Model itself, containing no secret and no private detail.
+              depends_on:
+              - P1-G7-T1
+              constraints: []
+              agent:
+                consider: []
+                avoid: []
+                overridden: []
+                skills: []
+              acceptance: The published metadata names Model's package identity and public entry point, describes every public Domain Definition the Public Interface offers, and contains no credential, secret value, private implementation detail, internal storage structure, or undeclared dependency.
+              verify: Observe that the metadata Model publishes agrees with what the installed library actually exposes, and that reading it exposes no secret or private detail.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: Compared the package identity, public entry point, and public interface stated in the README and package metadata with what the installed library exposes, and read both for secrets.
+                outcome: 'Passed: package name model, entry point `import model`, and all 15 definitions with their Operations agree with the installed library; only placeholders appear. Application Manifest section not written: Developing has no write authority over that record, so Configure must reconcile it.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Compared the published package identity, entry point, and public interface with what the installed library exposes, and read the Application Manifest.
+                outcome: 'Passed: metadata unchanged and consistent with the library. Configure has since reconciled the Model section of the Application Manifest from it.'
+            P1-G7-T3:
+              id: P1-G7-T3
+              title: Document the Model Public Interface in the Component documentation
+              description: 'Write the Component documentation so anyone can use Model through its Public Interface without reading its source: what Model is and where it sits; every Domain Definition it publishes with what it represents, its Fields and their declared properties, and whether it is persistent; every Operation with what it accepts, what it returns, the outcomes it can produce, and an example of calling it that runs as written, including importing Model, constructing an instance, turning it into its Plain Representation, and building one back from it; then setup, use, verification, and troubleshooting. State plainly that Model stores nothing, performs no application behaviour, and offers no operations on stored data.'
+              reason: A Component without complete, safe, and operational documentation is not complete, and that documentation is the only explanation a consumer needs.
+              kind: documentation
+              inputs:
+              - Public Interface of Model
+              - Development Principles and Preferences on documentation
+              expected_result: Component documentation that follows the required general-to-specific order, covers every Domain Definition and every Operation, and whose examples run as written on the resolved technology.
+              depends_on:
+              - P1-G7-T1
+              - P1-G7-T2
+              constraints: []
+              agent:
+                consider: []
+                avoid: []
+                overridden: []
+                skills: []
+              acceptance: Every part of the required documentation order is present or states that it does not apply; every Domain Definition is described with its Fields, declared properties, and persistence; every Operation states what it accepts, what it returns, and the outcomes it can produce, with an example that runs as written against the installed library; no usable credential or secret appears; and no explanation of Model's internal structure is present.
+              verify: Observe that a reader following only the documentation installs the library, imports a Domain Definition, constructs an instance, serializes it, and deserializes it back with the results the documentation states; that the documented Operations, with their accepts, returns, and outcomes, match observed behaviour; and that the documented Domain Definitions are exactly those the Public Interface publishes.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: Extracted the README's Python blocks and ran them as written in the project environment; triggered each troubleshooting symptom; compared the documented definitions with the published ones.
+                outcome: 'Passed: examples ran and printed the stated result, every troubleshooting message reproduced, 15 documented = 15 published, every required section present, no credential value, no internal structure explained.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Ran the documentation's Python blocks as written, checked that every Operation has a row stating what it accepts, returns, and its outcomes, reproduced each troubleshooting message, and compared documented definitions with published ones.
+                outcome: 'Passed against revision 2: Operation table present for construct, declaration, serialize, and deserialize with an example of each; examples ran; 15 documented = 15 published. No change to the documentation was needed.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Updated the documentation for the strict deserialize (Operation table, shared-behaviour bullet, troubleshooting) and re-ran its Python blocks, its stated plain forms, and its stated rejections.
+                outcome: 'Passed: examples run, the stated ISO datetime and decimal-string forms are accepted, a numeric datetime string and a numeric decimal are rejected as documented, 15 documented = 15 published.'
+            P1-G7-T4:
+              id: P1-G7-T4
+              title: Verify the Model boundary as a whole
+              description: 'Confirm the complete Model against its Principles as one boundary: each Domain Definition stands separate from every other, the shared Foundation stands apart from every definition, every definition is reachable through the public entry point, and no concern outside Model''s logical boundary is present.'
+              reason: Per-definition checks cannot show boundary-wide properties such as separation, completeness, and the absence of external concerns.
+              kind: command execution
+              inputs:
+              - The complete Model library
+              - Model Principles
+              - Model Preferences on layout and verification
+              expected_result: Evidence that the Model as a whole is complete, separated, and free of external concerns.
+              depends_on:
+              - P1-G7-T1
+              - P1-G7-T2
+              - P1-G7-T3
+              constraints: []
+              agent:
+                consider: []
+                avoid: []
+                overridden: []
+                skills: []
+              acceptance: Exactly the Domain Definitions the Target declares are published, no more and no fewer; each is separable from every other with nothing belonging to another definition; the shared Foundation is separable from every definition; and Model contains no persistence, transport, presentation, workflow, Initial Data, or technical selection outside its boundary and depends on no other Participating Component.
+              verify: Observe by transient checks that the set of published Domain Definitions equals the Target's set, that separation between definitions and from the Foundation holds, that every definition is reachable through the public entry point, and that Model's code and dependencies contain no storage, transport, presentation, Initial Data, or other Component.
+              status: done
+              log:
+              - at: '2026-09-19T14:22:51Z'
+                transition: todo -> claimed
+                by: developing
+              - at: '2026-09-19T14:22:51Z'
+                transition: claimed -> done
+                by: developing
+                check: 'Transient checks: published set vs Target set; one Domain Definition per module and none in the Foundation; modules import only the Foundation; source scanned for storage, transport, presentation, and other external concerns; artifact search for tests.'
+                outcome: 'Passed: 15 modules with one definition each, Foundation holds none, no external-concern terms in source, no other Component imported, and no test suite, test directory, test configuration, or test dependency exists in Model. Completion gate from a fresh environment (environment removed and re-synced from the lockfile): ruff check and format check passed, pyright 0 errors, transient behaviour check and README check passed.'
+              - at: '2026-09-19T14:30:03Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: 'Re-ran the boundary checks: published set equals the Target''s set, separation between definitions and from the Foundation, public entry reaches every definition, no external-concern terms, no other Component imported, artifact search for tests.'
+                outcome: 'Passed. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour check, Operations check, and README check passed, no test artifacts in Model.'
+              - at: '2026-09-19T14:37:01Z'
+                transition: done (re-verified at Plan revision 2)
+                by: developing
+                check: Re-ran the boundary checks (published set, separation, entry point reach, external-concern scan, no other Component imported, artifact search for tests).
+                outcome: 'Passed. Fresh-environment gate (environment removed and re-synced from the lockfile): ruff check and format check clean, pyright 0 errors, behaviour, Operations, parity, and README checks passed, no test artifacts in Model.'
