@@ -59,12 +59,12 @@ A Principles file carries these parts, in this order. A part marked *optional* i
 8. **Layering** — where the Component's technical choices live instead.
 9. **Documentation** — what this Component's own documentation must convey. *(optional)*
 10. **Authority** — the binding force of the file and its precedence.
-11. **Principles** — the numbered mandatory rules.
+11. **Principles** — the mandatory rules.
 12. **At a Glance** — the derived list of every obligation in the file.
 
 Understanding is everything a reader has to take in before the rules mean anything, so it comes first, gathered under Introduction rather than scattered through the file. What follows Introduction is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried. Layering and Authority are unheaded prose. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Documentation, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each numbered Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
+Overview, Purpose, and How It Works are always carried. Layering and Authority are unheaded prose. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Documentation, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -88,7 +88,7 @@ No other first-level heading appears in the file.
 
 The map of the file's own sections, so a reader — and an Agent looking for one part of it — sees the whole shape before reading any of it.
 
-A numbered list, one line per section the file actually carries, each linking to that section's heading. Nothing else: no description beside an entry, and no entry for a section the file omits. The Principles are one entry, with each numbered Principle listed beneath it:
+A numbered list, one line per section the file actually carries, each linking to that section's heading. Nothing else: no description beside an entry, and no entry for a section the file omits. The Principles are one entry, with each Principle's title listed beneath it:
 
 ```markdown
 ## Navigation
@@ -102,8 +102,8 @@ A numbered list, one line per section the file actually carries, each linking to
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Principles](#principles)**
-   - **[1. <Title>](#1-title)**
-   - **[2. <Title>](#2-title)**
+   - **[<Title>](#title)**
+   - **[<Title>](#title)**
 6. **[At a Glance](#at-a-glance)**
 ```
 
@@ -300,16 +300,16 @@ No Principles file omits or weakens any of the three.
 
 ## Principles
 
-The section that carries the file's mandatory rules. It opens with one or two short sentences stating that each rule below is mandatory and that its number is permanent, and then carries the Principles themselves.
+The section that carries the file's mandatory rules. It opens with one or two short sentences stating that each rule below is mandatory, and then carries the Principles themselves.
 
-Each Principle is a third-level heading under it, carrying its number and a title, followed by three labelled subsections:
+Each Principle is a third-level heading under it, carrying its title, followed by three labelled subsections:
 
 ```markdown
 ## Principles
 
-<One sentence: every Principle below is mandatory, and its number is permanent.>
+<One sentence: every Principle below is mandatory.>
 
-### <N>. <Title>
+### <Title>
 
 **Rule:** <the mandatory statement>
 
@@ -320,7 +320,7 @@ Each Principle is a third-level heading under it, carrying its number and a titl
 
 ### Title
 
-The title states the rule as a claim, not as a topic: `Data Access is the only Logic route to Database`, not `Data Access`. It is read alone in a list of Principles and still communicates the rule.
+The title states the rule as a claim, not as a topic: `Data Access is the only Logic route to Database`, not `Data Access`. It is read alone in a list of Principles and still communicates the rule, and it is how the Principle is cited — a Principle carries no number, so its title is its identity and is written to stay accurate if the rule is reworded.
 
 ### Rule
 
@@ -338,17 +338,12 @@ The limit of the rule: what it does not authorize, the adjacent responsibility i
 
 Every Principle has one, because a rule with no stated limit is read as unlimited. When the limit is that no exception exists, Boundary says so.
 
-### Numbering
-
-Principles are numbered from 1 in a single sequence. A number is permanent once assigned: a new Principle is appended after the highest existing number, and removing a Principle never renumbers the ones that follow it. This keeps a Principle citable as `<Component> Principle <N>` across versions of the file.
-
 ### Order
 
-A Principle's number is its position: the file is read and listed in numeric order, and Navigation and At a Glance follow that order.
+Principles carry no number. A Principle is identified and cited by its title, so it can be reordered, reworded, or removed without breaking a citation anywhere else.
 
-When a file is first written, the numbers are assigned so that the Principles establishing the Component's own shape come before the ones governing its relationships with other Components, and within that so that the order follows the reading path a newcomer needs rather than importance.
+They are ordered so that the ones establishing the Component's own shape come before the ones governing its relationships with other Components, and within that so the order follows the reading path a newcomer needs rather than importance. A new Principle is placed where it reads best rather than appended, and Navigation and At a Glance are rewritten to match.
 
-Afterwards, numbering wins over reading order. A new Principle is appended after the highest existing number even when its subject would have read earlier, because renumbering would break every citation of the Principles that follow it. A file whose reading order has drifted far enough to confuse a newcomer is not renumbered; its Navigation and its Introduction carry the reader through it.
 
 
 <!--------------------------------------------------------------------------------- At a Glance --->
@@ -361,12 +356,12 @@ The closing section: every obligation in the file, one line each, in Principle o
 ```markdown
 ## At a Glance
 
-- **Must** — <the obligation in one line> *(1)*
-- **Never** — <the prohibition in one line> *(1)*
-- **Must** — <the obligation in one line> *(2)*
+- **Must** — <the obligation in one line>
+- **Never** — <the prohibition in one line>
+- **Must** — <the obligation in one line>
 ```
 
-Each line is labelled **Must** or **Never** and carries the number of the Principle it comes from. A Principle contributes as many lines as it has distinct obligations, and every obligation in the file appears exactly once in this list.
+Each line is labelled **Must** or **Never**. The lines follow the order of the Principles they come from, and a Principle's lines stay together, so a reader can trace a line back by position. A Principle contributes as many lines as it has distinct obligations, and every obligation in the file appears exactly once in this list.
 
 This section is derived, never authoritative. It introduces no rule that its Principle does not already state, and it is rewritten whenever a Principle changes. When the list and a Principle disagree, the Principle is correct.
 
@@ -462,9 +457,9 @@ a Principle, and a project may only add stricter rules, never looser ones.
 
 ## Principles
 
-<Every Principle below is mandatory, and its number is permanent.>
+<Every Principle below is mandatory.>
 
-### 1. <Title stating the rule as a claim>
+### <Title stating the rule as a claim>
 
 **Rule:** <the mandatory statement>
 
@@ -474,7 +469,7 @@ a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-### 2. <Title>
+### <Title>
 
 **Rule:** ...
 
@@ -486,6 +481,6 @@ a Principle, and a project may only add stricter rules, never looser ones.
 
 ## At a Glance
 
-- **Must** — <obligation> *(1)*
-- **Never** — <prohibition> *(2)*
+- **Must** — <obligation>
+- **Never** — <prohibition>
 ```

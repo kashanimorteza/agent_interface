@@ -9,18 +9,18 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. State records the active Workflow position](#1-state-records-the-active-workflow-position)**
-   - **[2. The Workflow has four modes](#2-the-workflow-has-four-modes)**
-   - **[3. Every Target phase has aggregate operational State](#3-every-target-phase-has-aggregate-operational-state)**
-   - **[4. Phase records reconcile without erasing progress](#4-phase-records-reconcile-without-erasing-progress)**
-   - **[5. Operations update only their aggregate phase field](#5-operations-update-only-their-aggregate-phase-field)**
-   - **[6. Implementation State represents end-to-end orchestration](#6-implementation-state-represents-end-to-end-orchestration)**
-   - **[7. Launch State records the observable runtime result](#7-launch-state-records-the-observable-runtime-result)**
-   - **[8. History is append-only operational evidence](#8-history-is-append-only-operational-evidence)**
-   - **[9. Workflow operations remain repeatable](#9-workflow-operations-remain-repeatable)**
-   - **[10. Reset reconciles State with what it removes](#10-reset-reconciles-state-with-what-it-removes)**
-   - **[11. Blockers are critical stoppages](#11-blockers-are-critical-stoppages)**
-   - **[12. Open Questions belong to the human](#12-open-questions-belong-to-the-human)**
+   - **[State records the active Workflow position](#state-records-the-active-workflow-position)**
+   - **[The Workflow has four modes](#the-workflow-has-four-modes)**
+   - **[Every Target phase has aggregate operational State](#every-target-phase-has-aggregate-operational-state)**
+   - **[Phase records reconcile without erasing progress](#phase-records-reconcile-without-erasing-progress)**
+   - **[Operations update only their aggregate phase field](#operations-update-only-their-aggregate-phase-field)**
+   - **[Implementation State represents end-to-end orchestration](#implementation-state-represents-end-to-end-orchestration)**
+   - **[Launch State records the observable runtime result](#launch-state-records-the-observable-runtime-result)**
+   - **[History is append-only operational evidence](#history-is-append-only-operational-evidence)**
+   - **[Workflow operations remain repeatable](#workflow-operations-remain-repeatable)**
+   - **[Reset reconciles State with what it removes](#reset-reconciles-state-with-what-it-removes)**
+   - **[Blockers are critical stoppages](#blockers-are-critical-stoppages)**
+   - **[Open Questions belong to the human](#open-questions-belong-to-the-human)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -79,11 +79,11 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. State records the active Workflow position
+### State records the active Workflow position
 
 **Rule:** State records the current or most recently entered Workflow mode and the phase being acted on when the operation is phase-specific.
 
@@ -93,7 +93,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. The Workflow has four modes
+### The Workflow has four modes
 
 **Rule:** State recognizes `not set`, `configuring`, `planning`, and `development`. The initial mode is `not set`; the active phase is null when work is not phase-specific.
 
@@ -103,7 +103,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Every Target phase has aggregate operational State
+### Every Target phase has aggregate operational State
 
 **Rule:** State keeps one Phase State for every stable Target phase identifier. Planning and Development use `not started`, `in progress`, or `completed`. Review uses `not started`, `in progress`, `plan satisfied`, `satisfied`, `not satisfied`, or `inconclusive`. `plan satisfied` means Plan Assurance passed while no implementation was available for Implementation Assurance; only `satisfied` certifies both an assured Plan and its implemented result.
 
@@ -113,7 +113,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Phase records reconcile without erasing progress
+### Phase records reconcile without erasing progress
 
 **Rule:** Configure creates missing Phase State records from stable Target phase identifiers and preserves existing records. New records begin with every operation at `not started`. A removed Target phase is not silently deleted when its State carries meaningful progress or provenance; the conflict is reported. A record that still contains only initialization defaults may be removed during synchronization.
 
@@ -123,7 +123,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 5. Operations update only their aggregate phase field
+### Operations update only their aggregate phase field
 
 **Rule:** Planning updates Planning progress, Development updates Development progress, and Review updates Review progress for the active phase. Each records provenance and appends a History Event.
 
@@ -133,7 +133,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 6. Implementation State represents end-to-end orchestration
+### Implementation State represents end-to-end orchestration
 
 **Rule:** Implement records `not started`, `in progress`, `completed`, or `blocked`, with start, completion, and update provenance. `completed` means Configure succeeded, every phase implementable at that invocation was planned and developed, and Launch succeeded.
 
@@ -143,7 +143,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 7. Launch State records the observable runtime result
+### Launch State records the observable runtime result
 
 **Rule:** Launch State records `not launched`, `launching`, `launched`, `failed`, or `stopped`, together with the Environment, Launch method, provenance, and verified access points. Each access point has a name, kind, and address.
 
@@ -153,7 +153,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 8. History is append-only operational evidence
+### History is append-only operational evidence
 
 **Rule:** Every operation that changes State appends a History Event containing a stable identifier, operation, optional phase, event, outcome, recorder, and time.
 
@@ -163,7 +163,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 9. Workflow operations remain repeatable
+### Workflow operations remain repeatable
 
 **Rule:** Configure, Planning, Development, Review, Launch, Implement, and Reset may run again. Each reconciles records it owns, preserves information outside its authority, and records the new outcome truthfully.
 
@@ -173,7 +173,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 10. Reset reconciles State with what it removes
+### Reset reconciles State with what it removes
 
 **Rule:** A confirmed phase Reset returns only selected phase fields, Implementation State, and Launch State to values consistent with outputs that remain, preserves unselected phase State, and appends one reset History Event per selected phase. A confirmed Config or Complete Reset removes State with the other operational Config records.
 
@@ -183,7 +183,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 11. Blockers are critical stoppages
+### Blockers are critical stoppages
 
 **Rule:** A Blocker records what cannot continue, what is missing, why continuation is impossible, who can resolve it, and who raised it. It is removed only after verified resolution and authorized reconciliation of current references.
 
@@ -193,7 +193,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 12. Open Questions belong to the human
+### Open Questions belong to the human
 
 **Rule:** An Open Question records the decision, why it matters, any Blocker it releases, and provenance. A human answer records its value, author, and time; the question is removed when fully resolved.
 
@@ -205,13 +205,13 @@ Every Principle below is mandatory, and its number is permanent.
 
 ## At a Glance
 
-- **Must** — record the active Workflow position without making it an authorization gate *(1–2)*
-- **Must** — keep aggregate Planning, Development, and Review progress by stable phase identifier *(3–5)*
-- **Must** — distinguish `plan satisfied` from full Review `satisfied` when implementation is not yet available *(3)*
-- **Never** — copy Target meaning or individual Task status, evidence, or history into State *(3–4)*
-- **Must** — preserve existing progress while reconciling phase identity *(4)*
-- **Must** — record truthful Implement progress and exclude disabled or unready phases from completion *(6)*
-- **Must** — record Launch status and verified access points without secrets *(7)*
-- **Must** — append concise operational History for every State-changing operation *(8)*
-- **Must** — keep operations repeatable and make confirmed Reset outcomes agree with State *(9–10)*
-- **Must** — reserve Blockers and Open Questions for genuine critical conditions *(11–12)*
+- **Must** — record the active Workflow position without making it an authorization gate
+- **Must** — keep aggregate Planning, Development, and Review progress by stable phase identifier
+- **Must** — distinguish `plan satisfied` from full Review `satisfied` when implementation is not yet available
+- **Never** — copy Target meaning or individual Task status, evidence, or history into State
+- **Must** — preserve existing progress while reconciling phase identity
+- **Must** — record truthful Implement progress and exclude disabled or unready phases from completion
+- **Must** — record Launch status and verified access points without secrets
+- **Must** — append concise operational History for every State-changing operation
+- **Must** — keep operations repeatable and make confirmed Reset outcomes agree with State
+- **Must** — reserve Blockers and Open Questions for genuine critical conditions

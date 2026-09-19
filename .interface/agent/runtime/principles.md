@@ -9,9 +9,9 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. The Agent Runtime is replaceable](#1-the-agent-runtime-is-replaceable)**
-   - **[2. Runtime compatibility is explicit](#2-runtime-compatibility-is-explicit)**
-   - **[3. Every effective setting has an explainable source](#3-every-effective-setting-has-an-explainable-source)**
+   - **[The Agent Runtime is replaceable](#the-agent-runtime-is-replaceable)**
+   - **[Runtime compatibility is explicit](#runtime-compatibility-is-explicit)**
+   - **[Every effective setting has an explainable source](#every-effective-setting-has-an-explainable-source)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -75,11 +75,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. The Agent Runtime is replaceable
+### The Agent Runtime is replaceable
 
 **Rule:** Every Agent responsibility and Capability Contract is defined independently of a particular model, provider, client, runtime, or native capability format. A Runtime Mapping preserves those contracts without changing their meaning, authority, or boundaries.
 
@@ -89,7 +89,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Runtime compatibility is explicit
+### Runtime compatibility is explicit
 
 **Rule:** A selected Agent Runtime must expose or compatibly realize every required Agent Module declaration. Agent Sync learns the Native mechanisms, destinations, activation rules, and verification obligations from the selected Agent Native and reports an unsupported or ambiguous requirement as unavailable; it never silently approximates one.
 
@@ -99,7 +99,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Every effective setting has an explainable source
+### Every effective setting has an explainable source
 
 **Rule:** Configuration sources, their scopes, precedence, and merge behavior are explicit. Every Effective Setting can be traced to the sources that produced it.
 
@@ -107,16 +107,16 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** This Component explains resolution but does not override a stricter authority owned elsewhere.
 
-*Formerly Settings Principle 1; the other Settings Principles became rules of every Agent Preferences in the Agent Preferences Schema on 2026-09-17.*
+*Formerly Settings Principle "The Agent Runtime is replaceable"; the other Settings Principles became rules of every Agent Preferences in the Agent Preferences Schema on 2026-09-17.*
 
 <br>
 
 ## At a Glance
 
-- **Must** — define Agent contracts independently of a concrete runtime *(1)*
-- **Must** — preserve meaning, authority, and boundaries through Runtime Mapping *(1)*
-- **Must** — have Agent Sync resolve every required capability through the selected Native or report it unavailable *(2)*
-- **Never** — require a predeclared realization record or native directory for a Module declaration *(2)*
-- **Never** — remove an undeclared native capability merely to realize an explicitly unused Component *(2)*
-- **Never** — silently approximate an incompatible requirement *(2)*
-- **Must** — make source scope, precedence, merge behavior, and effective origin explicit *(3)*
+- **Must** — define Agent contracts independently of a concrete runtime
+- **Must** — preserve meaning, authority, and boundaries through Runtime Mapping
+- **Must** — have Agent Sync resolve every required capability through the selected Native or report it unavailable
+- **Never** — require a predeclared realization record or native directory for a Module declaration
+- **Never** — remove an undeclared native capability merely to realize an explicitly unused Component
+- **Never** — silently approximate an incompatible requirement
+- **Must** — make source scope, precedence, merge behavior, and effective origin explicit

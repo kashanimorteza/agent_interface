@@ -9,11 +9,11 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Every Skill has one complete contract](#1-every-skill-has-one-complete-contract)**
-   - **[2. Skill availability is proven](#2-skill-availability-is-proven)**
-   - **[3. Skill execution is safely repeatable](#3-skill-execution-is-safely-repeatable)**
-   - **[4. A prepared file or directory may supply a Skill's native instruction body](#4-a-prepared-file-or-directory-may-supply-a-skills-native-instruction-body)**
-   - **[5. Sync places Module content; it translates only where translation serves the Native](#5-sync-places-module-content-it-translates-only-where-translation-serves-the-native)**
+   - **[Every Skill has one complete contract](#every-skill-has-one-complete-contract)**
+   - **[Skill availability is proven](#skill-availability-is-proven)**
+   - **[Skill execution is safely repeatable](#skill-execution-is-safely-repeatable)**
+   - **[A prepared file or directory may supply a Skill's native instruction body](#a-prepared-file-or-directory-may-supply-a-skills-native-instruction-body)**
+   - **[Sync places Module content; it translates only where translation serves the Native](#sync-places-module-content-it-translates-only-where-translation-serves-the-native)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -22,7 +22,7 @@
 
 ### Overview
 
-Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Every declared Skill has exactly one Capability Realization Kind. An Interface-owned Skill is Constructed: its portable Skill Contract defines it completely, and Agent Sync places that Contract's obligations, as written, into the Native's own Skill form, adding only the Native's discovery and invocation mechanics (Principle 5). A declared Skill with a matching prepared Markdown file is Prepared: that file's instruction content is transferred into the Runtime unchanged. Externally provided Skills are Installed: they remain provider-owned capabilities declared by the Agent Preferences and provisioned through Agent Extension or Agent Integration, never built from a Skill Contract.
+Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Every declared Skill has exactly one Capability Realization Kind. An Interface-owned Skill is Constructed: its portable Skill Contract defines it completely, and Agent Sync places that Contract's obligations, as written, into the Native's own Skill form, adding only the Native's discovery and invocation mechanics (Principle "Sync places Module content; it translates only where translation serves the Native"). A declared Skill with a matching prepared Markdown file is Prepared: that file's instruction content is transferred into the Runtime unchanged. Externally provided Skills are Installed: they remain provider-owned capabilities declared by the Agent Preferences and provisioned through Agent Extension or Agent Integration, never built from a Skill Contract.
 
 It owns Skill contracts and activation boundaries. It does not own the project facts, Component policies, or runtime tools it consumes.
 
@@ -70,11 +70,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Every Skill has one complete contract
+### Every Skill has one complete contract
 
 **Rule:** Every Interface-owned Skill has exactly one portable Skill Contract, conforming to the Skill Contract Schema, that declares its purpose, responsibility, trigger, inputs, outputs, required Understanding, authority, workflow invariants, verification, idempotency expectation, stopping conditions, and runtime-realization requirements. Principles own rules shared by Skills, the Skill Contract owns Skill-specific behavior independent of a runtime, and a native Skill implementation is a synchronized, self-contained realization that owns only runtime-specific execution details and never overrides or becomes a second authority for its Contract.
 
@@ -84,7 +84,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Skill availability is proven
+### Skill availability is proven
 
 **Rule:** A Skill is available only when its intended Agent Role can discover and invoke it in the current project. A Skill delegated by another Skill is available only when the selected Runtime permits that declared coordinator to invoke it. Core Workflow Skills used by Implement are invocable both directly by the Human and by declared coordinators; top-level or sensitive coordinating Skills remain explicit-Human entry points unless the Skill Preferences state otherwise. A file, installation record, or declaration alone does not prove Activation.
 
@@ -94,7 +94,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Skill execution is safely repeatable
+### Skill execution is safely repeatable
 
 **Rule:** Repeating a Skill against unchanged authorities and state preserves valid work and produces no unnecessary mutation. A Skill reconciles current evidence rather than regenerating blindly.
 
@@ -110,7 +110,7 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 <br>
 
-### 4. A prepared file or directory may supply a Skill's native instruction body
+### A prepared file or directory may supply a Skill's native instruction body
 
 **Rule:** The Agent Skill Preferences declare one optional prepared-file directory and an exact naming convention keyed by declared Skill identity, satisfied either by a single Markdown file or by a directory holding that Skill's complete artifact. When a matching prepared file or directory exists, the install mode of the Agent Native Skill creates the Skill folder and entrypoint required by the selected Agent Native, preserves the prepared content and its meaning - every file of a prepared directory tree, with its internal relative paths intact - and adds or adapts only the minimum native metadata needed for discovery and invocation. When no match exists, Agent Sync realizes the Skill from its portable Contract, provider declaration, and Runtime mapping exactly as before.
 
@@ -120,7 +120,7 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 <br>
 
-### 5. Sync places Module content; it translates only where translation serves the Native
+### Sync places Module content; it translates only where translation serves the Native
 
 **Rule:** Agent Sync's first job is placement: it takes each declaration as the Human authored it and decides where, in the selected Agent Native's own configuration, that content belongs. The content itself is carried as written. Sync may restate a declaration in the Native's idiom only when doing so makes that concept land better in the Native's own configuration — and then the meaning, scope, and every obligation stay exactly what the Module gives them. A restatement that changes scope ("applicable" to "owning", "every" to "selected", a named Component to a category) is not a translation but a deviation, and is reported as approximated with both wordings side by side, never as synchronized.
 
@@ -132,19 +132,19 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 ## At a Glance
 
-- **Must** — give every Interface-owned Skill exactly one complete portable Contract conforming to the Skill Contract Schema *(1)*
-- **Must** — keep shared rules in Principles, Skill-specific behavior in its Contract, and runtime execution details in the native implementation *(1)*
-- **Must** — make every non-Sync native Skill self-contained so it never resolves a Contract or capability through the Agent Module *(1)*
-- **Never** — let a native Skill implementation override or become a second authority for its Contract *(1)*
-- **Must** — prove Skill availability through discovery and invocation *(2)*
-- **Must** — make every delegated Skill invocable by its declared coordinator and verify the complete invocation chain before orchestration mutates state *(2)*
-- **Never** — let coordinator invocation expand a delegated Skill's authority or permit unrelated automatic execution *(2)*
-- **Must** — make repeated execution preserve valid work *(3)*
-- **Never** — use repeatability to justify destructive regeneration *(3)*
-- **Must** — treat a changed source fingerprint as proof of staleness and an unchanged one as no proof of conformance *(3)*
-- **Must** — materialize an exact matching prepared Skill file or directory tree into the selected Agent Native's required Skill folder while preserving its instruction meaning and internal relative paths *(4)*
-- **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file *(4)*
-- **Never** — infer a Skill from an unmatched file or directory, treat its presence as proof of Activation, or rewrite the Human-owned prepared source *(4)*
-- **Must** — place each Module declaration as the Human authored it, adding only the Native's own mechanics around it *(5)*
-- **Must** — restate a declaration in the Native's idiom only where that makes the concept land better in the Native, and only with its scope and obligations unchanged *(5)*
-- **Never** — narrow, widen, or re-scope an obligation while realizing it; report such a difference as approximated with both wordings, never as synchronized *(5)*
+- **Must** — give every Interface-owned Skill exactly one complete portable Contract conforming to the Skill Contract Schema
+- **Must** — keep shared rules in Principles, Skill-specific behavior in its Contract, and runtime execution details in the native implementation
+- **Must** — make every non-Sync native Skill self-contained so it never resolves a Contract or capability through the Agent Module
+- **Never** — let a native Skill implementation override or become a second authority for its Contract
+- **Must** — prove Skill availability through discovery and invocation
+- **Must** — make every delegated Skill invocable by its declared coordinator and verify the complete invocation chain before orchestration mutates state
+- **Never** — let coordinator invocation expand a delegated Skill's authority or permit unrelated automatic execution
+- **Must** — make repeated execution preserve valid work
+- **Never** — use repeatability to justify destructive regeneration
+- **Must** — treat a changed source fingerprint as proof of staleness and an unchanged one as no proof of conformance
+- **Must** — materialize an exact matching prepared Skill file or directory tree into the selected Agent Native's required Skill folder while preserving its instruction meaning and internal relative paths
+- **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file
+- **Never** — infer a Skill from an unmatched file or directory, treat its presence as proof of Activation, or rewrite the Human-owned prepared source
+- **Must** — place each Module declaration as the Human authored it, adding only the Native's own mechanics around it
+- **Must** — restate a declaration in the Native's idiom only where that makes the concept land better in the Native, and only with its scope and obligations unchanged
+- **Never** — narrow, widen, or re-scope an obligation while realizing it; report such a difference as approximated with both wordings, never as synchronized

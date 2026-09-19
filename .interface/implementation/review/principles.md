@@ -9,13 +9,13 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Review always assures the Plan before available implementation](#1-review-always-assures-the-plan-before-available-implementation)**
-   - **[2. Review passes report; reconciliation stays with the owning operation](#2-review-passes-report-reconciliation-stays-with-the-owning-operation)**
-   - **[3. Review is independent of how the work was done](#3-review-is-independent-of-how-the-work-was-done)**
-   - **[4. Every Finding is grounded in an observation](#4-every-finding-is-grounded-in-an-observation)**
-   - **[5. Missing evidence is a Finding, not an absence](#5-missing-evidence-is-a-finding-not-an-absence)**
-   - **[6. A Finding is required work no activity covers](#6-a-finding-is-required-work-no-activity-covers)**
-   - **[7. A Finding outlives the session that raised it](#7-a-finding-outlives-the-session-that-raised-it)**
+   - **[Review always assures the Plan before available implementation](#review-always-assures-the-plan-before-available-implementation)**
+   - **[Review passes report; reconciliation stays with the owning operation](#review-passes-report-reconciliation-stays-with-the-owning-operation)**
+   - **[Review is independent of how the work was done](#review-is-independent-of-how-the-work-was-done)**
+   - **[Every Finding is grounded in an observation](#every-finding-is-grounded-in-an-observation)**
+   - **[Missing evidence is a Finding, not an absence](#missing-evidence-is-a-finding-not-an-absence)**
+   - **[A Finding is required work no activity covers](#a-finding-is-required-work-no-activity-covers)**
+   - **[A Finding outlives the session that raised it](#a-finding-outlives-the-session-that-raised-it)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -77,11 +77,11 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Review always assures the Plan before available implementation
+### Review always assures the Plan before available implementation
 
 **Rule:** A Review reconstructs current Interface Understanding and Target Understanding, then independently judges one phase's Plan against the current Target and every applicable Principle and Preference. It records the exact Assured Plan Revision with the Plan Assurance outcome. Only after Plan Assurance is satisfied does it judge existing implementation and evidence against that assured Plan and the same current authorities. When no implementation exists, Implementation Assurance is explicitly `not reviewed` rather than inferred.
 
@@ -91,7 +91,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Review passes report; reconciliation stays with the owning operation
+### Review passes report; reconciliation stays with the owning operation
 
 **Rule:** An individual Review pass changes no implementation, Plan, Target definition, or Task progress. The Reviewing Skill may coordinate Planning for the same phase when Plan Assurance exposes a missing, stale, incomplete, or invalid Plan, then perform a new independent Review pass against Planning's result. It never invokes Development or repairs implementation.
 
@@ -101,7 +101,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Review is independent of how the work was done
+### Review is independent of how the work was done
 
 **Rule:** Review observes the required condition for itself. It may read the check the implementer built and the evidence it recorded, but it judges whether that check actually establishes the condition rather than accepting that it passed.
 
@@ -111,7 +111,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Every Finding is grounded in an observation
+### Every Finding is grounded in an observation
 
 **Rule:** A Finding states what was expected, what was observed, and the exact location or observable result that shows it. A statement that cannot be traced to something a reader can see for themselves is not a Finding.
 
@@ -121,7 +121,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 5. Missing evidence is a Finding, not an absence
+### Missing evidence is a Finding, not an absence
 
 **Rule:** When an acceptance criterion has nothing observable to demonstrate it, that is recorded as a Finding of its own. Review does not reconstruct the missing evidence, infer it from the implementation, or treat a plausible result as proof that a check once passed.
 
@@ -131,7 +131,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 6. A Finding is required work no activity covers
+### A Finding is required work no activity covers
 
 **Rule:** A Review may find that the phase requires something no planned activity covers. That is recorded as a Finding of the phase rather than of any activity, because it belongs to none.
 
@@ -141,7 +141,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 7. A Finding outlives the session that raised it
+### A Finding outlives the session that raised it
 
 **Rule:** Every Finding is stored with its Review, and remains stored until an authorized Review establishes that it no longer holds or the human accepts it as it is. Its state is part of the record.
 
@@ -153,19 +153,19 @@ Every Principle below is mandatory, and its number is permanent.
 
 ## At a Glance
 
-- **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging available implementation *(1)*
-- **Must** — record Plan Assurance and Implementation Assurance separately, using `not reviewed` when implementation does not exist *(1)*
-- **Must** — bind every Plan Assurance outcome to the exact Plan Revision it examined *(1)*
-- **Never** — Review defines a new requirement, or treats silence in the baseline as one *(1)*
-- **Must** — a Review pass changes nothing it judges; Plan reconciliation is delegated to Planning and followed by a new independent pass *(2)*
-- **Never** — Review writes Plan content, repairs implementation, changes Target, or changes Task progress *(2)*
-- **Must** — Review observes the required condition for itself and judges whether the implementer's check establishes it *(3)*
-- **Never** — Review accepts that a check passed as proof that the condition holds *(3)*
-- **Must** — every Finding states what was expected, what was observed, and the exact evidence that shows it *(4)*
-- **Never** — an untraceable statement is recorded as a Finding *(4)*
-- **Must** — an acceptance criterion with nothing observable behind it is recorded as a Finding of missing evidence *(5)*
-- **Never** — Review reconstructs missing evidence, infers it, or accepts an explanation in its place *(5)*
-- **Must** — required work that no planned activity covers is recorded as a Finding of the phase *(6)*
-- **Never** — Review plans the work that would fill a gap it found *(6)*
-- **Must** — every Finding is stored with its Review and keeps its state until resolved or accepted *(7)*
-- **Never** — Review reopens Tasks, raises Blockers for another Component, or changes the active Workflow mode *(7)*
+- **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging available implementation
+- **Must** — record Plan Assurance and Implementation Assurance separately, using `not reviewed` when implementation does not exist
+- **Must** — bind every Plan Assurance outcome to the exact Plan Revision it examined
+- **Never** — Review defines a new requirement, or treats silence in the baseline as one
+- **Must** — a Review pass changes nothing it judges; Plan reconciliation is delegated to Planning and followed by a new independent pass
+- **Never** — Review writes Plan content, repairs implementation, changes Target, or changes Task progress
+- **Must** — Review observes the required condition for itself and judges whether the implementer's check establishes it
+- **Never** — Review accepts that a check passed as proof that the condition holds
+- **Must** — every Finding states what was expected, what was observed, and the exact evidence that shows it
+- **Never** — an untraceable statement is recorded as a Finding
+- **Must** — an acceptance criterion with nothing observable behind it is recorded as a Finding of missing evidence
+- **Never** — Review reconstructs missing evidence, infers it, or accepts an explanation in its place
+- **Must** — required work that no planned activity covers is recorded as a Finding of the phase
+- **Never** — Review plans the work that would fill a gap it found
+- **Must** — every Finding is stored with its Review and keeps its state until resolved or accepted
+- **Never** — Review reopens Tasks, raises Blockers for another Component, or changes the active Workflow mode

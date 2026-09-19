@@ -56,7 +56,7 @@ rules:
   default_must_exist: "default_instance names an existing Instance. An unknown explicit selection is rejected; an omitted selection uses the default."
   no_source_duplication: "Source reads every value from this file and hardcodes none of them — not the project name, the Instance key, the Engine, the database identity, the path, or a credential."
   credentials: "Connection credentials are written here, beside the Instance that uses them. How this file is protected is an open decision (2026-09-18) and this Schema does not decide it."
-  persisted_credentials_are_separate: "A credential field stored inside a Model — a user's password, an API key — is not a connection credential: it follows Database Principle 12's at-rest treatment, and when that treatment is encryption its key is read from this file's encryption.key (decided 2026-09-18)."
+  persisted_credentials_are_separate: "A credential field stored inside a Model — a user's password, an API key — is not a connection credential: it follows Database Principle “Credential storage protects values at rest”'s at-rest treatment, and when that treatment is encryption its key is read from this file's encryption.key (decided 2026-09-18)."
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |

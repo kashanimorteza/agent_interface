@@ -9,18 +9,18 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Rules guide behavior without replacing authority](#1-rules-guide-behavior-without-replacing-authority)**
-   - **[2. Rule scope and conflict are explicit](#2-rule-scope-and-conflict-are-explicit)**
-   - **[3. Security boundaries use enforcement](#3-security-boundaries-use-enforcement)**
-   - **[4. Presentation preserves technical substance](#4-presentation-preserves-technical-substance)**
-   - **[5. Interaction keeps work legible](#5-interaction-keeps-work-legible)**
-   - **[6. Interaction requests only material decisions](#6-interaction-requests-only-material-decisions)**
-   - **[7. Completion is evidence-backed](#7-completion-is-evidence-backed)**
-   - **[8. Material execution is observable](#8-material-execution-is-observable)**
-   - **[9. Health claims use controlled status vocabulary](#9-health-claims-use-controlled-status-vocabulary)**
-   - **[10. Session state is not authoritative project state](#10-session-state-is-not-authoritative-project-state)**
-   - **[11. Resume revalidates before mutation](#11-resume-revalidates-before-mutation)**
-   - **[12. Session termination exposes unfinished work](#12-session-termination-exposes-unfinished-work)**
+   - **[Rules guide behavior without replacing authority](#rules-guide-behavior-without-replacing-authority)**
+   - **[Rule scope and conflict are explicit](#rule-scope-and-conflict-are-explicit)**
+   - **[Security boundaries use enforcement](#security-boundaries-use-enforcement)**
+   - **[Presentation preserves technical substance](#presentation-preserves-technical-substance)**
+   - **[Interaction keeps work legible](#interaction-keeps-work-legible)**
+   - **[Interaction requests only material decisions](#interaction-requests-only-material-decisions)**
+   - **[Completion is evidence-backed](#completion-is-evidence-backed)**
+   - **[Material execution is observable](#material-execution-is-observable)**
+   - **[Health claims use controlled status vocabulary](#health-claims-use-controlled-status-vocabulary)**
+   - **[Session state is not authoritative project state](#session-state-is-not-authoritative-project-state)**
+   - **[Resume revalidates before mutation](#resume-revalidates-before-mutation)**
+   - **[Session termination exposes unfinished work](#session-termination-exposes-unfinished-work)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -110,11 +110,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Rules guide behavior without replacing authority
+### Rules guide behavior without replacing authority
 
 **Rule:** An Agent Rule states stable behavioral guidance concisely and points to the current owner of project facts, structures, choices, and workflows. It never copies or overrides those sources.
 
@@ -124,7 +124,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Rule scope and conflict are explicit
+### Rule scope and conflict are explicit
 
 **Rule:** Every Agent Rule declares whether it is global or scoped and the exact condition under which it applies. Applicable conflicts are reported and resolved by authority and declared precedence, never by arbitrary load order.
 
@@ -134,7 +134,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Security boundaries use enforcement
+### Security boundaries use enforcement
 
 **Rule:** A behavior that must be guaranteed is enforced by Agent Permission, sandboxing, or an applicable Hook rather than relying only on an Agent Rule.
 
@@ -144,7 +144,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Presentation preserves technical substance
+### Presentation preserves technical substance
 
 **Rule:** Output Style may change organization, tone, detail, and format while preserving exact technical meaning, identifiers, commands, paths, code, evidence, warnings, uncertainty, and required decisions.
 
@@ -152,11 +152,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** A style may shorten expression only when no required substance is lost.
 
-*Formerly Agent Interaction Principle 1.*
+*Formerly Agent Interaction Principle "Rules guide behavior without replacing authority".*
 
 <br>
 
-### 5. Interaction keeps work legible
+### Interaction keeps work legible
 
 **Rule:** Human-facing roles communicate active scope, material progress, blockers, required decisions, and final outcomes at a frequency and level appropriate to the work. They never fabricate certainty or hide a failed condition behind presentation.
 
@@ -164,11 +164,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Routine internal details and hidden reasoning are not progress requirements.
 
-*Formerly Agent Interaction Principle 2.*
+*Formerly Agent Interaction Principle "Rule scope and conflict are explicit".*
 
 <br>
 
-### 6. Interaction requests only material decisions
+### Interaction requests only material decisions
 
 **Rule:** An Agent Native or Agent Instance asks the Human only when no safe choice avoids materially changing intent, architecture, security, data integrity, permissions, a declared interface, or an irreversible outcome.
 
@@ -176,11 +176,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Ordinary unstated details within current authority are resolved by professional judgment.
 
-*Formerly Agent Interaction Principle 3.*
+*Formerly Agent Interaction Principle "Security boundaries use enforcement".*
 
 <br>
 
-### 7. Completion is evidence-backed
+### Completion is evidence-backed
 
 **Rule:** An Agent Native or Agent Instance reports success only when every requested and contract-required condition has current observable Evidence. Missing or inconclusive Evidence remains explicit and never becomes success by inference.
 
@@ -188,11 +188,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Evidence proportional to risk is sufficient; redundant checks that cannot increase confidence are unnecessary.
 
-*Formerly Agent Observability Principle 1.*
+*Formerly Agent Observability Principle "Rules guide behavior without replacing authority".*
 
 <br>
 
-### 8. Material execution is observable
+### Material execution is observable
 
 **Rule:** Active scope, material decisions, mutations, delegation, checks, outcomes, blockers, configuration drift, Capability Status, and required Human actions are attributable and inspectable.
 
@@ -200,11 +200,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Hidden reasoning, secrets, and irrelevant command transcripts are never observability requirements.
 
-*Formerly Agent Observability Principle 2.*
+*Formerly Agent Observability Principle "Rule scope and conflict are explicit".*
 
 <br>
 
-### 9. Health claims use controlled status vocabulary
+### Health claims use controlled status vocabulary
 
 **Rule:** Capability and configuration health use declared statuses with objective entry conditions. A status changes only when current Observation establishes the new condition.
 
@@ -212,11 +212,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** A runtime may expose richer native detail beneath the portable status.
 
-*Formerly Agent Observability Principle 3.*
+*Formerly Agent Observability Principle "Security boundaries use enforcement".*
 
 <br>
 
-### 10. Session state is not authoritative project state
+### Session state is not authoritative project state
 
 **Rule:** Conversation history, session identifiers, transient tasks, cached context, and background process state never replace authored Interface sources or owned operational records.
 
@@ -224,11 +224,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Session state may be used as evidence after it is revalidated against current sources.
 
-*Formerly Agent Session Principle 1.*
+*Formerly Agent Session Principle "Rules guide behavior without replacing authority".*
 
 <br>
 
-### 11. Resume revalidates before mutation
+### Resume revalidates before mutation
 
 **Rule:** A resumed, forked, restored, or background Session re-establishes required Context, active scope, permissions, filesystem state, and outstanding work before making new mutations.
 
@@ -236,11 +236,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Read-only orientation may occur before full mutation readiness is established.
 
-*Formerly Agent Session Principle 2.*
+*Formerly Agent Session Principle "Rule scope and conflict are explicit".*
 
 <br>
 
-### 12. Session termination exposes unfinished work
+### Session termination exposes unfinished work
 
 **Rule:** Before a Session claims completion or terminates managed Background Work, it exposes unfinished responsibilities, running work, blockers, and required Human actions. It never abandons authorized work while presenting success.
 
@@ -248,28 +248,28 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** An explicitly cancelled Session reports cancellation rather than completing its original objective.
 
-*Formerly Agent Session Principle 3.*
+*Formerly Agent Session Principle "Security boundaries use enforcement".*
 
 <br>
 
 ## At a Glance
 
-- **Must** — keep Rules concise and refer to current owners *(1)*
-- **Never** — copy or override project authorities in a Rule *(1)*
-- **Must** — declare Rule scope, activation, and conflict resolution *(2)*
-- **Never** — resolve conflicts through arbitrary load order *(2)*
-- **Must** — place guaranteed boundaries in enforceable mechanisms *(3)*
-- **Must** — preserve exact technical substance under every Output Style *(4)*
-- **Never** — let presentation hide evidence, warnings, uncertainty, or decisions *(4)*
-- **Must** — communicate scope, progress, blockers, decisions, and outcomes appropriately *(5)*
-- **Never** — fabricate certainty or conceal failure *(5)*
-- **Must** — ask the Human only for materially consequential unresolved choices *(6)*
-- **Must** — support every completion claim with current proportional Evidence *(7)*
-- **Never** — infer success from missing or inconclusive Evidence *(7)*
-- **Must** — make material execution, drift, health, blockers, and Human actions inspectable *(8)*
-- **Never** — expose secrets or require hidden reasoning *(8)*
-- **Must** — use declared statuses whose changes are established by Observation *(9)*
-- **Never** — treat transient Session state as authoritative project state *(10)*
-- **Must** — revalidate context, scope, permission, files, and work before resumed mutation *(11)*
-- **Must** — expose unfinished and running work before completion or termination *(12)*
-- **Never** — abandon unfinished work while reporting success *(12)*
+- **Must** — keep Rules concise and refer to current owners
+- **Never** — copy or override project authorities in a Rule
+- **Must** — declare Rule scope, activation, and conflict resolution
+- **Never** — resolve conflicts through arbitrary load order
+- **Must** — place guaranteed boundaries in enforceable mechanisms
+- **Must** — preserve exact technical substance under every Output Style
+- **Never** — let presentation hide evidence, warnings, uncertainty, or decisions
+- **Must** — communicate scope, progress, blockers, decisions, and outcomes appropriately
+- **Never** — fabricate certainty or conceal failure
+- **Must** — ask the Human only for materially consequential unresolved choices
+- **Must** — support every completion claim with current proportional Evidence
+- **Never** — infer success from missing or inconclusive Evidence
+- **Must** — make material execution, drift, health, blockers, and Human actions inspectable
+- **Never** — expose secrets or require hidden reasoning
+- **Must** — use declared statuses whose changes are established by Observation
+- **Never** — treat transient Session state as authoritative project state
+- **Must** — revalidate context, scope, permission, files, and work before resumed mutation
+- **Must** — expose unfinished and running work before completion or termination
+- **Never** — abandon unfinished work while reporting success

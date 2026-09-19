@@ -9,8 +9,8 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Every Tool has an atomic contract](#1-every-tool-has-an-atomic-contract)**
-   - **[2. Tool availability is observed](#2-tool-availability-is-observed)**
+   - **[Every Tool has an atomic contract](#every-tool-has-an-atomic-contract)**
+   - **[Tool availability is observed](#tool-availability-is-observed)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -64,11 +64,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Every Tool has an atomic contract
+### Every Tool has an atomic contract
 
 **Rule:** Every Tool declares its inputs, observable effects, outputs, failure modes, scope, and permission class. A Tool performs one atomic capability and never embeds an undeclared project workflow.
 
@@ -78,7 +78,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Tool availability is observed
+### Tool availability is observed
 
 **Rule:** A Tool is available only when the intended Agent Role can discover and successfully call it in the required scope. Presence in a catalog or provider claim alone is insufficient.
 
@@ -90,7 +90,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 ## At a Glance
 
-- **Must** — give every Tool one atomic contract with effects and permission class *(1)*
-- **Never** — hide an undeclared project workflow inside a Tool *(1)*
-- **Must** — verify Tool availability from the intended role and scope *(2)*
-- **Never** — infer availability from a catalog or provider claim *(2)*
+- **Must** — give every Tool one atomic contract with effects and permission class
+- **Never** — hide an undeclared project workflow inside a Tool
+- **Must** — verify Tool availability from the intended role and scope
+- **Never** — infer availability from a catalog or provider claim

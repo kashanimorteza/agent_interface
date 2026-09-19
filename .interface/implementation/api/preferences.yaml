@@ -86,7 +86,7 @@ content:
         enabled: true
         strategy: "path"
         initial_version: "v1"
-      expose_standard_model_operations: true
+      expose_standard_model_operations: true   # the operation set Database publishes through its Database Interface
     interfaces:
       model_access:
         via: "Model Public Interface"

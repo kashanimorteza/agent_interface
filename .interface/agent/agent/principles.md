@@ -9,19 +9,19 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Every Agent Instance has one complete definition](#1-every-agent-instance-has-one-complete-definition)**
-   - **[2. Agent Instance and Role remain separate](#2-agent-instance-and-role-remain-separate)**
-   - **[3. `general` is the General Agent Instance](#3-general-is-the-general-agent-instance)**
-   - **[4. Specialized Agent Instances remain bounded](#4-specialized-agent-instances-remain-bounded)**
-   - **[5. Agent Native and Instance availability are proven in the selected Runtime](#5-agent-native-and-instance-availability-are-proven-in-the-selected-runtime)**
-   - **[6. Every Agent Role has one bounded responsibility](#6-every-agent-role-has-one-bounded-responsibility)**
-   - **[7. Role ownership is unambiguous](#7-role-ownership-is-unambiguous)**
-   - **[8. The Primary Role remains accountable](#8-the-primary-role-remains-accountable)**
-   - **[9. The primary execution role owns the requested outcome](#9-the-primary-execution-role-owns-the-requested-outcome)**
-   - **[10. `interface-reader` reports without changing the observed state](#10-interface-reader-reports-without-changing-the-observed-state)**
-   - **[11. Delegation preserves scope and authority](#11-delegation-preserves-scope-and-authority)**
-   - **[12. Concurrent work has exclusive mutation ownership](#12-concurrent-work-has-exclusive-mutation-ownership)**
-   - **[13. Runtime coordination state is not project intent](#13-runtime-coordination-state-is-not-project-intent)**
+   - **[Every Agent Instance has one complete definition](#every-agent-instance-has-one-complete-definition)**
+   - **[Agent Instance and Role remain separate](#agent-instance-and-role-remain-separate)**
+   - **[`general` is the General Agent Instance](#general-is-the-general-agent-instance)**
+   - **[Specialized Agent Instances remain bounded](#specialized-agent-instances-remain-bounded)**
+   - **[Agent Native and Instance availability are proven in the selected Runtime](#agent-native-and-instance-availability-are-proven-in-the-selected-runtime)**
+   - **[Every Agent Role has one bounded responsibility](#every-agent-role-has-one-bounded-responsibility)**
+   - **[Role ownership is unambiguous](#role-ownership-is-unambiguous)**
+   - **[The Primary Role remains accountable](#the-primary-role-remains-accountable)**
+   - **[The primary execution role owns the requested outcome](#the-primary-execution-role-owns-the-requested-outcome)**
+   - **[`interface-reader` reports without changing the observed state](#interface-reader-reports-without-changing-the-observed-state)**
+   - **[Delegation preserves scope and authority](#delegation-preserves-scope-and-authority)**
+   - **[Concurrent work has exclusive mutation ownership](#concurrent-work-has-exclusive-mutation-ownership)**
+   - **[Runtime coordination state is not project intent](#runtime-coordination-state-is-not-project-intent)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -103,11 +103,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Every Agent Instance has one complete definition
+### Every Agent Instance has one complete definition
 
 **Rule:** Every required Agent Instance has one stable Agent Instance Definition declaring its identity, kind, assigned Role, native realization, capability assignments, configuration overrides, lifecycle behavior, and availability requirement. The Agent Native realizes that Definition without changing the contracts it references.
 
@@ -117,7 +117,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Agent Instance and Role remain separate
+### Agent Instance and Role remain separate
 
 **Rule:** An Agent Instance Definition states who executes; an Agent Role states the responsibility executed. Every Agent Instance maps to at least one declared Role, and assigning a Role never transfers ownership of the Role contract into the Agent Instance.
 
@@ -127,7 +127,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. `general` is the General Agent Instance
+### `general` is the General Agent Instance
 
 **Rule:** The Agent Preferences requires one General Agent Instance with the stable identity `general`. It realizes the primary execution Role, remains accountable to the Human, activates applicable capabilities, delegates bounded work when useful, integrates delegated evidence, and makes the final outcome claim.
 
@@ -137,7 +137,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Specialized Agent Instances remain bounded
+### Specialized Agent Instances remain bounded
 
 **Rule:** Every Specialized Agent Instance maps to a declared supporting Role and receives only the Context, Skills, Tools, Permission, and lifecycle behavior required for that Role. It returns its result and evidence to the accountable General Agent Instance or direct invoker without expanding its own assignment.
 
@@ -147,7 +147,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 5. Agent Native and Instance availability are proven in the selected Runtime
+### Agent Native and Instance availability are proven in the selected Runtime
 
 **Rule:** The Agent Native is available only when the selected Runtime exposes its core operational Agent. A required Agent Instance is available only when that Agent Native can instantiate or expose its native realization, assign its declared Role and capabilities, and successfully invoke it in the current project. A declaration or native file alone is not proof.
 
@@ -157,7 +157,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 6. Every Agent Role has one bounded responsibility
+### Every Agent Role has one bounded responsibility
 
 **Rule:** Every Agent Role declares one responsibility, scope, authority, required inputs, expected outputs, and stopping conditions. A role never performs an adjacent responsibility or acquires authority merely because it discovers additional work.
 
@@ -165,11 +165,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** One role may coordinate several capabilities when coordination is its declared responsibility.
 
-*Formerly Agent Role Principle 1.*
+*Formerly Agent Role Principle "Every Agent Instance has one complete definition".*
 
 <br>
 
-### 7. Role ownership is unambiguous
+### Role ownership is unambiguous
 
 **Rule:** Each required responsibility maps to one primary Agent Role. Missing, duplicate, contradictory, or unreachable role ownership is invalid.
 
@@ -177,11 +177,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Supporting roles may contribute evidence without becoming co-owners of the final claim.
 
-*Formerly Agent Role Principle 2.*
+*Formerly Agent Role Principle "Agent Instance and Role remain separate".*
 
 <br>
 
-### 8. The Primary Role remains accountable
+### The Primary Role remains accountable
 
 **Rule:** The Primary Role remains accountable for integrating delegated results, resolving conflicts, preserving the Human's scope, and making the final outcome claim.
 
@@ -189,11 +189,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Accountability does not grant the Primary Role authority excluded by the active request or policy.
 
-*Formerly Agent Role Principle 3.*
+*Formerly Agent Role Principle "`general` is the General Agent Instance".*
 
 <br>
 
-### 9. The primary execution role owns the requested outcome
+### The primary execution role owns the requested outcome
 
 **Rule:** The architecture requires one primary execution role whose purpose is accountable request completion, whose responsibility is to establish required Understanding, activate and coordinate applicable capabilities, preserve authority, and report an evidence-backed outcome, and whose task coverage is the complete authorized request.
 
@@ -201,11 +201,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** The primary execution role gains no authority beyond the request, applicable Permissions, and owning Component contracts.
 
-*Formerly Agent Role Principle 4.*
+*Formerly Agent Role Principle "Specialized Agent Instances remain bounded".*
 
 <br>
 
-### 10. `interface-reader` reports without changing the observed state
+### `interface-reader` reports without changing the observed state
 
 **Rule:** The architecture requires the `interface-reader` specialized role whose purpose is current Interface status reporting, whose responsibility is to derive Workflow position, phase progress, plans, implementation, launch, blockers, questions, and Findings from current authorities and records, and whose task coverage is read-only observation and explanation.
 
@@ -213,11 +213,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** `interface-reader` never reads Agent Module sources, writes files, executes project work, repairs discrepancies, or invents missing facts. It consumes synchronized Runtime rules for Agent-side behavior.
 
-*Formerly Agent Role Principle 5.*
+*Formerly Agent Role Principle "Agent Native and Instance availability are proven in the selected Runtime".*
 
 <br>
 
-### 11. Delegation preserves scope and authority
+### Delegation preserves scope and authority
 
 **Rule:** A delegation carries a bounded objective, minimum necessary context, expected result, evidence requirements, and no authority broader than the parent task permits. Delegation never bypasses ownership or approval.
 
@@ -225,11 +225,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** A delegate may choose ordinary implementation details inside its assigned contract.
 
-*Formerly Agent Coordination Principle 1.*
+*Formerly Agent Coordination Principle "Every Agent Instance has one complete definition".*
 
 <br>
 
-### 12. Concurrent work has exclusive mutation ownership
+### Concurrent work has exclusive mutation ownership
 
 **Rule:** Concurrent roles receive non-overlapping mutation scopes or an explicit coordination rule for shared records. Conflicting results are reconciled by the accountable parent before integration.
 
@@ -237,11 +237,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Read-only investigation may overlap freely when it does not mutate shared state.
 
-*Formerly Agent Coordination Principle 2.*
+*Formerly Agent Coordination Principle "Agent Instance and Role remain separate".*
 
 <br>
 
-### 13. Runtime coordination state is not project intent
+### Runtime coordination state is not project intent
 
 **Rule:** Team membership, task queues, mailboxes, process identifiers, and other Coordination Records remain runtime state and are never treated as authored Interface definitions.
 
@@ -249,33 +249,33 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Durable evidence and outcomes may be written to the record that owns them.
 
-*Formerly Agent Coordination Principle 3.*
+*Formerly Agent Coordination Principle "`general` is the General Agent Instance".*
 
 <br>
 
 ## At a Glance
 
-- **Must** — select one Agent Native supplied by the selected Agent Runtime *(1, 5)*
-- **Must** — give every required Agent Instance one complete and stable Agent Instance Definition *(1)*
-- **Never** — let the Agent Native change the contracts referenced by an Agent Instance Definition *(1)*
-- **Must** — map every Agent Instance to a declared Role while keeping Instance identity and Role responsibility separate *(2)*
-- **Must** — provide `general` as the General Agent Instance accountable for the complete authorized outcome *(3)*
-- **Never** — let General Agent Instance accountability broaden scope, Permission, or authority *(3)*
-- **Must** — keep every Specialized Agent Instance bounded to its supporting Role and required capabilities *(4)*
-- **Never** — let delegation turn a Specialized Agent Instance into the General Agent Instance *(4)*
-- **Must** — prove the Agent Native and every required Agent Instance are usable in the selected Runtime *(5)*
-- **Never** — approximate an unavailable Agent Native or Agent Instance with broader authority *(5)*
-- **Must** — give every Agent Role one complete bounded contract *(6)*
-- **Never** — let discovered work expand a role's authority *(6)*
-- **Must** — assign each required responsibility one primary owner *(7)*
-- **Never** — accept missing, duplicate, contradictory, or unreachable ownership *(7)*
-- **Must** — keep the Primary Role accountable for integration and the final claim *(8)*
-- **Must** — provide one primary execution role accountable for the authorized request *(9)*
-- **Never** — let primary accountability expand authority *(9)*
-- **Must** — provide `interface-reader` for read-only current status reporting *(10)*
-- **Never** — let `interface-reader` mutate, execute, repair, or invent project state *(10)*
-- **Never** — let `interface-reader` enter or inspect the Agent Module *(10)*
-- **Must** — delegate bounded objectives, context, outputs, evidence, and authority *(11)*
-- **Never** — use delegation to bypass ownership or approval *(11)*
-- **Must** — coordinate mutation scopes and reconcile conflicts before integration *(12)*
-- **Never** — treat transient coordination state as project intent *(13)*
+- **Must** — select one Agent Native supplied by the selected Agent Runtime
+- **Must** — give every required Agent Instance one complete and stable Agent Instance Definition
+- **Never** — let the Agent Native change the contracts referenced by an Agent Instance Definition
+- **Must** — map every Agent Instance to a declared Role while keeping Instance identity and Role responsibility separate
+- **Must** — provide `general` as the General Agent Instance accountable for the complete authorized outcome
+- **Never** — let General Agent Instance accountability broaden scope, Permission, or authority
+- **Must** — keep every Specialized Agent Instance bounded to its supporting Role and required capabilities
+- **Never** — let delegation turn a Specialized Agent Instance into the General Agent Instance
+- **Must** — prove the Agent Native and every required Agent Instance are usable in the selected Runtime
+- **Never** — approximate an unavailable Agent Native or Agent Instance with broader authority
+- **Must** — give every Agent Role one complete bounded contract
+- **Never** — let discovered work expand a role's authority
+- **Must** — assign each required responsibility one primary owner
+- **Never** — accept missing, duplicate, contradictory, or unreachable ownership
+- **Must** — keep the Primary Role accountable for integration and the final claim
+- **Must** — provide one primary execution role accountable for the authorized request
+- **Never** — let primary accountability expand authority
+- **Must** — provide `interface-reader` for read-only current status reporting
+- **Never** — let `interface-reader` mutate, execute, repair, or invent project state
+- **Never** — let `interface-reader` enter or inspect the Agent Module
+- **Must** — delegate bounded objectives, context, outputs, evidence, and authority
+- **Never** — use delegation to bypass ownership or approval
+- **Must** — coordinate mutation scopes and reconcile conflicts before integration
+- **Never** — treat transient coordination state as project intent

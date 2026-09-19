@@ -9,20 +9,20 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. API is an independent executable](#1-api-is-an-independent-executable)**
-   - **[2. Application Bootstrap owns API composition](#2-application-bootstrap-owns-api-composition)**
-   - **[3. Router owns the HTTP boundary](#3-router-owns-the-http-boundary)**
-   - **[4. Service mediates API operations](#4-service-mediates-api-operations)**
-   - **[5. API consumes explicit Public Interfaces](#5-api-consumes-explicit-public-interfaces)**
-   - **[6. API exposes Target capabilities](#6-api-exposes-target-capabilities)**
-   - **[7. API owns the external contract](#7-api-owns-the-external-contract)**
-   - **[8. Transport validation does not replace domain validation](#8-transport-validation-does-not-replace-domain-validation)**
-   - **[9. Credentials never leave the API boundary](#9-credentials-never-leave-the-api-boundary)**
-   - **[10. Outcomes and failures are mapped safely](#10-outcomes-and-failures-are-mapped-safely)**
-   - **[11. Identity and authorization remain separate](#11-identity-and-authorization-remain-separate)**
-   - **[12. Queries are bounded and explicit](#12-queries-are-bounded-and-explicit)**
-   - **[13. Lifecycle is observable](#13-lifecycle-is-observable)**
-   - **[14. API verification covers the boundary](#14-api-verification-covers-the-boundary)**
+   - **[API is an independent executable](#api-is-an-independent-executable)**
+   - **[Application Bootstrap owns API composition](#application-bootstrap-owns-api-composition)**
+   - **[Router owns the HTTP boundary](#router-owns-the-http-boundary)**
+   - **[Service mediates API operations](#service-mediates-api-operations)**
+   - **[API consumes explicit Public Interfaces](#api-consumes-explicit-public-interfaces)**
+   - **[API exposes Target capabilities](#api-exposes-target-capabilities)**
+   - **[API owns the external contract](#api-owns-the-external-contract)**
+   - **[Transport validation does not replace domain validation](#transport-validation-does-not-replace-domain-validation)**
+   - **[Credentials never leave the API boundary](#credentials-never-leave-the-api-boundary)**
+   - **[Outcomes and failures are mapped safely](#outcomes-and-failures-are-mapped-safely)**
+   - **[Identity and authorization remain separate](#identity-and-authorization-remain-separate)**
+   - **[Queries are bounded and explicit](#queries-are-bounded-and-explicit)**
+   - **[Lifecycle is observable](#lifecycle-is-observable)**
+   - **[API verification covers the boundary](#api-verification-covers-the-boundary)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -88,102 +88,102 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. API is an independent executable
+### API is an independent executable
 **Rule:** API owns its process, startup, routing, transport schemas, serialization, versioning, and machine-readable contract. Logic remains a library consumed through its Public Interface.
 
 **Why:** A boundary that owns its own process can be started, stopped, scaled, and replaced without disturbing the library behind it, and a Logic that owns no process can be reused by a consumer that is not this one.
 
 **Boundary:** API does not own application Behaviour, persistence, Model definitions, or Logic internals.
 
-### 2. Application Bootstrap owns API composition
+### Application Bootstrap owns API composition
 **Rule:** The Application Bootstrap is the API Composition Root. It creates the selected API framework application, applies API-level configuration, registers Router modules, installs transport middleware and exception handlers, wires Authentication dependencies, configures lifecycle hooks, and exposes the configured application through the selected entrypoint. It contains composition and wiring only; it does not contain business Behaviour or domain-specific operation logic.
 
 **Why:** One composition root means the shape of the running application is readable in a single place, instead of being assembled from side effects scattered through modules.
 
 **Boundary:** Bootstrap configuration is not a Router or Service responsibility. Runtime values such as host, port, deployment path, allowed origins, and secret references come from Platform Bindings or the API runtime configuration contract and are never hard-coded as application meaning.
 
-### 3. Router owns the HTTP boundary
+### Router owns the HTTP boundary
 **Rule:** Router owns URL and route definitions, HTTP methods, path and query parameters, headers, Request handling, HTTP-level validation, Authentication dependencies, HTTP status codes, HTTP error and response mapping, response handling, and OpenAPI metadata. Router delegates API operations to Service and contains no application Behaviour.
 
 **Why:** Confining the protocol to one layer is what lets everything behind it stay transport-independent, and what makes a second transport an addition rather than a rewrite.
 
 **Boundary:** Router never accesses Database directly, imports private Logic implementation, or places business rules in HTTP handlers.
 
-### 4. Service mediates API operations
+### Service mediates API operations
 **Rule:** Service is the API layer between Router and Logic Interface. It exposes API operations and domain-specific API actions, prepares or transforms data at the API boundary, and coordinates calls to Logic through its Public Interface. Service may orchestrate an API-level interaction but does not reimplement authoritative Business Behaviour.
 
 **Why:** A mediating layer keeps Router free of application concerns and Logic free of transport ones, so neither leaks into the other as endpoints multiply.
 
 **Boundary:** Service never imports the selected transport framework, Router modules, Request or Response types, transport status codes, Middleware, or other transport-specific concepts. Business rules remain in Logic.
 
-### 5. API consumes explicit Public Interfaces
+### API consumes explicit Public Interfaces
 **Rule:** API consumes Model types through Model's Public Interface for transport schemas and consumes Behaviour only through Logic's Public Interface. It never reaches Database directly.
 
 **Why:** Consuming only published surfaces keeps API replaceable and keeps Model and Logic free to change behind theirs.
 
 **Boundary:** API may hold a Transport Schema of its own where the wire shape differs from a Domain Definition; it never restates a Domain Definition that already exists, and never reaches persistence by any route.
 
-### 6. API exposes Target capabilities
+### API exposes Target capabilities
 **Rule:** API publishes every capability selected for external consumers by the Target, including applicable standard Model operations, without reducing the contract to storage CRUD.
 
 **Why:** The external contract exists to serve what the Target intends, not to expose the shape of storage; reducing it to storage operations forces every consumer to reassemble the intent itself.
 
 **Boundary:** Which capabilities are published is resolved from the Target. API decides how a capability is exposed over the transport, never whether the application has it.
 
-### 7. API owns the external contract
+### API owns the external contract
 **Rule:** API maintains the machine-readable description of operations, input and output shapes, versions, and approved outcomes. Documentation and contract remain consistent with implemented routes.
 
 **Why:** A contract that drifts from the running API is worse than none: consumers build against a description that no longer holds and discover the difference in production.
 
 **Boundary:** API owns the description of its own boundary only. The meaning behind an operation belongs to Logic, and the domain shapes it carries belong to Model.
 
-### 8. Transport validation does not replace domain validation
+### Transport validation does not replace domain validation
 **Rule:** API validates transport shape and delegates resulting-state and Behaviour validation to Logic. A valid request shape is not itself a valid domain operation.
 
 **Why:** Shape and meaning are different checks. A request can be perfectly formed and still be an operation that must not happen, and only the owner of Behaviour can tell.
 
 **Boundary:** API rejects what is malformed at its own edge and never absorbs domain rules to do so; Logic remains the single judge of whether an operation is permitted.
 
-### 9. Credentials never leave the API boundary
+### Credentials never leave the API boundary
 **Rule:** Credential values may be accepted only by required input operations and are excluded from responses, errors, diagnostics, logs, examples, and recorded output.
 
 **Why:** Credentials leak through the paths nobody inspects — an error body, a log line, an example in the generated contract — and one leak is permanent.
 
 **Boundary:** API may accept a credential where an operation requires one and pass it inwards through the authorized route; it never returns, records, or renders one.
 
-### 10. Outcomes and failures are mapped safely
+### Outcomes and failures are mapped safely
 **Rule:** API maps explicit Application Outcomes to the public contract. Unexpected failures become safe generic responses with a non-secret request identifier; internal exceptions and persistence details never cross the boundary.
 
 **Why:** A consumer needs to distinguish an expected failure from a fault, and neither needs to learn anything about what failed internally.
 
 **Boundary:** The outcomes API may map are the ones Logic declares. An unexpected failure is reported as itself, never reshaped into a successful response.
 
-### 11. Identity and authorization remain separate
+### Identity and authorization remain separate
 **Rule:** When enabled, API establishes validated requester identity in Request Context. Logic decides authorization for Behaviour; transport validity never implies permission.
 
 **Why:** Knowing who is asking and deciding what they may do are separate questions; answering both at the boundary puts application rules where they cannot see application state.
 
 **Boundary:** API establishes and carries identity; Logic decides authorization. A validated request is evidence of identity alone.
 
-### 12. Queries are bounded and explicit
+### Queries are bounded and explicit
 **Rule:** List, filtering, and sorting parameters are explicitly allowlisted, bounded, and stable. API parameters never become direct storage commands.
 
 **Why:** Unbounded queries let a caller shape the load on the system, and parameters passed through to storage let a caller shape the query itself.
 
 **Boundary:** API bounds and allowlists what its own contract accepts; how a bounded query is then satisfied belongs to the Components behind it.
 
-### 13. Lifecycle is observable
+### Lifecycle is observable
 **Rule:** API distinguishes health from readiness, validates required configuration and dependencies before readiness, and shuts down within the Platform-provided deadline.
 
 **Why:** An operator needs to know the difference between a process that is alive and one that is ready to serve, and a shutdown that ignores its deadline loses work in flight.
 
 **Boundary:** API reports its own condition; Platform decides what to do with that report and supplies the deadline it observes.
 
-### 14. API verification covers the boundary
+### API verification covers the boundary
 **Rule:** Verification covers route contracts, schemas, outcomes, credential exclusion, lifecycle, request context, and consistency between the machine-readable description and the running API.
 
 **Why:** The boundary is where the outside world meets the system, so what is verified there is what a consumer can actually rely on.
@@ -192,27 +192,27 @@ Every Principle below is mandatory, and its number is permanent.
 
 ## At a Glance
 
-- **Must** — Own the API process, its startup, routing, schemas, serialization, versioning, and machine-readable contract. *(1)*
-- **Never** — Own application Behaviour, persistence, Model definitions, or Logic internals. *(1)*
-- **Must** — Compose the running application in one Application Bootstrap that wires and configures only. *(2)*
-- **Never** — Put business Behaviour in composition, or hard-code runtime values as application meaning. *(2)*
-- **Must** — Keep routes, HTTP inputs and outputs, transport validation, status codes, and error mapping inside Router. *(3)*
-- **Never** — Access Database from Router, import private Logic implementation, or put business rules in handlers. *(3)*
-- **Must** — Let Service mediate between Router and Logic, preparing data at the boundary and coordinating calls. *(4)*
-- **Never** — Import transport types or framework concepts into Service, or reimplement Behaviour there. *(4)*
-- **Must** — Consume Model and Logic only through their Public Interfaces. *(5)*
-- **Never** — Reach Database from API, or restate a Domain Definition that already exists. *(5)*
-- **Must** — Publish every capability the Target selects for external consumers. *(6)*
-- **Never** — Reduce the external contract to storage operations. *(6)*
-- **Must** — Keep the machine-readable contract consistent with the implemented routes. *(7)*
-- **Must** — Validate transport shape at the boundary and leave state and Behaviour validation to Logic. *(8)*
-- **Never** — Treat a valid request shape as a valid domain operation. *(8)*
-- **Never** — Return, record, or render a credential value anywhere, including errors, logs, diagnostics, and examples. *(9)*
-- **Must** — Map declared Application Outcomes to the public contract, and unexpected failures to safe generic responses with a non-secret request identifier. *(10)*
-- **Never** — Let internal exceptions or persistence details cross the boundary. *(10)*
-- **Must** — Establish validated identity in Request Context when authentication is enabled. *(11)*
-- **Never** — Decide authorization at the transport boundary or treat transport validity as permission. *(11)*
-- **Must** — Allowlist and bound every list, filter, and sort parameter. *(12)*
-- **Never** — Let an API parameter become a direct storage command. *(12)*
-- **Must** — Distinguish health from readiness, validate configuration and dependencies before readiness, and shut down within the Platform deadline. *(13)*
-- **Must** — Verify route contracts, schemas, outcomes, credential exclusion, lifecycle, request context, and contract-to-runtime consistency. *(14)*
+- **Must** — Own the API process, its startup, routing, schemas, serialization, versioning, and machine-readable contract.
+- **Never** — Own application Behaviour, persistence, Model definitions, or Logic internals.
+- **Must** — Compose the running application in one Application Bootstrap that wires and configures only.
+- **Never** — Put business Behaviour in composition, or hard-code runtime values as application meaning.
+- **Must** — Keep routes, HTTP inputs and outputs, transport validation, status codes, and error mapping inside Router.
+- **Never** — Access Database from Router, import private Logic implementation, or put business rules in handlers.
+- **Must** — Let Service mediate between Router and Logic, preparing data at the boundary and coordinating calls.
+- **Never** — Import transport types or framework concepts into Service, or reimplement Behaviour there.
+- **Must** — Consume Model and Logic only through their Public Interfaces.
+- **Never** — Reach Database from API, or restate a Domain Definition that already exists.
+- **Must** — Publish every capability the Target selects for external consumers.
+- **Never** — Reduce the external contract to storage operations.
+- **Must** — Keep the machine-readable contract consistent with the implemented routes.
+- **Must** — Validate transport shape at the boundary and leave state and Behaviour validation to Logic.
+- **Never** — Treat a valid request shape as a valid domain operation.
+- **Never** — Return, record, or render a credential value anywhere, including errors, logs, diagnostics, and examples.
+- **Must** — Map declared Application Outcomes to the public contract, and unexpected failures to safe generic responses with a non-secret request identifier.
+- **Never** — Let internal exceptions or persistence details cross the boundary.
+- **Must** — Establish validated identity in Request Context when authentication is enabled.
+- **Never** — Decide authorization at the transport boundary or treat transport validity as permission.
+- **Must** — Allowlist and bound every list, filter, and sort parameter.
+- **Never** — Let an API parameter become a direct storage command.
+- **Must** — Distinguish health from readiness, validate configuration and dependencies before readiness, and shut down within the Platform deadline.
+- **Must** — Verify route contracts, schemas, outcomes, credential exclusion, lifecycle, request context, and contract-to-runtime consistency.

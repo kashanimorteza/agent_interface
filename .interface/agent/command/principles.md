@@ -9,8 +9,8 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. A Command is an entry point, not a second workflow](#1-a-command-is-an-entry-point-not-a-second-workflow)**
-   - **[2. Command invocation is stable and discoverable](#2-command-invocation-is-stable-and-discoverable)**
+   - **[A Command is an entry point, not a second workflow](#a-command-is-an-entry-point-not-a-second-workflow)**
+   - **[Command invocation is stable and discoverable](#command-invocation-is-stable-and-discoverable)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -64,11 +64,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. A Command is an entry point, not a second workflow
+### A Command is an entry point, not a second workflow
 
 **Rule:** Every Custom Command maps to one owning Capability Contract and adds no competing workflow, authority, or policy. Its arguments are validated before routing.
 
@@ -78,7 +78,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Command invocation is stable and discoverable
+### Command invocation is stable and discoverable
 
 **Rule:** Command names, aliases, accepted arguments, owner, availability, and invocation scope are explicit. A collision or unavailable target is reported rather than resolved by guesswork.
 
@@ -90,7 +90,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 ## At a Glance
 
-- **Must** — map every Custom Command to one owning Capability Contract *(1)*
-- **Never** — duplicate workflow, authority, or policy inside a Command *(1)*
-- **Must** — declare command names, arguments, ownership, scope, and availability *(2)*
-- **Never** — guess through a collision or unavailable command target *(2)*
+- **Must** — map every Custom Command to one owning Capability Contract
+- **Never** — duplicate workflow, authority, or policy inside a Command
+- **Must** — declare command names, arguments, ownership, scope, and availability
+- **Never** — guess through a collision or unavailable command target

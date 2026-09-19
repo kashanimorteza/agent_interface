@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
   purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "6.2"
+  version: "7.1"
   updated: "2026-09-19"
 
 
@@ -31,7 +31,7 @@ read_order:
 content_map:
   selected: "Empty. Development owns Model's configurable profile and concrete selections."
   options: "Empty. Development catalogues Model's concrete technical alternatives and Platform reference."
-  settings: "Technology-independent conventions, grouped by the parts Model Principles name in its Architecture — Domain Definition, Declaration Vocabulary, and Model Foundation — plus Verification, which spans the Component. Target definitions provide each Field and relationship property; this Component adds no inferred Field defaults."
+  settings: "Technology-independent conventions, grouped by the parts Model Principles name in its Architecture — Domain Definition, Declaration Vocabulary, and Model Foundation — plus Layout and Verification, which span the Component. Target definitions provide each Field and relationship property; this Component adds no inferred Field defaults."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -77,26 +77,34 @@ content:
         foreign_key: "Identifies the referenced Domain Definition and field without naming an Engine or ORM."
         cardinality: "Publishes relationship multiplicity and optionality resolved from the Target."
       model_metadata:
-        persistence: "Publishes whether the Domain Definition is persistent or non-persistent, as Model Principle 11 requires."
+        persistence: "Publishes whether the Domain Definition is persistent or non-persistent, as Model Principle “Every Domain Definition declares whether it is persistent” requires."
         unique_sets: "Publishes composite uniqueness constraints as ordered field-name sets."
-      usage: "Entries here describe meaning only, carried by the same Domain Definition that application code uses. Each consumer maps the vocabulary to its own technology; physical mapping, migration, and enforcement are Database's, as Model Principle 9 states."
+      usage: "Entries here describe meaning only, carried by the same Domain Definition that application code uses. Each consumer maps the vocabulary to its own technology; physical mapping, migration, and enforcement are Database's, as Model Principle “Model declares every definition in one standard, technology-independent vocabulary” states."
 
     # ---- Model Foundation ----
     model_foundation:
       serialization:
-        purpose: "The two symmetric conversions every Domain Definition carries, as required by Model Principle 10."
+        purpose: "The two symmetric conversions every Domain Definition carries, as required by Model Principle “Every Domain Definition converts to and from a Plain Representation”."
         capabilities:
           serialize: "Produces the Plain Representation of one instance."
           deserialize: "Produces an instance from a Plain Representation."
         naming: "Name the two capabilities for what they do, not for a wire format. The Interface fixes no language-level method name; the selected realization decides the compatible form."
         output_form: "Simple named values — a plain structure of field names and values. Never an encoded text form. Encoding the structure into JSON or any other wire format is the consuming Component's work."
         representation_target: "The plain structure is JSON-compatible: every published value is expressible in JSON without a custom encoder."
-        validation_on_input: "Follows Model Principle 10: deserialize evaluates the same Intrinsic Rules the Domain Definition applies to any other instance, and fails when the data does not satisfy them, so no construction path from outside skips validation."
+        validation_on_input: "Follows Model Principle “Every Domain Definition converts to and from a Plain Representation”: deserialize evaluates the same Intrinsic Rules the Domain Definition applies to any other instance, and fails when the data does not satisfy them, so no construction path from outside skips validation."
         relationships: "A Domain Relationship is published only as its declared foreign-key value. A related Domain Definition is never nested, and one conversion never traverses the relationship graph."
-        field_selection: "Follows Model Principle 10: every Field of the Domain Definition is published, and no output policy is applied here."
+        field_selection: "Follows Model Principle “Every Domain Definition converts to and from a Plain Representation”: every Field of the Domain Definition is published, and no output policy is applied here."
         output_policy_owner: "The consuming Component. API Preferences own which Fields leave an API response, including credential exclusion."
-        provided_by: "Model Foundation, as Model Principle 10 requires. Prefer the Foundation's pair unchanged; override it in a Domain Definition only where that definition's own domain meaning needs a different representation."
+        provided_by: "Model Foundation, as Model Principle “Every Domain Definition converts to and from a Plain Representation” requires. Prefer the Foundation's pair unchanged; override it in a Domain Definition only where that definition's own domain meaning needs a different representation."
         determinism: "Both conversions depend only on the instance's own data, produce the same result for the same input, and perform no external I/O."
+
+    # ---- Layout ----
+    layout:
+      purpose: "How the separation required by the Principle “Each Domain Definition stands in its own module” is realized in the selected technology. The Principle fixes the separation; this group fixes its shape."
+      domain_definition: "One file per Domain Definition, holding that definition and what belongs to it alone, named for the definition in the selected language's own naming standard."
+      model_foundation: "Its own file, separate from every Domain Definition."
+      public_interface: "One public entry point publishes every Domain Definition under its own identity, so a consumer imports the definition rather than the file it was declared in."
+      supporting_content: "A helper, constant, or type used by exactly one Domain Definition lives with it; anything used by more than one belongs to Model Foundation."
 
     # ---- Verification ----
     verification:
@@ -105,3 +113,4 @@ content:
         - "validation behavior"
         - "serialization behavior"
         - "declaration vocabulary publishing"
+        - "module separation: one Domain Definition per module, Model Foundation in its own, every definition reachable through the public entry point"

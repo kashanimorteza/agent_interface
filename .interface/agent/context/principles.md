@@ -9,9 +9,9 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Every action begins from current Understanding](#1-every-action-begins-from-current-understanding)**
-   - **[2. Context distinguishes authority from assistance](#2-context-distinguishes-authority-from-assistance)**
-   - **[3. Context lifecycle preserves required instructions](#3-context-lifecycle-preserves-required-instructions)**
+   - **[Every action begins from current Understanding](#every-action-begins-from-current-understanding)**
+   - **[Context distinguishes authority from assistance](#context-distinguishes-authority-from-assistance)**
+   - **[Context lifecycle preserves required instructions](#context-lifecycle-preserves-required-instructions)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -66,11 +66,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Every action begins from current Understanding
+### Every action begins from current Understanding
 
 **Rule:** An Agent Role establishes current Interface Understanding before acting and current Target Understanding whenever its responsibility requires it. It resolves the starting sources and their precedence from the Context Preferences's `understanding_sources` settings. Memory, operational records, conversation history, and prior summaries never substitute for current authoritative sources.
 
@@ -80,7 +80,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Context distinguishes authority from assistance
+### Context distinguishes authority from assistance
 
 **Rule:** Every context source retains its authority class and origin. Persistent instructions and Memory may guide execution but never override Principles, explicit project decisions, or current owned records.
 
@@ -90,7 +90,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Context lifecycle preserves required instructions
+### Context lifecycle preserves required instructions
 
 **Rule:** Session start, resume, compaction, delegation, and isolation preserve or reload every instruction required by the receiving role. Missing required context is reported before dependent work proceeds.
 
@@ -102,9 +102,9 @@ Every Principle below is mandatory, and its number is permanent.
 
 ## At a Glance
 
-- **Must** — establish current Interface and role-required Target Understanding before acting *(1)*
-- **Must** — load Agent Module sources only for explicit Agent Sync and use synchronized Runtime artifacts for every other role *(1)*
-- **Never** — substitute memory or prior summaries for current authorities *(1)*
-- **Must** — retain each context source's origin and authority *(2)*
-- **Never** — let instructions or Memory override owned sources *(2)*
-- **Must** — preserve or reload required context across lifecycle transitions *(3)*
+- **Must** — establish current Interface and role-required Target Understanding before acting
+- **Must** — load Agent Module sources only for explicit Agent Sync and use synchronized Runtime artifacts for every other role
+- **Never** — substitute memory or prior summaries for current authorities
+- **Must** — retain each context source's origin and authority
+- **Never** — let instructions or Memory override owned sources
+- **Must** — preserve or reload required context across lifecycle transitions

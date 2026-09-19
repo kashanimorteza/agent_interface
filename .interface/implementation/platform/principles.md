@@ -9,12 +9,12 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Platform remains separate from developed Components](#1-platform-remains-separate-from-developed-components)**
-   - **[2. Every Launch Item is one coherent selectable definition](#2-every-launch-item-is-one-coherent-selectable-definition)**
-   - **[3. Each Launch Item declares Component Runtime Requirements](#3-each-launch-item-declares-component-runtime-requirements)**
-   - **[4. Component Runtime Requirements are explicit and scoped](#4-component-runtime-requirements-are-explicit-and-scoped)**
-   - **[5. Launch delivers required Bindings safely](#5-launch-delivers-required-bindings-safely)**
-   - **[6. Launch reports only verified Access Points](#6-launch-reports-only-verified-access-points)**
+   - **[Platform remains separate from developed Components](#platform-remains-separate-from-developed-components)**
+   - **[Every Launch Item is one coherent selectable definition](#every-launch-item-is-one-coherent-selectable-definition)**
+   - **[Each Launch Item declares Component Runtime Requirements](#each-launch-item-declares-component-runtime-requirements)**
+   - **[Component Runtime Requirements are explicit and scoped](#component-runtime-requirements-are-explicit-and-scoped)**
+   - **[Launch delivers required Bindings safely](#launch-delivers-required-bindings-safely)**
+   - **[Launch reports only verified Access Points](#launch-reports-only-verified-access-points)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -77,11 +77,11 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Platform remains separate from developed Components
+### Platform remains separate from developed Components
 
 **Rule:** Platform prepares and operates developed Components only through their public boundaries. Every developed Component retains ownership of its internal logic, data, presentation, source organization, and Runtime Configuration contract.
 
@@ -91,7 +91,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Every Launch Item is one coherent selectable definition
+### Every Launch Item is one coherent selectable definition
 
 **Rule:** Every supported launch method is represented by one uniquely named Launch Item in Platform Preferences. One Launch Item is selected as the default when the Target does not explicitly select another compatible item.
 
@@ -101,7 +101,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Each Launch Item declares Component Runtime Requirements
+### Each Launch Item declares Component Runtime Requirements
 
 **Rule:** Each Launch Item declares runtime requirements directly under each applicable Component. A Component requirement may include its operating system, transport, web server, bindings, and other values required to operate that Component.
 
@@ -111,7 +111,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Component Runtime Requirements are explicit and scoped
+### Component Runtime Requirements are explicit and scoped
 
 **Rule:** A Launch Item groups runtime requirements by the Component they operate. Each requirement declares only the values needed to operate its named Component and may remain empty when no requirement exists for that Component.
 
@@ -121,7 +121,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 5. Launch delivers required Bindings safely
+### Launch delivers required Bindings safely
 
 **Rule:** The selected Launch Item defines every Binding required by the composed Components and delivers each Binding to the public boundary that consumes it. Secret values remain in appropriate secret sources.
 
@@ -131,7 +131,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 6. Launch reports only verified Access Points
+### Launch reports only verified Access Points
 
 **Rule:** The selected Launch Item verifies the composed Target and reports every usable Access Point exposed by the running result.
 
@@ -143,16 +143,16 @@ Every Principle below is mandatory, and its number is permanent.
 
 ## At a Glance
 
-- **Must** — Operate every developed Component only through its public boundary while the Component retains ownership of its internals and Runtime Configuration contract. *(1)*
-- **Never** — Let Platform redefine a developed Component or directly depend on its private implementation. *(1)*
-- **Must** — Represent every supported launch method as one uniquely named Launch Item and select one default. *(2)*
-- **Never** — Apply runtime requirements that are incompatible with the selected Launch Item or Target. *(2)*
-- **Must** — Declare runtime requirements directly under each applicable Component. *(3)*
-- **Never** — Define operational values outside the owning Component's requirement block. *(3)*
-- **Must** — Group runtime requirements by Component scope and explicitly declare required values. *(4)*
-- **Must** — Allow a Component requirement block to remain empty when its scope requires no values. *(4)*
-- **Never** — Let a runtime requirement define application behavior, modify private implementation, or imply an undeclared action. *(4)*
-- **Must** — Define and deliver every required Binding to its consuming public boundary while keeping secret values in secret sources. *(5)*
-- **Never** — Redefine a Component's internal Binding handling or record a secret value in Interface files or documentation. *(5)*
-- **Must** — Verify the composed Target and report every usable Access Point. *(6)*
-- **Never** — Report an unverified address as available or expose a credential or secret through an Access Point. *(6)*
+- **Must** — Operate every developed Component only through its public boundary while the Component retains ownership of its internals and Runtime Configuration contract.
+- **Never** — Let Platform redefine a developed Component or directly depend on its private implementation.
+- **Must** — Represent every supported launch method as one uniquely named Launch Item and select one default.
+- **Never** — Apply runtime requirements that are incompatible with the selected Launch Item or Target.
+- **Must** — Declare runtime requirements directly under each applicable Component.
+- **Never** — Define operational values outside the owning Component's requirement block.
+- **Must** — Group runtime requirements by Component scope and explicitly declare required values.
+- **Must** — Allow a Component requirement block to remain empty when its scope requires no values.
+- **Never** — Let a runtime requirement define application behavior, modify private implementation, or imply an undeclared action.
+- **Must** — Define and deliver every required Binding to its consuming public boundary while keeping secret values in secret sources.
+- **Never** — Redefine a Component's internal Binding handling or record a secret value in Interface files or documentation.
+- **Must** — Verify the composed Target and report every usable Access Point.
+- **Never** — Report an unverified address as available or expose a credential or secret through an Access Point.

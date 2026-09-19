@@ -9,8 +9,8 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Every Personality is one bounded stance](#1-every-personality-is-one-bounded-stance)**
-   - **[2. Model Preference is a Preferences file choice](#2-model-preference-is-a-preferences-file-choice)**
+   - **[Every Personality is one bounded stance](#every-personality-is-one-bounded-stance)**
+   - **[Model Preference is a Preferences file choice](#model-preference-is-a-preferences-file-choice)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -64,11 +64,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Every Personality is one bounded stance
+### Every Personality is one bounded stance
 
 **Rule:** Every Personality declares one identity, the stance and priorities it applies, and the Actions it performs. A Personality never performs an Action it does not declare.
 
@@ -78,7 +78,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Model Preference is a Preferences file choice
+### Model Preference is a Preferences file choice
 
 **Rule:** Which models a Personality runs on, and in what order, is declared in its Preferences as an ordered list of model names that the Agent Runtime Preferences declare, never in its Principles or definition prose.
 
@@ -90,7 +90,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 ## At a Glance
 
-- **Must** — give every Personality one identity, stance, and declared set of Actions *(1)*
-- **Never** — let a Personality perform an undeclared Action or gain authority from one *(1)*
-- **Must** — declare Model Preference in the Preferences, in priority order *(2)*
-- **Never** — place model or provider names in Principles or definition prose *(2)*
+- **Must** — give every Personality one identity, stance, and declared set of Actions
+- **Never** — let a Personality perform an undeclared Action or gain authority from one
+- **Must** — declare Model Preference in the Preferences, in priority order
+- **Never** — place model or provider names in Principles or definition prose

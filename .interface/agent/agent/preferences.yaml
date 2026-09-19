@@ -101,10 +101,10 @@ content:
     overrides: {}
     roles:
       primary-execution:
-        architecture_contract: Agent Principle 9 (formerly Role Principle 4)
+        architecture_contract: Agent Principle “The primary execution role owns the requested outcome” (formerly Role Principle “Specialized Agent Instances remain bounded”)
         required: true
       interface-reader:
-        architecture_contract: Agent Principle 10 (formerly Role Principle 5)
+        architecture_contract: Agent Principle “`interface-reader` reports without changing the observed state” (formerly Role Principle “Agent Native and Instance availability are proven in the selected Runtime”)
         required: true
     coordination:
       delegation:

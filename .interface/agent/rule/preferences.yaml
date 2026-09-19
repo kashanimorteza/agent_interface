@@ -41,7 +41,7 @@ content:
   options:
     response_styles:
       explanatory_structured:
-        meaning: Explanatory, structured responses that keep the technical substance exact (Rule Principle 4); realized in Claude Code by the Output Style named under settings.native.claude.
+        meaning: Explanatory, structured responses that keep the technical substance exact (Rule Principle “Presentation preserves technical substance”); realized in Claude Code by the Output Style named under settings.native.claude.
         former_key: output_style = ADHD Explanatory (renamed 2026-09-18; the Output Style catalog moved to settings.native.claude.output_styles)
     progress_behaviors:
       material_updates:

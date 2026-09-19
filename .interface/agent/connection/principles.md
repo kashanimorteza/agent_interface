@@ -9,12 +9,12 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Every Integration declares its trust boundary](#1-every-integration-declares-its-trust-boundary)**
-   - **[2. Connection is proven before dependence](#2-connection-is-proven-before-dependence)**
-   - **[3. External effects retain external authorization](#3-external-effects-retain-external-authorization)**
-   - **[4. Extension provenance and contents are explicit](#4-extension-provenance-and-contents-are-explicit)**
-   - **[5. Extension lifecycle is controlled](#5-extension-lifecycle-is-controlled)**
-   - **[6. Packaged capabilities retain their owners](#6-packaged-capabilities-retain-their-owners)**
+   - **[Every Integration declares its trust boundary](#every-integration-declares-its-trust-boundary)**
+   - **[Connection is proven before dependence](#connection-is-proven-before-dependence)**
+   - **[External effects retain external authorization](#external-effects-retain-external-authorization)**
+   - **[Extension provenance and contents are explicit](#extension-provenance-and-contents-are-explicit)**
+   - **[Extension lifecycle is controlled](#extension-lifecycle-is-controlled)**
+   - **[Packaged capabilities retain their owners](#packaged-capabilities-retain-their-owners)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -83,11 +83,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Every Integration declares its trust boundary
+### Every Integration declares its trust boundary
 
 **Rule:** Every Integration declares its provider, protocol, data exposed, actions enabled, scope, authentication requirement, and Trust Boundary before use. Credentials and secret values are never stored in the project declaration.
 
@@ -97,7 +97,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Connection is proven before dependence
+### Connection is proven before dependence
 
 **Rule:** An Integration is available only when it is declared, trusted, compatible, authenticated when required, connected, and usable by the intended role. Every unmet condition remains explicit.
 
@@ -107,7 +107,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. External effects retain external authorization
+### External effects retain external authorization
 
 **Rule:** An Integration never converts project permission into authority over an external account, service, recipient, or dataset. External actions follow the authorization required by their own scope and impact.
 
@@ -117,7 +117,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Extension provenance and contents are explicit
+### Extension provenance and contents are explicit
 
 **Rule:** Every Extension declares its stable identity, source, version policy, expected capability categories, permissions, dependencies, and trust status. Marketplace presence alone establishes none of these.
 
@@ -125,11 +125,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** A runtime-bundled Extension may identify its source as runtime-provided.
 
-*Formerly Agent Extension Principle 1.*
+*Formerly Agent Extension Principle "Every Integration declares its trust boundary".*
 
 <br>
 
-### 5. Extension lifecycle is controlled
+### Extension lifecycle is controlled
 
 **Rule:** Provisioning derives from current declared needs, previews material permissions and dependencies, obtains required authorization, verifies activation, and reconciles stale or conflicting state. Discovery alone never authorizes Provisioning.
 
@@ -137,11 +137,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Reconciliation may report an available update without applying it.
 
-*Formerly Agent Extension Principle 2.*
+*Formerly Agent Extension Principle "Connection is proven before dependence".*
 
 <br>
 
-### 6. Packaged capabilities retain their owners
+### Packaged capabilities retain their owners
 
 **Rule:** Packaging never changes a contained capability's contract, authority, or owning Agent Component. Extension metadata points to those contracts instead of redefining them.
 
@@ -149,18 +149,18 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** An Extension may add namespace and activation metadata required for distribution.
 
-*Formerly Agent Extension Principle 3.*
+*Formerly Agent Extension Principle "External effects retain external authorization".*
 
 <br>
 
 ## At a Glance
 
-- **Must** — declare every Integration's provider, data, actions, scope, authentication, and trust boundary *(1)*
-- **Never** — store credentials or secret values in project declarations *(1)*
-- **Must** — prove trust, compatibility, authentication, connection, and usability *(2)*
-- **Never** — treat validation as authority to activate an Integration *(2)*
-- **Never** — convert project permission into external-system authority *(3)*
-- **Must** — declare Extension identity, provenance, version, contents, permissions, dependencies, and trust *(4)*
-- **Must** — authorize and verify every material Provisioning change *(5)*
-- **Never** — treat discovery as authorization to provision *(5)*
-- **Must** — preserve each packaged capability's contract and owner *(6)*
+- **Must** — declare every Integration's provider, data, actions, scope, authentication, and trust boundary
+- **Never** — store credentials or secret values in project declarations
+- **Must** — prove trust, compatibility, authentication, connection, and usability
+- **Never** — treat validation as authority to activate an Integration
+- **Never** — convert project permission into external-system authority
+- **Must** — declare Extension identity, provenance, version, contents, permissions, dependencies, and trust
+- **Must** — authorize and verify every material Provisioning change
+- **Never** — treat discovery as authorization to provision
+- **Must** — preserve each packaged capability's contract and owner

@@ -10,20 +10,21 @@
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
-   - **[1. Each domain concept has one authoritative Domain Definition](#1-each-domain-concept-has-one-authoritative-domain-definition)**
-   - **[2. Model preserves explicit Target meaning and invents nothing](#2-model-preserves-explicit-target-meaning-and-invents-nothing)**
-   - **[3. Logical Model meaning is independent of implementation technology](#3-logical-model-meaning-is-independent-of-implementation-technology)**
-   - **[4. Concrete Model realizations share one Model Foundation](#4-concrete-model-realizations-share-one-model-foundation)**
-   - **[5. Model exposes an explicit and stable Public Interface](#5-model-exposes-an-explicit-and-stable-public-interface)**
-   - **[6. Intrinsic validation and domain behavior are deterministic and side-effect free](#6-intrinsic-validation-and-domain-behavior-are-deterministic-and-side-effect-free)**
-   - **[7. Model names express domain meaning](#7-model-names-express-domain-meaning)**
-   - **[8. Model remains separate from external concerns](#8-model-remains-separate-from-external-concerns)**
-   - **[9. Model declares every definition in one standard, technology-independent vocabulary](#9-model-declares-every-definition-in-one-standard-technology-independent-vocabulary)**
-   - **[10. Every Domain Definition converts to and from a Plain Representation](#10-every-domain-definition-converts-to-and-from-a-plain-representation)**
-   - **[11. Every Domain Definition declares whether it is persistent](#11-every-domain-definition-declares-whether-it-is-persistent)**
-6. **[At a Glance](#at-a-glance)**
-
+5. **[Documentation](#documentation)**
+6. **[Principles](#principles)**
+   - **[Each domain concept has one authoritative Domain Definition](#each-domain-concept-has-one-authoritative-domain-definition)**
+   - **[Model preserves explicit Target meaning and invents nothing](#model-preserves-explicit-target-meaning-and-invents-nothing)**
+   - **[Logical Model meaning is independent of implementation technology](#logical-model-meaning-is-independent-of-implementation-technology)**
+   - **[Concrete Model realizations share one Model Foundation](#concrete-model-realizations-share-one-model-foundation)**
+   - **[Model exposes an explicit and stable Public Interface](#model-exposes-an-explicit-and-stable-public-interface)**
+   - **[Intrinsic validation and domain behavior are deterministic and side-effect free](#intrinsic-validation-and-domain-behavior-are-deterministic-and-side-effect-free)**
+   - **[Model names express domain meaning](#model-names-express-domain-meaning)**
+   - **[Model remains separate from external concerns](#model-remains-separate-from-external-concerns)**
+   - **[Model declares every definition in one standard, technology-independent vocabulary](#model-declares-every-definition-in-one-standard-technology-independent-vocabulary)**
+   - **[Every Domain Definition converts to and from a Plain Representation](#every-domain-definition-converts-to-and-from-a-plain-representation)**
+   - **[Every Domain Definition declares whether it is persistent](#every-domain-definition-declares-whether-it-is-persistent)**
+   - **[Each Domain Definition stands in its own module](#each-domain-definition-stands-in-its-own-module)**
+7. **[At a Glance](#at-a-glance)**
 <br>
 
 ## Introduction
@@ -64,7 +65,17 @@ Concrete realizations share one Model Foundation for validation, serialization, 
 2. Model decides a field's type and size from the Target. A proposal to list the permitted types in the Interface was rejected: a closed list limits what Model can express about a domain the Interface has never seen.
 3. The vocabulary is carried by the same Domain Definition that application code uses. There is no second schema artifact beside it, and every Component — Database among them — reads the declaration through the Model Public Interface.
 4. Model takes its language, modeling package, Agent Skills, and Platform Reference from its Component Profile in Development and selects no technology itself.
-5. A proposal to route every Target property Model cannot express through State was rejected: Principle 2 already requires preservation, and a second route would invite Model to declare a property unexpressible instead of expressing it.
+5. A proposal to route every Target property Model cannot express through State was rejected: Principle "Model preserves explicit Target meaning and invents nothing" already requires preservation, and a second route would invite Model to declare a property unexpressible instead of expressing it.
+
+#### Structure
+
+**How should the Models be laid out?** Each entity, each domain, has a separate structure of its own. This is part of the structure and the philosophy, not a preference that changes from project to project.
+
+**Decisions:**
+
+1. Principle "Each Domain Definition stands in its own module" states it as separation: one Domain Definition per module, never several gathered together, with the Public Interface publishing each by its own identity.
+2. The Principle names no file, directory, or import mechanism. The realization — one file per definition, its name, and how it is re-exported — is stated in Model Preferences.
+3. Model Foundation is not divided this way; shared mechanism stays in one place of its own.
 
 #### Serialization
 
@@ -103,7 +114,7 @@ Model
 └── Public Interface           ← the only surface a consumer reaches
 ```
 
-**Domain Definition** holds the meaning of one concept the Target declares: its identity, its Fields and their properties, its Domain Relationships, and the Intrinsic Rules decidable from its own data. It never holds a concept that exists only for an implementation tool, and it never reaches outside its own data to decide something.
+**Domain Definition** stands in a module of its own and holds the meaning of one concept the Target declares: its identity, its Fields and their properties, its Domain Relationships, and the Intrinsic Rules decidable from its own data. It never holds a concept that exists only for an implementation tool, and it never reaches outside its own data to decide something.
 
 **Declaration Vocabulary** is the single set of terms every Domain Definition states itself in — logical type, length and precision, nullability, default, identity, uniqueness, relationship and cardinality. It belongs to no language, package, or Engine, and it is carried by the same Domain Definition application code uses rather than by a separate artifact beside it.
 
@@ -125,6 +136,16 @@ Model
 
 Model-owned defaults and implementation conventions belong to Model Preferences. Model's configurable identity and all technical or Platform references belong to its Component Profile in Development Preferences. Implementation applies those sources to the current Target definition.
 
+## Documentation
+
+Model is imported, not called: a consumer adds it as a library and works with the Domain Definitions it publishes. So its documentation answers a different first question than a Component with Operations does — not *what can I ask it to do*, but *what does it give me, and what can I do with it*.
+
+A reader must come away knowing which Domain Definitions this Model publishes and what each one represents in the domain, and for each, the Fields it declares with the properties declared on them and whether it is persistent. A Model with five definitions lists five, not a description of the idea of a definition.
+
+Then the three things a consumer does with one, each shown with an example that runs as written: import the Model and construct an instance; turn an instance into its Plain Representation; and build an instance back from one. The documentation also states plainly what Model does not do — it stores nothing, performs no application behaviour, and offers no operations on stored data — so a reader does not go looking for a capability that lives in another Component.
+
+<br>
+
 <br>
 
 Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
@@ -133,11 +154,11 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Each domain concept has one authoritative Domain Definition
+### Each domain concept has one authoritative Domain Definition
 
 **Rule:** Every meaningful domain concept resolved from the Target has exactly one authoritative Domain Definition in Model. A Domain Definition originates in domain meaning rather than the needs of an implementation tool or consumer, and the same domain identity is never independently redefined elsewhere.
 
@@ -147,7 +168,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Model preserves explicit Target meaning and invents nothing
+### Model preserves explicit Target meaning and invents nothing
 
 **Rule:** Model preserves every explicit Domain Definition, Field, property, Domain Relationship, constraint, sensitive or credential meaning, and Intrinsic Rule stated by the Target. Model Preferences may complete only missing properties of existing Fields, property by property. A default never creates a Field, overrides an explicit value including `false` or `null`, changes meaning, or invents a relationship or behavior. Every Domain Relationship preserves the meaning and constraints declared by the Target.
 
@@ -157,7 +178,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Logical Model meaning is independent of implementation technology
+### Logical Model meaning is independent of implementation technology
 
 **Rule:** Every Domain Definition and Intrinsic Rule remains understandable independently of a specific language, package, tool, version, runtime, or platform mechanism. A selected technology may realize Model concepts only while preserving their logical meaning.
 
@@ -167,7 +188,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Concrete Model realizations share one Model Foundation
+### Concrete Model realizations share one Model Foundation
 
 **Rule:** Every concrete Model realization receives applicable shared Model mechanisms through one Model Foundation. The Foundation may provide validation, serialization, and metadata-publishing mechanisms, but it never owns, injects, or requires a Field or Domain Relationship. Each Domain Definition declares its own complete set of Fields and relationships from the Target.
 
@@ -177,9 +198,9 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 5. Model exposes an explicit and stable Public Interface
+### Model exposes an explicit and stable Public Interface
 
-**Rule:** Model exposes its authoritative Domain Definitions through one explicit and stable Public Interface. Consumers use that surface rather than private internal resources, and each public Domain Definition has one unambiguous public identity. Every public Domain Definition carries the two Serialization capabilities of Principle 10 on that same surface, so a consumer that can reach a Domain Definition can always convert it both ways.
+**Rule:** Model exposes its authoritative Domain Definitions through one explicit and stable Public Interface. Consumers use that surface rather than private internal resources, and each public Domain Definition has one unambiguous public identity. Every public Domain Definition carries the two Serialization capabilities of Principle "Every Domain Definition converts to and from a Plain Representation" on that same surface, so a consumer that can reach a Domain Definition can always convert it both ways.
 
 Conceptual example:
 
@@ -193,7 +214,7 @@ model.<public_module>.<ModelType>
 
 <br>
 
-### 6. Intrinsic validation and domain behavior are deterministic and side-effect free
+### Intrinsic validation and domain behavior are deterministic and side-effect free
 
 **Rule:** Model validates only Intrinsic Rules. Every validation, derived value, serialization behavior, and other domain behavior depends only on the applicable Model data, produces a deterministic result for the same input, performs no external I/O, and creates no unrelated side effect.
 
@@ -203,7 +224,7 @@ model.<public_module>.<ModelType>
 
 <br>
 
-### 7. Model names express domain meaning
+### Model names express domain meaning
 
 **Rule:** Every Domain Definition, Field, Domain Relationship, and other public Model name expresses the meaning stated by the Target rather than an implementation tool or a consumer-specific representation.
 
@@ -220,7 +241,7 @@ Conceptual example:
 
 <br>
 
-### 8. Model remains separate from external concerns
+### Model remains separate from external concerns
 
 **Rule:** Model never owns Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or any other concern outside its logical domain boundary.
 
@@ -230,11 +251,11 @@ Conceptual example:
 
 <br>
 
-### 9. Model declares every definition in one standard, technology-independent vocabulary
+### Model declares every definition in one standard, technology-independent vocabulary
 
 **Rule:** Model expresses every Domain Definition through one standard vocabulary that belongs to no language, package, or Engine: the logical field type (for example integer, string, decimal, boolean, datetime), length and precision where the Target declares them, nullability, default, primary-key identity, generated identity, uniqueness, single-field or composite constraints, and relationships with their referenced Domain Definition, cardinality, and optionality. Which type or size a field receives is Model's own decision from the Target; the Interface fixes no closed list. This vocabulary is carried by the same Domain Definition that application code uses — there is no second schema artifact — and every Component reads it through the Model Public Interface. Each selected realization determines how that Domain Definition represents the vocabulary in its own technology. Database is one consumer of it: it derives and enforces physical storage structure from these declarations without reinterpreting the Target.
 
-Model preserves whether each Target Field is required, nullable, defaulted, generated, or otherwise allowed to be absent. An omitted Field is resolved according to the explicit Target declaration or the selected realization's compatible rules; Model never invents an absence state, default, or generation mechanism. Preserving the Target's declared presence semantics prevents a generic Model rule from changing Domain meaning. Model defines no partial-update semantics and does not choose how a realization represents omitted values. *(merged from former Principle 6)*
+Model preserves whether each Target Field is required, nullable, defaulted, generated, or otherwise allowed to be absent. An omitted Field is resolved according to the explicit Target declaration or the selected realization's compatible rules; Model never invents an absence state, default, or generation mechanism. Preserving the Target's declared presence semantics prevents a generic Model rule from changing Domain meaning. Model defines no partial-update semantics and does not choose how a realization represents omitted values. *(merged from former Principle "Intrinsic validation and domain behavior are deterministic and side-effect free")*
 
 Model also preserves each Target-declared credential classification and required at-rest treatment. Database applies that declared treatment and rejects a persisted credential whose treatment is missing or unsupported; neither Component infers credential policy from a field name.
 
@@ -244,7 +265,7 @@ Model also preserves each Target-declared credential classification and required
 
 <br>
 
-### 10. Every Domain Definition converts to and from a Plain Representation
+### Every Domain Definition converts to and from a Plain Representation
 
 **Rule:** Every Domain Definition offers two symmetric capabilities on its Public Interface: `serialize`, which produces the Plain Representation of one instance, and `deserialize`, which produces an instance from a Plain Representation. Both are provided once through Model Foundation so every Domain Definition carries the same pair without declaring it again. `serialize` returns simple named values, never an encoded text form; choosing a wire format is the consumer's concern. `deserialize` evaluates the same Intrinsic Rules the Domain Definition applies to any other instance and fails when the data does not satisfy them. Both are deterministic, depend only on the instance's own data, and perform no external I/O.
 
@@ -261,7 +282,7 @@ instance      -> serialize   -> { field: value, ... }
 
 <br>
 
-### 11. Every Domain Definition declares whether it is persistent
+### Every Domain Definition declares whether it is persistent
 
 **Rule:** Every Domain Definition declares itself `persistent` or `non-persistent`. Database stores only the Domain Definitions Model declares persistent, and never infers persistence from a Domain Definition's existence, name, or the presence of an identity Field.
 
@@ -271,43 +292,56 @@ instance      -> serialize   -> { field: value, ... }
 
 <br>
 
+### Each Domain Definition stands in its own module
+
+**Rule:** Every Domain Definition is declared in a module of its own, carrying that one definition together with what belongs to it alone. A module never gathers several Domain Definitions. The Public Interface publishes each definition under its own unambiguous identity, so a consumer reaches a Domain Definition by what it is rather than by which module it was declared in.
+
+**Why:** A concept that shares a module with others cannot be found, read, reviewed, or changed on its own, and every change to one of them becomes a change to the place all of them live. Separation keeps the boundary between two domain concepts visible in the structure itself, so the shape of the Model on disk matches the shape of the domain.
+
+**Boundary:** This fixes separation, not layout. The module's name, where it sits, and the mechanism that publishes it through the Public Interface belong to the selected realization and are stated in Model Preferences. Shared mechanism is not divided this way: it belongs to Model Foundation, which is a module of its own and not part of any Domain Definition.
+
+<br>
+
 ## At a Glance
 
-- **Must** — Give every meaningful Target domain concept exactly one authoritative Domain Definition in Model. *(1)*
-- **Never** — Create a Domain Definition solely for an implementation need or independently redefine the same domain identity. *(1)*
-- **Must** — Preserve every explicit Target definition, property, relationship, constraint, sensitive meaning, and Intrinsic Rule. *(2)*
-- **Must** — Apply Model defaults only to missing properties of existing Fields, property by property. *(2)*
-- **Never** — Let a default add a Field, override an explicit value, change meaning, or invent a relationship or behavior. *(2)*
-- **Never** — Treat Initial Data or another project record as a Model-owned Domain Definition. *(2)*
-- **Must** — Keep Domain Definitions and Intrinsic Rules understandable independently of implementation technology. *(3)*
-- **Must** — Require every selected technology to preserve logical Model meaning. *(3)*
-- **Must** — Take Model's language, modeling package, Agent Skills, and Platform Reference from its Component Profile in Development; Model never selects a technology itself. *(3)*
-- **Must** — Give every concrete Model realization applicable shared mechanisms through one Model Foundation without imposing Fields or relationships. *(4)*
-- **Never** — Require one particular realization mechanism for Model Foundation. *(4)*
-- **Must** — Expose every authoritative Domain Definition with one unambiguous identity through Model's explicit, stable Public Interface. *(5)*
-- **Never** — Let consumers depend on Model's private internal resources. *(5)*
-- **Never** — Treat the conceptual example as fixed technical syntax or evolve the Public Interface outside Development's change-propagation rules. *(5)*
-- **Must** — Keep Intrinsic validation and domain behavior deterministic, dependent only on Model data, and free of external I/O and unrelated side effects. *(6)*
-- **Never** — Treat an externally contextual rule as intrinsic or let Model orchestrate a workflow. *(6)*
-- **Must** — Name Model concepts from Target domain meaning. *(7)*
-- **Never** — Name a Model concept after an implementation tool or consumer-specific representation unless that name is itself a Target concept. *(7)*
-- **Must** — Take language-level casing and file or folder naming conventions from the applicable Development technology profile. *(7)*
-- **Never** — Let Model own Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or another concern outside its logical boundary. *(8)*
-- **Must** — Keep external realization outside Model ownership even when another Component consumes Model data or its Public Interface. *(8)*
-- **Must** — Express every Domain Definition in one standard, technology-independent vocabulary: type, length and precision, nullability, default, identity, uniqueness, constraints, and relationships. *(9)*
-- **Never** — Fix a closed list of types or sizes; Model decides them from the Target. *(9)*
-- **Must** — Carry that vocabulary in the same Domain Definition that application code uses, so every Component — Database among them — reads it through the Model Public Interface. *(9)*
-- **Never** — Maintain a separate schema artifact beside the Domain Definition as Database's source. *(9)*
-- **Must** — Preserve each Target Field's declared required, nullable, default, generated, and absence semantics. *(9)*
-- **Never** — Invent an absence state, default, generation mechanism, or partial-update semantics. *(9)*
-- **Never** — Put tables, indexes, migrations, SQL, ORM mappings, or Engine-specific constraints in Model. *(9)*
-- **Must** — Preserve each Target-declared credential classification and its required at-rest treatment, so Database can apply it and reject a persisted credential whose treatment is missing or unsupported. *(9)*
-- **Never** — Infer credential policy from a field name. *(9)*
-- **Must** — Offer `serialize` and `deserialize` on every Domain Definition, provided once through Model Foundation. *(10)*
-- **Must** — Return simple named values from `serialize`, leaving the wire format to the consumer. *(10)*
-- **Must** — Evaluate the Domain Definition's Intrinsic Rules during `deserialize` and fail when they are not satisfied. *(10)*
-- **Never** — Nest a related Domain Definition in a Plain Representation; a Domain Relationship appears only as its declared foreign-key value. *(10)*
-- **Never** — Withhold a Field inside Serialization; output policy belongs to the consuming Component. *(10)*
-- **Must** — Declare every Domain Definition as `persistent` or `non-persistent`. *(11)*
-- **Never** — Infer persistence from a Domain Definition's existence, name, or identity Field. *(11)*
-- **Never** — Decide in Model how, where, or under what structure a persistent Domain Definition is stored. *(11)*
+- **Must** — Give every meaningful Target domain concept exactly one authoritative Domain Definition in Model.
+- **Never** — Create a Domain Definition solely for an implementation need or independently redefine the same domain identity.
+- **Must** — Preserve every explicit Target definition, property, relationship, constraint, sensitive meaning, and Intrinsic Rule.
+- **Must** — Apply Model defaults only to missing properties of existing Fields, property by property.
+- **Never** — Let a default add a Field, override an explicit value, change meaning, or invent a relationship or behavior.
+- **Never** — Treat Initial Data or another project record as a Model-owned Domain Definition.
+- **Must** — Keep Domain Definitions and Intrinsic Rules understandable independently of implementation technology.
+- **Must** — Require every selected technology to preserve logical Model meaning.
+- **Must** — Take Model's language, modeling package, Agent Skills, and Platform Reference from its Component Profile in Development; Model never selects a technology itself.
+- **Must** — Give every concrete Model realization applicable shared mechanisms through one Model Foundation without imposing Fields or relationships.
+- **Never** — Require one particular realization mechanism for Model Foundation.
+- **Must** — Expose every authoritative Domain Definition with one unambiguous identity through Model's explicit, stable Public Interface.
+- **Never** — Let consumers depend on Model's private internal resources.
+- **Never** — Treat the conceptual example as fixed technical syntax or evolve the Public Interface outside Development's change-propagation rules.
+- **Must** — Keep Intrinsic validation and domain behavior deterministic, dependent only on Model data, and free of external I/O and unrelated side effects.
+- **Never** — Treat an externally contextual rule as intrinsic or let Model orchestrate a workflow.
+- **Must** — Name Model concepts from Target domain meaning.
+- **Never** — Name a Model concept after an implementation tool or consumer-specific representation unless that name is itself a Target concept.
+- **Must** — Take language-level casing and file or folder naming conventions from the applicable Development technology profile.
+- **Never** — Let Model own Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or another concern outside its logical boundary.
+- **Must** — Keep external realization outside Model ownership even when another Component consumes Model data or its Public Interface.
+- **Must** — Express every Domain Definition in one standard, technology-independent vocabulary: type, length and precision, nullability, default, identity, uniqueness, constraints, and relationships.
+- **Never** — Fix a closed list of types or sizes; Model decides them from the Target.
+- **Must** — Carry that vocabulary in the same Domain Definition that application code uses, so every Component — Database among them — reads it through the Model Public Interface.
+- **Never** — Maintain a separate schema artifact beside the Domain Definition as Database's source.
+- **Must** — Preserve each Target Field's declared required, nullable, default, generated, and absence semantics.
+- **Never** — Invent an absence state, default, generation mechanism, or partial-update semantics.
+- **Never** — Put tables, indexes, migrations, SQL, ORM mappings, or Engine-specific constraints in Model.
+- **Must** — Preserve each Target-declared credential classification and its required at-rest treatment, so Database can apply it and reject a persisted credential whose treatment is missing or unsupported.
+- **Never** — Infer credential policy from a field name.
+- **Must** — Offer `serialize` and `deserialize` on every Domain Definition, provided once through Model Foundation.
+- **Must** — Return simple named values from `serialize`, leaving the wire format to the consumer.
+- **Must** — Evaluate the Domain Definition's Intrinsic Rules during `deserialize` and fail when they are not satisfied.
+- **Never** — Nest a related Domain Definition in a Plain Representation; a Domain Relationship appears only as its declared foreign-key value.
+- **Never** — Withhold a Field inside Serialization; output policy belongs to the consuming Component.
+- **Must** — Declare every Domain Definition as `persistent` or `non-persistent`.
+- **Never** — Infer persistence from a Domain Definition's existence, name, or identity Field.
+- **Never** — Decide in Model how, where, or under what structure a persistent Domain Definition is stored.
+- **Must** — Declare every Domain Definition in a module of its own, carrying that definition and what belongs to it alone.
+- **Never** — Gather several Domain Definitions into one module.
+- **Must** — Publish each Domain Definition through the Public Interface under its own identity, independent of the module it was declared in.

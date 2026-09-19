@@ -9,14 +9,14 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Interface is read-only except for authorized Config records](#1-interface-is-read-only-except-for-authorized-config-records)**
-   - **[2. Permission is least-privilege and deny-safe](#2-permission-is-least-privilege-and-deny-safe)**
-   - **[3. Agent Module reads belong only to the explicit Agent Native Skill](#3-agent-module-reads-belong-only-to-the-explicit-agent-native-skill)**
-   - **[4. Secrets never enter project declarations or reports](#4-secrets-never-enter-project-declarations-or-reports)**
-   - **[5. Unrelated Human work is preserved](#5-unrelated-human-work-is-preserved)**
-   - **[6. An Enforced Guarantee is deterministic and bounded](#6-an-enforced-guarantee-is-deterministic-and-bounded)**
-   - **[7. Guarantees fail visibly and safely](#7-guarantees-fail-visibly-and-safely)**
-   - **[8. A guarantee's authority does not expand on trigger](#8-a-guarantees-authority-does-not-expand-on-trigger)**
+   - **[Interface is read-only except for authorized Config records](#interface-is-read-only-except-for-authorized-config-records)**
+   - **[Permission is least-privilege and deny-safe](#permission-is-least-privilege-and-deny-safe)**
+   - **[Agent Module reads belong only to the explicit Agent Native Skill](#agent-module-reads-belong-only-to-the-explicit-agent-native-skill)**
+   - **[Secrets never enter project declarations or reports](#secrets-never-enter-project-declarations-or-reports)**
+   - **[Unrelated Human work is preserved](#unrelated-human-work-is-preserved)**
+   - **[An Enforced Guarantee is deterministic and bounded](#an-enforced-guarantee-is-deterministic-and-bounded)**
+   - **[Guarantees fail visibly and safely](#guarantees-fail-visibly-and-safely)**
+   - **[A guarantee's authority does not expand on trigger](#a-guarantees-authority-does-not-expand-on-trigger)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -84,11 +84,11 @@ Every statement here is mandatory. An Agent Preference can never override a Prin
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Interface is read-only except for authorized Config records
+### Interface is read-only except for authorized Config records
 
 **Rule:** The entire Interface is read-only to every Agent Role and Skill by default. Only operational records inside the Interface Config boundary may be changed, and only by a Skill whose declared responsibility and owning Component grant authority over that exact record. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
 
@@ -98,7 +98,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Permission is least-privilege and deny-safe
+### Permission is least-privilege and deny-safe
 
 **Rule:** Every capability receives only the minimum access required by its contract. Deny rules and stricter authorities take precedence; no lower layer or delegated role can broaden them.
 
@@ -108,7 +108,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. Agent Module reads belong only to the explicit Agent Native Skill
+### Agent Module reads belong only to the explicit Agent Native Skill
 
 **Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-native` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, enforcement handler, lifecycle routine, automation, and model-generated action can neither invoke the Agent Native Skill nor create, inherit, borrow, or simulate its access grant. In its sync modes the Skill reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations; in its install mode it reads them to resolve which capabilities must be transferred or provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
 
@@ -118,7 +118,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Secrets never enter project declarations or reports
+### Secrets never enter project declarations or reports
 
 **Rule:** Credentials, tokens, private keys, and secret values remain in approved external stores or runtime channels and are never committed, copied into project declarations, logged, or exposed in Agent output.
 
@@ -128,7 +128,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 5. Unrelated Human work is preserved
+### Unrelated Human work is preserved
 
 **Rule:** Agent actions preserve unrelated Human changes and data. Destructive operations resolve exact targets and use recoverable mechanisms when practical.
 
@@ -138,7 +138,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 6. An Enforced Guarantee is deterministic and bounded
+### An Enforced Guarantee is deterministic and bounded
 
 **Rule:** Every Enforced Guarantee declares what it guarantees, the Event it binds to, its allowed effects, its failure policy, and whether it may block; the Native adds its own mechanics (matcher, handler type, inputs, timeout, exit behavior) under `native.<agent-native>`. Matching the same unchanged event produces the same policy outcome.
 
@@ -146,11 +146,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** A prompt- or agent-backed handler may reason internally but remains bounded by the guarantee's declaration.
 
-*Formerly Agent Hook Principle 1.*
+*Formerly Agent Hook Principle "Interface is read-only except for authorized Config records".*
 
 <br>
 
-### 7. Guarantees fail visibly and safely
+### Guarantees fail visibly and safely
 
 **Rule:** A guarantee's failure, timeout, malformed output, and denied execution have an explicit fail-open or fail-closed policy and become observable. Security and integrity controls fail closed unless a stricter authority explicitly defines otherwise.
 
@@ -158,11 +158,11 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** Notification-only guarantees may fail open when their failure cannot alter correctness or security.
 
-*Formerly Agent Hook Principle 2.*
+*Formerly Agent Hook Principle "Permission is least-privilege and deny-safe".*
 
 <br>
 
-### 8. A guarantee's authority does not expand on trigger
+### A guarantee's authority does not expand on trigger
 
 **Rule:** An Event authorizes only the effects declared for its Enforced Guarantee. A trigger never grants broader file, network, external-service, or workflow authority.
 
@@ -170,23 +170,23 @@ Every Principle below is mandatory, and its number is permanent.
 
 **Boundary:** An Enforced Guarantee may request Human authorization and stop pending that decision.
 
-*Formerly Agent Hook Principle 3.*
+*Formerly Agent Hook Principle "Agent Module reads belong only to the explicit Agent Native Skill".*
 
 <br>
 
 ## At a Glance
 
-- **Never** — modify any Interface path outside the operational Config boundary *(1)*
-- **Must** — restrict Config writes to the exact records owned by the active Skill's responsibility *(1)*
-- **Must** — obtain applicable authorization for materially consequential actions *(1)*
-- **Must** — grant every capability only its minimum required access *(2)*
-- **Never** — let a lower layer or delegate broaden a deny boundary *(2)*
-- **Must** — reserve every Agent Module read for the exact prompt created by direct Human invocation of `agent-native` *(3)*
-- **Never** — let any non-Human mechanism invoke the Agent Native Skill or create, inherit, borrow, or simulate its access grant *(3)*
-- **Never** — use Agent Module sources as ordinary Understanding or as a fallback for Runtime drift *(3)*
-- **Never** — store or expose secret values in project declarations, logs, or output *(4)*
-- **Must** — preserve unrelated Human work and resolve destructive targets exactly *(5)*
-- **Must** — declare every Enforced Guarantee's Event, effects, failure policy, and blocking behavior, leaving matcher, handler, and timeout to the Native block *(6)*
-- **Must** — make a guarantee's failure visible and give it an explicit failure policy *(7)*
-- **Must** — fail closed for security and integrity controls *(7)*
-- **Never** — let an Event expand a guarantee's authority *(8)*
+- **Never** — modify any Interface path outside the operational Config boundary
+- **Must** — restrict Config writes to the exact records owned by the active Skill's responsibility
+- **Must** — obtain applicable authorization for materially consequential actions
+- **Must** — grant every capability only its minimum required access
+- **Never** — let a lower layer or delegate broaden a deny boundary
+- **Must** — reserve every Agent Module read for the exact prompt created by direct Human invocation of `agent-native`
+- **Never** — let any non-Human mechanism invoke the Agent Native Skill or create, inherit, borrow, or simulate its access grant
+- **Never** — use Agent Module sources as ordinary Understanding or as a fallback for Runtime drift
+- **Never** — store or expose secret values in project declarations, logs, or output
+- **Must** — preserve unrelated Human work and resolve destructive targets exactly
+- **Must** — declare every Enforced Guarantee's Event, effects, failure policy, and blocking behavior, leaving matcher, handler, and timeout to the Native block
+- **Must** — make a guarantee's failure visible and give it an explicit failure policy
+- **Must** — fail closed for security and integrity controls
+- **Never** — let an Event expand a guarantee's authority

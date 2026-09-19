@@ -9,18 +9,18 @@
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Principles](#principles)**
-   - **[1. Every phase has its own Plan](#1-every-phase-has-its-own-plan)**
-   - **[2. Groups organize related work](#2-groups-organize-related-work)**
-   - **[3. A Task is one atomic action](#3-a-task-is-one-atomic-action)**
-   - **[4. Context is written once and inherited](#4-context-is-written-once-and-inherited)**
-   - **[5. Every Task is understandable in its context](#5-every-task-is-understandable-in-its-context)**
-   - **[6. A Task is independent of the implementation structure](#6-a-task-is-independent-of-the-implementation-structure)**
-   - **[7. Task defines the activity and Development defines the implementation](#7-task-defines-the-activity-and-development-defines-the-implementation)**
-   - **[8. Dependencies are explicit](#8-dependencies-are-explicit)**
-   - **[9. Completion must be demonstrable](#9-completion-must-be-demonstrable)**
-   - **[10. Task progress and Workflow State remain separate](#10-task-progress-and-workflow-state-remain-separate)**
-   - **[11. Existing work is never silently destroyed](#11-existing-work-is-never-silently-destroyed)**
-   - **[12. The record holds work and progress, not project meaning](#12-the-record-holds-work-and-progress-not-project-meaning)**
+   - **[Every phase has its own Plan](#every-phase-has-its-own-plan)**
+   - **[Groups organize related work](#groups-organize-related-work)**
+   - **[A Task is one atomic action](#a-task-is-one-atomic-action)**
+   - **[Context is written once and inherited](#context-is-written-once-and-inherited)**
+   - **[Every Task is understandable in its context](#every-task-is-understandable-in-its-context)**
+   - **[A Task is independent of the implementation structure](#a-task-is-independent-of-the-implementation-structure)**
+   - **[Task defines the activity and Development defines the implementation](#task-defines-the-activity-and-development-defines-the-implementation)**
+   - **[Dependencies are explicit](#dependencies-are-explicit)**
+   - **[Completion must be demonstrable](#completion-must-be-demonstrable)**
+   - **[Task progress and Workflow State remain separate](#task-progress-and-workflow-state-remain-separate)**
+   - **[Existing work is never silently destroyed](#existing-work-is-never-silently-destroyed)**
+   - **[The record holds work and progress, not project meaning](#the-record-holds-work-and-progress-not-project-meaning)**
 5. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -80,11 +80,11 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 ## Principles
 
-Every Principle below is mandatory, and its number is permanent.
+Every Principle below is mandatory.
 
 <br>
 
-### 1. Every phase has its own Plan
+### Every phase has its own Plan
 
 **Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, intended outcome, and Plan Revision, then decomposes that outcome into Groups and Tasks. Planning sets revision `1` when it first creates the Plan and increments it exactly once whenever Planning-owned semantic content changes. Development-owned Task status, blocker references, and logs never change the Plan Revision. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
@@ -94,7 +94,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 2. Groups organize related work
+### Groups organize related work
 
 **Rule:** Every Task belongs to one Group. A Group collects Tasks that contribute to one coherent implementation area and explains what that area is, what it accomplishes, and where within the phase's target Component its work belongs. A Group holds the work area and work-specific constraints shared by its Tasks that apply neither to the whole phase nor through another source. Technology choices remain in their owning sources.
 
@@ -104,7 +104,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 3. A Task is one atomic action
+### A Task is one atomic action
 
 **Rule:** Each Task describes one small, concrete activity with one independently observable result. Large work is divided into as many precise Tasks as necessary.
 
@@ -114,7 +114,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 4. Context is written once and inherited
+### Context is written once and inherited
 
 **Rule:** A Plan, its Groups, and their Tasks form one nested structure, and that nesting is the Task's context. A Task's phase is the Plan that contains it and its Group is the Group that contains it; neither is repeated inside the Task. Every piece of context the record does hold — the targeted Component, the work area, and any constraint specific to the work — is recorded exactly once, at the highest level where it holds: in the Plan when it holds for the whole phase, in the Group when it holds for one work area, in the Task only when it is specific to that one activity. Lower levels inherit what higher levels state.
 
@@ -124,7 +124,7 @@ Every Principle below is mandatory, and its number is permanent.
 
 <br>
 
-### 5. Every Task is understandable in its context
+### Every Task is understandable in its context
 
 **Rule:** A Task is read together with its Group and Plan. Read that way, the Task and its inherited context together explain:
 
@@ -145,7 +145,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-### 6. A Task is independent of the implementation structure
+### A Task is independent of the implementation structure
 
 **Rule:** Planning content in Plans, Groups, and Tasks is expressed in terms of responsibilities, behaviour, and observable results. It never states where anything lives: no file, folder, path, module, package layout, class, function, symbol, or command appears in that planning content, and it never asserts that a particular artifact already exists at a particular location. The target and work area identify a Component and a responsibility inside it, not a directory. Planning content carries no list of sources to consult. Execution history is distinct: a Task's log records the concrete check actually performed, relevant locations, and the observed outcome, with secret values excluded.
 
@@ -155,7 +155,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-### 7. Task defines the activity and Development defines the implementation
+### Task defines the activity and Development defines the implementation
 
 **Rule:** A Task defines what must be achieved, why it is needed, where its responsibility belongs, and what evidence demonstrates completion. The targeted Component and the work area are recorded at the level where they hold and inherited by the Task.
 
@@ -165,7 +165,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-### 8. Dependencies are explicit
+### Dependencies are explicit
 
 **Rule:** A Task names every other Task whose completed result it requires. Readiness is derived from those dependencies rather than guessed from file order or proximity inside a Group.
 
@@ -175,7 +175,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-### 9. Completion must be demonstrable
+### Completion must be demonstrable
 
 **Rule:** Every Task states an acceptance criterion and a verification condition, both expressed as observable behaviour. Acceptance states what makes the result correct. Verification states what must be observed to prove it, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that observes it. The concrete executable check that satisfies the verification condition is constructed and run at implementation time, and the check used and its outcome are recorded in the Task's log. A Task is complete only when that check has passed. The form of that check is governed by the declared cross-cutting testing scope, which is read before the check is constructed. A Task whose target Component is within that scope proves its verification condition through a test that persists as part of that Component. A Task whose target Component is outside that scope proves it through a transient check that leaves no test artifact behind: the check is run, its outcome is recorded in the log, and nothing it created remains in the Component. Availability of a test tool in the declared toolchain never widens the testing scope, and a Component outside that scope never acquires a test suite, a test directory, a test configuration, or a test dependency as a side effect of demonstrating completion.
 
@@ -185,7 +185,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-### 10. Task progress and Workflow State remain separate
+### Task progress and Workflow State remain separate
 
 **Rule:** The Plan Component owns Plans, Groups, Task content, Task status, a Task's reference to any Blocker, and Task-local history. An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists.
 
@@ -197,7 +197,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 <br>
 
-### 11. Existing work is never silently destroyed
+### Existing work is never silently destroyed
 
 **Rule:** Replanning or regeneration reconciles unchanged work and adds newly required work without silently overwriting completed, active, or otherwise meaningful Task content.
 
@@ -207,7 +207,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 <br>
 
-### 12. The record holds work and progress, not project meaning
+### The record holds work and progress, not project meaning
 
 **Rule:** Plans, Groups, and Tasks record which work exists, what each activity must produce, what it depends on, where it stands, and what has happened to it. Planning content does not store the project's concepts, its resolved technical choices, the rules of any Component, or an explanation of anything the human project definition, the Principles, and the Preferences already state. Execution history may identify concrete technologies and locations when needed as evidence of an action actually performed; it does not become the authority for choosing them.
 
@@ -219,36 +219,36 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 ## At a Glance
 
-- **Must** — every phase has one Plan holding its identity, order, target, outcome, and phase-wide context *(1)*
-- **Must** — every Plan has a Planning-owned revision that changes exactly when its semantic planning content changes *(1)*
-- **Never** — planning invents a new phase or silently changes the meaning of an existing one *(1)*
-- **Must** — every Task belongs to one Group that holds the context its Tasks share *(2)*
-- **Never** — a Group absorbs the activity, expected result, or verification of one Task *(2)*
-- **Must** — each Task is one atomic activity with one independently observable result *(3)*
-- **Never** — a Task combines unrelated changes or hides several outcomes behind one title *(3)*
-- **Must** — every piece of context the record holds is recorded exactly once, at the highest level where it holds *(4)*
-- **Never** — a Task stores its phase or Group, repeats inherited context, or contradicts it *(4)*
-- **Never** — the same statement appears in more than one Task of a Plan *(4)*
-- **Must** — a Task carries only what is its own, and is read together with its Group and Plan *(5)*
-- **Never** — a Task repeats the identity or general description of the project, its phase, or its Group *(5)*
-- **Must** — a Task is expressed in responsibilities, behaviour, and observable results *(6)*
-- **Never** — planning content names a file, folder, path, module, layout, class, function, symbol, or command, asserts an artifact's location, or carries a list of sources to consult *(6)*
-- **Must** — execution history records actual checks, relevant locations, and observed results without secret values or prescriptions for future implementation *(6)*
-- **Must** — a Task states what must be achieved, why, where the responsibility belongs, and what proves completion *(7)*
-- **Must** — the record holds which work exists, what it must produce, what it depends on, where it stands, and its history *(12)*
-- **Never** — planning content stores project concepts, resolved technical choices, Component rules, or explanations its sources already hold, or execution history becomes the authority for technical choices *(12)*
-- **Never** — a constraint is recorded when it is derivable from the project definition, the Principles, or the Preferences *(12)*
-- **Never** — a Task prescribes implementation steps, algorithms, source layout, code, or commands, or makes a technical decision *(7)*
-- **Must** — a Task names every other Task whose completed result it requires *(8)*
-- **Never** — readiness is guessed from file order or proximity inside a Group *(8)*
-- **Must** — every Task states acceptance and a verification condition, both as observable behaviour *(9)*
-- **Must** — the executable check used and its outcome are recorded in the Task's log, and the Task is complete only once it passes *(9)*
-- **Never** — verification names the command, tool, path, or code that observes it, or doubles as an implementation procedure *(9)*
-- **Must** — the check's form follows the declared cross-cutting testing scope: a persisted test only inside it, a transient check outside it *(9)*
-- **Never** — a Component outside the declared testing scope acquires a test suite, test directory, test configuration, or test dependency *(9)*
-- **Must** — an executor claims eligible work before modifying it and preserves an append-only Task log *(10)*
-- **Must** — authorized Task progress updates record verified Blocker resolution, reconcile its reference and pending status, and recheck dependencies and remaining conditions before claiming work *(10)*
-- **Never** — Blocker removal alone proves resolution, or resolution marks a Task complete *(10)*
-- **Never** — Task duplicates the active Workflow position or the shared Blocker and Open Question records *(10)*
-- **Must** — replanning reconciles unchanged work and adds what is newly required *(11)*
-- **Never** — completed, active, or meaningful Task content is removed without an authorized operation or a surfaced conflict *(11)*
+- **Must** — every phase has one Plan holding its identity, order, target, outcome, and phase-wide context
+- **Must** — every Plan has a Planning-owned revision that changes exactly when its semantic planning content changes
+- **Never** — planning invents a new phase or silently changes the meaning of an existing one
+- **Must** — every Task belongs to one Group that holds the context its Tasks share
+- **Never** — a Group absorbs the activity, expected result, or verification of one Task
+- **Must** — each Task is one atomic activity with one independently observable result
+- **Never** — a Task combines unrelated changes or hides several outcomes behind one title
+- **Must** — every piece of context the record holds is recorded exactly once, at the highest level where it holds
+- **Never** — a Task stores its phase or Group, repeats inherited context, or contradicts it
+- **Never** — the same statement appears in more than one Task of a Plan
+- **Must** — a Task carries only what is its own, and is read together with its Group and Plan
+- **Never** — a Task repeats the identity or general description of the project, its phase, or its Group
+- **Must** — a Task is expressed in responsibilities, behaviour, and observable results
+- **Never** — planning content names a file, folder, path, module, layout, class, function, symbol, or command, asserts an artifact's location, or carries a list of sources to consult
+- **Must** — execution history records actual checks, relevant locations, and observed results without secret values or prescriptions for future implementation
+- **Must** — a Task states what must be achieved, why, where the responsibility belongs, and what proves completion
+- **Must** — the record holds which work exists, what it must produce, what it depends on, where it stands, and its history
+- **Never** — planning content stores project concepts, resolved technical choices, Component rules, or explanations its sources already hold, or execution history becomes the authority for technical choices
+- **Never** — a constraint is recorded when it is derivable from the project definition, the Principles, or the Preferences
+- **Never** — a Task prescribes implementation steps, algorithms, source layout, code, or commands, or makes a technical decision
+- **Must** — a Task names every other Task whose completed result it requires
+- **Never** — readiness is guessed from file order or proximity inside a Group
+- **Must** — every Task states acceptance and a verification condition, both as observable behaviour
+- **Must** — the executable check used and its outcome are recorded in the Task's log, and the Task is complete only once it passes
+- **Never** — verification names the command, tool, path, or code that observes it, or doubles as an implementation procedure
+- **Must** — the check's form follows the declared cross-cutting testing scope: a persisted test only inside it, a transient check outside it
+- **Never** — a Component outside the declared testing scope acquires a test suite, test directory, test configuration, or test dependency
+- **Must** — an executor claims eligible work before modifying it and preserves an append-only Task log
+- **Must** — authorized Task progress updates record verified Blocker resolution, reconcile its reference and pending status, and recheck dependencies and remaining conditions before claiming work
+- **Never** — Blocker removal alone proves resolution, or resolution marks a Task complete
+- **Never** — Task duplicates the active Workflow position or the shared Blocker and Open Question records
+- **Must** — replanning reconciles unchanged work and adds what is newly required
+- **Never** — completed, active, or meaningful Task content is removed without an authorized operation or a surfaced conflict
