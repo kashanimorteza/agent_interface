@@ -4,10 +4,10 @@ description: Execute and verify eligible planned work for selected Target phases
 argument-hint: "[phase-number ...]"
 metadata:
   contract: ".interface/agent/skill/contracts/developing.md"
-  contract_sha256: "sha256:7147222c9ec13eecab836c3e488c7548763b2d2fc918e970d5c7872b6798b6a7"
+  contract_sha256: "sha256:06d5f68d132aef13af16724f85a25279d903b1a1f505fc6c40c3c6caeeb16323"
   preferences: ".interface/agent/skill/preferences.yaml"
   preferences_sha256: "sha256:386052d88bf6225ecc6b2cc35f60fc2e7344a26bce478741efa86371fde6d566"
-  synced_at: "2026-09-19T16:31:31Z"
+  synced_at: "2026-09-19T19:40:02Z"
 ---
 
 # Develop project phases
@@ -38,7 +38,7 @@ Claude Code input handling: the positions arrive as whitespace-separated positiv
 
 ## Outputs
 
-Produce authorized implementation and durable checks, Development-owned Task progress and evidence, aggregate Development State and History, prerequisite actions, Blockers or Open Questions permitted by their owners, the `agent` parameters applied, any reported as overridden by a higher authority, and the associated Skills applied or reported unavailable, and a phase-by-phase report.
+Produce authorized implementation and durable checks, Development-owned Task progress and evidence, aggregate Development State and History, prerequisite actions, Blockers or Open Questions permitted by their owners, the Agent parameters applied, any reported as overridden by a higher authority, and the associated Skills applied or reported unavailable, and a phase-by-phase report.
 
 ## Required Understanding
 
@@ -56,15 +56,15 @@ Write implementation, tests, executable documentation, dependencies, and configu
 - Before mutating a phase, require a current valid Plan and establish from current Interface and Target Understanding that the selected work is eligible.
 - A prior Review record is not required; Review is performed after implementation exists.
 - Execute only work eligible under current Plan rules and dependency evidence.
-- Read the `agent` parameters the Task records, and gather from current Preferences any applicable parameter the Task does not record, on the item being worked on and on every item above it.
-- Apply what an applicable `agent.consider` asks for and honour what an applicable `agent.avoid` rules out throughout the work, with the nearest parameter governing any point two of them speak to.
+- Read the Agent parameters the Task records, and gather from current Preferences any applicable parameter the Task does not record, on the item being worked on and on every item above it.
+- Apply what an applicable `agent_consider` asks for and honour what an applicable `agent_avoid` rules out throughout the work, with the nearest parameter governing any point two of them speak to.
 - Where such a parameter conflicts with an explicit Target statement or an applicable Principle, follow that authority and report the overridden parameter rather than choosing silently.
-- Re-check each recorded `agent.skills` association against currently discoverable and usable Runtime Skills, because availability can change between planning and development, and report any difference between what the Task recorded and what is usable now.
+- Re-check each recorded `agent_skills` association against currently discoverable and usable Runtime Skills, because availability can change between planning and development, and report any difference between what the Task recorded and what is usable now.
 - Match the declared name against the Skill's own name within a Runtime's namespaced identifier rather than requiring an exact string match.
 - Activate an associated Skill only when the item carrying it is selected and the Skill is currently discoverable and usable.
 - Apply a usable required Skill's complete applicable guidance as a completion gate, use optional Skills when available, and continue while reporting the unavailability when an associated Skill is not usable.
 - When this work installs packages, the applicable Language Item's skill-provisioning rule applies to that installation.
-- An associated Skill, and every `agent` parameter, supplies guidance without changing scope or authority.
+- An associated Skill, and every Agent parameter, supplies guidance without changing scope or authority.
 - Build a transient verification ledger that splits every acceptance and verification statement into observable conditions and associates each with proof.
 - Derive checks from required conditions, never from the implementation just produced.
 - One passing example proves only that example.
@@ -107,7 +107,7 @@ In Claude Code this adapter reports, in this order:
 1. **Phases** — every resolved phase identifier, title, and target, in Target order.
 2. **Work executed** — by phase, each Task attempted, its outcome, and the check that proved it.
 3. **Work not executed** — by phase, each eligible Task left undone and why, and each ineligible Task with the condition that held it back.
-4. **Agent parameters and associated Skills** — by phase, each `agent` parameter applied and each one reported as overridden by a higher authority, each Skill applied while performing the work, and each declared association that was not usable.
+4. **Agent parameters and associated Skills** — by phase, each Agent parameter applied and each one reported as overridden by a higher authority, each Skill applied while performing the work, and each declared association that was not usable.
 5. **Prerequisites handled** — by phase, each technical requirement resolved for the phase's Component, its concrete version, whether it was already satisfied or installed during the run, and its verification result.
 6. **Blockers and questions** — by phase, anything raised during the run, with what it prevents.
 7. **State** — each phase's aggregate progress and the History outcomes recorded for this run.

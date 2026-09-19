@@ -15,8 +15,9 @@ Three commands:
           recorded source paths and fingerprints already match is left
           untouched, so an unchanged run mutates no Skill file.
 
-  record  Used by Agent Sync for every other declaration (Rule, Hook, Permission,
-          Agent Instance, Extension, Integration, setting, empty category, ...).
+  record  Used by Agent Sync for every other declaration (Rule, Enforced Guarantee,
+          permission, Agent Instance, Connection service or package, setting,
+          empty category, ...).
           Hash the sources Agent Sync names and update the synchronization
           record. Their native artifacts offer no free-form metadata field, so
           the fingerprint lives in the record only.
@@ -271,7 +272,7 @@ def main() -> int:
         p.add_argument("--result", default="")
         p.add_argument("--supersedes", nargs="*", default=[], help="recorded declarations the Module removed, renamed, or merged; their entries leave the record")
     st.add_argument("--only", nargs="*", default=[], help="native skill names to stamp; default every Constructed Skill")
-    rc.add_argument("--declaration", required=True, help="Module declaration, e.g. agent/rule/preferences.yaml#project_rules.interface-bootstrap")
+    rc.add_argument("--declaration", required=True, help="Module declaration, e.g. agent/rule/preferences.yaml#rules.interface-bootstrap")
     rc.add_argument("--source", nargs="+", required=True, help="every Module source read for this declaration")
     rc.add_argument("--realized-as", required=True, help="Claude Code mechanism, or 'none' for an empty or blocked declaration")
     rc.add_argument("--artifact", default="", help="project path of the native artifact, when one exists")
