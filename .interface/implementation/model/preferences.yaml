@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
   purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "7.1"
+  version: "7.2"
   updated: "2026-09-19"
 
 
@@ -74,8 +74,8 @@ content:
         default: "Publishes the resolved default value when the Target declares one."
         index: "Publishes an index requirement only when the Target declares it or a declared Target constraint requires it."
       relationship_metadata:
-        foreign_key: "Identifies the referenced Domain Definition and field without naming an Engine or ORM."
-        cardinality: "Publishes relationship multiplicity and optionality resolved from the Target."
+        foreign_key: "Carries the referenced Domain Definition itself together with the field it points at, never that definition's name as text. The realization refers to the definition the way its own language refers to a definition, so a reference that does not resolve fails where it is written. It names no Engine and no ORM."
+        cardinality: "Publishes relationship multiplicity and optionality as the Target declares them, stated explicitly on every relationship. A relationship never takes a default multiplicity; where the Target leaves it unstated, the choice is made from the Target and recorded with the implementation."
       model_metadata:
         persistence: "Publishes whether the Domain Definition is persistent or non-persistent, as Model Principle “Every Domain Definition declares whether it is persistent” requires."
         unique_sets: "Publishes composite uniqueness constraints as ordered field-name sets."
