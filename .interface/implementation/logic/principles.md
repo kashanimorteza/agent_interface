@@ -55,7 +55,7 @@ This Component's Understanding — how the Human explained it and the decisions 
 
 ## Terms
 
-- **Logic** — the Logic part that owns application Behaviour and operation-dependent rules.
+- **Behaviour** — what the application does when a consumer asks for something: the validation, the ordering, and the rules that hold for an operation in its application context rather than for one record on its own.
 - **Public Interface** — the only Logic boundary a consumer sees, exposing the Operations Logic performs.
 - **Category** — one named grouping of Operations in the Public Interface, gathering the Operations that serve the same kind of work.
 - **Operation** — one complete unit of work the Public Interface offers a consumer, named by what the consumer wants done rather than by how it is carried out.
@@ -87,7 +87,7 @@ The **Public Interface** is Logic's whole outward surface. It organizes what Log
 
 - **Consumes Model** — imports authoritative Domain Definitions and their declaration vocabulary through Model's Public Interface.
 - **Consumes Database** — reaches persisted data and its transaction boundary through Database's Public Interface.
-- **Consumes Development** — uses its Component Profile, shared rules, technical items, Connections, and Platform Reference.
+- **Consumes Development** — takes from it what Logic does not choose for itself: its identity, its technology, and the Connections it is permitted to make.
 - **Consumes Platform** — receives the runtime values its configuration contract requires.
 - **Consumed by any consumer** — provides the Public Interface through which any Component or entry point carries out the Operations Logic offers; the API is one such consumer, not a privileged one.
 

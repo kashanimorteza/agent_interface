@@ -194,7 +194,7 @@ Every Principle below is mandatory.
 
 ### All data access uses one generic Database Interface
 
-**Rule:** Consumers use one generic Database Interface for every persistent Model. The interface accepts a public Model type or instance, a supported operation, and the criteria required by that operation. It supports create, read, read-by-identifier, list, search, update, and delete operations through one Model-driven pipeline rather than one implementation per Model.
+**Rule:** Consumers use one generic Database Interface for every persistent Model. The interface accepts a public Model type or instance, a supported operation, and the criteria required by that operation. It supports create, read, read-by-identifier, list, search, update, and delete operations, the aggregate reads that answer a question about a matching set rather than its records — how many, and the total, smallest, and largest value of one field — and the removal of every record of a Model while its structure stays in place, all through one Model-driven pipeline rather than one implementation per Model.
 
 Public operations never require a Model name encoded as an untyped string or resolve a Model through an untyped string registry. Model identity is carried by the imported type or instance.
 
@@ -319,6 +319,8 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Route all persistent data access through one generic Model-driven Database Interface.
 - **Must** — Support the shared `search` operation through the generic Model-driven Database Interface.
+- **Must** — Answer an aggregate question about a matching set — how many, total, smallest, largest — in Database rather than by handing the records out to be counted elsewhere.
+- **Must** — Offer the removal of every record of a Model while its structure stays in place.
 - **Never** — Require untyped Model-name strings, expose connections, or let controlled commands bypass protections.
 
 **Database Instances are explicit and selectable**

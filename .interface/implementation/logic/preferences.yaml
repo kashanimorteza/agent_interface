@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Logic Component — Logic-owned behavioural defaults and internal realization conventions."
   purpose: "Configurable defaults for Logic organization, reliability, and verification."
   standard: "Agent Project Interface"
-  version: "11.0"
+  version: "12.0"
   updated: "2026-09-19"
 
 
@@ -21,7 +21,7 @@ resolution:
   consumption: "Resolve Logic's Component Profile, language-owned Technical Purposes, Connections, and Platform Launch Item from Development first. Apply this file only to Logic-owned behavioural defaults and internal realization conventions. Resolve environment-specific Runtime Bindings from Platform and never copy concrete technical or Platform values into this file."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
   version_resolution: "This file owns no versioned implementation technology. Development resolves every language, framework, package, tool, and Package Management version."
-  matching: "Match standards and Logic settings by their exact keys. Match Model Logic files to public Model identities, enable and disable only to Models that declare an activation Field, delete only to Target-authorized Models, and idempotency only to Target-selected operations."
+  matching: "Match standards and Logic settings by their exact keys. Match Model Logic files to public Model identities, and match each behavioural policy under settings.policies to the Models and Operations its own entry names."
 
 
 
@@ -98,14 +98,14 @@ content:
               accepts: {model: "the Model this record belongs to", id: "which record"}
               returns: "the updated record"
               outcomes: ["enabled", "not found", "Model has no active state"]
-              uses: "database.enable"
+              uses: "database.update"
 
             disable:
               does: "Set one record inactive, where the Model declares an activation Field, by setting that declared Field."
               accepts: {model: "the Model this record belongs to", id: "which record"}
               returns: "the updated record"
               outcomes: ["disabled", "not found", "Model has no active state"]
-              uses: "database.disable"
+              uses: "database.update"
 
             count:
               does: "Return how many records of the named Model match the supplied criteria; the whole Model when no filter is given."
@@ -158,9 +158,7 @@ content:
         calls: "Database's Public Interface; each Action below is one of its Operations."
         actions:
           create: "Create one record for a Model from supplied values."
-          update: "Change supplied fields of one existing record."
-          enable: "Set the record active, where the Model declares an active state."
-          disable: "Set the record inactive, where the Model declares an active state."
+          update: "Change supplied fields of one existing record. Setting a record active or inactive is this Action on the Field the Model declares for it, not an Action of its own."
           delete: "Remove one record, where the Target authorizes deletion for that Model."
           list: "Return records for a Model under the applicable filters, order, and limit, including a filter on the identifier."
           count: "Return how many records of a Model match the applicable filters."
@@ -191,12 +189,6 @@ content:
         owner: "Logic"
         source: "Target-defined quotas and eligibility rules"
     runtime:
-      configuration:
-        contract_owner: "Logic"
-        values_source: "Platform Runtime Binding"
-        validate_before_readiness: true
-        fail_fast_on_missing_required_values: true
-        secrets_in_source_or_documentation: false
       reliability:
         finite_timeouts_required: true
         retry:
@@ -208,14 +200,9 @@ content:
           enabled: true
           correlate_with_request_id: true
           include_credentials_or_secrets: false
-          include_internal_details_in_external_responses: false
     verification:
       checks:
-        - "isolated Logic tests"
-        - "every Operation: its inputs, its result, and each Application Outcome it declares"
-        - "each Service's calls into the Public Interface it depends on"
-        - "Authentication and authorization when enabled"
-        - "Transaction grouping and idempotency when applicable"
-        - "Credential and secret exclusion"
-        - "application outcomes and safe logging"
+        - "Authentication and authorization, when Development enables them for Logic"
+        - "Idempotency, for the Operations the Target selects as sensitive to repetition"
+        - "Credential and secret exclusion from outcomes and logs"
       unit_tests_use_live_dependencies: false
