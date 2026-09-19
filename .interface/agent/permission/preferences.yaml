@@ -14,7 +14,6 @@ policy:
   changed_by: The human, directly.
   precedence: Human authorization, every applicable Principle, deny rules, and stricter managed controls take precedence.
   absorbed: 'hook/preferences.yaml (v1.1), merged on 2026-09-17: its project Hooks became settings.enforced guarantees, and its Claude-specific events, handler types, and hook mechanics moved under settings.native.claude.hooks.'
-  history: .interface/agent/permission/history.yaml
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->

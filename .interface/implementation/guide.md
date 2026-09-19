@@ -38,7 +38,6 @@ Each Implementation Component has two files.
 
 - `principles.md` is the authoritative expression of the Component's philosophy, responsibilities, rules, and boundaries. It follows the Principles Schema and contains no tool, library, framework, package, or version selection.
 - `preferences.yaml` holds the Component's preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations, used when the Target leaves a choice unspecified. It follows the Preferences Schema and can never override a Principle.
-- `understanding.md` records how the Human explained the Component and the decisions that followed, including proposals that were not accepted and why. It states no obligation and is optional: a Component whose Understanding has not been recorded has no such file. It follows the Understanding Schema.
 
 Explicit Target intent and applicable Principles guide the operational Skills; Preferences supply defaults where the Target leaves a choice unstated.
 
@@ -78,8 +77,7 @@ responsibility: Defines the layered architecture and how independent layers are 
 ```
 
 → [Principles](development/principles.md)<br>
-→ [Preferences](development/preferences.yaml)<br>
-→ [Understanding](development/understanding.md)
+→ [Preferences](development/preferences.yaml)
 
 ### Model
 
@@ -93,8 +91,7 @@ responsibility: Describes the domain entities and provides one shared logical me
 ```
 
 → [Principles](model/principles.md)<br>
-→ [Preferences](model/preferences.yaml)<br>
-→ [Understanding](model/understanding.md)
+→ [Preferences](model/preferences.yaml)
 
 ### Database
 
@@ -108,8 +105,7 @@ responsibility: Owns the persistence layer and publishes one generic interface f
 ```
 
 → [Principles](database/principles.md)<br>
-→ [Preferences](database/preferences.yaml)<br>
-→ [Understanding](database/understanding.md)
+→ [Preferences](database/preferences.yaml)
 
 ### Logic
 
@@ -123,8 +119,7 @@ responsibility: Implements application Behaviour as reusable Logic; the Principl
 ```
 
 → [Principles](logic/principles.md)<br>
-→ [Preferences](logic/preferences.yaml)<br>
-→ [Understanding](logic/understanding.md)
+→ [Preferences](logic/preferences.yaml)
 
 ### API
 
@@ -230,7 +225,7 @@ The Human owns every Principles and Preferences file. Plan, Review, and State ow
 
 Not yet recorded in full. The Human's own explanation of the Implementation Module — the engineering philosophy behind the layered architecture, why these ten Components, and how Preferences are meant to be chosen — will be captured here in a later session, in the same form as the Agent Module Guide.
 
-Component-level Understanding now lives in each Component's own `principles.md`, in its Understanding record section (moved there 2026-09-19, when the Principles file structure gained that section): Model in [model/principles.md](model/principles.md), Database in [database/principles.md](database/principles.md), Logic in [logic/principles.md](logic/principles.md), and Development's documentation Understanding in [development/principles.md](development/principles.md). What stays here is the Understanding of the Module as a whole.
+Component-level Understanding now lives in each Component's own `principles.md`, in its Understanding section: Model in [model/principles.md](model/principles.md), Database in [database/principles.md](database/principles.md), Logic in [logic/principles.md](logic/principles.md), and Development's documentation Understanding in [development/principles.md](development/principles.md). What stays here is the Understanding of the Module as a whole.
 
 <br>
 

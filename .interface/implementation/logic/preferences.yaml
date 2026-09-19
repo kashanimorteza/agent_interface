@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Logic Component — Logic-owned behavioural defaults and internal realization conventions."
   purpose: "Configurable defaults for Logic organization, reliability, and verification."
   standard: "Agent Project Interface"
-  version: "12.0"
+  version: "13.0"
   updated: "2026-09-19"
 
 
@@ -144,11 +144,8 @@ content:
 
           naming: "The Operation names follow the conventions a consumer already knows from REST and from data libraries — create, list, update, delete — rather than Interface-invented names (decided 2026-09-19)."
       operation_shape:
-        does: "what the consumer gets, in the consumer's terms"
-        accepts: "the values the consumer supplies"
-        returns: "the Application Outcome shape"
-        outcomes: "the expected failures this Operation can produce"
-        uses: "the Services and Actions it composes — internal detail, never published"
+        does: "What the consumer gets, stated in the consumer's own terms rather than in the steps that produce it."
+        uses: "The Services and Actions the Operation composes. Recorded here so the dependency is visible to the Human; it is internal detail and is never published to a consumer."
     services:
       purpose: "The Services this Logic currently has, one per Component it talks to, with the Actions each performs. The Principle “Logic is composed of internal Services, one per Component it talks to” fixes what a Service is; this group records which ones exist."
       database:

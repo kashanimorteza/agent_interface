@@ -14,7 +14,6 @@ policy:
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
   absorbed: interaction/preferences.yaml (v1.0), observability/preferences.yaml (v1.0), session/preferences.yaml (v1.0), merged verbatim under settings.interaction, settings.observability, settings.session on 2026-09-17.
-  history: .interface/agent/rule/history.yaml
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->

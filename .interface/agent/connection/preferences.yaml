@@ -15,7 +15,6 @@ policy:
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
   absorbed: integration/preferences.yaml (v1.0) under settings.services and extension/preferences.yaml (v1.0) under settings.packages, merged verbatim on 2026-09-17.
-  history: .interface/agent/connection/history.yaml
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->

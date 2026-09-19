@@ -64,7 +64,6 @@ Each Agent Component has two files.
 
 - `principles.md` states the Human's view and philosophy of that Component. It contains no technology, package, provider, or Agent Native. It is portable: the same file can be handed to another project or another Agent unchanged.
 - `preferences.yaml` holds the parameters that support that view: current selections, declared resources, explicit empty categories, and — when a view needs a helper for one Agent Native — a block declared for that Native only (for example `native.claude`). Preferences are in effect a preferences file; it never weakens a Principle.
-- `understanding.md` records how the Human explained the Component and the decisions that followed, including proposals that were not accepted and why. It states no obligation and is optional: a Component whose Understanding has not been recorded has no such file. It follows the Understanding Schema.
 
 Three conventions keep Preferences ready for placement rather than rewriting (decided 2026-09-18):
 
@@ -106,13 +105,11 @@ Runtime identity, provider, model, compatibility, and native capability mapping.
 name: Runtime
 principles: .interface/agent/runtime/principles.md
 preferences: .interface/agent/runtime/preferences.yaml
-history: .interface/agent/runtime/history.yaml
 responsibility: Runtime identity, provider, model, compatibility, and native capability mapping; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
 ```
 
 → [Principles](runtime/principles.md)<br>
-→ [Preferences](runtime/preferences.yaml)<br>
-→ [History](runtime/history.yaml)
+→ [Preferences](runtime/preferences.yaml)
 
 ### Agent
 
@@ -122,13 +119,11 @@ The selected Agent Native and its General and Specialized Agent Instances. Absor
 name: Agent
 principles: .interface/agent/agent/principles.md
 preferences: .interface/agent/agent/preferences.yaml
-history: .interface/agent/agent/history.yaml
 responsibility: The selected Agent Native and its General and Specialized Agent Instances; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
 ```
 
 → [Principles](agent/principles.md)<br>
-→ [Preferences](agent/preferences.yaml)<br>
-→ [History](agent/history.yaml)
+→ [Preferences](agent/preferences.yaml)
 
 ### Personality
 
@@ -155,15 +150,13 @@ Persistent global and scoped behavioral instructions. Absorbs the former Interac
 name: Rule
 principles: .interface/agent/rule/principles.md
 preferences: .interface/agent/rule/preferences.yaml
-history: .interface/agent/rule/history.yaml
 definitions: .interface/agent/rule/definitions/<rule>.md
 responsibility: Persistent global and scoped behavioral instructions; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
 ```
 
 → [Principles](rule/principles.md)<br>
 → [Preferences](rule/preferences.yaml)<br>
-→ [Definitions](rule/definitions/)<br>
-→ [History](rule/history.yaml)
+→ [Definitions](rule/definitions/)
 
 ### Skill
 
@@ -248,13 +241,11 @@ Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets. A
 name: Permission
 principles: .interface/agent/permission/principles.md
 preferences: .interface/agent/permission/preferences.yaml
-history: .interface/agent/permission/history.yaml
 responsibility: Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
 ```
 
 → [Principles](permission/principles.md)<br>
-→ [Preferences](permission/preferences.yaml)<br>
-→ [History](permission/history.yaml)
+→ [Preferences](permission/preferences.yaml)
 
 ### Connection
 
@@ -264,13 +255,11 @@ External services and installable packages the Agent obtains from outside the pr
 name: Connection
 principles: .interface/agent/connection/principles.md
 preferences: .interface/agent/connection/preferences.yaml
-history: .interface/agent/connection/history.yaml
 responsibility: External services and installable packages the Agent obtains from outside the project, with their trust boundaries and lifecycle; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
 ```
 
 → [Principles](connection/principles.md)<br>
-→ [Preferences](connection/preferences.yaml)<br>
-→ [History](connection/history.yaml)
+→ [Preferences](connection/preferences.yaml)
 
 ### Context
 
@@ -446,9 +435,8 @@ Recorded on 2026-09-18, after the Human asked for the Module to be read again on
 2. Two sentences still said Sync "translates" (Skill Principles introduction; Agent Native Contract Purpose). Reworded to placement as authored.
 3. Permission Principles 6–8 and two Terms spoke of "Hook" — one Native's mechanism — where the Module's concept is the Enforced Guarantee that Preferences already declare under `settings.enforced`. Renamed; matcher, handler, and timeout are named as the Native's own mechanics under `native.<agent-native>`. The absorbed Hook introduction stays verbatim as history.
 4. Command and Skill Preferences carried Claude Code's slash form and `my-interface-` prefix in the generic layer. A command's portable identity is now its key plus `arguments`; a Skill's portable name is its key; the `/my-interface-…` invocation and the Skill directory name live under each item's `native.claude`. This also made a hidden irregularity visible: the `reviewing` Skill's Claude directory is `my-interface-reviewer`.
-5. Five Preferences files kept the full former Preferences of absorbed Components under `policy` (about 275 lines). Moved verbatim to `<component>/history.yaml` — a record, never an authority, not read by Sync — with `policy.history` pointing to it; the Schema and this Guide record the convention.
-6. `legacy_command_files` (a Claude Code-only concept, empty) removed from Command Preferences.
-7. The Agent Native Contract referred to a `component_realization` map that no longer exists anywhere; the name was dropped, the obligation kept.
+5. `legacy_command_files` (a Claude Code-only concept, empty) removed from Command Preferences.
+6. The Agent Native Contract referred to a `component_realization` map that no longer exists anywhere; the name was dropped, the obligation kept.
 
 **Why this pass matters.** The Guide is the promise; the files are the proof. When the two drift, an Agent trusts the Guide and misreads the files — or, worse, trusts a stale name and invents a Component to match it. This pass is the kind of check that should follow every restructuring of the Module.
 

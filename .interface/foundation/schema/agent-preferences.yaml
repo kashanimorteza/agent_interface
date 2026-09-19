@@ -73,7 +73,6 @@ policy:
       required: true
       purpose: "Applicable Principles and explicit Human decisions take precedence."
   additional_fields: "A Component may add stricter Preferences-specific policy fields without removing or renaming the required fields."
-  history: "A Component that absorbed other Components may keep their former Preferences and superseded declarations verbatim in an optional sibling file, <component>/history.yaml, and point to it with policy.history. It is a record, never an authority, and Agent Sync does not read it (decided 2026-09-18)."
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->

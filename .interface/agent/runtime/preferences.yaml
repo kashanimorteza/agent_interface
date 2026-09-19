@@ -15,7 +15,6 @@ policy:
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
   absorbed: 'settings/preferences.yaml (v1.1) merged on 2026-09-17: its source precedence, merge behavior, and reconcile policy are Claude Code mechanics and live under settings.native.claude.configuration;
     its general Principles 2-5 became Agent Preferences Schema rules.'
-  history: .interface/agent/runtime/history.yaml
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->

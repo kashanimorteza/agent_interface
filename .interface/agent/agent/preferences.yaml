@@ -15,7 +15,6 @@ policy:
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
   absorbed: role/preferences.yaml (v1.2) and coordination/preferences.yaml (v1.2), merged verbatim under settings.roles and settings.coordination on 2026-09-17.
-  history: .interface/agent/agent/history.yaml
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->
