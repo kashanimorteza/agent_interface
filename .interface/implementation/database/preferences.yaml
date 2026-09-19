@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Database Component — persistence defaults, credential treatment, Instances, and implementation conventions."
   purpose: "Database-owned defaults for persistence behavior and runtime storage configuration; concrete technology choices come from Development."
   standard: "Agent Project Interface"
-  version: "7.0"
+  version: "10.0"
   updated: "2026-09-19"
 
 
@@ -35,7 +35,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The default Instance, credential at-rest mode, portability preference, Model source, and consumer boundary."
+  selected: "The default Instance and the credential at-rest mode used when the Target states none."
   options: "Database-owned credential at-rest alternatives. Engine, ORM, migration, language, and package alternatives belong to Development."
   settings: "Conventions grouped by the parts Database Principles name in its Architecture — Database Interface, Data Logic and Mapping, and Storage Adapter — plus the subjects that span the Component: migrations, transactions, controlled commands, security, and observability."
 
@@ -47,9 +47,6 @@ content:
   selected:
     default_instance: "general"   # the value written into database.yaml; that file is the runtime authority
     credential_at_rest_mode: "hash"   # an entry of options.credential_storage_modes; a credential the Target declares recoverable uses "encrypted"
-    portability_policy: "portable contract first; engine-specific extensions explicit"
-    model_import_source: "Model Public Interface"
-    consumer_access: "public Database Interface only"
 
   # <!-------------------------------------------- options -->
   options:
@@ -74,9 +71,7 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
     database_interface:
-      model_identity: "A consumer names a Model by the imported public type or an instance of it; the interface accepts nothing that identifies a Model by text."
       criteria_shape: "Each operation takes only the criteria it needs, named for the domain rather than for storage."
-      registry_exposure: "The Instance Registry publishes identities and the default only; it never hands out a connection, a credential, or an Engine detail."
 
     data_logic_and_mapping:
       initial_data:
@@ -92,11 +87,16 @@ content:
           readiness_hook: "invoke after structural migration and integrity verification during Database setup"
           failure_state: "Database not ready; report the import failure"
       credential_storage:
-        resolution: "For an existing field resolved as a credential, require the Model-declared storage mode. Reject a missing or unsupported mode; Database never infers one from a field name."
+        modes: "The at-rest modes Database supports are catalogued in options.credential_storage_modes; the default for an unstated credential is selected.credential_at_rest_mode."
+        encryption_key_source: "storage_adapter.runtime_configuration, under the encryption key the Database Configuration Schema defines. Never an Interface record and never source."
 
     storage_adapter:
       runtime_configuration:
         file: "database/database.yaml"
+        why_one_file: "Adding an Instance, or changing a username or a password, is one edit in this one file and never a change in source."
+        credential_placement: "Each Instance's connection credentials are written on that Instance, in this file, so an Instance and the credentials that reach it are read and changed together."
+        instance_source: "Which Instances exist, how each reaches its Engine, and the credentials each uses are read from this file and from nowhere else."
+        supplies_the_environment: "This file is how the environment supplies Database with its connection credentials and keys; a fresh checkout reproduces the structure but still needs this file to connect."
         required: true
         structure: ".interface/foundation/schema/database.yaml"
         generated_with_the_component: "Database is not complete until this file exists and the Storage Adapter reads its Engines, Instances, and default from it."

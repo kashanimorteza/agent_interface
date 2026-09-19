@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Schema -->
 schema:
   id: "agent-interface-model-declaration"
-  version: "1.0"
+  version: "1.1"
   purpose: "The Declaration Vocabulary: the one standard, technology-independent set of terms every Domain Definition states itself in. Model Principles require the vocabulary; this file fixes its terms and their meanings, so every Component reads the same declaration."
 
 # <!--------------------------------------------------------------------------------- Frame -->
@@ -42,6 +42,10 @@ field:
     credential:
       required: false
       purpose: "Classifies the Field as a credential and states the at-rest treatment the Target requires for it. Model classifies; it never applies the treatment and never removes the Field from anything."
+
+    activation:
+      required: false
+      purpose: "Marks the Field whose value says whether a record is active, when the Target gives a Domain Definition that notion. It is declared, never found by name: a Component that offers enabling and disabling sets this declared Field and no other."
 
 # <!--------------------------------------------------------------------------------- Relationship -->
 relationship:

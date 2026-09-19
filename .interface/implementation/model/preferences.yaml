@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
   purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "11.0"
+  version: "12.0"
   updated: "2026-09-19"
 
 
@@ -71,6 +71,7 @@ content:
       note: "The vocabulary's terms and their meanings are fixed by that Schema, not here. This group carries only Model's preferences about using it."
       logical_types: "Resolve each Field's logical type from the Target. Where the Target implies a type without naming one, prefer the narrowest type that holds every value the Target allows."
       precision_and_length: "State length and precision only where the Target states them; do not invent a bound the Target does not imply."
+      activation: "Declare the activation Field only where the Target gives the concept a notion of being active; whichever Field carries it, declaring it is what lets another Component enable or disable a record without guessing at a name."
 
     # ---- Model Foundation ----
     model_foundation:
