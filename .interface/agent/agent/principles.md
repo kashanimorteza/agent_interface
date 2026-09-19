@@ -95,7 +95,7 @@ Technical Role catalogs and primary Role selection belong to Agent Preferences (
 
 Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Preferences (formerly Coordination Preferences).
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

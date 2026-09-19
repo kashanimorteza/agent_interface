@@ -260,7 +260,7 @@ It is not the place to restate the shared rules. A Component carries it when its
 
 One or two paragraphs, stating all three of:
 
-- every Principle in the file is mandatory;
+- every Principle in the file is mandatory — the claim is about the Principles, not about every sentence in the file, since Introduction, Terms, Architecture, Relationships, Boundaries, and Documentation explain rather than oblige;
 - an Implementation Preference or Agent Preferences can never override a Principle; and
 - a project may only add stricter rules, never looser ones.
 
@@ -415,7 +415,7 @@ Agent declarations and mappings belong to <Component> Preferences; implementatio
 <What a reader must understand from this Component's documentation. Omit this whole section
 when the shared documentation rules are enough.>
 
-Every statement here is mandatory. An Implementation Preference or Agent Preferences can never override
+Every Principle in this file is mandatory. An Implementation Preference or Agent Preferences can never override
 a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>

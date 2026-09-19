@@ -113,7 +113,7 @@ It explains nothing behind the boundary. Which Logic Operation served a request,
 
 <br>
 
-Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

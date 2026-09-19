@@ -62,7 +62,7 @@ Execution is safely repeatable: running a Skill again preserves valid work rathe
 
 Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, and provider resources belong to Agent Skill Preferences; Native implementation mappings are resolved by Agent Sync from the selected Agent Native. Command names and argument forms belong to Agent Command Preferences.
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

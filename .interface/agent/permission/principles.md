@@ -76,7 +76,7 @@ Technical modes, permission rules, sandbox settings, trust policy, and credentia
 
 Technical events, matchers, handlers, timeouts, and native configuration belong to the `native.<agent-native>` block of each Enforced Guarantee in Agent Permission Preferences (formerly Hook Preferences).
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

@@ -58,7 +58,7 @@ Across session start, resume, compaction, delegation, and isolation, every instr
 
 Technical loading sources, memory behavior, imports, and limits belong to Agent Context Preferences.
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

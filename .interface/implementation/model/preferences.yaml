@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
   purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "10.0"
+  version: "11.0"
   updated: "2026-09-19"
 
 
@@ -52,6 +52,7 @@ content:
 
     # ---- Domain Definition ----
     domain_definition:
+      recorded_choices: "Where the Target states no technical modelling parameter and Model chooses one, record the choice beside the Domain Definition it belongs to, in that definition's own module, so a reviewer meets it where the Field is declared."
       validation:
         declarative_constraints_first: true
         custom_validation: "only when declarative constraints are insufficient"
@@ -75,7 +76,7 @@ content:
     model_foundation:
       serialization:
         purpose: "Realization preferences for the Serialization pair the Principle “Every Domain Definition converts to and from a Plain Representation” requires. The Principle states what the pair does; the entries below state only what it leaves open."
-        naming: "Name the two capabilities for what they do, not for a wire format. The Interface fixes no language-level method name; the selected realization decides the compatible form."
+        naming: "The two capabilities are `serialize` and `deserialize`, as the Principle requires; only their spelling is the language's to decide — the form the selected language uses for a method name. A name that points at a wire format, or at one language's type, is not a rewording of these but a different contract."
         representation_target: "The plain structure is JSON-compatible: every published value is expressible in JSON without a custom encoder."
         output_policy_owner: "The consuming Component. API Preferences own which Fields leave an API response, including credential exclusion."
     # ---- Layout ----
@@ -87,6 +88,7 @@ content:
       supporting_content: "A helper, constant, or type used by exactly one Domain Definition lives with it; anything used by more than one belongs to Model Foundation."
       public_identity_shape: "A consumer reaches a definition through the public entry point under its own name, in the form the selected language uses for a published type — conceptually `model.<public entry point>.<DefinitionName>`."
       naming_shape: "A definition is named for the domain concept, never for a consumer's representation of it: `Invoice`, not `InvoiceDTO`, unless the Target itself calls the concept a DTO."
+      casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as Development states it."
 
     # ---- Verification ----
     verification:

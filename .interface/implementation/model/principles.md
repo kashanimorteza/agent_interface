@@ -9,9 +9,8 @@
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Boundaries](#boundaries)**
-6. **[Documentation](#documentation)**
-7. **[Principles](#principles)**
+5. **[Documentation](#documentation)**
+6. **[Principles](#principles)**
    - **[Each domain concept has one authoritative Domain Definition](#each-domain-concept-has-one-authoritative-domain-definition)**
    - **[Model preserves explicit Target meaning](#model-preserves-explicit-target-meaning)**
    - **[Logical Model meaning is independent of implementation technology](#logical-model-meaning-is-independent-of-implementation-technology)**
@@ -24,7 +23,7 @@
    - **[Every Domain Definition converts to and from a Plain Representation](#every-domain-definition-converts-to-and-from-a-plain-representation)**
    - **[Every Domain Definition declares whether it is persistent](#every-domain-definition-declares-whether-it-is-persistent)**
    - **[Each Domain Definition stands in its own module](#each-domain-definition-stands-in-its-own-module)**
-8. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 <br>
 
 ## Introduction
@@ -90,21 +89,13 @@ Model
 
 ## Relationships
 
-- **Consumes Development** — uses its Component Profile, shared rules, technical items, and Platform Reference.
+- **Consumes Development** — takes from it what Model does not choose for itself: its identity, its technology, and where it runs.
 - **Consumed by Database** — provides the Declaration Vocabulary from which Database derives and enforces physical storage structure.
 - **Consumed by Logic** — provides the Domain Definitions Logic reasons about and passes between its Services.
 - **Consumed by API and Presentation** — provides the Domain Definitions they accept and return, and the Serialization pair they convert with.
 - **Consumed through Development-defined Connections** — every consumer reaches Model through its Public Interface, and Model repeats neither the identities nor the internal behavior of its consumers.
 
 <br>
-
-## Boundaries
-
-- **An index, or any other access-path decision** — belongs to Database, because an index is chosen from how data is read and how much of it there is, which Model cannot see. Model declares uniqueness, which is a domain fact; Database decides what to index to enforce or serve it.
-- **Naming a relationship a foreign key** — belongs to Database, because a foreign key is one storage realization of a Domain Relationship. Model declares the referenced definition, cardinality, and optionality; what that becomes in storage is Database's word, not Model's.
-- **Mapping an absent value to NULL** — belongs to Database, because nullability in Model means the domain allows the Field to have no value, and NULL is one Engine's way of recording that. A non-persistent Domain Definition has nullability too and no NULL anywhere.
-- **Deciding what leaves a response** — belongs to the consuming Component, because withholding a credential or any other Field is an output policy. Model classifies a Field as a credential; it never removes one.
-- **Choosing the modelling package, its version, or the language** — belongs to Development, because those are composition choices shared with every other Component that uses the same language.
 
 <br>
 
@@ -122,7 +113,7 @@ Then the three things a consumer does with one, each shown with an example that 
 
 <br>
 
-Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -146,7 +137,7 @@ Every Principle below is mandatory.
 
 **Rule:** Model preserves every explicit Domain Definition, Field, property, Domain Relationship, constraint, sensitive or credential meaning, and Intrinsic Rule stated by the Target. Model Preferences may complete only missing properties of existing Fields, property by property. A default never creates a Field, overrides an explicit value including `false` or `null`, changes meaning, or invents a relationship or behavior. Every Domain Relationship preserves the meaning and constraints declared by the Target.
 
-What the domain *is* comes only from the Target: which Domain Definitions exist, which Fields they carry, what those Fields and relationships are named, and how they relate. How a Field is realized is a separate question. Where the Target states no technical modelling parameter for an existing Field — a representation choice, a validation detail, a constraint the Target already implies — Model chooses it under its own Principles and records a consequential choice with the implementation rather than leaving the Field underspecified. Such a choice never adds, removes, or renames a Field or relationship, never overrides an explicit Target value, and never changes what a Field means.
+What the domain *is* comes only from the Target: which Domain Definitions exist, which Fields they carry, what those Fields and relationships are named, and how they relate. How a Field is realized is a separate question. Where the Target states no technical modelling parameter for an existing Field — a representation choice, a validation detail, a constraint the Target already implies — Model chooses it under its own Principles and records a consequential choice so it can be reviewed, rather than leaving the Field underspecified. Where such a record is kept is stated in Model Preferences. Such a choice never adds, removes, or renames a Field or relationship, never overrides an explicit Target value, and never changes what a Field means.
 
 Model also preserves each Target-declared credential classification and required at-rest treatment. Database applies that declared treatment and rejects a persisted credential whose treatment is missing or unsupported; neither Component infers credential policy from a field name.
 
@@ -202,7 +193,7 @@ Model also preserves each Target-declared credential classification and required
 
 **Why:** Domain-oriented names keep the logical model understandable without knowledge of a technical realization.
 
-**Boundary:** Language-level casing and file or folder naming conventions come from the applicable Development technology profile.
+**Boundary:** This governs the meaning a name carries, not the form it is written in. How a name is spelled in the selected language, and how files and folders are named, belong to Model Preferences.
 
 <br>
 
@@ -224,7 +215,7 @@ Model preserves whether each Target Field is required, nullable, defaulted, gene
 
 **Why:** One vocabulary understood without any technology lets every Component share the same definition while Model remains the single authority for domain meaning, and preserving the Target's declared presence semantics stops a generic Model rule from changing what a Field means.
 
-**Boundary:** Model does not create tables, indexes, migrations, SQL, ORM mappings, or engine-specific constraints, and it does not enforce rules that require comparing multiple stored records. Database owns physical realization and enforcement.
+**Boundary:** Model does not create tables, indexes, migrations, SQL, ORM mappings, or engine-specific constraints, and it does not enforce rules that require comparing multiple stored records. Nullability here means the domain allows a Field to have no value; recording that absence — as a null column or in any other way — belongs to whichever Component records it, and a non-persistent Domain Definition declares nullability with nothing recording it at all. Database owns physical realization and enforcement.
 
 <br>
 
@@ -291,7 +282,7 @@ Every obligation in the file, under the Principle it comes from.
 - **Never** — Let a default add a Field, override an explicit value, change meaning, or invent a relationship or behavior.
 - **Never** — Treat Initial Data or another project record as a Model-owned Domain Definition.
 - **Must** — Take what the domain is — which Domain Definitions and Fields exist, their names, and their relationships — only from the Target.
-- **Must** — Choose an unstated technical modelling parameter of an existing Field under Model's own Principles and record a consequential choice with the implementation.
+- **Must** — Choose an unstated technical modelling parameter of an existing Field under Model's own Principles, and record a consequential choice so it can be reviewed.
 - **Never** — Let such a choice add, remove, or rename a Field or relationship, override an explicit Target value, or change what a Field means.
 - **Must** — Preserve each Target-declared credential classification and its required at-rest treatment, so Database can apply it and reject a persisted credential whose treatment is missing or unsupported.
 - **Never** — Infer credential policy from a field name.
@@ -300,7 +291,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Keep Domain Definitions and Intrinsic Rules understandable independently of implementation technology.
 - **Must** — Require every selected technology to preserve logical Model meaning.
-- **Must** — Take Model's language, modeling package, Agent Skills, and Platform Reference from its Component Profile in Development; Model never selects a technology itself.
+- **Must** — Take every technical and platform choice from Development; Model never selects one itself.
 
 **Concrete Model realizations share one Model Foundation**
 
@@ -322,7 +313,6 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Name Model concepts from Target domain meaning.
 - **Never** — Name a Model concept after an implementation tool or consumer-specific representation unless that name is itself a Target concept.
-- **Must** — Take language-level casing and file or folder naming conventions from the applicable Development technology profile.
 
 **Model remains separate from external concerns**
 

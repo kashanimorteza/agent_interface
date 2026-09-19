@@ -102,7 +102,7 @@ Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting
 
 Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Rule Preferences (formerly Session Preferences).
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

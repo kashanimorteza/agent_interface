@@ -56,7 +56,7 @@ Nothing about a Personality expands what an Agent may do. It shapes how work is 
 
 Personality definitions, their Actions, and Model Preferences belong to Agent Personality Preferences and its definition files; Native realization is resolved by Agent Sync from the selected Agent Native.
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

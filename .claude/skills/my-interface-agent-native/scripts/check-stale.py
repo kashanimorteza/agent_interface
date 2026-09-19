@@ -7,12 +7,13 @@ Three commands:
           source, and report which native artifacts are provably stale.
           Exit 1 when any entry is stale or missing, else 0.
 
-  stamp   Used by Agent Sync for Constructed Skills. Re-hash each Interface-owned
-          Skill Contract, write the fingerprint into the native SKILL.md
-          frontmatter `metadata` block when it is absent or differs, and update
-          the synchronization record. A SKILL.md whose recorded Contract path and
-          fingerprint already match is left untouched, so an unchanged run
-          mutates no Skill file.
+  stamp   Used by Agent Sync for Constructed Skills. Re-hash every source Agent
+          Sync reads for a Skill -- its Interface-owned Contract and the Skill
+          Preferences file that declares it -- write both fingerprints into the
+          native SKILL.md frontmatter `metadata` block when they are absent or
+          differ, and update the synchronization record. A SKILL.md whose
+          recorded source paths and fingerprints already match is left
+          untouched, so an unchanged run mutates no Skill file.
 
   record  Used by Agent Sync for every other declaration (Rule, Hook, Permission,
           Agent Instance, Extension, Integration, setting, empty category, ...).
@@ -181,8 +182,11 @@ def cmd_check(root: Path) -> int:
             state, bad = f"STALE (source changed since last sync: {', '.join(changed)})", bad + 1
         elif d.get("realized_as") == SKILL_MECHANISM:
             _, fm = read_frontmatter((root / artifact).read_text())
-            stamped = (fm.get("metadata") or {}).get("contract_sha256")
-            if stamped != sources[0].get("fingerprint"):
+            stamped = fm.get("metadata") or {}
+            expected = {"contract": sources[0]["path"], "contract_sha256": sources[0].get("fingerprint")}
+            if len(sources) > 1:
+                expected.update({"preferences": sources[1]["path"], "preferences_sha256": sources[1].get("fingerprint")})
+            if any(stamped.get(k) != v for k, v in expected.items()):
                 state, bad = "STALE (artifact stamp differs from record)", bad + 1
             else:
                 state = "fingerprint unchanged (not proof of conformance)"
@@ -200,6 +204,7 @@ def cmd_check(root: Path) -> int:
 def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: list[str], supersedes: list[str]) -> int:
     ts = now()
     entries = []
+    prefs_path, prefs_fp = str(SKILL_PREFERENCES), sha256(root / SKILL_PREFERENCES)
     for d in constructed_skills(root):
         if only and d["name"] not in only:
             continue
@@ -211,14 +216,15 @@ def cmd_stamp(root: Path, mode: str, status: str, note: str, result: str, only: 
         fp = sha256(src)
         _, fm = read_frontmatter(art.read_text())
         stamped = fm.get("metadata") or {}
-        if stamped.get("contract") == d["contract"] and stamped.get("contract_sha256") == fp:
+        meta = {"contract": d["contract"], "contract_sha256": fp, "preferences": prefs_path, "preferences_sha256": prefs_fp}
+        if all(stamped.get(k) == v for k, v in meta.items()):
             print(f"stamp unchanged {art.relative_to(root)}")
         else:
-            write_metadata(art, {"contract": d["contract"], "contract_sha256": fp, "synced_at": ts})
+            write_metadata(art, {**meta, "synced_at": ts})
             print(f"stamped {art.relative_to(root)}")
         entries.append({
             "declaration": f"agent/skill/contracts/{Path(d['contract']).name}",
-            "sources": [{"path": d["contract"], "fingerprint": fp}],
+            "sources": [{"path": d["contract"], "fingerprint": fp}, {"path": prefs_path, "fingerprint": prefs_fp}],
             "realized_as": SKILL_MECHANISM,
             "artifact": str(SKILLS_DIR / d["name"] / "SKILL.md"),
             "status": status,

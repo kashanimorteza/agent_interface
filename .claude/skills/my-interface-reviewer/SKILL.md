@@ -4,8 +4,10 @@ description: Assure selected Target phase implementations, or every enabled phas
 argument-hint: "[phase-number ...]"
 metadata:
   contract: ".interface/agent/skill/contracts/reviewing.md"
-  contract_sha256: "sha256:e27ea1e754cc60354c223c96f19e2b554945b09249cd5a09e977fc2d8ae3beb4"
-  synced_at: "2026-09-18T13:46:48Z"
+  contract_sha256: "sha256:76814adb200b59d6ca8a9855e98a73405156892e328b9905c5520f0330fb4c6d"
+  preferences: ".interface/agent/skill/preferences.yaml"
+  preferences_sha256: "sha256:386052d88bf6225ecc6b2cc35f60fc2e7344a26bce478741efa86371fde6d566"
+  synced_at: "2026-09-19T16:31:31Z"
 ---
 
 # Review Target phases
@@ -36,7 +38,7 @@ Claude Code input handling: the positions arrive as whitespace-separated positiv
 
 ## Outputs
 
-Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase with an implementation, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, an obligation-coverage summary, and an evidence-first phase report. A phase without implementation is reported as not reviewable and receives no assurance outcome. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
+Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase with an implementation, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, an obligation-coverage summary including the applicable `agent` parameters and how each was classified, and an evidence-first phase report. A phase without implementation is reported as not reviewable and receives no assurance outcome. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
 
 ## Required Understanding
 
@@ -57,6 +59,8 @@ Observe and independently verify. Invoke no other Skill and execute no other Ski
 - If they do not, stop Review for that phase and report that Developing or Implement must create the implementation first.
 - For each selected phase, read the complete applicable authorities rather than relying on `At a Glance`, indexes, prior Findings, or other summaries.
 - Build a complete obligation inventory containing every applicable normative Principle Rule and Boundary, every obligation represented as `Must`, every `Never` expressed as its prohibited condition, every resolved Preference with `requirement: required`, every conditional requirement whose activation condition is true, every applicable instruction of a required synchronized Skill, and every applicable Target requirement.
+- Include in that inventory every applicable `agent` parameter: each `agent.consider` statement as a condition the work is expected to meet and each `agent.avoid` statement as a prohibited condition, gathered from the item worked on and every item above it, with the nearest parameter governing any point two of them speak to.
+- Classify an `agent` parameter that an explicit Target statement or an applicable Principle overrides as `not applicable`, with that authority as its applicability reason, rather than as a Finding.
 - For each assurance stage, classify every inventoried obligation exactly once as `satisfied`, `not applicable` with an explicit applicability reason, or `finding` with expected condition, actual observation, and evidence.
 - For Plan Assurance, `satisfied` means the current Plan gives the obligation valid, observable coverage; for Implementation Assurance, it means current implementation and evidence prove the obligation.
 - Never infer `not applicable` from silence, and never use it merely because a selected required technology, capability, implementation, or proof is absent.
@@ -115,6 +119,6 @@ In Claude Code this adapter invokes no Skill — not Configure, Planning, Develo
 2. **Plan Assurance** — result and the exact Plan Revision assured.
 3. **Implementation Assurance** — conditions observed, independent evidence, and result.
 4. **Findings and missing evidence** — grouped by phase and assurance stage, each naming its owning operation (Configure, Planning, Developing, or Launch), marked repeated when unchanged since the previous Review record, ordered by severity.
-5. **Obligation coverage** — summary of the obligation inventory and its classification counts for the phase.
+5. **Obligation coverage** — summary of the obligation inventory and its classification counts for the phase, including the applicable `agent` parameters and how each was classified.
 6. **Convergence and recorded outcomes** — whether Findings repeated, advanced, or closed since the previous record, any blocker, Plan outcome, Implementation outcome, aggregate Review State, reconciled Findings, records changed, and History.
 7. **Next step** — the single most useful next action supported by the result, naming the owning operation the Human or Implement must rerun before Review runs again.

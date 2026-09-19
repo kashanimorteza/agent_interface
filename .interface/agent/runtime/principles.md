@@ -67,7 +67,7 @@ Effective settings come from several sources — project, user, managed, runtime
 
 The selected runtime and compatibility choice belong to Agent Runtime Preferences; Native-specific realization details are learned by Agent Sync from the selected Agent Native.
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

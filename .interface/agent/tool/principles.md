@@ -56,7 +56,7 @@ Portable Tool requirements and availability expectations live in Preferences; th
 
 Portable tool requirements and availability expectations belong to Agent Tool Preferences; Native catalogs and mappings are resolved by Agent Sync from the selected Agent Native.
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

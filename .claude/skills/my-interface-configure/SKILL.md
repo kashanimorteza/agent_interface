@@ -4,7 +4,9 @@ description: Prepare the four operational Config records (plan, state, review, a
 metadata:
   contract: ".interface/agent/skill/contracts/configure.md"
   contract_sha256: "sha256:eb92955042e47ed6c10e605bc001370fb4afac3ad20b1b53e4b9f132b5a365e8"
-  synced_at: "2026-09-18T13:46:48Z"
+  preferences: ".interface/agent/skill/preferences.yaml"
+  preferences_sha256: "sha256:386052d88bf6225ecc6b2cc35f60fc2e7344a26bce478741efa86371fde6d566"
+  synced_at: "2026-09-19T16:31:31Z"
 ---
 
 # Configure the Interface

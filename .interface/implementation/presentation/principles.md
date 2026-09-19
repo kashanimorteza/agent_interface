@@ -63,7 +63,7 @@ The Theme resolves appearance for all of it — colours, typography, spacing, di
 
 Technical choices and defaults belong to Presentation Preferences. Presentation implementation applies those choices to the current project definition.
 
-Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

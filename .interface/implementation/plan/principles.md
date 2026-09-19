@@ -72,7 +72,7 @@ Plans are rebuilt as understanding changes rather than written once. Reconciliat
 
 Technical choices and defaults belong to Plan Preferences, which currently define none. The exact shape of the generated Plan configuration belongs to the Plan Schema.
 
-Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

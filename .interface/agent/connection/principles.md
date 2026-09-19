@@ -75,7 +75,7 @@ Technical MCP, LSP, channel, application, transport, and authentication-referenc
 
 Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Connection Preferences (formerly Extension Preferences).
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 

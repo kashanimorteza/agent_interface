@@ -56,7 +56,7 @@ When a name collides, or the target of a Command is unavailable, the Command rep
 
 Portable command names, aliases, and argument forms belong to Agent Command Preferences; Native mappings are resolved by Agent Sync from the selected Agent Native.
 
-Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
