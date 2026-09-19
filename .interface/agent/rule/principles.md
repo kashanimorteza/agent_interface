@@ -254,22 +254,59 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Rules guide behavior without replacing authority**
+
 - **Must** — keep Rules concise and refer to current owners
 - **Never** — copy or override project authorities in a Rule
+
+**Rule scope and conflict are explicit**
+
 - **Must** — declare Rule scope, activation, and conflict resolution
 - **Never** — resolve conflicts through arbitrary load order
+
+**Security boundaries use enforcement**
+
 - **Must** — place guaranteed boundaries in enforceable mechanisms
+
+**Presentation preserves technical substance**
+
 - **Must** — preserve exact technical substance under every Output Style
 - **Never** — let presentation hide evidence, warnings, uncertainty, or decisions
+
+**Interaction keeps work legible**
+
 - **Must** — communicate scope, progress, blockers, decisions, and outcomes appropriately
 - **Never** — fabricate certainty or conceal failure
+
+**Interaction requests only material decisions**
+
 - **Must** — ask the Human only for materially consequential unresolved choices
+
+**Completion is evidence-backed**
+
 - **Must** — support every completion claim with current proportional Evidence
 - **Never** — infer success from missing or inconclusive Evidence
+
+**Material execution is observable**
+
 - **Must** — make material execution, drift, health, blockers, and Human actions inspectable
 - **Never** — expose secrets or require hidden reasoning
+
+**Health claims use controlled status vocabulary**
+
 - **Must** — use declared statuses whose changes are established by Observation
+
+**Session state is not authoritative project state**
+
 - **Never** — treat transient Session state as authoritative project state
+
+**Resume revalidates before mutation**
+
 - **Must** — revalidate context, scope, permission, files, and work before resumed mutation
+
+**Session termination exposes unfinished work**
+
 - **Must** — expose unfinished and running work before completion or termination
 - **Never** — abandon unfinished work while reporting success

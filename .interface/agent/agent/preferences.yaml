@@ -5,7 +5,7 @@ meta:
   purpose: Agent Native selection, General and Specialized Agent Instance definitions, Role contracts, Coordination policy, capability configuration, lifecycle defaults, and native realizations. Absorbs
     the former Role and Coordination Preferences.
   standard: Agent Project Interface
-  version: '2.1'
+  version: '3.0'
   updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -14,13 +14,19 @@ policy:
   rule: This file is human-owned; runtime-discovered Agent Natives and Agent Instances are observed without being adopted as required declarations.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
+  absorbed: role/preferences.yaml (v1.2) and coordination/preferences.yaml (v1.2), merged verbatim under settings.roles and settings.coordination on 2026-09-17.
+  history: .interface/agent/agent/history.yaml
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: Use the selected Agent Native, instantiate the General Agent Instance, and expose each required Specialized Agent Instance through its declared native realization. Roles are assigned by stable
     key; coordination uses the smallest mechanism sufficient for the authorized work.
   selection: An undeclared Agent Native or Agent Instance remains an optional runtime capability and never becomes part of the required Agent Preferences automatically.
   version_resolution: Agent Native behavior and Native Instance Realization formats resolve from the selected Agent Runtime.
   matching: Match the Agent Native by runtime identity and Agent Instance Definitions by stable identity and assigned Role reference; resolve native realization details through Agent Sync.
-  absorbed: role/preferences.yaml (v1.2) and coordination/preferences.yaml (v1.2), merged verbatim under settings.roles and settings.coordination on 2026-09-17.
-  history: .interface/agent/agent/history.yaml
+
+
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
 - selected

@@ -205,13 +205,38 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**State records the active Workflow position**
+
 - **Must** — record the active Workflow position without making it an authorization gate
+
+**Every Target phase has aggregate operational State**
+
 - **Must** — keep aggregate Planning, Development, and Review progress by stable phase identifier
 - **Must** — distinguish `plan satisfied` from full Review `satisfied` when implementation is not yet available
 - **Never** — copy Target meaning or individual Task status, evidence, or history into State
+
+**Phase records reconcile without erasing progress**
+
 - **Must** — preserve existing progress while reconciling phase identity
+
+**Implementation State represents end-to-end orchestration**
+
 - **Must** — record truthful Implement progress and exclude disabled or unready phases from completion
+
+**Launch State records the observable runtime result**
+
 - **Must** — record Launch status and verified access points without secrets
+
+**History is append-only operational evidence**
+
 - **Must** — append concise operational History for every State-changing operation
+
+**Workflow operations remain repeatable**
+
 - **Must** — keep operations repeatable and make confirmed Reset outcomes agree with State
+
+**Blockers are critical stoppages**
+
 - **Must** — reserve Blockers and Open Questions for genuine critical conditions

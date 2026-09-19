@@ -113,10 +113,20 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**The Agent Runtime is replaceable**
+
 - **Must** — define Agent contracts independently of a concrete runtime
 - **Must** — preserve meaning, authority, and boundaries through Runtime Mapping
+
+**Runtime compatibility is explicit**
+
 - **Must** — have Agent Sync resolve every required capability through the selected Native or report it unavailable
 - **Never** — require a predeclared realization record or native directory for a Module declaration
 - **Never** — remove an undeclared native capability merely to realize an explicitly unused Component
 - **Never** — silently approximate an incompatible requirement
+
+**Every effective setting has an explainable source**
+
 - **Must** — make source scope, precedence, merge behavior, and effective origin explicit

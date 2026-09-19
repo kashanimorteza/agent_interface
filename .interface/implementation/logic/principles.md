@@ -216,25 +216,53 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Logic is a reusable library**
+
 - **Must** — Expose application Behaviour through one public Logic Interface.
 - **Never** — Start a process, own a transport schema, or depend on an API framework inside Logic.
+
+**Logic owns Behaviour**
+
 - **Must** — Validate domain state, apply operation and application-context rules, and return Application Outcomes.
 - **Never** — Let Behaviour depend on transport or storage, or restate a Model Intrinsic Rule or a Database guarantee.
+
+**One Public Interface exposes Logic's Operations**
+
 - **Must** — Publish exactly one Public Interface and let every consumer reach Logic only through it.
 - **Must** — Organize the Public Interface's Operations into Categories, each gathering the Operations that serve one kind of work.
 - **Must** — State for every Operation what it accepts, what it returns, and which Application Outcomes it can produce.
 - **Never** — Expose a Service, an Action, a connection, a session, or a storage detail through the Public Interface.
+
+**Logic is composed of internal Services, one per Component it talks to**
+
 - **Must** — Divide Logic into internal Services, each owning the work that concerns one Component Logic talks to and named after it.
 - **Must** — Carry out an Operation by composing Actions from one Service or several.
 - **Never** — Let a consumer name, reach, or depend on a Service, or let one Service do its work through another Component's Service.
+
+**Logic reaches another Component only through that Component's Public Interface**
+
 - **Must** — Reach every other Component only through that Component's Public Interface and its Operations, from the Service that owns the dependency.
 - **Must** — Forward grouped persistence work through Database's transaction boundary.
 - **Never** — Reach a Component by another route, hold a part of one its Public Interface does not publish, or expose engines, sessions, mappings, or schema details.
+
+**Domain meaning is imported, never restated**
+
 - **Must** — Import authoritative Domain Definitions through Model's Public Interface and use them as Model declares them.
 - **Never** — Copy or redefine a Domain Definition inside Logic.
+
+**External dependencies remain explicit**
+
 - **Must** — Consume an external service or cross-cutting capability only when Development selected it and Behaviour requires it, through the Service that owns that dependency.
 - **Never** — Select, provision, or operate an external service from Logic.
+
+**Runtime configuration stays private**
+
 - **Must** — Define Logic's configuration contract and validate every required value before use.
 - **Never** — Put a secret in source, an error, or a public interface, or take ownership of runtime values.
+
+**Logic verification covers Logic boundaries**
+
 - **Must** — Verify isolated Logic, each Service's calls into its Component's Public Interface, transaction behaviour, and every Operation with its inputs, result, and declared Application Outcomes, without a live consumer process.
 - **Never** — Push Logic verification into transport, presentation, or deployment, or persist a check in a Component outside the testing applicability list.

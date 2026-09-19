@@ -90,7 +90,14 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Every Tool has an atomic contract**
+
 - **Must** — give every Tool one atomic contract with effects and permission class
 - **Never** — hide an undeclared project workflow inside a Tool
+
+**Tool availability is observed**
+
 - **Must** — verify Tool availability from the intended role and scope
 - **Never** — infer availability from a catalog or provider claim

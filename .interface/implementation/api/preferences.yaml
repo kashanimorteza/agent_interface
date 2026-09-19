@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the API Component — API-owned boundary defaults and transport conventions."
   purpose: "Defaults for the executable HTTP boundary: contract, transport, queries, lifecycle, and cross-cutting behavior."
   standard: "Agent Project Interface"
-  version: "3.0"
+  version: "4.0"
   updated: "2026-09-19"
 
 
@@ -37,7 +37,7 @@ read_order:
 content_map:
   selected: "Empty. Development owns API's configurable profile and concrete selections."
   options: "Empty. Development catalogues API's concrete technical alternatives and Platform reference."
-  settings: "Technology-independent defaults for the API boundary: its internal parts, runtime shape, published contract, permitted interfaces, credential handling, request identity, query behavior, HTTP surface, lifecycle, cross-cutting behavior, and idempotency."
+  settings: "Boundary defaults grouped by the parts API Principles name in its Architecture — Application Bootstrap, Router, and Service, held under `parts` — plus the subjects that span the Component: runtime, published contract, permitted interfaces, credential handling, request identity, query behaviour, HTTP surface, lifecycle, boundary behaviour, and idempotency."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -52,7 +52,7 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
 
-    architecture:
+    parts:
       application_bootstrap:
         artifact: "API application bootstrap"
         creates_framework_application: true
@@ -138,7 +138,8 @@ content:
         path: "/ready"
       startup_validation: true
       graceful_shutdown: true
-    cross_cutting:
+    boundary_behavior:
+      owner_note: "Development decides that authentication, error handling, and logging apply to API; this group states only API's share of each at its own boundary."
       authentication:
         owner: "API Interface"
       error_handling:

@@ -225,28 +225,50 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Every Participating Component has one configurable Component Profile**
+
 - **Must** — Declare exactly one configurable Component Profile for every Participating Component.
 - **Must** — Give each profile a canonical identifier, name, unique repository-relative root, Component Type, role, and its applicable technical or Platform references.
 - **Never** — Fix configurable Component Profile values inside Principles or treat an internal item as a Participating Component.
 - **Must** — Keep Participating Components peer-owned and let each own its organization below its non-overlapping root.
+
+**Every Application Package is logically independent**
+
 - **Must** — Keep every Application Package cohesive and responsible for its implementation, Runtime Configuration, and Public Interface.
 - **Must** — Limit every authorized cross-package use to a declared Connection and the provider's Public Interface.
 - **Never** — Turn provider use into ownership of its internals or let Development prescribe private implementation structure.
+
+**Cross-Component use stays behind provider-owned Public Interfaces**
+
 - **Must** — Route every cross-Component interaction through a provider-owned Public Interface.
 - **Must** — Let each provider own its public entry points while each Connection records only consumer and provider.
 - **Never** — Access another Component's private implementation, storage, resources, or internal Runtime Configuration.
 - **Never** — Let Development define a provider's interface contents or realization method.
+
+**The declared Connection graph is direct, explicit, and acyclic**
+
 - **Must** — Declare every permitted direct dependency exactly once in a direct, non-transitive, acyclic Connection graph.
 - **Never** — Infer direct access, reverse dependency, or transport from an indirect path or provider response.
 - **Never** — Treat a Platform Reference as a runtime dependency Connection.
+
+**Components publish shared application metadata through the Application Manifest**
+
 - **Must** — Maintain the repository-level Application Manifest from Development Profiles, Connections, and public Component metadata.
 - **Must** — Include a Manifest section for every declared Component, even when it is empty.
 - **Never** — Put secrets, private implementation details, or undeclared dependencies in the Application Manifest.
+
+**Cross-cutting Capabilities are activated through applicability**
+
 - **Must** — Activate a Cross-cutting Capability only for unique canonical identifiers in its applicability list.
 - **Must** — Keep realization of an active Cross-cutting Capability inside each listed Component.
 - **Never** — Use a separate enabled flag or apply a Cross-cutting Capability to an unlisted Component.
 - **Must** — Apply Logging, Error Handling, Authentication, and Encryption by default to the five application Components: Model, Database, Logic, API, and Presentation.
 - **May** — Override a default Cross-cutting Capability explicitly in the Target.
+
+**Every Component has complete, safe, and operational documentation**
+
 - **Must** — Generate a README at each Component's `path` root, named by its Profile's `documentation` key, as part of generating the Component.
 - **Must** — Order the README from the general to the specific: overview, the Public Interface with every Category and Operation and a runnable example of each, setup, run, verification, troubleshooting — through each Component's own mechanism, stating explicitly when a part does not apply.
 - **Must** — Write it so that anyone who reads it understands how the Component works, with examples that run on the resolved technology.
@@ -254,15 +276,27 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Never** — Explain a Component's internal structure in its README, or leave a consumer needing it in order to use the Component.
 - **Must** — Keep every README consistent with public behavior and update it when public usage changes.
 - **Never** — Expose a usable secret in documentation or let a README copy, replace, or override an authoritative source.
+
+**Unstated Development decisions follow one precedence order**
+
 - **Must** — Resolve an unstated Development decision through Principles, Preferences, then compatible professional judgment.
 - **Never** — Let judgment override an applicable Principle or Preference.
 - **Must** — Leave Component-internal conceptual decisions to that Component's Principles and Preferences.
+
+**Runtime Configuration ownership remains inside its boundary**
+
 - **Must** — Keep each Application Package's Runtime Configuration contract and representation within its boundary.
 - **Must** — Let Platform deliver runtime values through documented inputs without redefining an owned contract.
 - **Never** — Store runtime secrets in Interface files or documentation or let one package directly modify another's Runtime Configuration.
+
+**Public Interface changes propagate through direct consumers**
+
 - **Must** — Review, update or regenerate when affected, and verify every direct consumer after a Public Interface changes.
 - **Must** — Continue propagation only when an affected consumer's own Public Interface changes.
 - **Never** — Trigger consumer work for a private compatible change or change Components outside the affected dependency path.
+
+**Development centralizes reusable technical items**
+
 - **Must** — Define each Language Item and Database Item once with its owned configurable technical details.
 - **Must** — Group language packages by Technical Purpose and resolve only the purposes applicable to the Target and Component responsibility.
 - **May** — Mark one package with `selected: true` when a Technical Purpose has multiple compatible package choices; a single package is the default without a marker.
@@ -270,6 +304,9 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable.
 - **Never** — Group a language package by Component identity or let a Technical Purpose transfer conceptual responsibility.
 - **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Launch Item definitions into Development.
+
+**Every Component offers its work as Operations on one Public Interface**
+
 - **Must** — Publish exactly one Public Interface per Component and offer its work there as Operations.
 - **Must** — Declare for every Operation what it accepts, what it returns, and which outcomes it can produce.
 - **Must** — Group a Component's Operations into Categories when their number makes grouping useful, with the Category grouping only.

@@ -167,24 +167,49 @@ Presentation derives operation-specific input and output representations from th
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Presentation has three internal layers**
+
 - **Must** — Presentation is formed from Presentation, Interaction Logic, and API Access, in that dependency direction
 - **Never** — a layer bypasses the layer immediately responsible for the next boundary
+
+**Presentation is component-based**
+
 - **Must** — Presentation is assembled from focused, composable, reusable Components
 - **Never** — a page or view absorbs unrelated interaction or application logic
+
+**Interaction Logic owns user-interface behaviour**
+
 - **Must** — Interaction Logic owns user-interface state, input, flows, and coordination between Components
 - **Never** — Interaction Logic implements authoritative application rules or persistence decisions
+
+**API Access is the only door to application data**
+
 - **Must** — application data and capabilities are reached only through the public API, through API Access
 - **Must** — when a machine-readable API description is unavailable, client representations derive from API-owned public definitions and documentation; unresolved integration ambiguities are reported without inventing API behaviour
 - **Never** — Presentation connects to Database, imports Logic implementation code, or bypasses Logic
 - **Never** — Presentation performs API communication directly
+
+**Domain Models are shared, never copied**
+
 - **Must** — every Presentation representation preserves the identity and meaning of the shared Models
 - **Must** — operation-specific input and output representations derive from the public API; credentials remain write-only inputs and are excluded from outputs
 - **Must** — partial input preserves the distinction between omission and explicit null and respects Logic-owned defaults and generation
 - **Never** — a client invents a field value to substitute for permitted omission, a default, or generation
 - **Never** — Presentation copies, redefines, or creates a competing definition of Model meaning
+
+**Presentation implements only Presentation-targeted project Behaviour**
+
 - **Must** — an outcome that depends on application rules is requested from Logic and presented as returned
 - **Never** — a Presentation Behaviour becomes a second implementation of authoritative Logic Behaviour
+
+**Appearance is governed by one coherent visual system**
+
 - **Must** — appearance is resolved once as one coherent Theme and consumed consistently
 - **Never** — a page or Component invents its own visual decisions
+
+**Presentation preserves its boundary**
+
 - **Never** — Presentation owns persistence, Database access, authoritative Behaviour, API implementation, or cross-layer composition
 - **Never** — a cross-cutting capability becomes an additional mandatory Presentation layer

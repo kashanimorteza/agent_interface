@@ -102,9 +102,19 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Every action begins from current Understanding**
+
 - **Must** — establish current Interface and role-required Target Understanding before acting
 - **Must** — load Agent Module sources only for explicit Agent Sync and use synchronized Runtime artifacts for every other role
 - **Never** — substitute memory or prior summaries for current authorities
+
+**Context distinguishes authority from assistance**
+
 - **Must** — retain each context source's origin and authority
 - **Never** — let instructions or Memory override owned sources
+
+**Context lifecycle preserves required instructions**
+
 - **Must** — preserve or reload required context across lifecycle transitions

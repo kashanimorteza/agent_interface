@@ -255,27 +255,67 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Every Agent Instance has one complete definition**
+
 - **Must** — select one Agent Native supplied by the selected Agent Runtime
 - **Must** — give every required Agent Instance one complete and stable Agent Instance Definition
 - **Never** — let the Agent Native change the contracts referenced by an Agent Instance Definition
+
+**Agent Instance and Role remain separate**
+
 - **Must** — map every Agent Instance to a declared Role while keeping Instance identity and Role responsibility separate
+
+**`general` is the General Agent Instance**
+
 - **Must** — provide `general` as the General Agent Instance accountable for the complete authorized outcome
 - **Never** — let General Agent Instance accountability broaden scope, Permission, or authority
+
+**Specialized Agent Instances remain bounded**
+
 - **Must** — keep every Specialized Agent Instance bounded to its supporting Role and required capabilities
 - **Never** — let delegation turn a Specialized Agent Instance into the General Agent Instance
+
+**Agent Native and Instance availability are proven in the selected Runtime**
+
 - **Must** — prove the Agent Native and every required Agent Instance are usable in the selected Runtime
 - **Never** — approximate an unavailable Agent Native or Agent Instance with broader authority
+
+**Every Agent Role has one bounded responsibility**
+
 - **Must** — give every Agent Role one complete bounded contract
 - **Never** — let discovered work expand a role's authority
+
+**Role ownership is unambiguous**
+
 - **Must** — assign each required responsibility one primary owner
 - **Never** — accept missing, duplicate, contradictory, or unreachable ownership
+
+**The Primary Role remains accountable**
+
 - **Must** — keep the Primary Role accountable for integration and the final claim
+
+**The primary execution role owns the requested outcome**
+
 - **Must** — provide one primary execution role accountable for the authorized request
 - **Never** — let primary accountability expand authority
+
+**`interface-reader` reports without changing the observed state**
+
 - **Must** — provide `interface-reader` for read-only current status reporting
 - **Never** — let `interface-reader` mutate, execute, repair, or invent project state
 - **Never** — let `interface-reader` enter or inspect the Agent Module
+
+**Delegation preserves scope and authority**
+
 - **Must** — delegate bounded objectives, context, outputs, evidence, and authority
 - **Never** — use delegation to bypass ownership or approval
+
+**Concurrent work has exclusive mutation ownership**
+
 - **Must** — coordinate mutation scopes and reconcile conflicts before integration
+
+**Runtime coordination state is not project intent**
+
 - **Never** — treat transient coordination state as project intent

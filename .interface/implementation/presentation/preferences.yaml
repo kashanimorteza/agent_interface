@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Presentation Component — supported technical choices and defaults used when a Presentation choice is unstated."
   purpose: "Defaults and supported technical profiles for the Presentation package and the Presentation, Interaction Logic, and API Access layers."
   standard: "Agent Project Interface"
-  version: "3.2"
+  version: "5.0"
   updated: "2026-09-13"
 
 
@@ -14,10 +14,16 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Presentation choices back into it."
   changed_by: "The human, directly. A missing critical technical choice is raised through State."
   precedence: "An explicit project value and every applicable Presentation Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: "Operations resolve unstated Presentation choices from these defaults and the current project definition when planning or implementing the work."
   selection: "Prefer a supported compatible entry. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Presentation stack; implementation records use the resolved concrete version."
   matching: "Match a selected key to the entry of that key in the matching options catalogue. An explicit project value takes priority over the selection recorded here."
+
+
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -29,7 +35,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Presentation language, user-interface library, application framework, package manager, API client, and Theme."
+  selected: "The Presentation language, user-interface library, application framework, package manager, API client, and Theme. The language and its package manager are not chosen here; they come from Presentation's Component Profile and Language Item in Development."
   options: "Supported languages, user-interface libraries, application frameworks, package managers, API clients, and Themes."
   settings: "Configuration grouped by the Presentation, Interaction Logic, and API Access layers."
 
@@ -39,27 +45,13 @@ content:
 
   # <!-------------------------------------------- selected -->
   selected:
-    language: "TypeScript"
     library: "React"
     framework: "Next.js"
-    package_manager: "npm"
     api_client: "Fetch"
     theme: "Default"
 
   # <!-------------------------------------------- options -->
   options:
-
-    languages:
-      TypeScript:
-        version: "latest"
-        naming:
-          variables: "camelCase"
-          functions: "camelCase"
-          classes: "PascalCase"
-          components: "PascalCase"
-          constants: "UPPER_SNAKE_CASE"
-          files: "kebab-case"
-          folders: "kebab-case"
 
     libraries:
       React:
@@ -72,10 +64,6 @@ content:
         library: "React"
         router: "App Router"
         run: "npm run dev"
-
-    package_managers:
-      npm:
-        version: "latest"
 
     api_clients:
       Fetch:

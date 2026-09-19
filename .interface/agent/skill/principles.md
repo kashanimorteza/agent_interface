@@ -132,19 +132,35 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Every Skill has one complete contract**
+
 - **Must** — give every Interface-owned Skill exactly one complete portable Contract conforming to the Skill Contract Schema
 - **Must** — keep shared rules in Principles, Skill-specific behavior in its Contract, and runtime execution details in the native implementation
 - **Must** — make every non-Sync native Skill self-contained so it never resolves a Contract or capability through the Agent Module
 - **Never** — let a native Skill implementation override or become a second authority for its Contract
+
+**Skill availability is proven**
+
 - **Must** — prove Skill availability through discovery and invocation
 - **Must** — make every delegated Skill invocable by its declared coordinator and verify the complete invocation chain before orchestration mutates state
 - **Never** — let coordinator invocation expand a delegated Skill's authority or permit unrelated automatic execution
+
+**Skill execution is safely repeatable**
+
 - **Must** — make repeated execution preserve valid work
 - **Never** — use repeatability to justify destructive regeneration
 - **Must** — treat a changed source fingerprint as proof of staleness and an unchanged one as no proof of conformance
+
+**A prepared file or directory may supply a Skill's native instruction body**
+
 - **Must** — materialize an exact matching prepared Skill file or directory tree into the selected Agent Native's required Skill folder while preserving its instruction meaning and internal relative paths
 - **Must** — keep the existing Contract- or provider-based realization path when a declared Skill has no prepared file
 - **Never** — infer a Skill from an unmatched file or directory, treat its presence as proof of Activation, or rewrite the Human-owned prepared source
+
+**Sync places Module content; it translates only where translation serves the Native**
+
 - **Must** — place each Module declaration as the Human authored it, adding only the Native's own mechanics around it
 - **Must** — restate a declaration in the Native's idiom only where that makes the concept land better in the Native, and only with its scope and obligations unchanged
 - **Never** — narrow, widen, or re-scope an obligation while realizing it; report such a difference as approximated with both wordings, never as synchronized

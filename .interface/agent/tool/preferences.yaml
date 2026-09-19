@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Agent Tool Component."
   purpose: "Declared Tool requirements, integration Tools, disabled Tools, and availability expectations."
   standard: "Agent Project Interface"
-  version: '1.2'
+  version: '2.0'
   updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,10 +13,16 @@ policy:
   rule: "This file is human-owned; observed runtime Tools are not automatically made project requirements."
   changed_by: "The human, directly."
   precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: "Use only Tools available to the active role and permitted for the requested action."
   selection: "An undeclared runtime Tool is optional; a missing required Tool is reported."
   version_resolution: "Runtime-provided Tool contracts resolve from the active runtime."
   matching: "Match portable Tool capability identities; Agent Sync resolves their Native names and providers."
+
+
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order: ["selected", "options", "settings"]

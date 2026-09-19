@@ -90,7 +90,14 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**A Command is an entry point, not a second workflow**
+
 - **Must** — map every Custom Command to one owning Capability Contract
 - **Never** — duplicate workflow, authority, or policy inside a Command
+
+**Command invocation is stable and discoverable**
+
 - **Must** — declare command names, arguments, ownership, scope, and availability
 - **Never** — guess through a collision or unavailable command target

@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the State Component. It currently defines no technical choices for operational progress, runtime state, or history."
   purpose: "Where technical choices owned by State would be recorded. State currently makes none."
   standard: "Agent Project Interface"
-  version: "1.1"
+  version: "2.0"
   updated: "2026-09-12"
 
 
@@ -14,10 +14,16 @@ policy:
   rule: "This file is human-owned and is read only when resolving State preferences."
   changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: "The empty content provides no State defaults; consumers continue with the other applicable authorities."
   selection: "There is nothing to select. A technical need that appears to belong to State is resolved by the Component that owns the technology, or raised through State when no Component owns it."
   version_resolution: "No entry here carries a version, because no technology is recorded."
   matching: "There is nothing to match. An empty section is an absence of defaults, not a wildcard."
+
+
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

@@ -176,17 +176,42 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Interface is read-only except for authorized Config records**
+
 - **Never** — modify any Interface path outside the operational Config boundary
 - **Must** — restrict Config writes to the exact records owned by the active Skill's responsibility
 - **Must** — obtain applicable authorization for materially consequential actions
+
+**Permission is least-privilege and deny-safe**
+
 - **Must** — grant every capability only its minimum required access
 - **Never** — let a lower layer or delegate broaden a deny boundary
+
+**Agent Module reads belong only to the explicit Agent Native Skill**
+
 - **Must** — reserve every Agent Module read for the exact prompt created by direct Human invocation of `agent-native`
 - **Never** — let any non-Human mechanism invoke the Agent Native Skill or create, inherit, borrow, or simulate its access grant
 - **Never** — use Agent Module sources as ordinary Understanding or as a fallback for Runtime drift
+
+**Secrets never enter project declarations or reports**
+
 - **Never** — store or expose secret values in project declarations, logs, or output
+
+**Unrelated Human work is preserved**
+
 - **Must** — preserve unrelated Human work and resolve destructive targets exactly
+
+**An Enforced Guarantee is deterministic and bounded**
+
 - **Must** — declare every Enforced Guarantee's Event, effects, failure policy, and blocking behavior, leaving matcher, handler, and timeout to the Native block
+
+**Guarantees fail visibly and safely**
+
 - **Must** — make a guarantee's failure visible and give it an explicit failure policy
 - **Must** — fail closed for security and integrity controls
+
+**A guarantee's authority does not expand on trigger**
+
 - **Never** — let an Event expand a guarantee's authority

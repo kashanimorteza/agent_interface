@@ -155,12 +155,31 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Every Integration declares its trust boundary**
+
 - **Must** — declare every Integration's provider, data, actions, scope, authentication, and trust boundary
 - **Never** — store credentials or secret values in project declarations
+
+**Connection is proven before dependence**
+
 - **Must** — prove trust, compatibility, authentication, connection, and usability
 - **Never** — treat validation as authority to activate an Integration
+
+**External effects retain external authorization**
+
 - **Never** — convert project permission into external-system authority
+
+**Extension provenance and contents are explicit**
+
 - **Must** — declare Extension identity, provenance, version, contents, permissions, dependencies, and trust
+
+**Extension lifecycle is controlled**
+
 - **Must** — authorize and verify every material Provisioning change
 - **Never** — treat discovery as authorization to provision
+
+**Packaged capabilities retain their owners**
+
 - **Must** — preserve each packaged capability's contract and owner

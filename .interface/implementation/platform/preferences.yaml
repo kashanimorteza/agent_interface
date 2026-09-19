@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Platform Component — named Launch Items with per-Component runtime requirements."
   purpose: "Technical defaults for selecting and applying a complete launch definition to the Target."
   standard: "Agent Project Interface"
-  version: "4.3"
+  version: "5.0"
   updated: "2026-09-14"
 
 
@@ -14,10 +14,16 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Platform choices back into it."
   changed_by: "The human, directly. A missing critical Platform choice is raised through State."
   precedence: "An explicit Target value and every applicable Platform Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: "Resolve selected.launch to its exact entry under options.launches, then apply each selected Component's runtime requirements as one coherent launch definition. Do not infer undeclared actions and do not write resolved values back into this file."
   selection: "Use the selected Launch Item when the Target leaves the launch method unstated. For an explicit unlisted or incompatible need, select the smallest compatible definition and record the consequential choice; ask only when no safe compatible definition can be established."
   version_resolution: "Preserve every explicit concrete version. Resolve an unpinned version to a concrete compatible stable version when a versioned package or tool is added to a Launch Item."
   matching: "Match selected.launch to its exact key under options.launches and each Component's runtime requirements by its exact component key."
+
+
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

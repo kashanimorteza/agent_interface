@@ -298,37 +298,86 @@ If the Target declares Initial Data, Database is not ready until the structure h
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Database is an independent package with one public boundary**
+
 - **Must** — Keep Database as an independent package with one documented public boundary.
 - **Never** — Let consumers depend on private persistence resources or treat Migration as a public runtime interface.
+
+**Database has three ordered internal layers**
+
 - **Must** — Preserve the order Database Interface → Data Logic and Mapping → Storage Adapter → Engine.
 - **Never** — Let an internal layer bypass its next boundary or let consumers bypass Database Interface.
+
+**Persistence preserves Model meaning without redefining it**
+
 - **Must** — Preserve Model meaning while adding only persistence representation, durability, and enforcement.
 - **Never** — Invent domain definitions, rules, records, or application-context behavior in Database.
+
+**Database remains independent of its Engine**
+
 - **Must** — Keep the portable contract independent of a particular Engine and isolate extensions.
 - **Never** — Present an Engine-specific guarantee as portable without declaring its limits.
+
+**The complete Database is reproducible from the repository**
+
 - **Must** — Keep the complete reproducible Database structure, history, and initial data in the repository.
 - **Never** — Depend on undocumented server state or manual structural work.
+
+**Storage changes use ordered and recoverable Migrations**
+
 - **Must** — Record every storage change as an ordered Migration with safe reversal or explicit recovery.
 - **Never** — Change storage objects directly from application code or apply an unverified Migration.
+
+**Database owns the complete persistence responsibility**
+
 - **Must** — Keep all persistence ownership inside Database and all other responsibilities in their owning Components.
+
+**All data access uses one generic Database Interface**
+
 - **Must** — Route all persistent data access through one generic Model-driven Database Interface.
 - **Must** — Support the shared `search` operation through the generic Model-driven Database Interface when the Model exposes it.
 - **Must** — Use is_active with enable or disable for activation when that field exists.
 - **Never** — Require untyped Model-name strings, expose connections, or let controlled commands bypass protections.
+
+**Database Instances are explicit and selectable**
+
 - **Must** — Give every Instance a stable identity, publish its Registry, and use exactly one explicit default.
 - **Never** — Expose raw connections or secrets through the Registry.
+
+**Storage mappings and constraints remain traceable to Models**
+
 - **Must** — Keep every persistent mapping and storage constraint traceable to its source Model.
 - **Never** — Turn a non-persistent Model into stored structure or silently weaken a persistence rule.
+
+**Relationship mappings preserve resolved meaning**
+
 - **Must** — Preserve resolved relationship cardinality, optionality, roles, and required physical enforcement.
 - **Never** — Let physical mapping defaults override Model meaning.
+
+**Credential storage protects values at rest**
+
 - **Must** — Keep connection credentials in Database's runtime configuration file, beside the Instance that uses them.
 - **Must** — Apply an approved protected at-rest treatment to every persisted credential field.
 - **Never** — Expose credential representations, keys, connection settings, or secret values through Database outputs.
+
+**Declared Initial Data preserves its meaning**
+
 - **Must** — Import declared initial data repeatably and preserve its Model meaning.
 - **Never** — Source initial data from Database Preferences.
+
+**Related operations share an explicit Transaction boundary**
+
 - **Must** — Provide an explicit Transaction boundary with atomic commit and rollback per Instance.
 - **Never** — Imply cross-Instance atomicity or silently duplicate non-idempotent work through retries.
+
+**Portability and schema integrity remain explicit**
+
 - **Must** — Classify portability, isolate Engine-specific extensions, and detect schema drift.
 - **Never** — Repair drift with ad-hoc structural commands or hide compatibility impact.
+
+**Persistence security and observability remain bounded**
+
 - **Must** — Apply least privilege, protected observability, and signals for security-relevant persistence outcomes.
 - **Never** — Treat logs, backups, exports, or diagnostics as exceptions to data protection or take ownership of application authorization.

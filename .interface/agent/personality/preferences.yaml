@@ -4,7 +4,7 @@ meta:
   path_note: The Preferences layer of the Agent Personality Component.
   purpose: Declared personalities, their definition files, the Actions each performs, and the models each prefers in priority order.
   standard: Agent Project Interface
-  version: '0.3'
+  version: '1.0'
   updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,11 +13,17 @@ policy:
   rule: This file is human-owned; observed runtime behavior is never written back as a personality choice.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: Only explicit Agent Sync reads these Preferences and its definition files; every other consumer uses the synchronized Runtime realization.
   selection: Use a declared Personality only within the active Role, Permission, and request.
   version_resolution: Model identities resolve against the selected Agent Runtime; an unavailable model falls through to the next declared one.
   matching: Match Personalities by stable key and definition file; Agent Sync resolves their Native realization.
   definition_structure: Every definition file follows .interface/foundation/schema/personality.md. Decided 2026-09-17.
+
+
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

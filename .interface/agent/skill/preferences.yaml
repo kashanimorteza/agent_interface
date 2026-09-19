@@ -5,7 +5,7 @@ meta:
   purpose: Interface-owned Skill Contracts, optional prepared Skill files or directories, and prepared and installed provider Skill declarations. Native mappings are
     resolved by Agent Sync.
   standard: Agent Project Interface
-  version: '2.2'
+  version: '3.0'
   updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -14,6 +14,10 @@ policy:
   rule: This file is human-owned; Skill execution and activation state are observed without writing here.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: 'Only the explicit Agent Native Skill reads these Preferences: in its sync modes it resolves portable Contracts and materializes self-contained native Constructed Skills; in its install mode
     it resolves prepared content and provider declarations and materializes Prepared and Installed Skills. Every other consumer uses the resulting Runtime artifacts.'
   selection: Use an undeclared optional Skill only when relevant, compatible, and within current authority.
@@ -30,6 +34,8 @@ policy:
   personality: 'A core Skill may name the Personality it works with (personality: <key from personality Preferences>); Agent Sync carries that Personality''s definition into the native Skill. All are null
     until the Personality definitions are complete (Human decision, 2026-09-17).'
   loop_owner: Implement owns the Planning → Developing → Reviewing loop; Reviewing records Findings and invokes nothing. Decided 2026-09-17.
+
+
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

@@ -4,7 +4,7 @@ meta:
   path_note: The Preferences layer of the Agent Runtime Component.
   purpose: The selected runtime, provider, models, effort, compatibility choices, and the selected Runtime's own configuration-source precedence (formerly Settings).
   standard: Agent Project Interface
-  version: '2.0'
+  version: '3.0'
   updated: '2026-09-17'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,13 +13,19 @@ policy:
   rule: This file is human-owned; runtime resolution is observed without being written back as a project choice.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
+  absorbed: 'settings/preferences.yaml (v1.1) merged on 2026-09-17: its source precedence, merge behavior, and reconcile policy are Claude Code mechanics and live under settings.native.claude.configuration;
+    its general Principles 2-5 became Agent Preferences Schema rules.'
+  history: .interface/agent/runtime/history.yaml
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: Consumers identify the selected Runtime; explicit Agent Sync learns and applies the Native Runtime's own mechanisms.
   selection: Use a listed compatible runtime; report incompatibility rather than inventing equivalent behavior.
   version_resolution: Runtime-provided values resolve from the active installation without changing this file.
   matching: Runtime identity matches the selected Runtime exactly.
-  absorbed: 'settings/preferences.yaml (v1.1) merged on 2026-09-17: its source precedence, merge behavior, and reconcile policy are Claude Code mechanics and live under settings.native.claude.configuration;
-    its general Principles 2-5 became Agent Preferences Schema rules.'
-  history: .interface/agent/runtime/history.yaml
+
+
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
 - selected

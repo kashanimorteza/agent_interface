@@ -82,7 +82,7 @@ Model
 
 **Declaration Vocabulary** is the single set of terms every Domain Definition states itself in — logical type, length and precision, nullability, default, identity, uniqueness, relationship and cardinality. It belongs to no language, package, or Engine, and it is carried by the same Domain Definition application code uses rather than by a separate artifact beside it.
 
-**Model Foundation** supplies what every concrete Domain Definition shares: validation, Serialization, and the publishing of the Declaration Vocabulary. It provides mechanism only. It never owns, injects, or requires a Field or a Domain Relationship, and it fixes no particular realization form.
+**Model Foundation** supplies what every concrete Domain Definition shares: validation, Serialization, and the publishing of the Declaration Vocabulary. It provides mechanism only, and stands in a module of its own beside the definitions rather than above them.
 
 **Public Interface** is the one surface through which a consumer reaches a Domain Definition, its declaration, and its Serialization pair. A consumer never depends on anything private behind it, and its evolution follows Development's change-propagation rules.
 

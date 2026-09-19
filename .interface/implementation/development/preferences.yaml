@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
   purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
-  version: "6.1"
+  version: "7.0"
   updated: "2026-09-19"
 
 
@@ -14,11 +14,17 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
   changed_by: "The human, directly. A missing critical Development choice is raised through State instead of being written into this file."
   precedence: "An explicit Target value and every applicable Development Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: "Resolve each Component Profile first. Match its language and database references to their exact option entries and its platform reference, when present, to the exact Platform-owned Launch Item. Within a selected Language Item, resolve only the package purposes required by the Target and the Component's conceptual responsibilities; no purpose is bound to a Component identifier. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
   selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
   matching: "Match Components by canonical identifier; languages and databases by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
   additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the resolved dependency with the implementation and in the README; a consequential recurring choice is added by the human under the relevant Language Item and Technical Purpose."
+
+
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

@@ -4,7 +4,7 @@ meta:
   path_note: The Preferences layer of the Agent Permission Component.
   purpose: Permission mode, allow/ask/deny rules, sandboxing, protected sources, enforced guarantees (formerly Hooks), trust, authentication, and secrets.
   standard: Agent Project Interface
-  version: '2.0'
+  version: '3.0'
   updated: '2026-09-17'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,14 +13,20 @@ policy:
   rule: This file is human-owned and contains no credential or secret values.
   changed_by: The human, directly.
   precedence: Human authorization, every applicable Principle, deny rules, and stricter managed controls take precedence.
+  absorbed: 'hook/preferences.yaml (v1.1), merged on 2026-09-17: its project Hooks became settings.enforced guarantees, and its Claude-specific events, handler types, and hook mechanics moved under settings.native.claude.hooks.'
+  history: .interface/agent/permission/history.yaml
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: Resolve permissions using deny-safe least privilege before executing a protected action.
   selection: Request authorization only when an applicable ask boundary or material undecided action requires it.
   version_resolution: Permission syntax and sandbox facilities resolve from the selected runtime.
   matching: Match portable Tool and resource capability patterns; Agent Sync resolves their Native syntax, and deny and stricter rules win conflicts.
-  absorbed: 'hook/preferences.yaml (v1.1), merged on 2026-09-17: its project Hooks became settings.enforced guarantees, and its Claude-specific events, handler types, and hook mechanics moved under settings.native.claude.hooks.'
-  history: .interface/agent/permission/history.yaml
   probes: Each enforced guarantee carries, per Agent Native, at least one behavioral probe (native.<agent>.probe) that Agent Sync runs during Verification; a failed probe means the guarantee is not realized.
     Decided 2026-09-17.
+
+
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

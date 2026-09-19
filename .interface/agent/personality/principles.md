@@ -90,7 +90,14 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Every Personality is one bounded stance**
+
 - **Must** — give every Personality one identity, stance, and declared set of Actions
 - **Never** — let a Personality perform an undeclared Action or gain authority from one
+
+**Model Preference is a Preferences file choice**
+
 - **Must** — declare Model Preference in the Preferences, in priority order
 - **Never** — place model or provider names in Principles or definition prose

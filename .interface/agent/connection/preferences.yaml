@@ -5,7 +5,7 @@ meta:
   purpose: External services (MCP, LSP, channels, application connectors) and installable packages (plugins, marketplaces, capability packages), their trust, and their lifecycle. Absorbs the former Integration
     and Extension Preferences.
   standard: Agent Project Interface
-  version: '2.0'
+  version: '3.0'
   updated: '2026-09-17'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -14,12 +14,18 @@ policy:
   rule: This file is human-owned and contains references only, never credential values; discovery never authorizes provisioning.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
+  absorbed: integration/preferences.yaml (v1.0) under settings.services and extension/preferences.yaml (v1.0) under settings.packages, merged verbatim on 2026-09-17.
+  history: .interface/agent/connection/history.yaml
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: Validate declaration, trust, compatibility, authentication, connection, and usability before dependence. Reconcile declared Extensions with runtime installation and activation state.
   selection: Do not connect, trust, authenticate, or mutate an external system without applicable authorization. Preview provenance, permissions, dependencies, and capability changes before Provisioning.
   version_resolution: Protocol and provider versions resolve from compatible declared entries. Unpinned Extensions resolve to the latest compatible provider version at activation time.
   matching: Match provider-qualified integration identities and exact server or channel keys. Match plugins by full plugin-at-marketplace identity and marketplaces by stable source key.
-  absorbed: integration/preferences.yaml (v1.0) under settings.services and extension/preferences.yaml (v1.0) under settings.packages, merged verbatim on 2026-09-17.
-  history: .interface/agent/connection/history.yaml
+
+
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
 - selected

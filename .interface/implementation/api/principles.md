@@ -7,8 +7,10 @@
    - **[Purpose](#purpose)**
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Documentation](#documentation)**
+6. **[Principles](#principles)**
    - **[API is an independent executable](#api-is-an-independent-executable)**
    - **[Application Bootstrap owns API composition](#application-bootstrap-owns-api-composition)**
    - **[Router owns the HTTP boundary](#router-owns-the-http-boundary)**
@@ -23,7 +25,7 @@
    - **[Queries are bounded and explicit](#queries-are-bounded-and-explicit)**
    - **[Lifecycle is observable](#lifecycle-is-observable)**
    - **[API verification covers the boundary](#api-verification-covers-the-boundary)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -68,6 +70,25 @@ Around all of it sits the process: the Application Bootstrap composes and wires 
 
 <br>
 
+## Architecture
+
+```text
+API
+├── Application Bootstrap     ← the Composition Root that starts and wires the process
+├── Router                    ← the HTTP boundary: routes, transport shapes, error mapping
+└── Service                   ← the layer between Router and Logic, free of transport
+```
+
+**Application Bootstrap** creates the application of the selected framework and wires the public transport parts together: it registers Routers, installs middleware and exception handlers, and binds authentication. It owns wiring and nothing else — no route, no transport shape, no application decision.
+
+**Router** owns the HTTP boundary. It declares routes, validates the transport data arriving on them, produces the transport data leaving on them, and maps an Application Outcome to its HTTP form. It never reasons about the domain and never reaches past Service.
+
+**Service** sits between Router and the Logic Interface. It exposes what API offers as operations and coordinates the calls that fulfil one, without knowing which transport carried the request or which framework is in use. It holds no application Behaviour of its own; that belongs to Logic.
+
+Dependencies run in that order — Bootstrap wires them, Router calls Service, Service calls Logic — and no part reaches past the one that owns the next boundary.
+
+<br>
+
 ## Relationships
 
 - **Consumes Logic** — invokes application Behaviour through Logic's Public Interface, and reaches the application no other way.
@@ -79,6 +100,16 @@ Around all of it sits the process: the Application Bootstrap composes and wires 
 <br>
 
 API-owned transport conventions and boundary defaults belong to API Preferences. Concrete API technology, package, framework, and runtime selections belong to the API Component Profile in Development Preferences. Implementation applies those sources to the current Target.
+
+<br>
+
+## Documentation
+
+API's documentation is written for a consumer outside this project, who has the published boundary and nothing else — no source, no Logic, no Database.
+
+It covers every operation the boundary publishes: what each one is for in the consumer's terms, what it accepts and in what shape, what it returns, which failures it can answer with and how each appears, and how a request is authenticated. Paging, filtering, and ordering are shown where an operation offers them, and every example is one a reader can send as written.
+
+It explains nothing behind the boundary. Which Logic Operation served a request, which Service coordinated it, how Database stored the result, and which framework is in use are not a consumer's concern, and naming them would invite a dependency the boundary exists to prevent. A reader must finish able to use every published operation correctly, including what to do with each failure, without knowing what happens after the request is accepted.
 
 <br>
 
@@ -192,27 +223,70 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**API is an independent executable**
+
 - **Must** — Own the API process, its startup, routing, schemas, serialization, versioning, and machine-readable contract.
 - **Never** — Own application Behaviour, persistence, Model definitions, or Logic internals.
+
+**Application Bootstrap owns API composition**
+
 - **Must** — Compose the running application in one Application Bootstrap that wires and configures only.
 - **Never** — Put business Behaviour in composition, or hard-code runtime values as application meaning.
+
+**Router owns the HTTP boundary**
+
 - **Must** — Keep routes, HTTP inputs and outputs, transport validation, status codes, and error mapping inside Router.
 - **Never** — Access Database from Router, import private Logic implementation, or put business rules in handlers.
+
+**Service mediates API operations**
+
 - **Must** — Let Service mediate between Router and Logic, preparing data at the boundary and coordinating calls.
 - **Never** — Import transport types or framework concepts into Service, or reimplement Behaviour there.
+
+**API consumes explicit Public Interfaces**
+
 - **Must** — Consume Model and Logic only through their Public Interfaces.
 - **Never** — Reach Database from API, or restate a Domain Definition that already exists.
+
+**API exposes Target capabilities**
+
 - **Must** — Publish every capability the Target selects for external consumers.
 - **Never** — Reduce the external contract to storage operations.
+
+**API owns the external contract**
+
 - **Must** — Keep the machine-readable contract consistent with the implemented routes.
+
+**Transport validation does not replace domain validation**
+
 - **Must** — Validate transport shape at the boundary and leave state and Behaviour validation to Logic.
 - **Never** — Treat a valid request shape as a valid domain operation.
+
+**Credentials never leave the API boundary**
+
 - **Never** — Return, record, or render a credential value anywhere, including errors, logs, diagnostics, and examples.
+
+**Outcomes and failures are mapped safely**
+
 - **Must** — Map declared Application Outcomes to the public contract, and unexpected failures to safe generic responses with a non-secret request identifier.
 - **Never** — Let internal exceptions or persistence details cross the boundary.
+
+**Identity and authorization remain separate**
+
 - **Must** — Establish validated identity in Request Context when authentication is enabled.
 - **Never** — Decide authorization at the transport boundary or treat transport validity as permission.
+
+**Queries are bounded and explicit**
+
 - **Must** — Allowlist and bound every list, filter, and sort parameter.
 - **Never** — Let an API parameter become a direct storage command.
+
+**Lifecycle is observable**
+
 - **Must** — Distinguish health from readiness, validate configuration and dependencies before readiness, and shut down within the Platform deadline.
+
+**API verification covers the boundary**
+
 - **Must** — Verify route contracts, schemas, outcomes, credential exclusion, lifecycle, request context, and contract-to-runtime consistency.

@@ -4,7 +4,7 @@ meta:
   path_note: The Preferences layer of the Agent Rule Component.
   purpose: The declared Agent Rules, each with its complete definition file, plus the conduct settings of the former Interaction, Observability, and Session Components.
   standard: Agent Project Interface
-  version: '2.1'
+  version: '3.0'
   updated: '2026-09-18'
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,12 +13,18 @@ policy:
   rule: This file is human-owned; Rules guide behavior but never replace enforceable Permission or Hook controls.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
+  absorbed: interaction/preferences.yaml (v1.0), observability/preferences.yaml (v1.0), session/preferences.yaml (v1.0), merged verbatim under settings.interaction, settings.observability, settings.session on 2026-09-17.
+  history: .interface/agent/rule/history.yaml
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: Load global Rules at startup and scoped Rules only for matching work.
   selection: Add a Rule only for stable recurring guidance; task-specific procedures belong to Skills.
   version_resolution: Rule format follows the selected runtime mapping.
   matching: Match Rules by stable key and exact scope conditions.
-  absorbed: interaction/preferences.yaml (v1.0), observability/preferences.yaml (v1.0), session/preferences.yaml (v1.0), merged verbatim under settings.interaction, settings.observability, settings.session on 2026-09-17.
-  history: .interface/agent/rule/history.yaml
+
+
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
 - selected

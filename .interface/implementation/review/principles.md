@@ -153,19 +153,41 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Review always assures the Plan before available implementation**
+
 - **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging available implementation
 - **Must** — record Plan Assurance and Implementation Assurance separately, using `not reviewed` when implementation does not exist
 - **Must** — bind every Plan Assurance outcome to the exact Plan Revision it examined
 - **Never** — Review defines a new requirement, or treats silence in the baseline as one
+
+**Review passes report; reconciliation stays with the owning operation**
+
 - **Must** — a Review pass changes nothing it judges; Plan reconciliation is delegated to Planning and followed by a new independent pass
 - **Never** — Review writes Plan content, repairs implementation, changes Target, or changes Task progress
+
+**Review is independent of how the work was done**
+
 - **Must** — Review observes the required condition for itself and judges whether the implementer's check establishes it
 - **Never** — Review accepts that a check passed as proof that the condition holds
+
+**Every Finding is grounded in an observation**
+
 - **Must** — every Finding states what was expected, what was observed, and the exact evidence that shows it
 - **Never** — an untraceable statement is recorded as a Finding
+
+**Missing evidence is a Finding, not an absence**
+
 - **Must** — an acceptance criterion with nothing observable behind it is recorded as a Finding of missing evidence
 - **Never** — Review reconstructs missing evidence, infers it, or accepts an explanation in its place
+
+**A Finding is required work no activity covers**
+
 - **Must** — required work that no planned activity covers is recorded as a Finding of the phase
 - **Never** — Review plans the work that would fill a gap it found
+
+**A Finding outlives the session that raised it**
+
 - **Must** — every Finding is stored with its Review and keeps its state until resolved or accepted
 - **Never** — Review reopens Tasks, raises Blockers for another Component, or changes the active Workflow mode

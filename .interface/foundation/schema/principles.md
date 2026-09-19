@@ -323,17 +323,24 @@ They are ordered so that the ones establishing the Component's own shape come be
 
 ## At a Glance
 
-The closing section: every obligation in the file, one line each, in Principle order.
+The closing section: every obligation in the file, one line each, gathered under the Principle it comes from.
 
 ```markdown
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**<Principle title>**
+
 - **Must** — <the obligation in one line>
 - **Never** — <the prohibition in one line>
+
+**<Principle title>**
+
 - **Must** — <the obligation in one line>
 ```
 
-Each line is labelled **Must** or **Never**. The lines follow the order of the Principles they come from, and a Principle's lines stay together, so a reader can trace a line back by position. A Principle contributes as many lines as it has distinct obligations, and every obligation in the file appears exactly once in this list.
+Each line is labelled **Must** or **Never** and sits under its own Principle's title, so a reader traces a line back by reading the heading above it. The groups follow the order of the Principles themselves. A Principle contributes as many lines as it has distinct obligations, and every obligation in the file appears exactly once in this list.
 
 This section is derived, never authoritative, and it is rewritten whenever a Principle changes. When the list and a Principle disagree, the Principle is correct.
 

@@ -143,16 +143,35 @@ Every Principle below is mandatory.
 
 ## At a Glance
 
+Every obligation in the file, under the Principle it comes from.
+
+**Platform remains separate from developed Components**
+
 - **Must** — Operate every developed Component only through its public boundary while the Component retains ownership of its internals and Runtime Configuration contract.
 - **Never** — Let Platform redefine a developed Component or directly depend on its private implementation.
+
+**Every Launch Item is one coherent selectable definition**
+
 - **Must** — Represent every supported launch method as one uniquely named Launch Item and select one default.
 - **Never** — Apply runtime requirements that are incompatible with the selected Launch Item or Target.
+
+**Each Launch Item declares Component Runtime Requirements**
+
 - **Must** — Declare runtime requirements directly under each applicable Component.
 - **Never** — Define operational values outside the owning Component's requirement block.
+
+**Component Runtime Requirements are explicit and scoped**
+
 - **Must** — Group runtime requirements by Component scope and explicitly declare required values.
 - **Must** — Allow a Component requirement block to remain empty when its scope requires no values.
 - **Never** — Let a runtime requirement define application behavior, modify private implementation, or imply an undeclared action.
+
+**Launch delivers required Bindings safely**
+
 - **Must** — Define and deliver every required Binding to its consuming public boundary while keeping secret values in secret sources.
 - **Never** — Redefine a Component's internal Binding handling or record a secret value in Interface files or documentation.
+
+**Launch reports only verified Access Points**
+
 - **Must** — Verify the composed Target and report every usable Access Point.
 - **Never** — Report an unverified address as available or expose a credential or secret through an Access Point.
