@@ -235,27 +235,27 @@ The Registry is derived from the configured Instance collection, and the number 
 
 **Why:** Named Instances let consumers choose a database by purpose without learning how it connects.
 
-**Boundary:** The Registry exposes no raw connection objects or secret values. Instances, their connection settings, and their credentials are owned by Database alone; Platform operates the result without owning or supplying them.
+**Boundary:** The Registry exposes no raw connection objects or secret values. Instances, their connection settings, and their credentials are owned by Database alone and are supplied by no other Component.
 
 <br>
 
 ### Every stored structure is traceable to a Model declaration
 
-**Rule:** Every persistent Model has a traceable storage mapping, and every resolved mapping records the Model it came from and the declaration it rests on. An explicit mapping takes precedence over a derived one. Database enforces the storage-relevant declarations a Model publishes — identity, generated identity, uniqueness, composite constraints, referenced-record existence, and resolved field properties — and reuses Model validation for anything decidable from a single record's own data. A relationship keeps the cardinality and optionality Model resolved, including one-to-one, one-to-many, and many-to-many; physical references, association storage, uniqueness, and referential actions are added only to preserve that meaning, and an explicit reference field is reused rather than duplicated. A Model declared non-persistent never becomes a stored structure. A missing or ambiguous declaration is reported rather than inferred from a name or from documentation.
+**Rule:** Every persistent Model has a traceable storage mapping, and every resolved mapping records the Model it came from and the declaration it rests on. An explicit mapping takes precedence over a derived one. Database enforces the storage-relevant declarations a Model publishes — identity, generated identity, uniqueness, composite constraints, referenced-record existence, and resolved field properties — and reuses Model validation for anything decidable from a single record's own data. A relationship keeps the cardinality and optionality Model resolved, including one-to-one, one-to-many, and many-to-many; physical references, association storage, uniqueness, and referential actions are added only to preserve that meaning, and an explicit reference field is reused rather than duplicated. Database stores only the Models declared persistent: a Model declared non-persistent never becomes a stored structure, and persistence is never inferred from a Model's existence, name, or the presence of an identity field. A missing or ambiguous declaration is reported rather than inferred from a name or from documentation.
 
 **Why:** Stored data stays valid under concurrent writes, and every guarantee in the database can be traced back to the meaning that asked for it — which is what makes a schema explainable and a change safe.
 
-**Boundary:** Database does not turn an application-context rule into a storage constraint. Model resolves logical field properties and relationship optionality first; Database Preferences supply only the physical mapping choices Model left unstated and never override Model meaning.
+**Boundary:** Database does not turn an application-context rule into a storage constraint. It takes logical field properties and relationship optionality as Model resolved them, and Database Preferences supply only the physical mapping choices Model left unstated and never override Model meaning.
 
 <br>
 
 ### Credential storage protects values at rest
 
-**Rule:** Connection credentials are supplied to Database by its environment and are never written in source, and Database is their only owner. Persisted credential fields — a credential the Target stores in a Model — are a separate concern: they are classified before persistence and resolve to an approved at-rest treatment: verification-only credentials use a one-way transformation, recoverable secrets use authenticated protection or a managed secret store, and other sensitive data follows its declared protection.
+**Rule:** Connection credentials are supplied to Database by its environment and are never written in source, and Database is their only owner. Persisted credential fields — a credential the Target stores in a Model — are a separate concern: they are classified before persistence and resolve to an approved at-rest treatment: verification-only credentials use a one-way transformation, recoverable secrets use authenticated protection or a managed secret store, and other sensitive data follows its declared protection. Database applies the classification and at-rest treatment the Model declares, rejects a persisted credential whose declared treatment is missing or unsupported rather than storing it, and infers neither of them from a field name.
 
 **Why:** A credential written into source is copied wherever the source goes and outlives every attempt to change it, and inconsistent per-caller treatment of persisted credentials weakens storage protection.
 
-**Boundary:** Database never exposes credential representations, connection settings, keys, or secret values through its public interface, logs, exports, documentation, or Interface records. Platform delivers required secret Bindings without publishing them to other layers.
+**Boundary:** Database never exposes credential representations, connection settings, keys, or secret values through its public interface, logs, exports, documentation, or Interface records.
 
 <br>
 
@@ -353,6 +353,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Keep every persistent mapping and storage constraint traceable to its source Model.
 - **Never** — Turn a non-persistent Model into stored structure or silently weaken a persistence rule.
+- **Never** — Infer persistence from a Model's existence, name, or identity field.
 - **Must** — Preserve resolved relationship cardinality, optionality, roles, and required physical enforcement.
 - **Never** — Let physical mapping defaults override Model meaning.
 
@@ -360,6 +361,8 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Take connection credentials from the environment and never write one in source.
 - **Must** — Apply an approved protected at-rest treatment to every persisted credential field.
+- **Must** — Reject a persisted credential whose declared at-rest treatment is missing or unsupported, rather than storing it.
+- **Never** — Infer a credential classification or its at-rest treatment from a field name.
 - **Never** — Expose credential representations, keys, connection settings, or secret values through Database outputs.
 
 **Declared Initial Data preserves its meaning**

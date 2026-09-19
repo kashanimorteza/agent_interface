@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-preferences"
-  version: "6.0"
+  version: "6.1"
   purpose: "The common structure every Implementation Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, and optional Agent Skill associations without deciding Target-specific meaning."
 
 # <!--------------------------------------------------------------------------------- Frame -->
@@ -133,20 +133,17 @@ sections:
       subordinate_profiles:
         required: false
         purpose: "Choices whose meaning and availability depend on this parent option, represented inside the parent rather than as unrelated top-level catalogues."
-        shape: "A singular key names each resolved subordinate kind and contains its name, version when applicable, option-owned attributes, and its own `agent` parameter when it has one."
+        shape: "A singular key names each resolved subordinate kind and contains its name, version when applicable, option-owned attributes, and its own Agent parameters when it has any."
         rules:
           ownership: "Nest a choice only when it has no independent meaning outside its parent. A reusable cross-language or cross-owner choice remains in its own owning catalogue or Component."
           resolution: "Selecting the parent resolves each embedded subordinate profile unless an explicit project value replaces that subordinate choice."
-          recursion: "The `agent` parameter rules defined for an option entry apply identically to every embedded subordinate profile, which may carry its own."
-      agent:
-        required: false
-        purpose: "The Human's message to the Agent about this option: what to take into account while working with it, what not to, and which Agent Skills help. Replaces the former `agent_skills` key, which is now `agent.skills`."
-        note: "This is the same `agent` parameter the Agent section of this schema defines. It is documented there once and referenced here; an option entry carries it under the same rules as any other item."
+          recursion: "The Agent parameter rules defined for an option entry apply identically to every embedded subordinate profile, which may carry its own."
     rules:
       no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
       no_project_data: "An option entry carries no Models, fields, records, or other project data."
       self_contained: "An entry describes only itself. A value shared by every option of a kind belongs to `settings`."
-      conditional_agent: "An option's `agent` parameter applies only after that top-level or embedded option is resolved as selected; an unselected option contributes nothing to the Agent."
+      agent_parameters: "An entry may carry the Agent parameters — `agent_consider`, `agent_avoid`, and `agent_skills` — beside its own fields. They are defined once in the Agent Parameters section of this schema and an option entry carries them under the same rules as any other item."
+      conditional_agent: "An option's Agent parameters apply only after that top-level or embedded option is resolved as selected; an unselected option contributes nothing to the Agent."
     empty: "An empty mapping when the Component supports no alternatives."
 
   settings:
@@ -164,28 +161,30 @@ sections:
     empty: "An empty mapping when the Component configures nothing."
 
 
-# <!--------------------------------------------------------------------------------- Agent -->
-agent:
+# <!--------------------------------------------------------------------------------- Agent Parameters -->
+agent_parameters:
   purpose: "The Human's message to the Agent about one item: what to take into account when working with it, what not to, and which Agent Skills help. It is how the Human's own judgment reaches the Agent at the exact place it applies, so that the same Preferences produce the same work whichever model performs it."
-  placement: "Any item, at any depth, in any of the three content sections. A Language Item may carry one, one of its Technical Purposes another, and each package under that Purpose another again; each is a separate message about a separate thing."
+  placement: "Written directly beside the item's own fields, at any depth, in any of the three content sections. They are not gathered under a wrapper key: the Agent reads the whole file, so a wrapper would add nesting without adding meaning, and the name `agent` is left free for a Component that owns it as a declaration of its own."
+  naming: "Each parameter name begins with `agent_`, so that it is distinguishable at a glance from the item's own fields and never collides with one — an item may carry both its own `skills` and `agent_skills`, meaning different things."
+  scope: "Any item may carry any of them. A Language Item may carry one, one of its Technical Purposes another, and each package under that Purpose another again; each is a separate message about a separate thing."
   authority: "A preference the Agent reads before it decides, and follows wherever nothing outranks it. Where it conflicts with an explicit Target statement or any applicable Principle, that authority wins and the conflict is reported rather than resolved silently. It never becomes a mandatory rule, and it never expands Target scope or claims a choice another Component owns."
-  accumulation: "Every `agent` parameter on the path to an item applies together. When two of them speak to the same point, the nearest one — the parameter on the most specific item — governs that point, and everything the others say that it does not contradict still applies."
+  accumulation: "Every Agent parameter on the path to an item applies together. When two of them speak to the same point, the nearest one — the parameter on the most specific item — governs that point, and everything the others say that it does not contradict still applies."
   activation: "A parameter on an option applies only once that option is resolved as selected. A parameter on an item in `selected` or `settings` is already in force."
-  extensibility: "The keys below are the current set, not a closed one. A key the Human has nothing to say under is omitted, and the Agent passes over it. A new key is added here when a kind of message the Human needs to send has no place among these."
-  distinct_from_native: "A `native.<agent-native>` block says how an Agent Native realizes a declaration; an `agent` parameter says how the Agent should do the work. They answer different questions and neither is written inside the other."
-  keys:
+  extensibility: "The parameters below are the current set, not a closed one. One the Human has nothing to say under is omitted, and the Agent passes over it. A new one is added here, under the same `agent_` naming, when a kind of message the Human needs to send has no place among these."
+  distinct_from_native: "A `native.<agent-native>` block says how an Agent Native realizes a declaration; an Agent parameter says how the Agent should do the work. They answer different questions and neither is written inside the other."
+  parameters:
 
-    consider:
+    agent_consider:
       required: false
       purpose: "What to take into account while working with this item: a standard to follow, a class or function to prefer, the shape the Human wants the work to take."
       shape: "A list of statements, or a mapping when grouping them helps a reader. The wording is the Human's own; this schema fixes no vocabulary for it."
 
-    avoid:
+    agent_avoid:
       required: false
       purpose: "What not to take into account, and what not to do with this item: a class not to reach for, a route not to take, a habit not to bring from elsewhere."
-      shape: "The same as `consider`."
+      shape: "The same as `agent_consider`."
 
-    skills:
+    agent_skills:
       required: false
       purpose: "Agent Skills associated with work on this item, not defined or installed here."
       shape:

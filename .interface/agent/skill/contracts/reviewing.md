@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every enabled phase tha
 
 ## Outputs
 
-Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase with an implementation, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, an obligation-coverage summary including the applicable `agent` parameters and how each was classified, and an evidence-first phase report. A phase without implementation is reported as not reviewable and receives no assurance outcome. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
+Produce a separate Plan Assurance and Implementation Assurance outcome for every selected phase with an implementation, the exact Plan Revision assured, reconciled Review Findings, aggregate Review State and History, an obligation-coverage summary including the applicable Agent parameters and how each was classified, and an evidence-first phase report. A phase without implementation is reported as not reviewable and receives no assurance outcome. Do not persist transient obligation ledgers, update Task progress directly, or change active Workflow mode.
 
 ## Required Understanding
 
@@ -37,8 +37,8 @@ Observe and independently verify. Invoke no other Skill and execute no other Ski
 - If they do not, stop Review for that phase and report that Developing or Implement must create the implementation first.
 - For each selected phase, read the complete applicable authorities rather than relying on `At a Glance`, indexes, prior Findings, or other summaries.
 - Build a complete obligation inventory containing every applicable normative Principle Rule and Boundary, every obligation represented as `Must`, every `Never` expressed as its prohibited condition, every resolved Preference with `requirement: required`, every conditional requirement whose activation condition is true, every applicable instruction of a required synchronized Skill, and every applicable Target requirement.
-- Include in that inventory every applicable `agent` parameter: each `agent.consider` statement as a condition the work is expected to meet and each `agent.avoid` statement as a prohibited condition, gathered from the item worked on and every item above it, with the nearest parameter governing any point two of them speak to.
-- Classify an `agent` parameter that an explicit Target statement or an applicable Principle overrides as `not applicable`, with that authority as its applicability reason, rather than as a Finding.
+- Include in that inventory every applicable Agent parameter: each `agent_consider` statement as a condition the work is expected to meet and each `agent_avoid` statement as a prohibited condition, gathered from the item worked on and every item above it, with the nearest parameter governing any point two of them speak to.
+- Classify an Agent parameter that an explicit Target statement or an applicable Principle overrides as `not applicable`, with that authority as its applicability reason, rather than as a Finding.
 - For each assurance stage, classify every inventoried obligation exactly once as `satisfied`, `not applicable` with an explicit applicability reason, or `finding` with expected condition, actual observation, and evidence.
 - For Plan Assurance, `satisfied` means the current Plan gives the obligation valid, observable coverage; for Implementation Assurance, it means current implementation and evidence prove the obligation.
 - Never infer `not applicable` from silence, and never use it merely because a selected required technology, capability, implementation, or proof is absent.

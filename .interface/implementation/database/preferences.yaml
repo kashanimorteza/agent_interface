@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Database Component — persistence defaults, credential treatment, Instances, and implementation conventions."
   purpose: "Database-owned defaults for persistence behavior and runtime storage configuration; concrete technology choices come from Development."
   standard: "Agent Project Interface"
-  version: "10.0"
+  version: "10.1"
   updated: "2026-09-19"
 
 
@@ -37,7 +37,7 @@ read_order:
 content_map:
   selected: "The default Instance and the credential at-rest mode used when the Target states none."
   options: "Database-owned credential at-rest alternatives. Engine, ORM, migration, language, and package alternatives belong to Development."
-  settings: "Conventions grouped by the parts Database Principles name in its Architecture — Database Interface, Data Logic and Mapping, and Storage Adapter — plus the subjects that span the Component: migrations, transactions, controlled commands, security, and observability."
+  settings: "Conventions grouped by the parts Database Principles name in its Architecture — Database Interface, Data Logic and Mapping, and Storage Adapter — plus the subjects that span the Component: migrations, transactions, and controlled commands."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -136,14 +136,11 @@ content:
       integrity_marker: "checksum"
       drift_detection: "before normal operations"
       concurrent_runner_coordination: "engine-supported lock"
-      irreversible_migration_requires: "explicit marker, verified backup, and recovery procedure"
-      startup_schema_creation: true
-      initial_data_required_when_declared: true
+      irreversible_migration_recovery: "verified backup"
     transactions:
       isolation: "engine-resolved and explicitly recorded"
       concurrency: "optimistic version check unless the resolved operation requires locking"
       retry_transient_conflicts: true
-      retry_requires_idempotency: true
       distinguish_failures:
         - "deadlock"
         - "serialization_failure"
@@ -153,14 +150,3 @@ content:
       enabled: true
       capability_restricted: true
       identifiers: "internal allow-list or typed operation definition"
-    security:
-      runtime_least_privilege: true
-      secrets_in_logs: false
-      credential_storage_exposed: false
-      backups_follow_data_protection: true
-    observability:
-      record_connection_failures: true
-      record_migration_failures: true
-      record_constraint_violations: true
-      record_transaction_conflicts: true
-      record_protected_data_access_without_values: true

@@ -24,6 +24,7 @@
    - **[Model names express domain meaning](#model-names-express-domain-meaning)**
    - **[Model remains separate from external concerns](#model-remains-separate-from-external-concerns)**
    - **[Model declares every definition in one standard, technology-independent vocabulary](#model-declares-every-definition-in-one-standard-technology-independent-vocabulary)**
+   - **[A Domain Relationship carries the definition it refers to](#a-domain-relationship-carries-the-definition-it-refers-to)**
    - **[Every Domain Definition converts to and from a Plain Representation](#every-domain-definition-converts-to-and-from-a-plain-representation)**
    - **[Every Domain Definition declares whether it is persistent](#every-domain-definition-declares-whether-it-is-persistent)**
    - **[Each Domain Definition stands in its own module](#each-domain-definition-stands-in-its-own-module)**
@@ -188,7 +189,7 @@ Every Principle below is mandatory.
 
 What the domain *is* comes only from the Target: which Domain Definitions exist, which Fields they carry, what those Fields and relationships are named, and how they relate. How a Field is realized is a separate question. Where the Target states no technical modelling parameter for an existing Field — a representation choice, a validation detail, a constraint the Target already implies — Model chooses it under its own Principles and records a consequential choice so it can be reviewed, rather than leaving the Field underspecified. Where such a record is kept is stated in Model Preferences. Such a choice never adds, removes, or renames a Field or relationship, never overrides an explicit Target value, and never changes what a Field means.
 
-Model also preserves each Target-declared credential classification and required at-rest treatment. Database applies that declared treatment and rejects a persisted credential whose treatment is missing or unsupported; neither Component infers credential policy from a field name.
+Model also preserves each Target-declared credential classification and required at-rest treatment, and infers neither of them from a Field's name. What is done with that declaration when the value is stored is Database's to enforce, under its own Principles.
 
 **Why:** The Target remains authoritative for what the domain means, while the details it never speaks to can still be settled — a Model that refuses to choose anything the Target did not spell out produces an underspecified definition, which is its own kind of unfaithfulness.
 
@@ -297,7 +298,7 @@ instance      -> serialize   -> { field: value, ... }
 
 ### Every Domain Definition declares whether it is persistent
 
-**Rule:** Every Domain Definition declares itself `persistent` or `non-persistent`. Database stores only the Domain Definitions Model declares persistent, and never infers persistence from a Domain Definition's existence, name, or the presence of an identity Field.
+**Rule:** Every Domain Definition declares itself `persistent` or `non-persistent`. The declaration is explicit: Model never leaves it to be read from a Domain Definition's existence, name, or the presence of an identity Field. What Database does with that declaration is Database's to enforce, under its own Principles.
 
 **Why:** Without a declared answer, storage is decided by whichever Component looks at the definition first, and a definition that exists only to carry meaning through the application ends up as a table nobody asked for.
 
@@ -333,8 +334,8 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Take what the domain is — which Domain Definitions and Fields exist, their names, and their relationships — only from the Target.
 - **Must** — Choose an unstated technical modelling parameter of an existing Field under Model's own Principles, and record a consequential choice so it can be reviewed.
 - **Never** — Let such a choice add, remove, or rename a Field or relationship, override an explicit Target value, or change what a Field means.
-- **Must** — Preserve each Target-declared credential classification and its required at-rest treatment, so Database can apply it and reject a persisted credential whose treatment is missing or unsupported.
-- **Never** — Infer credential policy from a field name.
+- **Must** — Preserve each Target-declared credential classification and its required at-rest treatment.
+- **Never** — Infer a credential classification or its at-rest treatment from a Field's name.
 
 **Logical Model meaning is independent of implementation technology**
 
@@ -394,8 +395,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Every Domain Definition declares whether it is persistent**
 
-- **Must** — Declare every Domain Definition as `persistent` or `non-persistent`.
-- **Never** — Infer persistence from a Domain Definition's existence, name, or identity Field.
+- **Must** — Declare every Domain Definition as `persistent` or `non-persistent`, explicitly.
 - **Never** — Decide in Model how, where, or under what structure a persistent Domain Definition is stored.
 
 **Each Domain Definition stands in its own module**

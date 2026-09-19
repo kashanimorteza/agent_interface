@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every enabled phase. Re
 
 ## Outputs
 
-Produce or reconcile only Planning-owned Plan content and Plan Revision, Planning aggregate State and History outcomes, conflicts, Blockers or Open Questions permitted by their owners, the applicable `agent` parameters carried into each governed Task and the resolution of every selected item's `agent.skills` associations, and a phase-by-phase report.
+Produce or reconcile only Planning-owned Plan content and Plan Revision, Planning aggregate State and History outcomes, conflicts, Blockers or Open Questions permitted by their owners, the applicable Agent parameters carried into each governed Task and the resolution of every selected item's `agent_skills` associations, and a phase-by-phase report.
 
 ## Required Understanding
 
@@ -44,10 +44,10 @@ Write only Planning-owned Plan fields and Planning-owned aggregate State and His
 - A Task whose target Component is not listed states a verification condition satisfiable by a transient check, and never one that can only be satisfied by a persisted test.
 - Availability of a test tool in the declared toolchain is not applicability; an unlisted Component stays unlisted.
 - Process phases independently in Target order unless an owned dependency or Blocker prevents continuation.
-- For every item a selected phase resolves, gather every `agent` parameter on the path to that item — the parameter on the item itself and on each item above it — and carry them into the governed Task together, the nearest one governing any point two of them speak to.
-- Shape the governed Task's acceptance and verification so that what an applicable `agent.consider` asks for and what an applicable `agent.avoid` rules out are observable conditions of the Task, not background advice.
-- Report rather than silently resolve a conflict between an `agent` parameter and an explicit Target statement or an applicable Principle; the Target or the Principle governs and the parameter is recorded as overridden.
-- Resolve the `agent.skills` associations of every selected item against currently discoverable and usable Runtime Skills.
+- For every item a selected phase resolves, gather every Agent parameter on the path to that item — the parameter on the item itself and on each item above it — and carry them into the governed Task together, the nearest one governing any point two of them speak to.
+- Shape the governed Task's acceptance and verification so that what an applicable `agent_consider` asks for and what an applicable `agent_avoid` rules out are observable conditions of the Task, not background advice.
+- Report rather than silently resolve a conflict between an Agent parameter and an explicit Target statement or an applicable Principle; the Target or the Principle governs and the parameter is recorded as overridden.
+- Resolve the `agent_skills` associations of every selected item against currently discoverable and usable Runtime Skills.
 - Match the declared name against the Skill's own name within a Runtime's namespaced identifier rather than requiring an exact string match.
 - When an associated Skill is required and currently discoverable and usable, shape the governed Task's acceptance and verification to require observable conformance with that Skill's applicable guidance, not only completion of the underlying requirement.
 - Record the unavailability and continue when an associated Skill is not currently usable; an unavailable associated Skill never blocks planning.
@@ -55,7 +55,7 @@ Write only Planning-owned Plan fields and Planning-owned aggregate State and His
 ## Verification
 
 - Validate the complete candidate against the transient coverage ledger, current Plan authorities, and applicable Schemas before writing.
-- Prove that every selected item's applicable `agent` parameters were gathered and carried into the governed Task, that each `agent.skills` association was resolved and recorded either as a shaped acceptance condition or as a reported unavailability, and that every conflict between a parameter and a higher authority was reported.
+- Prove that every selected item's applicable Agent parameters were gathered and carried into the governed Task, that each `agent_skills` association was resolved and recorded either as a shaped acceptance condition or as a reported unavailability, and that every conflict between a parameter and a higher authority was reported.
 - Planning is complete only when the selected phase Plan is complete and valid.
 
 ## Idempotency

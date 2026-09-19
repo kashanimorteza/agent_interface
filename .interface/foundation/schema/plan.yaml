@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-plan"
-  version: "8.3"
+  version: "8.4"
   purpose: "Operational Plan file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Plan Component."
 initialization:
   source: "initial"
@@ -161,51 +161,46 @@ sections:
                             required: true
                             default: []
                             purpose: "Restrictions and invariants specific to this Task alone and derivable from no other source, stated as observable boundaries; empty when none apply, which is the normal case. A restriction stated by the Target definition, an Implementation Principle, an Implementation Preference, or a synchronized Runtime rule is resolved from its own source and is never copied here; one shared with another Task of the same Plan belongs to their Group or Plan instead."
-                          agent:
+                          agent_consider:
                             required: true
-                            default: {}
-                            purpose: "The `agent` parameters that govern this Task, gathered by Planning from the items this Task uses and every item above them, with the nearest parameter governing any point two of them speak to. An empty mapping is a deliberate statement that those items carry no parameter, not an omission."
+                            default: []
+                            purpose: "What the gathered Agent parameters ask the Agent to take into account for this Task, each statement carried as the Preferences state it. Planning gathers them from the items this Task uses and every item above them, with the nearest parameter governing any point two of them speak to. An empty list is a deliberate statement that those items carry no such parameter, not an omission."
+                          agent_avoid:
+                            required: true
+                            default: []
+                            purpose: "What the gathered Agent parameters rule out for this Task, each statement carried as the Preferences state it, gathered the same way. An empty list is a deliberate statement, not an omission."
+                          agent_overridden:
+                            required: true
+                            default: []
+                            purpose: "Each gathered statement an explicit Target statement or an applicable Principle overrides, named with the authority that overrides it, so the conflict is visible rather than silently dropped."
+                          agent_skills:
+                            required: true
+                            default: []
+                            purpose: "The Agent Skill associations that govern this Task, resolved by Planning from the items this Task uses. An empty list is a deliberate statement, not an omission."
                             fields:
-                              consider:
+                              resource:
                                 required: true
-                                default: []
-                                purpose: "What the gathered parameters ask the Agent to take into account for this Task, each statement carried as the Preferences state it."
-                              avoid:
+                                default: ""
+                                purpose: "The declared portable Skill name, exactly as the Implementation association states it."
+                              requirement:
                                 required: true
-                                default: []
-                                purpose: "What the gathered parameters rule out for this Task, each statement carried as the Preferences state it."
-                              overridden:
+                                default: ""
+                                purpose: "The requirement the association declared."
+                                allowed:
+                                  - "optional"
+                                  - "required"
+                              resolved:
                                 required: true
-                                default: []
-                                purpose: "Each gathered statement an explicit Target statement or an applicable Principle overrides, named with the authority that overrides it, so the conflict is visible rather than silently dropped."
-                              skills:
+                                default: false
+                                purpose: "Whether the declared name resolved to a Runtime Skill that was discoverable and usable when this Plan was written."
+                              identifier:
                                 required: true
-                                default: []
-                                purpose: "The Agent Skill associations that govern this Task, resolved by Planning from the items this Task uses."
-                                fields:
-                                  resource:
-                                    required: true
-                                    default: ""
-                                    purpose: "The declared portable Skill name, exactly as the Implementation association states it."
-                                  requirement:
-                                    required: true
-                                    default: ""
-                                    purpose: "The requirement the association declared."
-                                    allowed:
-                                      - "optional"
-                                      - "required"
-                                  resolved:
-                                    required: true
-                                    default: false
-                                    purpose: "Whether the declared name resolved to a Runtime Skill that was discoverable and usable when this Plan was written."
-                                  identifier:
-                                    required: true
-                                    default: ""
-                                    purpose: "The Runtime identifier the declared name resolved to, including any namespace the Runtime applies; empty when it did not resolve."
+                                default: ""
+                                purpose: "The Runtime identifier the declared name resolved to, including any namespace the Runtime applies; empty when it did not resolve."
                           acceptance:
                             required: true
                             default: ""
-                            purpose: "The observable criterion that determines whether the intended result is correct. It also requires observable conformance with every statement in `agent.consider`, absence of every statement in `agent.avoid`, and the applicable guidance of any resolved `agent.skills` entry whose requirement is `required`."
+                            purpose: "The observable criterion that determines whether the intended result is correct. It also requires observable conformance with every statement in `agent_consider`, absence of every statement in `agent_avoid`, and the applicable guidance of any resolved `agent_skills` entry whose requirement is `required`."
                           verify:
                             required: true
                             default: ""

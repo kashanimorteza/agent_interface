@@ -232,7 +232,7 @@ Every Principle below is mandatory.
 
 ### Runtime configuration stays private
 
-**Rule:** Logic defines the configuration contract required by its Logic and validates required values before use. Platform supplies runtime values; secrets never enter source, errors, or public interfaces.
+**Rule:** Logic defines the configuration contract required by its Behaviour and validates required values before use. Runtime values are supplied to Logic by its environment; secrets never enter source, errors, or public interfaces.
 
 **Why:** A contract validated before readiness fails at start with a clear cause rather than mid-operation with an unclear one.
 
