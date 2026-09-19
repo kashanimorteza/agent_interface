@@ -1,0 +1,25 @@
+meta:
+  path: ".interface/foundation/config/application.yaml"
+  path_note: "Shared Application Manifest public Component metadata."
+
+policy:
+  agent_may_edit: true
+  rule: "Configure creates and reconciles this file; each Implementation Component's owner may add non-secret public metadata to its own section once that Component is generated."
+
+read_order: ["components"]
+
+content_map:
+  components: "Public metadata sections keyed by canonical Implementation Component identifier."
+
+content:
+  components:
+    development: {}
+    model: {}
+    database: {}
+    logic: {}
+    api: {}
+    presentation: {}
+    platform: {}
+    plan: {}
+    review: {}
+    state: {}
