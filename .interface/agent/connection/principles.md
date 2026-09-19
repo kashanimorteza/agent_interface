@@ -1,5 +1,28 @@
 # Agent Connection Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Every Integration declares its trust boundary](#1-every-integration-declares-its-trust-boundary)**
+   - **[2. Connection is proven before dependence](#2-connection-is-proven-before-dependence)**
+   - **[3. External effects retain external authorization](#3-external-effects-retain-external-authorization)**
+   - **[4. Extension provenance and contents are explicit](#4-extension-provenance-and-contents-are-explicit)**
+   - **[5. Extension lifecycle is controlled](#5-extension-lifecycle-is-controlled)**
+   - **[6. Packaged capabilities retain their owners](#6-packaged-capabilities-retain-their-owners)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Agent Connection is the Component that declares everything the Agent obtains from outside the project: live connections to external capability providers (MCP and LSP servers, channels, application connectors) and installable packages (plugins, marketplaces, capability bundles). On 2026-09-17 the former Integration and Extension Components were merged here: both declare Installed capabilities that the Agent Native provisions through its own mechanism from an external source, and both carry a trust boundary and per-Native identity. Nothing was dropped; each absorbed Principle keeps its former number in a note.
 
 *Absorbed from the former Agent Integration Component on 2026-09-17 — its introduction, kept verbatim:* Agent Integration is the Component that connects the Agent Runtime to external capability providers and protocols, including tool servers, code-intelligence services, communication channels, and external applications. Every declared Integration is Installed: the Agent Native connects to it through its own native mechanism, and it is never built from a portable specification. Because a connection mechanism can differ by Agent Native even when the underlying protocol is shared, an Integration's connection details may be declared separately per Agent Native.
@@ -9,6 +32,26 @@ It owns connection declarations, trust boundaries, compatibility, and activation
 *Absorbed from the former Agent Extension Component on 2026-09-17 — its introduction, kept verbatim:* Agent Extension is the Component that packages and distributes related Agent capabilities through installable units and catalogs. It governs plugins, marketplaces, capability packages, and runtime-supported extension bundles. Every capability it packages is Installed: the Agent Native provisions it through its own native mechanism from an external source, and never builds it from a portable specification. Because marketplaces and package ecosystems differ by Agent Native, an Extension's identity may be declared separately per Agent Native so each Native can locate and provision it.
 
 It owns extension identity, provenance, contents, lifecycle, and expected capabilities. It does not own the contracts of the capabilities an extension contains.
+
+### Purpose
+
+Everything else in the Agent Module is declared by the Human and realized from that declaration. This Component covers the opposite case: capabilities that come from outside and are taken as they are. A tool server, a language server, a channel, an application connector, a plugin, a marketplace package — none of them is built from a portable specification. The Agent Native provisions or connects to each one through its own mechanism, and what arrives is whatever the provider supplies.
+
+That is why Integration and Extension are one Component. A live connection and an installed package differ in mechanism, not in nature: both are Installed, both cross a trust boundary, and both carry an identity that can differ from one Agent Native to the next.
+
+The Component exists to make that crossing explicit. Something external can read project data and change systems the repository does not own, so what it touches, what it can do, and who authorized it are declared before it is used — not inferred afterwards from the fact that it worked.
+
+### How It Works
+
+Each Connection is declared with its provider, its protocol or source, the data it is exposed to, the actions it enables, its scope, its authentication requirement, and its Trust Boundary. Because the connection and provisioning mechanisms differ by Agent Native, identity and connection details may be declared per Native, so each one can locate what it needs. Credentials are never among the declared values; a declaration references a credential source and nothing more.
+
+A declared Connection is not yet a usable one. It becomes available only when it is trusted, compatible, authenticated where required, actually connected, and usable by the Role that intends to use it. Any condition not met stays visible as unmet, and validating a Connection never doubles as accepting its trust or authorizing a login.
+
+Authorization does not transfer across the boundary. An action with effects in an external system needs that system's own authorization, whatever the Agent's internal permission says.
+
+Packaged capabilities keep their owners. An Extension declares its provenance, its version or source, and the capabilities it is expected to contribute; those capabilities remain governed by the Components that own them — a Skill it brings is still governed by Skill, a Tool by Tool, a guarantee by Permission. Provisioning — installing, enabling, updating, disabling, removing — happens within Permission, and the resulting state is declared rather than discovered.
+
+<br>
 
 ## Terms
 
@@ -32,11 +75,19 @@ Technical MCP, LSP, channel, application, transport, and authentication-referenc
 
 Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Connection Preferences (formerly Extension Preferences).
 
-Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Every Integration declares its trust boundary
+<br>
+
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Every Integration declares its trust boundary
 
 **Rule:** Every Integration declares its provider, protocol, data exposed, actions enabled, scope, authentication requirement, and Trust Boundary before use. Credentials and secret values are never stored in the project declaration.
 
@@ -46,7 +97,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 2. Connection is proven before dependence
+### 2. Connection is proven before dependence
 
 **Rule:** An Integration is available only when it is declared, trusted, compatible, authenticated when required, connected, and usable by the intended role. Every unmet condition remains explicit.
 
@@ -56,7 +107,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 3. External effects retain external authorization
+### 3. External effects retain external authorization
 
 **Rule:** An Integration never converts project permission into authority over an external account, service, recipient, or dataset. External actions follow the authorization required by their own scope and impact.
 
@@ -66,7 +117,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 4. Extension provenance and contents are explicit
+### 4. Extension provenance and contents are explicit
 
 **Rule:** Every Extension declares its stable identity, source, version policy, expected capability categories, permissions, dependencies, and trust status. Marketplace presence alone establishes none of these.
 
@@ -78,7 +129,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 5. Extension lifecycle is controlled
+### 5. Extension lifecycle is controlled
 
 **Rule:** Provisioning derives from current declared needs, previews material permissions and dependencies, obtains required authorization, verifies activation, and reconciles stale or conflicting state. Discovery alone never authorizes Provisioning.
 
@@ -90,7 +141,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 6. Packaged capabilities retain their owners
+### 6. Packaged capabilities retain their owners
 
 **Rule:** Packaging never changes a contained capability's contract, authority, or owning Agent Component. Extension metadata points to those contracts instead of redefining them.
 

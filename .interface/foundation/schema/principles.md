@@ -12,7 +12,7 @@ One Principles file exists per Implementation Component at `.interface/implement
 
 A Principles file exists to raise understanding of the project. It answers what its owning Component or Module is, what responsibility it holds, and under which mandatory rules it operates, so that any reader — human or Agent — can reason about that owner without inspecting an implementation.
 
-A Implementation or Agent Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. A Principles file does not prescribe a concrete Skill workflow, name current runtime resources, or decide which Skill reads it and when. Interface-owned Skill behavior belongs to its declared Skill Contract conforming to the Skill Contract Schema, not to Agent Skill Principles.
+An Implementation or Agent Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. A Principles file does not prescribe a concrete Skill workflow, name current runtime resources, or decide which Skill reads it and when. Interface-owned Skill behavior belongs to its declared Skill Contract conforming to the Skill Contract Schema, not to Agent Skill Principles.
 
 
 <!--------------------------------------------------------------------------------- Scope --->
@@ -20,7 +20,7 @@ A Implementation or Agent Component describes its own responsibilities, boundari
 
 ## Scope
 
-A Principles file contains only mandatory philosophy, responsibilities, and boundaries. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Principles additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary; each Interface-owned Skill's complete portable behavior belongs to its Skill Contract. A conditional external Skill may name the technology it serves without selecting that technology for a Target.
+A Principles file carries two kinds of content: what a reader must understand about the Component, and the mandatory rules it operates under. It carries nothing else. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Principles additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary; each Interface-owned Skill's complete portable behavior belongs to its Skill Contract. A conditional external Skill may name the technology it serves without selecting that technology for a Target.
 
 A Principles file never contains:
 
@@ -31,6 +31,10 @@ A Principles file never contains:
 
 Relationships between Components are permitted and belong in Relationships. They describe what each Component consumes or provides without directing a Skill's execution.
 
+Introduction's Understanding is the one part that states no obligation: it records how the Human explained the Component, and a reader follows the Principles, not the record.
+
+Documentation states what a reader of the Component's documentation must come away with. The shape of that documentation file, like the shape of any generated file, still belongs elsewhere.
+
 A Principle is portable: the same file can be handed unchanged to another project or another Agent.
 
 
@@ -39,20 +43,28 @@ A Principle is portable: the same file can be handed unchanged to another projec
 
 ## Structure
 
-Every Principles file contains these parts, in this order:
+A Principles file carries these parts, in this order. A part marked *optional* is carried by a Component that has something to say there and omitted — not left empty — by one that does not:
 
 1. **Title** — the file's single first-level heading.
-2. **Introduction** — what the Component is and what it contributes.
-3. **Terms** — the vocabulary the Component owns.
-4. **Architecture** — the named parts the Component is formed from, when it has them.
-5. **Relationships** — what it consumes and what consumes it.
-6. **Layering** — where the Component's technical choices live instead.
-7. **Documentation** — what this Component's own documentation must convey, when it has something to add.
-8. **Authority** — the binding force of the file and its precedence.
-9. **Principles** — the numbered mandatory rules.
-10. **At a Glance** — the derived list of every obligation in the file.
+2. **Navigation** — the map of the file's own sections.
+3. **Introduction** — everything a reader needs in order to understand the Component, in four parts:
+   - **Overview** — what the Component is and what it contributes.
+   - **Purpose** — the problem it solves and what is lost without it.
+   - **How It Works** — how it does that work, told as a flow rather than as rules.
+   - **Understanding** — how the Human explained it, in their own words, with the decisions that followed. *(optional)*
+4. **Terms** — the vocabulary the Component owns.
+5. **Architecture** — the named parts the Component is formed from. *(optional)*
+6. **Relationships** — what it consumes and what consumes it.
+7. **Boundaries** — the work that looks like this Component's but belongs elsewhere. *(optional)*
+8. **Layering** — where the Component's technical choices live instead.
+9. **Documentation** — what this Component's own documentation must convey. *(optional)*
+10. **Authority** — the binding force of the file and its precedence.
+11. **Principles** — the numbered mandatory rules.
+12. **At a Glance** — the derived list of every obligation in the file.
 
-Architecture and Documentation are the optional parts: each is carried by a Component that has something to say there and omitted — not left empty — by one that does not. Introduction, Layering, and Authority are unheaded prose. Terms, Architecture, Documentation, Relationships, and At a Glance carry their own second-level heading. Every numbered second-level heading in the file is a Principle. A `<br>` separates each part from the next and each Principle from the next.
+Understanding is everything a reader has to take in before the rules mean anything, so it comes first, gathered under Introduction rather than scattered through the file. What follows Introduction is reference: the vocabulary, the parts, the edges, and the rules themselves.
+
+Overview, Purpose, and How It Works are always carried. Layering and Authority are unheaded prose. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Documentation, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each numbered Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -69,16 +81,90 @@ The file opens with one first-level heading naming the Component:
 No other first-level heading appears in the file.
 
 
+<!--------------------------------------------------------------------------------- Navigation --->
+<br>
+
+## Navigation
+
+The map of the file's own sections, so a reader — and an Agent looking for one part of it — sees the whole shape before reading any of it.
+
+A numbered list, one line per section the file actually carries, each linking to that section's heading. Nothing else: no description beside an entry, and no entry for a section the file omits. The Principles are one entry, with each numbered Principle listed beneath it:
+
+```markdown
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+   - **[Understanding](#understanding)**
+2. **[Terms](#terms)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Principles](#principles)**
+   - **[1. <Title>](#1-title)**
+   - **[2. <Title>](#2-title)**
+6. **[At a Glance](#at-a-glance)**
+```
+
+Introduction's own parts are listed beneath it. Layering and Authority are unheaded prose and carry no entry. Navigation is rewritten whenever a section or a Principle is added or renamed, like At a Glance.
+
+
 <!--------------------------------------------------------------------------------- Introduction --->
 <br>
 
 ## Introduction
 
-One or two paragraphs in which the Component introduces itself: what it is, the responsibility it holds, what it contributes to the project, and what it is independent of.
+Everything a reader needs in order to understand the Component, before any rule is stated. It carries four parts, each under its own third-level heading.
+
+### Overview
+
+The Component introduces itself: what it is, the responsibility it holds, what it contributes to the project, and what it is independent of. It takes as many paragraphs as that needs.
 
 It is written about the Component, never about the document: it begins by defining the Component, not by describing what the file contains. It states what the Component *is* and *does*. Relationships with other Components belong in Relationships; instructions about Skill roles, execution order, or when a Skill should read the Component do not belong in this file.
 
-The Component's own boundary — what it does not own — is stated explicitly, either as the closing sentences of Introduction or as one dedicated Principle. It is never left implicit and never stated in both places.
+The Component's own boundary — what it does not own — is stated explicitly, either as the closing sentences of Overview or as one dedicated Principle. It is never left implicit and never stated in both places.
+
+### Purpose
+
+The reason this Component is a Component at all: the problem it solves, what its separation makes possible, and what would go wrong if its work were spread across the others instead.
+
+It is written about the design rather than about the document, and takes as many paragraphs as the reason needs. It answers the question a reader asks before any rule makes sense — *why is this a thing of its own?* — so that every Principle that follows reads as a consequence of that reason rather than as an arbitrary constraint.
+
+It names the cost of the alternative concretely: not "for separation of concerns", but what actually happens when the same knowledge lives in three places, or when a consumer reaches past this Component to the one behind it. A reader who understands this part can judge a case the Principles do not cover.
+
+Each Principle's own **Why** explains that one rule. This part explains the Component. Neither repeats the other.
+
+### How It Works
+
+How the Component does its work, told as a flow: what reaches it, what it does with it, what it hands on, and what comes back. It is the narrative a newcomer needs in order to picture the Component in motion before meeting its vocabulary and its rules.
+
+It stays at the level of concepts the Component owns and names no tool, package, or file layout. It states no obligation: a rule that a reader would have to obey belongs in a Principle. Where a Component's flow is genuinely trivial, this part is a short paragraph or two rather than an invented elaboration.
+
+### Understanding
+
+How the Human explained this Component, in their own words, and what was decided along the way.
+
+The Principles state what holds. This part preserves how the Human arrived there, so that a later session — human or Agent — does not have to rediscover the reasoning, and so that a question already settled is not reopened as if it were new. Each entry names its subject under a fourth-level heading, gives the Human's explanation close to the words they used, and lists the decisions it produced, including the proposals that were not accepted and why:
+
+```markdown
+### Understanding
+
+#### <Subject>
+
+**<The question the Human is answering>** <Their explanation, in their own words.>
+
+**Decisions:**
+
+1. <what holds, and what it replaces>
+2. <a proposal that was not accepted, and why — so it is not proposed again>
+```
+
+It is written close to how the Human said it, not translated into the file's formal voice, because the wording is part of what is being preserved. A proposal that was not accepted is recorded with its reason; without that, the same suggestion returns in the next session.
+
+It carries no dates, and it is written in the present tense. It states what holds now and what it replaces, and is rewritten when the Human's understanding changes — the file is the current picture, not a log of when each part of it arrived.
+
+This part is a record, never an authority. It explains the Principles and never adds an obligation: an obligation that matters belongs in a Principle, where it is binding. Where the record and a Principle disagree, the Principle is correct and the record is out of date. It is optional: a Component whose Understanding has not been recorded omits it.
 
 
 <!--------------------------------------------------------------------------------- Terms --->
@@ -104,7 +190,7 @@ A term is listed only when this Principles owner owns it. A term owned by anothe
 
 The named parts the Component is formed from, and how they stand in relation to one another. It answers, in one view, what is inside this Component — before Relationships answers what is outside it.
 
-The section opens with a tree naming the parts, followed by one short paragraph per part stating what it owns and, where it matters, what it never does:
+The section opens with a tree naming the parts, followed by a short paragraph or two per part stating what it owns and, where it matters, what it never does:
 
 ```markdown
 ## Architecture
@@ -117,10 +203,10 @@ The section opens with a tree naming the parts, followed by one short paragraph 
     └── <Sub-part>
 ```
 
-<One paragraph per part: what it owns, and the limit that keeps it distinct from the others.>
+<A paragraph or two per part: what it owns, and the limit that keeps it distinct from the others.>
 ```
 
-The tree names concepts the Component owns, not files, directories, classes, or packages: a repository layout belongs to the Component's Preferences, and the shape of a generated file belongs to its Schema. A part named here is defined in Terms and governed by a Principle; Architecture shows how the parts fit together and introduces no obligation of its own.
+The tree names concepts the Component owns, not files, directories, classes, or packages: a repository layout belongs to the Component's Preferences, and the shape of a generated file belongs to its Schema. A part named here is governed by a Principle, and it is defined in Terms when this Component owns the term; a part whose term another Component owns — a Public Interface, for example — is used as that owner defines it and is not redefined in Terms. Architecture shows how the parts fit together and introduces no obligation of its own.
 
 This part is optional. A Component formed from named parts — internal layers, services, foundations, a public boundary — carries it. A Component with no internal structure worth naming omits the section entirely rather than carrying an empty one.
 
@@ -142,14 +228,34 @@ A short list naming the Components or Modules this Principles owner consumes and
 Relationships are stated between Components and Modules only. No Skill, operation, Mode, or Workflow step appears here. An owner that consumes nothing, or that nothing consumes, records that fact rather than inventing a connection.
 
 
+<!--------------------------------------------------------------------------------- Boundaries --->
+<br>
+
+## Boundaries
+
+The work that looks like this Component's but is not, each named with the Component that owns it and the reason the line falls there.
+
+Relationships says what this Component consumes and provides. Boundaries says where a reader — human or Agent — is most likely to put something in the wrong place, and settles it in advance:
+
+```markdown
+## Boundaries
+
+- **<the work that looks like this Component's>** — belongs to <Component>, because <what makes it theirs>.
+```
+
+Each entry is a case that has actually caused confusion or plausibly would: a rule that could be read as either Component's, a setting two Components could both claim, a concern whose name appears in both. An entry states the reason, not only the owner, so the same reasoning settles the next case that is not listed.
+
+This part is optional, and it is not a restatement of the Component's boundary sentence in Introduction or of a Principle's own **Boundary**. A Component carries it when its edges are genuinely easy to cross and omits the section when they are not.
+
+
 <!--------------------------------------------------------------------------------- Layering --->
 <br>
 
 ## Layering
 
-One paragraph placing the Component's technical choices outside this file, and naming what holds them:
+One or two paragraphs placing the Component's technical choices outside this file, and naming what holds them:
 
-- Implementation technical choices and defaults belong to the Component's Preferences, while Agent declarations and runtime mappings belong to the Component's Preferences;
+- an Implementation Component's technical choices and defaults belong to its Implementation Preferences, and an Agent Component's declarations and native mappings belong to its Agent Preferences;
 - implementation applies those choices to the current project definition; and
 - when the Component owns a generated file, the shape of that file belongs to its Schema.
 
@@ -180,9 +286,9 @@ This part is optional, and it is not the place to restate the shared rules. A Co
 
 ## Authority
 
-One paragraph, stating all three of:
+One or two paragraphs, stating all three of:
 
-- every statement in the file is mandatory;
+- every Principle in the file is mandatory;
 - an Implementation Preference or Agent Preferences can never override a Principle; and
 - a project may only add stricter rules, never looser ones.
 
@@ -194,10 +300,16 @@ No Principles file omits or weakens any of the three.
 
 ## Principles
 
-Each Principle is a second-level heading carrying its number and a title, followed by three labelled subsections:
+The section that carries the file's mandatory rules. It opens with one or two short sentences stating that each rule below is mandatory and that its number is permanent, and then carries the Principles themselves.
+
+Each Principle is a third-level heading under it, carrying its number and a title, followed by three labelled subsections:
 
 ```markdown
-## <N>. <Title>
+## Principles
+
+<One sentence: every Principle below is mandatory, and its number is permanent.>
+
+### <N>. <Title>
 
 **Rule:** <the mandatory statement>
 
@@ -232,7 +344,11 @@ Principles are numbered from 1 in a single sequence. A number is permanent once 
 
 ### Order
 
-Principles are ordered so that the ones establishing the Component's own shape come before the ones governing its relationships with other Components. Within that, order follows the reading path a newcomer needs rather than importance.
+A Principle's number is its position: the file is read and listed in numeric order, and Navigation and At a Glance follow that order.
+
+When a file is first written, the numbers are assigned so that the Principles establishing the Component's own shape come before the ones governing its relationships with other Components, and within that so that the order follows the reading path a newcomer needs rather than importance.
+
+Afterwards, numbering wins over reading order. A new Principle is appended after the highest existing number even when its subject would have read earlier, because renumbering would break every citation of the Principles that follow it. A file whose reading order has drifted far enough to confuse a newcomer is not renumbered; its Navigation and its Introduction carry the reader through it.
 
 
 <!--------------------------------------------------------------------------------- At a Glance --->
@@ -263,8 +379,47 @@ This section is derived, never authoritative. It introduces no rule that its Pri
 ```markdown
 # <Component> Principles
 
-<Introduction: what the Component is, the responsibility it holds, what it contributes,
-what it is independent of, and what it does not own.>
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+   - **[Understanding](#understanding)**
+2. **[Terms](#terms)**
+3. **[Principles](#principles)**
+   - **[1. <Title>](#1-title)**
+4. **[At a Glance](#at-a-glance)**
+
+## Introduction
+
+### Overview
+
+<What the Component is, the responsibility it holds, what it contributes, what it is
+independent of, and what it does not own. As many paragraphs as that needs.>
+
+### Purpose
+
+<The problem this Component solves, what its separation makes possible, and what goes
+wrong when its work is spread across the others instead.>
+
+### How It Works
+
+<How the Component does its work, told as a flow: what reaches it, what it does with it,
+what it hands on, and what comes back.>
+
+### Understanding
+
+#### <Subject>
+
+**<The question the Human is answering>** <Their explanation, in their own words.>
+
+**Decisions:**
+
+1. <what holds, and what it replaces>
+2. <a proposal that was not accepted, and why>
+
+<Omit Understanding when none has been recorded.>
 
 ## Terms
 
@@ -278,13 +433,19 @@ what it is independent of, and what it does not own.>
 └── <Part>
 ```
 
-<One paragraph per part: what it owns and the limit that keeps it distinct. Omit this
+<A paragraph or two per part: what it owns and the limit that keeps it distinct. Omit this
 whole section when the Component has no internal structure worth naming.>
 
 ## Relationships
 
 - **Consumes <Component>** — <what it takes and why>
 - **Consumed by <Component>** — <what it provides and why>
+
+## Boundaries
+
+- **<work that looks like this Component's>** — belongs to <Component>, because <the reason>.
+
+<Omit this whole section when this Component's edges are not easy to cross.>
 
 <Layering: Implementation technical choices and defaults belong to <Component> Preferences;
 Agent declarations and mappings belong to <Component> Preferences; implementation realizes them.>
@@ -294,12 +455,16 @@ Agent declarations and mappings belong to <Component> Preferences; implementatio
 <What a reader must understand from this Component's documentation. Omit this whole section
 when the shared documentation rules are enough.>
 
-Every statement here is mandatory. A Implementation Preference or Agent Preferences can never override
+Every statement here is mandatory. An Implementation Preference or Agent Preferences can never override
 a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. <Title stating the rule as a claim>
+## Principles
+
+<Every Principle below is mandatory, and its number is permanent.>
+
+### 1. <Title stating the rule as a claim>
 
 **Rule:** <the mandatory statement>
 
@@ -309,7 +474,7 @@ a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 2. <Title>
+### 2. <Title>
 
 **Rule:** ...
 

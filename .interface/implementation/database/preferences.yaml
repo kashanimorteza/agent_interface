@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Database Component — persistence defaults, credential treatment, Instances, and implementation conventions."
   purpose: "Database-owned defaults for persistence behavior and runtime storage configuration; concrete technology choices come from Development."
   standard: "Agent Project Interface"
-  version: "3.1"
-  updated: "2026-09-18"
+  version: "5.0"
+  updated: "2026-09-19"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -18,14 +18,6 @@ policy:
   selection: "Prefer a supported compatible Database-owned default. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "This file owns no versioned Engine, ORM, migration, or package choice. Development Preferences resolve every versioned technical item assigned to Database."
   matching: "Match a selected Database-owned key to its exact entry in this file. Match Engine, ORM, migration, language, package, and Platform selections to their exact entries in Development Preferences. Match Instance identities to storage_adapter.instances and credential defaults by exact field name."
-  understanding:
-    recorded: "2026-09-18"
-    runtime_configuration: "The Human wants one YAML file that holds the database information: adding a database, or changing a username or password, is one edit in that file and never a change in source. That file is database/database.yaml; its shape is the Database Configuration Schema at .interface/foundation/schema/database.yaml."
-    instances: "Several Instances live side by side in that file, each with its own Engine, connection settings, and credentials; the default is general."
-    key_shape: "Every Instance carries the same keys. A key that does not apply to its Engine — host and port for a file-backed Engine, path for a server-backed one, username and password for an Engine that does not authenticate — is left empty rather than removed, so moving an Instance to another Engine means filling values in, not adding keys."
-    credentials: "The former rule that credentials stay out of configuration (store_values_in_configuration: false, environment-variable names, Platform-delivered secrets) was removed on 2026-09-18 because the Human did not agree with it. Connection credentials, and the at-rest encryption key for persisted credential fields, are written in that same file."
-    generated_file: "The configuration file is part of generating the Database Component, not a step after it; Database is not complete without it, and source hardcodes none of its values."
-    open_decision: "How that file is protected — a distinguishing suffix, git exclusion, or another mechanism — is deliberately undecided; the Human will decide it later. No Principle or Preference may assume an answer."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -33,15 +25,13 @@ read_order:
   - "selected"
   - "options"
   - "settings"
-  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   selected: "The default Instance, credential at-rest mode, portability preference, Model source, and consumer boundary."
   options: "Database-owned credential at-rest alternatives. Engine, ORM, migration, language, and package alternatives belong to Development."
-  settings: "Relationship, initial-data, persisted-credential, runtime-configuration, backup, and Instance defaults."
-  implementation: "Persistence safety, migration integrity, transaction, controlled-command, security, and observability conventions."
+  settings: "Conventions grouped by the parts Database Principles name in its Architecture — Database Interface, Data Logic and Mapping, and Storage Adapter — plus the subjects that span the Component: mapping, migrations, transactions, controlled commands, security, and observability."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -50,6 +40,7 @@ content:
   # <!-------------------------------------------- selected -->
   selected:
     default_instance: "general"   # the value written into database.yaml; that file is the runtime authority
+    credential_at_rest_mode: "hash"   # an entry of options.credential_storage_modes; a credential the Target declares recoverable uses "encrypted"
     portability_policy: "portable contract first; engine-specific extensions explicit"
     model_import_source: "Model Public Interface"
     consumer_access: "public Database Interface only"
@@ -78,7 +69,7 @@ content:
   settings:
     database_interface: {}
 
-    data_logic:
+    data_logic_and_mapping:
       initial_data:
         enabled_when_present: true
         importer:
@@ -131,9 +122,6 @@ content:
           purpose: "General application data."
           engine: "<development.database_item>"
           database: "<project>_general"
-
-  # <!-------------------------------------------- implementation -->
-  implementation:
     mapping:
       persistent_model_required: true
       non_persistent_models_become_storage: false

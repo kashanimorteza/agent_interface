@@ -225,31 +225,7 @@ The Human owns every Principles and Preferences file. Plan, Review, and State ow
 
 Not yet recorded in full. The Human's own explanation of the Implementation Module — the engineering philosophy behind the layered architecture, why these ten Components, and how Preferences are meant to be chosen — will be captured here in a later session, in the same form as the Agent Module Guide.
 
-### Development — Documentation (recorded 2026-09-18)
-
-**What is documentation for, in the Human's words?** Documentation is a Development concern: every new Component starts from Development, and there it must learn how to document itself. Each Component's Preferences names where its documentation lives — a path inside the Component's own project. The README goes from the general to the specific: first an overview, then the details; it always gives examples; it explains setup and how to run; it names the capabilities that can be executed; it explains the different classes and objects. Each Component does this through its own mechanism. The measure is that anyone who reads the README understands how that Component or module works.
-
-**Where it lives, and why not a separate section.** The Principles Schema fixes the shape of every Principles file and sends the shape of a generated file to a Schema or Preferences, so the concept stays inside Development: Principle 8 carries the rule and the Human's view; Development Preferences carry the conventions once for all Components (`settings.documentation`: file, location, order, examples, per-Component fulfilment, secrets, authority) and each Component Profile carries its `documentation` path. Documentation is Development-specific for now; a Foundation-level README Schema is not needed until another Module needs the same shape.
-
-**Why this came up.** After the first Implement run, `model/` and `database/` were generated without a README although Principle 8 required one — Planning had scoped "applicable obligations" to the phase's own Component, and the phrase "at the root selected by its Component Profile" pointed at a key the Profile did not have. Both are now closed: the Profile has the key, the Principle names it, and the Agent Module's placement rule keeps the obligation from being narrowed in the synchronized Skills.
-
-### Model (recorded 2026-09-18)
-
-**What is the Model for, in the Human's words?** When the Agent has an Understanding of the Target, the Target has already declared its Models with their primary keys, auto-increment, nullability, defaults, relationships, and uniqueness, in its own language. Model must express those same parameters in one standard vocabulary that belongs to no technology and no database — type, size, relationships, generated identity — so that the Model can always be understood and built. Which type or size a field gets is Model's own decision from the Target; the Interface does not fix a closed list for it. Database using that vocabulary to build storage is one of Model's uses, not its main purpose; the main purpose is that Models are the shared language between every Component of the application. There is one definition, not a Model for code and a separate schema for storage. Because Model is also a Development Component, it takes its programming language, modeling package, and Agent Skills from its Component Profile in Development.
-
-**Decisions taken on 2026-09-18 (reviewed item by item):**
-
-1. The introduction and its Note already state this goal — unchanged.
-2. Logical field type was missing from the published metadata (Principle 9 and the field vocabulary in Preferences); added as a technology-independent value type, never a language or Engine type.
-3. Principle 9 now states explicitly that the metadata is carried by the same Domain Definition application code uses, with no second schema artifact; Database reads it through the Model Public Interface.
-4. Former Principle 6 (field presence and absence semantics) overlapped with Principle 10 and was merged into it; Principles 7–10 became 6–9. Nothing was dropped.
-5. `preferences.yaml`: `settings` made an explicit empty map; version 3.4.
-6. Terms, Relationships, and the remaining Principles — unchanged.
-7. Must line added: Model takes its language, modeling package, Agent Skills, and Platform Reference from its Component Profile in Development (Principle 3).
-8. Introduction and Note reframed: every Component reads the same definition; Database is one consumer.
-9. Principle 9 reframed from "storage-relevant constraints" to "one standard, technology-independent vocabulary".
-10. `persistence_contract` renamed `declaration_vocabulary`; `length` and `precision` added; no closed list of types — Model decides type and size from the Target.
-11. A rule forcing unexpressible Target properties through State was proposed and rejected as limiting Model; Principle 2 already covers preservation.
+Component-level Understanding now lives in each Component's own `principles.md`, in its Understanding record section (moved there 2026-09-19, when the Principles file structure gained that section): Model in [model/principles.md](model/principles.md), Database in [database/principles.md](database/principles.md), Logic in [logic/principles.md](logic/principles.md), and Development's documentation Understanding in [development/principles.md](development/principles.md). What stays here is the Understanding of the Module as a whole.
 
 <br>
 

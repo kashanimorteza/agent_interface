@@ -1,19 +1,19 @@
 schema:
   id: "agent-interface-preferences"
-  version: "3.1"
+  version: "4.0"
   purpose: "The common structure every Implementation Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, and optional Agent Skill associations without deciding Target-specific meaning."
 
 # <!--------------------------------------------------------------------------------- Frame -->
 frame:
   source: ".interface/foundation/schema/yaml.yaml"
-  inherited: "A Implementation Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
+  inherited: "An Implementation Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
   scope: "This schema defines the structure of Implementation Preferences content and states the additional expectations placed on the inherited meta and policy sections."
   path: ".interface/implementation/<component>/preferences.yaml for each Implementation Component."
   ownership: "The file is human-owned. Operations read it and never write resolved choices back into it."
 
 # <!--------------------------------------------------------------------------------- Purpose -->
 purpose:
-  answers: "With what and how. A Implementation Preferences file records supported technical choices, defaults, package and implementation conventions, and the selections used when the Target leaves a decision unstated."
+  answers: "With what and how. An Implementation Preferences file records supported technical choices, defaults, package and implementation conventions, and the selections used when the Target leaves a decision unstated."
   relation_to_principles: "Principles state what is mandatory; Preferences state what is preferred. A Preference can never override a Principle."
   relation_to_project: "An explicit value in the human project definition always wins. This file is consulted only where the project is silent."
   resolution: "A choice recorded here is resolved when an operation runs, from this file together with the current project definition. Nothing here is copied into an operational record."
@@ -30,7 +30,7 @@ scope:
     - "Project data such as Models, fields, phases, or initial data, which belong to the human project definition."
     - "Operational records such as Plans, Tasks, progress, or Workflow position, which belong to Config."
     - "A choice owned by another Component; that Component's own Preferences hold it."
-  empty_component: "A Component with no technical choices still has a Preferences file file with the full frame and all four content sections present and empty. The absence of choices is stated, never implied by a missing file or section."
+  empty_component: "A Component with no technical choices still has a Preferences file with the full frame and all three content sections present and empty. The absence of choices is stated, never implied by a missing file or section."
 
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
@@ -43,13 +43,13 @@ meta:
       purpose: "The location, layer, and role of the file, naming the Component and stating that this is its Preferences layer."
     purpose:
       required: true
-      purpose: "What these Preferences owner's choices cover, in one sentence."
+      purpose: "What this file's owner chooses, in one sentence."
     standard:
       required: true
       purpose: "The Interface standard the file belongs to."
     version:
       required: true
-      purpose: "The version of these Preferences file, raised whenever its content changes meaning."
+      purpose: "The version of this Preferences file, raised whenever its content changes meaning."
     updated:
       required: true
       purpose: "The date the file last changed."
@@ -90,7 +90,6 @@ structure:
   - "selected"
   - "options"
   - "settings"
-  - "implementation"
 
 # <!--------------------------------------------------------------------------------- Sections -->
 sections:
@@ -104,14 +103,14 @@ sections:
       names_an_option: "A value selecting an alternative is written as that option's exact key and the entry exists in the matching options catalogue. A value selecting a declared resource resolves to exactly one entry in settings."
       one_per_decision: "A decision appears here exactly once, under a key naming the kind of thing chosen, such as the language, the library, or the engine."
       no_detailed_configuration: "Operational configuration, field defaults, resource bodies, and layer settings do not belong here; they remain in settings."
-      no_code_level_detail: "Typing APIs, framework usage rules, quality tools, mapping mechanics, and other code-level realization conventions remain in implementation."
-      no_repetition: "A selected entry may reference or summarize another section but never copies a detailed option, setting, or implementation body."
+      no_code_level_detail: "Typing APIs, framework usage rules, quality tools, mapping mechanics, and other code-level realization conventions belong to settings, grouped with the part of the Component they govern."
+      no_repetition: "A selected entry may reference or summarize another section but never copies a detailed option or setting body."
     empty: "An empty mapping when the Component chooses nothing."
 
   options:
     required: true
     default: {}
-    purpose: "What these Preferences owner supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
+    purpose: "What this file's owner supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
     shape: "One mapping per kind of top-level alternative, named in the plural, each holding entries keyed by the option's name. An option may contain embedded subordinate profiles when those choices exist only within that parent, such as one language's environment or API framework."
     entry:
       version:
@@ -169,28 +168,20 @@ sections:
   settings:
     required: true
     default: {}
-    purpose: "How selected options are configured, together with declared resources and operational defaults owned by the Component."
-    grouping: "By the owner's internal layers, using exactly the layer names its Principles define, when the owner has layers. Otherwise by domain area, one group per coherent subject."
+    purpose: "How selected options are configured, together with declared resources, operational defaults, and the code-level and realization conventions owned by the Component."
+    grouping: "By the parts the owner's Principles name in its Architecture, using exactly those names, when it has an Architecture. Otherwise by domain area, one group per coherent subject. A setting that belongs to no single named part — one that spans the Component or governs it as a whole — is its own group beside them, named for its subject; it is never forced under a part it does not belong to."
     rules:
       no_repetition: "A setting never repeats a value already stated in `selected` or in an `options` entry. It refers to it instead."
       resolved_or_stated: "A setting states a concrete value, or an explicit marker that the value is supplied elsewhere, such as by the runtime environment or by the engine's own default."
       no_secrets: "A setting may name where a secret is read from; it never contains the secret value."
       declared_resources: "A resource the Component declares, such as a named instance, is recorded here with its identity and configuration."
+      conventions: "A code-level or realization convention — how something is written rather than which value it takes — belongs here too, grouped with the part of the Component it governs."
+      no_new_authority: "A setting supplies a preference only. It never introduces a mandatory rule, changes Target intent, or claims a choice owned by another Component."
     empty: "An empty mapping when the Component configures nothing."
-
-  implementation:
-    required: true
-    default: {}
-    purpose: "Code-level and realization conventions that complement the Component's Principles and selected technical profile without redefining Target meaning or repeating configuration settings."
-    rules:
-      no_repetition: "An implementation entry never repeats a value already stated in selected, options, or settings."
-      no_new_authority: "The section supplies implementation preferences only; it never introduces a mandatory Principle, changes Target intent, or claims a choice owned by another Component."
-      applicability: "Every Preferences file carries this section. Use an empty mapping when the Component has no separate implementation conventions."
-    empty: "An explicit empty mapping when the Component has no additional implementation conventions."
 
 # <!--------------------------------------------------------------------------------- Conventions -->
 conventions:
   placeholders: "A value that is completed at resolution time is written in angle brackets, such as `<project>` or `<role>`. A key in angle brackets describes the shape of future entries rather than one real entry."
   unresolved: "A choice that the project must make and this file cannot supply is written as `to be defined`, and the operation that meets it raises an Open Question rather than inventing a value."
-  read_order: "`read_order` lists all four content sections in their structural order: selected, options, settings, implementation."
-  content_map: "`content_map` carries exactly one line per content section, naming what that section holds for these Preferences owner."
+  read_order: "`read_order` lists all three content sections in their structural order: selected, options, settings."
+  content_map: "`content_map` carries exactly one line per content section, naming what that section holds for this file's owner."

@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
   purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
-  version: "5.6"
-  updated: "2026-09-18"
+  version: "5.7"
+  updated: "2026-09-19"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -26,7 +26,6 @@ read_order:
   - "selected"
   - "options"
   - "settings"
-  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -34,7 +33,6 @@ content_map:
   selected: "One configurable profile per Participating Component, including identity, path, documentation file, type, role, and applicable language, database, and Platform Launch Item references."
   options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
   settings: "The shared documentation conventions, the declared Connection graph, package-publication default, and Cross-cutting Capability applicability."
-  implementation: "Empty. Component-specific conceptual realization remains owned by each Participating Component."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -318,17 +316,16 @@ content:
       purpose: "Anyone who reads it understands how this Component works and can use it."
       order:
         - overview          # what it is, what it does, where it sits
-        - structure         # public surface; main classes, objects, or modules, each explained
+        - interface         # the Public Interface: every Category and Operation, what each accepts and returns, the outcomes it can produce, and a runnable example of calling it
         - setup             # install, configure
         - run               # how to start or use it
-        - capabilities      # what it can do, each with a runnable example when executable
         - verify            # how to check it works
         - troubleshooting
+      subject: "The Public Interface. The README explains how to work with this Component through its Operations, not how the Component is built inside; its internal structure is stated in its Principles and Preferences."
       examples: "required wherever something is executable; written for the Component's resolved technology so they run as written"
       per_component: "each Component fills this order through its own mechanism; a part that does not apply says so rather than being omitted"
       secrets: "placeholders, environment-variable names, or safe secret references only; never a usable credential"
       authority: "derived, non-authoritative; never copies or overrides Principles, Preferences, the implemented Public Interface, or a Target source"
-      decided: "2026-09-18"
 
     connections:
       presentation_to_api:
@@ -387,5 +384,3 @@ content:
           - "api"
           - "presentation"
 
-  # <!-------------------------------------------- implementation -->
-  implementation: {}

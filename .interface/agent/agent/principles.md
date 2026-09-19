@@ -1,5 +1,35 @@
 # Agent Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Every Agent Instance has one complete definition](#1-every-agent-instance-has-one-complete-definition)**
+   - **[2. Agent Instance and Role remain separate](#2-agent-instance-and-role-remain-separate)**
+   - **[3. `general` is the General Agent Instance](#3-general-is-the-general-agent-instance)**
+   - **[4. Specialized Agent Instances remain bounded](#4-specialized-agent-instances-remain-bounded)**
+   - **[5. Agent Native and Instance availability are proven in the selected Runtime](#5-agent-native-and-instance-availability-are-proven-in-the-selected-runtime)**
+   - **[6. Every Agent Role has one bounded responsibility](#6-every-agent-role-has-one-bounded-responsibility)**
+   - **[7. Role ownership is unambiguous](#7-role-ownership-is-unambiguous)**
+   - **[8. The Primary Role remains accountable](#8-the-primary-role-remains-accountable)**
+   - **[9. The primary execution role owns the requested outcome](#9-the-primary-execution-role-owns-the-requested-outcome)**
+   - **[10. `interface-reader` reports without changing the observed state](#10-interface-reader-reports-without-changing-the-observed-state)**
+   - **[11. Delegation preserves scope and authority](#11-delegation-preserves-scope-and-authority)**
+   - **[12. Concurrent work has exclusive mutation ownership](#12-concurrent-work-has-exclusive-mutation-ownership)**
+   - **[13. Runtime coordination state is not project intent](#13-runtime-coordination-state-is-not-project-intent)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 The `Agent` Component declares the selected Agent Native and the executable Agent Instances it hosts in Agent Preferences. Each Agent Instance realizes an Agent Role through the Agent Native with bounded capabilities and configuration.
 
 It owns Agent Native selection, Agent Instance identity, kind, Role assignment, capability assignment, native realization, and lifecycle defaults. It does not own Role responsibilities, Skill behavior, Runtime implementation, coordination protocol, or Permission policy.
@@ -13,6 +43,26 @@ It owns role responsibilities and boundaries. It does not own Agent Instance ide
 *Absorbed from the former Agent Coordination Component on 2026-09-17 — its introduction, kept verbatim:* Agent Coordination is the Component that organizes work across multiple Agent Instance Definitions and their Roles, sessions, tasks, and isolated workspaces within an Agent Native. It defines delegation, communication, synchronization, and integration without redefining the Agent Instances or Roles being coordinated.
 
 It owns coordination protocol and conflict boundaries. It does not own role contracts, project Plans, or implementation decisions.
+
+### Purpose
+
+Work gets done by something concrete: an Agent Instance running with a model, a set of tools, a scope, and an authority. But an Instance is not the same thing as a responsibility — one responsibility can be executed by different Instances, and one Instance can be asked to do more than its responsibility allows. Conflating them is how an Agent ends up with authority nobody granted it.
+
+This Component exists to declare both, separately, and to bind them. It says which Agent Native is selected, which Instances exist, what each one is for, which Role it executes, and what it may use. It also owns what happens when several Instances work at once: who may change what, and how their results come back together.
+
+When these are left implicit, the Agent's shape is whatever the Runtime happened to do: a delegated task inherits the parent's full authority, two Instances write the same thing, and no one can say afterwards which Instance produced which change. All three are ownership failures, which is why one Component owns them.
+
+### How It Works
+
+The Human declares Agent Instances. Each one has a complete definition: its identity, its kind — a general Instance or a specialized one — the Role it executes, the capabilities it may use, and the configuration it inherits from the defaults. `general` is the Instance that does ordinary work; a specialized Instance exists because its Role is bounded in a way the general one is not.
+
+Roles are declared beside them and stay separate. A Role is a responsibility with its own scope, authority, inputs, and expected outcome; an Instance is who executes it. That separation is what lets a responsibility be reassigned without rewriting the Agent, and what makes `interface-reader` meaningful: a Role that reports without changing anything, whichever Instance carries it.
+
+When work is delegated, the delegation carries its own bounded objective, scope, authority, and stopping condition — never the parent's. The primary Role stays accountable for the whole request and integrates what comes back.
+
+When several Instances work at once, each holds an exclusive mutation scope, so two of them never write the same thing. What that coordination produces — team membership, task queues, transient state — is runtime state and is never mistaken for project intent.
+
+<br>
 
 ## Terms
 
@@ -45,11 +95,19 @@ Technical Role catalogs and primary Role selection belong to Agent Preferences (
 
 Technical team mechanisms, task systems, messaging, and isolation choices belong to Agent Preferences (formerly Coordination Preferences).
 
-Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Every Agent Instance has one complete definition
+<br>
+
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Every Agent Instance has one complete definition
 
 **Rule:** Every required Agent Instance has one stable Agent Instance Definition declaring its identity, kind, assigned Role, native realization, capability assignments, configuration overrides, lifecycle behavior, and availability requirement. The Agent Native realizes that Definition without changing the contracts it references.
 
@@ -59,7 +117,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 2. Agent Instance and Role remain separate
+### 2. Agent Instance and Role remain separate
 
 **Rule:** An Agent Instance Definition states who executes; an Agent Role states the responsibility executed. Every Agent Instance maps to at least one declared Role, and assigning a Role never transfers ownership of the Role contract into the Agent Instance.
 
@@ -69,7 +127,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 3. `general` is the General Agent Instance
+### 3. `general` is the General Agent Instance
 
 **Rule:** The Agent Preferences requires one General Agent Instance with the stable identity `general`. It realizes the primary execution Role, remains accountable to the Human, activates applicable capabilities, delegates bounded work when useful, integrates delegated evidence, and makes the final outcome claim.
 
@@ -79,7 +137,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 4. Specialized Agent Instances remain bounded
+### 4. Specialized Agent Instances remain bounded
 
 **Rule:** Every Specialized Agent Instance maps to a declared supporting Role and receives only the Context, Skills, Tools, Permission, and lifecycle behavior required for that Role. It returns its result and evidence to the accountable General Agent Instance or direct invoker without expanding its own assignment.
 
@@ -89,7 +147,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 5. Agent Native and Instance availability are proven in the selected Runtime
+### 5. Agent Native and Instance availability are proven in the selected Runtime
 
 **Rule:** The Agent Native is available only when the selected Runtime exposes its core operational Agent. A required Agent Instance is available only when that Agent Native can instantiate or expose its native realization, assign its declared Role and capabilities, and successfully invoke it in the current project. A declaration or native file alone is not proof.
 
@@ -99,7 +157,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 6. Every Agent Role has one bounded responsibility
+### 6. Every Agent Role has one bounded responsibility
 
 **Rule:** Every Agent Role declares one responsibility, scope, authority, required inputs, expected outputs, and stopping conditions. A role never performs an adjacent responsibility or acquires authority merely because it discovers additional work.
 
@@ -111,7 +169,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 7. Role ownership is unambiguous
+### 7. Role ownership is unambiguous
 
 **Rule:** Each required responsibility maps to one primary Agent Role. Missing, duplicate, contradictory, or unreachable role ownership is invalid.
 
@@ -123,7 +181,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 8. The Primary Role remains accountable
+### 8. The Primary Role remains accountable
 
 **Rule:** The Primary Role remains accountable for integrating delegated results, resolving conflicts, preserving the Human's scope, and making the final outcome claim.
 
@@ -135,7 +193,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 9. The primary execution role owns the requested outcome
+### 9. The primary execution role owns the requested outcome
 
 **Rule:** The architecture requires one primary execution role whose purpose is accountable request completion, whose responsibility is to establish required Understanding, activate and coordinate applicable capabilities, preserve authority, and report an evidence-backed outcome, and whose task coverage is the complete authorized request.
 
@@ -147,7 +205,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 10. `interface-reader` reports without changing the observed state
+### 10. `interface-reader` reports without changing the observed state
 
 **Rule:** The architecture requires the `interface-reader` specialized role whose purpose is current Interface status reporting, whose responsibility is to derive Workflow position, phase progress, plans, implementation, launch, blockers, questions, and Findings from current authorities and records, and whose task coverage is read-only observation and explanation.
 
@@ -159,7 +217,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 11. Delegation preserves scope and authority
+### 11. Delegation preserves scope and authority
 
 **Rule:** A delegation carries a bounded objective, minimum necessary context, expected result, evidence requirements, and no authority broader than the parent task permits. Delegation never bypasses ownership or approval.
 
@@ -171,7 +229,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 12. Concurrent work has exclusive mutation ownership
+### 12. Concurrent work has exclusive mutation ownership
 
 **Rule:** Concurrent roles receive non-overlapping mutation scopes or an explicit coordination rule for shared records. Conflicting results are reconciled by the accountable parent before integration.
 
@@ -183,7 +241,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 13. Runtime coordination state is not project intent
+### 13. Runtime coordination state is not project intent
 
 **Rule:** Team membership, task queues, mailboxes, process identifiers, and other Coordination Records remain runtime state and are never treated as authored Interface definitions.
 

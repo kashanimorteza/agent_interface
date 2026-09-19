@@ -1,8 +1,67 @@
 # Development Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+   - **[Understanding](#understanding)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Every Participating Component has one configurable Component Profile](#1-every-participating-component-has-one-configurable-component-profile)**
+   - **[2. Every Application Package is logically independent](#2-every-application-package-is-logically-independent)**
+   - **[3. Cross-Component use stays behind provider-owned Public Interfaces](#3-cross-component-use-stays-behind-provider-owned-public-interfaces)**
+   - **[4. The declared Connection graph is direct, explicit, and acyclic](#4-the-declared-connection-graph-is-direct-explicit-and-acyclic)**
+   - **[5. Model operations use one shared contract across Components](#5-model-operations-use-one-shared-contract-across-components)**
+   - **[6. Components publish shared application metadata through the Application Manifest](#6-components-publish-shared-application-metadata-through-the-application-manifest)**
+   - **[7. Cross-cutting Capabilities are activated through applicability](#7-cross-cutting-capabilities-are-activated-through-applicability)**
+   - **[8. Every Component has complete, safe, and operational documentation](#8-every-component-has-complete-safe-and-operational-documentation)**
+   - **[9. Unstated Development decisions follow one precedence order](#9-unstated-development-decisions-follow-one-precedence-order)**
+   - **[10. Runtime Configuration ownership remains inside its boundary](#10-runtime-configuration-ownership-remains-inside-its-boundary)**
+   - **[11. Public Interface changes propagate through direct consumers](#11-public-interface-changes-propagate-through-direct-consumers)**
+   - **[12. Development centralizes reusable technical items](#12-development-centralizes-reusable-technical-items)**
+   - **[13. Every Component offers its work as Operations on one Public Interface](#13-every-component-offers-its-work-as-operations-on-one-public-interface)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Development defines the high-level composition through which independent peer Implementation Components form one application system. It owns their shared architectural concepts, configurable Component Profiles, declared dependency graph, centralized technical catalogues, and cross-Component standards.
 
 Development owns composition rather than the internal meaning or implementation behavior of another Component. Each Participating Component remains focused on its own role and receives shared technical and platform selections through its Development Component Profile.
+
+### Purpose
+
+Software is built from parts, and the parts have to agree on things none of them owns alone: where each one lives, what it is allowed to reach, which language and packages it uses, how it presents itself to the others, and what it must publish about itself. Someone has to hold those agreements. Without a Component that does, each part settles them privately — one picks its own dependency versions, another reaches into a neighbour's internals because it was convenient, a third invents its own way of being called — and the system stops being one system.
+
+Development exists to hold them. It owns composition: the profile of every Participating Component, the graph of who may depend on whom, the catalogues of languages and databases every Component draws from, and the standards every Component honours — one Public Interface offering Operations, one documentation shape, one precedence order when the project is silent. Each Component then concentrates on its own responsibility and receives the shared decisions rather than making them again.
+
+The cost of the alternative is drift that is invisible until it is expensive: two Components on incompatible versions of the same package, a dependency cycle nobody declared, a consumer bound to a provider's private internals, a Component nobody can use because it documents nothing. None of those is one Component's fault, which is exactly why one Component has to own them.
+
+### How It Works
+
+A Component Profile is the unit Development works in. Each Participating Component has exactly one: its identity, its root in the repository, its type, its role, and the technical and Platform references that apply to it. Reading that profile tells the Component everything the composition decides on its behalf.
+
+The technical choices behind those references live in Development's own catalogues rather than in the Components. A Language Item holds a language's version, package management, conventions, tools, and packages grouped by Technical Purpose; a Database Item holds a database technology's version, driver, and defaults. A Component Profile names the items that apply to it, and the Component resolves what it needs from there — so two Components on the same language are on the same version by construction, not by coincidence.
+
+Dependencies are declared, not discovered. A Connection names one consumer and one provider, and that declaration is the whole permission: what flows across it is the provider's Public Interface and its Operations, never its internals. The graph of those Connections stays direct and acyclic, so the composition can always be read as an order.
+
+What every Component owes the others is fixed by Development's standards rather than negotiated per Component: one Public Interface offering Operations that state what they accept and return, one README that explains that Interface, public metadata published through the Application Manifest, and a stated precedence order for the decisions the Target leaves open. Development supplies the shape; each Component fills it with its own content.
+
+### Understanding
+
+#### Documentation
+
+**What is documentation for, in the Human's words?** Documentation is a Development concern: every new Component starts from Development, and there it must learn how to document itself. Each Component's Preferences names where its documentation lives — a path inside the Component's own project. The README goes from the general to the specific: first an overview, then the details; it always gives examples; it explains setup and how to run; it names the capabilities that can be executed; it explains the different classes and objects. Each Component does this through its own mechanism. The measure is that anyone who reads the README understands how that Component or module works.
+
+**Where it lives, and why not a separate section.** The Principles Schema fixes the shape of every Principles file and sends the shape of a generated file to a Schema or Preferences, so the concept stays inside Development: Principle 8 carries the rule and the Human's view; Development Preferences carry the conventions once for all Components (`settings.documentation`: file, location, order, examples, per-Component fulfilment, secrets, authority) and each Component Profile carries its `documentation` path. Documentation is Development-specific for now; a Foundation-level README Schema is not needed until another Module needs the same shape.
+
+**Why this came up.** After the first Implement run, `model/` and `database/` were generated without a README although Principle 8 required one — Planning had scoped "applicable obligations" to the phase's own Component, and the phrase "at the root selected by its Component Profile" pointed at a key the Profile did not have. Both are now closed: the Profile has the key, the Principle names it, and the Agent Module's placement rule keeps the obligation from being narrowed in the synchronized Skills.
 
 <br>
 
@@ -17,7 +76,9 @@ Development owns composition rather than the internal meaning or implementation 
 - **Database Item** — one reusable Development Preferences definition containing a database technology's version, driver, storage, connection, and naming defaults.
 - **Technical Purpose** — a language-level use such as modeling, API delivery, database access, or migration that remains independent of any Component identity.
 - **Platform Reference** — the identifier of one Platform-owned Launch Item selected by a Component Profile without copying that Launch Item's definition into Development.
-- **Public Interface** — the provider-owned surface intended for consumers, including supported types, functions, APIs, commands, or other entry points.
+- **Public Interface** — the one provider-owned surface a consumer uses, carrying the Operations that Component offers and nothing else.
+- **Operation** — one complete unit of work a Public Interface offers, named by what the consumer wants done rather than by how it is carried out, and stating what it accepts, what it returns, and which outcomes it can produce.
+- **Category** — a named grouping of Operations within one Public Interface, used when a Component offers enough Operations that grouping them helps a consumer find the right one.
 - **Connection** — one configurable direct dependency from a consumer Component Profile to a provider Component Profile.
 - **Runtime Configuration** — runtime settings and secret references owned inside an Application Package boundary.
 - **Cross-cutting Capability** — a shared capability whose application to more than one Participating Component requires Development-level coordination.
@@ -42,7 +103,13 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 1. Every Participating Component has one configurable Component Profile
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Every Participating Component has one configurable Component Profile
 
 **Rule:** Development Preferences declares exactly one Component Profile for every Participating Component. Each profile has one canonical identifier and declares its name, repository-relative root, Component Type, high-level role, and any applicable Language Item, Database Item, or Platform Reference. Profile values remain configurable Preferences rather than fixed Principle values. Component roots are unique, do not overlap or nest, and contain the files owned by their Components. Participating Components are peers, and each owns its internal organization below its root.
 
@@ -52,7 +119,7 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 2. Every Application Package is logically independent
+### 2. Every Application Package is logically independent
 
 **Rule:** Each Application Package has one cohesive responsibility and owns its internal implementation, Runtime Configuration, and Public Interface. An authorized consumer may install or import a provider Application Package or use another supported public entry point only through a declared Connection and the provider's Public Interface. Such use never transfers logical ownership of provider internals.
 
@@ -62,7 +129,7 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 3. Cross-Component use stays behind provider-owned Public Interfaces
+### 3. Cross-Component use stays behind provider-owned Public Interfaces
 
 **Rule:** Every cross-Component interaction uses a Public Interface owned by the provider. The provider owns the number, shape, and implementation of its public entry points. A Connection identifies only its consumer and provider and never duplicates the provider's interface definition.
 
@@ -72,7 +139,7 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 4. The declared Connection graph is direct, explicit, and acyclic
+### 4. The declared Connection graph is direct, explicit, and acyclic
 
 **Rule:** Every permitted direct dependency is declared exactly once as a Connection in Development Preferences. Connection direction runs from consumer to provider and represents dependency rather than request-and-response data direction. Connections are direct, non-transitive, and acyclic; an indirect path never grants direct access.
 
@@ -82,7 +149,7 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 5. Model operations use one shared contract across Components
+### 5. Model operations use one shared contract across Components
 
 **Rule:** Development defines one shared vocabulary for operations that may be exposed by a Model. The default Model Operation set is `create`, `get_by_id`, `list`, `search`, `update`, `enable`, `disable`, and `delete`. Each Model declares the operations applicable to its own fields, relationships, and lifecycle; it may omit an inapplicable operation or add a Model-specific operation. When a Model exposes an operation, the Database, Logic, API, and Presentation Components account for that operation in their own responsibilities and preserve its meaning across their public boundaries.
 
@@ -92,7 +159,7 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 6. Components publish shared application metadata through the Application Manifest
+### 6. Components publish shared application metadata through the Application Manifest
 
 **Rule:** Configure creates and reconciles `.interface/foundation/config/application.yaml` on every run from the current Development Component Profiles, declared Connections, and each Component's public metadata. When an Implementation Component is generated or configured, it publishes its public composition metadata in the section keyed by its canonical identifier, including `package_name` when it has a package, its repository-relative `path`, `public_entrypoint` when applicable, `public_interface` metadata, and any other non-secret value required by another Component to compose or consume it. Consumers may use the Manifest as the shared application metadata surface while ongoing identity and ownership remain authoritative in Development Preferences and declared Connections. Every declared Implementation Component has a Manifest section, even when that section is empty.
 
@@ -102,7 +169,7 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 7. Cross-cutting Capabilities are activated through applicability
+### 7. Cross-cutting Capabilities are activated through applicability
 
 **Rule:** Development Preferences declares each Cross-cutting Capability with one applicability list. An empty list makes the capability inactive; a non-empty list activates it only for the uniquely listed canonical Component identifiers. Logging, Error Handling, Authentication, and Encryption are active by default for the five application Components (`model`, `database`, `logic`, `api`, and `presentation`). An explicit Target requirement or exclusion overrides that default for the current Target. Each listed Component applies the shared requirement while retaining ownership of its internal realization.
 
@@ -112,11 +179,11 @@ Every statement here is mandatory. An Implementation Preference can never overri
 
 <br>
 
-## 8. Every Component has complete, safe, and operational documentation
+### 8. Every Component has complete, safe, and operational documentation
 
-**Rule:** Every Participating Component is generated with a README at its `path` root, at the file its Component Profile's `documentation` key names. Documentation is part of generating the Component, not a step after it: a Component whose README is missing or stale is not complete. The README moves from the general to the specific — first what the Component is, what it does, and where it sits; then its actual public surface and structure, with each main class, object, or module explained; then setup and configuration; how it is run or used; every capability relevant to working with it, each shown with an executable example wherever it can be executed; how to verify it works; and troubleshooting. Each Component fills that order through its own mechanism, and a part that does not apply says so rather than disappearing. Examples use the resolved technical selections so they run as written.
+**Rule:** Every Participating Component is generated with a README at its `path` root, at the file its Component Profile's `documentation` key names. Documentation is part of generating the Component, not a step after it: a Component whose README is missing or stale is not complete. The README moves from the general to the specific — first what the Component is, what it does, and where it sits; then its Public Interface: every Category and every Operation, what each one accepts, what it returns, the outcomes it can produce, and a runnable example of calling it; then setup and configuration; how it is run or used; how to verify it works; and troubleshooting. Each Component fills that order through its own mechanism, and a part that does not apply says so rather than disappearing. Examples use the resolved technical selections so they run as written.
 
-The README's first duty is the Component's Public Interface: it explains that Interface completely — what the Component offers, what each Operation takes and returns, and how a consumer imports and calls it — with explanation, runnable examples, and a tree of the Interface where that makes it clearer. Internal parts are not explained there, and a reader who needs one has been told something the Public Interface should have carried instead. Anyone who reads that section is able to use the Component without reading its source. Documentation stays consistent with public behavior, and its measure is one: anyone — human or Agent — who reads it understands how the Component works and can use it without inspecting private implementation. The shared conventions of that documentation — file name, order of parts, example policy — are declared once in Development Preferences and apply to every Participating Component.
+The README exists to explain the Public Interface. It covers that Interface completely — every Category and Operation as Principle 13 defines them, what each Operation takes and returns, and how a consumer imports and calls it — through explanation, runnable code, and a tree of the Interface where that makes it clearer, so that anyone who reads it can work with the Component through its Public Interface without reading its source. It does not explain the Component's internal structure — its parts, its services, its layers, its classes. Those are stated in the Component's Principles and Preferences, and a README that explains them is documenting the wrong thing. Documentation stays consistent with public behavior, and its measure is one: anyone — human or Agent — who reads it understands how the Component works and can use it without inspecting private implementation. The shared conventions of that documentation — file name, order of parts, example policy — are declared once in Development Preferences and apply to every Participating Component.
 
 A README may show safe code and secret-supply mechanisms, but it uses placeholders, environment-variable names, or safe secret references and never includes a usable credential, token, or secret value. Public usage changes update the README.
 
@@ -126,7 +193,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 <br>
 
-## 9. Unstated Development decisions follow one precedence order
+### 9. Unstated Development decisions follow one precedence order
 
 **Rule:** When the Target leaves a Development-owned decision unstated, resolution applies Development Principles first, Development Preferences second, and compatible professional judgment last.
 
@@ -136,7 +203,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 <br>
 
-## 10. Runtime Configuration ownership remains inside its boundary
+### 10. Runtime Configuration ownership remains inside its boundary
 
 **Rule:** Each Application Package owns the contract and internal representation of its Runtime Configuration. A selected Platform Launch Item may deliver required runtime values through documented inputs. Runtime secret values remain in appropriate secret sources rather than Interface files or documentation.
 
@@ -146,7 +213,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 <br>
 
-## 11. Public Interface changes propagate through direct consumers
+### 11. Public Interface changes propagate through direct consumers
 
 **Rule:** A provider may change private implementation without consumer changes while its Public Interface remains compatible. When a Public Interface changes, every direct consumer in the declared Connection graph is reviewed and, when affected, updated or regenerated and verified. Propagation continues through later Connections only when an affected consumer's own Public Interface also changes.
 
@@ -156,7 +223,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 <br>
 
-## 12. Development centralizes reusable technical items
+### 12. Development centralizes reusable technical items
 
 **Rule:** Development Preferences defines every Language Item and Database Item once. A Language Item contains its version, Package Management choice, naming and typing conventions, quality tools, and packages grouped by Technical Purpose rather than Component identity. When a Technical Purpose has one package, that package is its default; when it has multiple compatible packages, Development Preferences may mark one with `selected: true` as the default choice. Implementation resolves the selected default only when that purpose is required by the Target and the Component's own conceptual responsibilities. A Database Item contains its version and applicable technical defaults. Each Component Profile references the applicable items, while implementation resolves only the Technical Purposes required by the Target and the Component's own conceptual responsibilities. The same Technical Purpose may be used by any compatible Component. Concrete language, package, database, version, tool, and Package Management selections are never duplicated in a participating Component's own Principles or Preferences.
 
@@ -164,6 +231,16 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 
 **Boundary:** A Component Profile may omit an inapplicable technical reference. A Technical Purpose never restricts its package to a particular Component or transfers conceptual responsibility into the Language Item. Development only references a Platform Launch Item; its definition and all internal parameters remain owned by Platform.
 
+
+<br>
+
+### 13. Every Component offers its work as Operations on one Public Interface
+
+**Rule:** Every Participating Component publishes exactly one Public Interface and offers its work there as Operations. An Operation is a complete unit of work named in the consumer's terms, and it declares what it accepts, what it returns, and which outcomes it can produce. A Component with enough Operations to need grouping organizes them into Categories; a Category groups and performs no work of its own. What a Component offers is therefore answerable as a list: these Operations, with these inputs and these results.
+
+**Why:** One shape shared by every Component means a consumer learns how to read a Component once rather than once per Component, documentation states what a Component offers in the same terms every time, and a Component can be replaced by anything that offers the same Operations.
+
+**Boundary:** This Principle fixes the shape, never the contents: which Operations a Component offers, what they are called, and what they do belong to that Component's own Principles and Preferences. It does not prescribe how an Operation is realized in code — a function, a method, a command, or a request handler are all realizations the Component and its selected technology decide.
 
 <br>
 
@@ -196,10 +273,10 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Apply Logging, Error Handling, Authentication, and Encryption by default to the five application Components: Model, Database, Logic, API, and Presentation. *(7)*
 - **May** — Override a default Cross-cutting Capability explicitly in the Target. *(7)*
 - **Must** — Generate a README at each Component's `path` root, named by its Profile's `documentation` key, as part of generating the Component. *(8)*
-- **Must** — Order the README from the general to the specific: overview, structure and main objects, setup, run, capabilities with executable examples, verification, troubleshooting — through each Component's own mechanism, stating explicitly when a part does not apply. *(8)*
+- **Must** — Order the README from the general to the specific: overview, the Public Interface with every Category and Operation and a runnable example of each, setup, run, verification, troubleshooting — through each Component's own mechanism, stating explicitly when a part does not apply. *(8)*
 - **Must** — Write it so that anyone who reads it understands how the Component works, with examples that run on the resolved technology. *(8)*
 - **Must** — Explain the Component's Public Interface completely — every Operation's inputs and results, and how a consumer imports and calls it — with examples, and a tree of the Interface where that helps. *(8)*
-- **Never** — Explain a Component's internal parts in its README, or leave a consumer needing one in order to use the Component. *(8)*
+- **Never** — Explain a Component's internal structure in its README, or leave a consumer needing it in order to use the Component. *(8)*
 - **Must** — Keep every README consistent with public behavior and update it when public usage changes. *(8)*
 - **Never** — Expose a usable secret in documentation or let a README copy, replace, or override an authoritative source. *(8)*
 - **Must** — Resolve an unstated Development decision through Principles, Preferences, then compatible professional judgment. *(9)*
@@ -218,3 +295,7 @@ A README may show safe code and secret-supply mechanisms, but it uses placeholde
 - **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable. *(12)*
 - **Never** — Group a language package by Component identity or let a Technical Purpose transfer conceptual responsibility. *(12)*
 - **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Launch Item definitions into Development. *(12)*
+- **Must** — Publish exactly one Public Interface per Component and offer its work there as Operations. *(13)*
+- **Must** — Declare for every Operation what it accepts, what it returns, and which outcomes it can produce. *(13)*
+- **Must** — Group a Component's Operations into Categories when their number makes grouping useful, with the Category grouping only. *(13)*
+- **Never** — Let a consumer reach a Component's work by any route other than an Operation on its Public Interface. *(13)*

@@ -1,8 +1,84 @@
 # Logic Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+   - **[Understanding](#understanding)**
+2. **[Terms](#terms)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Boundaries](#boundaries)**
+6. **[Documentation](#documentation)**
+7. **[Principles](#principles)**
+   - **[1. Logic is a reusable library](#1-logic-is-a-reusable-library)**
+   - **[2. Logic owns Behaviour](#2-logic-owns-behaviour)**
+   - **[3. One Public Interface exposes Logic's Operations](#3-one-public-interface-exposes-logics-operations)**
+   - **[4. Logic is composed of internal Services, one per Component it talks to](#4-logic-is-composed-of-internal-services-one-per-component-it-talks-to)**
+   - **[5. Logic reaches another Component only through that Component's Public Interface](#5-logic-reaches-another-component-only-through-that-components-public-interface)**
+   - **[6. Domain meaning is imported, never restated](#6-domain-meaning-is-imported-never-restated)**
+   - **[7. External dependencies remain explicit](#7-external-dependencies-remain-explicit)**
+   - **[8. Runtime configuration stays private](#8-runtime-configuration-stays-private)**
+   - **[9. Logic verification covers Logic boundaries](#9-logic-verification-covers-logic-boundaries)**
+8. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Logic is the independent Logic Component that implements the Target's application Behaviour as a reusable library. It is the hub of the Implementation: Model, Database, and every consumer — the API today, a command-line entry point or another Component tomorrow — meet through it. A consumer states what it wants done; Logic decides what to read from Model, what to ask of Database or another Component, what to compute, and what to answer.
 
 Logic owns application Behaviour and the rules that depend on an operation and its application context. It does not own domain meaning, persistence, transport, presentation, or process operation.
+
+### Purpose
+
+Every application has reasoning that belongs to no single Domain Definition and to no single stored record: what may be done, in what order, under which conditions, and what the answer is when it cannot be done. That reasoning has to live somewhere. Without a Component that owns it, it settles wherever it was first needed — a rule inside an API handler, a second copy inside a background script, a third inside a screen — and the three drift until the same request gives three different answers depending on which door it came through.
+
+Logic exists so that there is one door. A consumer that wants something done says so and receives an outcome; it does not learn which Components were involved, in what order, or how their answers were combined. That is what makes a second consumer cheap: a command-line entry point, a scheduled job, or another Component arrives without reimplementing anything, because the reasoning was never inside the first consumer to begin with. It is also what makes the Components behind Logic replaceable: when the only route to stored data runs through here, Database can change everything behind its own boundary without Behaviour noticing.
+
+The cost of the alternative is not untidiness, it is disagreement. Behaviour spread across consumers cannot be verified in one place, cannot be changed in one place, and cannot be trusted to mean the same thing twice.
+
+### How It Works
+
+A consumer names an Operation on Logic's Public Interface and gives it what that Operation needs. Logic works out what the request means: which Domain Definitions it concerns, which Components hold the answer, and in what order they have to be asked.
+
+It then carries the work out through its Services. Each Service holds the calls into one Component's Public Interface, so a Service's Action is one call outwards — the Database Service's `create` is a call into Database's Public Interface, and a Service for another Component is the same thing pointed elsewhere. An Operation that needs one Component uses one Service; an Operation that needs several composes their Actions, deciding what to pass from one to the next and what belongs together in a single unit of work.
+
+What comes back is an Application Outcome: the result the consumer asked for, or one of the expected failures that Operation declares. The consumer learns nothing else — not which Components were involved, not which Service performed which step, not how the answers were combined. That is the whole exchange, and it is the same exchange whether the consumer is an API process, a command-line entry point, or another Component.
+
+### Understanding
+
+#### Logic
+
+**What is Logic, in the Human's words?** Logic is the layer of reasoning: the logic, the functionality, the behaviours and the routines of the application are designed here. It is the hub of the Implementation — Model, Database and the consumers turn around it. It is not executable; it is a library.
+
+**Who talks to it?** A consumer states what it wants done and Logic does the rest. The API is one consumer: it runs the server, receives the request and tells Logic. Tomorrow a command-line entry point, or another Component, is a consumer in the same way. Whoever wants to enter or change data for a Model asks Logic, never Database or Model directly.
+
+**What does it talk to?** Logic talks to Model to understand the Domain Definitions and build on them, to Database to reach stored data, and later to further Components — Binance, MT5, Log, Report — each of which will be its own Component.
+
+**How is it reached?** Nobody outside reaches Logic's internal parts. Logic has one Public Interface; it groups its Operations into Categories — Data Entry is one of them — and offers Operations: a consumer names the Operation and gives what it needs — the Model and the data for a data-entry Operation, the instrument and the parameters for opening an MT5 position — and Logic decides what to read from Model, what to ask of another Component, what to do, and what to answer. One Operation may use several internal Services.
+
+**How does it reach the others?** Logic reaches any other Component only through that Component's Public Interface and the Operations it offers — Model for domain meaning, Database for stored data, and every Component that follows. The Service that owns a dependency holds those calls: the Database Service is where the Operations of Database's Public Interface are used, so an Action there is one call into Database. Logic has no other route out, and there are no separate Logic-side interface names for those boundaries.
+
+**What is inside it?** Inside Logic the work is divided into Services, one per Component Logic talks to and named after it: a Database Service for the part of the reasoning that speaks to Database, and later an MT5 Service, a Binance Service, a Log Service, a Report Service. Services are internal — invisible from outside — and each performs Actions.
+
+**Operations and Actions.** An Operation is the larger unit, offered by the Public Interface; an Action is the step a Service performs. Operations are composed of Actions. The Database Service performs create, update, enable, disable, delete, list, count, sum, min, max, truncate and execute command — the last one reaching Database's own capability-restricted command route for work the other Actions cannot express.
+
+**The Data Entry Operations.** The Data Entry Category offers create, list, update, delete, enable, disable, count, sum, min, max and truncate. list carries the reading work: it takes filters — id among them, so reading one record needs no Operation of its own — an order_by field and direction, and a limit. enable sets is_active true and disable sets it false; they stay two Operations rather than one with a flag. count, sum, min and max each take filters, and sum, min and max also take the field they work on. truncate empties a Model of its records while leaving its structure in place. The names follow REST and data-library convention rather than Interface-invented ones.
+
+**Decisions:**
+
+1. Logic's architecture is the Public Interface with its Categories and Operations, and the internal Services with their Actions. This replaces an earlier structure of a Logic Foundation, one Model Logic unit per Model inheriting from it, and a separate Use Case Logic unit for cross-Model Behaviour. The internal structure of each Service stays deliberately open.
+2. That architecture is Logic's own. No named external standard is selected for it — an earlier choice of Hexagonal, with Clean as an alternative, and the policy requiring conformance to it, are not kept.
+3. No consumer is named or privileged. Anything can talk to Logic through its Public Interface. An earlier statement that the API Component consumes it is not kept, because it read as a restriction that does not exist.
+4. Logic reaches every other Component through that Component's own Public Interface, from the Service that owns the dependency. There are no separate Logic-side names for those boundaries; earlier Model Interface and Database Interface terms are not kept.
+5. Public Interface and Operation are meant to become the shared standard of every Implementation Component — Model, Database, API and the rest — declared in Development so documentation can rely on them. Recorded here as the decision that produced it; Development owns the general statement.
+
+**Still open.** Which further Categories and Operations the Public Interface offers, the full Action list of each Service beyond Database, and the internal structure of a Service are not yet decided.
 
 <br>
 
@@ -13,9 +89,7 @@ Logic owns application Behaviour and the rules that depend on an operation and i
 - **Category** — one named grouping of Operations in the Public Interface, gathering the Operations that serve the same kind of work.
 - **Operation** — one complete unit of work the Public Interface offers a consumer, named by what the consumer wants done rather than by how it is carried out.
 - **Service** — one internal part of Logic, owning the work that concerns one Component Logic talks to. A Service is internal: no consumer reaches it, names it, or depends on it.
-- **Action** — one step a Service performs. Operations are composed of Actions; an Action is never offered directly to a consumer.
-- **Model Interface** — Logic's boundary onto Model's Public Interface.
-- **Database Interface** — Logic's boundary onto Database's Public Interface.
+- **Action** — one step a Service performs, carried out by calling an Operation of that Component's own Public Interface. Operations are composed of Actions; an Action is never offered directly to a consumer.
 - **Application Outcome** — a logical success or expected failure independent of transport and persistence.
 
 <br>
@@ -34,17 +108,28 @@ Logic
 
 The **Public Interface** is Logic's whole outward surface. It organizes what Logic offers into **Categories**, each gathering the Operations that serve one kind of work, and each **Operation** is one complete unit of work stated in the consumer's terms. Nothing else of Logic is visible: the Public Interface names no Service and exposes no Action.
 
-**Services** are the inside of Logic. Each **Service** owns the work that concerns one Component Logic talks to and carries that Component's name, and each **Action** is one step that Service performs. An Operation is carried out by composing Actions, from one Service or several. Services stand beside one another rather than on top of one another, and none of them is reachable, nameable, or dependable from outside.
+**Services** are the inside of Logic. Each **Service** owns the work that concerns one Component Logic talks to and carries that Component's name, and each **Action** is one step that Service performs by calling an Operation of that Component's own Public Interface. An Operation is carried out by composing Actions, from one Service or several. Services stand beside one another rather than on top of one another, and none of them is reachable, nameable, or dependable from outside.
 
 <br>
 
 ## Relationships
 
 - **Consumes Model** — imports authoritative Domain Definitions and their declaration vocabulary through Model's Public Interface.
-- **Consumes Database** — reaches persisted data and its transaction boundary through Database's public Database Interface.
+- **Consumes Database** — reaches persisted data and its transaction boundary through Database's Public Interface.
 - **Consumes Development** — uses its Component Profile, shared rules, technical items, Connections, and Platform Reference.
 - **Consumes Platform** — receives the runtime values its configuration contract requires.
-- **Consumed by API** — provides the Logic Public Interface the API Component publishes over a transport.
+- **Consumed by any consumer** — provides the Public Interface through which any Component or entry point carries out the Operations Logic offers; the API is one such consumer, not a privileged one.
+
+<br>
+
+## Boundaries
+
+- **A rule determinable from one Domain Definition's own data** — belongs to Model, because it holds wherever that definition is used, with no operation and no application context to qualify it.
+- **A guarantee that requires comparing stored records** — belongs to Database, because only the Component that holds every record can enforce it; Logic would have to read the whole set to imitate it, and would still race with the next writer.
+- **The shape of a request or a response on the wire, its status codes and its serialization** — belongs to the consumer that carries it, because it is a property of the transport rather than of the Behaviour underneath.
+- **Selecting, provisioning, or operating an external service** — belongs to Development and Platform, because choosing a dependency and running it are decisions about the project and its environment, not about what the application does.
+- **Where a value comes from at runtime** — belongs to Platform, because Logic owns the contract that says which values it needs and never the delivery of them.
+- **The physical layout of stored data — tables, indexes, migrations, mappings** — belongs to Database, because it is how meaning is stored rather than what the meaning is.
 
 <br>
 
@@ -58,11 +143,17 @@ Logic's documentation is written for a consumer who will never see inside it. It
 
 <br>
 
-Every statement here is mandatory. A Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Logic is a reusable library
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Logic is a reusable library
 
 **Rule:** Logic owns application Behaviour and exposes it through its Public Interface. It does not start a process, own transport schemas, or depend on a consumer's framework.
 
@@ -72,7 +163,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 <br>
 
-## 2. Logic owns Behaviour
+### 2. Logic owns Behaviour
 
 **Rule:** Logic validates domain state, applies operation and application-context rules, and returns Application Outcomes. Behaviour remains independent of transport and storage.
 
@@ -82,7 +173,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 <br>
 
-## 3. One Public Interface exposes Logic's Operations
+### 3. One Public Interface exposes Logic's Operations
 
 **Rule:** Logic publishes exactly one Public Interface, and every consumer reaches Logic only through it. That Interface organizes what it offers into Categories, each gathering the Operations that serve one kind of work, and offers Operations: each one a complete unit of work stated in the consumer's terms — what it wants done and with what — never a route into Logic's internal parts. An Operation states what it accepts, what it returns, and which Application Outcomes it can produce.
 
@@ -92,7 +183,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 <br>
 
-## 4. Logic is composed of internal Services, one per Component it talks to
+### 4. Logic is composed of internal Services, one per Component it talks to
 
 **Rule:** Inside Logic, work is divided into Services. Each Service owns the work that concerns one Component Logic talks to and is named after it, so the Component a piece of Behaviour depends on is visible from its Service. A Service performs Actions; an Operation is carried out by composing Actions, from one Service or several. Services are internal: no consumer names one, reaches one, or depends on one, and no Service is promoted to the Public Interface.
 
@@ -102,19 +193,19 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 <br>
 
-## 5. Persistence has one boundary
+### 5. Logic reaches another Component only through that Component's Public Interface
 
-**Rule:** Database Interface is Logic's only route to persistence and forwards grouped operations through Database's transaction boundary. Logic never exposes engines, sessions, mappings, or schema details.
+**Rule:** Every route out of Logic runs through the Public Interface of the Component on the other side, and through the Operations that Interface offers. The Service that owns a dependency makes those calls; Logic reaches no Component by another route and holds no part of one that its Public Interface does not publish. Persistence follows the same rule: Logic reaches stored data only through Database's Public Interface, forwards grouped work through Database's transaction boundary, and never exposes engines, sessions, mappings, or schema details.
 
-**Why:** A single persistence boundary lets the Engine, the mapping, and the Database's internals change without reaching Behaviour.
+**Why:** A Component that is only ever reached through its own published surface can change everything behind it without reaching Behaviour, and every dependency Logic has is then visible as a call it is allowed to make.
 
-**Boundary:** Logic decides which operations belong together in one unit of work; Database owns commit, rollback, isolation, and retry behaviour within it.
+**Boundary:** Logic decides which operations belong together in one unit of work; the Component on the other side owns what happens inside its own boundary — for Database, commit, rollback, isolation, and retry. What that Component publishes is its own decision, not Logic's.
 
 <br>
 
-## 6. Model meaning has one boundary
+### 6. Domain meaning is imported, never restated
 
-**Rule:** Model Interface imports authoritative public definitions. Logic never copies or redefines Domain Definitions.
+**Rule:** Logic imports authoritative Domain Definitions through Model's Public Interface and uses them as Model declares them. It never copies, mirrors, or redefines a Domain Definition, and never re-derives meaning Model already publishes.
 
 **Why:** One definition shared by every Component is what keeps the domain from drifting into several versions of itself.
 
@@ -122,7 +213,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 <br>
 
-## 7. External dependencies remain explicit
+### 7. External dependencies remain explicit
 
 **Rule:** Logic consumes only the external services and cross-cutting capabilities selected by Development, through explicit interfaces and only where Behaviour requires them. An external service is reached through the Service that owns that dependency, never from scattered points inside Logic.
 
@@ -132,7 +223,7 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 <br>
 
-## 8. Runtime configuration stays private
+### 8. Runtime configuration stays private
 
 **Rule:** Logic defines the configuration contract required by its Logic and validates required values before use. Platform supplies runtime values; secrets never enter source, errors, or public interfaces.
 
@@ -142,9 +233,9 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 
 <br>
 
-## 9. Logic verification covers Logic boundaries
+### 9. Logic verification covers Logic boundaries
 
-**Rule:** Verification covers isolated Logic, Model Interface, Database Interface, transaction behaviour, outcomes, and every public Logic operation without requiring a live API process.
+**Rule:** Verification covers isolated Logic, each Service's calls into the Public Interface it depends on, transaction behaviour, and every Operation the Public Interface offers — its inputs, its result, and each Application Outcome it declares — without requiring a live consumer process.
 
 **Why:** Behaviour that can only be verified through a running API is verified at the wrong boundary and hides which layer actually failed.
 
@@ -165,13 +256,14 @@ Every statement here is mandatory. A Implementation Preference can never overrid
 - **Must** — Divide Logic into internal Services, each owning the work that concerns one Component Logic talks to and named after it. *(4)*
 - **Must** — Carry out an Operation by composing Actions from one Service or several. *(4)*
 - **Never** — Let a consumer name, reach, or depend on a Service, or let one Service do its work through another Component's Service. *(4)*
-- **Must** — Reach persistence only through Database Interface, forwarding grouped operations through Database's transaction boundary. *(5)*
-- **Never** — Expose engines, sessions, mappings, or schema details through Logic. *(5)*
-- **Must** — Import authoritative Domain Definitions through Model Interface. *(6)*
+- **Must** — Reach every other Component only through that Component's Public Interface and its Operations, from the Service that owns the dependency. *(5)*
+- **Must** — Forward grouped persistence work through Database's transaction boundary. *(5)*
+- **Never** — Reach a Component by another route, hold a part of one its Public Interface does not publish, or expose engines, sessions, mappings, or schema details. *(5)*
+- **Must** — Import authoritative Domain Definitions through Model's Public Interface and use them as Model declares them. *(6)*
 - **Never** — Copy or redefine a Domain Definition inside Logic. *(6)*
 - **Must** — Consume an external service or cross-cutting capability only when Development selected it and Behaviour requires it, through the Service that owns that dependency. *(7)*
 - **Never** — Select, provision, or operate an external service from Logic. *(7)*
 - **Must** — Define Logic's configuration contract and validate every required value before use. *(8)*
 - **Never** — Put a secret in source, an error, or a public interface, or take ownership of runtime values. *(8)*
-- **Must** — Verify isolated Logic, both Interfaces, transaction behaviour, outcomes, and every public operation without a live API process. *(9)*
+- **Must** — Verify isolated Logic, each Service's calls into its Component's Public Interface, transaction behaviour, and every Operation with its inputs, result, and declared Application Outcomes, without a live consumer process. *(9)*
 - **Never** — Push Logic verification into transport, presentation, or deployment, or persist a check in a Component outside the testing applicability list. *(9)*

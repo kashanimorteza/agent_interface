@@ -1,5 +1,30 @@
 # Agent Permission Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Interface is read-only except for authorized Config records](#1-interface-is-read-only-except-for-authorized-config-records)**
+   - **[2. Permission is least-privilege and deny-safe](#2-permission-is-least-privilege-and-deny-safe)**
+   - **[3. Agent Module reads belong only to the explicit Agent Native Skill](#3-agent-module-reads-belong-only-to-the-explicit-agent-native-skill)**
+   - **[4. Secrets never enter project declarations or reports](#4-secrets-never-enter-project-declarations-or-reports)**
+   - **[5. Unrelated Human work is preserved](#5-unrelated-human-work-is-preserved)**
+   - **[6. An Enforced Guarantee is deterministic and bounded](#6-an-enforced-guarantee-is-deterministic-and-bounded)**
+   - **[7. Guarantees fail visibly and safely](#7-guarantees-fail-visibly-and-safely)**
+   - **[8. A guarantee's authority does not expand on trigger](#8-a-guarantees-authority-does-not-expand-on-trigger)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Agent Permission is the Component that governs what Agent Roles and capabilities may read, change, execute, connect to, or disclose. It combines authorization policy, sandbox boundaries, trust decisions, and secret handling.
 
 It owns enforceable access decisions. It does not own Human intent, external account authority, or a capability's functional contract.
@@ -9,6 +34,26 @@ On 2026-09-17 the former Hook Component was merged into this Component: a Hook i
 *Absorbed from the former Agent Hook Component on 2026-09-17 — its introduction, kept verbatim:* Agent Hook is the Component that performs deterministic automation at declared lifecycle events. A Hook may observe, validate, block, transform, notify, or trigger a bounded capability independently of an Agent Native's or Agent Instance's discretionary reasoning.
 
 It owns event matching, handler order, inputs, effects, and failure behavior. It does not own the workflow it observes or broader authority than the triggering event permits.
+
+### Purpose
+
+Every other Agent Component describes something the Agent can do. This one describes what it may do — and, more importantly, what must happen whether or not the model decides to do it.
+
+Two concerns turn out to be the same concern. Authorization asks whether an action is allowed: which paths are writable, which commands may run, which external systems may be reached, which secrets may be seen. An Enforced Guarantee asks whether a behavior happens without discretion: a check that always runs, a boundary that always blocks, a record that is always written. Both are answers to *the model does not get to decide this*, so both are owned here.
+
+The Component exists because a boundary that depends on good reasoning is not a boundary. An Agent that is merely instructed not to write to the Interface will, under the right prompt, write to the Interface. An Agent that cannot is a different thing entirely.
+
+### How It Works
+
+Access starts closed. The Interface is read-only to every Role and Skill, and the only writable exception is an operational record inside the Config boundary, changed by the one Skill whose declared responsibility and owning Component give it authority over that exact record. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Role or lower layer can widen what it was given.
+
+The Agent Module is stricter still. Its sources are readable only inside the prompt the Human creates by directly invoking the declared Agent Native entry point — not by an Agent, a Skill, a coordinator, a handler, or anything the model can reach on its own. Every other consumer works from the last synchronized Runtime artifacts, and a missing artifact is reported as drift rather than resolved by going back to the Module.
+
+Enforced Guarantees cover what authorization alone cannot. A guarantee declares the behavior that must occur and the point at which it occurs; the Agent Native chooses the mechanism — a hook, a deny rule, a sandbox constraint — and that choice is recorded per Native in Preferences. A guarantee is deterministic and bounded, carries no authority beyond what its trigger permits, and when it cannot run it fails visibly and safely rather than quietly passing.
+
+Secrets are never values in a declaration. A declaration references a credential source; the value stays where the authority that owns it keeps it. Human authorship sits outside all of this: these rules govern Agent execution, not what the Human writes.
+
+<br>
 
 ## Terms
 
@@ -31,11 +76,19 @@ Technical modes, permission rules, sandbox settings, trust policy, and credentia
 
 Technical events, matchers, handlers, timeouts, and native configuration belong to the `native.<agent-native>` block of each Enforced Guarantee in Agent Permission Preferences (formerly Hook Preferences).
 
-Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Interface is read-only except for authorized Config records
+<br>
+
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Interface is read-only except for authorized Config records
 
 **Rule:** The entire Interface is read-only to every Agent Role and Skill by default. Only operational records inside the Interface Config boundary may be changed, and only by a Skill whose declared responsibility and owning Component grant authority over that exact record. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
 
@@ -45,7 +98,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 2. Permission is least-privilege and deny-safe
+### 2. Permission is least-privilege and deny-safe
 
 **Rule:** Every capability receives only the minimum access required by its contract. Deny rules and stricter authorities take precedence; no lower layer or delegated role can broaden them.
 
@@ -55,7 +108,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 3. Agent Module reads belong only to the explicit Agent Native Skill
+### 3. Agent Module reads belong only to the explicit Agent Native Skill
 
 **Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-native` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, enforcement handler, lifecycle routine, automation, and model-generated action can neither invoke the Agent Native Skill nor create, inherit, borrow, or simulate its access grant. In its sync modes the Skill reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations; in its install mode it reads them to resolve which capabilities must be transferred or provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
 
@@ -65,7 +118,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 4. Secrets never enter project declarations or reports
+### 4. Secrets never enter project declarations or reports
 
 **Rule:** Credentials, tokens, private keys, and secret values remain in approved external stores or runtime channels and are never committed, copied into project declarations, logged, or exposed in Agent output.
 
@@ -75,7 +128,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 5. Unrelated Human work is preserved
+### 5. Unrelated Human work is preserved
 
 **Rule:** Agent actions preserve unrelated Human changes and data. Destructive operations resolve exact targets and use recoverable mechanisms when practical.
 
@@ -85,7 +138,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 6. An Enforced Guarantee is deterministic and bounded
+### 6. An Enforced Guarantee is deterministic and bounded
 
 **Rule:** Every Enforced Guarantee declares what it guarantees, the Event it binds to, its allowed effects, its failure policy, and whether it may block; the Native adds its own mechanics (matcher, handler type, inputs, timeout, exit behavior) under `native.<agent-native>`. Matching the same unchanged event produces the same policy outcome.
 
@@ -97,7 +150,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 7. Guarantees fail visibly and safely
+### 7. Guarantees fail visibly and safely
 
 **Rule:** A guarantee's failure, timeout, malformed output, and denied execution have an explicit fail-open or fail-closed policy and become observable. Security and integrity controls fail closed unless a stricter authority explicitly defines otherwise.
 
@@ -109,7 +162,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 8. A guarantee's authority does not expand on trigger
+### 8. A guarantee's authority does not expand on trigger
 
 **Rule:** An Event authorizes only the effects declared for its Enforced Guarantee. A trigger never grants broader file, network, external-service, or workflow authority.
 

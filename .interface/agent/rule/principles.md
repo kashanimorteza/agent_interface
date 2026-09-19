@@ -1,5 +1,34 @@
 # Agent Rule Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Rules guide behavior without replacing authority](#1-rules-guide-behavior-without-replacing-authority)**
+   - **[2. Rule scope and conflict are explicit](#2-rule-scope-and-conflict-are-explicit)**
+   - **[3. Security boundaries use enforcement](#3-security-boundaries-use-enforcement)**
+   - **[4. Presentation preserves technical substance](#4-presentation-preserves-technical-substance)**
+   - **[5. Interaction keeps work legible](#5-interaction-keeps-work-legible)**
+   - **[6. Interaction requests only material decisions](#6-interaction-requests-only-material-decisions)**
+   - **[7. Completion is evidence-backed](#7-completion-is-evidence-backed)**
+   - **[8. Material execution is observable](#8-material-execution-is-observable)**
+   - **[9. Health claims use controlled status vocabulary](#9-health-claims-use-controlled-status-vocabulary)**
+   - **[10. Session state is not authoritative project state](#10-session-state-is-not-authoritative-project-state)**
+   - **[11. Resume revalidates before mutation](#11-resume-revalidates-before-mutation)**
+   - **[12. Session termination exposes unfinished work](#12-session-termination-exposes-unfinished-work)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Agent Rule is the Component that defines persistent behavioral instructions applied across sessions or within a declared path scope. Rules adapt Agent Native and Agent Instance behavior to stable project conventions without becoming enforcement mechanisms or copies of owned Interface sources.
 
 It owns instruction scope, loading conditions, and precedence among Rules. It does not own security enforcement, workflow implementation, or project definitions.
@@ -17,6 +46,26 @@ It owns observation contracts and health vocabulary. It does not own implementat
 *Absorbed from the former Agent Session Component on 2026-09-17 — its introduction, kept verbatim:* Agent Session is the Component that governs one continuous or resumable period of Agent execution. It defines lifecycle, identity, state continuity, background work, resumption, isolation, and termination behavior.
 
 It owns session lifecycle and transient execution continuity. It does not own project state, authored definitions, or durable Workflow records.
+
+### Purpose
+
+Some things an Agent must do are not tied to any one task: never commit without being asked, report progress without narrating everything, claim completion only with evidence, re-establish context after a resume. They apply across sessions and across work, and if they are not written down somewhere persistent, they have to be repeated in every conversation — and they will be forgotten in the one that matters.
+
+Rule exists to hold them. A Rule is a standing instruction that adapts the Agent's behavior to stable conventions: how it presents work, what it counts as done, how it begins and ends a session. It is guidance the Agent carries with it, not enforcement.
+
+The distinction from enforcement is the point. A Rule tells the Agent how to behave; a Permission guarantee makes a behavior impossible. Rules that pretend to enforce create a false sense of safety, and enforcement that pretends to be advice gets argued with. Keeping them in separate Components keeps both honest.
+
+### How It Works
+
+The Human declares Rules, each with its scope — applying everywhere, or only within a declared path — and its complete text in its own definition file. Agent Sync places that content where the selected Native reads standing instructions, adding only that Native's wrapper.
+
+Loading and precedence are explicit: which Rules apply, in what order, and what happens when two of them conflict. A Rule never silently overrides an owned Interface source; where a Rule and an authority disagree, the authority holds.
+
+Beyond the declared Rules, this Component carries the conduct every Agent Native honours whether or not it has a native mechanism for each: presentation that never alters technical substance, progress that is reported without narrating internals, decisions that are asked for only when they are material, completion claimed only with observed evidence, a controlled vocabulary for health, and session conduct — session state is never authoritative, a resume revalidates before it mutates anything, and an ending exposes what is unfinished.
+
+What must be guaranteed rather than followed is not written here: it is declared as an Enforced Guarantee in Permission, and this Component explains the boundary rather than replacing it.
+
+<br>
 
 ## Terms
 
@@ -53,11 +102,19 @@ Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting
 
 Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Rule Preferences (formerly Session Preferences).
 
-Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Rules guide behavior without replacing authority
+<br>
+
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Rules guide behavior without replacing authority
 
 **Rule:** An Agent Rule states stable behavioral guidance concisely and points to the current owner of project facts, structures, choices, and workflows. It never copies or overrides those sources.
 
@@ -67,7 +124,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 2. Rule scope and conflict are explicit
+### 2. Rule scope and conflict are explicit
 
 **Rule:** Every Agent Rule declares whether it is global or scoped and the exact condition under which it applies. Applicable conflicts are reported and resolved by authority and declared precedence, never by arbitrary load order.
 
@@ -77,7 +134,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 3. Security boundaries use enforcement
+### 3. Security boundaries use enforcement
 
 **Rule:** A behavior that must be guaranteed is enforced by Agent Permission, sandboxing, or an applicable Hook rather than relying only on an Agent Rule.
 
@@ -87,7 +144,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 4. Presentation preserves technical substance
+### 4. Presentation preserves technical substance
 
 **Rule:** Output Style may change organization, tone, detail, and format while preserving exact technical meaning, identifiers, commands, paths, code, evidence, warnings, uncertainty, and required decisions.
 
@@ -99,7 +156,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 5. Interaction keeps work legible
+### 5. Interaction keeps work legible
 
 **Rule:** Human-facing roles communicate active scope, material progress, blockers, required decisions, and final outcomes at a frequency and level appropriate to the work. They never fabricate certainty or hide a failed condition behind presentation.
 
@@ -111,7 +168,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 6. Interaction requests only material decisions
+### 6. Interaction requests only material decisions
 
 **Rule:** An Agent Native or Agent Instance asks the Human only when no safe choice avoids materially changing intent, architecture, security, data integrity, permissions, a declared interface, or an irreversible outcome.
 
@@ -123,7 +180,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 7. Completion is evidence-backed
+### 7. Completion is evidence-backed
 
 **Rule:** An Agent Native or Agent Instance reports success only when every requested and contract-required condition has current observable Evidence. Missing or inconclusive Evidence remains explicit and never becomes success by inference.
 
@@ -135,7 +192,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 8. Material execution is observable
+### 8. Material execution is observable
 
 **Rule:** Active scope, material decisions, mutations, delegation, checks, outcomes, blockers, configuration drift, Capability Status, and required Human actions are attributable and inspectable.
 
@@ -147,7 +204,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 9. Health claims use controlled status vocabulary
+### 9. Health claims use controlled status vocabulary
 
 **Rule:** Capability and configuration health use declared statuses with objective entry conditions. A status changes only when current Observation establishes the new condition.
 
@@ -159,7 +216,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 10. Session state is not authoritative project state
+### 10. Session state is not authoritative project state
 
 **Rule:** Conversation history, session identifiers, transient tasks, cached context, and background process state never replace authored Interface sources or owned operational records.
 
@@ -171,7 +228,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 11. Resume revalidates before mutation
+### 11. Resume revalidates before mutation
 
 **Rule:** A resumed, forked, restored, or background Session re-establishes required Context, active scope, permissions, filesystem state, and outstanding work before making new mutations.
 
@@ -183,7 +240,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 12. Session termination exposes unfinished work
+### 12. Session termination exposes unfinished work
 
 **Rule:** Before a Session claims completion or terminates managed Background Work, it exposes unfinished responsibilities, running work, blockers, and required Human actions. It never abandons authorized work while presenting success.
 

@@ -1,6 +1,51 @@
 # Presentation Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Presentation has three internal layers](#1-presentation-has-three-internal-layers)**
+   - **[2. Presentation is component-based](#2-presentation-is-component-based)**
+   - **[3. Interaction Logic owns user-interface behaviour](#3-interaction-logic-owns-user-interface-behaviour)**
+   - **[4. API Access is the only door to application data](#4-api-access-is-the-only-door-to-application-data)**
+   - **[5. Domain Models are shared, never copied](#5-domain-models-are-shared-never-copied)**
+   - **[6. Presentation implements only Presentation-targeted project Behaviour](#6-presentation-implements-only-presentation-targeted-project-behaviour)**
+   - **[7. Appearance is governed by one coherent visual system](#7-appearance-is-governed-by-one-coherent-visual-system)**
+   - **[8. Presentation preserves its boundary](#8-presentation-preserves-its-boundary)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Presentation is the Component that presents the application to users, manages user interaction, and consumes the capabilities published by API. It is where the project becomes something a person can see and act on, and it keeps that experience coherent by resolving its appearance and its interface behaviour once rather than page by page. Its architecture is independent of any language, library, framework, package manager, API protocol, or project.
+
+### Purpose
+
+Software that people use is judged by what they see, and what they see is assembled from hundreds of small decisions — a spacing, a colour, a label, what happens after a click. Made page by page, those decisions never agree: the same button looks different in two places, the same action behaves differently, and changing any of it means finding every copy.
+
+Presentation exists to make those decisions once and reuse them. The visual system is resolved in one place and consumed everywhere; a user-interface concept is built once as a Component and appears wherever it is needed; interaction behaviour lives in one layer rather than scattered through views. That is what keeps an interface coherent as it grows, rather than coherent only on the day it was designed.
+
+Its second reason is the boundary beneath it. Presentation reaches the application only through the API, which keeps it from becoming a second place where domain meaning and application rules are decided. Without that, validation gets reimplemented in forms, rules migrate into screens, and the same rule quietly disagrees with itself depending on whether the user or the server applied it.
+
+### How It Works
+
+What a user sees is composed from user-interface Components: focused, reusable units, each responsible for one interface concept, assembled into pages and views. A Component takes what it needs and renders it; it does not fetch, and it does not decide application rules.
+
+Interaction Logic sits behind them and owns behaviour: interface state, input, interaction flows, what happens when something is chosen or submitted, what the user is shown while waiting. It is the only layer that reasons about the interface, which is what keeps views declarative and repeatable.
+
+API Access is the single door outwards. Every piece of application data enters and leaves through it, using the capabilities API publishes, so Presentation has exactly one dependency on the running system and one place to change when that system changes. Domain Definitions are imported from Model rather than restated, so the shapes on screen are the shapes the application agrees on.
+
+The Theme resolves appearance for all of it — colours, typography, spacing, direction, display mode — in one coherent system that every Component consumes rather than each deciding for itself.
+
+<br>
 
 ## Terms
 
@@ -18,11 +63,19 @@ Presentation is the Component that presents the application to users, manages us
 
 Technical choices and defaults belong to Presentation Preferences. Presentation implementation applies those choices to the current project definition.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Presentation has three internal layers
+<br>
+
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Presentation has three internal layers
 
 **Rule:** Presentation is formed from three distinct layers:
 
@@ -38,7 +91,7 @@ The dependency direction is Presentation → Interaction Logic → API Access �
 
 <br>
 
-## 2. Presentation is component-based
+### 2. Presentation is component-based
 
 **Rule:** Presentation is assembled from focused, composable Components rather than monolithic pages or duplicated interface fragments. Reusable Components preserve consistent behaviour and appearance wherever the same user-interface concept is needed.
 
@@ -48,7 +101,7 @@ The dependency direction is Presentation → Interaction Logic → API Access �
 
 <br>
 
-## 3. Interaction Logic owns user-interface behaviour
+### 3. Interaction Logic owns user-interface behaviour
 
 **Rule:** Interaction Logic manages state that exists for the user experience, including user input, form state, selection, navigation intent, loading state, and coordination between Presentation Components. It may perform interaction-level validation and transform resolved data for presentation.
 
@@ -58,7 +111,7 @@ The dependency direction is Presentation → Interaction Logic → API Access �
 
 <br>
 
-## 4. API Access is the only door to application data
+### 4. API Access is the only door to application data
 
 **Rule:** Presentation reaches application data and application capabilities only through the public API implemented by the API Component. API Access owns the Presentation-side client boundary, request and response transport, and translation between API representations and the data used by Interaction Logic. It consumes the resolved API contract and its machine-readable description when one is available.
 
@@ -70,7 +123,7 @@ When a machine-readable description is unavailable, API Access derives its clien
 
 <br>
 
-## 5. Domain Models are shared, never copied
+### 5. Domain Models are shared, never copied
 
 **Rule:** Presentation preserves the identity and meaning of the shared logical domain-model set through the public API contract. Presentation implementation never imports, copies, redefines, or creates a competing definition of Model meaning. API Access translates the API's representations for Interaction Logic and the user interface while preserving their traceability to the shared Model.
 
@@ -82,7 +135,7 @@ Presentation derives operation-specific input and output representations from th
 
 <br>
 
-## 6. Presentation implements only Presentation-targeted project Behaviour
+### 6. Presentation implements only Presentation-targeted project Behaviour
 
 **Rule:** Presentation may implement project Behaviour concerned with presentation and user interaction. Presentation determines how that Behaviour is exposed to the user, Interaction Logic coordinates its user-facing flow, and API Access consumes any Logic capability it requires.
 
@@ -92,7 +145,7 @@ Presentation derives operation-specific input and output representations from th
 
 <br>
 
-## 7. Appearance is governed by one coherent visual system
+### 7. Appearance is governed by one coherent visual system
 
 **Rule:** Presentation uses a coherent Theme and shared visual rules across its Components. Colours, typography, spacing, direction, display mode, and other visual decisions are resolved once and consumed consistently rather than being independently invented by each page or Component.
 
@@ -102,7 +155,7 @@ Presentation derives operation-specific input and output representations from th
 
 <br>
 
-## 8. Presentation preserves its boundary
+### 8. Presentation preserves its boundary
 
 **Rule:** Presentation owns presentation, user-interface interaction, its API client boundary, and its visual system.
 

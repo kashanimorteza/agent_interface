@@ -1,8 +1,52 @@
 # Review Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Review always assures the Plan before available implementation](#1-review-always-assures-the-plan-before-available-implementation)**
+   - **[2. Review passes report; reconciliation stays with the owning operation](#2-review-passes-report-reconciliation-stays-with-the-owning-operation)**
+   - **[3. Review is independent of how the work was done](#3-review-is-independent-of-how-the-work-was-done)**
+   - **[4. Every Finding is grounded in an observation](#4-every-finding-is-grounded-in-an-observation)**
+   - **[5. Missing evidence is a Finding, not an absence](#5-missing-evidence-is-a-finding-not-an-absence)**
+   - **[6. A Finding is required work no activity covers](#6-a-finding-is-required-work-no-activity-covers)**
+   - **[7. A Finding outlives the session that raised it](#7-a-finding-outlives-the-session-that-raised-it)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Review is the Component that establishes whether a phase Plan and, when implementation exists, its implemented result satisfy the current Interface and Target, and records what it found. It exists because the operation that produces a Plan or result is the worst judge of it: the producer knows what it meant to create, and that knowledge quietly fills the gaps that an independent reader would notice.
 
 Review owns its Findings and the record of what was reviewed. It does not own implementation, Plan, Target, or the active Workflow position, and it never enters or changes a Workflow Mode. It records only aggregate Review progress and its History outcome under State.
+
+### Purpose
+
+The operation that produced something is the worst judge of it. It knows what it meant, and that knowledge fills the gaps silently: a requirement that was never covered reads as covered, evidence that was never observed reads as obvious, and work that is almost finished reads as finished. This is not carelessness — it is unavoidable for anyone holding the intent.
+
+Review exists to be the reader who does not hold it. It takes the current authorities and the current Target, builds the complete set of obligations they impose, and judges the Plan and, when it exists, the implemented result against that set — each obligation either satisfied with evidence, explicitly not applicable with a reason, or a Finding.
+
+What makes it useful is that it only judges. It reconciles nothing and fixes nothing: each Finding names the operation that owns the work, and that operation resolves it. A judge who also repairs stops being independent by the second repair, and the record of what was wrong disappears into the fix.
+
+### How It Works
+
+Review runs against one phase at a time and starts from current sources rather than from what a previous run concluded. It reads the applicable authorities in full — not their summaries — and builds an inventory of every obligation they impose: every mandatory rule, every required preference, every applicable Target requirement, every unresolved Finding from before.
+
+Plan Assurance comes first. Every obligation in that inventory is classified exactly once against the current Plan: covered, not applicable with a stated reason, or a Finding. Implementation Assurance does not begin until Plan Assurance is satisfied, because judging an implementation against an incomplete Plan judges the wrong thing.
+
+When implementation exists, Implementation Assurance repeats the exercise against what was actually built and the evidence recorded for it. A condition that was asserted but not observed is missing evidence, which is a Finding — absence of proof is never read as proof.
+
+Every Finding carries the expected condition, what was actually observed, and where; and it names the operation that owns the fix. Findings persist across runs until current observation proves them resolved or the Human accepts them, so a problem raised once cannot quietly disappear between sessions.
+
+<br>
 
 ## Terms
 
@@ -25,11 +69,19 @@ Review owns its Findings and the record of what was reviewed. It does not own im
 
 Technical choices and defaults belong to Review Preferences, which currently define none. The exact shape of the generated Review configuration belongs to the Review Schema.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Review always assures the Plan before available implementation
+<br>
+
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Review always assures the Plan before available implementation
 
 **Rule:** A Review reconstructs current Interface Understanding and Target Understanding, then independently judges one phase's Plan against the current Target and every applicable Principle and Preference. It records the exact Assured Plan Revision with the Plan Assurance outcome. Only after Plan Assurance is satisfied does it judge existing implementation and evidence against that assured Plan and the same current authorities. When no implementation exists, Implementation Assurance is explicitly `not reviewed` rather than inferred.
 
@@ -39,7 +91,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 2. Review passes report; reconciliation stays with the owning operation
+### 2. Review passes report; reconciliation stays with the owning operation
 
 **Rule:** An individual Review pass changes no implementation, Plan, Target definition, or Task progress. The Reviewing Skill may coordinate Planning for the same phase when Plan Assurance exposes a missing, stale, incomplete, or invalid Plan, then perform a new independent Review pass against Planning's result. It never invokes Development or repairs implementation.
 
@@ -49,7 +101,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 3. Review is independent of how the work was done
+### 3. Review is independent of how the work was done
 
 **Rule:** Review observes the required condition for itself. It may read the check the implementer built and the evidence it recorded, but it judges whether that check actually establishes the condition rather than accepting that it passed.
 
@@ -59,7 +111,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 4. Every Finding is grounded in an observation
+### 4. Every Finding is grounded in an observation
 
 **Rule:** A Finding states what was expected, what was observed, and the exact location or observable result that shows it. A statement that cannot be traced to something a reader can see for themselves is not a Finding.
 
@@ -69,7 +121,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 5. Missing evidence is a Finding, not an absence
+### 5. Missing evidence is a Finding, not an absence
 
 **Rule:** When an acceptance criterion has nothing observable to demonstrate it, that is recorded as a Finding of its own. Review does not reconstruct the missing evidence, infer it from the implementation, or treat a plausible result as proof that a check once passed.
 
@@ -79,7 +131,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 6. A Finding is required work no activity covers
+### 6. A Finding is required work no activity covers
 
 **Rule:** A Review may find that the phase requires something no planned activity covers. That is recorded as a Finding of the phase rather than of any activity, because it belongs to none.
 
@@ -89,7 +141,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 7. A Finding outlives the session that raised it
+### 7. A Finding outlives the session that raised it
 
 **Rule:** Every Finding is stored with its Review, and remains stored until an authorized Review establishes that it no longer holds or the human accepts it as it is. Its state is part of the record.
 

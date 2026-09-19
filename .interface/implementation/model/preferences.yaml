@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
   purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "3.4"
-  updated: "2026-09-18"
+  version: "6.2"
+  updated: "2026-09-19"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -25,15 +25,13 @@ read_order:
   - "selected"
   - "options"
   - "settings"
-  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   selected: "Empty. Development owns Model's configurable profile and concrete selections."
   options: "Empty. Development catalogues Model's concrete technical alternatives and Platform reference."
-  settings: "Empty. Target definitions provide each Field and relationship property; this Component adds no inferred Field defaults."
-  implementation: "Technology-independent conventions for the declaration vocabulary, validation, precision, time, and verification."
+  settings: "Technology-independent conventions, grouped by the parts Model Principles name in its Architecture — Domain Definition, Declaration Vocabulary, and Model Foundation — plus Verification, which spans the Component. Target definitions provide each Field and relationship property; this Component adds no inferred Field defaults."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -46,10 +44,23 @@ content:
   options: {}
 
   # <!-------------------------------------------- settings -->
-  settings: {}
+  settings:
 
-  # <!-------------------------------------------- implementation -->
-  implementation:
+    # ---- Domain Definition ----
+    domain_definition:
+      validation:
+        declarative_constraints_first: true
+        custom_validation: "only when declarative constraints are insufficient"
+        strictness: "enable when coercion could hide invalid domain data"
+      numeric_precision:
+        exact_values: "exact decimal representation"
+        approximate_values: "only when explicitly permitted by the Target"
+      time:
+        absolute_instants: "timezone-aware"
+        canonical_timezone: "UTC"
+        naive_datetime: "only when explicitly required by the Target"
+
+    # ---- Declaration Vocabulary ----
     declaration_vocabulary:
       purpose: "The one standard, technology-independent vocabulary every Domain Definition is expressed in; read by every Component through the Model Public Interface. Database is one consumer."
       field_metadata:
@@ -66,21 +77,31 @@ content:
         foreign_key: "Identifies the referenced Domain Definition and field without naming an Engine or ORM."
         cardinality: "Publishes relationship multiplicity and optionality resolved from the Target."
       model_metadata:
+        persistence: "Publishes whether the Domain Definition is persistent or non-persistent, as Model Principle 11 requires."
         unique_sets: "Publishes composite uniqueness constraints as ordered field-name sets."
-      rule: "Express meaning only, in this vocabulary, carried by the same Domain Definition that application code uses; each consumer maps it to its own technology, and Database owns physical mapping, migration, and enforcement."
-    validation:
-      declarative_constraints_first: true
-      custom_validation: "only when declarative constraints are insufficient"
-      strictness: "enable when coercion could hide invalid domain data"
-    numeric_precision:
-      exact_values: "exact decimal representation"
-      approximate_values: "only when explicitly permitted by the Target"
-    time:
-      absolute_instants: "timezone-aware"
-      canonical_timezone: "UTC"
-      naive_datetime: "only when explicitly required by the Target"
+      usage: "Entries here describe meaning only, carried by the same Domain Definition that application code uses. Each consumer maps the vocabulary to its own technology; physical mapping, migration, and enforcement are Database's, as Model Principle 9 states."
+
+    # ---- Model Foundation ----
+    model_foundation:
+      serialization:
+        purpose: "The two symmetric conversions every Domain Definition carries, as required by Model Principle 10."
+        capabilities:
+          serialize: "Produces the Plain Representation of one instance."
+          deserialize: "Produces an instance from a Plain Representation."
+        naming: "Name the two capabilities for what they do, not for a wire format. The Interface fixes no language-level method name; the selected realization decides the compatible form."
+        output_form: "Simple named values — a plain structure of field names and values. Never an encoded text form. Encoding the structure into JSON or any other wire format is the consuming Component's work."
+        representation_target: "The plain structure is JSON-compatible: every published value is expressible in JSON without a custom encoder."
+        validation_on_input: "Follows Model Principle 10: deserialize evaluates the same Intrinsic Rules the Domain Definition applies to any other instance, and fails when the data does not satisfy them, so no construction path from outside skips validation."
+        relationships: "A Domain Relationship is published only as its declared foreign-key value. A related Domain Definition is never nested, and one conversion never traverses the relationship graph."
+        field_selection: "Follows Model Principle 10: every Field of the Domain Definition is published, and no output policy is applied here."
+        output_policy_owner: "The consuming Component. API Preferences own which Fields leave an API response, including credential exclusion."
+        provided_by: "Model Foundation, as Model Principle 10 requires. Prefer the Foundation's pair unchanged; override it in a Domain Definition only where that definition's own domain meaning needs a different representation."
+        determinism: "Both conversions depend only on the instance's own data, produce the same result for the same input, and perform no external I/O."
+
+    # ---- Verification ----
     verification:
       checks:
         - "public interface"
         - "validation behavior"
-        - "serialization and schema generation"
+        - "serialization behavior"
+        - "declaration vocabulary publishing"

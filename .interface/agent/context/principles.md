@@ -1,8 +1,48 @@
 # Agent Context Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Every action begins from current Understanding](#1-every-action-begins-from-current-understanding)**
+   - **[2. Context distinguishes authority from assistance](#2-context-distinguishes-authority-from-assistance)**
+   - **[3. Context lifecycle preserves required instructions](#3-context-lifecycle-preserves-required-instructions)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Agent Context is the Component that establishes the current information available to an Agent Instance while it performs an assigned Role. It governs persistent instructions, loaded project knowledge, memory, imports, and context preservation across runtime lifecycle events.
 
 It owns context composition and freshness. It does not own the meaning of Target, Implementation, or Agent sources and never replaces those authorities with remembered summaries.
+
+### Purpose
+
+An Agent's output is a function of what it was looking at. Everything else — the Role, the Skill, the Tools — operates on whatever information happened to be loaded, which makes context the quietest way for the whole system to go wrong. Nothing errors. The Agent reasons well about a version of the project that no longer exists.
+
+This Component exists to make the starting information deliberate. It decides what is loaded before work begins, from which authoritative sources, in what precedence, and what survives a lifecycle event that would otherwise drop it.
+
+It also exists to keep a distinction that loading tends to erase. Persistent instructions, project knowledge, memory, and current owned records all arrive as text in the same window, and once there they look equally true. They are not. A remembered summary is assistance; a current source is authority. This Component is where that difference is preserved.
+
+### How It Works
+
+Before acting, a Role establishes current Interface Understanding, and current Target Understanding whenever its responsibility requires it. Which sources that means, and in what precedence, comes from the `understanding_sources` settings in Preferences rather than from habit. Memory, operational records, conversation history, and earlier summaries are never a substitute for reading the current source.
+
+A Role loads what its bounded responsibility needs and no more. Agent Module sources are the one context nothing ordinary may include: only Agent Sync loads them, and every other Role works from the synchronized Runtime realizations.
+
+Each loaded source keeps its origin and its authority class. Persistent instructions and Memory may guide how work is done, but they never override a Principle, an explicit project decision, or a current owned record. Ordering can change what a reader sees first; it cannot change what outranks what.
+
+Across session start, resume, compaction, delegation, and isolation, every instruction the receiving Role requires is preserved or reloaded. If something required is missing, that is reported before dependent work continues, while supporting material that nothing currently depends on may be loaded only when it is needed.
+
+<br>
 
 ## Terms
 
@@ -18,11 +58,19 @@ It owns context composition and freshness. It does not own the meaning of Target
 
 Technical loading sources, memory behavior, imports, and limits belong to Agent Context Preferences.
 
-Every statement here is mandatory. Preferences can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Every action begins from current Understanding
+<br>
+
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Every action begins from current Understanding
 
 **Rule:** An Agent Role establishes current Interface Understanding before acting and current Target Understanding whenever its responsibility requires it. It resolves the starting sources and their precedence from the Context Preferences's `understanding_sources` settings. Memory, operational records, conversation history, and prior summaries never substitute for current authoritative sources.
 
@@ -32,7 +80,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 2. Context distinguishes authority from assistance
+### 2. Context distinguishes authority from assistance
 
 **Rule:** Every context source retains its authority class and origin. Persistent instructions and Memory may guide execution but never override Principles, explicit project decisions, or current owned records.
 
@@ -42,7 +90,7 @@ Every statement here is mandatory. Preferences can never override a Principle, a
 
 <br>
 
-## 3. Context lifecycle preserves required instructions
+### 3. Context lifecycle preserves required instructions
 
 **Rule:** Session start, resume, compaction, delegation, and isolation preserve or reload every instruction required by the receiving role. Missing required context is reported before dependent work proceeds.
 

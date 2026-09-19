@@ -1,6 +1,55 @@
 # Plan Principles
 
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[1. Every phase has its own Plan](#1-every-phase-has-its-own-plan)**
+   - **[2. Groups organize related work](#2-groups-organize-related-work)**
+   - **[3. A Task is one atomic action](#3-a-task-is-one-atomic-action)**
+   - **[4. Context is written once and inherited](#4-context-is-written-once-and-inherited)**
+   - **[5. Every Task is understandable in its context](#5-every-task-is-understandable-in-its-context)**
+   - **[6. A Task is independent of the implementation structure](#6-a-task-is-independent-of-the-implementation-structure)**
+   - **[7. Task defines the activity and Development defines the implementation](#7-task-defines-the-activity-and-development-defines-the-implementation)**
+   - **[8. Dependencies are explicit](#8-dependencies-are-explicit)**
+   - **[9. Completion must be demonstrable](#9-completion-must-be-demonstrable)**
+   - **[10. Task progress and Workflow State remain separate](#10-task-progress-and-workflow-state-remain-separate)**
+   - **[11. Existing work is never silently destroyed](#11-existing-work-is-never-silently-destroyed)**
+   - **[12. The record holds work and progress, not project meaning](#12-the-record-holds-work-and-progress-not-project-meaning)**
+5. **[At a Glance](#at-a-glance)**
+
+<br>
+
+## Introduction
+
+### Overview
+
 Plan is the Component that turns project phases into precise, bounded activities and organizes them as Plans, Groups, and Tasks. It is the standard by which work is broken down: it decides what an activity must contain to be understood and executed, how activities are organized so that shared context is stated once, and what counts as proof that one is finished. Every Plan, Group, and Task in the project is produced and read under this standard.
+
+### Purpose
+
+Work that has not been broken down cannot be judged, ordered, or trusted to be finished. "Implement the model layer" is not something anyone can start, verify, or know the end of — and when work is described that way, progress becomes opinion, two people can both believe an activity is done and mean different things, and what was left out is discovered only later.
+
+Plan exists to set the standard for breaking work down. It decides what an activity must contain before it can be executed — enough context to be understood, a result that can be observed, dependencies stated rather than assumed — and how activities are organized so that context shared by many of them is written once and inherited instead of repeated.
+
+Without one standard, every phase is decomposed differently: one is a list of files, another a list of intentions, a third a single item. The record then cannot be read by anyone who did not write it, and its progress cannot be compared across phases, which is exactly what a record of work is for.
+
+### How It Works
+
+A phase becomes a Plan. The Plan holds the context that applies to the whole phase, and decomposes its outcome into Groups — coherent implementation areas, each holding the context its own Tasks share.
+
+A Task is where work becomes concrete: one atomic activity with one independently observable result. It states what it produces, what it requires from other Tasks before it can begin, and what would count as proof that it is finished — so that a reader who knows only the Task and the context it inherits can carry it out, and a reader who did not do it can tell whether it was.
+
+Context flows downwards and is never restated: what the phase shares lives in the Plan, what an area shares lives in its Group, and a Task carries only what is its own. That inheritance is what keeps a Task short without making it ambiguous.
+
+Plans are rebuilt as understanding changes rather than written once. Reconciliation preserves valid work and recorded progress, and a Plan Revision moves when planning meaning changes, so a judgment made about a Plan can be tied to the exact version it judged.
+
+<br>
 
 ## Terms
 
@@ -23,11 +72,19 @@ Plan is the Component that turns project phases into precise, bounded activities
 
 Technical choices and defaults belong to Plan Preferences, which currently define none. The exact shape of the generated Plan configuration belongs to the Plan Schema.
 
-Every statement here is mandatory. A Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every statement here is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
-## 1. Every phase has its own Plan
+<br>
+
+## Principles
+
+Every Principle below is mandatory, and its number is permanent.
+
+<br>
+
+### 1. Every phase has its own Plan
 
 **Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, intended outcome, and Plan Revision, then decomposes that outcome into Groups and Tasks. Planning sets revision `1` when it first creates the Plan and increments it exactly once whenever Planning-owned semantic content changes. Development-owned Task status, blocker references, and logs never change the Plan Revision. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
@@ -37,7 +94,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 2. Groups organize related work
+### 2. Groups organize related work
 
 **Rule:** Every Task belongs to one Group. A Group collects Tasks that contribute to one coherent implementation area and explains what that area is, what it accomplishes, and where within the phase's target Component its work belongs. A Group holds the work area and work-specific constraints shared by its Tasks that apply neither to the whole phase nor through another source. Technology choices remain in their owning sources.
 
@@ -47,7 +104,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 3. A Task is one atomic action
+### 3. A Task is one atomic action
 
 **Rule:** Each Task describes one small, concrete activity with one independently observable result. Large work is divided into as many precise Tasks as necessary.
 
@@ -57,7 +114,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 4. Context is written once and inherited
+### 4. Context is written once and inherited
 
 **Rule:** A Plan, its Groups, and their Tasks form one nested structure, and that nesting is the Task's context. A Task's phase is the Plan that contains it and its Group is the Group that contains it; neither is repeated inside the Task. Every piece of context the record does hold — the targeted Component, the work area, and any constraint specific to the work — is recorded exactly once, at the highest level where it holds: in the Plan when it holds for the whole phase, in the Group when it holds for one work area, in the Task only when it is specific to that one activity. Lower levels inherit what higher levels state.
 
@@ -67,7 +124,7 @@ Every statement here is mandatory. A Preference can never override a Principle, 
 
 <br>
 
-## 5. Every Task is understandable in its context
+### 5. Every Task is understandable in its context
 
 **Rule:** A Task is read together with its Group and Plan. Read that way, the Task and its inherited context together explain:
 
@@ -88,7 +145,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-## 6. A Task is independent of the implementation structure
+### 6. A Task is independent of the implementation structure
 
 **Rule:** Planning content in Plans, Groups, and Tasks is expressed in terms of responsibilities, behaviour, and observable results. It never states where anything lives: no file, folder, path, module, package layout, class, function, symbol, or command appears in that planning content, and it never asserts that a particular artifact already exists at a particular location. The target and work area identify a Component and a responsibility inside it, not a directory. Planning content carries no list of sources to consult. Execution history is distinct: a Task's log records the concrete check actually performed, relevant locations, and the observed outcome, with secret values excluded.
 
@@ -98,7 +155,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-## 7. Task defines the activity and Development defines the implementation
+### 7. Task defines the activity and Development defines the implementation
 
 **Rule:** A Task defines what must be achieved, why it is needed, where its responsibility belongs, and what evidence demonstrates completion. The targeted Component and the work area are recorded at the level where they hold and inherited by the Task.
 
@@ -108,7 +165,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-## 8. Dependencies are explicit
+### 8. Dependencies are explicit
 
 **Rule:** A Task names every other Task whose completed result it requires. Readiness is derived from those dependencies rather than guessed from file order or proximity inside a Group.
 
@@ -118,7 +175,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-## 9. Completion must be demonstrable
+### 9. Completion must be demonstrable
 
 **Rule:** Every Task states an acceptance criterion and a verification condition, both expressed as observable behaviour. Acceptance states what makes the result correct. Verification states what must be observed to prove it, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that observes it. The concrete executable check that satisfies the verification condition is constructed and run at implementation time, and the check used and its outcome are recorded in the Task's log. A Task is complete only when that check has passed. The form of that check is governed by the declared cross-cutting testing scope, which is read before the check is constructed. A Task whose target Component is within that scope proves its verification condition through a test that persists as part of that Component. A Task whose target Component is outside that scope proves it through a transient check that leaves no test artifact behind: the check is run, its outcome is recorded in the log, and nothing it created remains in the Component. Availability of a test tool in the declared toolchain never widens the testing scope, and a Component outside that scope never acquires a test suite, a test directory, a test configuration, or a test dependency as a side effect of demonstrating completion.
 
@@ -128,7 +185,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-## 10. Task progress and Workflow State remain separate
+### 10. Task progress and Workflow State remain separate
 
 **Rule:** The Plan Component owns Plans, Groups, Task content, Task status, a Task's reference to any Blocker, and Task-local history. An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists.
 
@@ -140,7 +197,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 <br>
 
-## 11. Existing work is never silently destroyed
+### 11. Existing work is never silently destroyed
 
 **Rule:** Replanning or regeneration reconciles unchanged work and adds newly required work without silently overwriting completed, active, or otherwise meaningful Task content.
 
@@ -150,7 +207,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 <br>
 
-## 12. The record holds work and progress, not project meaning
+### 12. The record holds work and progress, not project meaning
 
 **Rule:** Plans, Groups, and Tasks record which work exists, what each activity must produce, what it depends on, where it stands, and what has happened to it. Planning content does not store the project's concepts, its resolved technical choices, the rules of any Component, or an explanation of anything the human project definition, the Principles, and the Preferences already state. Execution history may identify concrete technologies and locations when needed as evidence of an action actually performed; it does not become the authority for choosing them.
 
