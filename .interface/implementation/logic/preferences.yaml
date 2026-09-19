@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Logic Component — Logic-owned behavioural defaults and internal realization conventions."
   purpose: "Configurable defaults for Logic organization, reliability, and verification."
   standard: "Agent Project Interface"
-  version: "9.0"
+  version: "10.0"
   updated: "2026-09-19"
 
 
@@ -53,7 +53,7 @@ content:
   settings:
 
     public_interface:
-      purpose: "The one boundary every consumer uses. It groups its Operations into Categories; it names no Service and exposes no Action."
+      purpose: "The Operations this Logic currently offers and the Categories they are grouped into. The Principle “One Public Interface exposes Logic's Operations” fixes what the Interface is; this group records what is on it today."
       categories:
         data_entry:
           name: "Data Entry"
@@ -143,7 +143,6 @@ content:
               uses: "database.truncate"
 
           naming: "The Operation names follow the conventions a consumer already knows from REST and from data libraries — create, list, update, delete — rather than Interface-invented names (decided 2026-09-19)."
-      category_note: "A Category groups Operations and performs no work of its own. Further Categories are added as further kinds of work appear; which Categories exist is a per-project declaration."
       operation_shape:
         does: "what the consumer gets, in the consumer's terms"
         accepts: "the values the consumer supplies"
@@ -151,8 +150,7 @@ content:
         outcomes: "the expected failures this Operation can produce"
         uses: "the Services and Actions it composes — internal detail, never published"
     services:
-      purpose: "The internal parts of Logic, one per Component Logic talks to, named after that Component. Internal only: no consumer names, reaches, or depends on one."
-      how_actions_work: "Each Action is carried out by calling an Operation of that Component's own Public Interface; a Service holds the calls Logic is allowed to make into one Component and nothing else."
+      purpose: "The Services this Logic currently has, one per Component it talks to, with the Actions each performs. The Principle “Logic is composed of internal Services, one per Component it talks to” fixes what a Service is; this group records which ones exist."
       database:
         name: "Database Service"
         talks_to: "Database Component"
@@ -176,7 +174,6 @@ content:
       internal_structure: "Not yet decided. A Service's own layout — how its Actions are organized in files and units — is deliberately left open (2026-09-19)."
 
     policies:
-      note: "Behavioural defaults, kept together and not yet revisited (2026-09-19)."
       deletion:
         requires_explicit_target_authorization: true
         inferred_from_is_active: false

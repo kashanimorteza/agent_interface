@@ -64,6 +64,7 @@ Each Agent Component has two files.
 
 - `principles.md` states the Human's view and philosophy of that Component. It contains no technology, package, provider, or Agent Native. It is portable: the same file can be handed to another project or another Agent unchanged.
 - `preferences.yaml` holds the parameters that support that view: current selections, declared resources, explicit empty categories, and — when a view needs a helper for one Agent Native — a block declared for that Native only (for example `native.claude`). Preferences are in effect a preferences file; it never weakens a Principle.
+- `understanding.md` records how the Human explained the Component and the decisions that followed, including proposals that were not accepted and why. It states no obligation and is optional: a Component whose Understanding has not been recorded has no such file. It follows the Understanding Schema.
 
 Three conventions keep Preferences ready for placement rather than rewriting (decided 2026-09-18):
 

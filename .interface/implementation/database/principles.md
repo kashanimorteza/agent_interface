@@ -6,11 +6,11 @@
    - **[Overview](#overview)**
    - **[Purpose](#purpose)**
    - **[How It Works](#how-it-works)**
-   - **[Understanding](#understanding)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
+5. **[Documentation](#documentation)**
+6. **[Principles](#principles)**
    - **[Database is an independent package with one public boundary](#database-is-an-independent-package-with-one-public-boundary)**
    - **[Database has three ordered internal layers](#database-has-three-ordered-internal-layers)**
    - **[Persistence preserves Model meaning without redefining it](#persistence-preserves-model-meaning-without-redefining-it)**
@@ -27,7 +27,7 @@
    - **[Related operations share an explicit Transaction boundary](#related-operations-share-an-explicit-transaction-boundary)**
    - **[Portability and schema integrity remain explicit](#portability-and-schema-integrity-remain-explicit)**
    - **[Persistence security and observability remain bounded](#persistence-security-and-observability-remain-bounded)**
-6. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 <br>
 
 ## Introduction
@@ -56,20 +56,8 @@ What the storage looks like is derived from Model rather than decided here. Data
 
 Structure changes only through Migrations, in a recorded order, so the current schema can be explained, reproduced from the repository, and recovered. At startup the declared structure is applied, integrity is verified, and declared Initial Data is imported; an Instance is not ready until that completes. Which Instances exist, how each reaches its Engine, and the credentials it uses are read from Database's own runtime configuration file, so adding a database or changing a credential is an edit to that file and not to any source.
 
-### Understanding
+This Component's Understanding — how the Human explained it and the decisions that followed — is recorded in [understanding.md](understanding.md).
 
-#### Database configuration
-
-**Where does the database information live?** One YAML file holds the database information. Adding a database, or changing a username or password, is one edit in that file and never a change in source. Several Instances live side by side in it, each with its own Engine, connection settings, and credentials, and one of them is the default. Every Instance carries the same keys, and a key that does not apply to its Engine is left empty rather than removed, so moving an Instance to another Engine means filling values in rather than adding keys. The connection credentials and the at-rest encryption key for persisted credential fields are written in that same file.
-
-**Decisions:**
-
-1. The file is `database/database.yaml`, and its shape is the Database Configuration Schema at `.interface/foundation/schema/database.yaml`.
-2. Instances are declared side by side, each with its Engine, connection settings, and credentials; `general` is the default.
-3. Every Instance carries the same keys — host, port, path, username, password — and an inapplicable key is left empty rather than removed: host and port for a file-backed Engine, path for a server-backed one, username and password for an Engine that does not authenticate.
-4. Connection credentials and the at-rest encryption key live in that file. The earlier rule `store_values_in_configuration: false` — no values in the file, environment-variable names instead, secrets delivered by Platform — is removed, because the Human does not agree with it.
-5. The configuration file is part of generating the Database Component, not a step after it. Database is not complete without it, and source hardcodes none of its values.
-6. How the file is protected — a distinguishing suffix, git exclusion, or another mechanism — is deliberately undecided and is the Human's to settle later. A proposal to fix a `.auth.yml` suffix and exclude the file from version control was set aside for now; no Principle or Preference assumes an answer.
 <br>
 
 ## Terms
@@ -115,6 +103,14 @@ The three layers are ordered: dependencies run from the interface through mappin
 <br>
 
 Database-owned defaults and implementation conventions belong to Database Preferences. Concrete technical selections and the Platform Launch Item reference belong to the Database Component Profile in Development Preferences. Implementation applies those sources to the current Target.
+
+## Documentation
+
+Database's documentation is written for a consumer who will never open a connection. It covers the one Database Interface as Development's documentation rules require — every operation it offers, what each accepts and returns, and how a consumer names a Model by its imported type — together with the Instance Registry: which Instances exist, which is the default, and how one is selected. It shows a runnable example of each kind of operation and of the Transaction boundary.
+
+It stops at that boundary. The three internal layers, the mapping rules, the Migration history, the Engine in use, and the runtime configuration file are not explained to consumers: a consumer who learns them would start to depend on them, and the Interface exists so that they do not have to. The reader must finish able to store, read, change, and remove data, and to group related operations in one Transaction, without knowing which Engine holds it or how a Model became a table.
+
+<br>
 
 <br>
 

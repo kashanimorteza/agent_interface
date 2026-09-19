@@ -38,6 +38,7 @@ Each Implementation Component has two files.
 
 - `principles.md` is the authoritative expression of the Component's philosophy, responsibilities, rules, and boundaries. It follows the Principles Schema and contains no tool, library, framework, package, or version selection.
 - `preferences.yaml` holds the Component's preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations, used when the Target leaves a choice unspecified. It follows the Preferences Schema and can never override a Principle.
+- `understanding.md` records how the Human explained the Component and the decisions that followed, including proposals that were not accepted and why. It states no obligation and is optional: a Component whose Understanding has not been recorded has no such file. It follows the Understanding Schema.
 
 Explicit Target intent and applicable Principles guide the operational Skills; Preferences supply defaults where the Target leaves a choice unstated.
 
@@ -77,7 +78,8 @@ responsibility: Defines the layered architecture and how independent layers are 
 ```
 
 → [Principles](development/principles.md)<br>
-→ [Preferences](development/preferences.yaml)
+→ [Preferences](development/preferences.yaml)<br>
+→ [Understanding](development/understanding.md)
 
 ### Model
 
@@ -91,7 +93,8 @@ responsibility: Describes the domain entities and provides one shared logical me
 ```
 
 → [Principles](model/principles.md)<br>
-→ [Preferences](model/preferences.yaml)
+→ [Preferences](model/preferences.yaml)<br>
+→ [Understanding](model/understanding.md)
 
 ### Database
 
@@ -105,7 +108,8 @@ responsibility: Owns the persistence layer and publishes one generic interface f
 ```
 
 → [Principles](database/principles.md)<br>
-→ [Preferences](database/preferences.yaml)
+→ [Preferences](database/preferences.yaml)<br>
+→ [Understanding](database/understanding.md)
 
 ### Logic
 
@@ -119,7 +123,8 @@ responsibility: Implements application Behaviour as reusable Logic; the Principl
 ```
 
 → [Principles](logic/principles.md)<br>
-→ [Preferences](logic/preferences.yaml)
+→ [Preferences](logic/preferences.yaml)<br>
+→ [Understanding](logic/understanding.md)
 
 ### API
 

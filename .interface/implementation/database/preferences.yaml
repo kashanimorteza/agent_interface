@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Database Component — persistence defaults, credential treatment, Instances, and implementation conventions."
   purpose: "Database-owned defaults for persistence behavior and runtime storage configuration; concrete technology choices come from Development."
   standard: "Agent Project Interface"
-  version: "6.0"
+  version: "7.0"
   updated: "2026-09-19"
 
 
@@ -37,7 +37,7 @@ read_order:
 content_map:
   selected: "The default Instance, credential at-rest mode, portability preference, Model source, and consumer boundary."
   options: "Database-owned credential at-rest alternatives. Engine, ORM, migration, language, and package alternatives belong to Development."
-  settings: "Conventions grouped by the parts Database Principles name in its Architecture — Database Interface, Data Logic and Mapping, and Storage Adapter — plus the subjects that span the Component: mapping, migrations, transactions, controlled commands, security, and observability."
+  settings: "Conventions grouped by the parts Database Principles name in its Architecture — Database Interface, Data Logic and Mapping, and Storage Adapter — plus the subjects that span the Component: migrations, transactions, controlled commands, security, and observability."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -73,7 +73,10 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings:
-    database_interface: {}
+    database_interface:
+      model_identity: "A consumer names a Model by the imported public type or an instance of it; the interface accepts nothing that identifies a Model by text."
+      criteria_shape: "Each operation takes only the criteria it needs, named for the domain rather than for storage."
+      registry_exposure: "The Instance Registry publishes identities and the default only; it never hands out a connection, a credential, or an Engine detail."
 
     data_logic_and_mapping:
       initial_data:
@@ -128,11 +131,7 @@ content:
           purpose: "General application data."
           engine: "<development.database_item>"
           database: "<project>_general"
-    mapping:
-      persistent_model_required: true
-      non_persistent_models_become_storage: false
-      portable_contract_first: true
-      engine_specific_extensions_must_be_declared: true
+
     migrations:
       integrity_marker: "checksum"
       drift_detection: "before normal operations"
@@ -153,13 +152,7 @@ content:
     controlled_commands:
       enabled: true
       capability_restricted: true
-      parameterization_required: true
       identifiers: "internal allow-list or typed operation definition"
-      structural_changes: false
-      privilege_changes: false
-      migration_commands: false
-      protected_output: true
-      separately_observable: true
     security:
       runtime_least_privilege: true
       secrets_in_logs: false
