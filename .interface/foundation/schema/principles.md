@@ -12,7 +12,7 @@ One Principles file exists per Implementation Component at `.interface/implement
 
 A Principles file exists to raise understanding of the project. It answers what its owning Component or Module is, what responsibility it holds, and under which mandatory rules it operates, so that any reader — human or Agent — can reason about that owner without inspecting an implementation.
 
-An Implementation or Agent Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. A Principles file does not prescribe a concrete Skill workflow, name current runtime resources, or decide which Skill reads it and when. Interface-owned Skill behavior belongs to its declared Skill Contract conforming to the Skill Contract Schema, not to Agent Skill Principles.
+An Implementation or Agent Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. What such a file may and may not carry is stated once, in Scope.
 
 
 <!--------------------------------------------------------------------------------- Scope --->
@@ -26,14 +26,14 @@ A Principles file never contains:
 
 - a specific tool, library, framework, engine, third-party package, or version selection; Implementation choices belong to Implementation Preferences and Agent declarations belong to the owning Agent Preferences, except that Agent Skill Principles may name a required or conditional Skill and the technology category that activates it without making the technology selection;
 - a technical default or resolved technical choice, which belongs to Implementation Preferences or the owning Agent Preferences;
-- the shape of a generated file, which belongs to the Component's Schema when one exists; or
+- the shape of any generated file, including a documentation file, which belongs to the Component's Schema when one exists or to the Preferences that own that file; or
 - instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.
+
+Interface-owned Skill behavior belongs to its declared Skill Contract conforming to the Skill Contract Schema, not to Agent Skill Principles.
 
 Relationships between Components are permitted and belong in Relationships. They describe what each Component consumes or provides without directing a Skill's execution.
 
-Introduction's Understanding is the one part that states no obligation: it records how the Human explained the Component, and a reader follows the Principles, not the record.
-
-Documentation states what a reader of the Component's documentation must come away with. The shape of that documentation file, like the shape of any generated file, still belongs elsewhere.
+Two rules follow from this Scope and hold in every part of the file, so no part restates them. **No tool, package, version, file, directory, or layout is ever named**, except where Scope's own exception for Agent Skill Principles applies; a part that would need one describes the concept instead. **Only a Principle states an obligation**: every other part explains, records, or maps, and a sentence a reader would have to obey belongs in a Principle's Rule wherever it was written.
 
 A Principle is portable: the same file can be handed unchanged to another project or another Agent.
 
@@ -121,7 +121,7 @@ Everything a reader needs in order to understand the Component, before any rule 
 
 The Component introduces itself: what it is, the responsibility it holds, what it contributes to the project, and what it is independent of. It takes as many paragraphs as that needs.
 
-It is written about the Component, never about the document: it begins by defining the Component, not by describing what the file contains. It states what the Component *is* and *does*. Relationships with other Components belong in Relationships; instructions about Skill roles, execution order, or when a Skill should read the Component do not belong in this file.
+It is written about the Component, never about the document: it begins by defining the Component, not by describing what the file contains. It states what the Component *is* and *does*. Relationships with other Components belong in Relationships.
 
 The Component's own boundary — what it does not own — is stated explicitly, either as the closing sentences of Overview or as one dedicated Principle. It is never left implicit and never stated in both places.
 
@@ -139,7 +139,7 @@ Each Principle's own **Why** explains that one rule. This part explains the Comp
 
 How the Component does its work, told as a flow: what reaches it, what it does with it, what it hands on, and what comes back. It is the narrative a newcomer needs in order to picture the Component in motion before meeting its vocabulary and its rules.
 
-It stays at the level of concepts the Component owns and names no tool, package, or file layout. It states no obligation: a rule that a reader would have to obey belongs in a Principle. Where a Component's flow is genuinely trivial, this part is a short paragraph or two rather than an invented elaboration.
+It stays at the level of concepts the Component owns. Where a Component's flow is genuinely trivial, this part is a short paragraph or two rather than an invented elaboration.
 
 ### Understanding
 
@@ -164,7 +164,7 @@ It is written close to how the Human said it, not translated into the file's for
 
 It carries no dates, and it is written in the present tense. It states what holds now and what it replaces, and is rewritten when the Human's understanding changes — the file is the current picture, not a log of when each part of it arrived.
 
-This part is a record, never an authority. It explains the Principles and never adds an obligation: an obligation that matters belongs in a Principle, where it is binding. Where the record and a Principle disagree, the Principle is correct and the record is out of date. It is optional: a Component whose Understanding has not been recorded omits it.
+This part is a record, never an authority. Where the record and a Principle disagree, the Principle is correct and the record is out of date. A Component whose Understanding has not been recorded omits it.
 
 
 <!--------------------------------------------------------------------------------- Terms --->
@@ -206,9 +206,9 @@ The section opens with a tree naming the parts, followed by a short paragraph or
 <A paragraph or two per part: what it owns, and the limit that keeps it distinct from the others.>
 ```
 
-The tree names concepts the Component owns, not files, directories, classes, or packages: a repository layout belongs to the Component's Preferences, and the shape of a generated file belongs to its Schema. A part named here is governed by a Principle, and it is defined in Terms when this Component owns the term; a part whose term another Component owns — a Public Interface, for example — is used as that owner defines it and is not redefined in Terms. Architecture shows how the parts fit together and introduces no obligation of its own.
+The tree names concepts the Component owns: a repository layout belongs to the Component's Preferences. A part named here is governed by a Principle, and it is defined in Terms when this Component owns the term; a part whose term another Component owns — a Public Interface, for example — is used as that owner defines it and is not redefined in Terms. Architecture shows how the parts fit together.
 
-This part is optional. A Component formed from named parts — internal layers, services, foundations, a public boundary — carries it. A Component with no internal structure worth naming omits the section entirely rather than carrying an empty one.
+A Component formed from named parts — internal layers, services, foundations, a public boundary — carries it. One with no internal structure worth naming omits the section entirely rather than carrying an empty one.
 
 
 <!--------------------------------------------------------------------------------- Relationships --->
@@ -245,7 +245,7 @@ Relationships says what this Component consumes and provides. Boundaries says wh
 
 Each entry is a case that has actually caused confusion or plausibly would: a rule that could be read as either Component's, a setting two Components could both claim, a concern whose name appears in both. An entry states the reason, not only the owner, so the same reasoning settles the next case that is not listed.
 
-This part is optional, and it is not a restatement of the Component's boundary sentence in Introduction or of a Principle's own **Boundary**. A Component carries it when its edges are genuinely easy to cross and omits the section when they are not.
+It is not a restatement of the Component's boundary sentence in Introduction or of a Principle's own **Boundary**. A Component carries it when its edges are genuinely easy to cross and omits the section when they are not.
 
 
 <!--------------------------------------------------------------------------------- Layering --->
@@ -269,7 +269,7 @@ A Component still states where its technical choices or declarations belong even
 
 What this Component's own documentation must convey, beyond the shared documentation rules that Development states for every Component.
 
-The section is short prose, and it says what a reader of that Component's documentation must come away with — never how the documentation file is laid out, which belongs to Development Preferences:
+The section is short prose, and it says what a reader of that Component's documentation must come away with:
 
 ```markdown
 ## Documentation
@@ -278,7 +278,7 @@ The section is short prose, and it says what a reader of that Component's docume
 documentation must therefore cover that the shared rules do not already require.>
 ```
 
-This part is optional, and it is not the place to restate the shared rules. A Component carries it when its documentation has a demand of its own — a surface that must be shown a particular way, a concept a reader cannot use the Component without — and omits the section entirely when the shared rules are enough.
+It is not the place to restate the shared rules. A Component carries it when its documentation has a demand of its own — a surface that must be shown a particular way, a concept a reader cannot use the Component without — and omits the section entirely when the shared rules are enough.
 
 
 <!--------------------------------------------------------------------------------- Authority --->
@@ -324,13 +324,13 @@ The title states the rule as a claim, not as a topic: `Data Access is the only L
 
 ### Rule
 
-The mandatory statement itself, written in the present tense as something that holds rather than something to do. It uses the binding words — *is*, *must*, *only*, *never* — and remains free of tools and versions.
+The mandatory statement itself, written in the present tense as something that holds rather than something to do. It uses the binding words — *is*, *must*, *only*, *never*.
 
 The Rule may be one sentence or several, and may carry a list when the rule enumerates parts, such as the layers a Component is formed from or the values a field accepts. It states the rule completely; a reader who reads only the Rule subsections of a file has read every obligation the file imposes.
 
 ### Why
 
-The reason the rule exists: what it protects, what it makes possible, or what breaks without it. It never introduces a new obligation. A statement that a reader would have to obey belongs in Rule.
+The reason the rule exists: what it protects, what it makes possible, or what breaks without it.
 
 ### Boundary
 
@@ -363,7 +363,7 @@ The closing section: every obligation in the file, one line each, in Principle o
 
 Each line is labelled **Must** or **Never**. The lines follow the order of the Principles they come from, and a Principle's lines stay together, so a reader can trace a line back by position. A Principle contributes as many lines as it has distinct obligations, and every obligation in the file appears exactly once in this list.
 
-This section is derived, never authoritative. It introduces no rule that its Principle does not already state, and it is rewritten whenever a Principle changes. When the list and a Principle disagree, the Principle is correct.
+This section is derived, never authoritative, and it is rewritten whenever a Principle changes. When the list and a Principle disagree, the Principle is correct.
 
 
 <!--------------------------------------------------------------------------------- Template --->

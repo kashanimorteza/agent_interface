@@ -1,11 +1,12 @@
 schema:
   id: "agent-interface-yaml"
-  version: "1.1"
+  version: "1.2"
   purpose: "The common structural frame followed by Implementation Preferences, Agent Preferences, and Config files. It defines their outer sections; what goes inside `content` belongs to the schema of that kind of file. Schema definition files, including this file, use their own definition formats and are outside this frame's scope."
 
 structure:
   - meta
   - policy
+  - resolution
   - read_order
   - content_map
   - content
@@ -27,7 +28,12 @@ sections:
   # <!--------------------------------------------------------------------------------- Policy -->
   policy:
     required: true
-    purpose: "Rules and policy for reading, interpreting, and modifying the file."
+    purpose: "The file itself, and nothing that is in it: who owns it and writes it, whether an Agent may change it, who changes it and what happens when a needed entry is missing, and where the file stands relative to other authorities. It never states how the content is read, matched, or resolved; that belongs to resolution."
+
+  # <!--------------------------------------------------------------------------------- Resolution -->
+  resolution:
+    required: true
+    purpose: "How this file's content becomes a decision when an operation runs: which sources it is read together with and in what order, which entry applies to the case at hand and what governs when two of them could, what happens when the content covers nothing that fits, and how a value left open becomes concrete. It describes the procedure for using the content and never states a preference; the preferences themselves are the content."
 
   # <!--------------------------------------------------------------------------------- Read_Order -->
   read_order:

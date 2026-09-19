@@ -1,12 +1,12 @@
 schema:
   id: "agent-interface-preferences"
-  version: "5.0"
+  version: "6.0"
   purpose: "The common structure every Implementation Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, and optional Agent Skill associations without deciding Target-specific meaning."
 
 # <!--------------------------------------------------------------------------------- Frame -->
 frame:
   source: ".interface/foundation/schema/yaml.yaml"
-  inherited: "An Implementation Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
+  inherited: "An Implementation Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, resolution, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
   scope: "This schema defines the structure of Implementation Preferences content and states the additional expectations placed on the inherited meta and policy sections."
   path: ".interface/implementation/<component>/preferences.yaml for each Implementation Component."
   ownership: "The file is human-owned. Operations read it and never write resolved choices back into it."
@@ -71,6 +71,13 @@ policy:
     precedence:
       required: true
       purpose: "That an explicit project value and every applicable Principle take precedence over this file."
+  additional_fields: "A Component may add policy statements of its own after the required ones, such as how an isolated environment is created and used. It never renames or removes a required one."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  purpose: "How this file's content becomes a decision when an operation runs. It describes the procedure for using the content and never states a preference. A question with no substance for this owner is answered plainly rather than omitted."
+  required_fields:
     consumption:
       required: true
       purpose: "How an operation uses these entries when it resolves an unstated choice."
@@ -83,7 +90,8 @@ policy:
     matching:
       required: true
       purpose: "How an entry here is matched to what the project states, and the order in which competing entries apply."
-  additional_fields: "A Component may add policy statements of its own after the required ones, such as how an isolated environment is created and used. It never renames or removes a required one."
+
+
 
 # <!--------------------------------------------------------------------------------- Structure -->
 structure:

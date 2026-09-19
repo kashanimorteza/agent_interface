@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Database Component — persistence defaults, credential treatment, Instances, and implementation conventions."
   purpose: "Database-owned defaults for persistence behavior and runtime storage configuration; concrete technology choices come from Development."
   standard: "Agent Project Interface"
-  version: "5.0"
+  version: "6.0"
   updated: "2026-09-19"
 
 
@@ -14,10 +14,16 @@ policy:
   rule: "This file is human-owned. Operations read it without writing resolved Database choices back into it."
   changed_by: "The human, directly. A missing critical Database choice is raised through State."
   precedence: "An explicit Target value and every applicable Database Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
   consumption: "Resolve Database's Component Profile, language-owned Technical Purposes, Database Item, and Platform Reference from Development first. Apply this file only for Database-owned defaults, credential treatment, Instance configuration, and implementation conventions. Never write resolved values back into this file."
   selection: "Prefer a supported compatible Database-owned default. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "This file owns no versioned Engine, ORM, migration, or package choice. Development Preferences resolve every versioned technical item assigned to Database."
   matching: "Match a selected Database-owned key to its exact entry in this file. Match Engine, ORM, migration, language, package, and Platform selections to their exact entries in Development Preferences. Match Instance identities to storage_adapter.instances and credential defaults by exact field name."
+
+
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
