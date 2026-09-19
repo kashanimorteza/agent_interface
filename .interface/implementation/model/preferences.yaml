@@ -76,8 +76,6 @@ content:
     # ---- Model Foundation ----
     model_foundation:
       serialization:
-        purpose: "Realization preferences for the Serialization pair the Principle “Every Domain Definition converts to and from a Plain Representation” requires. The Principle states what the pair does; the entries below state only what it leaves open."
-        naming: "The two capabilities are `serialize` and `deserialize`, as the Principle requires; only their spelling is the language's to decide — the form the selected language uses for a method name. A name that points at a wire format, or at one language's type, is not a rewording of these but a different contract."
         representation_target: "The plain structure is JSON-compatible: every published value is expressible in JSON without a custom encoder."
         output_policy_owner: "The consuming Component. API Preferences own which Fields leave an API response, including credential exclusion."
     # ---- Layout ----

@@ -47,24 +47,24 @@ A Principles file carries these parts, in this order. A part marked *optional* i
 
 1. **Title** — the file's single first-level heading.
 2. **Navigation** — the map of the file's own sections.
-3. **Introduction** — everything a reader needs in order to understand the Component, in three parts:
+3. **Introduction** — everything a reader needs in order to understand the Component, in four parts:
    - **Overview** — what the Component is and what it contributes.
    - **Purpose** — the problem it solves and what is lost without it.
    - **How It Works** — how it does that work, told as a flow rather than as rules.
-4. **Understanding** — how the Human explained the Component, and the decisions that followed. *(optional)*
-5. **Terms** — the vocabulary the Component owns.
-6. **Architecture** — the named parts the Component is formed from. *(optional)*
-7. **Relationships** — what it consumes and what consumes it.
-8. **Boundaries** — the work that looks like this Component's but belongs elsewhere. *(optional)*
-9. **Layering** — where the Component's technical choices live instead.
-10. **Documentation** — what this Component's own documentation must convey. *(optional)*
-11. **Authority** — the binding force of the file and its precedence.
-12. **Principles** — the mandatory rules.
-13. **At a Glance** — the derived list of every obligation in the file.
+   - **Decisions** — how the Human explained the Component and the decisions that followed, once that explanation is folded into the three parts above. *(optional)*
+4. **Terms** — the vocabulary the Component owns.
+5. **Architecture** — the named parts the Component is formed from. *(optional)*
+6. **Relationships** — what it consumes and what consumes it.
+7. **Boundaries** — the work that looks like this Component's but belongs elsewhere. *(optional)*
+8. **Layering** — where the Component's technical choices live instead.
+9. **Documentation** — what this Component's own documentation must convey. *(optional)*
+10. **Authority** — the binding force of the file and its precedence.
+11. **Principles** — the mandatory rules.
+12. **At a Glance** — the derived list of every obligation in the file.
 
-Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and Understanding follows it because how the Human arrived at the Component is context for the rules rather than one of them. What follows those is reference: the vocabulary, the parts, the edges, and the rules themselves.
+Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried. Layering and Authority are unheaded prose. Navigation, Introduction, Understanding, Terms, Architecture, Relationships, Boundaries, Documentation, Principles, and At a Glance carry their own second-level heading. Introduction's three parts, each Understanding subject, and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose Understanding has been recorded. Layering and Authority are unheaded prose. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Documentation, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -97,6 +97,7 @@ A numbered list, one line per section the file actually carries, each linking to
    - **[Overview](#overview)**
    - **[Purpose](#purpose)**
    - **[How It Works](#how-it-works)**
+   - **[Decisions](#decisions)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
@@ -114,7 +115,7 @@ Introduction's own parts are listed beneath it. Layering and Authority are unhea
 
 ## Introduction
 
-Everything a reader needs in order to understand the Component, before any rule is stated. It carries three parts, each under its own third-level heading.
+Everything a reader needs in order to understand the Component, before any rule is stated. It carries four parts, each under its own third-level heading; the fourth is optional.
 
 ### Overview
 
@@ -140,35 +141,26 @@ How the Component does its work, told as a flow: what reaches it, what it does w
 
 It stays at the level of concepts the Component owns. Where a Component's flow is genuinely trivial, this part is a short paragraph or two rather than an invented elaboration.
 
-<!--------------------------------------------------------------------------------- Understanding --->
-<br>
+### Decisions
 
-## Understanding
-
-How the Human explained this Component, in their own words, and what was decided along the way.
-
-The Principles state what holds. This section preserves how the Human arrived there, so that a later session — human or Agent — does not have to rediscover the reasoning, and so that a question already settled is not reopened as if it were new. Each subject carries a third-level heading, gives the Human's explanation close to the words they used, and lists the decisions it produced, including the proposals that were not accepted and why:
+How the Human explained the Component, once that explanation has been folded into Overview, Purpose, and How It Works above, and the decisions it led to. This part carries only what those three do not already hold: the decisions themselves, each stated close to how the Human said it, including a proposal that was not accepted and the reason it wasn't — so it is not proposed again:
 
 ```markdown
-## Understanding
+### Decisions
 
-### <Subject>
-
-**<The question the Human is answering>** <Their explanation, in their own words.>
-
-**Decisions:**
+**<Subject>**
 
 1. <what holds, and what it replaces>
 2. <a proposal that was not accepted, and why — so it is not proposed again>
+
+**<Subject>**
+
+...
 ```
 
-The section opens with one paragraph saying what it is and that it binds nothing, and then carries one subject per third-level heading, in the order the subjects were settled. A `<br>` separates each subject from the next.
+One bold subject lead-in per settled question, in the order the subjects were settled, each followed by its own numbered list. It carries no dates and is written in the present tense: it states what holds now and what it replaces, and is rewritten when the Human's understanding changes — it is the current picture, not a log of when each part of it arrived.
 
-It is written close to how the Human said it, not translated into the file's formal voice, because the wording is part of what is being preserved. A proposal that was not accepted is recorded with its reason; without that, the same suggestion returns in the next session.
-
-It carries no dates, and it is written in the present tense. It states what holds now and what it replaces, and is rewritten when the Human's understanding changes — it is the current picture, not a log of when each part of it arrived.
-
-This section is a record, never an authority: it states no obligation, and nothing in it reaches At a Glance. Where it and a Principle disagree, the Principle is correct and the record is out of date. It is optional, and a Component whose Understanding has not been recorded omits it.
+This part is a record, never an authority: it states no obligation, and nothing in it reaches At a Glance. Where it and a Principle disagree, the Principle is correct and the record is out of date. It is optional, and a Component whose Understanding has not been recorded omits it.
 
 
 <!--------------------------------------------------------------------------------- Terms --->
@@ -391,12 +383,11 @@ This section is derived, never authoritative, and it is rewritten whenever a Pri
    - **[Overview](#overview)**
    - **[Purpose](#purpose)**
    - **[How It Works](#how-it-works)**
-2. **[Understanding](#understanding)**
-   - **[<Subject>](#subject)**
-3. **[Terms](#terms)**
-4. **[Principles](#principles)**
+   - **[Decisions](#decisions)**
+2. **[Terms](#terms)**
+3. **[Principles](#principles)**
    - **[<Title>](#title)**
-5. **[At a Glance](#at-a-glance)**
+4. **[At a Glance](#at-a-glance)**
 
 ## Introduction
 
@@ -415,16 +406,11 @@ wrong when its work is spread across the others instead.>
 <How the Component does its work, told as a flow: what reaches it, what it does with it,
 what it hands on, and what comes back.>
 
-## Understanding
+### Decisions
 
-<One paragraph: what this section is, and that it states no obligation. Omit this whole
-section when the Component's Understanding has not been recorded.>
+<Omit this whole part when the Component's Understanding has not been recorded.>
 
-### <Subject>
-
-**<The question the Human is answering>** <Their explanation, in their own words.>
-
-**Decisions:**
+**<Subject>**
 
 1. <what holds, and what it replaces>
 2. <a proposal that was not accepted, and why — so it is not proposed again>

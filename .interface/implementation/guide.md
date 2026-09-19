@@ -225,7 +225,7 @@ The Human owns every Principles and Preferences file. Plan, Review, and State ow
 
 Not yet recorded in full. The Human's own explanation of the Implementation Module — the engineering philosophy behind the layered architecture, why these ten Components, and how Preferences are meant to be chosen — will be captured here in a later session, in the same form as the Agent Module Guide.
 
-Component-level Understanding now lives in each Component's own `principles.md`, in its Understanding section: Model in [model/principles.md](model/principles.md), Database in [database/principles.md](database/principles.md), Logic in [logic/principles.md](logic/principles.md), and Development's documentation Understanding in [development/principles.md](development/principles.md). What stays here is the Understanding of the Module as a whole.
+Component-level Understanding now lives in each Component's own `principles.md`, in its Introduction's Decisions part: Model in [model/principles.md](model/principles.md), Database in [database/principles.md](database/principles.md), Logic in [logic/principles.md](logic/principles.md), and Development's documentation Understanding in [development/principles.md](development/principles.md). What stays here is the Understanding of the Module as a whole.
 
 <br>
 

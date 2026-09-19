@@ -6,11 +6,10 @@
    - **[Overview](#overview)**
    - **[Purpose](#purpose)**
    - **[How It Works](#how-it-works)**
-2. **[Understanding](#understanding)**
-   - **[Documentation](#documentation)**
-3. **[Terms](#terms)**
-4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
+   - **[Decisions](#decisions)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
    - **[Every Participating Component has one configurable Component Profile](#every-participating-component-has-one-configurable-component-profile)**
    - **[Every Application Package is logically independent](#every-application-package-is-logically-independent)**
    - **[Cross-Component use stays behind provider-owned Public Interfaces](#cross-component-use-stays-behind-provider-owned-public-interfaces)**
@@ -23,7 +22,7 @@
    - **[Public Interface changes propagate through direct consumers](#public-interface-changes-propagate-through-direct-consumers)**
    - **[Development centralizes reusable technical items](#development-centralizes-reusable-technical-items)**
    - **[Every Component offers its work as Operations on one Public Interface](#every-component-offers-its-work-as-operations-on-one-public-interface)**
-6. **[At a Glance](#at-a-glance)**
+5. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -53,21 +52,14 @@ Dependencies are declared, not discovered. A Connection names one consumer and o
 
 What every Component owes the others is fixed by Development's standards rather than negotiated per Component: one Public Interface offering Operations that state what they accept and return, one README that explains that Interface, public metadata published through the Application Manifest, and a stated precedence order for the decisions the Target leaves open. Development supplies the shape; each Component fills it with its own content.
 
-<br>
+### Decisions
 
-## Understanding
+**Documentation**
 
-How the Human explained this Component, in their own words, and what was decided along the way. The Principles state what holds; this section preserves how they were arrived at. It states no obligation: where this record and a Principle disagree, the Principle is correct.
-
-<br>
-
-### Documentation
-
-**What is documentation for, in the Human's words?** Documentation is a Development concern: every new Component starts from Development, and there it must learn how to document itself. Each Component's Preferences names where its documentation lives — a path inside the Component's own project. The README goes from the general to the specific: first an overview, then the details; it always gives examples; it explains setup and how to run; it names the capabilities that can be executed; it explains the different classes and objects. Each Component does this through its own mechanism. The measure is that anyone who reads the README understands how that Component or module works.
-
-**Where it lives, and why not a separate section.** The Principles Schema fixes the shape of every Principles file and sends the shape of a generated file to a Schema or Preferences, so the concept stays inside Development: Principle "Every Component has complete, safe, and operational documentation" carries the rule and the Human's view; Development Preferences carry the conventions once for all Components (`settings.documentation`: file, location, order, examples, per-Component fulfilment, secrets, authority) and each Component Profile carries its `documentation` path. Documentation is Development-specific for now; a Foundation-level README Schema is not needed until another Module needs the same shape.
-
-**Why this came up.** After the first Implement run, `model/` and `database/` were generated without a README although Principle "Every Component has complete, safe, and operational documentation" required one — Planning had scoped "applicable obligations" to the phase's own Component, and the phrase "at the root selected by its Component Profile" pointed at a key the Profile did not have. Both are now closed: the Profile has the key, the Principle names it, and the Agent Module's placement rule keeps the obligation from being narrowed in the synchronized Skills.
+1. Documentation is a Development concern: every new Component starts from Development, and there it learns how to document itself; each Component's Preferences names where its documentation lives, and each Component fulfils that through its own mechanism, measured by whether a reader understands how the Component works.
+2. An earlier statement that the README also explains a Component's classes and objects is not kept: the Principle now scopes the README to the Public Interface and excludes internal structure — parts, services, layers, classes — as documenting the wrong thing.
+3. The Principles Schema fixes the shape of every Principles file; the shape of a generated documentation file belongs to a Schema or Preferences instead, so the concept stays inside Development. Principle "Every Component has complete, safe, and operational documentation" carries the rule; Development Preferences carry the conventions once for all Components (`settings.documentation`: file, location, order, examples, per-Component fulfilment, secrets, authority), and each Component Profile carries its `documentation` path. Documentation is Development-specific for now; a Foundation-level README Schema is not needed until another Module needs the same shape.
+4. After the first Implement run, `model/` and `database/` were generated without a README although the documentation Principle required one — Planning had scoped "applicable obligations" to the phase's own Component, and the phrase "at the root selected by its Component Profile" pointed at a key the Profile did not have. Both are now closed: the Profile has the key, the Principle names it, and the Agent Module's placement rule keeps the obligation from being narrowed in the synchronized Skills.
 
 <br>
 
