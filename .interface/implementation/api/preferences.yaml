@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the API Component — API-owned boundary defaults and transport conventions."
   purpose: "Defaults for the executable HTTP boundary: contract, transport, queries, lifecycle, and cross-cutting behavior."
   standard: "Agent Project Interface"
-  version: "2.0"
+  version: "2.1"
   updated: "2026-09-19"
 
 
@@ -17,6 +17,7 @@ policy:
   consumption: "Use API's identity, language, framework, and Platform Reference from its Component Profile in Development Preferences, then apply the boundary defaults in this file. Preserve every explicit value, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves an API-owned choice unstated and this file supplies no default, use compatible professional judgment under API Principles and record a consequential implementation choice with the implementation."
   version_resolution: "This file owns no versioned technology. Development Preferences resolve every versioned technical item assigned to API."
+  matching: "An explicit Target statement takes priority. A default here applies only where the Target leaves that boundary choice unstated; otherwise no default applies. Where two entries could apply, the one naming the more specific operation, route, or resource governs, and a Component Profile selection in Development outranks a general default here."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

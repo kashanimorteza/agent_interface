@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-agent-preferences"
-  version: "1.1"
+  version: "1.2"
   purpose: "The common structure every Agent Component Preferences follow. It defines current Agent Module selections, supported alternatives, declared capabilities, resources, mappings, and explicit empty categories without turning runtime choices into portable Principles."
 
 # <!--------------------------------------------------------------------------------- Frame -->
@@ -172,6 +172,13 @@ profile_rules:
     origin: "formerly Agent Settings Principle 5, moved here on 2026-09-17"
 
 # <!--------------------------------------------------------------------------------- Native_Blocks -->
+# <!--------------------------------------------------------------------------------- Agent -->
+agent:
+  definition: ".interface/foundation/schema/preferences.yaml#agent"
+  purpose: "The Human's message to the Agent about one item: what to take into account when working with it, what not to, and which Agent Skills help. It is defined once in the Preferences file structure and is not redefined here."
+  applies_here: "An Agent Component's Preferences may carry it on any item, at any depth, in any of the three content sections, under exactly the rules that definition states — placement, authority, accumulation, activation, and the open key set `consider`, `avoid`, `skills`."
+  distinct_from_native: "A `native.<agent-native>` block says how an Agent Native realizes a declaration; an `agent` parameter says how the Agent should do the work. They answer different questions and neither is written inside the other."
+
 native_blocks:
   path: "content.settings.native.<agent-native>"
   purpose: "Optional per-Agent-Native realization suggestions and Native-only mechanics. A Component states its portable concept in Principles and its portable selections in selected, options, and settings; when the Human knows how a particular Native realizes that concept best, the suggestion goes here, keyed by that Native."

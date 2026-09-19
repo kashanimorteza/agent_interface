@@ -25,7 +25,6 @@ read_order:
   - "selected"
   - "options"
   - "settings"
-  - "implementation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -33,7 +32,6 @@ content_map:
   selected: "The default named Launch Item."
   options: "The supported named Launch Items, each containing runtime requirements for their applicable Components."
   settings: "Empty. The complete current Platform configuration is owned by each Launch Item."
-  implementation: "Empty. Platform currently declares no additional realization conventions."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -67,6 +65,3 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings: {}
-
-  # <!-------------------------------------------- implementation -->
-  implementation: {}

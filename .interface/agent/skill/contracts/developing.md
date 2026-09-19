@@ -18,7 +18,7 @@ Accept zero or more phase positions. Empty input selects every phase eligible un
 
 ## Outputs
 
-Produce authorized implementation and durable checks, Development-owned Task progress and evidence, aggregate Development State and History, prerequisite actions, Blockers or Open Questions permitted by their owners, the associated Skills applied and those reported unavailable, and a phase-by-phase report.
+Produce authorized implementation and durable checks, Development-owned Task progress and evidence, aggregate Development State and History, prerequisite actions, Blockers or Open Questions permitted by their owners, the `agent` parameters applied, any reported as overridden by a higher authority, and the associated Skills applied or reported unavailable, and a phase-by-phase report.
 
 ## Required Understanding
 
@@ -34,13 +34,15 @@ Write implementation, tests, executable documentation, dependencies, and configu
 - Before mutating a phase, require a current valid Plan and establish from current Interface and Target Understanding that the selected work is eligible.
 - A prior Review record is not required; Review is performed after implementation exists.
 - Execute only work eligible under current Plan rules and dependency evidence.
-- Read the governing associations the Task records in its `agent_skills` field, then re-check each one against currently discoverable and usable Runtime Skills, because availability can change between planning and development.
-- Resolve an association the Task does not record from the technical option that declares it, and report any difference between what the Task recorded and what is usable now.
+- Read the `agent` parameters the Task records, and gather from current Preferences any applicable parameter the Task does not record, on the item being worked on and on every item above it.
+- Apply what an applicable `agent.consider` asks for and honour what an applicable `agent.avoid` rules out throughout the work, with the nearest parameter governing any point two of them speak to.
+- Where such a parameter conflicts with an explicit Target statement or an applicable Principle, follow that authority and report the overridden parameter rather than choosing silently.
+- Re-check each recorded `agent.skills` association against currently discoverable and usable Runtime Skills, because availability can change between planning and development, and report any difference between what the Task recorded and what is usable now.
 - Match the declared name against the Skill's own name within a Runtime's namespaced identifier rather than requiring an exact string match.
-- Activate an associated Skill only when the option is selected and the Skill is currently discoverable and usable.
+- Activate an associated Skill only when the item carrying it is selected and the Skill is currently discoverable and usable.
 - Apply a usable required Skill's complete applicable guidance as a completion gate, use optional Skills when available, and continue while reporting the unavailability when an associated Skill is not usable.
 - When this work installs packages, the applicable Language Item's skill-provisioning rule applies to that installation.
-- An associated Skill supplies guidance without changing scope or authority.
+- An associated Skill, and every `agent` parameter, supplies guidance without changing scope or authority.
 - Build a transient verification ledger that splits every acceptance and verification statement into observable conditions and associates each with proof.
 - Derive checks from required conditions, never from the implementation just produced.
 - One passing example proves only that example.

@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Development Component — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
   purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
   standard: "Agent Project Interface"
-  version: "5.7"
+  version: "6.0"
   updated: "2026-09-19"
 
 
@@ -32,7 +32,7 @@ read_order:
 content_map:
   selected: "One configurable profile per Participating Component, including identity, path, documentation file, type, role, and applicable language, database, and Platform Launch Item references."
   options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
-  settings: "The shared documentation conventions, the declared Connection graph, package-publication default, and Cross-cutting Capability applicability."
+  settings: "Project-wide naming conventions, documentation rules, Connection defaults, shared package defaults, and Cross-cutting Capability applicability."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -101,13 +101,6 @@ content:
           lockfile: "uv.lock"
           isolated_environment_directory: ".venv"
           skill_provisioning: "uvx library-skills --claude"
-        naming:
-          variables: "snake_case"
-          functions: "snake_case"
-          classes: "PascalCase"
-          constants: "UPPER_SNAKE_CASE"
-          files: "snake_case"
-          folders: "snake_case"
         typing:
           style: "modern Python typing"
           prefer_builtin_generics: true
@@ -141,30 +134,55 @@ content:
             name: "Pydantic"
             package: "pydantic"
             version: "2.x"
-            agent_skills:
-              - resource: "pydantic"
-                requirement: "required"
-                activation: "when_selected"
-                purpose: "Apply the complete applicable Pydantic guidance while implementing and independently reviewing the selected data validation framework."
-            api:
-              base_model: "pydantic.BaseModel"
-              configuration: "pydantic.ConfigDict"
-              field_validation: "pydantic.field_validator"
-              model_validation: "pydantic.model_validator"
-              root_model: "pydantic.RootModel"
-              computed_field: "pydantic.computed_field"
-              field_serialization: "pydantic.field_serializer"
-              model_serialization: "pydantic.model_serializer"
-              serialization:
-                - "model_dump"
-                - "model_dump_json"
-              schema: "model_json_schema"
-            forbidden_legacy_apis:
-              - "validator"
-              - "root_validator"
-              - "parse_obj"
-              - "dict"
-              - "json"
+            agent:
+              consider:
+                standards:
+                  json_schema: "Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible."
+                  typing: "Modern Python typing as the language entry states it — builtin generics and the union operator."
+                structure:
+                  field_declaration: "Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not."
+                  reusable_domain_type: "Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field."
+                  model_config: "ConfigDict(extra='forbid', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is 'ignore', which discards an unknown field silently."
+                  single_field_rule: "@field_validator"
+                  cross_field_rule: "@model_validator(mode='after')"
+                  polymorphic_data: "A discriminated union, with Field(discriminator=...)"
+                  root_collection: "RootModel[...]"
+                  non_model_validation: "TypeAdapter, for validating a type that is not a BaseModel"
+                  derived_value: "computed_field"
+                  validator_order: "Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance."
+                api:
+                  base_model: "pydantic.BaseModel"
+                  configuration: "pydantic.ConfigDict"
+                  field_validation: "pydantic.field_validator"
+                  model_validation: "pydantic.model_validator"
+                  root_model: "pydantic.RootModel"
+                  computed_field: "pydantic.computed_field"
+                  field_serialization: "pydantic.field_serializer"
+                  model_serialization: "pydantic.model_serializer"
+                  serialization:
+                    - "model_dump"
+                    - "model_dump_json"
+                  schema: "model_json_schema"
+              avoid:
+                legacy_apis:
+                  - "validator"
+                  - "root_validator"
+                  - "parse_obj"
+                  - "dict"
+                  - "json"
+                deprecated_constraint_helpers:
+                  note: "Scheduled for removal in Pydantic 3; express the same constraint with Annotated instead."
+                  names:
+                    - "constr"
+                    - "conint"
+                    - "confloat"
+                    - "condecimal"
+                plain_validator: "PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead."
+              skills:
+                - resource: "pydantic"
+                  requirement: "required"
+                  activation: "when_selected"
+                  purpose: "Apply the complete applicable Pydantic guidance while implementing and independently reviewing the selected data validation framework."
           api:
             name: "FastAPI"
             package: "fastapi[standard]"
@@ -173,20 +191,22 @@ content:
               validation: "pydantic>=2,<3"
               settings: "pydantic-settings"
               http_testing: "httpx"
-            agent_skills:
-              - resource: "fastapi"
-                requirement: "required"
-                activation: "when_selected"
-                purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
+            agent:
+              skills:
+                - resource: "fastapi"
+                  requirement: "required"
+                  activation: "when_selected"
+                  purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
           cli:
             name: "Typer"
             package: "typer"
             version: "latest-compatible"
-            agent_skills:
-              - resource: "typer"
-                requirement: "required"
-                activation: "when_selected"
-                purpose: "Apply the complete applicable Typer guidance while implementing and independently reviewing the selected command-line interface."
+            agent:
+              skills:
+                - resource: "typer"
+                  requirement: "required"
+                  activation: "when_selected"
+                  purpose: "Apply the complete applicable Typer guidance while implementing and independently reviewing the selected command-line interface."
           database:
             orm:
               name: "SQLAlchemy"
@@ -209,14 +229,6 @@ content:
         package_management:
           name: "npm"
           version: "latest-compatible"
-        naming:
-          variables: "camelCase"
-          functions: "camelCase"
-          classes: "PascalCase"
-          components: "PascalCase"
-          constants: "UPPER_SNAKE_CASE"
-          files: "kebab-case"
-          folders: "kebab-case"
         packages:
           user_interface:
             name: "React"
@@ -253,12 +265,6 @@ content:
             - "database"
           foreign_keys: true
           check_same_thread: false
-        naming:
-          tables: "plural_snake_case"
-          columns: "snake_case"
-          constraints: "snake_case"
-          indexes: "ix_<table>_<column>"
-
       PostgreSQL:
         version: "latest-compatible"
         driver:
@@ -276,12 +282,6 @@ content:
             - "database"
             - "username_secret"
             - "password_secret"
-        naming:
-          tables: "plural_snake_case"
-          columns: "snake_case"
-          constraints: "snake_case"
-          indexes: "ix_<table>_<column>"
-
       MySQL:
         version: "latest-compatible"
         driver:
@@ -300,14 +300,19 @@ content:
             - "username_secret"
             - "password_secret"
           charset: "utf8mb4"
-        naming:
-          tables: "plural_snake_case"
-          columns: "snake_case"
-          constraints: "snake_case"
-          indexes: "ix_<table>_<column>"
-
   # <!-------------------------------------------- settings -->
   settings:
+
+    # ---- naming ----
+    naming:
+      purpose: "The naming conventions the project uses, gathered in one place rather than inside the technology that happens to apply it."
+      code: "Follow the established naming standard of the selected language for whatever is being named — variable, function, class, constant, file, folder. A language's own standard is well known and is not restated here, and no project-specific naming is imposed on code."
+      storage:
+        applies_to: "Every declared database Engine; these do not differ by Engine and are the project's own choice rather than an Engine's standard."
+        tables: "plural_snake_case"
+        columns: "snake_case"
+        constraints: "snake_case"
+        indexes: "ix_<table>_<column>"
 
     documentation:
       file: "README.md"
