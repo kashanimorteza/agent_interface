@@ -12,7 +12,7 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned and is read only when resolving Review preferences."
-  changed_by: "The human, directly."
+  changed_by: "The human, directly. A missing needed choice is raised through State."
   precedence: "An explicit project value and every applicable Principle take precedence over this file."
 
 

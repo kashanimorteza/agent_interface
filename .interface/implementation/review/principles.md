@@ -24,27 +24,19 @@
 
 ### Overview
 
-Review is the Component that establishes whether a phase Plan and, when implementation exists, its implemented result satisfy the current Interface and Target, and records what it found. It exists because the operation that produces a Plan or result is the worst judge of it: the producer knows what it meant to create, and that knowledge quietly fills the gaps that an independent reader would notice.
+Review is the Component that establishes whether a phase Plan and, when implementation exists, its implemented result satisfy the current Interface and Target, and records what it found.
 
 Review owns its Findings and the record of what was reviewed. It does not own implementation, Plan, Target, or the active Workflow position, and it never enters or changes a Workflow Mode. It records only aggregate Review progress and its History outcome under State.
 
 ### Purpose
 
-The operation that produced something is the worst judge of it. It knows what it meant, and that knowledge fills the gaps silently: a requirement that was never covered reads as covered, evidence that was never observed reads as obvious, and work that is almost finished reads as finished. This is not carelessness — it is unavoidable for anyone holding the intent.
-
-Review exists to be the reader who does not hold it. It takes the current authorities and the current Target, builds the complete set of obligations they impose, and judges the Plan and, when it exists, the implemented result against that set — each obligation either satisfied with evidence, explicitly not applicable with a reason, or a Finding.
+Review is the reader who does not hold the producer's intent. It takes the current authorities and Target, builds the obligations they impose, and judges the Plan and, when it exists, the implemented result against them.
 
 What makes it useful is that it only judges. It reconciles nothing and fixes nothing: each Finding names the operation that owns the work, and that operation resolves it. A judge who also repairs stops being independent by the second repair, and the record of what was wrong disappears into the fix.
 
 ### How It Works
 
-Review runs against one phase at a time and starts from current sources rather than from what a previous run concluded. It reads the applicable authorities in full — not their summaries — and builds an inventory of every obligation they impose: every mandatory rule, every required preference, every applicable Target requirement, every unresolved Finding from before.
-
-Plan Assurance comes first. Every obligation in that inventory is classified exactly once against the current Plan: covered, not applicable with a stated reason, or a Finding. Implementation Assurance does not begin until Plan Assurance is satisfied, because judging an implementation against an incomplete Plan judges the wrong thing.
-
-When implementation exists, Implementation Assurance repeats the exercise against what was actually built and the evidence recorded for it. A condition that was asserted but not observed is missing evidence, which is a Finding — absence of proof is never read as proof.
-
-Every Finding carries the expected condition, what was actually observed, and where; and it names the operation that owns the fix. Findings persist across runs until current observation proves them resolved or the Human accepts them, so a problem raised once cannot quietly disappear between sessions.
+Review works one phase at a time from current authorities. It establishes the Plan as its baseline, then, when available, examines the generated Source, Public Interface, implemented result, and evidence against that baseline. It records the outcome and any Finding for the operation that owns its resolution.
 
 <br>
 
@@ -62,12 +54,16 @@ Every Finding carries the expected condition, what was actually observed, and wh
 
 ## Relationships
 
-- **Consumes Interface and Target Understanding** — reconstructs both from current sources before judging a phase.
-- **Consumes Plan** — the Plans, acceptance criteria, verification conditions, and recorded execution evidence a result is judged against.
-- **Consumed by Plan** — a Finding recorded as a gap names required work that no planned activity covers, and Planning is where that work is decided.
-- **Updates State** — records the phase's aggregate Review outcome and a concise History event without copying Findings.
+- **Consumes Interface, Target, and Plan** — takes their current meaning, Plan coverage, acceptance criteria, and verification conditions as the baseline for a phase.
+- **Consumes State** — uses current aggregate progress and prior Review records without treating either as authority.
+- **Consumed by Plan** — a recorded Gap identifies work the Plan must cover without copying the Finding into Plan content.
+- **Consumed by State** — provides the phase's aggregate Review outcome and a concise History event; Findings remain Review-owned.
+
+<br>
 
 Technical choices and defaults belong to Review Preferences, which currently define none. The exact shape of the generated Review configuration belongs to the Review Schema.
+
+<br>
 
 Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -83,7 +79,7 @@ Every Principle below is mandatory.
 
 ### Review always assures the Plan before available implementation
 
-**Rule:** A Review reconstructs current Interface Understanding and Target Understanding, then independently judges one phase's Plan against the current Target and every applicable Principle and Preference. It records the exact Assured Plan Revision with the Plan Assurance outcome. Only after Plan Assurance is satisfied does it judge existing implementation and evidence against that assured Plan and the same current authorities. When no implementation exists, Implementation Assurance is explicitly `not reviewed` rather than inferred.
+**Rule:** A Review reconstructs current Interface Understanding and Target Understanding, then independently judges one phase's Plan against the current Target and every applicable Principle and Preference. It records the exact Assured Plan Revision with the Plan Assurance outcome. Only after Plan Assurance is satisfied does it judge the generated Source, Public Interface, existing implementation, and evidence against that assured Plan and the same current authorities. When no implementation exists, Implementation Assurance is explicitly `not reviewed` rather than inferred.
 
 **Why:** A result can only be wrong relative to something. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
 
@@ -93,7 +89,7 @@ Every Principle below is mandatory.
 
 ### Review passes report; reconciliation stays with the owning operation
 
-**Rule:** An individual Review pass changes no implementation, Plan, Target definition, or Task progress. The Reviewing Skill may coordinate Planning for the same phase when Plan Assurance exposes a missing, stale, incomplete, or invalid Plan, then perform a new independent Review pass against Planning's result. It never invokes Development or repairs implementation.
+**Rule:** An individual Review pass changes no implementation, Plan, Target definition, or Task progress. It records a Finding for the operation that owns any missing, stale, incomplete, or invalid result; Review never repairs implementation.
 
 **Why:** An operation that fixes what it finds loses the ability to tell the difference between what was already correct and what it corrected, and the human never learns that the problem existed.
 
@@ -157,14 +153,14 @@ Every obligation in the file, under the Principle it comes from.
 
 **Review always assures the Plan before available implementation**
 
-- **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging available implementation
+- **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging available generated Source, Public Interface, implementation, and evidence
 - **Must** — record Plan Assurance and Implementation Assurance separately, using `not reviewed` when implementation does not exist
 - **Must** — bind every Plan Assurance outcome to the exact Plan Revision it examined
 - **Never** — Review defines a new requirement, or treats silence in the baseline as one
 
 **Review passes report; reconciliation stays with the owning operation**
 
-- **Must** — a Review pass changes nothing it judges; Plan reconciliation is delegated to Planning and followed by a new independent pass
+- **Must** — a Review pass changes nothing it judges; every Finding names its owning operation and a reconciled Plan receives a new independent pass
 - **Never** — Review writes Plan content, repairs implementation, changes Target, or changes Task progress
 
 **Review is independent of how the work was done**
