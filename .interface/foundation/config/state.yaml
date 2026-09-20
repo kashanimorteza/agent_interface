@@ -1,0 +1,96 @@
+meta:
+  path: ".interface/foundation/config/state.yaml"
+  path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+read_order: ["active", "phases", "implementation", "launch", "history", "blockers", "open_questions"]
+content_map:
+  active: "Current or most recently recorded Workflow position."
+  phases: "Aggregate Planning, Development, and Review progress by phase identifier."
+  implementation: "Latest end-to-end Implement result and the step-by-step log of every Implement run."
+  launch: "Current runtime result and verified access points."
+  history: "Append-only State-changing Workflow events."
+  blockers: "Unresolved critical conditions."
+  open_questions: "Unresolved critical questions."
+content:
+  active:
+    mode: "configuring"
+    phase: null
+    mode_reason: "Configure created the operational Config records and synchronized phase State from the Target phase identifiers."
+    set_by: "configure"
+    set_at: "2026-09-20T07:31:41Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "configure"
+      updated_at: "2026-09-20T07:31:41Z"
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "configure"
+      updated_at: "2026-09-20T07:31:41Z"
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "configure"
+      updated_at: "2026-09-20T07:31:41Z"
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "configure"
+      updated_at: "2026-09-20T07:31:41Z"
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "configure"
+      updated_at: "2026-09-20T07:31:41Z"
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "configure"
+      updated_at: "2026-09-20T07:31:41Z"
+    P7:
+      id: "P7"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      updated_by: "configure"
+      updated_at: "2026-09-20T07:31:41Z"
+  implementation:
+    status: "not started"
+    started_at: null
+    completed_at: null
+    updated_by: "initialization"
+    updated_at: null
+    runs: []
+  launch:
+    status: "not launched"
+    environment: null
+    method: null
+    access_points: []
+    updated_by: "initialization"
+    updated_at: null
+  history:
+    - id: "H1"
+      operation: "configure"
+      phase: null
+      event: "Created application, plan, review, and state Config from their Schemas; added phase records P1-P7; no Implementation Component exists yet, so every Manifest section stays at its Schema default."
+      outcome: "completed"
+      recorded_by: "configure"
+      recorded_at: "2026-09-20T07:31:41Z"
+  blockers: {}
+  open_questions: {}
