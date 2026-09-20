@@ -1,5 +1,7 @@
 # Reset Definition
 
+Reset is the Process Component that reconciles authorized operational records and outputs with a selected reset scope.
+
 <br><br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -11,9 +13,12 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Reset reconciles only its authorized scope](#reset-reconciles-only-its-authorized-scope)**
-5. **[At a Glance](#at-a-glance)**
+7. **[Process Contract](#process-contract)**
+8. **[At a Glance](#at-a-glance)**
 
 <br><br>
 
@@ -58,6 +63,20 @@ Every Principle in this file is mandatory. A Process Preference can never overri
 <br><br>
 
 <!--------------------------------------------------------------------------------- Principles --->
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Reset owns reconciliation of its authorized scope. It does not redefine Target, repair product implementation, or take ownership of another Process Component's records.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Principle and Process Contract in this Definition govern Reset. Reset Preferences can guide only an explicitly authorized scope and cannot authorize a destructive scope themselves.
+
+<br><br>
+
 ## Principles
 
 Every Principle below is mandatory.

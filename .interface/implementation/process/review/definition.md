@@ -1,5 +1,7 @@
 # Review Definition
 
+Review is the Process Component that independently judges selected-phase Plans and available implementation against their applicable authorities.
+
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -8,7 +10,9 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Review always assures the Plan before available implementation](#review-always-assures-the-plan-before-available-implementation)**
    - **[Review passes report; reconciliation stays with the owning operation](#review-passes-report-reconciliation-stays-with-the-owning-operation)**
    - **[Review is independent of how the work was done](#review-is-independent-of-how-the-work-was-done)**
@@ -16,7 +20,8 @@
    - **[Missing evidence is a Finding, not an absence](#missing-evidence-is-a-finding-not-an-absence)**
    - **[A Finding is required work no activity covers](#a-finding-is-required-work-no-activity-covers)**
    - **[A Finding outlives the session that raised it](#a-finding-outlives-the-session-that-raised-it)**
-5. **[At a Glance](#at-a-glance)**
+7. **[Process Contract](#process-contract)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -70,6 +75,20 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 <br>
 
 <br>
+
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Review owns assurance and Findings. Plan owns planned work, Develop owns implementation, and the Human or the owning operation resolves what Review reports.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Principles and Process Contract in this Definition govern Review. Review Preferences are empty and cannot lower the evidence or independence required by those Principles.
+
+<br><br>
 
 ## Principles
 

@@ -1,5 +1,7 @@
 # Plan Definition
 
+Plan is the Process Component that turns a Target phase into bounded, understandable, and verifiable work.
+
 <br><br>
 
 ## Navigation
@@ -10,7 +12,9 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Every phase has its own Plan](#every-phase-has-its-own-plan)**
    - **[Groups organize related work](#groups-organize-related-work)**
    - **[A Task is one atomic action](#a-task-is-one-atomic-action)**
@@ -23,7 +27,8 @@
    - **[Task progress and Workflow State remain separate](#task-progress-and-workflow-state-remain-separate)**
    - **[Existing work is never silently destroyed](#existing-work-is-never-silently-destroyed)**
    - **[The record holds work and progress, not project meaning](#the-record-holds-work-and-progress-not-project-meaning)**
-5. **[At a Glance](#at-a-glance)**
+7. **[Process Contract](#process-contract)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -65,6 +70,20 @@ A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic T
 <br>
 
 <br>
+
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Plan owns decomposition and completion conditions. Target owns intent, Development owns realization, Develop owns execution, and State owns aggregate progress.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Principles and Process Contract in this Definition govern Plan. Plan Preferences are empty and cannot add technical or project meaning.
+
+<br><br>
 
 ## Principles
 

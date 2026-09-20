@@ -1,5 +1,7 @@
 # Implement Definition
 
+Implement is the Process Component that coordinates the authorized Process sequence across the selected phases.
+
 <br><br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -11,9 +13,12 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Implement coordinates the Process workflow](#implement-coordinates-the-process-workflow)**
-5. **[At a Glance](#at-a-glance)**
+7. **[Process Contract](#process-contract)**
+8. **[At a Glance](#at-a-glance)**
 
 <br><br>
 
@@ -54,6 +59,20 @@ Implement reads State and the selected authorities, invokes the applicable Proce
 Implement owns coordination, not product Source, Plan content, Review Findings, or State authority.
 
 Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Implement owns coordination, not the work performed by Configure, Plan, Develop, Review, Launch, Reset, or State. Each participating Component retains its own authority and records.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Principle and Process Contract in this Definition govern coordination. Implement Preferences supply only coordination defaults and never replace an owning Component's authority.
 
 <br><br>
 

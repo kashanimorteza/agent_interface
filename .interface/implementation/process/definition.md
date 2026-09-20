@@ -1,5 +1,7 @@
 # Process Definition
 
+Process is the Implementation Subsystem that governs how authorized work is prepared, carried out, checked, activated, reset, and recorded.
+
 <br><br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -20,11 +22,13 @@
    - **[Reset](#reset)**
    - **[State](#state)**
 4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
+5. **[Layering](#layering)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
    - **[Process governs implementation work without becoming product implementation](#process-governs-implementation-work-without-becoming-product-implementation)**
    - **[Each operational concern has one owning Component](#each-operational-concern-has-one-owning-component)**
    - **[Operational records remain separate from their authorities](#operational-records-remain-separate-from-their-authorities)**
-6. **[At a Glance](#at-a-glance)**
+8. **[At a Glance](#at-a-glance)**
 
 <br><br>
 
@@ -211,6 +215,20 @@ Technical choices and defaults shared by Process belong to Process Preferences. 
 <br>
 
 Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Process owns workflow concerns. Technical choices belong to the Preferences of the Process Component that owns them; product meaning belongs to Development; project intent belongs to Target; and runtime realization belongs to the selected Agent Native.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Principles in this Definition are mandatory. This Definition explains Process and its ownership; Process Preferences supply only defaults and preferences. Target, Development, and the applicable Schemas outrank Process Preferences where they speak to their own concerns.
 
 <br><br>
 

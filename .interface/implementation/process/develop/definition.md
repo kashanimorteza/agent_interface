@@ -1,5 +1,7 @@
 # Develop Definition
 
+Develop is the Process Component that executes authorized planned Tasks and produces the resulting Development work.
+
 <br><br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -11,9 +13,12 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Develop executes planned work within its authority](#develop-executes-planned-work-within-its-authority)**
-5. **[At a Glance](#at-a-glance)**
+7. **[Process Contract](#process-contract)**
+8. **[At a Glance](#at-a-glance)**
 
 <br><br>
 
@@ -54,6 +59,20 @@ Develop reads the selected Plan and applicable authorities, performs the authori
 Technical choices and defaults belong to the owning Development Component Preferences. Develop owns execution conventions only; it does not select product architecture or technical items.
 
 Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Develop owns execution. Plan owns the work definition, Development owns product meaning and technical choices, and State and Review own their respective records and judgments.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Principle and Process Contract in this Definition govern Develop. Develop Preferences can supply execution defaults only where the Plan and owning Development authorities are silent.
 
 <br><br>
 

@@ -1,5 +1,7 @@
 # Launch Definition
 
+Launch is the Process Component that activates a completed implementation and records the observable runtime result.
+
 <br><br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -11,9 +13,12 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Launch activates only a ready implementation](#launch-activates-only-a-ready-implementation)**
-5. **[At a Glance](#at-a-glance)**
+7. **[Process Contract](#process-contract)**
+8. **[At a Glance](#at-a-glance)**
 
 <br><br>
 
@@ -54,6 +59,20 @@ Launch reads the applicable Platform and operational authorities, verifies readi
 Launch owns activation and observation, not product Source, Platform definitions, or runtime secrets.
 
 Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Launch owns activation and its observable result. Development owns the implementation, Platform owns runtime capability, and State owns the recorded Launch State.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Principle and Process Contract in this Definition govern Launch. Launch Preferences supply only activation defaults where higher authorities are silent.
 
 <br><br>
 

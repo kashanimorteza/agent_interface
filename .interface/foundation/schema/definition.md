@@ -60,11 +60,12 @@ A Definition file carries these parts, in this order. A part marked *optional* i
 9. **Layering** — where the Component's technical choices live instead.
 10. **Authority** — the binding force of the file and its precedence.
 11. **Principles** — the mandatory rules.
-12. **At a Glance** — the derived list of every obligation in the file.
+12. **Process Contract** — the operational contract of a Process Component, when the Component is an executable Process operation. *(optional)*
+13. **At a Glance** — the derived list of every obligation in the file.
 
 The Opening Summary is the file's one-line orientation: it names what the owner is and where it belongs, without explaining the file's structure or stating a Principle. Navigation follows it so the reader sees the whole shape before entering the content. Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Process Contract is carried only by an executable Process Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, Process Contract, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -115,7 +116,8 @@ A numbered list, one line per section the file actually carries, each linking to
 8. **[Principles](#principles)**
    - **[<Title>](#title)**
    - **[<Title>](#title)**
-9. **[At a Glance](#at-a-glance)**
+9. **[Process Contract](#process-contract)**
+10. **[At a Glance](#at-a-glance)**
 ```
 
 Introduction's own parts are listed beneath it. Navigation is rewritten whenever a section or a Principle is added or renamed, like At a Glance.

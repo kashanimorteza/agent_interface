@@ -1,5 +1,7 @@
 # State Definition
 
+State is the Process Component that records the aggregate operational position, outcomes, stoppages, and history needed to continue the workflow.
+
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -8,7 +10,9 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[State records the active Workflow position](#state-records-the-active-workflow-position)**
    - **[The Workflow has four modes](#the-workflow-has-four-modes)**
    - **[Every Target phase has aggregate operational State](#every-target-phase-has-aggregate-operational-state)**
@@ -21,7 +25,7 @@
    - **[Reset reconciles State with what it removes](#reset-reconciles-state-with-what-it-removes)**
    - **[Blockers are critical stoppages](#blockers-are-critical-stoppages)**
    - **[Open Questions belong to the human](#open-questions-belong-to-the-human)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -76,6 +80,20 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 <br>
 
 <br>
+
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+State owns aggregate operational records. Individual operations own their detailed records and evidence, while Target and Development remain the authorities for project and product meaning.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Principles in this Definition govern State. State Preferences are empty; the State Schema owns record shape, and operations may update only the fields granted to them.
+
+<br><br>
 
 ## Principles
 

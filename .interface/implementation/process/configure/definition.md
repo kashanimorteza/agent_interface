@@ -1,6 +1,8 @@
 # Configure Definition
 
-<br><br>
+Configure is the Process Component that creates the four structural Config records required by the Interface.
+
+<br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
@@ -12,9 +14,11 @@
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
+5. **[Layering](#layering)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
    - **[Configure generates only the four Config files from their Schemas](#configure-generates-only-the-four-config-files-from-their-schemas)**
-6. **[At a Glance](#at-a-glance)**
+8. **[At a Glance](#at-a-glance)**
 
 <br><br>
 
@@ -77,6 +81,20 @@ Configure has no internal operational Components. Its only responsibility is to 
 The four Config Schemas own file shape and required structure. Configure Preferences are empty because Configure has no independent choices or Defaults.
 
 Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Configure owns structural creation of Config records. The Config Schemas own their shapes, while later Process Components own the operational content written into those records.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+This Definition is the authority for Configure's responsibility and limits. Its Principle is mandatory; Configure Preferences are empty and cannot expand its scope.
 
 <br><br>
 
