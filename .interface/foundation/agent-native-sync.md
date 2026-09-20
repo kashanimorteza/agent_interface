@@ -1,10 +1,10 @@
 # Agent Native Sync
 
-This Foundation File instructs an Agent Native to create or update the Skill **My-Interface-Agent-Native-Sync** and defines what that Skill does. The Skill is the only reader of the Agent Module and transfers the Human's Agent concepts into the selected Agent Native.
+This Foundation File instructs an Agent Native to create or update its Agent Native Sync Skill and defines what that Skill does. The Skill is the only reader of the Agent Module and transfers the Human's Agent concepts into the selected Agent Native. The Native's registered Skill name and invocation are authoritative; in this project the invocation is `/my-interface-agent-native`.
 
 ## Instruction
 
-According to the selected Agent Native's Skill-creation policy, create the Skill **My-Interface-Agent-Native-Sync** if it does not exist. If it already exists, update its instruction from this Foundation File. The Skill must be self-contained after creation and must not require a later read of the Agent Module to understand its own synchronization procedure.
+According to the selected Agent Native's Skill-creation policy, create or update its Agent Native Sync Skill from this Foundation File. The Skill must be self-contained after creation and must not require a later read of the Agent Module to understand its own synchronization procedure. In this project, the Human invokes the resulting Skill only through `/my-interface-agent-native`, without a mode or numeric argument.
 
 When the Skill is explicitly invoked, it must read and understand the complete Agent Module, then realize that understanding in the selected Agent Native. It must update an existing Native realization or create one when it is missing.
 
@@ -56,11 +56,15 @@ For every declared Skill entry, the Skill must create the Native Skill when it i
 
 The Agent Module is Human-owned. Agent Sync reads it read-only; it never changes any file or directory under `.interface/agent/`. Only the Human may change Agent Definitions and Preferences.
 
+The Human's direct explicit invocation of Agent Sync is standing authorization for every additive, project-scoped Native change within this Foundation File's scope. The Skill must create, update, save, and verify the required Native artifacts without asking whether it may save or whether each individual change is approved. It may pause only for credentials, external trust, authentication, broader authority, an irreversible action, or a Native capability that cannot realize the declaration; ordinary project-scoped Native file changes require no second confirmation.
+
 Agent Sync is the only process authorized to read the Agent Module for Native realization. No other Skill, Agent Instance, coordinator, startup routine, Context, or Runtime operation may read, resolve, or depend directly on those sources. Other Native operations use the synchronized Native realization.
 
 The Skill does not:
 
 - read or understand Target sources;
+- inspect Git status, history, branches, diffs, tracked state, deleted files, or earlier versions;
+- restore, compare, or recover anything from Git or from any past project state;
 - choose or change Implementation decisions;
 - install plugins, packages, or external capabilities;
 - change application dependencies, project code, Config, credentials, user settings, or machine settings;
