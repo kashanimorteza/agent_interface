@@ -11,5 +11,60 @@ content_map:
   finding_count: "Total number of stored Findings."
   reviews: "The current review record for each reviewed phase."
 content:
-  finding_count: 0
-  reviews: {}
+  finding_count: 4
+  reviews:
+    P1:
+      id: "P1"
+      title: "Model"
+      target: "model"
+      scope: "Configuration currency (Application Manifest against the real package) and Plan Assurance of Plan revision 1 against the Target, the Model, Development, and Plan Principles, and the Model and Development Preferences, including the Agent parameters carried by each governed Task. Implementation Assurance was not begun because Plan Assurance is not satisfied, so the implementation and its evidence were not judged in this pass."
+      outcome: "not satisfied"
+      plan_outcome: "not satisfied"
+      plan_revision: 1
+      implementation_outcome: "inconclusive"
+      reviewed_by: "reviewing"
+      reviewed_at: "2026-09-20T08:06:24Z"
+      finding_count: 4
+      findings:
+        P1-F1:
+          id: "P1-F1"
+          kind: "defect"
+          severity: "blocking"
+          task: null
+          expected: "Owning operation: Configure. Once the Model Component exists, the Application Manifest carries its current public composition metadata (package name, repository-relative path, public entry point, and public interface metadata) in the section for the model Component, reconciled by Configure."
+          observed: "The model section of the Application Manifest is still empty although the Model Component now exists as an installable package with a public entry point and a public Interface."
+          evidence: ".interface/foundation/config/application.yaml, content.components.model is {}. The Component exists at model/ (package declared in model/pyproject.toml, entry point in model/src/model/__init__.py, Interface documented in model/README.md)."
+          state: "resolved"
+          raised_at: "2026-09-20T08:01:22Z"
+          settled_at: "2026-09-20T08:06:24Z"
+          settled_by: "Review of 2026-09-20T08:06:24Z: the model section of the Application Manifest now matches the real package exactly (package name, path, entry point, 4 Operations, 15 Domain Definitions, 12 vocabulary names, 3 shared types)."
+        P1-F2:
+          id: "P1-F2"
+          kind: "gap"
+          severity: "minor"
+          task: null
+          expected: "Owning operation: Planning. The Plan gives observable coverage to the Model obligation to record each consequential technical modelling choice the Target leaves unstated beside the Domain Definition it belongs to."
+          observed: "No Task's acceptance, verification, or constraint requires recording such choices; a search of every Task for record, choice, and consequential finds nothing."
+          evidence: "Plan revision 1 in .interface/foundation/config/plan.yaml, plans.P1: the definition Tasks P1-G3-T1 through P1-G7-T3 carry acceptance and verification with no recording condition."
+          state: "open"
+          raised_at: "2026-09-20T08:06:24Z"
+        P1-F3:
+          id: "P1-F3"
+          kind: "defect"
+          severity: "minor"
+          task: null
+          expected: "Owning operation: Planning. Planning content states responsibilities and observable results and does not store resolved technical choices that Preferences own."
+          observed: "Tasks state exact decimal representation, timezone-aware absolute instants, a JSON-compatible plain representation, and a recorded lock as requirements; each is a choice owned by Model or Development Preferences."
+          evidence: "plans.P1 in .interface/foundation/config/plan.yaml: exact decimal in P1-G5-T2, P1-G6-T2, P1-G6-T4, P1-G7-T2, P1-G7-T3; timezone-aware absolute instant in P1-G7-T3; JSON in P1-G2-T2; recorded lock in P1-G1-T1."
+          state: "open"
+          raised_at: "2026-09-20T08:06:24Z"
+        P1-F4:
+          id: "P1-F4"
+          kind: "defect"
+          severity: "minor"
+          task: null
+          expected: "Owning operation: Planning. A statement common to several Tasks is stored once, at the Group or Plan that binds them, and never repeated in more than one Task."
+          observed: "The 15 Domain Definition Tasks repeat the same description, reason, expected result, and verification sentences, and the same three acceptance clauses (exact Target Fields, relationships carry the referenced definition, explicitly persistent with an activation Field), differing only in the definition's name."
+          evidence: "plans.P1 in .interface/foundation/config/plan.yaml, P1-G3-T1 through P1-G7-T3: description, reason, expected_result, and verify are identical after the name is substituted (15 of 15), as are three acceptance clauses (15 of 15)."
+          state: "open"
+          raised_at: "2026-09-20T08:06:24Z"

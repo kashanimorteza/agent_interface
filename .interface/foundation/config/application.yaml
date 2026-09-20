@@ -10,7 +10,16 @@ content_map:
 content:
   components:
     development: {}
-    model: {}
+    model:
+      package_name: "model"
+      path: "model"
+      public_entrypoint: "model"
+      public_interface:
+        operations: ["describe", "create", "serialize", "deserialize"]
+        domain_definitions: ["User", "TradingPlatform", "Instance", "Currency", "Broker", "Asset", "AccountGroup", "Account", "TrailingGroup", "TrailingRule", "PartialGroup", "PartialRule", "ActionGroup", "Action", "Position"]
+        vocabulary: ["Declaration", "FieldDeclaration", "Relationship", "Precision", "Persistence", "Cardinality", "AtRest", "Identity", "Generated", "Unique", "Activation", "Credential"]
+        shared_types: ["ModelFoundation", "ExactDecimal", "Instant"]
+      documentation: "model/README.md"
     database: {}
     logic: {}
     api: {}

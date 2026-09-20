@@ -11,5 +11,1287 @@ content_map:
   task_count: "Total number of stored Tasks."
   plans: "Current phase Plans and their Groups and Tasks."
 content:
-  task_count: 0
-  plans: {}
+  task_count: 24
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      revision: 2
+      target: model
+      does: The independent Model layer is available as a reusable package that publishes every Target Domain Definition — with its Fields, relationships, and rules — through one Public Interface, together with the shared foundation, vocabulary, and conversions those definitions rely on, and documentation of that Interface.
+      constraints:
+      - 'This phase''s result contains no Initial Data records: the Target''s Initial Data is delivered by the Database phase, because Model never owns project records.'
+      task_count: 24
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Model package boundary
+          description: Makes the Model Component an independent, reusable, importable package.
+          area: Package boundary and dependency environment of the Model Component
+          does: Model exists as an independent package that any authorized consumer can install and import in isolation.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              title: Establish Model as an independent reusable package
+              description: Make the Model Component an importable package whose dependency environment can be reproduced from scratch, whose declared modeling dependency is resolved, and which depends on no other Application Package.
+              reason: Every later Task and every consumer Component needs one installable Model package to build on and to import through its Public Interface.
+              kind: configuration
+              inputs:
+              - The Model Component Profile
+              - The resolved language, package management, and modeling selections
+              expected_result: A fresh isolated environment can install the Model package with its declared dependencies and import it successfully.
+              depends_on: []
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: The package installs and imports in a fresh isolated environment; its dependency set contains no other Application Package; the dependencies it resolves are recorded so the same environment can be reproduced. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.
+              verify: In a fresh isolated environment the package is installed and imported successfully; inspecting its resolved dependencies shows no other Application Package; a second fresh environment resolves the same dependencies.
+              status: done
+              log:
+              - at: '2026-09-20T07:47:22Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:48:02Z'
+                by: developing
+                event: done
+                check: 'Transient: built wheel and installed it in a fresh isolated Python 3.14.7 environment; import of the package succeeded; resolved requirement set was pydantic>=2,<3 only (no other Application Package); uv.lock present. Prerequisites: uv 0.12.10 present, Python 3.14.7 via uv, pydantic 2.13.5, ruff 0.16.8, pyright 1.1.414 installed; library-skills scan found no packaged skills.'
+              - at: '2026-09-20T08:15:17Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording: fresh isolated environment installs and imports the package; only dependency is pydantic>=2,<3 (no other Application Package); a second environment synced strictly from the recorded lock resolved identical dependencies (8 packages, diff empty).'
+        P1-G2:
+          id: P1-G2
+          title: Model Foundation and Declaration Vocabulary
+          description: The shared mechanisms every Domain Definition receives and the one vocabulary every definition states itself in.
+          area: Model Foundation, Declaration Vocabulary, and Serialization
+          does: Every Domain Definition can receive shared validation and Serialization, state its Fields, relationships, and persistence in the one Declaration Vocabulary, and have that declaration read by other Components.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              title: Establish the Model Foundation
+              description: Provide the single common foundation through which every concrete Domain Definition receives shared validation and metadata mechanisms, without the foundation owning, injecting, or requiring any Field or relationship.
+              reason: Shared mechanisms stay consistent only when they come from one place that imposes no domain meaning.
+              kind: code
+              inputs:
+              - The independent Model package
+              expected_result: A common foundation exists that a Domain Definition can receive shared behaviour from, declaring no Field and no relationship of its own.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: The foundation declares no Field and no relationship; a definition built on it receives the shared validation behaviour; input that names an unknown Field is refused rather than ignored; validation is deterministic, depends only on the definition's own data, and performs no external I/O. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.
+              verify: A transient probe definition built on the foundation is shown to inherit no Fields, to refuse unknown input, and to give identical validation outcomes on repeated runs without any external access.
+              status: done
+              log:
+              - at: '2026-09-20T07:48:17Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:48:41Z'
+                by: developing
+                event: done
+                check: 'Transient probe (nothing kept in the Component): foundation declares no Field; probe built on it inherits none; unknown input, string-for-int, bool-for-int, naive datetime, float and NaN for an exact decimal are all refused; offsets normalise to UTC; assignment is validated; 20 repeated validations gave identical outcomes; no I/O performed.'
+            P1-G2-T2:
+              id: P1-G2-T2
+              title: Provide symmetric conversion to and from a Plain Representation
+              description: 'Provide once, through the Model Foundation, the pair of conversions between a Domain Definition and its Plain Representation: one produces simple named values, the other produces a validated instance from such values.'
+              reason: Consumers convert domain data without redefining domain meaning or its rules.
+              kind: code
+              inputs:
+              - The Model Foundation
+              expected_result: Every definition built on the foundation offers both conversions with identical behaviour.
+              depends_on:
+              - P1-G2-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: Conversion out returns simple named values rather than encoded text, so a consumer can carry them in any wire format it chooses; it includes every Field and never nests a related definition — a relationship appears only as its declared reference value; conversion in applies the same Intrinsic Rules as construction and fails when they are not satisfied; both are deterministic, data-only, and free of external I/O. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.
+              verify: For a transient probe definition, converting out and back yields an equal instance; the output holds only simple values; input breaking an Intrinsic Rule is refused on conversion in; no Field is withheld from the output.
+              status: done
+              log:
+              - at: '2026-09-20T07:48:41Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:49:20Z'
+                by: developing
+                event: done
+                check: 'Transient probe: serialize returns every Field (none withheld, credential-like value included) as JSON-compatible values with no nesting; json.dumps needs no custom encoder; deserialize(serialize(x)) and a JSON text round trip equal the original; repeated calls identical; deserialize refuses over-length, wrong-type, unknown-key, missing-key and naive-datetime input.'
+              - at: '2026-09-20T08:15:17Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording: for all 15 definitions the serialized output holds only simple values (int/str/bool/float/None), includes every Field, nests nothing, and round-trips to an equal instance; Intrinsic-Rule violations refused on conversion in.'
+            P1-G2-T3:
+              id: P1-G2-T3
+              title: Provide the Field terms of the Declaration Vocabulary
+              description: Let a Domain Definition state, for each Field, the terms the Declaration Vocabulary defines for a Field — logical type, length, precision, optionality, default, identity, generated, uniqueness, credential classification with its stated at-rest treatment, and activation — and let other Components read those statements through the Model.
+              reason: Database and every other Component must read one shared declaration instead of inferring meaning from names or from a second artifact.
+              kind: code
+              inputs:
+              - The Model Foundation
+              - The Declaration Vocabulary Schema
+              expected_result: A definition can state every Field term and any Component can read the stated terms back.
+              depends_on:
+              - P1-G2-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: Each Field term the vocabulary defines can be stated and read back exactly as stated; required, optional, defaulted, and generated meanings are preserved without invented absence states or partial-update behaviour; a credential classification records the at-rest treatment without applying it or removing the Field from anything; no table, index, migration, storage type, or engine-specific constraint appears in the declaration. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.
+              verify: For a transient probe definition, stating each Field term and reading it back returns the stated value; a Field declared optional, defaulted, generated, unique, credential, and activation each reads back distinctly; the declaration mentions no storage structure.
+              status: done
+              log:
+              - at: '2026-09-20T07:49:20Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:50:10Z'
+                by: developing
+                event: done
+                check: 'Transient probe: each Field term (type, length, precision, optional, default, identity, generated, unique, credential with at-rest treatment, activation) reads back exactly as stated and is true only where stated; generated identity reads optional=false with no default; a type with no logical type is refused; the declaration record has no table/index/column/nullable/foreign-key term.'
+            P1-G2-T4:
+              id: P1-G2-T4
+              title: Provide the relationship and definition terms of the Declaration Vocabulary
+              description: Let a Domain Definition state each relationship — the referenced Domain Definition itself and the Field referred to, cardinality, and optionality — and state for itself whether it is persistent or non-persistent and which composite uniqueness sets apply, and let other Components read those statements through the Model.
+              reason: Relationships must be verifiable where they are written and persistence must be explicit so that no Component guesses either.
+              kind: code
+              inputs:
+              - The Model Foundation
+              - The Declaration Vocabulary Schema
+              expected_result: A definition can state every relationship and definition term and any Component can read the stated terms back.
+              depends_on:
+              - P1-G2-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: A relationship carries the referenced definition itself rather than a name in text; a reference that cannot be resolved fails where it is written; cardinality and optionality must be stated and are never defaulted; persistence must be stated explicitly and is never inferred from a name or an identity Field; composite uniqueness sets are stated and read back as ordered sets of Field names. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.
+              verify: For transient probe definitions, a relationship to an existing probe reads back with its referenced definition, cardinality, and optionality; a relationship to an unresolvable reference, or with cardinality, optionality, or persistence omitted, fails where written; composite uniqueness sets read back in order.
+              status: done
+              log:
+              - at: '2026-09-20T07:50:11Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:51:25Z'
+                by: developing
+                event: done
+                check: 'Transient probe: relationship reads back with the referenced class itself, referred Field, via Field, cardinality and optionality; persistence reads back for persistent and non-persistent definitions; composite unique sets read back in order; a string reference, an undeclared referred Field, a non-enum cardinality, an omitted cardinality or optionality, an omitted persistence, an undeclared via Field and an undeclared unique-set Field each fail where written.'
+        P1-G3:
+          id: P1-G3
+          title: Access and connectivity definitions
+          description: The Domain Definitions that describe who uses the system and how it reaches a Trading Platform.
+          area: Domain Definitions for users, trading platforms, and instances
+          does: User, Trading Platform, and Instance are each available as a complete Domain Definition.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              title: Declare the User Domain Definition
+              description: Declare the User Domain Definition as the Target defines it — an independent user of the system, so each user can have distinct settings — stating its 7 stated Fields (id, name, username, password, api_key, is_active, description) with the properties the Target gives them; password and api_key are classified as credentials with hash at-rest treatment; name and username are declared unique.
+              reason: The Target's User concept — an independent user of the system, so each user can have distinct settings — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of User
+              - The Declaration Vocabulary
+              - The Model Foundation
+              expected_result: User is available as a complete Domain Definition of an independent user of the system, so each user can have distinct settings.
+              depends_on:
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T4
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'User''s published declaration matches the Target''s definition of it: its 7 stated Fields (id, name, username, password, api_key, is_active, description) with the properties the Target gives them; password and api_key are classified as credentials with hash at-rest treatment; name and username are declared unique. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: Reading the published declaration of User shows its 7 stated Fields (id, name, username, password, api_key, is_active, description) with the properties the Target gives them; password and api_key are classified as credentials with hash at-rest treatment; name and username are declared unique; building User from valid data succeeds; omitting any of name, username, password and api_key is refused, naming the missing Field.
+              status: done
+              log:
+              - at: '2026-09-20T07:51:25Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:53:40Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text: declaration lists exactly the Target Fields in order with stated type, nullability, default, identity, generated, unique, credential and activation terms; persistent; own module holds exactly one definition; valid data builds, converts out and back equal; each required Field omitted, null, wrong-typed, unknown key each refused naming the Field. ruff and pyright strict clean.'
+              - at: '2026-09-20T08:15:18Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G3-T2:
+              id: P1-G3-T2
+              title: Declare the Trading Platform Domain Definition
+              description: Declare the Trading Platform Domain Definition as the Target defines it — a supported trading API standard, independent of any exchange or broker — stating its 5 stated Fields (id, name, code, is_active, description) with the properties the Target gives them; name is declared unique.
+              reason: The Target's Trading Platform concept — a supported trading API standard, independent of any exchange or broker — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Trading Platform
+              - The Declaration Vocabulary
+              - The Model Foundation
+              expected_result: Trading Platform is available as a complete Domain Definition of a supported trading API standard, independent of any exchange or broker.
+              depends_on:
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T4
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Trading Platform''s published declaration matches the Target''s definition of it: its 5 stated Fields (id, name, code, is_active, description) with the properties the Target gives them; name is declared unique. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: Reading the published declaration of Trading Platform shows its 5 stated Fields (id, name, code, is_active, description) with the properties the Target gives them; name is declared unique; building Trading Platform from valid data succeeds; omitting any of name and code is refused, naming the missing Field.
+              status: done
+              log:
+              - at: '2026-09-20T07:51:25Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:53:40Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text: declaration lists exactly the Target Fields in order with stated type, nullability, default, identity, generated, unique, credential and activation terms; persistent; own module holds exactly one definition; valid data builds, converts out and back equal; each required Field omitted, null, wrong-typed, unknown key each refused naming the Field. ruff and pyright strict clean.'
+              - at: '2026-09-20T08:15:18Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G3-T3:
+              id: P1-G3-T3
+              title: Declare the Instance Domain Definition
+              description: 'Declare the Instance Domain Definition as the Target defines it — a user-owned connection through which the system reaches a Trading Platform — stating its 10 stated Fields (id, user_id, trading_platform_id, name, ip, username, password, api_key, is_active, description) with the properties the Target gives them; password and api_key are classified as credentials with encrypted at-rest treatment; ip, username, password and api_key may have no value; unique together: (user_id, name); its relationships to User and Trading Platform.'
+              reason: The Target's Instance concept — a user-owned connection through which the system reaches a Trading Platform — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Instance
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The User Domain Definition
+              - The Trading Platform Domain Definition
+              expected_result: Instance is available as a complete Domain Definition of a user-owned connection through which the system reaches a Trading Platform.
+              depends_on:
+              - P1-G3-T1
+              - P1-G3-T2
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Instance''s published declaration matches the Target''s definition of it: its 10 stated Fields (id, user_id, trading_platform_id, name, ip, username, password, api_key, is_active, description) with the properties the Target gives them; password and api_key are classified as credentials with encrypted at-rest treatment; ip, username, password and api_key may have no value; unique together: (user_id, name); its relationships to User and Trading Platform. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Instance shows its 10 stated Fields (id, user_id, trading_platform_id, name, ip, username, password, api_key, is_active, description) with the properties the Target gives them; password and api_key are classified as credentials with encrypted at-rest treatment; ip, username, password and api_key may have no value; unique together: (user_id, name); its relationships to User and Trading Platform; building Instance from valid data succeeds; omitting any of user_id, trading_platform_id and name is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:53:41Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:54:08Z'
+                by: developing
+                event: done
+                check: Transient definition check built from the Target text (fields, credential treatment on password/api_key, optional connection Fields, composite uniqueness of user_id+name, relationships carrying User and TradingPlatform themselves with cardinality one and optional false, persistence, own module, refusal of each violation); ruff and pyright strict clean.
+              - at: '2026-09-20T08:15:19Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+        P1-G4:
+          id: P1-G4
+          title: Market reference definitions
+          description: The Domain Definitions that describe currencies, brokers, and the assets a broker provides.
+          area: Domain Definitions for currencies, brokers, and assets
+          does: Currency, Broker, and Asset are each available as a complete Domain Definition.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              title: Declare the Currency Domain Definition
+              description: 'Declare the Currency Domain Definition as the Target defines it — a currency the trading system can use, with its code, symbol, region, and monetary precision — stating its 8 stated Fields (id, user_id, code, symbol, country, decimal_digits, is_active, description) with the properties the Target gives them; symbol and country may have no value; decimal_digits defaults to 2; code is limited to the length the Target states; unique together: (user_id, code); its relationship to User.'
+              reason: The Target's Currency concept — a currency the trading system can use, with its code, symbol, region, and monetary precision — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Currency
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: Currency is available as a complete Domain Definition of a currency the trading system can use, with its code, symbol, region, and monetary precision.
+              depends_on:
+              - P1-G3-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Currency''s published declaration matches the Target''s definition of it: its 8 stated Fields (id, user_id, code, symbol, country, decimal_digits, is_active, description) with the properties the Target gives them; symbol and country may have no value; decimal_digits defaults to 2; code is limited to the length the Target states; unique together: (user_id, code); its relationship to User. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Currency shows its 8 stated Fields (id, user_id, code, symbol, country, decimal_digits, is_active, description) with the properties the Target gives them; symbol and country may have no value; decimal_digits defaults to 2; code is limited to the length the Target states; unique together: (user_id, code); its relationship to User; building Currency from valid data succeeds; omitting any of user_id and code is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:54:09Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:54:52Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. Currency: code carries declared length 3; decimal_digits default 2; composite uniqueness user_id+code.'
+              - at: '2026-09-20T08:15:19Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G4-T2:
+              id: P1-G4-T2
+              title: Declare the Broker Domain Definition
+              description: 'Declare the Broker Domain Definition as the Target defines it — a broker the system supports, owned by one user and coupled to no single Trading Platform — stating its 5 stated Fields (id, name, user_id, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User.'
+              reason: The Target's Broker concept — a broker the system supports, owned by one user and coupled to no single Trading Platform — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Broker
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: Broker is available as a complete Domain Definition of a broker the system supports, owned by one user and coupled to no single Trading Platform.
+              depends_on:
+              - P1-G3-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Broker''s published declaration matches the Target''s definition of it: its 5 stated Fields (id, name, user_id, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Broker shows its 5 stated Fields (id, name, user_id, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User; building Broker from valid data succeeds; omitting any of name and user_id is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:54:09Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:54:53Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. Broker: composite uniqueness user_id+name.'
+              - at: '2026-09-20T08:15:19Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G4-T3:
+              id: P1-G4-T3
+              title: Declare the Asset Domain Definition
+              description: 'Declare the Asset Domain Definition as the Target defines it — a tradable asset a broker provides, with its category and price precision — stating its 8 stated Fields (id, broker_id, symbol, category, point_size, digits, is_active, description) with the properties the Target gives them; point_size defaults to 0.0 and digits defaults to 0; unique together: (broker_id, symbol); its relationship to Broker.'
+              reason: The Target's Asset concept — a tradable asset a broker provides, with its category and price precision — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Asset
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The Broker Domain Definition
+              expected_result: Asset is available as a complete Domain Definition of a tradable asset a broker provides, with its category and price precision.
+              depends_on:
+              - P1-G4-T2
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Asset''s published declaration matches the Target''s definition of it: its 8 stated Fields (id, broker_id, symbol, category, point_size, digits, is_active, description) with the properties the Target gives them; point_size defaults to 0.0 and digits defaults to 0; unique together: (broker_id, symbol); its relationship to Broker. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Asset shows its 8 stated Fields (id, broker_id, symbol, category, point_size, digits, is_active, description) with the properties the Target gives them; point_size defaults to 0.0 and digits defaults to 0; unique together: (broker_id, symbol); its relationship to Broker; building Asset from valid data succeeds; omitting any of broker_id, symbol and category is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:54:53Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:02Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. Asset: point_size default 0.0 (float), digits default 0, composite uniqueness broker_id+symbol.'
+              - at: '2026-09-20T08:15:20Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+        P1-G5:
+          id: P1-G5
+          title: Account definitions
+          description: The Domain Definitions that organize and describe trading accounts.
+          area: Domain Definitions for account groups and accounts
+          does: Account Group and Account are each available as a complete Domain Definition.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G5-T1:
+              id: P1-G5-T1
+              title: Declare the Account Group Domain Definition
+              description: 'Declare the Account Group Domain Definition as the Target defines it — an independent group for organizing one user''s trading accounts — stating its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User.'
+              reason: The Target's Account Group concept — an independent group for organizing one user's trading accounts — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Account Group
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: Account Group is available as a complete Domain Definition of an independent group for organizing one user's trading accounts.
+              depends_on:
+              - P1-G3-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Account Group''s published declaration matches the Target''s definition of it: its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Account Group shows its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User; building Account Group from valid data succeeds; omitting any of user_id and name is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:55:02Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:05Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. AccountGroup: composite uniqueness user_id+name.'
+              - at: '2026-09-20T08:15:20Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G5-T2:
+              id: P1-G5-T2
+              title: Declare the Account Domain Definition
+              description: 'Declare the Account Domain Definition as the Target defines it — a funded trading account through which the system executes trades and launches positions — stating its 13 stated Fields (id, name, group_id, broker_id, instance_id, base_currency_id, username, password, leverage, balance, account_type, is_active, description) with the properties the Target gives them; password is classified as a credential with encrypted at-rest treatment; name is declared unique; balance defaults to 0; unique together: (group_id, broker_id, instance_id); its relationships to Account Group, Broker, Instance and Currency.'
+              reason: The Target's Account concept — a funded trading account through which the system executes trades and launches positions — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Account
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The Account Group Domain Definition
+              - The Broker Domain Definition
+              - The Instance Domain Definition
+              - The Currency Domain Definition
+              expected_result: Account is available as a complete Domain Definition of a funded trading account through which the system executes trades and launches positions.
+              depends_on:
+              - P1-G5-T1
+              - P1-G4-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Account''s published declaration matches the Target''s definition of it: its 13 stated Fields (id, name, group_id, broker_id, instance_id, base_currency_id, username, password, leverage, balance, account_type, is_active, description) with the properties the Target gives them; password is classified as a credential with encrypted at-rest treatment; name is declared unique; balance defaults to 0; unique together: (group_id, broker_id, instance_id); its relationships to Account Group, Broker, Instance and Currency. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Account shows its 13 stated Fields (id, name, group_id, broker_id, instance_id, base_currency_id, username, password, leverage, balance, account_type, is_active, description) with the properties the Target gives them; password is classified as a credential with encrypted at-rest treatment; name is declared unique; balance defaults to 0; unique together: (group_id, broker_id, instance_id); its relationships to Account Group, Broker, Instance and Currency; building Account from valid data succeeds; omitting any of name, group_id, broker_id, instance_id, base_currency_id, username, password, leverage and account_type is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:55:06Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:17Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. Account: password classified credential/encrypted; name unique; balance exact decimal default 0; composite uniqueness group_id+broker_id+instance_id; four relationships (AccountGroup, Broker, Instance, Currency).'
+              - at: '2026-09-20T08:15:20Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+        P1-G6:
+          id: P1-G6
+          title: Position management rule definitions
+          description: The Domain Definitions that describe trailing and partial-close rule sets.
+          area: Domain Definitions for trailing and partial-close groups and rules
+          does: Trailing Group, Trailing Rule, Partial Group, and Partial Rule are each available as a complete Domain Definition.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G6-T1:
+              id: P1-G6-T1
+              title: Declare the Trailing Group Domain Definition
+              description: 'Declare the Trailing Group Domain Definition as the Target defines it — a group of rules that manage Stop Loss and Take Profit during a trade — stating its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User.'
+              reason: The Target's Trailing Group concept — a group of rules that manage Stop Loss and Take Profit during a trade — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Trailing Group
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: Trailing Group is available as a complete Domain Definition of a group of rules that manage Stop Loss and Take Profit during a trade.
+              depends_on:
+              - P1-G3-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Trailing Group''s published declaration matches the Target''s definition of it: its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Trailing Group shows its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User; building Trailing Group from valid data succeeds; omitting any of user_id and name is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:55:18Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:21Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. TrailingGroup: composite uniqueness user_id+name.'
+              - at: '2026-09-20T08:15:21Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G6-T2:
+              id: P1-G6-T2
+              title: Declare the Trailing Rule Domain Definition
+              description: 'Declare the Trailing Rule Domain Definition as the Target defines it — one rule that says when and how to adjust Take Profit and Stop Loss — stating its 8 stated Fields (id, name, trailing_group_id, trigger_percentage, take_profit_adjustment, stop_loss_adjustment, is_active, description) with the properties the Target gives them; name is declared unique; take_profit_adjustment and stop_loss_adjustment may have no value; unique together: (trailing_group_id, trigger_percentage); its relationship to Trailing Group.'
+              reason: The Target's Trailing Rule concept — one rule that says when and how to adjust Take Profit and Stop Loss — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Trailing Rule
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The Trailing Group Domain Definition
+              expected_result: Trailing Rule is available as a complete Domain Definition of one rule that says when and how to adjust Take Profit and Stop Loss.
+              depends_on:
+              - P1-G6-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Trailing Rule''s published declaration matches the Target''s definition of it: its 8 stated Fields (id, name, trailing_group_id, trigger_percentage, take_profit_adjustment, stop_loss_adjustment, is_active, description) with the properties the Target gives them; name is declared unique; take_profit_adjustment and stop_loss_adjustment may have no value; unique together: (trailing_group_id, trigger_percentage); its relationship to Trailing Group. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Trailing Rule shows its 8 stated Fields (id, name, trailing_group_id, trigger_percentage, take_profit_adjustment, stop_loss_adjustment, is_active, description) with the properties the Target gives them; name is declared unique; take_profit_adjustment and stop_loss_adjustment may have no value; unique together: (trailing_group_id, trigger_percentage); its relationship to Trailing Group; building Trailing Rule from valid data succeeds; omitting any of name, trailing_group_id and trigger_percentage is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:55:22Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:33Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. TrailingRule: exact decimals; optional adjustment Fields accept no value; name unique; composite uniqueness trailing_group_id+trigger_percentage.'
+              - at: '2026-09-20T08:15:21Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G6-T3:
+              id: P1-G6-T3
+              title: Declare the Partial Group Domain Definition
+              description: 'Declare the Partial Group Domain Definition as the Target defines it — a group of rules for closing portions of an open trade — stating its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User.'
+              reason: The Target's Partial Group concept — a group of rules for closing portions of an open trade — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Partial Group
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: Partial Group is available as a complete Domain Definition of a group of rules for closing portions of an open trade.
+              depends_on:
+              - P1-G3-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Partial Group''s published declaration matches the Target''s definition of it: its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Partial Group shows its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User; building Partial Group from valid data succeeds; omitting any of user_id and name is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:55:18Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:21Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. PartialGroup: composite uniqueness user_id+name.'
+              - at: '2026-09-20T08:15:21Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G6-T4:
+              id: P1-G6-T4
+              title: Declare the Partial Rule Domain Definition
+              description: 'Declare the Partial Rule Domain Definition as the Target defines it — one rule that says under which condition, and how much of, a position is closed — stating its 7 stated Fields (id, name, partial_group_id, profit_percentage, close_percentage, is_active, description) with the properties the Target gives them; name is declared unique; unique together: (partial_group_id, profit_percentage); its relationship to Partial Group.'
+              reason: The Target's Partial Rule concept — one rule that says under which condition, and how much of, a position is closed — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Partial Rule
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The Partial Group Domain Definition
+              expected_result: Partial Rule is available as a complete Domain Definition of one rule that says under which condition, and how much of, a position is closed.
+              depends_on:
+              - P1-G6-T3
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Partial Rule''s published declaration matches the Target''s definition of it: its 7 stated Fields (id, name, partial_group_id, profit_percentage, close_percentage, is_active, description) with the properties the Target gives them; name is declared unique; unique together: (partial_group_id, profit_percentage); its relationship to Partial Group. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Partial Rule shows its 7 stated Fields (id, name, partial_group_id, profit_percentage, close_percentage, is_active, description) with the properties the Target gives them; name is declared unique; unique together: (partial_group_id, profit_percentage); its relationship to Partial Group; building Partial Rule from valid data succeeds; omitting any of name, partial_group_id, profit_percentage and close_percentage is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:55:22Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:33Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. PartialRule: exact decimals; name unique; composite uniqueness partial_group_id+profit_percentage.'
+              - at: '2026-09-20T08:15:22Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+        P1-G7:
+          id: P1-G7
+          title: Trading action and position definitions
+          description: The Domain Definitions that describe how positions are opened and the positions themselves.
+          area: Domain Definitions for action groups, actions, and positions
+          does: Action Group, Action, and Position are each available as a complete Domain Definition.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G7-T1:
+              id: P1-G7-T1
+              title: Declare the Action Group Domain Definition
+              description: 'Declare the Action Group Domain Definition as the Target defines it — a grouping of trading actions by risk profile — stating its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User.'
+              reason: The Target's Action Group concept — a grouping of trading actions by risk profile — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Action Group
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The User Domain Definition
+              expected_result: Action Group is available as a complete Domain Definition of a grouping of trading actions by risk profile.
+              depends_on:
+              - P1-G3-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Action Group''s published declaration matches the Target''s definition of it: its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Action Group shows its 5 stated Fields (id, user_id, name, is_active, description) with the properties the Target gives them; unique together: (user_id, name); its relationship to User; building Action Group from valid data succeeds; omitting any of user_id and name is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:55:34Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:37Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. ActionGroup: composite uniqueness user_id+name.'
+              - at: '2026-09-20T08:15:22Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G7-T2:
+              id: P1-G7-T2
+              title: Declare the Action Domain Definition
+              description: 'Declare the Action Domain Definition as the Target defines it — how a position must be opened: its asset, account, risk, targets, and rule groups — stating its 12 stated Fields (id, name, action_group_id, asset_id, account_id, partial_group_id, trailing_group_id, risk_by_reward, take_profit, stop_loss, is_active, description) with the properties the Target gives them; unique together: (action_group_id, name); its relationships to Action Group, Asset, Account, Partial Group and Trailing Group.'
+              reason: 'The Target''s Action concept — how a position must be opened: its asset, account, risk, targets, and rule groups — needs one authoritative definition that other Components share rather than redefine.'
+              kind: code
+              inputs:
+              - The Target definition of Action
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The Action Group Domain Definition
+              - The Asset Domain Definition
+              - The Account Domain Definition
+              - The Partial Group Domain Definition
+              - The Trailing Group Domain Definition
+              expected_result: 'Action is available as a complete Domain Definition of how a position must be opened: its asset, account, risk, targets, and rule groups.'
+              depends_on:
+              - P1-G7-T1
+              - P1-G4-T3
+              - P1-G5-T2
+              - P1-G6-T3
+              - P1-G6-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Action''s published declaration matches the Target''s definition of it: its 12 stated Fields (id, name, action_group_id, asset_id, account_id, partial_group_id, trailing_group_id, risk_by_reward, take_profit, stop_loss, is_active, description) with the properties the Target gives them; unique together: (action_group_id, name); its relationships to Action Group, Asset, Account, Partial Group and Trailing Group. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: 'Reading the published declaration of Action shows its 12 stated Fields (id, name, action_group_id, asset_id, account_id, partial_group_id, trailing_group_id, risk_by_reward, take_profit, stop_loss, is_active, description) with the properties the Target gives them; unique together: (action_group_id, name); its relationships to Action Group, Asset, Account, Partial Group and Trailing Group; building Action from valid data succeeds; omitting any of name, action_group_id, asset_id, account_id, partial_group_id, trailing_group_id, risk_by_reward, take_profit and stop_loss is refused, naming the missing Field.'
+              status: done
+              log:
+              - at: '2026-09-20T07:55:37Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:41Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. Action: exact decimals for risk_by_reward, take_profit, stop_loss; composite uniqueness action_group_id+name; five relationships.'
+              - at: '2026-09-20T08:15:22Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+            P1-G7-T3:
+              id: P1-G7-T3
+              title: Declare the Position Domain Definition
+              description: Declare the Position Domain Definition as the Target defines it — a position created by the system, whether opened or still pending execution — stating its 21 stated Fields (id, user_id, name, trading_platform_id, broker_id, account_id, trailing_group_id, partial_group_id, action_group_id, action_id, date, volume, profit, is_executed, order_type, base_tp, base_sl, real_tp, real_sl, is_active, description) with the properties the Target gives them; name is declared unique; profit defaults to 0 and is_executed defaults to false; its relationships to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group and Action.
+              reason: The Target's Position concept — a position created by the system, whether opened or still pending execution — needs one authoritative definition that other Components share rather than redefine.
+              kind: code
+              inputs:
+              - The Target definition of Position
+              - The Declaration Vocabulary
+              - The Model Foundation
+              - The User Domain Definition
+              - The Trading Platform Domain Definition
+              - The Broker Domain Definition
+              - The Account Domain Definition
+              - The Trailing Group Domain Definition
+              - The Partial Group Domain Definition
+              - The Action Group Domain Definition
+              - The Action Domain Definition
+              expected_result: Position is available as a complete Domain Definition of a position created by the system, whether opened or still pending execution.
+              depends_on:
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G4-T2
+              - P1-G5-T2
+              - P1-G6-T1
+              - P1-G6-T3
+              - P1-G7-T1
+              - P1-G7-T2
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: 'Position''s published declaration matches the Target''s definition of it: its 21 stated Fields (id, user_id, name, trading_platform_id, broker_id, account_id, trailing_group_id, partial_group_id, action_group_id, action_id, date, volume, profit, is_executed, order_type, base_tp, base_sl, real_tp, real_sl, is_active, description) with the properties the Target gives them; name is declared unique; profit defaults to 0 and is_executed defaults to false; its relationships to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group and Action. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.'
+              verify: Reading the published declaration of Position shows its 21 stated Fields (id, user_id, name, trading_platform_id, broker_id, account_id, trailing_group_id, partial_group_id, action_group_id, action_id, date, volume, profit, is_executed, order_type, base_tp, base_sl, real_tp, real_sl, is_active, description) with the properties the Target gives them; name is declared unique; profit defaults to 0 and is_executed defaults to false; its relationships to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group and Action; building Position from valid data succeeds; omitting any of user_id, name, trading_platform_id, broker_id, account_id, trailing_group_id, partial_group_id, action_group_id, action_id, date, volume, order_type, base_tp, base_sl, real_tp and real_sl is refused, naming the missing Field.
+              status: done
+              log:
+              - at: '2026-09-20T07:55:42Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:55:58Z'
+                by: developing
+                event: done
+                check: 'Transient definition check built from the Target text (exact Target Fields in order with stated terms, defaults, uniqueness, relationships carrying the referenced definition with cardinality one and optional false, persistence, own module, refusal of each violation naming the Field); ruff and pyright strict clean. Position: 21 Fields; eight relationships; exact decimals; date is an aware instant normalised to UTC (naive refused); profit default 0 and is_executed default false; name unique.'
+              - at: '2026-09-20T08:15:23Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording with the Target-derived definition check: the named Fields in Target order with their stated properties, credential treatments, unique Fields and unique-together sets, optional Fields, defaults, length limits, and the named relationships all read back as stated; omitting each required Field is refused naming it; valid data builds. ruff and pyright strict clean.'
+        P1-G8:
+          id: P1-G8
+          title: Public Interface and documentation
+          description: How consumers reach and learn to use the Model.
+          area: Public Interface, public entry point, and documentation of the Model Component
+          does: Consumers can reach every Domain Definition and every Operation through one Public Interface and can learn to use it from the Model's documentation.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G8-T1:
+              id: P1-G8-T1
+              title: Publish every Domain Definition through one public entry point
+              description: Publish every Target Domain Definition, and the Model's declarations and conversions, through one explicit and stable public entry point, each definition under its own unambiguous identity independent of where it is declared.
+              reason: Consumers must reach Model only through its Public Interface, never through its private resources.
+              kind: code
+              inputs:
+              - Every completed Domain Definition
+              - The independent Model package
+              expected_result: A consumer can import each Domain Definition by its own name from the one public entry point and learn the package identity and entry point needed to compose it.
+              depends_on:
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G4-T3
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              - P1-G6-T4
+              - P1-G7-T1
+              - P1-G7-T2
+              - P1-G7-T3
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: Every Domain Definition the Target defines is reachable from the public entry point under its own name and no other name for it is published; every published Domain Definition is explicitly declared persistent and declares its activation Field; every relationship carries the referenced definition itself with the cardinality and optionality the Target states; each Domain Definition is declared apart from every other and the Model Foundation is declared apart from all of them; a consumer needs no private resource; the package identity, root, and entry point are discoverable so that the Application Manifest owner can publish them. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.
+              verify: A fresh consumer imports each Domain Definition by name from the public entry point and reaches its declaration; the published set equals the Target's set of Models; no private resource is needed for any of it; every published definition reads back as explicitly persistent with an activation Field, every relationship reads back with the referenced definition itself, its cardinality, and its optionality, and the separation of definitions and foundation is observed in the package.
+              status: done
+              log:
+              - at: '2026-09-20T07:55:58Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:56:36Z'
+                by: developing
+                event: done
+                check: 'Transient consumer check from a wheel installed in a fresh Python 3.14.7 environment, importing only from the public entry point: published set equals the Target''s 15 Models; each definition is published under exactly one name (its own); 15 distinct definition modules; Model Foundation module declares no definition; every __all__ name resolves; declarations readable from public names alone with relationships resolving to published definitions; package name and version discoverable. ruff and pyright strict clean.'
+              - at: '2026-09-20T08:15:18Z'
+                by: developing
+                event: re-verified under Plan revision 2
+                check: 'Re-observed against the revision-2 wording from the published names: all 15 definitions explicitly persistent with exactly one activation Field; every relationship resolves to a published definition and reads back with cardinality one and optional false; definitions and foundation each in their own module. Wheel-based consumer check re-run clean.'
+            P1-G8-T2:
+              id: P1-G8-T2
+              title: State the Model's work as Operations on its Public Interface
+              description: State the Model's work as Operations on its one Public Interface — reading a definition's declaration, constructing a validated instance, converting an instance to its Plain Representation, and creating a validated instance from a Plain Representation — each in consumer terms with what it accepts, what it returns, and which outcomes it can produce.
+              reason: Every Component offers its work as Operations so that a consumer learns one shape and documentation can state what the Component offers.
+              kind: code
+              inputs:
+              - The public entry point
+              - The Model Foundation
+              expected_result: The Model's Public Interface is answerable as a list of Operations with their inputs, results, and outcomes.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: The Model publishes exactly one Public Interface; every Operation declares what it accepts, what it returns, and which outcomes it can produce; no consumer reaches Model's work except through an Operation; the Interface offers no stored-data operation and performs no application behaviour. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.
+              verify: Reading the Public Interface lists each Operation with its inputs, results, and outcomes; invoking each Operation with valid and invalid input produces exactly the declared outcomes; no stored-data operation exists.
+              status: done
+              log:
+              - at: '2026-09-20T07:56:36Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:57:29Z'
+                by: developing
+                event: done
+                check: 'Transient consumer check from a wheel installed in a fresh Python 3.14.7 environment: exactly four public Operations (describe, create, serialize, deserialize), each documenting what it accepts, returns and its outcomes; no name suggests a stored-data operation; each Operation exercised with valid input and returns the declared result; each declared failure outcome observed (ValidationError naming the offending Fields for missing/unknown/wrong-typed values, TypeError for a non-definition or non-instance argument). ruff and pyright strict clean.'
+            P1-G8-T3:
+              id: P1-G8-T3
+              title: Document the Model's Public Interface
+              description: Produce the Model's operational documentation for its Public Interface, in the documentation order Development declares, covering every Operation with a runnable example, and stating what the Model stores, performs, and offers.
+              reason: A Component whose documentation is missing or stale is not complete, and consumers must be able to use the Model without reading its source.
+              kind: documentation
+              inputs:
+              - The Model's Operations
+              - The documentation conventions Development declares
+              expected_result: Anyone reading the documentation understands how to use the Model through its Public Interface.
+              depends_on:
+              - P1-G8-T2
+              constraints: []
+              agent_consider: []
+              agent_avoid: []
+              agent_overridden: []
+              agent_skills: []
+              acceptance: The documentation exists for the Model Component and covers overview, Public Interface, setup, run, verification, and troubleshooting in that order; every Operation and every published Domain Definition is described with a runnable example on the resolved technology; it states that Model stores nothing, performs no application behaviour, and offers no stored-data operations; it contains no usable secret and copies no Principle.
+              verify: Following the documentation's setup and examples exactly as written in a fresh environment succeeds; every Operation and every published Domain Definition appears in it; a search finds no usable credential.
+              status: done
+              log:
+              - at: '2026-09-20T07:57:29Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T07:59:55Z'
+                by: developing
+                event: done
+                check: 'Transient (nothing kept in the Component): all 20 Python examples in the documentation were executed exactly as written and succeeded; every Operation and all 15 published Domain Definitions appear with a section and example; the documentation follows the declared order (overview, Public Interface, setup, run, verify, troubleshooting); it states Model stores nothing, performs no application behaviour and offers no stored-data operations; each troubleshooting message was reproduced against the real behaviour; setup (uv sync, editable path dependency from a fresh consumer project) and verify commands were run and passed; no usable secret present (placeholders only).'
+            P1-G8-T4:
+              id: P1-G8-T4
+              title: Record consequential modelling choices beside their Domain Definitions
+              description: Where the Target states no technical modelling parameter and Model had to choose one, record that choice beside the Domain Definition it belongs to, so a reviewer meets it at the point the Field is declared.
+              reason: A choice made where the Target is silent must be visible and reviewable, not buried in the implementation.
+              kind: documentation
+              inputs:
+              - Every completed Domain Definition
+              - The Target's definition of each concept
+              expected_result: Each choice Model made where the Target is silent can be found recorded beside its Domain Definition.
+              depends_on:
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G4-T3
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              - P1-G6-T4
+              - P1-G7-T1
+              - P1-G7-T2
+              - P1-G7-T3
+              constraints: []
+              agent_consider:
+              - 'Standards: JSON Schema Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible.'
+              - 'Standards: Modern Python typing as the language entry states it — builtin generics and the union operator.'
+              - 'Structure: Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not.'
+              - 'Structure: Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field.'
+              - 'Structure: ConfigDict(extra=''forbid'', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is ''ignore'', which discards an unknown field silently.'
+              - 'Structure: Single-field rule: @field_validator. Cross-field rule: @model_validator(mode=''after'').'
+              - 'Structure: Polymorphic data: a discriminated union, with Field(discriminator=...). Root collection: RootModel[...]. Validating a type that is not a BaseModel: TypeAdapter. Derived value: computed_field.'
+              - 'Structure: Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance.'
+              - 'API: pydantic.BaseModel, pydantic.ConfigDict, pydantic.field_validator, pydantic.model_validator, pydantic.RootModel, pydantic.computed_field, pydantic.field_serializer, pydantic.model_serializer; serialization through model_dump and model_dump_json; schema through model_json_schema.'
+              agent_avoid:
+              - 'Legacy APIs: validator, root_validator, parse_obj, dict, json.'
+              - 'Deprecated constraint helpers, scheduled for removal in Pydantic 3 — express the same constraint with Annotated instead: constr, conint, confloat, condecimal.'
+              - PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead.
+              agent_overridden: []
+              agent_skills:
+              - resource: pydantic
+                requirement: required
+                resolved: true
+                identifier: pydantic:pydantic
+              acceptance: Every choice Model made where the Target states nothing is recorded beside the Domain Definition it belongs to; no recorded choice adds, removes, or renames a Field or relationship, overrides a value the Target states, or changes what a Field means. Every statement in agent_consider is observably followed, no statement in agent_avoid appears, and the applicable guidance of the required pydantic Skill is followed.
+              verify: Comparing each published Domain Definition with the Target's definition of it identifies every choice made where the Target is silent, and each such choice is found recorded beside its definition; no such choice is unrecorded.
+              status: done
+              log:
+              - at: '2026-09-20T08:14:06Z'
+                by: developing
+                event: claimed
+              - at: '2026-09-20T08:15:17Z'
+                by: developing
+                event: done
+                check: 'Transient (nothing kept in the Component): for each of the 15 definitions, the record beside it was compared with the choices actually made where the Target is silent — persistence, generated identity absent until produced, text length bound unless the Target states one, nullable Field with no default; exact decimals recorded exactly where a definition has decimal Fields and the UTC absolute instant where it has a datetime, and no definition records a choice it did not make. Foundation-wide choices (unknown names refused, whitespace removed, assignment validated, not frozen, strict validation, and the two value types that opt out of strictness) are recorded beside the Foundation. Definition check re-run: no recorded choice adds, removes, or renames a Field or relationship or overrides a Target value. Wording of the recorded text corrected during the task (length bound unless the Target states one). ruff and pyright strict clean.'
