@@ -20,7 +20,7 @@ An Implementation or Agent Component describes its own responsibilities, boundar
 
 ## Scope
 
-A Definition file carries two kinds of content: what a reader must understand about the Component, and the mandatory rules it operates under. It carries nothing else. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Definitions additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary; each Interface-owned Skill's complete portable behavior belongs to its Skill Contract. A conditional external Skill may name the technology it serves without selecting that technology for a Target.
+A Definition file carries two kinds of content: what a reader must understand about the Component, and the mandatory rules it operates under. It carries nothing else. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Definitions additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary; Process-backed Skill behavior belongs to its owning Implementation Process Component, while Agent Skill Preferences hold the Agent-side bridge. A conditional external Skill may name the technology it serves without selecting that technology for a Target.
 
 A Definition file never contains:
 
@@ -29,7 +29,7 @@ A Definition file never contains:
 - the shape of any generated file, including a documentation file, which belongs to the Component's Schema when one exists or to the Preferences that own that file; or
 - instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.
 
-Interface-owned Skill behavior belongs to its declared Skill Contract conforming to the Skill Contract Schema, not to Agent Skill Definitions.
+Process-backed Skill behavior belongs to its owning Implementation Process Component, not to Agent Skill Preferences or Agent Skill Definitions. Agent Skill Preferences declare only the Agent-side bridge, invocation, and Runtime boundary.
 
 Relationships between Components are permitted and belong in Relationships. They describe what each Component consumes or provides without directing a Skill's execution.
 

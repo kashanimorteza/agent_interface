@@ -41,38 +41,38 @@ content:
     commands:
       configure:
         arguments: ""
-        owner: "skill.skills.core_workflow.configure"
+        owner: "skill.skills.configure"
         native: {claude: {invocation: "/my-interface-configure"}}
       plan:
         arguments: "[phase-number ...]"
-        owner: "skill.skills.core_workflow.plan"
+        owner: "skill.skills.plan"
         native: {claude: {invocation: "/my-interface-plan [phase-number ...]"}}
       develop:
         arguments: "[phase-number ...]"
-        owner: "skill.skills.core_workflow.develop"
+        owner: "skill.skills.develop"
         native: {claude: {invocation: "/my-interface-develop [phase-number ...]"}}
       review:
         arguments: "[phase-number ...]"
-        owner: "skill.skills.core_workflow.review"
+        owner: "skill.skills.review"
         native: {claude: {invocation: "/my-interface-review [phase-number ...]"}}
       launch:
         arguments: ""
-        owner: "skill.skills.core_workflow.launch"
+        owner: "skill.skills.launch"
         native: {claude: {invocation: "/my-interface-launch"}}
       implement:
         arguments: "[phase-number ...]"
-        owner: "skill.skills.supporting.implement"
+        owner: "skill.skills.implement"
         native: {claude: {invocation: "/my-interface-implement [phase-number ...]"}}
       reset:
         arguments: "[phase-number ... | config | complete]"
-        owner: "skill.skills.supporting.reset"
+        owner: "skill.skills.reset"
         native: {claude: {invocation: "/my-interface-reset [phase-number ... | config | complete]"}}
-      agent-native:
+      agent-native-sync:
         arguments: "<1=sync self | 2=sync component | 3=install>"
         modes: {1: "sync self", 2: "sync component", 3: "install"}
-        owner: "skill.skills.supporting.agent-native"
+        owner: "foundation.agent-native-sync"
         invocation_scope: "direct-explicit-human-only"
-        native: {claude: {invocation: "/my-interface-agent-native <1=sync self | 2=sync component | 3=install>"}}
+        native: {claude: {invocation: "/my-interface-agent-native-sync <1=sync self | 2=sync component | 3=install>"}}
     naming_note: "A command's portable identity is its key and its `arguments`; the slash form and the `my-interface-` prefix are Claude Code idioms and live only under each command's native.claude.invocation (moved there 2026-09-18). Another Native realizes the same key through its own invocation mechanism."
     placement_note: "Where a declared Command lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (custom_commands, built_in_commands, user_commands, managed_commands, extension_commands) were collapsed into `commands` on 2026-09-18 because they mirrored one Native's layout; `legacy_command_files` (a Claude Code-only concept) was removed the same day — if a Native needs it, it belongs under `native.<agent-native>`. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     aliases: {}

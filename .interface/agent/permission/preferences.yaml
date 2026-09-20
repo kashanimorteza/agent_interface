@@ -86,11 +86,11 @@ content:
           path: .interface/agent/
           default: deny
           consumers:
-          - skill.skills.supporting.agent-native
+          - foundation.agent-native-sync
           invocation: direct-explicit-human-only
           grant_scope: exact expanded Human prompt only; non-transferable
           effect: The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, model-generated action, and Understanding workflow consumes synchronized Runtime artifacts
-            and cannot initiate the Agent Native Skill.
+            and cannot initiate Agent Native Sync.
       editable_exception:
         path: .interface/foundation/config/
         condition: Only the active Skill's declared write authority and the owning Component's rules may authorize an exact Config record.
@@ -117,11 +117,11 @@ content:
             matcher: Read|Glob|Grep|Edit|Write|NotebookEdit|Bash|Skill
             path: resolved by Agent Sync from the selected Agent Native
             probe:
-              action: From an ordinary subagent (not the Agent Native Skill prompt), attempt to Read .interface/agent/guide.md and to Grep inside .interface/agent/.
+              action: From an ordinary subagent (not the Agent Native Sync prompt), attempt to Read .interface/agent/guide.md and to Grep inside .interface/agent/.
               expect: Both are blocked by the PreToolUse hook with the boundary message; no content is returned.
               also: 'Attempt to Edit .interface/interface.md from any role; expect: blocked (Interface mutation outside the Config boundary).'
       agent-native-read-grant:
-        guarantee: Grant Agent Module read access only to the prompt created by the Human's direct explicit invocation of the Agent Native Skill (sync and install modes); a model, Agent Native, Agent Instance,
+        guarantee: Grant Agent Module read access only to the prompt created by the Human's direct explicit invocation of Agent Native Sync (sync and install modes); a model, Agent Native, Agent Instance,
           Skill, coordinator, Hook, lifecycle routine, or automation can never create, inherit, or borrow this grant.
         failure_policy: fail_closed
         required: true
@@ -129,10 +129,10 @@ content:
           claude:
             mechanism: hook
             event: UserPromptExpansion
-            matcher: my-interface-agent-native
+            matcher: my-interface-agent-native-sync
             path: resolved by Agent Sync from the selected Agent Native
             probe:
-              action: Within the prompt created by the Human's /my-interface-agent-native invocation, Read .interface/agent/guide.md; then, from a subagent spawned by that prompt, attempt the same Read.
+              action: Within the prompt created by the Human's /my-interface-agent-native-sync invocation, Read .interface/agent/guide.md; then, from a subagent spawned by that prompt, attempt the same Read.
               expect: The first Read succeeds; the subagent's Read is blocked (the grant is non-transferable).
     native:
       claude:
@@ -175,4 +175,3 @@ content:
           failure_defaults:
             security_and_integrity: fail_closed
             notification_only: fail_open
-

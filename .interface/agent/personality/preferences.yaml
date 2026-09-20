@@ -44,7 +44,7 @@ content:
   options:
     default_personalities: {}
   settings:
-    definitions_directory: definitions/
+    contracts_directory: contracts/
     personalities:
       developer:
         definition: definitions/developer.md
@@ -78,4 +78,3 @@ content:
         required: false
     placement_note: "Where a declared Personality lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (personalities, user_personalities, managed_personalities, extension_personalities) were collapsed into `personalities` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     disabled_personalities: {}
-

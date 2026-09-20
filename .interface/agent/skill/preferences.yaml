@@ -18,7 +18,7 @@ policy:
 resolution:
   consumption: "Agent Sync resolves the declared Skill bridges, invocation policies, required status, and Runtime realization. The selected Skill then reads the owning Implementation Process Component Definition and Preferences for its meaning."
   selection: "Use a declared Skill only when explicitly invoked or when a declared coordinator is authorized to invoke it. Autonomous activation is disabled unless an entry explicitly enables it."
-  version_resolution: "Skill Contract and Process Component paths are interface-owned references; Runtime versions and native identifiers are resolved by the selected Agent Native."
+  version_resolution: "Agent Skill bridge and Process Component paths are interface-owned references; Runtime versions and native identifiers are resolved by Agent Native Sync."
   matching: "Match each Skill by its stable key to exactly one Contract and, for Process-backed Skills, exactly one Implementation Process Component. A missing or ambiguous match is reported and never inferred."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -40,8 +40,7 @@ content:
 
   options:
     skills:
-      core_workflow:
-        configure:
+      configure:
           name: configure
           component_definition: .interface/implementation/process/configure/definition.md
           component_preferences: .interface/implementation/process/configure/preferences.yaml
@@ -59,7 +58,7 @@ content:
             required_understanding: Read the Configure Component Definition and Preferences before execution.
             authority: Follow the Configure Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
-        plan:
+      plan:
           name: plan
           component_definition: .interface/implementation/process/plan/definition.md
           component_preferences: .interface/implementation/process/plan/preferences.yaml
@@ -77,7 +76,7 @@ content:
             required_understanding: Read the Plan Component Definition and Preferences before execution.
             authority: Follow the Plan Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
-        develop:
+      develop:
           name: develop
           component_definition: .interface/implementation/process/develop/definition.md
           component_preferences: .interface/implementation/process/develop/preferences.yaml
@@ -95,7 +94,7 @@ content:
             required_understanding: Read the Develop Component Definition and Preferences before execution.
             authority: Follow the Develop Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
-        review:
+      review:
           name: review
           component_definition: .interface/implementation/process/review/definition.md
           component_preferences: .interface/implementation/process/review/preferences.yaml
@@ -113,7 +112,7 @@ content:
             required_understanding: Read the Review Component Definition and Preferences before execution.
             authority: Follow the Review Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
-        launch:
+      launch:
           name: launch
           component_definition: .interface/implementation/process/launch/definition.md
           component_preferences: .interface/implementation/process/launch/preferences.yaml
@@ -131,8 +130,7 @@ content:
             required_understanding: Read the Launch Component Definition and Preferences before execution.
             authority: Follow the Launch Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
-      supporting:
-        implement:
+      implement:
           name: implement
           component_definition: .interface/implementation/process/implement/definition.md
           component_preferences: .interface/implementation/process/implement/preferences.yaml
@@ -152,13 +150,13 @@ content:
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
           coordination:
             allowed_skills:
-              - skills.core_workflow.configure
-              - skills.core_workflow.plan
-              - skills.core_workflow.develop
-              - skills.core_workflow.review
-              - skills.core_workflow.launch
+              - skills.configure
+              - skills.plan
+              - skills.develop
+              - skills.review
+              - skills.launch
             authority: delegated invocation only through the Runtime's own Skill mechanism; each Process Component retains ownership of its records and outputs
-        reset:
+      reset:
           name: reset
           component_definition: .interface/implementation/process/reset/definition.md
           component_preferences: .interface/implementation/process/reset/preferences.yaml
@@ -178,12 +176,6 @@ content:
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
 
   settings:
-    prepared_files:
-      directory: .interface/agent/skill/files/
-      naming: <declared-skill-stable-key>.md or <declared-skill-stable-key>/
-      presence: optional per declared Skill
-      absent: Realize the Skill from its Contract bridge and owning Process Component; absence is not an error.
-      unmatched: Report a prepared file or directory that does not match exactly one declared Skill; never install it by inference.
     external_providers: {}
     disabled_skills: {}
     overrides: {}

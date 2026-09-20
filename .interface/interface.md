@@ -42,7 +42,7 @@ responsibility: Overview, purpose, how it works, independence, core idea, and de
 <!--------------------------------------------------------------------------------- Terminology --->
 ## Terminology
 
-Terminology defines the shared vocabulary used throughout the Interface — Interface, Human, Module, Target, Implementation, Agent, Component, Principles, Preferences, Schema, Config, Plan, Task, Understanding, Operation, Workflow, Mode, Skill, the Agent Module and its Native, Instances, Preferences, Roles, and capabilities, the Agent Native Skill, and Capability Realization Kinds.
+Terminology defines the shared vocabulary used throughout the Interface — Interface, Human, Module, Target, Implementation, Agent, Component, Principles, Preferences, Schema, Config, Plan, Task, Understanding, Operation, Workflow, Mode, Skill, the Agent Module and its Native, Instances, Preferences, Roles, and capabilities, Agent Native Sync, and Capability Realization Kinds.
 
 ```yaml
 name: Terminology
@@ -108,12 +108,12 @@ responsibility: Defines the Implementation Module and maps every Component's Def
 <!-------------------------- Agent -->
 ### Agent
 
-The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Sync; only the Agent Native Skill enters it, and every other role uses the synchronized Runtime realization.
+The Agent Module is the Human-owned, Runtime-independent declaration of how an Agent Native and its Agent Instances must operate, realized in the selected Runtime only through explicit Agent Native Sync; only Agent Native Sync enters it, and every other role uses the synchronized Runtime realization.
 
 ```yaml
 name: Agent Module Guide
 path: .interface/agent/guide.md
-responsibility: Explains the Agent Module and maps every Component's Definition and Preferences files; read only within an explicit Agent Native Skill invocation
+responsibility: Explains the Agent Module and maps every Component's Definition and Preferences files; read only within an explicit Agent Native Sync invocation
 ```
 
 → [Agent Module Guide](agent/guide.md)
@@ -159,7 +159,7 @@ responsibility: Defines Interface Understanding and Target Understanding, their 
 <!--------------------------------------------------------------------------------- Operations --->
 ## Operations
 
-Operations are the defined actions performed through the eight Interface-owned Skills — Configure, Planning, Developing, Reviewing, Launch, Implement, Reset, and Agent Native (three modes: sync self, sync component, install) — each with exactly one Skill and one summarized outcome.
+Operations are the defined actions performed through the eight Interface-owned Skills — Configure, Plan, Develop, Review, Launch, Implement, Reset, and Agent Native Sync (three modes: sync self, sync component, install) — each with exactly one Skill and one summarized outcome.
 
 ```yaml
 name: Operations

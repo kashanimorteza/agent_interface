@@ -64,6 +64,7 @@ The Interface routes an Agent to the relevant Foundation source, Schema, or Conf
 ├── modes.md
 ├── authority.md
 ├── workflow.md
+├── agent-native-sync.md
 ├── config/
 │   ├── application.yaml
 │   ├── state.yaml
@@ -74,7 +75,6 @@ The Interface routes an Agent to the relevant Foundation source, Schema, or Conf
     ├── yaml.yaml
     ├── definition.md
     ├── preferences.yaml
-    ├── skill-contract.md
     ├── personality.md
     ├── state.yaml
     ├── plan.yaml
@@ -94,6 +94,19 @@ responsibility: Canonical definition, navigation entry point, and entry point to
 ```
 
 → [Interface](../interface.md)
+
+<br>
+
+### Agent Native Sync
+
+The Foundation instruction that creates and updates the `my-interface-agent-native-sync` Skill and uses it to synchronize the complete Agent Module with the selected Agent Native.
+
+```yaml
+path: .interface/foundation/agent-native-sync.md
+responsibility: Defines Agent Native Sync and its three modes: sync self, sync component, and install
+```
+
+→ [Agent Native Sync](agent-native-sync.md)
 
 <br>
 
@@ -276,7 +289,6 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── yaml.yaml
 ├── definition.md
 ├── preferences.yaml
-├── skill-contract.md
 ├── personality.md
 ├── database.yaml
 ├── application.yaml
@@ -329,28 +341,15 @@ responsibility: Defines the common Preferences structure followed by every Compo
 
 → [Preferences Schema](schema/preferences.yaml)
 
-#### Skill Contract Schema
-
-The portable, runtime-independent structure of every Agent Skill Contract.
-
-```yaml
-name: Skill Contract Schema
-path: .interface/foundation/schema/skill-contract.md
-kind: Structure standard
-responsibility: Defines the portable, runtime-independent structure followed by every declared Agent Skill Contract
-```
-
-→ [Skill Contract Schema](schema/skill-contract.md)
-
 #### Personality Schema
 
-The structure of every Personality definition file under `agent/personality/definitions/`.
+The structure of every Personality Contract file under `agent/personality/contracts/`.
 
 ```yaml
 name: Personality Schema
 path: .interface/foundation/schema/personality.md
 kind: Structure standard
-responsibility: Defines the structure followed by every Personality definition file under agent/personality/definitions/
+responsibility: Defines the structure followed by every Personality Contract file under agent/personality/contracts/
 ```
 
 → [Personality Schema](schema/personality.md)

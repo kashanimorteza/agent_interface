@@ -35,9 +35,9 @@ Configure, Planning, and Developing = write the active Workflow position under S
 Launch = changes runtime state through Platform and writes Launch State, access points, and History under State
 Implement = coordinates operation Skills and writes only Implementation State and its History under State
 Reset = after human confirmation of the preview, removes or resets explicit-phase outputs, every generated phase when no phase is supplied, Config only, or the complete set of Config and all-phase implementation outputs, including reconciliation of the Workflow position, under the owning Components' rules
-Agent Native Skill, modes 1 and 2 (Agent Sync) = on explicit Human invocation, exclusively reads the Agent Module and reconciles its declarations with self-contained project-scoped native Runtime artifacts outside Interface sources
-Agent Native Skill, mode 3 (install) = discovers Agent capabilities and, after approval, provisions only approved project-scoped capabilities outside Interface sources
-Reviewing, Launch, Implement, and the Agent Native Skill = do not directly change the active Workflow mode
+Agent Native Sync, modes 1 and 2 (Agent Sync) = on explicit Human invocation, exclusively reads the Agent Module and reconciles its declarations with self-contained project-scoped native Runtime artifacts outside Interface sources
+Agent Native Sync, mode 3 (install) = discovers Agent capabilities and, after approval, provisions only approved project-scoped capabilities outside Interface sources
+Reviewing, Launch, Implement, and Agent Native Sync = do not directly change the active Workflow mode
 Every Skill = may record its own Blockers and Open Questions under State's rules when applicable
 ```
 

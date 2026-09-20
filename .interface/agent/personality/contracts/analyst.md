@@ -1,4 +1,4 @@
-# Analyst Personality
+# Analyst Personality Contract
 
 ## Who it is
 

@@ -1,4 +1,4 @@
-# Architect Personality
+# Architect Personality Contract
 
 ## Who it is
 

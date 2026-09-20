@@ -58,18 +58,18 @@ content:
       revalidate:
         meaning: Re-establish context, scope, permissions, files, and outstanding work before mutation.
   settings:
-    definitions_directory: .interface/agent/rule/definitions/
-    definitions_note: "One Markdown file per Rule holds the complete Rule text as the Human wrote it; Agent Sync places that content where the selected Agent Native reads Rules, adding only the Native's own wrapper (scope header, frontmatter, file name). A Rule whose text is derived by Sync from other Preferences declares `definition: derived` and names its sources instead of a file."
+    contracts_directory: .interface/agent/rule/contracts/
+    contracts_note: "One Markdown file per Rule holds the complete Rule contract as the Human wrote it; Agent Sync places that content where the selected Agent Native reads Rules, adding only the Native's own wrapper (scope header, frontmatter, file name). A Rule whose text is derived by Sync from other Preferences declares `contract: derived` and names its sources instead of a file."
     rules:
       interface-bootstrap:
-        definition: .interface/agent/rule/definitions/interface-bootstrap.md
+        contract: .interface/agent/rule/contracts/interface-bootstrap.md
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Enter through the canonical Interface file and the Foundation section files it links (introduction, terminology, architecture, understanding, operations, modes, authority, workflow) while reserving Agent Module sources
           exclusively for explicit Agent Sync.
         required: true
       interface-skill-policy:
-        definition: .interface/agent/rule/definitions/interface-skill-policy.md
+        contract: .interface/agent/rule/contracts/interface-skill-policy.md
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Apply shared human-owned boundaries and capability policy.
@@ -82,7 +82,7 @@ content:
         responsibility: Expose the synchronized Runtime capability identifiers and native mappings without requiring Agent Module reads.
         required: true
       git-discipline:
-        definition: .interface/agent/rule/definitions/git-discipline.md
+        contract: .interface/agent/rule/contracts/git-discipline.md
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Never run git commit or git push unless the Human explicitly asks for it in the current message; 'save it' means write files to disk, not commit. Explains the boundary that Permission

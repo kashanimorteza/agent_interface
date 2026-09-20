@@ -1,6 +1,10 @@
-# Agent Native Contract
+# Agent Native Sync
 
-Agent Native is the Interface mechanism that configures and synchronizes itself from the Agent Module. It has three modes, given as a number: `1` sync self, `2` sync component, `3` install. Modes `1` and `2` are Agent Sync as defined throughout the Interface; mode `3` is capability installation. The name `agent-native` identifies this mechanism and its Runtime entry point; Agent Native in Interface prose means the core operational Agent supplied by the Runtime.
+Agent Native Sync is the Foundation instruction that creates and maintains the Native synchronization Skill. It reads the complete Agent Module, understands its Components, and transfers that portable understanding into the selected Agent Native. The generated Skill is named `my-interface-agent-native-sync` and performs three modes: `1` sync self, `2` sync component, and `3` install.
+
+## Instruction
+
+First create or update the Native Skill `my-interface-agent-native-sync` according to the Skill and Native standards. Then, when that Skill is explicitly invoked, read the complete Agent Module, establish its Understanding from the current Agent Guide and every applicable Component Definition and Preferences, learn the selected Agent Native's own mechanisms, and realize the Module's declared meaning in that Native. Synchronize every declared Component and capability — including Skills, Tools, Rules, Commands, Permissions, Connections, Context, and Agent Instances — without inventing, narrowing, or duplicating the Human's declarations.
 
 ## Purpose
 
@@ -10,7 +14,7 @@ In mode `3`: materialize the Prepared and Installed capabilities the Agent Modul
 
 ## Responsibility
 
-Establish Interface Understanding, understand the complete Agent Module, learn the selected Agent Native's own documented capabilities and conventions, realize the Agent Native adapter in mode `1` (sync self) and every other declaration in mode `2` (sync component), placing the Module's content into that Native Runtime as authored under the invoked mode. Reconcile authorized project artifacts and already-selected capabilities and prove complete availability. Agent Sync applies existing Human choices; it never discovers or selects new ones. Report an undeclared need for Human declaration and for mode `3` (install) instead of adopting it here.
+Agent Native synchronizes the Agent Module with the selected Runtime and manages the realization of declared capabilities. It owns synchronization and Runtime mechanics, not the meaning of Agent Components, Implementation Process Components, or Target decisions. Establish Interface Understanding, understand the complete Agent Module, learn the selected Agent Native's own documented capabilities and conventions, realize the Agent Native adapter in mode `1` (sync self) and every other declaration in mode `2` (sync component), placing the Module's content into that Native Runtime as authored under the invoked mode. Reconcile authorized project artifacts and already-selected capabilities and prove complete availability. Agent Sync applies existing Human choices; it never discovers or selects new ones. Report an undeclared need for Human declaration and for mode `3` (install) instead of adopting it here.
 
 **Mode `3` (install).** Derive capability needs from current Target and synchronized Runtime evidence, discover compatible project-scoped candidates, preview provenance and impact, provision only approved candidates, and verify Activation. It manages Runtime capabilities, never application dependencies, Target implementation, or Agent Module declarations. It owns every capability the Module declares as Prepared or Installed: Prepared content is transferred into the Runtime unchanged, and an Installed capability is provisioned through its owning provider declaration. The sync modes build only Constructed Skills and materialize neither kind.
 
@@ -96,7 +100,7 @@ Modify only project-scoped native Agent artifacts selected by the Native Runtime
 - Runtime references may point to other synchronized Runtime artifacts, but never to Agent Module sources.
 - Never invent content for an empty category.
 - Realize only Constructed Skills: an Interface-owned Process Skill is built from its owning Process Component Definition and Preferences, with its Agent Contract serving as the bridge into a self-contained native Skill.
-- A Prepared Skill and an Installed Skill are outside the sync modes; mode `3` (install) of this same Skill owns them.
+- Installed capabilities are outside the sync modes; mode `3` (install) of Agent Native Sync owns them.
 - Treat Agent Module changes as dormant desired state until this explicit synchronization completes.
 - Never trigger synchronization from another Skill, startup routine, or ordinary Interface Understanding.
 - Reconcile every Runtime instruction that could route a non-Sync consumer into the Agent Module.

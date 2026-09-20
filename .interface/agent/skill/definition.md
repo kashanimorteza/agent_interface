@@ -38,7 +38,7 @@ Skill prevents the Agent from reconstructing the same instructions each time. Ea
 
 ### How It Works
 
-The owning Process Component is authoritative for a Process-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Runtime owns execution mechanics. A prepared file or an external provider can supply a different realization, but neither changes the owning Component's meaning.
+The owning Process Component is authoritative for a Process-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Runtime owns execution mechanics. An external provider can supply a different realization, but it does not change the owning Component's meaning.
 
 
 
@@ -50,7 +50,7 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 
 - **Skill** — a reusable capability activated explicitly or by a declared coordinator.
 - **Skill Preferences** — the Agent-side bridge to one Skill's owning Component, including its invocation and Runtime boundary.
-- **Capability Realization Kind** — the declared way a Skill becomes usable: Constructed from a Contract, Prepared from declared content, or Installed through a provider.
+- **Capability Realization Kind** — the declared way a Skill becomes usable: Constructed from its Process Component and Agent Skill Preferences, or Installed through a provider.
 
 
 
@@ -60,9 +60,9 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Agent, Implementation, and Target** — reads the authorities required by its Contract.
+- **Consumes Agent, Implementation, and Target** — reads the authorities required by its Agent Skill Preferences and owning Process Component.
 - **Consumed by Agent and permitted Coordinators** — provides an executable capability without acquiring the authority of its sources.
-- **Realized by Agent Sync** — is carried into the selected Runtime without changing its Contract.
+- **Realized by Agent Sync** — is carried into the selected Runtime without changing its owning Component.
 
 
 
@@ -81,11 +81,11 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 **Boundary:** No layer replaces, overrides, or duplicates another layer's authority.
 
 
-### Every Skill has one Contract
+### Every Skill has one owner and bridge
 
 **Rule:** Every Process-backed Skill has one owning Process Component and one Agent Preferences bridge that points to it.
 
-**Why:** One owning Component keeps each Process Skill's behavior clear and consistent, while one Contract keeps the Agent bridge clear.
+**Why:** One owning Component keeps each Process Skill's behavior clear and consistent, while one Preferences bridge keeps the Agent mapping clear.
 
 **Boundary:** Agent Skill Preferences do not repeat or redefine the owning Process Component's workflow.
 
@@ -110,7 +110,7 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 
 ### Every Skill has one Realization Kind
 
-**Rule:** Each Skill has one realization path: Constructed, Prepared, or Installed.
+**Rule:** Each Skill has one realization path: Constructed or Installed.
 
 **Why:** The Runtime needs one clear realization path for every Skill.
 
@@ -141,6 +141,6 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 
 **Skill execution is repeatable** — preserve valid work on repetition; never replace meaningful work destructively.
 
-**Every Skill has one Realization Kind** — use exactly one of Constructed, Prepared, or Installed.
+**Every Skill has one Realization Kind** — use exactly one of Constructed or Installed.
 
 **Skill owns executable capability only** — keep ownership limited to the declared capability.

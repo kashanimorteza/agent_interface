@@ -1,4 +1,4 @@
-# Git discipline
+# Git discipline Contract
 
 Never run `git commit` or `git push` unless the Human explicitly asks for it in the current message. An earlier request, a finished task, a passing check, or a Skill's workflow is never that request. "Save it" means write the files to disk, not commit.
 

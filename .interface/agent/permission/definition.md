@@ -11,7 +11,7 @@
 4. **[Principles](#principles)**
    - **[Interface is read-only except for authorized Config records](#interface-is-read-only-except-for-authorized-config-records)**
    - **[Permission is least-privilege and deny-safe](#permission-is-least-privilege-and-deny-safe)**
-   - **[Agent Module reads belong only to the explicit Agent Native Skill](#agent-module-reads-belong-only-to-the-explicit-agent-native-skill)**
+   - **[Agent Module reads belong only to the explicit Agent Native Sync](#agent-module-reads-belong-only-to-the-explicit-agent-native-sync)**
    - **[Secrets never enter project declarations or reports](#secrets-never-enter-project-declarations-or-reports)**
    - **[Unrelated Human work is preserved](#unrelated-human-work-is-preserved)**
    - **[An Enforced Guarantee is deterministic and bounded](#an-enforced-guarantee-is-deterministic-and-bounded)**
@@ -108,9 +108,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Agent Module reads belong only to the explicit Agent Native Skill
+### Agent Module reads belong only to the explicit Agent Native Sync
 
-**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes the declared `agent-native` Runtime entry point. The Agent Native, every Agent Instance, Skill, coordinator, enforcement handler, lifecycle routine, automation, and model-generated action can neither invoke the Agent Native Skill nor create, inherit, borrow, or simulate its access grant. In its sync modes the Skill reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations; in its install mode it reads them to resolve which capabilities must be transferred or provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
+**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes Agent Native Sync. The Agent Native, every Agent Instance, Skill, coordinator, enforcement handler, lifecycle routine, automation, and model-generated action can neither invoke Agent Native Sync nor create, inherit, borrow, or simulate its access grant. In its sync modes it reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations; in its install mode it reads them to resolve which capabilities must be provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
 
 **Why:** The Agent Module defines how an Agent Native and its Agent Instances should be constructed; it is not their operational context after synchronization.
 
@@ -170,7 +170,7 @@ Every Principle below is mandatory.
 
 **Boundary:** An Enforced Guarantee may request Human authorization and stop pending that decision.
 
-*Formerly Agent Hook Principle "Agent Module reads belong only to the explicit Agent Native Skill".*
+*Formerly Agent Hook Principle "Agent Module reads belong only to the explicit Agent Native Sync".*
 
 <br>
 
@@ -189,10 +189,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — grant every capability only its minimum required access
 - **Never** — let a lower layer or delegate broaden a deny boundary
 
-**Agent Module reads belong only to the explicit Agent Native Skill**
+**Agent Module reads belong only to the explicit Agent Native Sync**
 
-- **Must** — reserve every Agent Module read for the exact prompt created by direct Human invocation of `agent-native`
-- **Never** — let any non-Human mechanism invoke the Agent Native Skill or create, inherit, borrow, or simulate its access grant
+- **Must** — reserve every Agent Module read for the exact prompt created by direct Human invocation of Agent Native Sync
+- **Never** — let any non-Human mechanism invoke Agent Native Sync or create, inherit, borrow, or simulate its access grant
 - **Never** — use Agent Module sources as ordinary Understanding or as a fallback for Runtime drift
 
 **Secrets never enter project declarations or reports**

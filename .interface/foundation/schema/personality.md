@@ -1,6 +1,6 @@
 # Personality Definition Structure
 
-This document is the common structure every Personality definition follows. One definition exists per declared Personality at `.interface/agent/personality/definitions/<personality>.md`, matching the key declared in Personality Preferences. Each file is Human-owned and read only through the Agent Native Skill, which carries it into the Native (for example into the Skill or Agent Instance that names that Personality).
+This document is the common structure every Personality Contract follows. One Contract exists per declared Personality at `.interface/agent/personality/contracts/<personality>.md`, matching the key declared in Personality Preferences. Each file is Human-owned and read only through the Agent Native mechanism, which carries it into the Native (for example into the Skill or Agent Instance that names that Personality).
 
 A definition describes one way of working — who the Agent is while it performs a kind of work — and nothing else. It contains no model or provider name (those belong to Personality Preferences as ordered references to Runtime Preferences), no Target fact, and no vendor mechanism.
 
