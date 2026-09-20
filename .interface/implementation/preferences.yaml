@@ -1,0 +1,40 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/implementation/preferences.yaml"
+  path_note: "The Preferences layer of the Implementation Module."
+  purpose: "Shared Implementation choices that apply across Development and Process when their own authorities are silent."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-20"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved choices back into it."
+  changed_by: "The human, directly. A missing critical Implementation choice is raised through State."
+  precedence: "An explicit Target value and every applicable Definition Principle take precedence over this file."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Apply a shared Implementation default only when the Target and the owning Development or Process subject are silent."
+  selection: "There is currently no shared Implementation alternative to select."
+  version_resolution: "No entry currently carries a version."
+  matching: "There is currently no shared Implementation entry to match."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Empty. Implementation selects no shared profile."
+  options: "Empty. Implementation catalogues no shared alternatives."
+  settings: "Empty. Development and Process subjects own their specific settings."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected: {}
+  options: {}
+  settings: {}

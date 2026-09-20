@@ -73,7 +73,7 @@ Foundation Files provide the foundational definitions and schemas required by th
 └── schema/
     ├── application.yaml
     ├── yaml.yaml
-    ├── principles.md
+    ├── definition.md
     ├── preferences.yaml
     ├── agent-preferences.yaml
     ├── skill-contract.md
@@ -276,7 +276,7 @@ Schemas define the structure followed by authored Interface files and generated 
 ```text
 .interface/foundation/schema/
 ├── yaml.yaml
-├── principles.md
+├── definition.md
 ├── preferences.yaml
 ├── agent-preferences.yaml
 ├── skill-contract.md
@@ -306,18 +306,18 @@ scope: Schema definition files use their own formats and do not follow this oute
 
 → [YAML Schema](schema/yaml.yaml)
 
-#### Principles Schema
+#### Definition Schema
 
-The common Markdown structure of every Implementation and Agent Component `principles.md`.
+The common Markdown structure of every Implementation and Agent Component `definition.md`.
 
 ```yaml
-name: Principles Schema
-path: .interface/foundation/schema/principles.md
+name: Definition Schema
+path: .interface/foundation/schema/definition.md
 kind: Structure standard
-responsibility: Defines the common Markdown structure followed by every Implementation and Agent Component principles.md file
+responsibility: Defines the common Markdown structure followed by every Implementation and Agent Component definition.md file
 ```
 
-→ [Principles Schema](schema/principles.md)
+→ [Definition Schema](schema/definition.md)
 
 #### Preferences Schema
 

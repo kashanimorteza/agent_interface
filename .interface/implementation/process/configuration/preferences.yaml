@@ -1,0 +1,40 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/implementation/process/configuration/preferences.yaml"
+  path_note: "The Preferences layer of the Configuration Component."
+  purpose: "Configuration defaults used when current authorities leave a technical reconciliation choice unstated."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-20"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved choices back into it."
+  changed_by: "The human, directly. A missing critical Configuration choice is raised through State."
+  precedence: "An explicit Target value and every applicable Principle take precedence over this file."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "The empty content supplies no Configuration defaults; use current Schemas and other applicable authorities."
+  selection: "There is currently no Configuration alternative to select."
+  version_resolution: "No entry currently carries a version."
+  matching: "There is currently no Configuration entry to match."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Empty. Configuration selects no technical profile."
+  options: "Empty. Configuration catalogues no alternatives."
+  settings: "Empty. Configuration currently uses Schema-defined structure without additional defaults."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected: {}
+  options: {}
+  settings: {}

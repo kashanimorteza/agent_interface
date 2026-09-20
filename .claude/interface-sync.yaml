@@ -14,7 +14,7 @@ declarations:
   sources:
   - path: .interface/agent/agent/preferences.yaml
     fingerprint: sha256:2f729f5ea908b070196d4aa2f90a166d7759d79ca5e1946a556dd556c7ff2fd7
-  - path: .interface/agent/agent/principles.md
+  - path: .interface/agent/agent/definition.md
     fingerprint: sha256:3bd82e7e0f4bb0a6765e6fb8c237c2415f6b445f779d9d85b1c7757577d9be60
   realized_as: Claude Code primary agent, runtime-provided, observation only
   status: already synchronized
@@ -27,7 +27,7 @@ declarations:
   sources:
   - path: .interface/agent/agent/preferences.yaml
     fingerprint: sha256:2f729f5ea908b070196d4aa2f90a166d7759d79ca5e1946a556dd556c7ff2fd7
-  - path: .interface/agent/agent/principles.md
+  - path: .interface/agent/agent/definition.md
     fingerprint: sha256:3bd82e7e0f4bb0a6765e6fb8c237c2415f6b445f779d9d85b1c7757577d9be60
   realized_as: Claude Code project subagent
   artifact: .claude/agents/interface-reader.md
@@ -41,7 +41,7 @@ declarations:
   sources:
   - path: .interface/agent/agent/preferences.yaml
     fingerprint: sha256:2f729f5ea908b070196d4aa2f90a166d7759d79ca5e1946a556dd556c7ff2fd7
-  - path: .interface/agent/agent/principles.md
+  - path: .interface/agent/agent/definition.md
     fingerprint: sha256:3bd82e7e0f4bb0a6765e6fb8c237c2415f6b445f779d9d85b1c7757577d9be60
   - path: .interface/agent/rule/definitions/interface-skill-policy.md
     fingerprint: sha256:b9d4a599026720a432f15941afb363110cb709f336d3bb00f7879d55ff7fe627
@@ -57,7 +57,7 @@ declarations:
   sources:
   - path: .interface/agent/command/preferences.yaml
     fingerprint: sha256:0bbc92b70e9403480dfe12daa46862afc68c407338004b7727302bf69215fc37
-  - path: .interface/agent/command/principles.md
+  - path: .interface/agent/command/definition.md
     fingerprint: sha256:0d49b202967867f428067f8b5e1192424f7fd554c42e137b9f99b935956eca27
   realized_as: Claude Code Skill slash commands with argument-hint frontmatter
   artifact: .claude/skills
@@ -72,7 +72,7 @@ declarations:
   sources:
   - path: .interface/agent/connection/preferences.yaml
     fingerprint: sha256:b8f0e613834da0666491bda363b0e5f88db58e0d5dbfddbe6506bacc6ea05434
-  - path: .interface/agent/connection/principles.md
+  - path: .interface/agent/connection/definition.md
     fingerprint: sha256:215d7a6c68af10e1543e89923bbcba6274a63c402d9567b5595f7ad9d8aab759
   realized_as: Claude Code enabledPlugins and extraKnownMarketplaces
   artifact: .claude/settings.json
@@ -87,7 +87,7 @@ declarations:
   sources:
   - path: .interface/agent/connection/preferences.yaml
     fingerprint: sha256:b8f0e613834da0666491bda363b0e5f88db58e0d5dbfddbe6506bacc6ea05434
-  - path: .interface/agent/connection/principles.md
+  - path: .interface/agent/connection/definition.md
     fingerprint: sha256:215d7a6c68af10e1543e89923bbcba6274a63c402d9567b5595f7ad9d8aab759
   realized_as: none
   status: already synchronized
@@ -100,7 +100,7 @@ declarations:
   sources:
   - path: .interface/agent/context/preferences.yaml
     fingerprint: sha256:46f6f256088be9773e6f24b3cbb0bb44f683951c549e28e9695deb02d74d4dfa
-  - path: .interface/agent/context/principles.md
+  - path: .interface/agent/context/definition.md
     fingerprint: sha256:13ebb09966a195eea0cb16d612eefd2b0ce4e965d46afb662bac010b034f1507
   realized_as: Claude Code autoMemoryEnabled setting plus global project Rules
   artifact: .claude/settings.json
@@ -114,7 +114,7 @@ declarations:
   sources:
   - path: .interface/agent/permission/preferences.yaml
     fingerprint: sha256:0ff6dffdd5793fdb35d8991d1c055ffa33e33bbf014b0e22e9b550721ef57ab0
-  - path: .interface/agent/permission/principles.md
+  - path: .interface/agent/permission/definition.md
     fingerprint: sha256:c77192ab5971079245a7d4b9160f20a45f589a6ec790583cf5425413efa0db92
   realized_as: Claude Code UserPromptExpansion command hook writing a per-prompt marker, honored only on the main thread
   artifact: .claude/hooks/interface-boundary-guard.py
@@ -130,7 +130,7 @@ declarations:
   sources:
   - path: .interface/agent/permission/preferences.yaml
     fingerprint: sha256:0ff6dffdd5793fdb35d8991d1c055ffa33e33bbf014b0e22e9b550721ef57ab0
-  - path: .interface/agent/permission/principles.md
+  - path: .interface/agent/permission/definition.md
     fingerprint: sha256:c77192ab5971079245a7d4b9160f20a45f589a6ec790583cf5425413efa0db92
   realized_as: Claude Code PreToolUse command hook, fail closed
   artifact: .claude/hooks/interface-boundary-guard.py
@@ -149,7 +149,7 @@ declarations:
   sources:
   - path: .interface/agent/permission/preferences.yaml
     fingerprint: sha256:0ff6dffdd5793fdb35d8991d1c055ffa33e33bbf014b0e22e9b550721ef57ab0
-  - path: .interface/agent/permission/principles.md
+  - path: .interface/agent/permission/definition.md
     fingerprint: sha256:c77192ab5971079245a7d4b9160f20a45f589a6ec790583cf5425413efa0db92
   realized_as: Claude Code PreToolUse command hook plus the Interface protection section of the policy Rule
   artifact: .claude/hooks/interface-boundary-guard.py
@@ -164,7 +164,7 @@ declarations:
   sources:
   - path: .interface/agent/permission/preferences.yaml
     fingerprint: sha256:0ff6dffdd5793fdb35d8991d1c055ffa33e33bbf014b0e22e9b550721ef57ab0
-  - path: .interface/agent/permission/principles.md
+  - path: .interface/agent/permission/definition.md
     fingerprint: sha256:c77192ab5971079245a7d4b9160f20a45f589a6ec790583cf5425413efa0db92
   realized_as: Claude Code settings permissions allow, ask, deny and defaultMode
   artifact: .claude/settings.json
@@ -179,7 +179,7 @@ declarations:
   sources:
   - path: .interface/agent/personality/preferences.yaml
     fingerprint: sha256:739d042490a9af769eb8f706b3123689f4c97e4c943a8bc70da1bfdd469f77d6
-  - path: .interface/agent/personality/principles.md
+  - path: .interface/agent/personality/definition.md
     fingerprint: sha256:c9ce888093e2b10c9fbdd2391e79e4f0441a5f8f383bbe1a9cfe81b1d32cd30a
   - path: .interface/agent/personality/definitions/analyst.md
     fingerprint: sha256:2cc9fb52864a3e20053547faea78e95040d7850e14704302c822b1fe6385494d
@@ -202,7 +202,7 @@ declarations:
   sources:
   - path: .interface/agent/rule/preferences.yaml
     fingerprint: sha256:c073dcaffe23e83ea11c66c0d8b9188d44fbb12359af4b97d05ade649ae19961
-  - path: .interface/agent/rule/principles.md
+  - path: .interface/agent/rule/definition.md
     fingerprint: sha256:18cb3281b6842427f3b464d0c8e8947771cce247cbb9f824ceeafbb182c3dd37
   - path: .interface/agent/rule/definitions/git-discipline.md
     fingerprint: sha256:c05a47f20b1e35bb94b8910c554f6c0d669b4b1477d2c8e687383622d8f54380
@@ -218,7 +218,7 @@ declarations:
   sources:
   - path: .interface/agent/rule/preferences.yaml
     fingerprint: sha256:c073dcaffe23e83ea11c66c0d8b9188d44fbb12359af4b97d05ade649ae19961
-  - path: .interface/agent/rule/principles.md
+  - path: .interface/agent/rule/definition.md
     fingerprint: sha256:18cb3281b6842427f3b464d0c8e8947771cce247cbb9f824ceeafbb182c3dd37
   - path: .interface/agent/skill/preferences.yaml
     fingerprint: sha256:386052d88bf6225ecc6b2cc35f60fc2e7344a26bce478741efa86371fde6d566
@@ -238,7 +238,7 @@ declarations:
   sources:
   - path: .interface/agent/rule/preferences.yaml
     fingerprint: sha256:c073dcaffe23e83ea11c66c0d8b9188d44fbb12359af4b97d05ade649ae19961
-  - path: .interface/agent/rule/principles.md
+  - path: .interface/agent/rule/definition.md
     fingerprint: sha256:18cb3281b6842427f3b464d0c8e8947771cce247cbb9f824ceeafbb182c3dd37
   - path: .interface/agent/rule/definitions/interface-bootstrap.md
     fingerprint: sha256:602af054283322e533adb573161e4b7da93b36abb8e4d37cd90e0592a9edaab1
@@ -253,7 +253,7 @@ declarations:
   sources:
   - path: .interface/agent/rule/preferences.yaml
     fingerprint: sha256:c073dcaffe23e83ea11c66c0d8b9188d44fbb12359af4b97d05ade649ae19961
-  - path: .interface/agent/rule/principles.md
+  - path: .interface/agent/rule/definition.md
     fingerprint: sha256:18cb3281b6842427f3b464d0c8e8947771cce247cbb9f824ceeafbb182c3dd37
   - path: .interface/agent/rule/definitions/interface-skill-policy.md
     fingerprint: sha256:b9d4a599026720a432f15941afb363110cb709f336d3bb00f7879d55ff7fe627
@@ -269,7 +269,7 @@ declarations:
   sources:
   - path: .interface/agent/rule/preferences.yaml
     fingerprint: sha256:c073dcaffe23e83ea11c66c0d8b9188d44fbb12359af4b97d05ade649ae19961
-  - path: .interface/agent/rule/principles.md
+  - path: .interface/agent/rule/definition.md
     fingerprint: sha256:18cb3281b6842427f3b464d0c8e8947771cce247cbb9f824ceeafbb182c3dd37
   - path: .interface/agent/rule/definitions/interface-skill-policy.md
     fingerprint: sha256:b9d4a599026720a432f15941afb363110cb709f336d3bb00f7879d55ff7fe627
@@ -287,7 +287,7 @@ declarations:
   sources:
   - path: .interface/agent/rule/preferences.yaml
     fingerprint: sha256:c073dcaffe23e83ea11c66c0d8b9188d44fbb12359af4b97d05ade649ae19961
-  - path: .interface/agent/rule/principles.md
+  - path: .interface/agent/rule/definition.md
     fingerprint: sha256:18cb3281b6842427f3b464d0c8e8947771cce247cbb9f824ceeafbb182c3dd37
   - path: .interface/agent/connection/preferences.yaml
     fingerprint: sha256:b8f0e613834da0666491bda363b0e5f88db58e0d5dbfddbe6506bacc6ea05434
@@ -304,7 +304,7 @@ declarations:
   sources:
   - path: .interface/agent/runtime/preferences.yaml
     fingerprint: sha256:2f3d0222bccf6a0d530c04d90c2cd7cc484efb46f191442dc7cedc6a1d900a60
-  - path: .interface/agent/runtime/principles.md
+  - path: .interface/agent/runtime/definition.md
     fingerprint: sha256:3e0c86bf4ece9bcb750c91ae8b4c46aba0250fc067ffe5dd019e854cf7ef16cc
   realized_as: Claude Code runtime with shared project settings source
   artifact: .claude/settings.json
@@ -437,7 +437,7 @@ declarations:
   sources:
   - path: .interface/agent/skill/preferences.yaml
     fingerprint: sha256:386052d88bf6225ecc6b2cc35f60fc2e7344a26bce478741efa86371fde6d566
-  - path: .interface/agent/skill/principles.md
+  - path: .interface/agent/skill/definition.md
     fingerprint: sha256:b235f44f2af35acbe6aafb8472baa95606ee3e7919508acc89aabfe4f45de688
   realized_as: observed only, owned by mode 3
   provider: pydantic@pydantic-skills
@@ -450,7 +450,7 @@ declarations:
   sources:
   - path: .interface/agent/skill/preferences.yaml
     fingerprint: sha256:386052d88bf6225ecc6b2cc35f60fc2e7344a26bce478741efa86371fde6d566
-  - path: .interface/agent/skill/principles.md
+  - path: .interface/agent/skill/definition.md
     fingerprint: sha256:b235f44f2af35acbe6aafb8472baa95606ee3e7919508acc89aabfe4f45de688
   realized_as: none
   status: already synchronized
@@ -462,7 +462,7 @@ declarations:
   sources:
   - path: .interface/agent/tool/preferences.yaml
     fingerprint: sha256:98e9ede3a57ed441caf0254295b1beb010b970489fab48f4388b4324ec2199b9
-  - path: .interface/agent/tool/principles.md
+  - path: .interface/agent/tool/definition.md
     fingerprint: sha256:55adcae593aed43a3b06a0ec6223a9a543ab4339ea0c8fc3e7773877a3326c33
   realized_as: Claude Code built-in tools, runtime-provided, observation only
   status: already synchronized

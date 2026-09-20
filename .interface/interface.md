@@ -97,12 +97,12 @@ responsibility: Explains the Target Module and maps its files; the Understanding
 The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its ten Components.
 
 ```yaml
-name: Implementation Module Guide
-path: .interface/implementation/guide.md
-responsibility: Explains the Implementation Module and maps every Component's Principles and Preferences; each Component's Principles remain the authority
+name: Implementation Module Definition
+path: .interface/implementation/definition.md
+responsibility: Defines the Implementation Module and maps every Component's Definition and Preferences; each Component's Definition remains the authority
 ```
 
-→ [Implementation Module Guide](implementation/guide.md)
+→ [Implementation Module Definition](implementation/definition.md)
 
 <!-------------------------- Agent -->
 ### Agent
@@ -112,7 +112,7 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 ```yaml
 name: Agent Module Guide
 path: .interface/agent/guide.md
-responsibility: Explains the Agent Module and maps every Component's Principles, Preferences, and definition files; read only within an explicit Agent Native Skill invocation
+responsibility: Explains the Agent Module and maps every Component's Definition and Preferences files; read only within an explicit Agent Native Skill invocation
 ```
 
 → [Agent Module Guide](agent/guide.md)
@@ -222,4 +222,3 @@ responsibility: Defines the Workflow and the Default, Normal, and Detailed invoc
 
 
 <br><br>
-

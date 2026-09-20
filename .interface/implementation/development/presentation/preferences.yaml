@@ -1,0 +1,94 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/implementation/development/presentation/preferences.yaml"
+  path_note: "The Preferences layer of the Presentation Component — supported technical choices and defaults used when a Presentation choice is unstated."
+  purpose: "Defaults and supported technical profiles for the Presentation package and the Presentation, Interaction Logic, and API Access layers."
+  standard: "Agent Project Interface"
+  version: "5.0"
+  updated: "2026-09-13"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved Presentation choices back into it."
+  changed_by: "The human, directly. A missing critical technical choice is raised through State."
+  precedence: "An explicit project value and every applicable Presentation Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Operations resolve unstated Presentation choices from these defaults and the current project definition when planning or implementing the work."
+  selection: "Prefer a supported compatible entry. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest to a concrete stable version compatible with the complete selected Presentation stack; implementation records use the resolved concrete version."
+  matching: "Match a selected key to the entry of that key in the matching options catalogue. An explicit project value takes priority over the selection recorded here."
+
+
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The Presentation language, user-interface library, application framework, package manager, API client, and Theme. The language and its package manager are not chosen here; they come from Presentation's Component Profile and Language Item in Development."
+  options: "Supported languages, user-interface libraries, application frameworks, package managers, API clients, and Themes."
+  settings: "Configuration grouped by the Presentation, Interaction Logic, and API Access layers."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- selected -->
+  selected:
+    library: "React"
+    framework: "Next.js"
+    api_client: "Fetch"
+    theme: "Default"
+
+  # <!-------------------------------------------- options -->
+  options:
+
+    libraries:
+      React:
+        version: "latest"
+        component_style: "Function components"
+
+    frameworks:
+      "Next.js":
+        version: "latest"
+        library: "React"
+        router: "App Router"
+        run: "npm run dev"
+
+    api_clients:
+      Fetch:
+        version: "runtime-provided"
+        package: null
+
+    themes:
+      Default:
+        version: "1.0"
+        color_mode: "system"
+        direction: "auto"
+        token_based: true
+
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    presentation:
+      component_architecture: "reusable_composition"
+
+    interaction_logic:
+      state_management: "framework-native"
+
+    api_access:
+      contract_source: "api_openapi_description"
+      generated_types: true
+      type_resolution: "Generate operation-specific client types from the current API OpenAPI description when available. generated_types is a preference for generation, not a requirement to enable API documentation."
+      contract_fallback: "When no machine-readable description is available, derive and maintain equivalent client types from API-owned public request and response definitions and documentation, without importing Logic implementation at runtime. Check them against the public API and reconcile them when it changes."
+      unresolved_contract: "Do not invent missing API details. Report the affected integration when current public sources cannot establish a correct client; apply the current criticality rules and continue independently defined work."
