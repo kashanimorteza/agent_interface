@@ -11,8 +11,8 @@
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Documentation](#documentation)**
-7. **[Principles](#principles)**
+6. **[Principles](#principles)**
+   - **[Logic documentation exposes the Public Interface only](#logic-documentation-exposes-the-public-interface-only)**
    - **[Logic is a reusable library](#logic-is-a-reusable-library)**
    - **[Logic owns Behaviour](#logic-owns-behaviour)**
    - **[One Public Interface exposes Logic's Operations](#one-public-interface-exposes-logics-operations)**
@@ -22,7 +22,7 @@
    - **[External dependencies remain explicit](#external-dependencies-remain-explicit)**
    - **[Runtime configuration stays private](#runtime-configuration-stays-private)**
    - **[Logic verification covers Logic boundaries](#logic-verification-covers-logic-boundaries)**
-8. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -118,12 +118,6 @@ Logic-owned behavioural defaults and internal realization conventions belong to 
 
 <br>
 
-## Documentation
-
-Logic's documentation is written for a consumer who will never see inside it. It covers the Public Interface as Development Principle "Every Component has complete, safe, and operational documentation" requires — every Category and its Operations, what each Operation accepts and returns, the Application Outcomes it can produce, and how a consumer imports and calls it — and it stops there. Services and Actions are internal and are not documented for consumers: naming one in the documentation would make it something a consumer could come to rely on, which Principle "Logic is composed of internal Services, one per Component it talks to" forbids. A reader who finishes that documentation can carry out every Operation Logic offers without knowing which Component the work reached or which Service performed it.
-
-<br>
-
 Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
@@ -131,6 +125,16 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 ## Principles
 
 Every Principle below is mandatory.
+
+<br>
+
+### Logic documentation exposes the Public Interface only
+
+**Rule:** Logic documentation is written for a consumer who will never see inside it. It covers every Category and Operation in the Public Interface, what each accepts and returns, the Application Outcomes it can produce, and how a consumer imports and calls it. Services and Actions remain internal and are not documented as consumer dependencies.
+
+**Why:** A reader must be able to carry out every Operation Logic offers without knowing which Component the work reached or which Service performed it.
+
+**Boundary:** This Principle governs consumer-facing Logic documentation; it does not publish Services, Actions, or internal implementation details.
 
 <br>
 
@@ -227,6 +231,11 @@ Every Principle below is mandatory.
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
+
+**Logic documentation exposes the Public Interface only**
+
+- **Must** — document every Public Interface Category and Operation, its inputs, outputs, Application Outcomes, and consumer usage.
+- **Never** — document Services or Actions as consumer dependencies.
 
 **Logic is a reusable library**
 

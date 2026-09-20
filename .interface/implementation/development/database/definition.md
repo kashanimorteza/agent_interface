@@ -9,8 +9,8 @@
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Documentation](#documentation)**
-6. **[Principles](#principles)**
+5. **[Principles](#principles)**
+   - **[Database documentation exposes only its public operations](#database-documentation-exposes-only-its-public-operations)**
    - **[Database is an independent package with one public boundary](#database-is-an-independent-package-with-one-public-boundary)**
    - **[Database has three ordered internal layers](#database-has-three-ordered-internal-layers)**
    - **[Storage is derived from Model and invents nothing](#storage-is-derived-from-model-and-invents-nothing)**
@@ -25,7 +25,7 @@
    - **[Declared Initial Data preserves its meaning](#declared-initial-data-preserves-its-meaning)**
    - **[Related operations share an explicit Transaction boundary](#related-operations-share-an-explicit-transaction-boundary)**
    - **[Persistence security and observability remain bounded](#persistence-security-and-observability-remain-bounded)**
-7. **[At a Glance](#at-a-glance)**
+6. **[At a Glance](#at-a-glance)**
 <br>
 
 ## Introduction
@@ -90,12 +90,6 @@ Database-owned defaults and implementation conventions belong to Database Prefer
 
 <br>
 
-## Documentation
-
-Database documentation covers the public operations, their inputs and outputs, Model naming, the Instance Registry, selection, runnable operation examples, and Transactions. It does not expose internal layers, mappings, Migrations, Engine choice, or configuration; consumers must be able to use persistence without depending on them.
-
-<br>
-
 Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
@@ -103,6 +97,16 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 ## Principles
 
 Every Principle below is mandatory.
+
+<br>
+
+### Database documentation exposes only its public operations
+
+**Rule:** Database documentation covers the public operations, their inputs and outputs, Model naming, the Instance Registry, selection, runnable operation examples, and Transactions. It does not expose internal layers, mappings, Migrations, Engine choice, or configuration.
+
+**Why:** Consumers must be able to use persistence without depending on how Database is built or configured.
+
+**Boundary:** This Principle governs consumer-facing Database documentation; it does not make internal persistence details public.
 
 <br>
 
@@ -251,6 +255,11 @@ The Registry is derived from the configured Instance collection, and the number 
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
+
+**Database documentation exposes only its public operations**
+
+- **Must** — document the public operations, their inputs and outputs, Model naming, Instance selection, runnable examples, and Transactions.
+- **Never** — expose internal layers, mappings, Migrations, Engine choice, or configuration as consumer dependencies.
 
 **Database is an independent package with one public boundary**
 

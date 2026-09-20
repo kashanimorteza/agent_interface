@@ -2,7 +2,7 @@
 
 <br><br>
 
-<!--------------------------------------------------------------------------------- Modes --->
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -12,12 +12,12 @@
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Documentation](#documentation)**
-6. **[Principles](#principles)**
+5. **[Principles](#principles)**
    - **[Implementation has Development and Process parts](#implementation-has-development-and-process-parts)**
    - **[Each subject is defined by one Definition and one Preferences file](#each-subject-is-defined-by-one-definition-and-one-preferences-file)**
    - **[Development and Process retain separate ownership](#development-and-process-retain-separate-ownership)**
-7. **[At a Glance](#at-a-glance)**
+   - **[Implementation documentation maps subjects without replacing Definitions](#implementation-documentation-maps-subjects-without-replacing-definitions)**
+6. **[At a Glance](#at-a-glance)**
 
 
 
@@ -25,12 +25,12 @@
 
 <br><br>
 
-<!--------------------------------------------------------------------------------- Modes --->
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
 
-Implementation defines the reusable philosophy, standards, and preferred choices used to build a Target and to control the work that builds it. It is independent of any particular Target or Agent.
+Implementation defines the reusable philosophy and standards used to build a Target and to control the work that builds it. It is independent of any particular Target or Agent.
 
 Implementation has two parts:
 
@@ -51,7 +51,7 @@ Each subject in Implementation is described by a Definition and a Preferences fi
 
 <br><br>
 
-<!--------------------------------------------------------------------------------- Modes --->
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Implementation** — the reusable module that defines how a Target is built and how its implementation work is controlled.
@@ -65,52 +65,57 @@ Each subject in Implementation is described by a Definition and a Preferences fi
 
 
 <br><br>
-<!--------------------------------------------------------------------------------- Modes --->
+<!--------------------------------------------------------------------------------- Architecture --->
 
 ## Architecture
 
 ```text
 Implementation
 ├── Development
-│   ├── Model
-│   ├── Database
-│   ├── Logic
-│   ├── API
-│   ├── Presentation
-│   └── Platform
 └── Process
-    ├── Configuration
-    ├── Plan
-    ├── Review
-    └── State
 ```
 
-Development defines how independent product Components form one application system. Its Definition and Preferences hold the composition model, Component Profiles, Connections, shared technical catalogues, and cross-cutting standards.
+### Development
+
+Development defines how independent product Components form one application system. It owns their composition, Component Profiles, Connections, shared technical catalogues, and cross-cutting standards.
+
+```yaml
+name: Development
+definition: .interface/implementation/development/definition.md
+preferences: .interface/implementation/development/preferences.yaml
+responsibility: The product composition and technical realization of the independent Components that form the Target application.
+```
+
+→ [Definition](development/definition.md)<br>
+→ [Preferences](development/preferences.yaml)
+
+<br>
 
 Model defines shared domain meaning and Domain Definitions. Database owns persistence and the public operations for stored data. Logic owns application Behaviour and exposes it through its Public Interface. API publishes the application's external API through Logic. Presentation presents the application through capabilities published by Logic. Platform defines how completed Development Components are prepared and brought online.
 
-Process defines how work on Development is configured, planned, reviewed, and recorded. It owns no product Behaviour or Source. Configuration prepares and structurally reconciles operational Config and the Application Manifest. Plan turns Target phases into bounded, understandable, and verifiable activities. Review establishes whether selected-phase work satisfies its applicable authorities and owns recorded Findings. State records aggregate operational position, progress, outcomes, History, Blockers, and Open Questions.
+### Process
 
-Subject files:
+Process defines how work on Development is configured, planned, reviewed, and recorded. It owns no product Behaviour or Source.
 
-- [Development Definition](development/definition.md) · [Development Preferences](development/preferences.yaml)
-- [Model Definition](development/model/definition.md) · [Model Preferences](development/model/preferences.yaml)
-- [Database Definition](development/database/definition.md) · [Database Preferences](development/database/preferences.yaml)
-- [Logic Definition](development/logic/definition.md) · [Logic Preferences](development/logic/preferences.yaml)
-- [API Definition](development/api/definition.md) · [API Preferences](development/api/preferences.yaml)
-- [Presentation Definition](development/presentation/definition.md) · [Presentation Preferences](development/presentation/preferences.yaml)
-- [Platform Definition](development/platform/definition.md) · [Platform Preferences](development/platform/preferences.yaml)
-- [Process Definition](process/definition.md) · [Process Preferences](process/preferences.yaml)
-- [Configuration Definition](process/configuration/definition.md) · [Configuration Preferences](process/configuration/preferences.yaml)
-- [Plan Definition](process/plan/definition.md) · [Plan Preferences](process/plan/preferences.yaml)
-- [Review Definition](process/review/definition.md) · [Review Preferences](process/review/preferences.yaml)
-- [State Definition](process/state/definition.md) · [State Preferences](process/state/preferences.yaml)
+```yaml
+name: Process
+definition: .interface/implementation/process/definition.md
+preferences: .interface/implementation/process/preferences.yaml
+responsibility: The configuration, planning, review, and operational recording of Implementation work.
+```
+
+→ [Definition](process/definition.md)<br>
+→ [Preferences](process/preferences.yaml)
+
+<br>
+
+Configuration prepares and structurally reconciles operational Config and the Application Manifest. Plan turns Target phases into bounded, understandable, and verifiable activities. Review establishes whether selected-phase work satisfies its applicable authorities and owns recorded Findings. State records aggregate operational position, progress, outcomes, History, Blockers, and Open Questions.
 
 
 
 
 <br><br>
-<!--------------------------------------------------------------------------------- Modes --->
+<!--------------------------------------------------------------------------------- Relationships --->
 
 ## Relationships
 
@@ -122,23 +127,28 @@ Subject files:
 
 Technical choices and defaults belong to the Preferences file of the subject that owns them. Shared choices that genuinely span Development and Process belong to Implementation Preferences. The shape of any generated operational record belongs to its Schema.
 
-
-<br><br>
-<!--------------------------------------------------------------------------------- Modes --->
-
-## Documentation
-
-Implementation documentation identifies the two parts, shows their subject tree, links every subject's Definition and Preferences, and makes clear which responsibilities belong to Development and which belong to Process. It does not replace any subject's Definition or Preferences.
-
-<br>
-
 Every Principle in this file is mandatory. An Implementation Preference or Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
-<br>
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Principles --->
 
 ## Principles
 
 Every Principle below is mandatory.
+
+<br>
+
+### Implementation documentation maps subjects without replacing Definitions
+
+**Rule:** Implementation documentation identifies Development and Process, links each part's Definition and Preferences, and makes clear which responsibilities belong to each part. Subject documentation remains in that subject's Definition and Preferences. Documentation never replaces either.
+
+**Why:** A clear map helps readers reach the authoritative subject files without creating a second explanation that can diverge from them.
+
+**Boundary:** This Principle governs the content and role of the map; it does not require every subject to own a separate documentation section.
 
 <br>
 
@@ -175,11 +185,16 @@ Every Principle below is mandatory.
 
 
 <br><br>
-<!--------------------------------------------------------------------------------- Modes --->
+<!--------------------------------------------------------------------------------- At a Glance --->
 
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
+
+**Implementation documentation maps subjects without replacing Definitions**
+
+- **Must** — use documentation to identify the parts and link their authoritative Definition and Preferences files; keep subject documentation in that subject's files.
+- **Never** — let documentation replace or override a subject's Definition or Preferences.
 
 **Implementation has Development and Process parts**
 

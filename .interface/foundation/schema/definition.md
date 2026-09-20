@@ -57,14 +57,13 @@ A Definition file carries these parts, in this order. A part marked *optional* i
 6. **Relationships** — what it consumes and what consumes it.
 7. **Boundaries** — the work that looks like this Component's but belongs elsewhere. *(optional)*
 8. **Layering** — where the Component's technical choices live instead.
-9. **Documentation** — what this Component's own documentation must convey. *(optional)*
-10. **Authority** — the binding force of the file and its precedence.
-11. **Principles** — the mandatory rules.
-12. **At a Glance** — the derived list of every obligation in the file.
+9. **Authority** — the binding force of the file and its precedence.
+10. **Principles** — the mandatory rules.
+11. **At a Glance** — the derived list of every obligation in the file.
 
 Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose Understanding has been recorded. Layering and Authority are unheaded prose. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Documentation, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose Understanding has been recorded. Layering and Authority are unheaded prose. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -258,25 +257,6 @@ One or two paragraphs placing the Component's technical choices outside this fil
 A Component still states where its technical choices or declarations belong even when its Implementation Preferences or Agent Preferences contain no entries. Explicit absence is not a reason to omit the layering statement.
 
 
-<!--------------------------------------------------------------------------------- Documentation --->
-<br>
-
-## Documentation
-
-What this Component's own documentation must convey, beyond the shared documentation rules that Development states for every Component.
-
-The section is short prose, and it says what a reader of that Component's documentation must come away with:
-
-```markdown
-## Documentation
-
-<What a reader must understand from this Component's documentation, and what its
-documentation must therefore cover that the shared rules do not already require.>
-```
-
-It is not the place to restate the shared rules. A Component carries it when its documentation has a demand of its own — a surface that must be shown a particular way, a concept a reader cannot use the Component without — and omits the section entirely when the shared rules are enough.
-
-
 <!--------------------------------------------------------------------------------- Authority --->
 <br>
 
@@ -284,7 +264,7 @@ It is not the place to restate the shared rules. A Component carries it when its
 
 One or two paragraphs, stating all three of:
 
-- every Principle in the file is mandatory — the claim is about the Principles, not about every sentence in the file, since Introduction, Terms, Architecture, Relationships, Boundaries, and Documentation explain rather than oblige;
+- every Principle in the file is mandatory — the claim is about the Principles, not about every sentence in the file, since Introduction, Terms, Architecture, Relationships, Boundaries, and other explanatory sections explain rather than oblige;
 - an Implementation Preference or Agent Preferences can never override a Principle; and
 - a project may only add stricter rules, never looser ones.
 
@@ -443,11 +423,6 @@ whole section when the Component has no internal structure worth naming.>
 
 <Layering: Implementation technical choices and defaults belong to <Component> Preferences;
 Agent declarations and mappings belong to <Component> Preferences; implementation realizes them.>
-
-## Documentation
-
-<What a reader must understand from this Component's documentation. Omit this whole section
-when the shared documentation rules are enough.>
 
 Every Principle in this file is mandatory. An Implementation Preference or Agent Preferences can never override
 a Principle, and a project may only add stricter rules, never looser ones.

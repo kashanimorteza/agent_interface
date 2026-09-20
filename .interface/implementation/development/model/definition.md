@@ -9,8 +9,8 @@
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Documentation](#documentation)**
-6. **[Principles](#principles)**
+5. **[Principles](#principles)**
+   - **[Model documentation explains its published domain surface](#model-documentation-explains-its-published-domain-surface)**
    - **[Each domain concept has one authoritative Domain Definition](#each-domain-concept-has-one-authoritative-domain-definition)**
    - **[Model preserves explicit Target meaning](#model-preserves-explicit-target-meaning)**
    - **[Logical Model meaning is independent of implementation technology](#logical-model-meaning-is-independent-of-implementation-technology)**
@@ -24,7 +24,7 @@
    - **[Every Domain Definition converts to and from a Plain Representation](#every-domain-definition-converts-to-and-from-a-plain-representation)**
    - **[Every Domain Definition declares whether it is persistent](#every-domain-definition-declares-whether-it-is-persistent)**
    - **[Each Domain Definition stands in its own module](#each-domain-definition-stands-in-its-own-module)**
-7. **[At a Glance](#at-a-glance)**
+6. **[At a Glance](#at-a-glance)**
 <br>
 
 ## Introduction
@@ -90,12 +90,6 @@ Model-owned defaults and implementation conventions belong to Model Preferences.
 
 <br>
 
-## Documentation
-
-Model documentation explains what it publishes and how consumers use it: every Domain Definition, its meaning, Fields, properties, persistence status, import and construction, conversion to and from Plain Representation, and runnable examples. It also states that Model stores nothing, performs no application behavior, and offers no stored-data operations.
-
-<br>
-
 Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
@@ -103,6 +97,16 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 ## Principles
 
 Every Principle below is mandatory.
+
+<br>
+
+### Model documentation explains its published domain surface
+
+**Rule:** Model documentation explains every published Domain Definition, its meaning, Fields, properties, persistence status, import and construction, conversion to and from Plain Representation, and runnable examples. It also states that Model stores nothing, performs no application behavior, and offers no stored-data operations.
+
+**Why:** Consumers need a complete description of the domain surface without mistaking Model for persistence or application Behaviour.
+
+**Boundary:** This Principle governs consumer-facing Model documentation; it does not add storage, workflow, or application responsibilities to Model.
 
 <br>
 
@@ -246,6 +250,11 @@ instance      -> serialize   -> { field: value, ... }
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
+
+**Model documentation explains its published domain surface**
+
+- **Must** — document every published Domain Definition, its properties, persistence status, representations, and runnable usage.
+- **Never** — imply that Model stores data or owns application Behaviour or stored-data operations.
 
 **Each domain concept has one authoritative Domain Definition**
 

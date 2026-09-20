@@ -9,8 +9,8 @@
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Documentation](#documentation)**
-6. **[Principles](#principles)**
+5. **[Principles](#principles)**
+   - **[API documentation describes the external contract only](#api-documentation-describes-the-external-contract-only)**
    - **[API is an independent executable](#api-is-an-independent-executable)**
    - **[Application Bootstrap owns API composition](#application-bootstrap-owns-api-composition)**
    - **[Router owns the HTTP boundary](#router-owns-the-http-boundary)**
@@ -25,7 +25,7 @@
    - **[Queries are bounded and explicit](#queries-are-bounded-and-explicit)**
    - **[Lifecycle is observable](#lifecycle-is-observable)**
    - **[API verification covers the boundary](#api-verification-covers-the-boundary)**
-7. **[At a Glance](#at-a-glance)**
+6. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -103,16 +103,6 @@ API-owned transport conventions and boundary defaults belong to API Preferences.
 
 <br>
 
-## Documentation
-
-API's documentation is written for a consumer outside this project, who has the published boundary and nothing else — no source, no Logic, no Database.
-
-It covers every operation the boundary publishes: what each one is for in the consumer's terms, what it accepts and in what shape, what it returns, which failures it can answer with and how each appears, and how a request is authenticated. Paging, filtering, and ordering are shown where an operation offers them, and every example is one a reader can send as written.
-
-It explains nothing behind the boundary. Which Logic Operation served a request, which Service coordinated it, how Database stored the result, and which framework is in use are not a consumer's concern, and naming them would invite a dependency the boundary exists to prevent. A reader must finish able to use every published operation correctly, including what to do with each failure, without knowing what happens after the request is accepted.
-
-<br>
-
 Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
@@ -120,6 +110,16 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 ## Principles
 
 Every Principle below is mandatory.
+
+<br>
+
+### API documentation describes the external contract only
+
+**Rule:** API documentation is written for an external consumer with access to the published boundary and nothing behind it. It covers every published operation, its purpose, accepted shape, return value, failures, authentication, and applicable paging, filtering, ordering, and runnable examples.
+
+**Why:** A reader must be able to use every published operation correctly without knowing which Logic Operation, Service, Database mechanism, or framework served it.
+
+**Boundary:** This Principle governs the external API contract; it does not publish internal Logic, persistence, or framework details.
 
 <br>
 
@@ -224,6 +224,11 @@ Every Principle below is mandatory.
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
+
+**API documentation describes the external contract only**
+
+- **Must** — document every published operation, its inputs, outputs, failures, authentication, and applicable query controls with runnable examples.
+- **Never** — expose Logic, Service, Database, or framework implementation details as consumer dependencies.
 
 **API is an independent executable**
 
