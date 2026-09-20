@@ -1,5 +1,9 @@
 # Implementation Definition
 
+
+
+
+
 <br><br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -13,10 +17,9 @@
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Principles](#principles)**
-   - **[Implementation has Development and Process parts](#implementation-has-development-and-process-parts)**
+   - **[Implementation has Development and Process Subsystems](#implementation-has-development-and-process-subsystems)**
    - **[Each subject is defined by one Definition and one Preferences file](#each-subject-is-defined-by-one-definition-and-one-preferences-file)**
    - **[Development and Process retain separate ownership](#development-and-process-retain-separate-ownership)**
-   - **[Implementation documentation maps subjects without replacing Definitions](#implementation-documentation-maps-subjects-without-replacing-definitions)**
 6. **[At a Glance](#at-a-glance)**
 
 
@@ -32,10 +35,10 @@
 
 Implementation defines the reusable philosophy and standards used to build a Target and to control the work that builds it. It is independent of any particular Target or Agent.
 
-Implementation has two parts:
+Implementation has two top-level Subsystems:
 
-- **Development** defines the product being built, its Components, their composition, and their technical realization.
-- **Process** defines how implementation work is configured, planned, reviewed, and recorded.
+- **Development Subsystem** defines the product being built, its Components, their composition, and their technical realization.
+- **Process Subsystem** defines how implementation work is configured, planned, reviewed, and recorded.
 
 ### Purpose
 
@@ -55,11 +58,12 @@ Each subject in Implementation is described by a Definition and a Preferences fi
 ## Terms
 
 - **Implementation** — the reusable module that defines how a Target is built and how its implementation work is controlled.
-- **Development** — the Implementation part that defines the product Components, their composition, and their technical realization.
-- **Process** — the Implementation part that defines configuration, planning, review, and operational recording.
+- **Development** — the Implementation Subsystem that defines the product Components, their composition, and their technical realization.
+- **Process** — the Implementation Subsystem that defines configuration, planning, review, and operational recording.
 - **Definition** — the authoritative description of a subject's Understanding, relationships, boundaries, and mandatory Principles.
 - **Preference** — a human-owned choice or default used where a higher authority is silent; it never overrides a Principle.
-- **Subject** — any Implementation Module, part, or Component described by a Definition and Preferences file.
+- **Subject** — any Implementation Module, Subsystem, or Component described by a Definition and Preferences file.
+
 
 
 
@@ -71,8 +75,9 @@ Each subject in Implementation is described by a Definition and a Preferences fi
 
 ```text
 Implementation
-├── Development
-└── Process
+└── Subsystems
+    ├── Development
+    └── Process
 ```
 
 ### Development
@@ -114,6 +119,7 @@ Configuration prepares and structurally reconciles operational Config and the Ap
 
 
 
+
 <br><br>
 <!--------------------------------------------------------------------------------- Relationships --->
 
@@ -121,7 +127,7 @@ Configuration prepares and structurally reconciles operational Config and the Ap
 
 - **Consumes Target** — applies the current Target intent and phase requirements without becoming another Target definition.
 - **Consumed by operational Skills** — supplies the Development and Process authorities used while configuring, planning, developing, reviewing, launching, and recording work.
-- **Provides Development and Process subjects** — exposes the product and operational ownership boundaries that the rest of the Interface uses.
+- **Contains Development and Process Subsystems** — defines the product and operational ownership boundaries that the rest of the Interface uses.
 
 <br>
 
@@ -142,21 +148,11 @@ Every Principle below is mandatory.
 
 <br>
 
-### Implementation documentation maps subjects without replacing Definitions
+### Implementation has Development and Process Subsystems
 
-**Rule:** Implementation documentation identifies Development and Process, links each part's Definition and Preferences, and makes clear which responsibilities belong to each part. Subject documentation remains in that subject's Definition and Preferences. Documentation never replaces either.
+**Rule:** Implementation consists of two top-level Subsystems: Development, which governs the product being built, and Process, which governs the work that configures, plans, reviews, and records that build. Neither Subsystem replaces the other.
 
-**Why:** A clear map helps readers reach the authoritative subject files without creating a second explanation that can diverge from them.
-
-**Boundary:** This Principle governs the content and role of the map; it does not require every subject to own a separate documentation section.
-
-<br>
-
-### Implementation has Development and Process parts
-
-**Rule:** Implementation consists of Development, which governs the product being built, and Process, which governs the work that configures, plans, reviews, and records that build. Neither part replaces the other.
-
-**Why:** Product architecture and work control require different ownership while still needing one reusable Implementation perspective.
+**Why:** Product architecture and work control require different ownership while still needing one reusable Implementation perspective with explicit Subsystems.
 
 **Boundary:** Development does not own Process records, and Process does not own product Behaviour, Source, or public interfaces.
 
@@ -174,11 +170,11 @@ Every Principle below is mandatory.
 
 ### Development and Process retain separate ownership
 
-**Rule:** Development Components own product responsibilities, and Process Components own Configuration, Plan, Review, and State responsibilities. A Skill performs an operation under these owners but does not acquire ownership by writing an authorized record.
+**Rule:** Components within Development own product responsibilities, and Components within Process own Configuration, Plan, Review, and State responsibilities. A Skill performs an operation under these owners but does not acquire ownership by writing an authorized record.
 
 **Why:** Explicit ownership keeps product meaning, operational progress, evidence, and workflow records from becoming interchangeable.
 
-**Boundary:** A Process Component may inspect Development results when its responsibility requires it, but it never changes a Development-owned result directly.
+**Boundary:** A Component within Process may inspect Development results when its responsibility requires it, but it never changes a Development-owned result directly.
 
 
 
@@ -191,15 +187,11 @@ Every Principle below is mandatory.
 
 Every obligation in the file, under the Principle it comes from.
 
-**Implementation documentation maps subjects without replacing Definitions**
 
-- **Must** — use documentation to identify the parts and link their authoritative Definition and Preferences files; keep subject documentation in that subject's files.
-- **Never** — let documentation replace or override a subject's Definition or Preferences.
-
-**Implementation has Development and Process parts**
+**Implementation has Development and Process Subsystems**
 
 - **Must** — keep product construction in Development and implementation control in Process.
-- **Never** — let either part replace the responsibility of the other.
+- **Never** — let either Component replace the responsibility of the other.
 
 **Each subject is defined by one Definition and one Preferences file**
 

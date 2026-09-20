@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/implementation/process/configuration/preferences.yaml"
-  path_note: "The Preferences layer of the Configuration Component."
-  purpose: "Configuration defaults used when current authorities leave a technical reconciliation choice unstated."
+  path: ".interface/implementation/process/reset/preferences.yaml"
+  path_note: "The Preferences layer of the Reset Component."
+  purpose: "Reset defaults used when the selected scope and owning authorities are silent."
   standard: "Agent Project Interface"
   version: "1.0"
   updated: "2026-09-20"
@@ -10,16 +10,16 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Operations read it without writing resolved choices back into it."
-  changed_by: "The human, directly. A missing critical Configuration choice is raised through State."
+  rule: "This file is human-owned. Reset reads it without writing resolved choices back into it."
+  changed_by: "The human, directly. A missing critical Reset choice is raised through State."
   precedence: "An explicit Target value and every applicable Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "The empty content supplies no Configuration defaults; use current Schemas and other applicable authorities."
-  selection: "There is currently no Configuration alternative to select."
+  consumption: "Apply a Reset default only when the authorized scope and owning authorities are silent."
+  selection: "Refuse an ambiguous or unsafe reset and raise the required human decision."
   version_resolution: "No entry currently carries a version."
-  matching: "There is currently no Configuration entry to match."
+  matching: "Match reset settings to the explicitly selected record or output scope."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -29,9 +29,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty. Configuration selects no technical profile."
-  options: "Empty. Configuration catalogues no alternatives."
-  settings: "Empty. Configuration currently uses Schema-defined structure without additional defaults."
+  selected: "Empty. Reset selects no shared reset profile."
+  options: "Empty. Reset catalogues no shared alternatives."
+  settings: "Empty. Reset defaults remain to be declared when needed."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:

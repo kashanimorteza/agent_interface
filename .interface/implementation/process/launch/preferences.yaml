@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/implementation/process/preferences.yaml"
-  path_note: "The Preferences layer of the Process Subsystem — defaults shared by Configuration, Plan, Review, and State."
-  purpose: "Shared Process choices used when the Target and owning Process Component are silent."
+  path: ".interface/implementation/process/launch/preferences.yaml"
+  path_note: "The Preferences layer of the Launch Component."
+  purpose: "Launch defaults used when Platform and Process authorities are silent."
   standard: "Agent Project Interface"
   version: "1.0"
   updated: "2026-09-20"
@@ -10,16 +10,16 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Operations read it without writing resolved choices back into it."
-  changed_by: "The human, directly. A missing critical Process choice is raised through State."
+  rule: "This file is human-owned. Launch reads it without writing resolved choices back into it."
+  changed_by: "The human, directly. A missing critical Launch choice is raised through State."
   precedence: "An explicit Target value and every applicable Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Apply a shared Process default only when neither the Target nor the owning Process Component supplies the choice."
-  selection: "There is currently no shared Process alternative to select."
+  consumption: "Apply a Launch default only when Platform and Process authorities are silent."
+  selection: "Use the safest compatible launch behavior and record a consequential choice when no preference applies."
   version_resolution: "No entry currently carries a version."
-  matching: "There is currently no shared Process entry to match."
+  matching: "Match launch settings to the selected Platform and launch requirements."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -29,9 +29,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty. Process selects no shared technical profile."
-  options: "Empty. Process catalogues no shared alternatives."
-  settings: "Empty. Each Process Component currently owns its own settings."
+  selected: "Empty. Launch selects no shared activation profile."
+  options: "Empty. Launch catalogues no shared alternatives."
+  settings: "Empty. Launch defaults remain to be declared when needed."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:

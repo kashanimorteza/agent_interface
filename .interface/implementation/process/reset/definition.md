@@ -1,0 +1,85 @@
+# Reset Definition
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Navigation --->
+## Navigation
+
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
+   - **[Reset reconciles only its authorized scope](#reset-reconciles-only-its-authorized-scope)**
+5. **[At a Glance](#at-a-glance)**
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Introduction --->
+## Introduction
+
+### Overview
+
+Reset is the Process Component that reconciles operational records and implementation outputs with an explicitly authorized reset scope while preserving what must remain.
+
+### Purpose
+
+Long-running implementation work needs a safe way to remove or reconcile selected outputs without erasing unrelated progress, evidence, or human-owned intent.
+
+### How It Works
+
+Reset reads the selected scope and current authorities, identifies affected records and outputs, preserves protected content, performs only the authorized reconciliation, and records the resulting position.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Terms --->
+## Terms
+
+- **Reset Scope** — the explicit set of records or outputs a Reset operation may reconcile.
+- **Protected Content** — content outside the authorized scope or owned by a different authority that Reset must preserve.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Relationships --->
+## Relationships
+
+- **Consumes State and Config** — identifies the current operational position and records to reconcile.
+- **Consumes the selected authorities** — determines what may be reset and what must remain.
+- **Consumed by State** — supplies the resulting operational position and history.
+
+<br>
+
+Reset owns bounded reconciliation, not Target meaning, Development Source, or another Component's authority.
+
+Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Principles --->
+## Principles
+
+Every Principle below is mandatory.
+
+<br>
+
+### Reset reconciles only its authorized scope
+
+**Rule:** Reset changes only the records and outputs explicitly included in its authorized scope, preserves protected content and meaningful history, and records what it removed or retained.
+
+**Why:** A reset must make the selected state recoverable without turning cleanup into silent destruction of unrelated work.
+
+**Boundary:** Reset never changes Target intent, Principles, Preferences, or Development results outside its explicit scope.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- At a Glance --->
+## At a Glance
+
+Every obligation in the file, under the Principle it comes from.
+
+**Reset reconciles only its authorized scope**
+
+- **Must** — preserve protected content and record the reset outcome.
+- **Never** — alter anything outside the authorized reset scope.
