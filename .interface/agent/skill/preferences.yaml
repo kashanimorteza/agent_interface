@@ -41,7 +41,7 @@ content:
   options:
     skills:
       configure:
-          name: configure
+          name: my-interface-configure
           component_definition: .interface/implementation/process/configure/definition.md
           component_preferences: .interface/implementation/process/configure/preferences.yaml
           invocation: human-or-declared-coordinator
@@ -59,7 +59,7 @@ content:
             authority: Follow the Configure Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       plan:
-          name: plan
+          name: my-interface-plan
           component_definition: .interface/implementation/process/plan/definition.md
           component_preferences: .interface/implementation/process/plan/preferences.yaml
           invocation: human-or-declared-coordinator
@@ -77,7 +77,7 @@ content:
             authority: Follow the Plan Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       develop:
-          name: develop
+          name: my-interface-develop
           component_definition: .interface/implementation/process/develop/definition.md
           component_preferences: .interface/implementation/process/develop/preferences.yaml
           invocation: human-or-declared-coordinator
@@ -95,7 +95,7 @@ content:
             authority: Follow the Develop Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       review:
-          name: review
+          name: my-interface-review
           component_definition: .interface/implementation/process/review/definition.md
           component_preferences: .interface/implementation/process/review/preferences.yaml
           invocation: human-or-declared-coordinator
@@ -113,7 +113,7 @@ content:
             authority: Follow the Review Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       launch:
-          name: launch
+          name: my-interface-launch
           component_definition: .interface/implementation/process/launch/definition.md
           component_preferences: .interface/implementation/process/launch/preferences.yaml
           invocation: human-or-declared-coordinator
@@ -131,7 +131,7 @@ content:
             authority: Follow the Launch Component authority and write only through the Process operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       implement:
-          name: implement
+          name: my-interface-implement
           component_definition: .interface/implementation/process/implement/definition.md
           component_preferences: .interface/implementation/process/implement/preferences.yaml
           invocation: explicit-human
@@ -157,7 +157,7 @@ content:
               - skills.launch
             authority: delegated invocation only through the Runtime's own Skill mechanism; each Process Component retains ownership of its records and outputs
       reset:
-          name: reset
+          name: my-interface-reset
           component_definition: .interface/implementation/process/reset/definition.md
           component_preferences: .interface/implementation/process/reset/preferences.yaml
           invocation: explicit-human

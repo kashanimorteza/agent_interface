@@ -15,7 +15,9 @@
       "TaskUpdate",
       "TodoWrite",
       "WebFetch",
-      "WebSearch"
+      "WebSearch",
+      "Bash(python3 -)",
+      "Bash(python3 -c ' *)"
     ],
     "deny": [],
     "ask": [
