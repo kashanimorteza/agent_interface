@@ -40,7 +40,7 @@ sections:
 
 initial:
   meta:
-    path: ".interface/foundation/config/application.yaml"
+    path: ".interface/config/application.yaml"
     path_note: "Shared Application Manifest public Component metadata."
   content:
     components:

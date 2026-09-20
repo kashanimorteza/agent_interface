@@ -160,7 +160,7 @@ sections:
               answered_at: {required: true, default: ""}
 initial:
   meta:
-    path: ".interface/foundation/config/state.yaml"
+    path: ".interface/config/state.yaml"
     path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
   policy:
     agent_may_edit: true

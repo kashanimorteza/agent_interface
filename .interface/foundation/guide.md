@@ -29,7 +29,7 @@ Foundation is not one of the three Modules (Target, Implementation, Agent). It i
 
 ### Overview
 
-Foundation Files provide the foundational definitions and schemas required by the Interface: the canonical Interface document that every Understanding starts from, the Schemas that define how authored and generated files are shaped, and the Config records that coordinate the Workflow.
+Foundation Files provide the foundational definitions and schemas required by the Interface: the canonical Interface document that every Understanding starts from and the Schemas that define how authored and generated files are shaped. The Foundation Guide also maps the separate Config boundary that coordinates the Workflow.
 
 ### Purpose
 
@@ -53,32 +53,33 @@ The Interface routes an Agent to the relevant Foundation source, Schema, or Conf
 ## Architecture
 
 ```text
-.interface/interface.md          ← the Interface file, one level above
-.interface/foundation/
-├── guide.md
-├── introduction.md
-├── terminology.md
-├── architecture.md
-├── understanding.md
-├── operations.md
-├── modes.md
-├── authority.md
-├── workflow.md
-├── agent-native-sync.md
-├── config/
+.interface/
+├── interface.md                  ← the Interface file
+├── config/                        ← mutable operational records, outside Foundation
 │   ├── application.yaml
 │   ├── state.yaml
 │   ├── plan.yaml
 │   └── review.yaml
-└── schema/
-    ├── application.yaml
-    ├── yaml.yaml
-    ├── definition.md
-    ├── preferences.yaml
-    ├── personality.md
-    ├── state.yaml
-    ├── plan.yaml
-    └── review.yaml
+└── foundation/
+    ├── guide.md
+    ├── introduction.md
+    ├── terminology.md
+    ├── architecture.md
+    ├── understanding.md
+    ├── operations.md
+    ├── modes.md
+    ├── authority.md
+    ├── workflow.md
+    ├── agent-native-sync.md
+    └── schema/
+        ├── application.yaml
+        ├── yaml.yaml
+        ├── definition.md
+        ├── preferences.yaml
+        ├── personality.md
+        ├── state.yaml
+        ├── plan.yaml
+        └── review.yaml
 ```
 
 <br>
@@ -99,7 +100,7 @@ responsibility: Canonical definition, navigation entry point, and entry point to
 
 ### Agent Native Sync
 
-The Foundation instruction that creates and updates the `my-interface-agent-native-sync` Skill and uses it to synchronize the complete Agent Module with the selected Agent Native.
+The Foundation instruction that creates and updates the `/my-interface-agent-native` Skill and uses it to synchronize the complete Agent Module with the selected Agent Native.
 
 ```yaml
 path: .interface/foundation/agent-native-sync.md
@@ -217,7 +218,7 @@ responsibility: Defines the Workflow and its Default, Normal, and Detailed paths
 Config stores the mutable operational records used while executing the Interface. It coordinates the Workflow and records where work stands; it does not store what the Target means and never becomes a second project definition.
 
 ```text
-.interface/foundation/config/
+.interface/config/
 ├── application.yaml
 ├── state.yaml
 ├── plan.yaml
@@ -232,12 +233,12 @@ One public metadata section for every Implementation Component; sections may rem
 
 ```yaml
 name: Application Manifest Config
-path: .interface/foundation/config/application.yaml
+path: .interface/config/application.yaml
 schema: .interface/foundation/schema/application.yaml
 responsibility: Stores one public metadata section for every Implementation Component; sections may remain empty until their owners publish metadata
 ```
 
-→ [Application Manifest Config](config/application.yaml)
+→ [Application Manifest Config](../config/application.yaml)
 
 ### State Config
 
@@ -245,12 +246,12 @@ Active Workflow position, aggregate phase progress, Implement and Launch results
 
 ```yaml
 name: State Config
-path: .interface/foundation/config/state.yaml
+path: .interface/config/state.yaml
 schema: .interface/foundation/schema/state.yaml
 responsibility: Stores active Workflow position, aggregate phase progress, Implement and Launch results, access points, History, Blockers, and Open Questions
 ```
 
-→ [State Config](config/state.yaml)
+→ [State Config](../config/state.yaml)
 
 ### Plan Config
 
@@ -258,12 +259,12 @@ Plans, Groups, Tasks, their dependencies, status, and history.
 
 ```yaml
 name: Plan Config
-path: .interface/foundation/config/plan.yaml
+path: .interface/config/plan.yaml
 schema: .interface/foundation/schema/plan.yaml
 responsibility: Stores Plans, Groups, Tasks, their dependencies, status, and history
 ```
 
-→ [Plan Config](config/plan.yaml)
+→ [Plan Config](../config/plan.yaml)
 
 ### Review Config
 
@@ -271,12 +272,12 @@ Reviewed phases, outcomes, Findings, evidence, and Finding status.
 
 ```yaml
 name: Review Config
-path: .interface/foundation/config/review.yaml
+path: .interface/config/review.yaml
 schema: .interface/foundation/schema/review.yaml
 responsibility: Stores reviewed phases, outcomes, Findings, evidence, and Finding status
 ```
 
-→ [Review Config](config/review.yaml)
+→ [Review Config](../config/review.yaml)
 
 <br>
 
@@ -380,7 +381,7 @@ Generates `config/application.yaml`.
 name: Application Manifest Schema
 path: .interface/foundation/schema/application.yaml
 kind: Operational format
-generates: .interface/foundation/config/application.yaml
+generates: .interface/config/application.yaml
 responsibility: Defines the shared Component metadata sections and their empty initial structure
 ```
 
@@ -394,7 +395,7 @@ Generates `config/state.yaml`.
 name: State Schema
 path: .interface/foundation/schema/state.yaml
 kind: Operational format
-generates: .interface/foundation/config/state.yaml
+generates: .interface/config/state.yaml
 responsibility: Defines the stored structure and initial values of State Config
 ```
 
@@ -408,7 +409,7 @@ Generates `config/plan.yaml`.
 name: Plan Schema
 path: .interface/foundation/schema/plan.yaml
 kind: Operational format
-generates: .interface/foundation/config/plan.yaml
+generates: .interface/config/plan.yaml
 responsibility: Defines the stored structure and initial values of Plan Config
 ```
 
@@ -422,7 +423,7 @@ Generates `config/review.yaml`.
 name: Review Schema
 path: .interface/foundation/schema/review.yaml
 kind: Operational format
-generates: .interface/foundation/config/review.yaml
+generates: .interface/config/review.yaml
 responsibility: Defines the stored structure and initial values of Review Config
 ```
 

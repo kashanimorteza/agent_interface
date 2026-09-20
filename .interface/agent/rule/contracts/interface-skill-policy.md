@@ -12,7 +12,7 @@ Skills and supporting agents may read a `README.md`, including the file at the p
 
 The complete `.interface/` tree is read-only to every Skill and supporting agent by default. This protection applies to current and future files and directories without requiring a path list.
 
-The only mutable exception is `.interface/foundation/config/`. A Skill may change an exact Config record there only when the Interface gives that Skill write authority and the record's owning Component permits the change. The exception never grants general Config write access and never reaches a sibling, parent, or other Interface path.
+The only mutable exception is `.interface/config/`. A Skill may change an exact Config record there only when the Interface gives that Skill write authority and the record's owning Component permits the change. The exception never grants general Config write access and never reaches a sibling, parent, or other Interface path.
 
 Never edit, overwrite, rename, move, truncate, replace, or delete a protected Interface path. Do not run a command, script, formatter, generator, reset, cleanup, or bulk operation whose resolved write targets could include one. Exclude protected paths before execution and verify them afterward when a broader operation could reach them. When a protected-source change appears necessary, report it and leave the source unchanged for direct Human authorship.
 

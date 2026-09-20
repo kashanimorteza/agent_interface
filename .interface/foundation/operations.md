@@ -72,7 +72,7 @@ This Operation is performed through `/my-interface-reset [phase-number ...]` to 
 <!-------------------------- Agent Native Operation -->
 ### Agent Native Sync
 
-**Agent Skill:** `/my-interface-agent-native-sync`
+**Agent Skill:** `/my-interface-agent-native`
 
 This Skill is performed only through explicit Human invocation. It is the sole operation permitted to inspect Agent Module sources. It reads the complete Module and the selected Agent Native's own conventions, translates the Module into Native realizations, and verifies every required declaration.
 

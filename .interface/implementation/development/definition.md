@@ -80,7 +80,7 @@ What every Component owes the others is fixed by Development's standards rather 
 - **Connection** — one configurable direct dependency from a consumer Component Profile to a provider Component Profile.
 - **Runtime Configuration** — runtime settings and secret references owned inside an Application Package boundary.
 - **Cross-cutting Capability** — a shared capability whose application to more than one Participating Component requires Development-level coordination.
-- **Application Manifest** — `.interface/foundation/config/application.yaml`, created and reconciled by Configure so Components can exchange current public metadata.
+- **Application Manifest** — `.interface/config/application.yaml`, created and reconciled by Configure so Components can exchange current public metadata.
 
 <br>
 
@@ -148,7 +148,7 @@ Every Principle below is mandatory.
 
 ### Components publish shared application metadata through the Application Manifest
 
-**Rule:** Configure creates and reconciles `.interface/foundation/config/application.yaml` on every run from the current Development Component Profiles, declared Connections, and each Component's public metadata. When an Implementation Component is generated or configured, it publishes its public composition metadata in the section keyed by its canonical identifier, including `package_name` when it has a package, its repository-relative `path`, `public_entrypoint` when applicable, `public_interface` metadata, and any other non-secret value required by another Component to compose or consume it. Consumers may use the Manifest as the shared application metadata surface while ongoing identity and ownership remain authoritative in Development Preferences and declared Connections. Every declared Implementation Component has a Manifest section, even when that section is empty.
+**Rule:** Configure creates and reconciles `.interface/config/application.yaml` on every run from the current Development Component Profiles, declared Connections, and each Component's public metadata. When an Implementation Component is generated or configured, it publishes its public composition metadata in the section keyed by its canonical identifier, including `package_name` when it has a package, its repository-relative `path`, `public_entrypoint` when applicable, `public_interface` metadata, and any other non-secret value required by another Component to compose or consume it. Consumers may use the Manifest as the shared application metadata surface while ongoing identity and ownership remain authoritative in Development Preferences and declared Connections. Every declared Implementation Component has a Manifest section, even when that section is empty.
 
 **Why:** A persistent, reconciled Manifest gives Components one current place to discover the public information needed for composition without reaching into another Component's private files.
 

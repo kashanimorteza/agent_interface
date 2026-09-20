@@ -124,12 +124,12 @@ responsibility: Explains the Agent Module and maps every Component's Definition 
 <!--------------------------------------------------------------------------------- Foundation Files --->
 ## Foundation Files
 
-Foundation Files are the shared resources every Module and Skill depends on: the section files of this Interface, the Config records that coordinate the Workflow, and the Schemas that shape authored and generated files. They are not a Module.
+Foundation Files are the shared resources every Module and Skill depends on: the section files of this Interface and the Schemas that shape authored and generated files. The Config records that coordinate the Workflow are a separate shared operational boundary, not part of the Foundation directory and not a Module.
 
 ```yaml
 name: Foundation Guide
 path: .interface/foundation/guide.md
-responsibility: Explains the Foundation directory and maps the Interface section files, every Config record, and every Schema; Config records remain owned by Plan, State, and Review
+responsibility: Explains the Foundation directory and maps the Interface section files, shared Config records, and every Schema; Config records remain owned by Plan, State, and Review
 ```
 
 → [Foundation Guide](foundation/guide.md)

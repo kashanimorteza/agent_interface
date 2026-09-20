@@ -90,7 +90,7 @@ content:
           effect: The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, model-generated action, and Understanding workflow consumes synchronized Runtime artifacts
             and cannot initiate Agent Native Sync.
       editable_exception:
-        path: .interface/foundation/config/
+        path: .interface/config/
         condition: Only the active Skill's declared write authority and the owning Component's rules may authorize an exact Config record.
       future_paths: Protected automatically unless they are inside the editable Config exception.
     trust: {}
@@ -127,10 +127,10 @@ content:
           claude:
             mechanism: hook
             event: UserPromptExpansion
-            matcher: my-interface-agent-native-sync
+            matcher: my-interface-agent-native
             path: resolved by Agent Sync from the selected Agent Native
             probe:
-              action: Within the prompt created by the Human's /my-interface-agent-native-sync invocation, Read .interface/agent/guide.md; then, from a subagent spawned by that prompt, attempt the same Read.
+              action: Within the prompt created by the Human's /my-interface-agent-native invocation, Read .interface/agent/guide.md; then, from a subagent spawned by that prompt, attempt the same Read.
               expect: The first Read succeeds; the subagent's Read is blocked (the grant is non-transferable).
     native:
       claude:
