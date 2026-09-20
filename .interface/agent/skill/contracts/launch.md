@@ -12,6 +12,8 @@ Prepare and verify the selected Environment for the selected Launch Item, start 
 
 Activate explicitly or after end-to-end orchestration establishes every current launch prerequisite.
 
+Human and declared-coordinator invocation are enabled; autonomous activation is disabled.
+
 ## Inputs
 
 Accept one optional Launch Scope selection: `api`, `presentation`, `logic`, or `complete` (the alias `all` is equivalent to `complete`). `logic` prepares or verifies the reusable Logic Component and `api` starts the API executable. When no scope is supplied, ask the Human to choose one of these values before starting. Consume the selected scope together with Target and Platform selections, Platform authorities, State, developed parts and public interfaces, and observable runtime state.

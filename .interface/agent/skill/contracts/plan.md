@@ -1,4 +1,4 @@
-# planning Skill Contract
+# plan Skill Contract
 
 ## Purpose
 
@@ -11,6 +11,8 @@ Create or reconcile Plans, Groups, and Tasks from current Target intent and appl
 ## Trigger
 
 Activate explicitly for zero or more phase selections, or when a coordinator requires a current valid Plan.
+
+Human and declared-coordinator invocation are enabled; autonomous activation is disabled.
 
 ## Inputs
 
@@ -70,4 +72,3 @@ Rebuild from current authorities and reconcile rather than regenerate. Unchanged
 ## Runtime Realization
 
 A native adapter exposes optional multi-phase input using the Command mapping, locates all live structures through the Interface, and reports phases, Plan results, changes, conflicts, State, and the supported next step.
-

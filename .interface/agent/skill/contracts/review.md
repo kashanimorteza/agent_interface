@@ -1,4 +1,4 @@
-# reviewing Skill Contract
+# review Skill Contract
 
 ## Purpose
 
@@ -11,6 +11,8 @@ Reconstruct current Interface Understanding and Target Understanding; compare th
 ## Trigger
 
 Activate explicitly for zero or more phase selections after an implementation exists, including after Development, a Component or Target change, or as a final convergence gate. Do not start Review for a phase with no implementation.
+
+Human and declared-coordinator invocation are enabled; autonomous activation is disabled.
 
 ## Inputs
 
@@ -88,4 +90,3 @@ Repeated Review reconstructs both Understandings, preserves stable Findings and 
 ## Runtime Realization
 
 A native adapter exposes optional multi-phase input, invokes no other Skill, and reports phase selection, both assurances, every Finding with its owning operation, missing evidence, convergence status, aggregate outcomes, and records changed.
-

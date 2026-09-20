@@ -1,9 +1,8 @@
 # Agent Module
 
-This document explains the Agent Module: what it is, why it exists, how its parts relate, how it changes, and how its success is judged. It is Human-owned and records the Human's stated understanding so that this understanding is not lost between sessions or Agent Runtimes. The canonical Interface definition remains `.interface/interface.md`; this document explains, it does not redefine. Where the two disagree, the Interface file and each Component's Definition are correct.
-
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -12,15 +11,31 @@ This document explains the Agent Module: what it is, why it exists, how its part
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
+   - **[Components](#components)**
+   - **[Runtime](#runtime)**
+   - **[Agent](#agent)**
+   - **[Personality](#personality)**
+   - **[Rule](#rule)**
+   - **[Skill](#skill)**
+   - **[Command](#command)**
+   - **[Tool](#tool)**
+   - **[Permission](#permission)**
+   - **[Connection](#connection)**
+   - **[Context](#context)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
 6. **[Layering](#layering)**
 7. **[Authority](#authority)**
 8. **[Principles](#principles)**
+   - **[What success means](#what-success-means)**
 9. **[At a Glance](#at-a-glance)**
 
-<br>
 
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -43,6 +58,12 @@ The Agent Module is therefore the portable source of what the Agent is and must 
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Agent Module** — the portable, Human-owned declaration of how an Agent and its capabilities operate.
@@ -53,6 +74,12 @@ The Agent Module is therefore the portable source of what the Agent is and must 
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ### Components
@@ -145,29 +172,25 @@ Reusable knowledge and workflows, including core, supporting, and contextual Ski
 ```yaml
 name: Skill
   definition: .interface/agent/skill/definition.md
-preferences: .interface/agent/skill/preferences.yaml
 contracts: .interface/agent/skill/contracts/<interface-owned-skill>.md
 files: .interface/agent/skill/files/<declared-skill-stable-key>[.md | /]
-responsibility: Reusable knowledge and workflows, including core, supporting, and contextual Skills; the Principles are the authority, the Preferences hold selections, declarations, and optional native.<agent-native> realization hints
+responsibility: Reusable knowledge and workflows, including core, supporting, and contextual Skills; the Guide explains the shared concept and each Contract owns one Skill's behavior
 ```
 
 → [Definition](skill/definition.md)<br>
-→ [Preferences](skill/preferences.yaml)<br>
 → [Contracts](skill/contracts/)<br>
 → [Files](skill/files/)
 
-The Skill directory in detail (moved here verbatim from the former `skill/guide.md` on 2026-09-17):
+The Skill directory in detail:
 
 ```text
 skill/
-├── guide.md
-├── definition.md        ← the shared philosophy every Skill follows
-├── preferences.yaml         ← the declared Skills, their invocation policy, and provider declarations
+├── definition.md       ← the shared Skill concept and guidance
 ├── contracts/           ← one portable Contract per Interface-owned Skill
 │   ├── configure.md
-│   ├── planning.md
-│   ├── developing.md
-│   ├── reviewing.md
+│   ├── plan.md
+│   ├── develop.md
+│   ├── review.md
 │   ├── launch.md
 │   ├── implement.md
 │   ├── reset.md
@@ -179,11 +202,15 @@ A Skill has exactly one Capability Realization Kind. An Interface-owned Skill is
 
 Three layers, each with one owner:
 
-- **Principles** (`definition.md`) — rules shared by every Skill: one complete Contract each, proven availability, safe repeatability, fingerprints that prove staleness but never conformance, prepared files.
+- **Definition** (`definition.md`) — the shared Skill concept and guidance: one complete Contract each, proven availability, safe repeatability, one realization kind, and capability ownership.
 - **Contract** (`contracts/<skill>.md`) — the Skill's own portable behavior in the thirteen sections of the Skill Contract Schema: purpose, responsibility, trigger, inputs, outputs, required understanding, authority, workflow invariants, verification, idempotency, stopping conditions, runtime realization. Every obligation appears once; nothing vendor-specific.
 - **Native adapter** (outside `.interface/`, for example `.claude/skills/<name>/SKILL.md`) — the synchronized, self-contained realization of the Contract in the selected Agent Native. It owns only runtime execution detail and never becomes a second authority.
 
-When a conversation produces a new understanding of a Skill, the *why* is recorded in this guide and the *obligation* it implies is written into that Skill's Contract. The adapter is then brought into line by Agent Sync, never by hand — except for the Agent Sync adapter itself, once, at bootstrap.
+When a conversation produces a new understanding of a Skill, its durable meaning is recorded in the Definition or the relevant Contract. Invocation policy, coordination limits, realization mode, and Skill-specific behavior belong in the relevant Contract. Optional prepared files live under `files/`; unmatched files are never installed by inference. External provider declarations belong to the provider that owns them, not to a Skill Preference file. The adapter is brought into line by Agent Sync, never by hand — except for the Agent Sync adapter itself, once, at bootstrap.
+
+Core Skills are Configure, Plan, Develop, Review, and Launch. They are available to the Human and declared coordinators, while autonomous activation is disabled. Implement is the explicit Human coordinator for that workflow and may invoke only those five Skills. Reset and Agent Native are explicit-Human-only and cannot be delegated or autonomously activated.
+
+Prepared Skill content, when declared, is read from `.interface/agent/skill/files/<declared-skill-stable-key>.md` or the matching directory tree; an absent prepared artifact is not an error, and an unmatched artifact is never installed by inference. Optional external capabilities are Installed through their owning provider declaration; the current optional provider is `pydantic:pydantic`.
 
 ### Command
 
@@ -259,22 +286,12 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 
 <br>
 
-## Boundaries
 
-Every view, rule, limit, and responsibility that concerns the Agent, and would remain true if the Target or the Implementation were replaced. A rule such as "never commit or push until the Human explicitly asks" is an Agent rule: it is a rule between the Human and the Agent, not a property of any project. The Module records it, and the Agent Native enforces it through whichever native mechanism it has (a permission rule, a hook, a persistent instruction).
 
-What does not belong here: the meaning of the Target, the engineering philosophy of the Implementation, the shape of generated Config, and any vendor's file layout, command names, or configuration format. Such Native-specific hints belong only under `native.<agent-native>`.
 
-<br>
 
-## Layering
-
-Each Agent Component has two files. `definition.md` states the portable view and philosophy; `preferences.yaml` holds current selections, declarations, and Native hints. Preferences never weaken a Principle. Definition files carry prose the Native must preserve, while Preferences point to them and hold generic categories and selections.
-
-Three conventions keep Preferences ready for placement rather than rewriting: prose the Native must carry as written lives in its own Markdown file under the Component; declarations are grouped by capability kind rather than Native location; and a generic `selected` value carries any Native mechanism hint under `settings.native.<agent-native>`.
-
-<br>
-
+<br><br>
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - The Module consumes the selected Runtime, Target-independent Agent authorities, and the shared Interface sources required for realization.
@@ -288,6 +305,40 @@ Three conventions keep Preferences ready for placement rather than rewriting: pr
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Boundaries --->
+## Boundaries
+
+Every view, rule, limit, and responsibility that concerns the Agent, and would remain true if the Target or the Implementation were replaced. A rule such as "never commit or push until the Human explicitly asks" is an Agent rule: it is a rule between the Human and the Agent, not a property of any project. The Module records it, and the Agent Native enforces it through whichever native mechanism it has (a permission rule, a hook, a persistent instruction).
+
+What does not belong here: the meaning of the Target, the engineering philosophy of the Implementation, the shape of generated Config, and any vendor's file layout, command names, or configuration format. Such Native-specific hints belong only under `native.<agent-native>`.
+
+<br>
+
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Each Agent Component has two files. `definition.md` states the portable view and philosophy; `preferences.yaml` holds current selections, declarations, and Native hints. Preferences never weaken a Principle. Definition files carry prose the Native must preserve, while Preferences point to them and hold generic categories and selections.
+
+Three conventions keep Preferences ready for placement rather than rewriting: prose the Native must carry as written lives in its own Markdown file under the Component; declarations are grouped by capability kind rather than Native location; and a generic `selected` value carries any Native mechanism hint under `settings.native.<agent-native>`.
+
+<br>
+
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 ### How the Module changes
@@ -302,6 +353,12 @@ Only the Agent Native Skill reads this Module. Every other Skill, Agent Instance
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Component's Definition carries its mandatory Principles. The Guide records the shared success condition for realizing those Principles without replacing them.
@@ -318,6 +375,12 @@ The third condition is about behavior, not only about artifacts. A file that exi
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- At_a_Glance --->
 ## At a Glance
 
 - **Must** — keep portable Agent meaning in Component Definitions and current choices in Component Preferences.
@@ -326,4 +389,3 @@ The third condition is about behavior, not only about artifacts. A file that exi
 - **Never** — let a Guide replace a Definition, Preferences file, or synchronized Runtime authority.
 
 <br>
-

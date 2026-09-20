@@ -11,7 +11,7 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Shared Guidance](#shared-guidance)**
    - **[Each Skill layer has one owner](#each-skill-layer-has-one-owner)**
    - **[Every Skill has one Contract](#every-skill-has-one-contract)**
    - **[Skill availability is proven](#skill-availability-is-proven)**
@@ -19,7 +19,6 @@
    - **[Every Skill has one Realization Kind](#every-skill-has-one-realization-kind)**
    - **[Skill owns executable capability only](#skill-owns-executable-capability-only)**
 5. **[At a Glance](#at-a-glance)**
-
 
 
 
@@ -35,12 +34,11 @@ Skill is a reusable capability an Agent can activate to perform a defined kind o
 
 ### Purpose
 
-Skill prevents the Agent from having to reconstruct the same instructions each time. Each Skill has one clear responsibility and one authoritative Contract.
+Skill prevents the Agent from reconstructing the same instructions each time. Each Skill has one responsibility and one portable Contract.
 
 ### How It Works
 
-The Skill Contract defines the Skill's behavior. Preferences hold its current selections and declarations. The Capability Realization Kind determines how the Skill becomes usable. Agent Sync carries the Skill into the selected Runtime; the Runtime owns its execution mechanics.
-
+The Contract is the authoritative source for one Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Sync carries the Contract into the selected Runtime, where the Runtime owns execution mechanics. A prepared file or an external provider can supply a different realization, but neither changes the Contract's meaning.
 
 
 
@@ -50,10 +48,9 @@ The Skill Contract defines the Skill's behavior. Preferences hold its current se
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Skill** — a reusable capability activated explicitly or by relevance.
-- **Skill Contract** — the authoritative definition of one Skill's behavior, responsibility, inputs, outputs, and boundaries.
-- **Capability Realization Kind** — the declared way a Skill becomes usable in a Runtime.
-
+- **Skill** — a reusable capability activated explicitly or by a declared coordinator.
+- **Skill Contract** — the authoritative definition of one Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions.
+- **Capability Realization Kind** — the declared way a Skill becomes usable: Constructed from a Contract, Prepared from declared content, or Installed through a provider.
 
 
 
@@ -63,35 +60,34 @@ The Skill Contract defines the Skill's behavior. Preferences hold its current se
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Agent, Implementation, and Target** — reads the authorities required by its responsibility.
-- **Consumed by Agent and permitted Coordinators** — provides an executable capability.
-- **Realized by Agent Sync** — is carried into the selected Runtime without changing its authority.
-
+- **Consumes Agent, Implementation, and Target** — reads the authorities required by its Contract.
+- **Consumed by Agent and permitted Coordinators** — provides an executable capability without acquiring the authority of its sources.
+- **Realized by Agent Sync** — is carried into the selected Runtime without changing its Contract.
 
 
 
 
 <br><br>
 
-<!--------------------------------------------------------------------------------- Principles --->
-## Principles
+<!--------------------------------------------------------------------------------- Shared Guidance --->
+## Shared Guidance
 
 ### Each Skill layer has one owner
 
-**Rule:** Definition owns shared Principles, Contract owns Skill-specific behavior, Preferences own current declarations, and the selected Runtime owns execution mechanics.
+**Rule:** This Guide explains the shared Skill concept, each Contract owns Skill-specific behavior, and the selected Runtime owns execution mechanics.
 
 **Why:** Clear ownership prevents duplication and conflicting authorities.
 
-**Boundary:** No layer replaces, overrides, or duplicates the authority of another layer.
+**Boundary:** No layer replaces, overrides, or duplicates another layer's authority.
 
 
 ### Every Skill has one Contract
 
-**Rule:** Every declared Skill has one complete Contract that defines its responsibility, behavior, inputs, outputs, authority, verification, and stopping conditions.
+**Rule:** Every Interface-owned Skill has one complete Contract.
 
 **Why:** One Contract keeps each Skill's behavior clear and consistent.
 
-**Boundary:** This Definition does not repeat a Skill Contract or define one Skill's workflow.
+**Boundary:** This Guide does not repeat a Skill Contract or define one Skill's workflow.
 
 
 ### Skill availability is proven
@@ -114,11 +110,11 @@ The Skill Contract defines the Skill's behavior. Preferences hold its current se
 
 ### Every Skill has one Realization Kind
 
-**Rule:** Each Skill declares one Capability Realization Kind that determines how it becomes usable.
+**Rule:** Each Skill has one realization path: Constructed, Prepared, or Installed.
 
 **Why:** The Runtime needs one clear realization path for every Skill.
 
-**Boundary:** Realization never changes the Skill Contract's meaning or authority.
+**Boundary:** Realization never changes the Contract's meaning or authority.
 
 
 ### Skill owns executable capability only
@@ -132,38 +128,19 @@ The Skill Contract defines the Skill's behavior. Preferences hold its current se
 
 
 
-
 <br><br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
-**Each Skill layer has one owner**
+**Each Skill layer has one owner** — Guide explains the shared concept; Contract owns Skill behavior; Runtime owns execution mechanics.
 
-- **Must** — keep Principles, Contract behavior, Preferences, and Runtime mechanics in their owning layers.
-- **Never** — duplicate or override another layer's authority.
+**Every Skill has one Contract** — define each Interface-owned Skill through one authoritative Contract.
 
-**Every Skill has one Contract**
+**Skill availability is proven** — verify Runtime discovery and invocation; never infer availability from declaration alone.
 
-- **Must** — define each Skill through one authoritative Contract.
-- **Never** — duplicate Skill-specific workflow in this Definition.
+**Skill execution is repeatable** — preserve valid work on repetition; never replace meaningful work destructively.
 
-**Skill availability is proven**
+**Every Skill has one Realization Kind** — use exactly one of Constructed, Prepared, or Installed.
 
-- **Must** — verify that the selected Runtime can discover and invoke the Skill.
-- **Never** — infer availability from a declaration alone.
-
-**Skill execution is repeatable**
-
-- **Must** — preserve valid work on repetition.
-- **Never** — use repeatability to justify destructive replacement.
-
-**Every Skill has one Realization Kind**
-
-- **Must** — give each Skill one realization path.
-- **Never** — let realization alter the Contract.
-
-**Skill owns executable capability only**
-
-- **Must** — keep ownership limited to the declared capability.
-- **Never** — let a Skill acquire another Component's authority.
+**Skill owns executable capability only** — keep ownership limited to the declared capability.

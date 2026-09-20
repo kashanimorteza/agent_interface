@@ -1,4 +1,4 @@
-# developing Skill Contract
+# develop Skill Contract
 
 ## Purpose
 
@@ -11,6 +11,8 @@ Execute eligible Tasks, choose implementation details within current authority, 
 ## Trigger
 
 Activate explicitly for zero or more phase selections after a valid current Plan exists and its prerequisites are ready.
+
+Human and declared-coordinator invocation are enabled; autonomous activation is disabled.
 
 ## Inputs
 
@@ -77,4 +79,3 @@ Preserve valid implementation and completed evidence, reconcile changed requirem
 ## Runtime Realization
 
 A native adapter uses the selected development tools and package mechanisms from Component Preferences, never hardcodes them in the Contract, and reports executed and withheld work, proof, prerequisites, blockers, State, and the supported next step.
-

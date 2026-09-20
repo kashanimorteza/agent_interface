@@ -12,6 +12,8 @@ Validate phase selection, coordinate Configure once, then execute Planning, Deve
 
 Activate explicitly for zero or more phase selections when the Human wants complete orchestration rather than operation-by-operation control.
 
+Implement is Human-invoked and may coordinate only Configure, Plan, Develop, Review, and Launch through the Runtime's Skill invocation mechanism. It may not invoke Reset or Agent Native. Autonomous activation is disabled.
+
 ## Inputs
 
 Accept zero or more phase positions. Empty input selects every phase currently enabled and ready. Resolve positions to stable identifiers, validate all tokens before mutation, deduplicate them, and retain Target order. Consume current operation Contracts, Target eligibility, operational records, dependencies, implementation, and Review evidence.

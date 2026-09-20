@@ -19,6 +19,8 @@ These files are the authority for Configure. This Contract does not repeat their
 
 Activate when Configure is invoked by the Human or a declared coordinator.
 
+Autonomous activation is disabled.
+
 ## Inputs
 
 Use the inputs declared by the Configure Component Definition and Preferences.

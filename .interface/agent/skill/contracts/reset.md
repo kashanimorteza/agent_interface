@@ -12,6 +12,8 @@ Resolve one declared reset scope—explicit phases, all phases with generated wo
 
 Activate only through explicit Human invocation with one reset scope. Invocation itself is never approval to mutate.
 
+Coordinator, delegated, and autonomous invocation are disabled.
+
 ## Inputs
 
 Accept exactly one semantic scope: explicit-phase reset with one or more valid phase identifiers, argument-free reset of every phase with generated work, Config-only reset, or complete reset. Native commands expose these as `<phase-number ...>`, no argument, `config`, and `complete`; named modes cannot be mixed with phase identifiers. Every number denotes a phase, not a rollback stage. Normalize phase identifiers, reject duplicates and unknown phases, and process affected phases in Target order. Discover generated phases from Plan, Review, non-initial Phase State, Task evidence, and attributable implementation outputs; exclude phases with no generated work. Resolve Config targets from the Interface and implementation ownership from phase Plans, Task evidence, owning Component Preferences, and observable repository state.
