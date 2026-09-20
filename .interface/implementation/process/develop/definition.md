@@ -75,6 +75,22 @@ Every Principle below is mandatory.
 <br><br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
+## Process Contract
+
+Develop accepts zero or more phase selections. An empty selection means every phase eligible under its current Plan. It resolves stable phase identities, removes duplicates, and preserves Target order.
+
+Develop consumes current Interface and Target Understanding, applicable Implementation Components, selected Plans and State, public interfaces, existing implementation, Review Findings, and the Agent parameters recorded for the work. It must establish the current authorities before mutation.
+
+Develop executes only eligible planned Tasks. It may create authorized Source, tests, executable documentation, dependencies, and configuration within the resolved Plan and Component boundaries, and records truthful Task progress, evidence, aggregate Development State, History, Blockers, Open Questions, and applied Agent parameters.
+
+Develop never creates or changes Plan content, Target intent, Review Findings, unrelated work, or another operation's records. It resolves declared technical requirements from owning Implementation Preferences, verifies or installs only what is missing, and records concrete versions and verification results.
+
+Every Task is claimed before mutation, its acceptance and verification conditions are checked, and its evidence is recorded. Components outside the declared testing scope do not acquire tests, test configuration, or test dependencies as a side effect. Existing valid work is preserved and repeated execution is idempotent.
+
+Develop stops on invalid selection, missing or stale Plan, unmet dependency, unavailable prerequisite, failed verification, unresolved Blocker, unavailable required Skill, or a required Human decision.
+
+<br><br>
+
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

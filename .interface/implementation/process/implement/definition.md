@@ -75,6 +75,20 @@ Every Principle below is mandatory.
 <br><br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
+## Process Contract
+
+Implement is the explicit Human coordinator for zero or more phase selections. An empty selection means every phase currently enabled and ready. It resolves and validates the complete selection before mutation and preserves Target order.
+
+Implement establishes current Interface and Target Understanding, resolves the synchronized Runtime implementations of Configure, Plan, Develop, Review, and Launch, and proves that each is available for coordinator invocation. It never enters the Agent Module to resolve them.
+
+When no phase is selected, Implement runs Configure exactly once and verifies readiness. For each phase it runs the required Plan → Develop → Review cycle, reconciles Findings through their owning operations, and repeats only while the cycle closes or materially advances a Finding. It advances only after current Plan and Implementation Assurance succeed.
+
+Implement owns only its own status and step-by-step run log. Every delegated mutation remains owned by the invoked Process Component. It never bypasses Human approval, combines operation ownership, invokes Reset or Agent Native, or changes Target intent.
+
+Launch is eligible only after every enabled and ready phase has completed Planning and Development and has satisfied the required Review assurances. Implement stops on invalid input, unavailable or incompatible child Skill, unmet dependency, failed operation gate, repeated unresolved Finding, no observable progress, inconclusive assurance, or required Human decision.
+
+<br><br>
+
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

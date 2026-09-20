@@ -76,7 +76,7 @@ content:
         required: true
       interface-agent-capabilities:
         definition: derived
-        derived_from: [.interface/agent/skill/definition.md, .interface/agent/skill/contracts/, .interface/agent/command/preferences.yaml]
+        derived_from: [.interface/agent/skill/definition.md, .interface/agent/skill/preferences.yaml, .interface/agent/command/preferences.yaml]
         path: resolved by Agent Sync from the selected Agent Native
         scope: global
         responsibility: Expose the synchronized Runtime capability identifiers and native mappings without requiring Agent Module reads.

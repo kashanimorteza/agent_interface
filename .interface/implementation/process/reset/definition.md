@@ -75,6 +75,18 @@ Every Principle below is mandatory.
 <br><br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
+## Process Contract
+
+Reset accepts exactly one scope: explicit phases, all phases with generated work, `config`, or `complete`. It resolves phase identity, ownership, generated outputs, State, Plan, Review, Config, Platform Launch authorities, Task evidence, and observable repository state before mutation.
+
+Reset always produces a complete preview and requires explicit Human confirmation. It removes or resets only exact targets in the confirmed scope, preserves Interface and Target sources, protected content, unselected phases, and meaningful surviving history, and records the resulting State.
+
+An explicit-phase reset removes that phase's Plan, Task content and history, Review and Findings, attributable implementation output, and aggregate progress. Argument-free reset applies the same behavior to every discovered phase with generated work. Config reset removes operational Config files without regenerating them. Complete reset combines Config reset with all-phase reset while preserving the Config container and Environment preparation.
+
+Reset resolves shared paths conservatively; unresolved attribution stops mutation. It stops affected runtime parts in dependency order, uses bounded file removal, verifies every previewed target and every protected target, and never invokes another workflow operation. Repeating an already realized reset produces no additional deletion beyond a newly resolved and confirmed preview.
+
+<br><br>
+
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

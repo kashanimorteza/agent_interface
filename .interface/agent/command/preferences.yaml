@@ -43,15 +43,15 @@ content:
         arguments: ""
         owner: "skill.skills.core_workflow.configure"
         native: {claude: {invocation: "/my-interface-configure"}}
-      planning:
+      plan:
         arguments: "[phase-number ...]"
         owner: "skill.skills.core_workflow.plan"
         native: {claude: {invocation: "/my-interface-plan [phase-number ...]"}}
-      developing:
+      develop:
         arguments: "[phase-number ...]"
         owner: "skill.skills.core_workflow.develop"
         native: {claude: {invocation: "/my-interface-develop [phase-number ...]"}}
-      reviewing:
+      review:
         arguments: "[phase-number ...]"
         owner: "skill.skills.core_workflow.review"
         native: {claude: {invocation: "/my-interface-review [phase-number ...]"}}

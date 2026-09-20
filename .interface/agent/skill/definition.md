@@ -34,11 +34,11 @@ Skill is a reusable capability an Agent can activate to perform a defined kind o
 
 ### Purpose
 
-Skill prevents the Agent from reconstructing the same instructions each time. Each Skill has one responsibility and one portable Contract.
+Skill prevents the Agent from reconstructing the same instructions each time. Each Process-backed Skill points to one owning Process Component, whose Definition and Preferences contain the meaning the Skill executes; Agent Skill Preferences contain only the Agent-side bridge.
 
 ### How It Works
 
-The Contract is the authoritative source for one Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Sync carries the Contract into the selected Runtime, where the Runtime owns execution mechanics. A prepared file or an external provider can supply a different realization, but neither changes the Contract's meaning.
+The owning Process Component is authoritative for a Process-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Runtime owns execution mechanics. A prepared file or an external provider can supply a different realization, but neither changes the owning Component's meaning.
 
 
 
@@ -49,7 +49,7 @@ The Contract is the authoritative source for one Skill's behavior, responsibilit
 ## Terms
 
 - **Skill** — a reusable capability activated explicitly or by a declared coordinator.
-- **Skill Contract** — the authoritative definition of one Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions.
+- **Skill Preferences** — the Agent-side bridge to one Skill's owning Component, including its invocation and Runtime boundary.
 - **Capability Realization Kind** — the declared way a Skill becomes usable: Constructed from a Contract, Prepared from declared content, or Installed through a provider.
 
 
@@ -74,7 +74,7 @@ The Contract is the authoritative source for one Skill's behavior, responsibilit
 
 ### Each Skill layer has one owner
 
-**Rule:** This Guide explains the shared Skill concept, each Contract owns Skill-specific behavior, and the selected Runtime owns execution mechanics.
+**Rule:** This Definition explains the shared Skill concept, the owning Process Component owns Process-specific behavior, Agent Skill Preferences provide the bridge, and the selected Runtime owns execution mechanics.
 
 **Why:** Clear ownership prevents duplication and conflicting authorities.
 
@@ -83,11 +83,11 @@ The Contract is the authoritative source for one Skill's behavior, responsibilit
 
 ### Every Skill has one Contract
 
-**Rule:** Every Interface-owned Skill has one complete Contract.
+**Rule:** Every Process-backed Skill has one owning Process Component and one Agent Preferences bridge that points to it.
 
-**Why:** One Contract keeps each Skill's behavior clear and consistent.
+**Why:** One owning Component keeps each Process Skill's behavior clear and consistent, while one Contract keeps the Agent bridge clear.
 
-**Boundary:** This Guide does not repeat a Skill Contract or define one Skill's workflow.
+**Boundary:** Agent Skill Preferences do not repeat or redefine the owning Process Component's workflow.
 
 
 ### Skill availability is proven
@@ -133,9 +133,9 @@ The Contract is the authoritative source for one Skill's behavior, responsibilit
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
-**Each Skill layer has one owner** — Guide explains the shared concept; Contract owns Skill behavior; Runtime owns execution mechanics.
+**Each Skill layer has one owner** — Definition explains the shared concept; Process Component owns Skill behavior; Preferences bridge Agent to Process; Runtime owns execution mechanics.
 
-**Every Skill has one Contract** — define each Interface-owned Skill through one authoritative Contract.
+**Every Skill has one owner and bridge** — define each Process-backed Skill through one owning Component and one Agent Preferences bridge.
 
 **Skill availability is proven** — verify Runtime discovery and invocation; never infer availability from declaration alone.
 

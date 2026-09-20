@@ -1,6 +1,6 @@
-# agent-native Skill Contract
+# Agent Native Contract
 
-This Skill is the Agent Native configuring itself from the Agent Module. It has three modes, given as a number: `1` sync self, `2` sync component, `3` install. Modes `1` and `2` are Agent Sync as defined throughout the Interface; mode `3` is the former Skill Installer operation, merged into this Skill on 2026-09-17. The name `agent-native` names the Skill and its entry point; the term Agent Native in Interface prose still means the core operational Agent supplied by the Runtime, which is what runs this Skill.
+Agent Native is the Interface mechanism that configures and synchronizes itself from the Agent Module. It has three modes, given as a number: `1` sync self, `2` sync component, `3` install. Modes `1` and `2` are Agent Sync as defined throughout the Interface; mode `3` is capability installation. The name `agent-native` identifies this mechanism and its Runtime entry point; Agent Native in Interface prose means the core operational Agent supplied by the Runtime.
 
 ## Purpose
 
@@ -10,19 +10,19 @@ In mode `3`: materialize the Prepared and Installed capabilities the Agent Modul
 
 ## Responsibility
 
-Establish Interface Understanding, understand the complete Agent Module, learn the selected Agent Native's own documented capabilities and conventions, realize this Skill's own adapter in mode `1` (sync self) and every other declaration in mode `2` (sync component), placing the Module's content into that Native Runtime as authored under the invoked mode. Reconcile authorized project artifacts and already-selected capabilities and prove complete availability. Agent Sync applies existing Human choices; it never discovers or selects new ones. Report an undeclared need for Human declaration and for mode `3` (install) of this Skill instead of adopting it here.
+Establish Interface Understanding, understand the complete Agent Module, learn the selected Agent Native's own documented capabilities and conventions, realize the Agent Native adapter in mode `1` (sync self) and every other declaration in mode `2` (sync component), placing the Module's content into that Native Runtime as authored under the invoked mode. Reconcile authorized project artifacts and already-selected capabilities and prove complete availability. Agent Sync applies existing Human choices; it never discovers or selects new ones. Report an undeclared need for Human declaration and for mode `3` (install) instead of adopting it here.
 
 **Mode `3` (install).** Derive capability needs from current Target and synchronized Runtime evidence, discover compatible project-scoped candidates, preview provenance and impact, provision only approved candidates, and verify Activation. It manages Runtime capabilities, never application dependencies, Target implementation, or Agent Module declarations. It owns every capability the Module declares as Prepared or Installed: Prepared content is transferred into the Runtime unchanged, and an Installed capability is provisioned through its owning provider declaration. The sync modes build only Constructed Skills and materialize neither kind.
 
 ## Trigger
 
-Activate only when the Human directly invokes the declared Runtime entry point while setting up, repairing, migrating, updating, or auditing an Agent Runtime. The Agent Native, every Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, and model-generated action are forbidden from invoking, chaining, triggering, or simulating this Skill. A Human request to change Agent Module declarations authorizes only that source change; it is not an Agent Sync invocation unless the Human separately invokes the declared Agent Sync entry point.
+Activate only when the Human directly invokes the declared Runtime entry point while setting up, repairing, migrating, updating, or auditing an Agent Runtime. The Agent Native, every Agent Instance, Skill, coordinator, Hook, startup or resume routine, automation, and model-generated action are forbidden from invoking, chaining, triggering, or simulating this mechanism. A Human request to change Agent Module declarations authorizes only that source change; it is not an Agent Sync invocation unless the Human separately invokes the declared Agent Sync entry point.
 
 **Mode `3` (install).** Activate explicitly when the Human requests capability discovery, when a capability the Agent Module declares as Prepared or Installed is not present and usable in the Runtime, or when a required capability is absent from the synchronized Runtime. Never activate through another Skill, coordinator, automation, or model-generated action.
 
 ## Inputs
 
-Accept exactly one required mode, given as a number: mode `1` (sync self) realizes only this Skill's own native adapter from the current Contract, and mode `2` (sync component) realizes every other Agent Module declaration. An invocation without a mode mutates nothing and reports all three modes together with whether the installed adapter still matches this Contract. Accept no capability selection in modes `1` and `2`. Consume the complete Agent Module, including its Agent Preferences, explicit empty categories, portable Skill Contracts, optional prepared Markdown Skill files matched by declared stable key, native project artifacts, and runtime-reported activation state. Obtain native paths, formats, mappings, and capability limits from the selected Agent Native's own documentation and runtime, rather than requiring them to be predeclared by the Module.
+Accept exactly one required mode, given as a number: mode `1` (sync self) realizes only the Agent Native adapter from this Contract, and mode `2` (sync component) realizes every other Agent Module declaration. An invocation without a mode mutates nothing and reports all three modes together with whether the installed adapter still matches this Contract. Accept no capability selection in modes `1` and `2`. Consume the complete Agent Module, including its Agent Preferences, explicit empty categories, Skill bridge Contracts, optional prepared Markdown Skill files matched by declared stable key, native project artifacts, and runtime-reported activation state. Obtain native paths, formats, mappings, and capability limits from the selected Agent Native's own documentation and runtime, rather than requiring them to be predeclared by the Module.
 
 **Mode `3` (install).** Accept a requested capability need or derive needs from current Target technologies, frameworks, protocols, services, data sources, activities, Preferences, dependencies, and installed Agent capabilities. An empty explicit request performs complete relevant discovery from current evidence.
 
@@ -95,7 +95,7 @@ Modify only project-scoped native Agent artifacts selected by the Native Runtime
 - When the Contract no longer matches what the adapter instructs, regenerate that adapter's content rather than classifying it as no change.
 - Runtime references may point to other synchronized Runtime artifacts, but never to Agent Module sources.
 - Never invent content for an empty category.
-- Realize only Constructed Skills: an Interface-owned Skill defined by a portable Contract is built from that Contract into a self-contained native Skill.
+- Realize only Constructed Skills: an Interface-owned Process Skill is built from its owning Process Component Definition and Preferences, with its Agent Contract serving as the bridge into a self-contained native Skill.
 - A Prepared Skill and an Installed Skill are outside the sync modes; mode `3` (install) of this same Skill owns them.
 - Treat Agent Module changes as dormant desired state until this explicit synchronization completes.
 - Never trigger synchronization from another Skill, startup routine, or ordinary Interface Understanding.

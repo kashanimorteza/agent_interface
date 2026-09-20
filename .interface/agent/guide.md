@@ -172,13 +172,14 @@ Reusable knowledge and workflows, including core, supporting, and contextual Ski
 ```yaml
 name: Skill
   definition: .interface/agent/skill/definition.md
+preferences: .interface/agent/skill/preferences.yaml
 contracts: .interface/agent/skill/contracts/<interface-owned-skill>.md
 files: .interface/agent/skill/files/<declared-skill-stable-key>[.md | /]
-responsibility: Reusable knowledge and workflows, including core, supporting, and contextual Skills; the Guide explains the shared concept and each Contract owns one Skill's behavior
+responsibility: Reusable knowledge and workflows, including core, supporting, and contextual Skills; the Definition and Process Component own the meaning, while Skill Preferences hold the Agent-side bridge to that Component
 ```
 
 → [Definition](skill/definition.md)<br>
-→ [Contracts](skill/contracts/)<br>
+→ [Preferences](skill/preferences.yaml)<br>
 → [Files](skill/files/)
 
 The Skill directory in detail:
@@ -186,27 +187,31 @@ The Skill directory in detail:
 ```text
 skill/
 ├── definition.md       ← the shared Skill concept and guidance
-├── contracts/           ← one portable Contract per Interface-owned Skill
-│   ├── configure.md
-│   ├── plan.md
-│   ├── develop.md
-│   ├── review.md
-│   ├── launch.md
-│   ├── implement.md
-│   ├── reset.md
-│   └── agent-native.md     ← modes 1 sync self · 2 sync component · 3 install (former skill-installer)
+├── preferences.yaml    ← Agent-side Skill declarations and Process bridges
 └── files/               ← optional prepared Skill files, keyed by stable Skill key (declared; currently absent)
 ```
 
-A Skill has exactly one Capability Realization Kind. An Interface-owned Skill is **Constructed**: its Contract defines it completely and Agent Sync builds the native Skill from it. A Skill with a matching prepared file is **Prepared** and a Skill from an external provider is **Installed**; both belong to the install mode of the Agent Native Skill.
+### Native
+
+The Agent Native is the Agent's synchronization and Runtime mechanism, not a Skill. Its Contract is kept outside the Skill directory.
+
+```yaml
+name: Agent Native
+  contract: .interface/agent/native/agent-native.md
+responsibility: Synchronize the Agent Module with the selected Runtime and manage declared capability realization
+```
+
+→ [Contract](native/agent-native.md)
+
+A Skill has exactly one Capability Realization Kind. A Process-backed Interface Skill is **Constructed** from its Process Component Definition, Process Preferences, and Agent Skill Preferences; Agent Sync builds the native Skill from those sources. A Skill with a matching prepared file is **Prepared** and a Skill from an external provider is **Installed**; both belong to the install mode of the Agent Native mechanism.
 
 Three layers, each with one owner:
 
-- **Definition** (`definition.md`) — the shared Skill concept and guidance: one complete Contract each, proven availability, safe repeatability, one realization kind, and capability ownership.
-- **Contract** (`contracts/<skill>.md`) — the Skill's own portable behavior in the thirteen sections of the Skill Contract Schema: purpose, responsibility, trigger, inputs, outputs, required understanding, authority, workflow invariants, verification, idempotency, stopping conditions, runtime realization. Every obligation appears once; nothing vendor-specific.
+- **Definition** (`definition.md`) — the shared Skill concept and guidance: one bridge Contract per Process-backed Skill, proven availability, safe repeatability, one realization kind, and capability ownership.
+- **Skill Preferences** (`preferences.yaml`) — the Agent-side bridge to the owning Process Component, including the Skill's invocation and Runtime boundary. Process meaning, behavior, inputs, outputs, authority, verification, idempotency, and stopping conditions are defined by that Component's Definition and Preferences.
 - **Native adapter** (outside `.interface/`, for example `.claude/skills/<name>/SKILL.md`) — the synchronized, self-contained realization of the Contract in the selected Agent Native. It owns only runtime execution detail and never becomes a second authority.
 
-When a conversation produces a new understanding of a Skill, its durable meaning is recorded in the Definition or the relevant Contract. Invocation policy, coordination limits, realization mode, and Skill-specific behavior belong in the relevant Contract. Optional prepared files live under `files/`; unmatched files are never installed by inference. External provider declarations belong to the provider that owns them, not to a Skill Preference file. The adapter is brought into line by Agent Sync, never by hand — except for the Agent Sync adapter itself, once, at bootstrap.
+When a conversation produces a new understanding of a Process-backed Skill, its durable meaning is recorded in the owning Process Component Definition or Preferences. The Agent Skill Preferences record only the bridge, invocation, and Runtime boundary. Optional prepared files live under `files/`; unmatched files are never installed by inference. External provider declarations belong to the provider that owns them. The adapter is brought into line by Agent Sync, never by hand — except for the Agent Native mechanism itself, once, at bootstrap.
 
 Core Skills are Configure, Plan, Develop, Review, and Launch. They are available to the Human and declared coordinators, while autonomous activation is disabled. Implement is the explicit Human coordinator for that workflow and may invoke only those five Skills. Reset and Agent Native are explicit-Human-only and cannot be delegated or autonomously activated.
 
@@ -300,8 +305,7 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 - Agent Component Definitions and Preferences — the Module's mandatory meaning and current declarations, listed below.
 - Component `definition.md` files — mandatory meaning and Principles for each Component.
 - Component `preferences.yaml` files — current choices and declarations for each Component.
-- [Skill Contracts](skill/contracts/) — portable behavior for Interface-owned Skills.
-- [Agent Native Contract](skill/contracts/agent-native.md) — the only Skill Contract authorized to read the Agent Module directly.
+- [Agent Native Contract](native/agent-native.md) — the only Agent mechanism authorized to read the Agent Module directly.
 
 <br>
 

@@ -1,5 +1,7 @@
 # Plan Definition
 
+<br><br>
+
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -29,25 +31,15 @@
 
 ### Overview
 
-Plan is the Component that turns project phases into precise, bounded activities and organizes them as Plans, Groups, and Tasks. It is the standard by which work is broken down: it decides what an activity must contain to be understood and executed, how activities are organized so that shared context is stated once, and what counts as proof that one is finished. Every Plan, Group, and Task in the project is produced and read under this standard.
+Plan is the Process Component that turns one project phase into a bounded Plan of Groups and Tasks. It defines how work is organized, understood, ordered, and shown complete.
 
 ### Purpose
 
-Work that has not been broken down cannot be judged, ordered, or trusted to be finished. "Implement the model layer" is not something anyone can start, verify, or know the end of — and when work is described that way, progress becomes opinion, two people can both believe an activity is done and mean different things, and what was left out is discovered only later.
-
-Plan exists to set the standard for breaking work down. It decides what an activity must contain before it can be executed — enough context to be understood, a result that can be observed, dependencies stated rather than assumed — and how activities are organized so that context shared by many of them is written once and inherited instead of repeated.
-
-Without one standard, every phase is decomposed differently: one is a list of files, another a list of intentions, a third a single item. The record then cannot be read by anyone who did not write it, and its progress cannot be compared across phases, which is exactly what a record of work is for.
+Work must be precise enough to execute, order, and verify. Plan provides that standard by expressing work as bounded Tasks, organizing shared context through Groups, and making dependencies and completion observable.
 
 ### How It Works
 
-A phase becomes a Plan. The Plan holds the context that applies to the whole phase, and decomposes its outcome into Groups — coherent implementation areas, each holding the context its own Tasks share.
-
-A Task is where work becomes concrete: one atomic activity with one independently observable result. It states what it produces, what it requires from other Tasks before it can begin, and what would count as proof that it is finished — so that a reader who knows only the Task and the context it inherits can carry it out, and a reader who did not do it can tell whether it was.
-
-Context flows downwards and is never restated: what the phase shares lives in the Plan, what an area shares lives in its Group, and a Task carries only what is its own. That inheritance is what keeps a Task short without making it ambiguous.
-
-Plans are rebuilt as understanding changes rather than written once. Reconciliation preserves valid work and recorded progress, and a Plan Revision moves when planning meaning changes, so a judgment made about a Plan can be tied to the exact version it judged.
+A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward. Planning reconciles the record as understanding changes, preserving valid work and changing the Plan Revision only when planning meaning changes.
 
 <br>
 
@@ -61,18 +53,14 @@ Plans are rebuilt as understanding changes rather than written once. Reconciliat
 - **Dependency** — another Task whose completed result this Task requires before it can begin.
 - **Acceptance** — the observable criterion that determines whether a Task's result is correct.
 - **Verification** — the condition that must be observed to prove acceptance, stated as behaviour rather than as a command.
-- **Status** — the current progress value of a Task.
-- **Log** — the append-only record of a Task's meaningful transitions and the evidence of its completion.
+- **Status** — the current progress value of a Task, owned by Plan and distinct from the aggregate Workflow State.
+- **Log** — the append-only record of a Task's meaningful transitions and completion evidence, not the project's Workflow History.
 
 ## Relationships
 
 - **Consumes State** — shared Blockers and the aggregate phase progress Planning updates without duplicating Task records.
 - **Consumes Review** — the gap Findings that name required work no planned activity yet covers.
 - **Consumed by Review** — the planned outcomes, acceptance criteria, and execution evidence used to judge the implemented result.
-
-Technical choices and defaults belong to Plan Preferences, which currently define none. The exact shape of the generated Plan configuration belongs to the Plan Schema.
-
-Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -81,6 +69,8 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 ## Principles
 
 Every Principle below is mandatory.
+
+Plan Preferences currently define no technical choices or defaults. The generated Plan record follows the Plan Schema. Preferences can never override a Principle; a project may only add stricter rules.
 
 <br>
 
@@ -216,6 +206,22 @@ When a blocking condition is verified as resolved, an operation authorized to up
 **Boundary:** A constraint is recorded only when it is specific to the work itself and derivable from no other source; anything derivable is resolved from its own source at the moment the work is implemented. This limits what the record stores, never what an implementation must respect.
 
 <br>
+
+## Process Contract
+
+Plan accepts zero or more phase selections. An empty selection means every enabled phase. It resolves stable phase identities, removes duplicates, and preserves Target order.
+
+Plan consumes current Target Understanding, applicable Component authorities, Plan, State, Review Findings, Schemas, and relevant implementation evidence. It establishes fresh Interface and Target Understanding before planning.
+
+Plan creates or reconciles only Planning-owned Plan content, Plan Revision, aggregate Planning State and History, permitted Blockers and Open Questions, Task Agent parameters, `agent_skills` associations, and a phase report. It never writes implementation, Target intent, Review ownership, or fields outside Planning authority.
+
+Every planning run validates the complete selection before mutation, maps every selected requirement and unresolved Finding to one Task or inherited phase context, preserves valid identities and progress, and keeps planning content independent of files, paths, packages, commands, and implementation layout. A new Plan starts at revision `1`; semantic Planning changes increment the revision exactly once, while progress-only changes do not.
+
+Completion requires every Task to have observable acceptance and verification. Testing scope is inherited from the applicable Implementation authorities; it is never widened merely because a test tool is available. Review Findings are reconciled through Planning when they identify missing or changed planned work.
+
+Plan is idempotent: repeated planning against unchanged authorities preserves valid work and produces no unnecessary semantic change. It stops on invalid selection, missing or contradictory coverage, unresolved ownership, unavailable prerequisites, or a required Human decision.
+
+<br><br>
 
 ## At a Glance
 

@@ -147,6 +147,20 @@ Every Principle below is mandatory.
 
 <br>
 
+## Process Contract
+
+Review accepts zero or more phase selections. An empty selection means every enabled phase that has an implementation. It resolves stable phase identities, removes duplicates, and preserves Target order.
+
+Review establishes fresh Interface Understanding and Target Understanding on every invocation. It reads the selected Plan, State, applicable Implementation authorities, synchronized Runtime rules, implementation, generated Source, public interfaces, prior Review records, and evidence. It never reads Agent Module sources.
+
+Review independently compares the current Plan and implementation with those authorities. It produces Plan Assurance and Implementation Assurance for each reviewable phase, records Review-owned Findings, aggregate Review State and History, obligation coverage, and a phase report. A phase without implementation is not reviewable and receives no assurance outcome.
+
+Review invokes no other Skill and never repairs implementation, Plan content, Task progress, Target, or another operation's records. Each Finding names the operation that owns its resolution. Implement or the Human reruns the owning operations and Review.
+
+Review is idempotent and evidence-first. It stops on invalid selection, missing implementation or generated Source, inconclusive evidence, unavailable authority, or an unresolved condition that prevents assurance.
+
+<br><br>
+
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

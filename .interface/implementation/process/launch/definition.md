@@ -75,6 +75,20 @@ Every Principle below is mandatory.
 <br><br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
+## Process Contract
+
+Launch accepts one optional scope: `api`, `presentation`, `logic`, or `complete` (`all` is an alias). With no scope, it asks the Human to choose one. It consumes Target and Platform selections, Platform authorities, State, developed parts, public interfaces, and observable runtime state.
+
+Launch establishes current Interface and Target Understanding, reads Platform Principles and Preferences and operational State, and resolves the Environment and Launch definition from explicit Target decisions before Platform defaults. It never invents a missing definition.
+
+Launch prepares only declared project-scoped runtime requirements, verifies readiness, activates only the selected parts in dependency order, preserves already healthy parts, delivers bindings through public boundaries without recording secrets, and records startup or preservation outcomes, readiness evidence, Access Points, Launch State and History, Blockers, and Open Questions.
+
+Launch never repairs product Source, changes Target meaning, redefines Platform authority, or exposes secrets. It stops on unresolved Environment or Launch, missing system preparation, failed preparation or prerequisite startup, incomplete Development, failed readiness, or an unsafe binding.
+
+Launch is idempotent: a healthy running part is preserved and only runtime elements that do not satisfy the current scope are changed.
+
+<br><br>
+
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

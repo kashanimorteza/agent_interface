@@ -1,0 +1,189 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/agent/skill/preferences.yaml"
+  path_note: "The Preferences layer of the Agent Skill Component. It declares Agent-side Skill selection, invocation, and Runtime bridges; Process meaning remains in the owning Implementation Component."
+  purpose: "Declared Agent Skills and their bridges to the owning Process Components."
+  standard: "Agent Project Interface"
+  version: "1.0"
+  updated: "2026-09-20"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Agent Sync and Skills read it without writing resolved choices back into it."
+  changed_by: "The human, directly. A missing Agent-side declaration or invocation mapping is reported rather than invented."
+  precedence: "An explicit project decision and every applicable Agent or Implementation Principle take precedence over this file."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Agent Sync resolves the declared Skill bridges, invocation policies, required status, and Runtime realization. The selected Skill then reads the owning Implementation Process Component Definition and Preferences for its meaning."
+  selection: "Use a declared Skill only when explicitly invoked or when a declared coordinator is authorized to invoke it. Autonomous activation is disabled unless an entry explicitly enables it."
+  version_resolution: "Skill Contract and Process Component paths are interface-owned references; Runtime versions and native identifiers are resolved by the selected Agent Native."
+  matching: "Match each Skill by its stable key to exactly one Contract and, for Process-backed Skills, exactly one Implementation Process Component. A missing or ambiguous match is reported and never inferred."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "The selected coordinating Agent Skill."
+  options: "Selectable Agent Skill declarations and their owning Process Components."
+  settings: "Agent-side invocation, Runtime, prepared-file, and provider settings that do not define Process behavior."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    implementation_skill: implement
+
+  options:
+    skills:
+      core_workflow:
+        configure:
+          name: configure
+          component_definition: .interface/implementation/process/configure/definition.md
+          component_preferences: .interface/implementation/process/configure/preferences.yaml
+          invocation: human-or-declared-coordinator
+          human_invocation: enabled
+          coordinator_invocation: enabled for declared coordinators
+          autonomous_invocation: disabled
+          required: true
+          bridge:
+            purpose: Bridge the Agent Skill to the Configure Process Component.
+            inputs: Use the inputs declared by the Configure Component Definition and Preferences.
+            outputs: Use the outputs declared by the Configure Component Definition and Preferences.
+            responsibility: Read and execute the Configure Component without redefining its meaning or workflow.
+            trigger: Activate when invoked by the Human or a declared coordinator.
+            required_understanding: Read the Configure Component Definition and Preferences before execution.
+            authority: Follow the Configure Component authority and write only through the Process operation it defines.
+            runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
+        plan:
+          name: plan
+          component_definition: .interface/implementation/process/plan/definition.md
+          component_preferences: .interface/implementation/process/plan/preferences.yaml
+          invocation: human-or-declared-coordinator
+          human_invocation: enabled
+          coordinator_invocation: enabled for declared coordinators
+          autonomous_invocation: disabled
+          required: true
+          bridge:
+            purpose: Bridge the Agent Skill to the Plan Process Component.
+            inputs: Use the inputs declared by the Plan Component Definition and Preferences.
+            outputs: Use the outputs declared by the Plan Component Definition and Preferences.
+            responsibility: Read and execute the Plan Component without redefining its meaning or workflow.
+            trigger: Activate explicitly for zero or more phase selections, or when a declared coordinator requires a current Plan.
+            required_understanding: Read the Plan Component Definition and Preferences before execution.
+            authority: Follow the Plan Component authority and write only through the Process operation it defines.
+            runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
+        develop:
+          name: develop
+          component_definition: .interface/implementation/process/develop/definition.md
+          component_preferences: .interface/implementation/process/develop/preferences.yaml
+          invocation: human-or-declared-coordinator
+          human_invocation: enabled
+          coordinator_invocation: enabled for declared coordinators
+          autonomous_invocation: disabled
+          required: true
+          bridge:
+            purpose: Bridge the Agent Skill to the Develop Process Component.
+            inputs: Use the inputs declared by the Develop Component Definition and Preferences.
+            outputs: Use the outputs declared by the Develop Component Definition and Preferences.
+            responsibility: Read and execute the Develop Component without redefining its meaning or workflow.
+            trigger: Activate explicitly for zero or more phase selections after a valid current Plan exists and prerequisites are ready.
+            required_understanding: Read the Develop Component Definition and Preferences before execution.
+            authority: Follow the Develop Component authority and write only through the Process operation it defines.
+            runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
+        review:
+          name: review
+          component_definition: .interface/implementation/process/review/definition.md
+          component_preferences: .interface/implementation/process/review/preferences.yaml
+          invocation: human-or-declared-coordinator
+          human_invocation: enabled
+          coordinator_invocation: enabled for declared coordinators
+          autonomous_invocation: disabled
+          required: true
+          bridge:
+            purpose: Bridge the Agent Skill to the Review Process Component.
+            inputs: Use the inputs declared by the Review Component Definition and Preferences.
+            outputs: Use the outputs declared by the Review Component Definition and Preferences.
+            responsibility: Read and execute the Review Component without redefining its meaning or workflow.
+            trigger: Activate explicitly for zero or more phase selections after implementation exists.
+            required_understanding: Read the Review Component Definition and Preferences before execution.
+            authority: Follow the Review Component authority and write only through the Process operation it defines.
+            runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
+        launch:
+          name: launch
+          component_definition: .interface/implementation/process/launch/definition.md
+          component_preferences: .interface/implementation/process/launch/preferences.yaml
+          invocation: human-or-declared-coordinator
+          human_invocation: enabled
+          coordinator_invocation: enabled for declared coordinators
+          autonomous_invocation: disabled
+          required: true
+          bridge:
+            purpose: Bridge the Agent Skill to the Launch Process Component.
+            inputs: Use the inputs declared by the Launch Component Definition and Preferences.
+            outputs: Use the outputs declared by the Launch Component Definition and Preferences.
+            responsibility: Read and execute the Launch Component without redefining its meaning or workflow.
+            trigger: Activate explicitly or when end-to-end orchestration establishes the current Launch prerequisites.
+            required_understanding: Read the Launch Component Definition and Preferences before execution.
+            authority: Follow the Launch Component authority and write only through the Process operation it defines.
+            runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
+      supporting:
+        implement:
+          name: implement
+          component_definition: .interface/implementation/process/implement/definition.md
+          component_preferences: .interface/implementation/process/implement/preferences.yaml
+          invocation: explicit-human
+          human_invocation: enabled
+          coordinator_invocation: disabled
+          autonomous_invocation: disabled
+          required: true
+          bridge:
+            purpose: Bridge the Agent Skill to the Implement Process Component.
+            inputs: Use the inputs declared by the Implement Component Definition and Preferences.
+            outputs: Use the outputs declared by the Implement Component Definition and Preferences.
+            responsibility: Read and coordinate the Implement Component without redefining its meaning or workflow.
+            trigger: Activate only through explicit Human invocation for zero or more phase selections.
+            required_understanding: Read the Implement Component Definition and Preferences before execution.
+            authority: Follow the Implement Component authority and invoke child Process Skills only through the Runtime's own Skill mechanism.
+            runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
+          coordination:
+            allowed_skills:
+              - skills.core_workflow.configure
+              - skills.core_workflow.plan
+              - skills.core_workflow.develop
+              - skills.core_workflow.review
+              - skills.core_workflow.launch
+            authority: delegated invocation only through the Runtime's own Skill mechanism; each Process Component retains ownership of its records and outputs
+        reset:
+          name: reset
+          component_definition: .interface/implementation/process/reset/definition.md
+          component_preferences: .interface/implementation/process/reset/preferences.yaml
+          invocation: explicit-human
+          human_invocation: enabled
+          coordinator_invocation: disabled
+          autonomous_invocation: disabled
+          required: true
+          bridge:
+            purpose: Bridge the Agent Skill to the Reset Process Component.
+            inputs: Use the inputs declared by the Reset Component Definition and Preferences.
+            outputs: Use the outputs declared by the Reset Component Definition and Preferences.
+            responsibility: Read and execute the Reset Component without redefining its meaning or workflow.
+            trigger: Activate only through explicit Human invocation with one reset scope.
+            required_understanding: Read the Reset Component Definition and Preferences before execution.
+            authority: Follow the Reset Component authority and write only through the Process operation it defines.
+            runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
+
+  settings:
+    prepared_files:
+      directory: .interface/agent/skill/files/
+      naming: <declared-skill-stable-key>.md or <declared-skill-stable-key>/
+      presence: optional per declared Skill
+      absent: Realize the Skill from its Contract bridge and owning Process Component; absence is not an error.
+      unmatched: Report a prepared file or directory that does not match exactly one declared Skill; never install it by inference.
+    external_providers: {}
+    disabled_skills: {}
+    overrides: {}
