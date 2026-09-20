@@ -2,24 +2,24 @@
 meta:
   path: ".interface/implementation/process/configure/preferences.yaml"
   path_note: "The Preferences layer of the Configure Component."
-  purpose: "Configuration defaults used when current authorities leave a technical reconciliation choice unstated."
+  purpose: "Configure has no independent choices; its four Config Records follow their Schemas."
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "2.0"
   updated: "2026-09-20"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Operations read it without writing resolved choices back into it."
-  changed_by: "The human, directly. A missing critical Configuration choice is raised through State."
-  precedence: "An explicit Target value and every applicable Principle take precedence over this file."
+  rule: "This file is human-owned. Configure reads it without writing resolved choices back into it."
+  changed_by: "The human, directly. A missing structural requirement is resolved by the owning Config Schema."
+  precedence: "The four Config Schemas and every applicable Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "The empty content supplies no Configuration defaults; use current Schemas and other applicable authorities."
-  selection: "There is currently no Configuration alternative to select."
+  consumption: "Configure uses the four Config Schemas directly; this file supplies no defaults."
+  selection: "There is no Configure alternative to select."
   version_resolution: "No entry currently carries a version."
-  matching: "There is currently no Configuration entry to match."
+  matching: "There is no Configure entry to match."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -29,9 +29,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty. Configuration selects no technical profile."
-  options: "Empty. Configuration catalogues no alternatives."
-  settings: "Empty. Configuration currently uses Schema-defined structure without additional defaults."
+  selected: "Empty. Configure selects no profile."
+  options: "Empty. Configure supports no alternatives."
+  settings: "Empty. Configure has no independent settings."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
