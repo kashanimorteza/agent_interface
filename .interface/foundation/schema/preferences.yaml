@@ -1,19 +1,19 @@
 schema:
   id: "agent-interface-preferences"
   version: "6.1"
-  purpose: "The common structure every Implementation Component Preferences file follows. It defines technical choices, supported alternatives, configuration, implementation conventions, and optional Agent Skill associations without deciding Target-specific meaning."
+  purpose: "The common structure every Component Preferences file follows. It defines selected values, supported alternatives, settings, declarations, and optional Agent parameters without deciding Target-specific meaning."
 
 # <!--------------------------------------------------------------------------------- Frame -->
 frame:
   source: ".interface/foundation/schema/yaml.yaml"
-  inherited: "An Implementation Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, resolution, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
-  scope: "This schema defines the structure of Implementation Preferences content and states the additional expectations placed on the inherited meta and policy sections."
-  path: ".interface/implementation/<component>/preferences.yaml for each Implementation Component."
+  inherited: "A Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, resolution, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
+  scope: "This schema defines the structure of Preferences content and states the additional expectations placed on the inherited meta and policy sections."
+  path: ".interface/<module>/<component>/preferences.yaml for each Component."
   ownership: "The file is human-owned. Operations read it and never write resolved choices back into it."
 
 # <!--------------------------------------------------------------------------------- Purpose -->
 purpose:
-  answers: "With what and how. An Implementation Preferences file records supported technical choices, defaults, package and implementation conventions, and the selections used when the Target leaves a decision unstated."
+  answers: "What is selected, supported, and preferred. A Component Preferences file records the choices, alternatives, settings, declarations, and conventions owned by its Component."
   relation_to_principles: "Principles state what is mandatory; Preferences state what is preferred. A Preference can never override a Principle."
   relation_to_project: "An explicit value in the human project definition always wins. This file is consulted only where the project is silent."
   resolution: "A choice recorded here is resolved when an operation runs, from this file together with the current project definition. Nothing here is copied into an operational record."

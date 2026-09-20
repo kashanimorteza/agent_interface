@@ -75,7 +75,6 @@ Foundation Files provide the foundational definitions and schemas required by th
     ├── yaml.yaml
     ├── definition.md
     ├── preferences.yaml
-    ├── agent-preferences.yaml
     ├── skill-contract.md
     ├── personality.md
     ├── state.yaml
@@ -278,7 +277,6 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── yaml.yaml
 ├── definition.md
 ├── preferences.yaml
-├── agent-preferences.yaml
 ├── skill-contract.md
 ├── personality.md
 ├── database.yaml
@@ -294,13 +292,13 @@ The shape a Human-authored file follows.
 
 #### YAML Schema
 
-The common outer frame (meta, policy, read_order, content_map, content) followed by Implementation Preferences, Agent Preferences, and Config files.
+The common outer frame (meta, policy, read_order, content_map, content) followed by Component Preferences and Config files.
 
 ```yaml
 name: YAML Schema
 path: .interface/foundation/schema/yaml.yaml
 kind: Structure standard
-responsibility: Defines the common outer structure followed by Implementation Preferences, Agent Preferences, and Config files
+responsibility: Defines the common outer structure followed by Component Preferences and Config files
 scope: Schema definition files use their own formats and do not follow this outer structure
 ```
 
@@ -321,29 +319,16 @@ responsibility: Defines the common Markdown structure followed by every Implemen
 
 #### Preferences Schema
 
-The four-section structure of every Implementation `preferences.yaml`.
+The common structure of every Component `preferences.yaml`.
 
 ```yaml
 name: Preferences Schema
 path: .interface/foundation/schema/preferences.yaml
 kind: Structure standard
-responsibility: Defines the four-section structure followed by every Implementation Component preferences.yaml file
+responsibility: Defines the common Preferences structure followed by every Component preferences.yaml file
 ```
 
 → [Preferences Schema](schema/preferences.yaml)
-
-#### Agent Preferences Schema
-
-The three-section structure of every Agent `preferences.yaml`.
-
-```yaml
-name: Agent Preferences Schema
-path: .interface/foundation/schema/agent-preferences.yaml
-kind: Structure standard
-responsibility: Defines the three-section structure followed by every Agent Component preferences.yaml file
-```
-
-→ [Agent Preferences Schema](schema/agent-preferences.yaml)
 
 #### Skill Contract Schema
 
