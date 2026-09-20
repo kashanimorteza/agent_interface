@@ -121,7 +121,7 @@ content:
               expect: Both are blocked by the PreToolUse hook with the boundary message; no content is returned.
               also: 'Attempt to Edit .interface/interface.md from any role; expect: blocked (Interface mutation outside the Config boundary).'
       agent-native-read-grant:
-        guarantee: Grant Agent Module read access only to the prompt created by the Human's direct explicit invocation of Agent Native Sync (sync and install modes); a model, Agent Native, Agent Instance,
+        guarantee: Grant Agent Module read access only to the prompt created by the Human's direct explicit invocation of Agent Native Sync; a model, Agent Native, Agent Instance,
           Skill, coordinator, Hook, lifecycle routine, or automation can never create, inherit, or borrow this grant.
         failure_policy: fail_closed
         required: true

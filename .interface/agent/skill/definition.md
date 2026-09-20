@@ -42,6 +42,8 @@ Skill prevents the Agent from reconstructing the same instructions each time. Ea
 
 The owning Process Component is authoritative for a Process-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Agent Native owns execution mechanics. An external provider can supply a different realization, but it does not change the owning Component's meaning.
 
+Declared Agent Skills are listed in Agent Skill Preferences. Each entry points to the Definition and Preferences of its owning Process Component, so Agent Sync and the realized Skill can find the Skill's meaning and required Understanding at the source. These references identify where to read; they do not copy or redefine the Process Component's content in the Agent Skill Component.
+
 
 
 

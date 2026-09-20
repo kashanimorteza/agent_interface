@@ -1,56 +1,34 @@
-# <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/agent/tool/preferences.yaml"
-  path_note: "The Preferences layer of the Agent Tool Component."
-  purpose: "Declared Tool requirements, integration Tools, disabled Tools, and availability expectations."
-  standard: "Agent Project Interface"
-  version: '2.0'
-  updated: '2026-09-18'
+  path: .interface/agent/tool/preferences.yaml
+  path_note: The Preferences layer of the Agent Tool Component.
+  purpose: Current Agent Tool selections and declarations.
+  standard: Agent Project Interface
+  version: '3.0'
+  updated: '2026-09-21'
 
-# <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned; observed runtime Tools are not automatically made project requirements."
-  changed_by: "The human, directly."
-  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  rule: This file is human-owned and currently contains no selections or declarations.
+  changed_by: The human, directly.
+  precedence: An explicit project decision and every applicable Principle take precedence over this file.
 
-
-# <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Use only Tools available to the active role and permitted for the requested action."
-  selection: "An undeclared runtime Tool is optional; a missing required Tool is reported."
-  version_resolution: "Runtime-provided Tool contracts resolve from the active runtime."
-  matching: "Match portable Tool capability identities; Agent Sync resolves their Native names and providers."
+  consumption: No Agent Tool preference is currently declared.
+  selection: No selection is currently declared.
+  version_resolution: No version resolution is currently declared.
+  matching: No matching rule is currently declared.
 
+read_order:
+  - selected
+  - options
+  - settings
 
-
-# <!--------------------------------------------------------------------------------- Read_Order -->
-read_order: ["selected", "options", "settings"]
-
-# <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty; Tools are selected by the active capability contract."
-  options: "Empty; Tools are resources rather than alternatives."
-  settings: "Complete Tool catalogs by provider and source."
+  selected: No selections are currently declared.
+  options: No options are currently declared.
+  settings: No settings or declarations are currently declared.
 
-# <!--------------------------------------------------------------------------------- Content -->
 content:
   selected: {}
   options: {}
-  settings:
-    tools:
-      shell_execute: {required: false}
-      file_read: {required: true}
-      file_discover: {required: true}
-      text_search: {required: true}
-      file_edit: {required: true}
-      file_write: {required: true}
-      notebook_edit: {required: false}
-      agent_delegate: {required: true}
-      task_record: {required: false}
-      web_fetch: {required: false}
-      web_search: {required: false}
-    placement_note: "Where a declared Tool lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (runtime_tools, project_tools, extension_tools, user_tools, managed_tools) were collapsed into `tools` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
-    integration_tools: {}
-    disabled_tools: {}
-    availability_checks: {}
+  settings: {}

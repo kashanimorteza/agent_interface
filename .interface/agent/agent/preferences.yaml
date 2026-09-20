@@ -1,138 +1,34 @@
-# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: .interface/agent/agent/preferences.yaml
   path_note: The Preferences layer of the Agent Component.
-  purpose: Agent Native selection, General and Specialized Agent Instance definitions, Role contracts, Coordination policy, capability configuration, lifecycle defaults, and native realizations. Absorbs
-    the former Role and Coordination Preferences.
+  purpose: Current Agent Component selections and declarations.
   standard: Agent Project Interface
-  version: '3.0'
-  updated: '2026-09-18'
+  version: '4.0'
+  updated: '2026-09-21'
 
-# <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: This file is human-owned; runtime-discovered Agent Natives and Agent Instances are observed without being adopted as required declarations.
+  rule: This file is human-owned and currently contains no selections or declarations.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
-  absorbed: role/preferences.yaml (v1.2) and coordination/preferences.yaml (v1.2), merged verbatim under settings.roles and settings.coordination on 2026-09-17.
 
-
-# <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: Use the selected Agent Native, instantiate the General Agent Instance, and expose each required Specialized Agent Instance through its declared native realization. Roles are assigned by stable
-    key; coordination uses the smallest mechanism sufficient for the authorized work.
-  selection: An undeclared Agent Native or Agent Instance remains an optional runtime capability and never becomes part of the required Agent Preferences automatically.
-  version_resolution: Agent Native behavior and Native Instance Realization formats resolve from the selected Agent Runtime.
-  matching: Match the Agent Native by runtime identity and Agent Instance Definitions by stable identity and assigned Role reference; resolve native realization details through Agent Sync.
+  consumption: No Agent Component preference is currently declared.
+  selection: No selection is currently declared.
+  version_resolution: No version resolution is currently declared.
+  matching: No matching rule is currently declared.
 
-
-# <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-- selected
-- options
-- settings
+  - selected
+  - options
+  - settings
 
-# <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: Selected Agent Native, General Agent Instance, Primary Role, and default coordination and isolation strategy.
-  options: Selectable Agent Natives, General Agent Instances, primary roles, and coordination mechanisms.
-  settings: Declared Agent Instance definitions, inherited defaults (including optional personality), Role catalogs, coordination policy, and optional per-Native realization hints.
+  selected: No selections are currently declared.
+  options: No options are currently declared.
+  settings: No settings or declarations are currently declared.
 
-# <!--------------------------------------------------------------------------------- Content -->
 content:
-  selected:
-    agent_native: runtime-primary
-    general_instance: general
-    primary_role: primary-execution
-    default_coordination: single_agent
-    mutation_isolation: scope_partition
-  options:
-    agent_natives:
-      runtime-primary:
-        runtime: selected Agent Runtime
-        native_identity: runtime primary agent
-        realization: runtime-provided
-    general_instances:
-      general:
-        resource: instances.general
-    primary_roles:
-      primary-execution:
-        resource: roles.primary-execution
-    default_coordinations:
-      single_agent:
-        meaning: The General Agent Instance executes the work directly.
-      delegated_agents:
-        meaning: Specialized Agent Instances return bounded results to the accountable General Agent Instance.
-      agent_team:
-        meaning: Independent declared Agent Instances coordinate through shared tasks and messaging.
-    mutation_isolations:
-      scope_partition:
-        meaning: Concurrent writers receive non-overlapping owned scopes.
-      worktree:
-        meaning: Concurrent writers operate in isolated worktrees.
-  settings:
-    instances:
-      general:
-        kind: general
-        role: roles.primary-execution
-        native_identity: runtime primary agent
-        native_definition: runtime-provided
-        configuration: inherits instance_defaults materialized into the synchronized Runtime by explicit Agent Sync
-        required: true
-      interface-reader:
-        kind: specialized
-        role: roles.interface-reader
-        native_identity: interface-reader
-        native_definition: resolved by Agent Sync from the selected Agent Native
-        allowed_tools:
-        - Read
-        - Grep
-        - Glob
-        write_authority: none
-        configuration: inherits instance_defaults with allowed_tools and write_authority overridden by this definition
-        required: true
-    placement_note: "Where a declared Agent Instance or Role lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (project_instances, runtime_instances, user_instances, managed_instances, extension_instances, built_in_instances and the matching *_roles) were collapsed into `instances` and `roles` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
-    instance_defaults:
-      model: null
-      effort: null
-      max_turns: null
-      background: false
-      isolation: null
-      memory: null
-      skills: []
-      allowed_tools: []
-      disallowed_tools: []
-      personality: null
-    overrides: {}
-    roles:
-      primary-execution:
-        architecture_contract: Agent Principle “The primary execution role owns the requested outcome” (formerly Role Principle “Specialized Agent Instances remain bounded”)
-        required: true
-      interface-reader:
-        architecture_contract: Agent Principle “`interface-reader` reports without changing the observed state” (formerly Role Principle “Agent Native and Instance availability are proven in the selected Runtime”)
-        required: true
-    coordination:
-      delegation:
-        required_contract_fields:
-        - objective
-        - scope
-        - context
-        - authority
-        - expected_output
-        - evidence
-        - stopping_condition
-      teams: {}
-      teammates: {}
-      shared_tasks: {}
-      messaging: {}
-      mailboxes: {}
-      concurrency: {}
-      worktrees: {}
-      batch_execution: {}
-      conflict_resolution:
-        accountable_owner: general Agent Instance
-        integrate_only_after_reconciliation: true
-    native:
-      claude:
-        realization_hints: {}
-
+  selected: {}
+  options: {}
+  settings: {}

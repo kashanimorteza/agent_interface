@@ -1,89 +1,34 @@
-# <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: .interface/agent/context/preferences.yaml
   path_note: The Preferences layer of the Agent Context Component.
-  purpose: Persistent instructions, memory, imports, context loading, compaction, and context-budget choices.
+  purpose: Current Agent Context selections and declarations.
   standard: Agent Project Interface
-  version: '2.0'
-  updated: '2026-09-17'
+  version: '3.0'
+  updated: '2026-09-21'
 
-# <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: This file is human-owned; runtime memory never changes the authorities declared here.
+  rule: This file is human-owned and currently contains no selections or declarations.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
 
-
-# <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: Load the minimum current context required by the active Agent Role.
-  selection: Use current authoritative project sources; do not infer a missing persistent instruction.
-  version_resolution: Context formats follow their owning runtime or Interface definition.
-  matching: Match instruction and memory sources by exact scope and path.
+  consumption: No Agent Context preference is currently declared.
+  selection: No selection is currently declared.
+  version_resolution: No version resolution is currently declared.
+  matching: No matching rule is currently declared.
 
-
-
-# <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-- selected
-- options
-- settings
+  - selected
+  - options
+  - settings
 
-# <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: Selected reliance on runtime-maintained memory.
-  options: Supported reliance choices.
-  settings: Complete instruction, memory, import, compaction, and context-budget declarations.
+  selected: No selections are currently declared.
+  options: No options are currently declared.
+  settings: No settings or declarations are currently declared.
 
-# <!--------------------------------------------------------------------------------- Content -->
 content:
-  selected:
-    runtime_memory_reliance: none
-  options:
-    runtime_memory_reliances:
-      none:
-        meaning: Do not rely on runtime-maintained cross-session memory for project authority.
-        former_key: auto_memory_behavior = disabled (renamed 2026-09-18; the Native feature name moved to settings.native.claude.auto_memory)
-      runtime_default:
-        meaning: Use the runtime default while retaining Memory's non-authoritative status.
-  settings:
-    project_instructions: {}
-    local_instructions: {}
-    user_instructions: {}
-    managed_instructions: {}
-    imports: {}
-    path_scoped_loading: {}
-    auto_memory:
-      entries: {}
-      authoritative: false
-    compaction:
-      required_sources_reload: true
-      custom_instructions: {}
-    context_budget: {}
-    derived_sources:
-      readme:
-        access: read
-        scope: README.md at the project root and every Component or package boundary.
-        authority: non-authoritative
-        use: Orientation, public usage, and consistency verification only; current Interface and Target owning sources take precedence.
-    understanding_sources:
-      interface: .interface/interface.md
-      interface_sections:
-      - .interface/foundation/introduction.md
-      - .interface/foundation/terminology.md
-      - .interface/foundation/architecture.md
-      - .interface/foundation/understanding.md
-      - .interface/foundation/operations.md
-      - .interface/foundation/modes.md
-      - .interface/foundation/authority.md
-      - .interface/foundation/workflow.md
-      target:
-      - .interface/target/non-technical.md
-      - .interface/target/technical.md
-      target_precedence: non-technical definition establishes Human intent; technical definition records its corresponding technical definition without changing that intent; the technical definition takes
-        precedence wherever the two conflict
-    native:
-      claude:
-        auto_memory: disabled
-        auto_memory_note: Claude Code's realization of selected.runtime_memory_reliance = none; a hint, never the authority.
+  selected: {}
+  options: {}
+  settings: {}

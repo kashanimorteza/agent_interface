@@ -1,78 +1,34 @@
-# <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/agent/command/preferences.yaml"
-  path_note: "The Preferences layer of the Agent Command Component."
-  purpose: "Built-in and custom command concepts, arguments, aliases, scope, and owning capability declarations. Native command realization is resolved by Agent Sync."
-  standard: "Agent Project Interface"
-  version: '2.0'
-  updated: '2026-09-18'
+  path: .interface/agent/command/preferences.yaml
+  path_note: The Preferences layer of the Agent Command Component.
+  purpose: Current Agent Command selections and declarations.
+  standard: Agent Project Interface
+  version: '3.0'
+  updated: '2026-09-21'
 
-# <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned; command discovery does not create a new command declaration."
-  changed_by: "The human, directly."
-  precedence: "An explicit project decision and every applicable Principle take precedence over this file."
+  rule: This file is human-owned and currently contains no selections or declarations.
+  changed_by: The human, directly.
+  precedence: An explicit project decision and every applicable Principle take precedence over this file.
 
-
-# <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Route declared command invocations to their owning capability."
-  selection: "Runtime built-ins remain optional unless explicitly required; custom collisions are reported."
-  version_resolution: "Built-in commands resolve from the active runtime version."
-  matching: "Match exact command name, namespace, alias, and argument contract."
+  consumption: No Agent Command preference is currently declared.
+  selection: No selection is currently declared.
+  version_resolution: No version resolution is currently declared.
+  matching: No matching rule is currently declared.
 
+read_order:
+  - selected
+  - options
+  - settings
 
-
-# <!--------------------------------------------------------------------------------- Read_Order -->
-read_order: ["selected", "options", "settings"]
-
-# <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty; no command is globally selected."
-  options: "Empty; Commands are entry points rather than alternatives."
-  settings: "Declared commands and aliases."
+  selected: No selections are currently declared.
+  options: No options are currently declared.
+  settings: No settings or declarations are currently declared.
 
-# <!--------------------------------------------------------------------------------- Content -->
 content:
   selected: {}
   options: {}
-  settings:
-    commands:
-      configure:
-        arguments: ""
-        owner: "skill.skills.configure"
-        native: {claude: {invocation: "/my-interface-configure"}}
-      plan:
-        arguments: "[phase-number ...]"
-        owner: "skill.skills.plan"
-        native: {claude: {invocation: "/my-interface-plan [phase-number ...]"}}
-      develop:
-        arguments: "[phase-number ...]"
-        owner: "skill.skills.develop"
-        native: {claude: {invocation: "/my-interface-develop [phase-number ...]"}}
-      review:
-        arguments: "[phase-number ...]"
-        owner: "skill.skills.review"
-        native: {claude: {invocation: "/my-interface-review [phase-number ...]"}}
-      launch:
-        arguments: ""
-        owner: "skill.skills.launch"
-        native: {claude: {invocation: "/my-interface-launch"}}
-      implement:
-        arguments: "[phase-number ...]"
-        owner: "skill.skills.implement"
-        native: {claude: {invocation: "/my-interface-implement [phase-number ...]"}}
-      reset:
-        arguments: "[phase-number ... | config | complete]"
-        owner: "skill.skills.reset"
-        native: {claude: {invocation: "/my-interface-reset [phase-number ... | config | complete]"}}
-      agent-native-sync:
-        arguments: "<1=sync self | 2=sync component | 3=install>"
-        modes: {1: "sync self", 2: "sync component", 3: "install"}
-        owner: "foundation.agent-native-sync"
-        invocation_scope: "direct-explicit-human-only"
-        native: {claude: {invocation: "/my-interface-agent-native-sync <1=sync self | 2=sync component | 3=install>"}}
-    naming_note: "A command's portable identity is its key and its `arguments`; the slash form and the `my-interface-` prefix are Claude Code idioms and live only under each command's native.claude.invocation (moved there 2026-09-18). Another Native realizes the same key through its own invocation mechanism."
-    placement_note: "Where a declared Command lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (custom_commands, built_in_commands, user_commands, managed_commands, extension_commands) were collapsed into `commands` on 2026-09-18 because they mirrored one Native's layout; `legacy_command_files` (a Claude Code-only concept) was removed the same day — if a Native needs it, it belongs under `native.<agent-native>`. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
-    aliases: {}
+  settings: {}

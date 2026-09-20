@@ -159,7 +159,7 @@ responsibility: Defines Interface Understanding and Target Understanding, their 
 <!--------------------------------------------------------------------------------- Operations --->
 ## Operations
 
-Operations are the defined actions performed through the eight Interface-owned Skills — Configure, Plan, Develop, Review, Launch, Implement, Reset, and Agent Native Sync (three modes: sync self, sync component, install) — each with exactly one Skill and one summarized outcome.
+Operations are the defined actions performed through the eight Interface-owned Skills — Configure, Plan, Develop, Review, Launch, Implement, Reset, and Agent Native Sync — each with exactly one Skill and one summarized outcome.
 
 ```yaml
 name: Operations

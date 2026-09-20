@@ -124,7 +124,7 @@ Every Principle below is mandatory.
 
 ### Agent Module reads belong only to the explicit Agent Native Sync
 
-**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes Agent Native Sync. The Agent Native, every Agent Instance, Skill, coordinator, enforcement handler, lifecycle routine, automation, and model-generated action can neither invoke Agent Native Sync nor create, inherit, borrow, or simulate its access grant. In its sync modes it reads those Human-owned declarations to produce self-contained project-scoped Runtime realizations; in its install mode it reads them to resolve which capabilities must be provisioned. Every other consumer uses only the last synchronized Runtime artifacts, and a missing artifact is reported as Runtime drift rather than resolved from the Agent Module.
+**Rule:** Access to Agent Module sources is denied except within the exact prompt created when the Human directly invokes Agent Native Sync. The Agent Native, every Agent Instance, Skill, coordinator, enforcement handler, lifecycle routine, automation, and model-generated action can neither invoke Agent Native Sync nor create, inherit, borrow, or simulate its access grant. Agent Sync reads those Human-owned declarations to produce self-contained project-scoped Native realizations. Every other consumer uses only the last synchronized Native artifacts, and a missing artifact is reported as Native drift rather than resolved from the Agent Module.
 
 **Why:** The Agent Module defines how an Agent Native and its Agent Instances should be constructed; it is not their operational context after synchronization.
 

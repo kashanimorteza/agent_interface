@@ -103,7 +103,7 @@ The Foundation instruction that creates and updates the `my-interface-agent-nati
 
 ```yaml
 path: .interface/foundation/agent-native-sync.md
-responsibility: Defines Agent Native Sync and its three modes: sync self, sync component, and install
+responsibility: Defines the Agent Native Sync Skill and its read-only Agent Module synchronization procedure
 ```
 
 → [Agent Native Sync](agent-native-sync.md)
