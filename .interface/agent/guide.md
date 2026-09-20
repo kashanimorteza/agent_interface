@@ -56,6 +56,18 @@ Agent Sync is the only reader and bridge from the Module to the selected Agent N
 
 The Foundation File [Agent Native Sync](../foundation/agent-native-sync.md) instructs the selected Agent Native to create or update the `My-Interface-Agent-Native-Sync` Skill. When that Skill runs, it reads this Module and realizes its current Components, declarations, and Principles in the Agent Native; therefore, changes made here take effect in a Native only through that synchronization.
 
+To create or update the synchronization Skill, the Human tells the Agent:
+
+```text
+Read `.interface/foundation/agent-native-sync.md` completely and execute every instruction in it.
+
+Create or update the project-scoped Skill `My-Interface-Agent-Native-Sync` according to the selected Agent Native's Skill-creation policy. Preserve the authority and boundaries defined in the Foundation File. Do not read Target sources and do not modify `.interface/agent/`.
+
+After creating or updating the Skill, report exactly what was done and whether the Skill is ready to be invoked.
+```
+
+After the Skill exists, the Human invokes the synchronization with `/my-interface-agent-native-sync`.
+
 
 
 
