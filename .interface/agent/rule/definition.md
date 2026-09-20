@@ -31,23 +31,9 @@
 
 ### Overview
 
-Agent Rule is the Component that defines persistent behavioral instructions applied across sessions or within a declared path scope. Rules adapt Agent Native and Agent Instance behavior to stable project conventions without becoming enforcement mechanisms or copies of owned Interface sources.
+Agent Rule defines persistent behavioral guidance applied across sessions or within a declared scope. It adapts Agent behavior to stable conventions without becoming an enforcement mechanism or a copy of another Component's authority.
 
-It owns instruction scope, loading conditions, and precedence among Rules. It does not own security enforcement, workflow implementation, or project definitions.
-
-On 2026-09-17 the former Interaction, Observability, and Session Components were merged into this Component: how an Agent presents its work, what counts as evidence of completion, and how a session begins, resumes, and ends are persistent rules of conduct that every Agent Native must honor whether or not it has a native mechanism for each. Nothing was dropped; each absorbed Principle keeps its former number in a note.
-
-*Absorbed from the former Agent Interaction Component on 2026-09-17 — its introduction, kept verbatim:* Agent Interaction is the Component that governs how Agent Native and Agent Instance work is presented to and exchanged with Humans. It covers output style, progress communication, prompts, status presentation, artifacts, and other user-interface behavior.
-
-It owns presentation and interaction contracts. It does not own technical meaning, evidence, permission decisions, or the work being communicated.
-
-*Absorbed from the former Agent Observability Component on 2026-09-17 — its introduction, kept verbatim:* Agent Observability is the Component that makes Agent Native and Agent Instance configuration, execution, capability health, evidence, and outcomes inspectable. It defines diagnostics, status, logs, usage signals, and completion evidence without becoming the authority for the work observed.
-
-It owns observation contracts and health vocabulary. It does not own implementation, project intent, hidden reasoning, or the records maintained by other Components.
-
-*Absorbed from the former Agent Session Component on 2026-09-17 — its introduction, kept verbatim:* Agent Session is the Component that governs one continuous or resumable period of Agent execution. It defines lifecycle, identity, state continuity, background work, resumption, isolation, and termination behavior.
-
-It owns session lifecycle and transient execution continuity. It does not own project state, authored definitions, or durable Workflow records.
+It owns Rule scope, loading conditions, precedence, and recurring conduct. It does not own security enforcement, workflow implementation, project definitions, or session records.
 
 ### Purpose
 
@@ -86,25 +72,9 @@ What must be guaranteed rather than followed is not written here: it is declared
 
 ## Relationships
 
-- **Consumes Target and Implementation Modules during ordinary execution** — Agent Module authorities are consumed only by explicit Agent Sync and realized as Runtime Rules for every other operation.
-- **Consumed by Agent Context and Skill** — supplies persistent applicable guidance.
-- **Consumed by Agent Permission (including former Hook)** — provides behavioral context while those Components supply enforceable controls.
-- **Consumes Agent (formerly Role), Command, Rule (formerly Session and Observability)** — presents actions, progress, state, and outcomes.
-- **Consumed by every Human-facing Agent capability** — supplies the selected communication contract.
-- **Consumes every Agent Component** — evaluates their declarations and runtime realization.
-- **Consumed by Agent (formerly Role), Rule (formerly Interaction and Session)** — supplies diagnostics and evidence-backed outcome claims.
-- **Consumes Agent Runtime, Agent, Context, Agent (formerly Role), and Permission** — hosts an Agent Instance executing with current context and authority.
-- **Consumed by Agent (formerly Coordination), Permission (formerly Hook), Rule (formerly Interaction and Observability)** — supplies lifecycle events and execution identity.
-
-Technical Rule files, scopes, load order, and native locations belong to Agent Rule Preferences.
-
-Technical styles, status lines, themes, artifact facilities, and interface selections belong to Agent Rule Preferences (formerly Interaction Preferences).
-
-Technical checks, statuses, diagnostics, telemetry, logging, and usage reporting belong to Agent Rule Preferences (formerly Observability Preferences).
-
-Technical session options, persistence, resume policy, isolation, and background behavior belong to Agent Rule Preferences (formerly Session Preferences).
-
-Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+- **Consumed by Agent** — supplies persistent behavioral guidance to the Agent and its Native realization.
+- **Consumes Permission** — explains enforceable boundaries without replacing Permission's guarantees.
+- **Consumes Context** — relies on current context loading and scope to determine which Rules apply.
 
 <br>
 
@@ -150,7 +120,7 @@ Every Principle below is mandatory.
 
 ### Security boundaries use enforcement
 
-**Rule:** A behavior that must be guaranteed is enforced by Agent Permission, sandboxing, or an applicable Hook rather than relying only on an Agent Rule.
+**Rule:** A behavior that must be guaranteed is enforced by Agent Permission, sandboxing, or another applicable Native mechanism rather than relying only on an Agent Rule.
 
 **Why:** Instructions influence model behavior but do not constitute deterministic enforcement.
 
@@ -166,8 +136,6 @@ Every Principle below is mandatory.
 
 **Boundary:** A style may shorten expression only when no required substance is lost.
 
-*Formerly Agent Interaction Principle "Rules guide behavior without replacing authority".*
-
 <br>
 
 ### Interaction keeps work legible
@@ -177,8 +145,6 @@ Every Principle below is mandatory.
 **Why:** The Human must be able to understand and steer ongoing work.
 
 **Boundary:** Routine internal details and hidden reasoning are not progress requirements.
-
-*Formerly Agent Interaction Principle "Rule scope and conflict are explicit".*
 
 <br>
 
@@ -190,8 +156,6 @@ Every Principle below is mandatory.
 
 **Boundary:** Ordinary unstated details within current authority are resolved by professional judgment.
 
-*Formerly Agent Interaction Principle "Security boundaries use enforcement".*
-
 <br>
 
 ### Completion is evidence-backed
@@ -201,8 +165,6 @@ Every Principle below is mandatory.
 **Why:** Stable outcomes require repeatable gates rather than confidence or plausible artifacts.
 
 **Boundary:** Evidence proportional to risk is sufficient; redundant checks that cannot increase confidence are unnecessary.
-
-*Formerly Agent Observability Principle "Rules guide behavior without replacing authority".*
 
 <br>
 
@@ -214,8 +176,6 @@ Every Principle below is mandatory.
 
 **Boundary:** Hidden reasoning, secrets, and irrelevant command transcripts are never observability requirements.
 
-*Formerly Agent Observability Principle "Rule scope and conflict are explicit".*
-
 <br>
 
 ### Health claims use controlled status vocabulary
@@ -225,8 +185,6 @@ Every Principle below is mandatory.
 **Why:** Stable vocabulary makes diagnostics comparable across runtimes and sessions.
 
 **Boundary:** A runtime may expose richer native detail beneath the portable status.
-
-*Formerly Agent Observability Principle "Security boundaries use enforcement".*
 
 <br>
 
@@ -238,8 +196,6 @@ Every Principle below is mandatory.
 
 **Boundary:** Session state may be used as evidence after it is revalidated against current sources.
 
-*Formerly Agent Session Principle "Rules guide behavior without replacing authority".*
-
 <br>
 
 ### Resume revalidates before mutation
@@ -250,8 +206,6 @@ Every Principle below is mandatory.
 
 **Boundary:** Read-only orientation may occur before full mutation readiness is established.
 
-*Formerly Agent Session Principle "Rule scope and conflict are explicit".*
-
 <br>
 
 ### Session termination exposes unfinished work
@@ -261,8 +215,6 @@ Every Principle below is mandatory.
 **Why:** Invisible lifecycle endings make continuation unsafe.
 
 **Boundary:** An explicitly cancelled Session reports cancellation rather than completing its original objective.
-
-*Formerly Agent Session Principle "Security boundaries use enforcement".*
 
 <br>
 

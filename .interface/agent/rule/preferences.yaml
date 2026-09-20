@@ -10,10 +10,9 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: This file is human-owned; Rules guide behavior but never replace enforceable Permission or Hook controls.
+  rule: This file is human-owned; Rules guide behavior but never replace enforceable Permission controls.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
-  absorbed: interaction/preferences.yaml (v1.0), observability/preferences.yaml (v1.0), session/preferences.yaml (v1.0), merged verbatim under settings.interaction, settings.observability, settings.session on 2026-09-17.
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->

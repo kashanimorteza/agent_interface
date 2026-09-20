@@ -2,7 +2,7 @@
 meta:
   path: .interface/agent/permission/preferences.yaml
   path_note: The Preferences layer of the Agent Permission Component.
-  purpose: Permission mode, allow/ask/deny rules, sandboxing, protected sources, enforced guarantees (formerly Hooks), trust, authentication, and secrets.
+  purpose: Permission mode, allow/ask/deny rules, sandboxing, protected sources, enforced guarantees, trust, authentication, and secrets.
   standard: Agent Project Interface
   version: '3.0'
   updated: '2026-09-17'
@@ -13,7 +13,6 @@ policy:
   rule: This file is human-owned and contains no credential or secret values.
   changed_by: The human, directly.
   precedence: Human authorization, every applicable Principle, deny rules, and stricter managed controls take precedence.
-  absorbed: 'hook/preferences.yaml (v1.1), merged on 2026-09-17: its project Hooks became settings.enforced guarantees, and its Claude-specific events, handler types, and hook mechanics moved under settings.native.claude.hooks.'
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->
@@ -47,7 +46,6 @@ content:
     file_edit_approvals:
       not_required:
         meaning: Apply ordinary project file edits without per-edit confirmation while preserving explicit ask and deny rules.
-        former_key: edit_authorized (renamed 2026-09-18; the Native mechanism name moved to settings.native.claude.permission_mode)
       per_edit:
         meaning: Confirm every project file edit before it is applied.
   settings:
