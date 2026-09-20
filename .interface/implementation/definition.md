@@ -14,13 +14,12 @@
    - **[Purpose](#purpose)**
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
-3. **[Architecture](#architecture)**
-4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
+3. **[Relationships](#relationships)**
+4. **[Principles](#principles)**
    - **[Implementation has Development and Process Subsystems](#implementation-has-development-and-process-subsystems)**
    - **[Each subject is defined by one Definition and one Preferences file](#each-subject-is-defined-by-one-definition-and-one-preferences-file)**
    - **[Development and Process retain separate ownership](#development-and-process-retain-separate-ownership)**
-6. **[At a Glance](#at-a-glance)**
+5. **[At a Glance](#at-a-glance)**
 
 
 
@@ -35,10 +34,7 @@
 
 Implementation defines the reusable philosophy and standards used to build a Target and to control the work that builds it. It is independent of any particular Target or Agent.
 
-Implementation has two top-level Subsystems:
-
-- **Development Subsystem** defines the product being built, its Components, their composition, and their technical realization.
-- **Process Subsystem** defines how implementation work is configured, planned, reviewed, and recorded.
+The Module map and the relationship between its Subsystems are described in the [Implementation Guide](guide.md).
 
 ### Purpose
 
@@ -46,7 +42,7 @@ Building a product requires both a coherent product architecture and a reliable 
 
 ### How It Works
 
-Each subject in Implementation is described by a Definition and a Preferences file. Development supplies the product Components and their shared composition. Process prepares the operational records, turns Target phases into work, evaluates selected results, and records the position needed to continue. Skills perform these operations under the authorities of the relevant subjects.
+Each subject in Implementation is described by a Definition and a Preferences file. The Definition is authoritative for meaning and Principles; Preferences record choices and realization conventions. Skills perform operations under the authority of the relevant subject.
 
 
 
@@ -63,59 +59,6 @@ Each subject in Implementation is described by a Definition and a Preferences fi
 - **Definition** — the authoritative description of a subject's Understanding, relationships, boundaries, and mandatory Principles.
 - **Preference** — a human-owned choice or default used where a higher authority is silent; it never overrides a Principle.
 - **Subject** — any Implementation Module, Subsystem, or Component described by a Definition and Preferences file.
-
-
-
-
-
-<br><br>
-<!--------------------------------------------------------------------------------- Architecture --->
-
-## Architecture
-
-```text
-Implementation
-└── Subsystems
-    ├── Development
-    └── Process
-```
-
-### Development
-
-Development defines how independent product Components form one application system. It owns their composition, Component Profiles, Connections, shared technical catalogues, and cross-cutting standards.
-
-```yaml
-name: Development
-definition: .interface/implementation/development/definition.md
-preferences: .interface/implementation/development/preferences.yaml
-responsibility: The product composition and technical realization of the independent Components that form the Target application.
-```
-
-→ [Definition](development/definition.md)<br>
-→ [Preferences](development/preferences.yaml)
-
-<br>
-
-Model defines shared domain meaning and Domain Definitions. Database owns persistence and the public operations for stored data. Logic owns application Behaviour and exposes it through its Public Interface. API publishes the application's external API through Logic. Presentation presents the application through capabilities published by Logic. Platform defines how completed Development Components are prepared and brought online.
-
-### Process
-
-Process defines how work on Development is configured, planned, reviewed, and recorded. It owns no product Behaviour or Source.
-
-```yaml
-name: Process
-definition: .interface/implementation/process/definition.md
-preferences: .interface/implementation/process/preferences.yaml
-responsibility: The configuration, planning, review, and operational recording of Implementation work.
-```
-
-→ [Definition](process/definition.md)<br>
-→ [Preferences](process/preferences.yaml)
-
-<br>
-
-Configuration prepares and structurally reconciles operational Config and the Application Manifest. Plan turns Target phases into bounded, understandable, and verifiable activities. Review establishes whether selected-phase work satisfies its applicable authorities and owns recorded Findings. State records aggregate operational position, progress, outcomes, History, Blockers, and Open Questions.
-
 
 
 

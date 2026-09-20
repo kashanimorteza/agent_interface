@@ -8,50 +8,49 @@ Foundation is not one of the three Modules (Target, Implementation, Agent). It i
 
 ## Navigation
 
-1. **[Purpose](#purpose)**
-2. **[Structure](#structure)**
-3. **[Interface file](#interface-file)**
-4. **[Interface sections kept as separate files](#interface-sections-kept-as-separate-files)**
-   - **[Introduction](#introduction)**
-   - **[Terminology](#terminology)**
-   - **[Architecture](#architecture)**
-   - **[Understanding](#understanding)**
-   - **[Operations](#operations)**
-   - **[Modes](#modes)**
-   - **[Authority and Ownership](#authority-and-ownership)**
-   - **[Workflow](#workflow)**
-5. **[Config](#config)**
-   - **[Application Manifest](#application-manifest-config)**
-   - **[State](#state-config)**
-   - **[Plan](#plan-config)**
-   - **[Review](#review-config)**
-6. **[Schema](#schema)**
-   - **[Structure standards](#structure-standards)**
-     - **[YAML](#yaml-schema)**
-     - **[Principles](#principles-schema)**
-     - **[Preferences](#preferences-schema)**
-     - **[Agent Preferences](#agent-preferences-schema)**
-     - **[Skill Contract](#skill-contract-schema)**
-     - **[Personality](#personality-schema)**
-     - **[Database Configuration](#database-configuration-schema)**
-   - **[Operational formats](#operational-formats)**
-     - **[Application Manifest](#application-manifest-schema)**
-     - **[State](#state-schema)**
-     - **[Plan](#plan-schema)**
-     - **[Review](#review-schema)**
-7. **[Ownership](#ownership)**
-8. **[Understanding record](#understanding-record)**
-9. **[Open decisions](#open-decisions)**
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Boundaries](#boundaries)**
+6. **[Layering](#layering)**
+7. **[Authority](#authority)**
+8. **[Principles](#principles)**
+9. **[At a Glance](#at-a-glance)**
+10. **[Understanding record](#understanding-record)**
+11. **[Open decisions](#open-decisions)**
 
 <br>
 
-## Purpose
+## Introduction
+
+### Overview
 
 Foundation Files provide the foundational definitions and schemas required by the Interface: the canonical Interface document that every Understanding starts from, the Schemas that define how authored and generated files are shaped, and the Config records that coordinate the Workflow.
 
+### Purpose
+
+Foundation keeps shared Interface resources separate from the Target, Implementation, and Agent Modules.
+
+### How It Works
+
+The Interface routes an Agent to the relevant Foundation source, Schema, or Config record. Each source remains owned by its stated authority.
+
 <br>
 
-## Structure
+## Terms
+
+- **Foundation** — shared resources required by the Modules and Skills.
+- **Schema** — the structure of an authored source or operational record.
+- **Config** — an operational record used by the Workflow.
+- **Interface file** — the canonical navigation entry point for Agent Interface.
+
+<br>
+
+## Architecture
 
 ```text
 .interface/interface.md          ← the Interface file, one level above
@@ -84,7 +83,7 @@ Foundation Files provide the foundational definitions and schemas required by th
 
 <br>
 
-## Interface file
+### Interface file
 
 [`interface.md`](../interface.md), one level above this directory, is the canonical definition, navigation entry point, and complete file map of Agent Interface. Interface Understanding — required by every Skill — starts exclusively from this file and follows only the routes it provides for the active role. For every operation except Agent Sync, those routes lead to Target, Implementation, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module.
 
@@ -98,7 +97,7 @@ responsibility: Canonical definition, navigation entry point, and entry point to
 
 <br>
 
-## Interface sections kept as separate files
+### Interface sections kept as separate files
 
 Eight sections of the Interface were moved out of `interface.md` verbatim — five on 2026-09-17; Introduction, Terminology, and Architecture on 2026-09-18 — so that the entry file stays a map. Each is part of Interface Understanding: a Skill reads `interface.md` and then these files before acting.
 
@@ -200,7 +199,7 @@ responsibility: Defines the Workflow and its Default, Normal, and Detailed paths
 
 <br>
 
-## Config
+### Config
 
 Config stores the mutable operational records used while executing the Interface. It coordinates the Workflow and records where work stands; it does not store what the Target means and never becomes a second project definition.
 
@@ -268,7 +267,7 @@ responsibility: Stores reviewed phases, outcomes, Findings, evidence, and Findin
 
 <br>
 
-## Schema
+### Schema
 
 Schemas define the structure followed by authored Interface files and generated operational records. Two kinds exist: **Structure standards**, the shape a Human-authored file follows, and **Operational formats**, the stored structure and initial template of a generated record. Schema definition files use their own formats and do not follow the outer YAML frame they define.
 
@@ -433,9 +432,41 @@ responsibility: Defines the stored structure and initial values of Review Config
 The Interface file's own statement of the Foundation Files — "Foundation Files provide foundational definitions and schemas required by the Interface." — was moved here verbatim on 2026-09-17 and merged into the entries above on 2026-09-18. Its earlier structure tree listed `interface.md` inside `foundation/`; the Structure tree at the top of this document supersedes it.
 
 
-## Ownership
+## Relationships
 
 The Human owns `interface.md`, this document, the eight section files, and every Schema. Config records belong to the Components that own them — Plan, State, and Review — and are written only by the Skills the Interface authorizes for each record. Target definitions are intentionally **not** considered Foundation Files because they belong to the Target concept itself; they live in the Target Module.
+
+<br>
+
+## Boundaries
+
+Foundation defines shared resources and their structure. It does not define Target meaning, Implementation choices, Agent selections, or resolved runtime state.
+
+<br>
+
+## Layering
+
+Definitions explain portable meaning, Preferences record current choices, Schemas define file structure, and Config records store operational state. Each layer remains under its owning authority.
+
+<br>
+
+## Authority
+
+The Interface file is the canonical navigation authority. Each Definition, Preferences file, Schema, and Config record remains authoritative only within its declared ownership.
+
+<br>
+
+## Principles
+
+Foundation Guides explain shared resources and map their owners; they do not replace the Definitions, Preferences, Schemas, or Config records they reference.
+
+<br>
+
+## At a Glance
+
+- **Must** — follow the Interface routes to the relevant Foundation source.
+- **Must** — use each Schema for the file type it owns.
+- **Never** — treat a Guide as a replacement for its authoritative source.
 
 <br>
 

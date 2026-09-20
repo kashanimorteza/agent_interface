@@ -103,6 +103,7 @@ responsibility: Defines the Implementation Module and maps every Component's Def
 ```
 
 → [Implementation Module Definition](implementation/definition.md)
+→ [Implementation Guide](implementation/guide.md)
 
 <!-------------------------- Agent -->
 ### Agent

@@ -1,29 +1,54 @@
-# Target
+# Target Guide
 
-This document explains the Target Module: what it is, what its files hold, who owns them, and how the rest of the Interface reads them. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/interface.md`, and where the two disagree the Interface file is correct.
+This Guide explains the Target Module: what it is, what its files hold, who owns them, and how the rest of the Interface reads them. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/interface.md`, and where the two disagree the Interface file is correct.
 
 <br>
 
 ## Navigation
 
-1. **[Purpose](#purpose)**
-2. **[Structure](#structure)**
-   - **[Non-Technical Definition](#non-technical-definition)**
-   - **[Technical Definition](#technical-definition)**
-3. **[How the Target is used](#how-the-target-is-used)**
-4. **[Ownership](#ownership)**
-5. **[Understanding record](#understanding-record)**
-6. **[Open decisions](#open-decisions)**
+1. **[Introduction](#introduction)**
+   - **[Overview](#overview)**
+   - **[Purpose](#purpose)**
+   - **[How It Works](#how-it-works)**
+2. **[Terms](#terms)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Boundaries](#boundaries)**
+6. **[Layering](#layering)**
+7. **[Authority](#authority)**
+8. **[Principles](#principles)**
+9. **[At a Glance](#at-a-glance)**
+10. **[Understanding record](#understanding-record)**
+11. **[Open decisions](#open-decisions)**
 
 <br>
 
-## Purpose
+## Introduction
 
-The Target describes **what the Interface is working on** — the application, platform, service, API, module, package, subsystem, or other development subject. The term Target is preferred over "Target Project" because the subject does not have to be an entire project. A different Target can be provided without changing the Implementation or Agent definitions; that separation is one of the central principles of Agent Interface.
+### Overview
+
+The Target describes what the Interface is working on: an application, platform, service, API, module, package, subsystem, or other development subject.
+
+### Purpose
+
+A different Target can be provided without changing the Implementation or Agent definitions. That separation is one of the central principles of Agent Interface.
+
+### How It Works
+
+Target Understanding reads the two complementary Target definitions under their declared precedence. Config records operational work on the Target but never become a second Target definition.
 
 <br>
 
-## Structure
+## Terms
+
+- **Target** — the subject the Interface is working on.
+- **Non-Technical Definition** — the Human's intent, context, and requirements without requiring technical formulation.
+- **Technical Definition** — the Human's technical translation of the Non-Technical Definition and the primary authority when they conflict.
+- **Phase** — an ordered Target stage with a stable identifier, Component target, enabled state, readiness state, and goal.
+
+<br>
+
+## Architecture
 
 ```text
 Target Structure
@@ -54,28 +79,50 @@ The Human, acting as the implementation, translates the Non-Technical Definition
 ```yaml
 name: Technical Definition
 path: .interface/target/technical.md
-responsibility: The Human's technical translation of the Non-Technical Definition, without changing its meaning; the primary authority for the Target, taking precedence wherever the two definitions conflict
+responsibility: The Human's technical translation of the Non-Technical Definition, without changing its meaning; the primary authority on conflict
 ```
 
 → [Technical Definition](technical.md)
 
-Target definitions are intentionally not Foundation Files: they belong to the Target concept itself.
+<br>
 
-The Interface file's own statement of the Target — "The Target describes **what the Interface is working on**." — was moved here verbatim on 2026-09-17 and merged into the entries above on 2026-09-18.
+## Relationships
+
+- **Consumed by Target Understanding** — supplies the current meaning of the Target.
+- **Consumed by Implementation** — supplies intent and phase requirements without becoming Implementation policy.
+- **Recorded by Config** — supplies phase identifiers for operational records; Config does not define the Target.
 
 <br>
 
-## How the Target is used
+## Boundaries
 
-Target Understanding is one of the two kinds of Understanding a Skill establishes before acting. When a role needs Target meaning, it reads both definitions under the declared precedence — the Non-Technical Definition provides intent and context, the Technical Definition is the authority on conflict. Understanding is reconstructed from the current sources every time it is required and is never copied into Config as a second project definition.
-
-The Technical Definition also carries the Target's Phases: the ordered stages of development, each with a stable identifier, a Component target, an enabled state, a readiness state, and a goal. Configure creates the phase records in State from those identifiers; Planning, Developing, and Review work phase by phase.
+Target definitions do not contain Implementation philosophy, Agent behavior, generated Config, or runtime state. Target definitions are intentionally not Foundation Files: they belong to the Target concept itself.
 
 <br>
 
-## Ownership
+## Layering
 
-The Human owns both Target definitions and every other authored Interface source. No Skill writes to `.interface/target/`. Config stores operational records about the work on the Target but never defines the Target.
+The Non-Technical Definition provides intent and context. The Technical Definition provides the technical translation and takes precedence wherever the two conflict.
+
+<br>
+
+## Authority
+
+The Human owns both Target definitions and every other authored Interface source. No Skill writes to `.interface/target/`. The Interface file remains the canonical navigation authority.
+
+<br>
+
+## Principles
+
+The Target definitions are the authorities for Target meaning. This Guide explains and maps them; it does not introduce a second Target definition.
+
+<br>
+
+## At a Glance
+
+- **Must** — read both Target definitions when Target Understanding is required.
+- **Must** — use the Technical Definition as the authority on conflict.
+- **Never** — copy Target meaning into Config or treat operational records as a Target definition.
 
 <br>
 

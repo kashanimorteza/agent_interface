@@ -1,5 +1,10 @@
 # Agent Skill Definition
 
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -8,21 +13,30 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Every Skill has one complete contract](#every-skill-has-one-complete-contract)**
    - **[Skill availability is proven](#skill-availability-is-proven)**
    - **[Skill execution is safely repeatable](#skill-execution-is-safely-repeatable)**
+   - **[Skill-specific behavior](#skill-specific-behavior)**
    - **[A prepared file or directory may supply a Skill's native instruction body](#a-prepared-file-or-directory-may-supply-a-skills-native-instruction-body)**
    - **[Sync places Module content; it translates only where translation serves the Native](#sync-places-module-content-it-translates-only-where-translation-serves-the-native)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
 
-Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Every declared Skill has exactly one Capability Realization Kind. An Interface-owned Skill is Constructed: its portable Skill Contract defines it completely, and Agent Sync places that Contract's obligations, as written, into the Native's own Skill form, adding only the Native's discovery and invocation mechanics (Principle "Sync places Module content; it translates only where translation serves the Native"). A declared Skill with a matching prepared Markdown file is Prepared: that file's instruction content is transferred into the Runtime unchanged. Externally provided Skills are Installed: they remain provider-owned capabilities declared by the Agent Preferences and provisioned through Agent Extension or Agent Integration, never built from a Skill Contract.
+Agent Skill is the Component that defines the architecture-level requirements for reusable knowledge or workflows an Agent Role can activate. Every declared Skill has exactly one Capability Realization Kind. An Interface-owned Skill is Constructed: its portable Skill Contract defines it completely, and Agent Sync places that Contract's obligations, as written, into the Native's own Skill form, adding only the Native's discovery and invocation mechanics (Principle "Sync places Module content; it translates only where translation serves the Native"). A declared Skill with a matching prepared Markdown file is Prepared: that file's instruction content is transferred into the Runtime unchanged. Externally provided Skills are Installed: they remain provider-owned capabilities declared by the Agent Preferences and are provisioned through the provider's own ecosystem, never built from a Skill Contract.
 
 It owns Skill contracts and activation boundaries. It does not own the project facts, Component policies, or runtime tools it consumes.
 
@@ -46,6 +60,12 @@ Execution is safely repeatable: running a Skill again preserves valid work rathe
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Skill** — reusable instructions or knowledge activated explicitly or by relevance.
@@ -54,11 +74,17 @@ Execution is safely repeatable: running a Skill again preserves valid work rathe
 - **Activation** — the state in which a Skill is discoverable and usable by its intended role.
 - **Invocation Policy** — whether a Skill may be invoked by the Human, by a declared coordinating Skill, or by both in the selected Runtime.
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Agent (formerly Role), Context, Rule, Tool, and Permission** — executes within their contracts.
+- **Consumes Agent, Context, Rule, Tool, and Permission** — executes within their contracts.
 - **Consumes Implementation Components and Target** — reads current authorities required by its responsibility.
-- **Consumed by Agent, Command, and Agent (formerly Coordination)** — provides assignable, invocable, and delegable workflows.
+- **Consumed by Agent and Command** — provides assignable, invocable, and delegable workflows.
 
 Each Interface-owned Skill's portable behavior belongs to its Skill Contract under the Agent Skill Component. Technical Skill catalogs, external provider Skills, activation choices, and provider resources belong to Agent Skill Preferences; Native implementation mappings are resolved by Agent Sync from the selected Agent Native. Command names and argument forms belong to Agent Command Preferences.
 
@@ -66,8 +92,38 @@ Every Principle in this file is mandatory. An Agent Preference can never overrid
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Skill-specific behavior belongs in each portable Skill Contract. Agent Skill Preferences hold declarations, selections, Native mappings, prepared-file conventions, and provider resources. The selected Agent Native owns runtime paths, formats, and invocation mechanics.
+
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+This Definition owns the shared mandatory rules of the Skill Component. Skill Contracts own Skill-specific behavior; Preferences record current declarations; and native realizations never override either authority.
+
+<br>
+
+<br>
+
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -104,7 +160,7 @@ Every Principle below is mandatory.
 
 <br>
 
-## Skill-specific behavior
+### Skill-specific behavior
 
 Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, verification, idempotency, stopping conditions, and runtime realization belong only in its own portable Contract. This Definition file defines no Skill-specific workflow or implementation details.
 
@@ -130,6 +186,12 @@ Each Skill's purpose, responsibility, workflow, inputs, outputs, authority, veri
 
 <br>
 
+
+
+
+
+<br><br>
+<!--------------------------------------------------------------------------------- At_a_Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
@@ -164,3 +226,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — place each Module declaration as the Human authored it, adding only the Native's own mechanics around it
 - **Must** — restate a declaration in the Native's idiom only where that makes the concept land better in the Native, and only with its scope and obligations unchanged
 - **Never** — narrow, widen, or re-scope an obligation while realizing it; report such a difference as approximated with both wordings, never as synchronized
+
+
+
+
+
+<br><br>
+

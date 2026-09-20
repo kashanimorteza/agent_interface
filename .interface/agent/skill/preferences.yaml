@@ -20,7 +20,7 @@ policy:
 resolution:
   consumption: 'Only the explicit Agent Native Skill reads these Preferences: in its sync modes it resolves portable Contracts and materializes self-contained native Constructed Skills; in its install mode
     it resolves prepared content and provider declarations and materializes Prepared and Installed Skills. Every other consumer uses the resulting Runtime artifacts.'
-  selection: Use an undeclared optional Skill only when relevant, compatible, and within current authority.
+  selection: Use a declared optional Skill only when relevant, compatible, and within current authority.
   version_resolution: Runtime and extension Skills resolve from their active providers.
   matching: During explicit Agent Sync, match Interface-owned Skills by portable Contract. During explicit the install mode of the Agent Native Skill, match a prepared Skill file or directory by the declared
     Skill's exact stable key and match external Skills by stable key and provider declaration. Either operation resolves Native identifiers and mappings from the selected Agent Native.
@@ -147,9 +147,6 @@ content:
             scope: Configure once when no phase was selected or when a Finding names it; Planning, Developing, and Reviewing per selected phase, repeated while Review records Findings and progress continues;
               Launch when every enabled and ready phase is assured
             authority: delegated invocation only through the Native's own Skill invocation mechanism; each Skill retains ownership of its records and outputs
-            moved_from: 'reviewing.coordination on 2026-09-17 (was: {allowed_skills: [skills.core_workflow.configure, skills.core_workflow.planning, skills.core_workflow.developing],
-              authority: delegated invocation only; each Skill retains ownership of its records and outputs, scope: same selected phase and current reconciliation Finding; Configure may also reconcile project-wide
-              Config or Environment prerequisites})'
         reset:
           name: reset
           native: {claude: {name: my-interface-reset}}
@@ -167,7 +164,7 @@ content:
           modes:
             1: sync self
             2: sync component
-            3: install (formerly the skill-installer Skill, merged 2026-09-17)
+            3: install
           invocation: direct-explicit-human-only
           model_invocation: disabled
           delegated_invocation: disabled
@@ -189,4 +186,3 @@ content:
     placement_note: "Where a declared Skill lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (project_skills, user_skills, managed_skills, runtime_skills, extension_skills) were collapsed into `skills` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     disabled_skills: {}
     overrides: {}
-
