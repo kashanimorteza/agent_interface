@@ -70,3 +70,4 @@ Rebuild from current authorities and reconcile rather than regenerate. Unchanged
 ## Runtime Realization
 
 A native adapter exposes optional multi-phase input using the Command mapping, locates all live structures through the Interface, and reports phases, Plan results, changes, conflicts, State, and the supported next step.
+

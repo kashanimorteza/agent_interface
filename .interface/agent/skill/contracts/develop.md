@@ -77,3 +77,4 @@ Preserve valid implementation and completed evidence, reconcile changed requirem
 ## Runtime Realization
 
 A native adapter uses the selected development tools and package mechanisms from Component Preferences, never hardcodes them in the Contract, and reports executed and withheld work, proof, prerequisites, blockers, State, and the supported next step.
+

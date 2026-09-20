@@ -33,23 +33,23 @@ A Skill named by an `agent_skills` association reaches the Runtime through its e
 <!-------------------------- Planning Operation -->
 ### Planning
 
-**Agent Skill:** `/my-interface-planning`
+**Agent Skill:** `/my-interface-plan`
 
-This Operation is performed through `/my-interface-planning` to convert the current Target and applicable Implementation guidance into bounded, understandable, and verifiable Tasks.
+This Operation is performed through `/my-interface-plan` to convert the current Target and applicable Implementation guidance into bounded, understandable, and verifiable Tasks.
 
 <!-------------------------- Developing Operation -->
 ### Developing
 
-**Agent Skill:** `/my-interface-developing`
+**Agent Skill:** `/my-interface-develop`
 
-This Operation is performed through `/my-interface-developing [phase-number ...]` to implement and verify eligible Tasks from a valid current Plan. Review evaluates the resulting implementation afterward.
+This Operation is performed through `/my-interface-develop [phase-number ...]` to implement and verify eligible Tasks from a valid current Plan. Review evaluates the resulting implementation afterward.
 
 <!-------------------------- Reviewing Operation -->
 ### Reviewing
 
-**Agent Skill:** `/my-interface-reviewer`
+**Agent Skill:** `/my-interface-review`
 
-This Operation is performed through `/my-interface-reviewer [phase-number ...]` to assure each selected phase's Plan and existing implementation against current Interface and Target Understanding, recording every misalignment as a Finding owned by Configure, Planning, or Developing, without invoking them or repairing anything; Implement (or the Human) reruns those operations and Review until it is satisfied. With no phase input, it reviews every enabled phase.
+This Operation is performed through `/my-interface-review [phase-number ...]` to assure each selected phase's Plan and existing implementation against current Interface and Target Understanding, recording every misalignment as a Finding owned by Configure, Plan, or Develop, without invoking them or repairing anything; Implement (or the Human) reruns those operations and Review until it is satisfied. With no phase input, it reviews every enabled phase.
 
 <!-------------------------- Launch Operation -->
 ### Launch

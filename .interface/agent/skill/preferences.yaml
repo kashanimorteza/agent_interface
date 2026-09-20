@@ -80,11 +80,11 @@ content:
           autonomous_invocation: disabled
           required: true
           personality: null
-        planning:
-          name: planning
-          native: {claude: {name: my-interface-planning}}
+        plan:
+          name: plan
+          native: {claude: {name: my-interface-plan}}
           path: resolved by Agent Sync from the selected Agent Native
-          contract: .interface/agent/skill/contracts/planning.md
+          contract: .interface/agent/skill/contracts/plan.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
           invocation: human-or-declared-coordinator
           human_invocation: enabled
@@ -92,11 +92,11 @@ content:
           autonomous_invocation: disabled
           required: true
           personality: null
-        developing:
-          name: developing
-          native: {claude: {name: my-interface-developing}}
+        develop:
+          name: develop
+          native: {claude: {name: my-interface-develop}}
           path: resolved by Agent Sync from the selected Agent Native
-          contract: .interface/agent/skill/contracts/developing.md
+          contract: .interface/agent/skill/contracts/develop.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
           invocation: human-or-declared-coordinator
           human_invocation: enabled
@@ -104,11 +104,11 @@ content:
           autonomous_invocation: disabled
           required: true
           personality: null
-        reviewing:
-          name: reviewing
-          native: {claude: {name: my-interface-reviewer}}
+        review:
+          name: review
+          native: {claude: {name: my-interface-review}}
           path: resolved by Agent Sync from the selected Agent Native
-          contract: .interface/agent/skill/contracts/reviewing.md
+          contract: .interface/agent/skill/contracts/review.md
           architecture_contract: Skill Contract and shared Agent Skill Principles
           invocation: human-or-declared-coordinator
           human_invocation: enabled
@@ -140,11 +140,11 @@ content:
           coordination:
             allowed_skills:
             - skills.core_workflow.configure
-            - skills.core_workflow.planning
-            - skills.core_workflow.developing
-            - skills.core_workflow.reviewing
+            - skills.core_workflow.plan
+            - skills.core_workflow.develop
+            - skills.core_workflow.review
             - skills.core_workflow.launch
-            scope: Configure once when no phase was selected or when a Finding names it; Planning, Developing, and Reviewing per selected phase, repeated while Review records Findings and progress continues;
+            scope: Configure once when no phase was selected or when a Finding names it; Plan, Develop, and Review per selected phase, repeated while Review records Findings and progress continues;
               Launch when every enabled and ready phase is assured
             authority: delegated invocation only through the Native's own Skill invocation mechanism; each Skill retains ownership of its records and outputs
         reset:
@@ -182,7 +182,7 @@ content:
                 source: github
                 repository: pydantic/skills
               plugin: pydantic@pydantic-skills
-    naming_note: "A Skill's portable name is its key; the Claude Code Skill directory name (the `my-interface-` prefix, and `reviewer` for `reviewing`) lives only under each Skill's native.claude.name (moved there 2026-09-18)."
+    naming_note: "A Skill's portable name is its key; the Claude Code Skill directory name and the `my-interface-` prefix live only under each Skill's native.claude.name."
     placement_note: "Where a declared Skill lives in the Native (project, user, managed, extension, runtime, built-in) is Agent Sync's decision from the Native's own layout; the former source-based categories (project_skills, user_skills, managed_skills, runtime_skills, extension_skills) were collapsed into `skills` on 2026-09-18 because they mirrored one Native's layout. An entry that must land in a particular place may say so in its own `native.<agent-native>` hint."
     disabled_skills: {}
     overrides: {}

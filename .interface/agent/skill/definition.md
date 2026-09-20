@@ -1,9 +1,7 @@
 # Agent Skill Definition
 
+<br>
 
-
-
-<br><br>
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
@@ -13,22 +11,21 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
-5. **[Authority](#authority)**
-6. **[Principles](#principles)**
+4. **[Principles](#principles)**
    - **[Each Skill layer has one owner](#each-skill-layer-has-one-owner)**
    - **[Every Skill has one Contract](#every-skill-has-one-contract)**
    - **[Skill availability is proven](#skill-availability-is-proven)**
    - **[Skill execution is repeatable](#skill-execution-is-repeatable)**
    - **[Every Skill has one Realization Kind](#every-skill-has-one-realization-kind)**
    - **[Skill owns executable capability only](#skill-owns-executable-capability-only)**
-7. **[At a Glance](#at-a-glance)**
+5. **[At a Glance](#at-a-glance)**
 
 
 
 
 
 <br><br>
+
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
@@ -49,6 +46,7 @@ The Skill Contract defines the Skill's behavior. Preferences hold its current se
 
 
 <br><br>
+
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
@@ -61,6 +59,7 @@ The Skill Contract defines the Skill's behavior. Preferences hold its current se
 
 
 <br><br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
@@ -73,32 +72,9 @@ The Skill Contract defines the Skill's behavior. Preferences hold its current se
 
 
 <br><br>
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
 
-Layer ownership is governed by the Principle **Each Skill layer has one owner**.
-
-
-
-
-
-<br><br>
-<!--------------------------------------------------------------------------------- Authority --->
-## Authority
-
-This Definition owns the shared principles of the Skill Component. Each Contract owns one Skill's behavior, Preferences own its current declarations, and the Runtime realization never overrides either.
-
-
-
-
-
-<br><br>
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
-
-Every Principle below is mandatory.
-
-<br>
 
 ### Each Skill layer has one owner
 
@@ -108,7 +84,6 @@ Every Principle below is mandatory.
 
 **Boundary:** No layer replaces, overrides, or duplicates the authority of another layer.
 
-<br>
 
 ### Every Skill has one Contract
 
@@ -118,7 +93,6 @@ Every Principle below is mandatory.
 
 **Boundary:** This Definition does not repeat a Skill Contract or define one Skill's workflow.
 
-<br>
 
 ### Skill availability is proven
 
@@ -128,7 +102,6 @@ Every Principle below is mandatory.
 
 **Boundary:** Invocation never expands the Skill's authority or responsibility.
 
-<br>
 
 ### Skill execution is repeatable
 
@@ -138,7 +111,6 @@ Every Principle below is mandatory.
 
 **Boundary:** Repeatability never authorizes destructive replacement of meaningful work.
 
-<br>
 
 ### Every Skill has one Realization Kind
 
@@ -148,7 +120,6 @@ Every Principle below is mandatory.
 
 **Boundary:** Realization never changes the Skill Contract's meaning or authority.
 
-<br>
 
 ### Skill owns executable capability only
 
@@ -163,6 +134,7 @@ Every Principle below is mandatory.
 
 
 <br><br>
+
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 

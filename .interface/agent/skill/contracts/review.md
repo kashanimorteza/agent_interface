@@ -88,3 +88,4 @@ Repeated Review reconstructs both Understandings, preserves stable Findings and 
 ## Runtime Realization
 
 A native adapter exposes optional multi-phase input, invokes no other Skill, and reports phase selection, both assurances, every Finding with its owning operation, missing evidence, convergence status, aggregate outcomes, and records changed.
+
