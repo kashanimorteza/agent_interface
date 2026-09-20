@@ -46,24 +46,25 @@ A Principle is portable: the same file can be handed unchanged to another projec
 A Definition file carries these parts, in this order. A part marked *optional* is carried by a Component that has something to say there and omitted — not left empty — by one that does not:
 
 1. **Title** — the file's single first-level heading.
-2. **Navigation** — the map of the file's own sections.
-3. **Introduction** — everything a reader needs in order to understand the Component, in four parts:
+2. **Opening Summary** — one short paragraph introducing the owning Module, Subsystem, or Component before the reader enters the file's map.
+3. **Navigation** — the map of the file's own sections.
+4. **Introduction** — everything a reader needs in order to understand the Component, in four parts:
    - **Overview** — what the Component is and what it contributes.
    - **Purpose** — the problem it solves and what is lost without it.
    - **How It Works** — how it does that work, told as a flow rather than as rules.
    - **Decisions** — how the Human explained the Component and the decisions that followed, once that explanation is folded into the three parts above. *(optional)*
-4. **Terms** — the vocabulary the Component owns.
-5. **Architecture** — the named parts the Component is formed from. *(optional)*
-6. **Relationships** — what it consumes and what consumes it.
-7. **Boundaries** — the work that looks like this Component's but belongs elsewhere. *(optional)*
-8. **Layering** — where the Component's technical choices live instead.
-9. **Authority** — the binding force of the file and its precedence.
-10. **Principles** — the mandatory rules.
-11. **At a Glance** — the derived list of every obligation in the file.
+5. **Terms** — the vocabulary the Component owns.
+6. **Architecture** — the named parts the Component is formed from. *(optional)*
+7. **Relationships** — what it consumes and what consumes it.
+8. **Boundaries** — the work that looks like this Component's but belongs elsewhere. *(optional)*
+9. **Layering** — where the Component's technical choices live instead.
+10. **Authority** — the binding force of the file and its precedence.
+11. **Principles** — the mandatory rules.
+12. **At a Glance** — the derived list of every obligation in the file.
 
-Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
+The Opening Summary is the file's one-line orientation: it names what the owner is and where it belongs, without explaining the file's structure or stating a Principle. Navigation follows it so the reader sees the whole shape before entering the content. Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -78,6 +79,14 @@ The file opens with one first-level heading naming the Component:
 ```
 
 No other first-level heading appears in the file.
+
+
+<!--------------------------------------------------------------------------------- Opening Summary --->
+<br>
+
+## Opening Summary
+
+The Opening Summary is written as one unheaded paragraph immediately after the Title and before Navigation. It introduces the owning Module, Subsystem, or Component in one short sentence, without describing the document, repeating the Introduction, or stating an obligation. The paragraph has no Navigation entry.
 
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -359,6 +368,8 @@ This section is derived, never authoritative, and it is rewritten whenever a Pri
 
 ```markdown
 # <Component> Definition
+
+<One short sentence introducing the owning Component before the file's Navigation.>
 
 ## Navigation
 

@@ -1,5 +1,7 @@
 # Agent Module Guide
 
+This Guide explains the Agent Module. Its Component Definitions and Preferences remain authoritative, and Agent Native Sync is the only process that realizes them in an Agent Native.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->

@@ -94,15 +94,14 @@ responsibility: Explains the Target Module and maps its files; the Understanding
 <!-------------------------- Implementation -->
 ### Implementation
 
-The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its ten Components.
+The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its Development and Process Subsystems.
 
 ```yaml
-name: Implementation Module Definition
-path: .interface/implementation/definition.md
-responsibility: Defines the Implementation Module and maps every Component's Definition and Preferences; each Component's Definition remains the authority
+name: Implementation Guide
+path: .interface/implementation/guide.md
+responsibility: Explains the Implementation Module and maps its Development and Process Subsystems and their Components
 ```
 
-→ [Implementation Module Definition](implementation/definition.md)
 → [Implementation Guide](implementation/guide.md)
 
 <!-------------------------- Agent -->

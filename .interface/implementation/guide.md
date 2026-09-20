@@ -1,9 +1,10 @@
-# Implementation Guide
+# Implementation Module Guide
 
 This Guide explains the Implementation Module. The Interface and each subject's Definition remain authoritative.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -12,15 +13,21 @@ This Guide explains the Implementation Module. The Interface and each subject's 
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
+   - **[Development](#development)**
+   - **[Process](#process)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
 6. **[Layering](#layering)**
 7. **[Authority](#authority)**
 8. **[Principles](#principles)**
+   - **[Implementation has Development and Process Subsystems](#implementation-has-development-and-process-subsystems)**
+   - **[Each subject is defined by one Definition and one Preferences file](#each-subject-is-defined-by-one-definition-and-one-preferences-file)**
+   - **[Development and Process retain separate ownership](#development-and-process-retain-separate-ownership)**
 9. **[At a Glance](#at-a-glance)**
 
-<br>
+<br><br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -35,8 +42,9 @@ This Guide explains the Module's structure and keeps the Human's understanding o
 
 The Definition is authoritative for mandatory meaning and Principles. Preferences hold current choices. Skills operate under the authority of the relevant subject.
 
-<br>
+<br><br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Implementation** — the reusable Module that defines how a Target is built and how implementation work is controlled.
@@ -44,9 +52,13 @@ The Definition is authoritative for mandatory meaning and Principles. Preference
 - **Process** — the Subsystem that defines configuration, planning, review, and operational recording.
 - **Subsystem** — a major part of Implementation with separate ownership.
 - **Component** — a bounded subject within a Subsystem with its own Definition and Preferences.
+- **Definition** — the authoritative description of a subject's Understanding, relationships, boundaries, and mandatory Principles.
+- **Preference** — a human-owned choice or default used where a higher authority is silent; it never overrides a Principle.
+- **Subject** — any Implementation Subsystem or Component described by a Definition and Preferences file.
 
-<br>
+<br><br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ```text
@@ -88,42 +100,78 @@ responsibility: The configuration, planning, review, and operational recording o
 
 Configure prepares the operational Config records. Plan turns Target phases into bounded, understandable, and verifiable activities. Review establishes whether selected-phase work satisfies its applicable authorities and owns recorded Findings. State records aggregate operational position, progress, outcomes, History, Blockers, and Open Questions. The remaining Process Components coordinate the lifecycle around these responsibilities.
 
-<br>
+<br><br>
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Target** — applies current Target intent and phase requirements without becoming another Target definition.
 - **Consumed by operational Skills** — supplies the Development and Process authorities used while implementation work is performed.
 - **Contains Development and Process** — defines the product and operational ownership boundaries used by the Interface.
+- **Contains one Definition and one Preferences file per subject** — keeps each subject's meaning separate from its current choices.
 
-<br>
+<br><br>
 
+<!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
 Development owns product responsibilities. Process owns configuration, planning, review, and operational records. Neither Subsystem replaces the other.
 
-<br>
+<br><br>
 
+<!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Technical choices and defaults belong to the Preferences file of the subject that owns them. Shared choices that genuinely span Development and Process belong to Implementation Preferences. The shape of a generated operational record belongs to its Schema.
+Technical choices and defaults belong to the Preferences file of the subject that owns them. Shared choices that genuinely span Development and Process would belong to a shared Implementation Preferences file. The shape of a generated operational record belongs to its Schema.
 
-<br>
+No shared Implementation choices are currently declared; Development and Process subjects own their specific choices. Subject Preferences remain human-owned, are read in `selected`, `options`, `settings` order, and never override an explicit Target value or an applicable Definition Principle.
 
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Definition and Principles of each subject are authoritative for its meaning and mandatory rules. Preferences never override them. This Guide explains and maps those sources; it does not become a second authority.
 
-<br>
+<br><br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
-The mandatory Principles are recorded in [Implementation Definition](definition.md). This Guide does not repeat them.
+The mandatory Principles are stated by the Definition files of the owning subjects and summarized here for the Implementation Module. Those Definitions remain authoritative.
 
-<br>
+### Implementation has Development and Process Subsystems
 
+**Rule:** Implementation consists of two top-level Subsystems: Development, which governs the product being built, and Process, which governs the work that configures, plans, reviews, and records that build. Neither Subsystem replaces the other.
+
+**Why:** Product architecture and work control require different ownership while still needing one reusable Implementation perspective with explicit Subsystems.
+
+**Boundary:** Development does not own Process records, and Process does not own product Behaviour, Source, or public interfaces.
+
+### Each subject is defined by one Definition and one Preferences file
+
+**Rule:** Every Implementation Subsystem and Component has one `definition.md` and one `preferences.yaml`. The Definition carries its Understanding and mandatory Principles; Preferences carry its choices, defaults, and realization conventions.
+
+**Why:** A stable pair separates what the subject is and must preserve from how it is preferably realized.
+
+**Boundary:** A subject's Preferences never override its Definition, and a child subject does not duplicate the authority of its parent or sibling.
+
+### Development and Process retain separate ownership
+
+**Rule:** Components within Development own product responsibilities, and Components within Process own Configuration, Plan, Review, and State responsibilities. A Skill performs an operation under these owners but does not acquire ownership by writing an authorized record.
+
+**Why:** Explicit ownership keeps product meaning, operational progress, evidence, and workflow records from becoming interchangeable.
+
+**Boundary:** A Component within Process may inspect Development results when its responsibility requires it, but it never changes a Development-owned result directly.
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- At_a_Glance --->
 ## At a Glance
 
 - **Must** — keep product construction in Development and implementation control in Process.
+- **Must** — keep each subject's Understanding and mandatory Principles in Definition and its choices in Preferences.
+- **Must** — keep choices owned by Development or Process unless a choice genuinely spans both Subsystems.
 - **Must** — read each subject's Definition and Preferences through the links above.
 - **Never** — let this Guide replace a subject's Definition, Preferences, or Schema.
+- **Never** — let Preferences override Definition Principles or let Development and Process replace one another's ownership.
