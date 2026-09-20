@@ -1,4 +1,4 @@
-# Agent Module
+# Agent Module Guide
 
 <br>
 
@@ -11,7 +11,6 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
-   - **[Components](#components)**
    - **[Runtime](#runtime)**
    - **[Agent](#agent)**
    - **[Personality](#personality)**
@@ -251,9 +250,8 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-The Agent Module contains its own Component Definitions and Preferences. These files are the complete source of the Agent's portable meaning and current declarations.
-
-Only [Agent Native Sync](../foundation/agent-native-sync.md) is authorized to read the Module. The Foundation instruction creates and maintains the Agent Sync Skill, which realizes the Module in the selected Agent Native. No other Skill, Agent Instance, Runtime, or Context reads the Module directly.
+- **Consumed by the Foundation Module** — its [Agent Native Sync](../foundation/agent-native-sync.md) instruction is the only authorized reader of the Agent Module and realizes it in the selected Agent Native.
+- **Provides Agent meaning** — the Module's Component Definitions and Preferences provide the portable meaning and current declarations that Agent Sync transfers.
 
 
 
@@ -263,9 +261,10 @@ Only [Agent Native Sync](../foundation/agent-native-sync.md) is authorized to re
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-Every view, rule, limit, and responsibility that concerns the Agent, and would remain true if the Target or the Implementation were replaced. A rule such as "never commit or push until the Human explicitly asks" is an Agent rule: it is a rule between the Human and the Agent, not a property of any project. The Module records it, and Agent Sync realizes it in the Agent Native.
-
-What does not belong here: the meaning of the Target, the engineering philosophy of the Implementation, the shape of generated Config, or any Agent Native's file layout, command names, or configuration format. Native-specific realization belongs to Agent Sync.
+- **Target meaning** — belongs to Target, because it describes the project being built rather than how the Agent operates.
+- **Implementation engineering philosophy** — belongs to Implementation, because it describes how the project is built rather than how the Agent operates.
+- **Generated Config shape** — belongs to the owning Schema or Preferences, because it describes an output artifact rather than Agent meaning.
+- **Agent Native layout, commands, and configuration format** — belongs to Agent Sync, because it describes Native realization rather than the portable Agent Module.
 
 
 
@@ -288,9 +287,9 @@ Two conventions keep Preferences ready for synchronization without duplicating t
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-### How the Module changes
-
 The Human owns the Agent Module and is the only actor allowed to change its files. Agent Sync reads the Module read-only and realizes its declarations in the selected Agent Native. No other Skill, Agent Instance, Runtime, or Context reads or changes the Module.
+
+Every Principle in this Guide is mandatory. Agent Preferences can never override a Principle, and a Native realization may only preserve or strengthen the Module's meaning, never weaken it.
 
 
 

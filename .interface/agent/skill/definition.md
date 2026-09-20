@@ -11,14 +11,16 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Shared Guidance](#shared-guidance)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Each Skill layer has one owner](#each-skill-layer-has-one-owner)**
-   - **[Every Skill has one Contract](#every-skill-has-one-contract)**
+   - **[Every Skill has one owner and bridge](#every-skill-has-one-owner-and-bridge)**
    - **[Skill availability is proven](#skill-availability-is-proven)**
    - **[Skill execution is repeatable](#skill-execution-is-repeatable)**
    - **[Every Skill has one Realization Kind](#every-skill-has-one-realization-kind)**
    - **[Skill owns executable capability only](#skill-owns-executable-capability-only)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 
 
@@ -38,7 +40,7 @@ Skill prevents the Agent from reconstructing the same instructions each time. Ea
 
 ### How It Works
 
-The owning Process Component is authoritative for a Process-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Runtime owns execution mechanics. An external provider can supply a different realization, but it does not change the owning Component's meaning.
+The owning Process Component is authoritative for a Process-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Agent Native owns execution mechanics. An external provider can supply a different realization, but it does not change the owning Component's meaning.
 
 
 
@@ -49,7 +51,7 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 ## Terms
 
 - **Skill** — a reusable capability activated explicitly or by a declared coordinator.
-- **Skill Preferences** — the Agent-side bridge to one Skill's owning Component, including its invocation and Runtime boundary.
+- **Skill Preferences** — the Agent-side bridge to one Skill's owning Component, including its invocation and Agent Native boundary.
 - **Capability Realization Kind** — the declared way a Skill becomes usable: Constructed from its Process Component and Agent Skill Preferences, or Installed through a provider.
 
 
@@ -62,19 +64,42 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 
 - **Consumes Agent, Implementation, and Target** — reads the authorities required by its Agent Skill Preferences and owning Process Component.
 - **Consumed by Agent and permitted Coordinators** — provides an executable capability without acquiring the authority of its sources.
-- **Realized by Agent Sync** — is carried into the selected Runtime without changing its owning Component.
 
 
 
 
 <br><br>
 
-<!--------------------------------------------------------------------------------- Shared Guidance --->
-## Shared Guidance
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Process-backed Skill behavior belongs to the owning Implementation Process Component. Agent-side declarations and mappings belong to Agent Skill Preferences, while Agent Sync owns their realization in the selected Agent Native.
+
+The Definition carries the portable Skill meaning; Preferences carry the Agent-side bridge. Neither layer replaces or duplicates the owning Process Component's behavior.
+
+
+
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Agent Preferences can never override a Principle, and a Native realization may only preserve or strengthen the Skill's meaning, never weaken it.
+
+
+
+
+<br><br>
+
+<!--------------------------------------------------------------------------------- Principles --->
+## Principles
+
+Every Principle below is mandatory and defines the shared meaning of an Agent Skill.
 
 ### Each Skill layer has one owner
 
-**Rule:** This Definition explains the shared Skill concept, the owning Process Component owns Process-specific behavior, Agent Skill Preferences provide the bridge, and the selected Runtime owns execution mechanics.
+**Rule:** This Definition explains the shared Skill concept, the owning Process Component owns Process-specific behavior, Agent Skill Preferences provide the bridge, and the selected Agent Native owns execution mechanics.
 
 **Why:** Clear ownership prevents duplication and conflicting authorities.
 
@@ -92,7 +117,7 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 
 ### Skill availability is proven
 
-**Rule:** A Skill is usable only when the selected Runtime can discover and invoke it.
+**Rule:** A Skill is usable only when the selected Agent Native can discover and invoke it.
 
 **Why:** A declaration alone does not make a capability available.
 
@@ -119,7 +144,7 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 
 ### Skill owns executable capability only
 
-**Rule:** A Skill owns its executable capability and does not own Target meaning, Implementation policy, Runtime mechanics, or another Component's records.
+**Rule:** A Skill owns its executable capability and does not own Target meaning, Implementation policy, Agent Native mechanics, or another Component's records.
 
 **Why:** Clear ownership keeps reusable capability separate from the authorities it consumes.
 
@@ -133,14 +158,14 @@ The owning Process Component is authoritative for a Process-backed Skill's behav
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
-**Each Skill layer has one owner** — Definition explains the shared concept; Process Component owns Skill behavior; Preferences bridge Agent to Process; Runtime owns execution mechanics.
+- **Each Skill layer has one owner** — Definition explains the shared concept; Process Component owns Skill behavior; Preferences bridge Agent to Process; Agent Sync owns Native realization.
 
-**Every Skill has one owner and bridge** — define each Process-backed Skill through one owning Component and one Agent Preferences bridge.
+- **Every Skill has one owner and bridge** — define each Process-backed Skill through one owning Component and one Agent Preferences bridge.
 
-**Skill availability is proven** — verify Runtime discovery and invocation; never infer availability from declaration alone.
+- **Skill availability is proven** — verify Native discovery and invocation; never infer availability from declaration alone.
 
-**Skill execution is repeatable** — preserve valid work on repetition; never replace meaningful work destructively.
+- **Skill execution is repeatable** — preserve valid work on repetition; never replace meaningful work destructively.
 
-**Every Skill has one Realization Kind** — use exactly one of Constructed or Installed.
+- **Every Skill has one Realization Kind** — use exactly one of Constructed or Installed.
 
-**Skill owns executable capability only** — keep ownership limited to the declared capability.
+- **Skill owns executable capability only** — keep ownership limited to the declared capability.

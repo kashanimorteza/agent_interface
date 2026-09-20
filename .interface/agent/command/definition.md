@@ -8,10 +8,12 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[A Command is an entry point, not a second workflow](#a-command-is-an-entry-point-not-a-second-workflow)**
    - **[Command invocation is stable and discoverable](#command-invocation-is-stable-and-discoverable)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -59,6 +61,18 @@ Portable command names, aliases, and argument forms belong to Agent Command Pref
 Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
+
+<br>
+
+## Layering
+
+This Definition carries the portable meaning and mandatory Principles of the Command Component. Preferences carry current command selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+
+<br>
+
+## Authority
+
+The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 

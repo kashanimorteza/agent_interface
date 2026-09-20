@@ -8,7 +8,9 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Rules guide behavior without replacing authority](#rules-guide-behavior-without-replacing-authority)**
    - **[Rule scope and conflict are explicit](#rule-scope-and-conflict-are-explicit)**
    - **[Security boundaries use enforcement](#security-boundaries-use-enforcement)**
@@ -21,7 +23,7 @@
    - **[Session state is not authoritative project state](#session-state-is-not-authoritative-project-state)**
    - **[Resume revalidates before mutation](#resume-revalidates-before-mutation)**
    - **[Session termination exposes unfinished work](#session-termination-exposes-unfinished-work)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -105,6 +107,18 @@ Technical session options, persistence, resume policy, isolation, and background
 Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
+
+<br>
+
+## Layering
+
+This Definition carries the portable meaning and mandatory Principles of the Rule Component. Preferences carry current Rule selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+
+<br>
+
+## Authority
+
+The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 

@@ -8,14 +8,16 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Every Integration declares its trust boundary](#every-integration-declares-its-trust-boundary)**
    - **[Connection is proven before dependence](#connection-is-proven-before-dependence)**
    - **[External effects retain external authorization](#external-effects-retain-external-authorization)**
    - **[Extension provenance and contents are explicit](#extension-provenance-and-contents-are-explicit)**
    - **[Extension lifecycle is controlled](#extension-lifecycle-is-controlled)**
    - **[Packaged capabilities retain their owners](#packaged-capabilities-retain-their-owners)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -78,6 +80,18 @@ Technical Extension catalogs, versions, sources, enabled state, and expected con
 Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
+
+<br>
+
+## Layering
+
+This Definition carries the portable meaning and mandatory Principles of the Connection Component. Preferences carry current connection selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+
+<br>
+
+## Authority
+
+The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 

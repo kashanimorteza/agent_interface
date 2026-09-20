@@ -8,7 +8,9 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Every Agent Instance has one complete definition](#every-agent-instance-has-one-complete-definition)**
    - **[Agent Instance and Role remain separate](#agent-instance-and-role-remain-separate)**
    - **[`general` is the General Agent Instance](#general-is-the-general-agent-instance)**
@@ -22,7 +24,7 @@
    - **[Delegation preserves scope and authority](#delegation-preserves-scope-and-authority)**
    - **[Concurrent work has exclusive mutation ownership](#concurrent-work-has-exclusive-mutation-ownership)**
    - **[Runtime coordination state is not project intent](#runtime-coordination-state-is-not-project-intent)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -98,6 +100,18 @@ Technical team mechanisms, task systems, messaging, and isolation choices belong
 Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
+
+<br>
+
+## Layering
+
+This Definition carries the portable meaning and mandatory Principles of the Agent Component. Preferences carry current Agent Native selections, declarations, and realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+
+<br>
+
+## Authority
+
+The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 

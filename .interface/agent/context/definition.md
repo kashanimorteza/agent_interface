@@ -8,11 +8,13 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Every action begins from current Understanding](#every-action-begins-from-current-understanding)**
    - **[Context distinguishes authority from assistance](#context-distinguishes-authority-from-assistance)**
    - **[Context lifecycle preserves required instructions](#context-lifecycle-preserves-required-instructions)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -61,6 +63,18 @@ Technical loading sources, memory behavior, imports, and limits belong to Agent 
 Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
+
+<br>
+
+## Layering
+
+This Definition carries the portable meaning and mandatory Principles of the Context Component. Preferences carry current context selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+
+<br>
+
+## Authority
+
+The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 

@@ -63,7 +63,7 @@ A Definition file carries these parts, in this order. A part marked *optional* i
 
 Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved. Layering and Authority are unheaded prose. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -100,13 +100,16 @@ A numbered list, one line per section the file actually carries, each linking to
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
+5. **[Boundaries](#boundaries)**
+6. **[Layering](#layering)**
+7. **[Authority](#authority)**
+8. **[Principles](#principles)**
    - **[<Title>](#title)**
    - **[<Title>](#title)**
-6. **[At a Glance](#at-a-glance)**
+9. **[At a Glance](#at-a-glance)**
 ```
 
-Introduction's own parts are listed beneath it. Layering and Authority are unheaded prose and carry no entry. Navigation is rewritten whenever a section or a Principle is added or renamed, like At a Glance.
+Introduction's own parts are listed beneath it. Navigation is rewritten whenever a section or a Principle is added or renamed, like At a Glance.
 
 
 <!--------------------------------------------------------------------------------- Introduction --->
@@ -365,9 +368,14 @@ This section is derived, never authoritative, and it is rewritten whenever a Pri
    - **[How It Works](#how-it-works)**
    - **[Decisions](#decisions)**
 2. **[Terms](#terms)**
-3. **[Principles](#principles)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Boundaries](#boundaries)**
+6. **[Layering](#layering)**
+7. **[Authority](#authority)**
+8. **[Principles](#principles)**
    - **[<Title>](#title)**
-4. **[At a Glance](#at-a-glance)**
+9. **[At a Glance](#at-a-glance)**
 
 ## Introduction
 
@@ -421,8 +429,12 @@ whole section when the Component has no internal structure worth naming.>
 
 <Omit this whole section when this Component's edges are not easy to cross.>
 
-<Layering: Implementation technical choices and defaults belong to <Component> Preferences;
-Agent declarations and mappings belong to <Component> Preferences; implementation realizes them.>
+## Layering
+
+<Implementation technical choices and defaults belong to <Component> Preferences; Agent
+declarations and mappings belong to <Component> Preferences; implementation realizes them.>
+
+## Authority
 
 Every Principle in this file is mandatory. An Implementation Preference or Agent Preferences can never override
 a Principle, and a project may only add stricter rules, never looser ones.

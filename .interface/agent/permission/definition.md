@@ -8,7 +8,9 @@
    - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
    - **[Interface is read-only except for authorized Config records](#interface-is-read-only-except-for-authorized-config-records)**
    - **[Permission is least-privilege and deny-safe](#permission-is-least-privilege-and-deny-safe)**
    - **[Agent Module reads belong only to the explicit Agent Native Sync](#agent-module-reads-belong-only-to-the-explicit-agent-native-sync)**
@@ -17,7 +19,7 @@
    - **[An Enforced Guarantee is deterministic and bounded](#an-enforced-guarantee-is-deterministic-and-bounded)**
    - **[Guarantees fail visibly and safely](#guarantees-fail-visibly-and-safely)**
    - **[A guarantee's authority does not expand on trigger](#a-guarantees-authority-does-not-expand-on-trigger)**
-5. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -79,6 +81,18 @@ Technical events, matchers, handlers, timeouts, and native configuration belong 
 Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
+
+<br>
+
+## Layering
+
+This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+
+<br>
+
+## Authority
+
+The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 
