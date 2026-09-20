@@ -25,6 +25,8 @@ The Skill discovers the current Components and referenced sources from the Agent
 
 Interface Understanding is not required for synchronization. When navigation is necessary, the Skill may consult `.interface/interface.md` as a map of the Interface. It never needs Target Understanding and must not read Target sources to perform this work.
 
+The Skill must then enumerate every entry in `.interface/agent/skill/preferences.yaml` before realizing any Skill. Each declared entry is one required synchronization item: its declared Process Component Definition and Preferences are the source of its meaning, and its Agent-side bridge is the source of its invocation and Native boundary. No declared Skill may be skipped because it is unfamiliar, already present, or not selected as the coordinating Skill. A Process Component that has no entry in this Skill catalog — such as State when it is not declared as a Skill — must not be turned into a Skill merely because it exists in the Implementation Module.
+
 ## Synchronization
 
 The Skill establishes an Understanding of the complete Agent Module before changing any Native artifact. It preserves the meaning, scope, ownership, boundaries, and mandatory Principles declared by the Human.
@@ -47,6 +49,8 @@ The Agent Native decides where and how each concept is represented. The Skill le
 Agent Sync may restate a declaration in the Native's idiom only when necessary for the Native to apply it. Such restatement must preserve the declaration's meaning, scope, ownership, and authority. A Native artifact is never a second authority.
 
 When a declared Skill is required, the Skill creates or updates that Native Skill according to the Native's Skill policy. When a declared Rule, Permission, Command, Tool, Connection, Context, Personality, Runtime choice, or Agent Instance has another Native mechanism, it uses that mechanism instead of forcing every concept into a Skill.
+
+For every declared Skill entry, the Skill must create the Native Skill when it is missing, update it when it is stale, and verify it after realization. It must report one result for every declared entry, including entries that are already current, unsupported, approximated, or blocked. The coordinating Skill selection affects invocation and coordination only; it does not make any other declared Skill optional.
 
 ## Authority and Boundaries
 

@@ -54,6 +54,8 @@ The Agent Module is composed of Components. Each Component has a Definition for 
 
 Agent Sync is the only reader and bridge from the Module to the selected Agent Native. It reads the complete Module and realizes its meaning in the Native without changing its scope or authority. Other Skills and Agent Instances use the synchronized Native realization and do not read Module sources directly.
 
+The Foundation File [Agent Native Sync](../foundation/agent-native-sync.md) instructs the selected Agent Native to create or update the `My-Interface-Agent-Native-Sync` Skill. When that Skill runs, it reads this Module and realizes its current Components, declarations, and Principles in the Agent Native; therefore, changes made here take effect in a Native only through that synchronization.
+
 
 
 
