@@ -6,6 +6,8 @@ This Foundation File instructs an Agent Native to create or update its Agent Nat
 
 According to the selected Agent Native's Skill-creation policy, create or update its Agent Native Sync Skill from this Foundation File. The Skill must be self-contained after creation and must not require a later read of the Agent Module to understand its own synchronization procedure. In this project, the Human invokes the resulting Skill only through `/my-interface-agent-native`, without a mode or numeric argument.
 
+Creating or updating the Agent Native Sync Skill is a preparation step only. The creation process must not invoke, schedule, chain, or simulate the resulting Skill, and must not begin Agent Module synchronization in the same run. Synchronization starts only after a separate explicit Human invocation of `/my-interface-agent-native`.
+
 When the Skill is explicitly invoked, it must read and understand the complete Agent Module, then realize that understanding in the selected Agent Native. It must update an existing Native realization or create one when it is missing.
 
 Every explicit invocation is a full synchronization against the current Agent Module and the current instructions in this Foundation File. The existence of the Agent Native Sync Skill or any previously generated Native artifact never satisfies the invocation and never permits the Skill to skip creation, reconciliation, or verification under the current mechanism.
