@@ -1,0 +1,391 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/implementation/development/development.yaml"
+  path_note: "The Preferences layer of the Development Subsystem — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
+  purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
+  standard: "Agent Project Interface"
+  version: "7.0"
+  updated: "2026-09-19"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
+  changed_by: "The human, directly. A missing critical Development choice is raised through State instead of being written into this file."
+  precedence: "An explicit Target value and every applicable Development Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Resolve each Component Profile first. Match its language and database references to their exact option entries and its platform reference, when present, to the exact Platform-owned Launch Item. Within a selected Language Item, resolve only the package purposes required by the Target and the Component's conceptual responsibilities; no purpose is bound to a Component identifier. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
+  selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
+  matching: "Match Components by canonical identifier; languages and databases by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
+  additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the resolved dependency with the implementation and in the README; a consequential recurring choice is added by the human under the relevant Language Item and Technical Purpose."
+
+
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "One configurable profile per Participating Component, including identity, path, documentation file, type, role, and applicable language, database, and Platform Launch Item references."
+  options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
+  settings: "Project-wide naming conventions, documentation rules, Connection defaults, shared package defaults, and Cross-cutting Capability applicability."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- selected -->
+  selected:
+    components:
+      model:
+        name: "model"
+        path: "model"
+        documentation: "model/README.md"
+        type: "library"
+        role: "Defines the system's shared domain Model."
+        language: "Python"
+        platform: "VPS"
+      database:
+        name: "database"
+        path: "database"
+        documentation: "database/README.md"
+        type: "library"
+        role: "Owns persistence and access to stored data."
+        language: "Python"
+        database: "SQLite"
+        platform: "VPS"
+      logic:
+        name: "logic"
+        path: "logic"
+        documentation: "logic/README.md"
+        type: "library"
+        role: "Implements server-side application Behaviour as reusable Logic."
+        language: "Python"
+        platform: "VPS"
+      api:
+        name: "api"
+        path: "api"
+        documentation: "api/README.md"
+        type: "executable"
+        role: "Publishes the external API and runs the API process."
+        language: "Python"
+        platform: "VPS"
+      presentation:
+        name: "presentation"
+        path: "presentation"
+        documentation: "presentation/README.md"
+        type: "executable"
+        role: "Provides the user-facing application."
+        language: "TypeScript"
+        platform: "VPS"
+      platform:
+        name: "platform"
+        path: "platform"
+        documentation: "platform/README.md"
+        type: "guideline"
+        role: "Defines Launch Items, per-Component runtime requirements, and supporting artifacts."
+
+  # <!-------------------------------------------- options -->
+  options:
+
+    languages:
+      Python:
+        version: "latest-compatible"
+        package_management:
+          name: "uv"
+          version: "latest-compatible"
+          lockfile: "uv.lock"
+          isolated_environment_directory: ".venv"
+          skill_provisioning: "uvx library-skills --claude"
+        typing:
+          style: "modern Python typing"
+          prefer_builtin_generics: true
+          prefer_union_operator: true
+          nullable_fields: "T | None"
+        closed_value_sets:
+          reusable_named: "StrEnum"
+          small_local: "Literal"
+        concept_mappings:
+          exact_decimal_representation: "decimal.Decimal"
+          timezone_aware_datetime: "datetime.datetime with timezone information"
+        quality_tools:
+          formatter:
+            name: "ruff-format"
+            package: "ruff"
+            version: "latest-compatible"
+          linter:
+            name: "ruff"
+            package: "ruff"
+            version: "latest-compatible"
+          type_checker:
+            name: "pyright"
+            package: "pyright"
+            version: "latest-compatible"
+          test_runner:
+            name: "pytest"
+            package: "pytest"
+            version: "latest-compatible"
+        packages:
+          modeling:
+            name: "Pydantic"
+            package: "pydantic"
+            version: "2.x"
+            agent_consider:
+              standards:
+                json_schema: "Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible."
+                typing: "Modern Python typing as the language entry states it — builtin generics and the union operator."
+              structure:
+                field_declaration: "Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not."
+                reusable_domain_type: "Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field."
+                model_config: "ConfigDict(extra='forbid', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is 'ignore', which discards an unknown field silently."
+                single_field_rule: "@field_validator"
+                cross_field_rule: "@model_validator(mode='after')"
+                polymorphic_data: "A discriminated union, with Field(discriminator=...)"
+                root_collection: "RootModel[...]"
+                non_model_validation: "TypeAdapter, for validating a type that is not a BaseModel"
+                derived_value: "computed_field"
+                validator_order: "Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance."
+              api:
+                base_model: "pydantic.BaseModel"
+                configuration: "pydantic.ConfigDict"
+                field_validation: "pydantic.field_validator"
+                model_validation: "pydantic.model_validator"
+                root_model: "pydantic.RootModel"
+                computed_field: "pydantic.computed_field"
+                field_serialization: "pydantic.field_serializer"
+                model_serialization: "pydantic.model_serializer"
+                serialization:
+                  - "model_dump"
+                  - "model_dump_json"
+                schema: "model_json_schema"
+            agent_avoid:
+              legacy_apis:
+                - "validator"
+                - "root_validator"
+                - "parse_obj"
+                - "dict"
+                - "json"
+              deprecated_constraint_helpers:
+                note: "Scheduled for removal in Pydantic 3; express the same constraint with Annotated instead."
+                names:
+                  - "constr"
+                  - "conint"
+                  - "confloat"
+                  - "condecimal"
+              plain_validator: "PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead."
+            agent_skills:
+              - resource: "pydantic"
+                requirement: "required"
+                activation: "when_selected"
+                purpose: "Apply the complete applicable Pydantic guidance while implementing and independently reviewing the selected data validation framework."
+          api:
+            name: "FastAPI"
+            package: "fastapi[standard]"
+            version: "latest-compatible"
+            supporting_packages:
+              validation: "pydantic>=2,<3"
+              settings: "pydantic-settings"
+              http_testing: "httpx"
+            agent_skills:
+              - resource: "fastapi"
+                requirement: "required"
+                activation: "when_selected"
+                purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
+          cli:
+            name: "Typer"
+            package: "typer"
+            version: "latest-compatible"
+            agent_skills:
+              - resource: "typer"
+                requirement: "required"
+                activation: "when_selected"
+                purpose: "Apply the complete applicable Typer guidance while implementing and independently reviewing the selected command-line interface."
+          database:
+            orm:
+              name: "SQLAlchemy"
+              package: "SQLAlchemy"
+              version: "latest-compatible"
+              capabilities:
+                model_mapping: true
+                parameterized_sql: true
+            migration:
+              name: "Alembic"
+              package: "Alembic"
+              version: "latest-compatible"
+              compatible_orm: "SQLAlchemy"
+              commands:
+                upgrade: "uv run alembic upgrade head"
+                downgrade: "uv run alembic downgrade -1"
+
+      TypeScript:
+        version: "latest-compatible"
+        package_management:
+          name: "npm"
+          version: "latest-compatible"
+        packages:
+          user_interface:
+            name: "React"
+            package: "react"
+            version: "latest-compatible"
+            component_style: "Function components"
+          application_framework:
+            name: "Next.js"
+            package: "next"
+            version: "latest-compatible"
+            user_interface: "React"
+            router: "App Router"
+            run: "npm run dev"
+          api_client:
+            name: "Fetch"
+            package: null
+            version: "runtime-provided"
+
+    databases:
+      SQLite:
+        version: "runtime-provided"
+        driver:
+          name: "sqlite3"
+          version: "runtime-provided"
+          package: null
+        storage:
+          kind: "file"
+          relative_to: "component_root"
+          location: "data/<database>.db"
+          committed: false
+        connection:
+          url_scheme: "sqlite"
+          parameters:
+            - "database"
+          foreign_keys: true
+          check_same_thread: false
+      PostgreSQL:
+        version: "latest-compatible"
+        driver:
+          name: "psycopg"
+          version: "latest-compatible"
+          package: "psycopg"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "postgresql+psycopg"
+          default_port: 5432
+          parameters:
+            - "host"
+            - "port"
+            - "database"
+            - "username_secret"
+            - "password_secret"
+      MySQL:
+        version: "latest-compatible"
+        driver:
+          name: "PyMySQL"
+          version: "latest-compatible"
+          package: "PyMySQL"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "mysql+pymysql"
+          default_port: 3306
+          parameters:
+            - "host"
+            - "port"
+            - "database"
+            - "username_secret"
+            - "password_secret"
+          charset: "utf8mb4"
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    # ---- naming ----
+    naming:
+      purpose: "The naming conventions the project uses, gathered in one place rather than inside the technology that happens to apply it."
+      code: "Follow the established naming standard of the selected language for whatever is being named — variable, function, class, constant, file, folder. A language's own standard is well known and is not restated here, and no project-specific naming is imposed on code."
+      storage:
+        applies_to: "Every declared database Engine; these do not differ by Engine and are the project's own choice rather than an Engine's standard."
+        tables: "plural_snake_case"
+        columns: "snake_case"
+        constraints: "snake_case"
+        indexes: "ix_<table>_<column>"
+
+    documentation:
+      file: "README.md"
+      location: "the Component's path root, at the file its Profile's documentation key names"
+      format: "markdown"
+      purpose: "Anyone who reads it understands how this Component works and can use it."
+      order:
+        - overview          # what it is, what it does, where it sits
+        - interface         # the Public Interface: every Category and Operation, what each accepts and returns, the outcomes it can produce, and a runnable example of calling it
+        - setup             # install, configure
+        - run               # how to start or use it
+        - verify            # how to check it works
+        - troubleshooting
+      subject: "The Public Interface. The README explains how to work with this Component through its Operations, not how the Component is built inside; its internal structure is stated in its Principles and Preferences."
+      examples: "required wherever something is executable; written for the Component's resolved technology so they run as written"
+      per_component: "each Component fills this order through its own mechanism; a part that does not apply says so rather than being omitted"
+      secrets: "placeholders, environment-variable names, or safe secret references only; never a usable credential"
+      authority: "derived, non-authoritative; never copies or overrides Principles, Preferences, the implemented Public Interface, or a Target source"
+
+    connections:
+      presentation_to_api:
+        consumer: "presentation"
+        provider: "api"
+      api_to_logic:
+        consumer: "api"
+        provider: "logic"
+      api_to_model:
+        consumer: "api"
+        provider: "model"
+      logic_to_database:
+        consumer: "logic"
+        provider: "database"
+      logic_to_model:
+        consumer: "logic"
+        provider: "model"
+      database_to_model:
+        consumer: "database"
+        provider: "model"
+
+    packages:
+      publish: false
+
+    cross_cutting:
+      testing:
+        applies_to:
+          - "logic"
+          - "api"
+      logging:
+        applies_to:
+          - "database"
+          - "logic"
+          - "api"
+          - "presentation"
+      error_handling:
+        applies_to:
+          - "model"
+          - "database"
+          - "logic"
+          - "api"
+          - "presentation"
+      authentication:
+        applies_to:
+          - "database"
+          - "logic"
+          - "api"
+          - "presentation"
+      encryption:
+        applies_to:
+          - "model"
+          - "database"
+          - "logic"
+          - "api"
+          - "presentation"

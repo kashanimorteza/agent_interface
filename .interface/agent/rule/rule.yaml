@@ -1,0 +1,218 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/agent/rule/rule.yaml
+  path_note: The Preferences layer of the Agent Rule Component.
+  purpose: The declared Agent Rules, each with its complete definition file, plus the conduct settings owned by Rule.
+  standard: Agent Project Interface
+  version: '3.0'
+  updated: '2026-09-18'
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: This file is human-owned; Rules guide behavior but never replace enforceable Permission controls.
+  changed_by: The human, directly.
+  precedence: An explicit project decision and every applicable Principle take precedence over this file.
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: Load global Rules at startup and scoped Rules only for matching work.
+  selection: Add a Rule only for stable recurring guidance; task-specific procedures belong to Skills.
+  version_resolution: Rule format follows the selected runtime mapping.
+  matching: Match Rules by stable key and exact scope conditions.
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+- selected
+- options
+- settings
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: Selected response style, progress behavior, validation depth, and resume behavior.
+  options: Available response styles, progress behaviors, validation depths, and resume behaviors.
+  settings: The declared Rules and their definition files, plus interaction, observability, and session conduct settings and optional per-Native realization hints.
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    response_style: explanatory_structured
+    progress_behavior: material_updates
+    validation_depth: proportional
+    resume_behavior: revalidate
+  options:
+    response_styles:
+      explanatory_structured:
+        meaning: Explanatory, structured responses that preserve exact technical substance; realized in Claude Code by the Output Style named under settings.native.claude.
+    progress_behaviors:
+      material_updates:
+        meaning: Report meaningful progress and blockers without narrating routine internals.
+    validation_depths:
+      proportional:
+        meaning: Use evidence proportional to risk and repeat checks after relevant changes.
+    resume_behaviors:
+      revalidate:
+        meaning: Re-establish context, scope, permissions, files, and outstanding work before mutation.
+  settings:
+    contracts_directory: .interface/agent/rule/contracts/
+    contracts_note: "One Markdown file per Rule holds the complete Rule contract as the Human wrote it; Agent Sync places that content where the selected Agent Native reads Rules, adding only the Native's own wrapper (scope header, frontmatter, file name). A Rule whose text is derived by Sync from other Preferences declares `contract: derived` and names its sources instead of a file."
+    rules:
+      interface-bootstrap:
+        contract: .interface/agent/rule/contracts/interface-bootstrap.md
+        path: resolved by Agent Sync from the selected Agent Native
+        scope: global
+        responsibility: Enter through the canonical Interface file and the Foundation section files it links (introduction, terminology, architecture, understanding, operations, modes, authority, workflow) while reserving Agent Module sources
+          exclusively for explicit Agent Sync.
+        required: true
+      interface-skill-policy:
+        contract: .interface/agent/rule/contracts/interface-skill-policy.md
+        path: resolved by Agent Sync from the selected Agent Native
+        scope: global
+        responsibility: Apply shared human-owned boundaries and capability policy.
+        required: true
+      interface-agent-capabilities:
+        definition: derived
+        derived_from: [.interface/agent/skill/skill.md, .interface/agent/skill/skill.yaml, .interface/agent/command/command.yaml]
+        path: resolved by Agent Sync from the selected Agent Native
+        scope: global
+        responsibility: Expose the synchronized Runtime capability identifiers and native mappings without requiring Agent Module reads.
+        required: true
+      git-discipline:
+        contract: .interface/agent/rule/contracts/git-discipline.md
+        path: resolved by Agent Sync from the selected Agent Native
+        scope: global
+        responsibility: Never run git commit or git push unless the Human explicitly asks for it in the current message; 'save it' means write files to disk, not commit. Explains the boundary that Permission
+          enforces through its ask rules on git commit, push, reset, restore, checkout, rebase, and clean.
+        required: true
+    placement_note: "Where a Rule lives in the Native (project, user, managed, extension, or path-scoped) is Agent Sync's decision from the Native's own layout. A Rule that must land in a particular place may say so in its own `native.<agent-native>` hint."
+    conflicts: {}
+    interaction:
+      output_style_defaults:
+        preserve_coding_instructions: true
+        preserve_identifiers: true
+        preserve_evidence: true
+        preserve_warnings: true
+      progress_updates: {}
+      prompts_and_questions: {}
+      status_line: {}
+      artifacts: {}
+      themes: {}
+      terminal_interface: {}
+      ide_interface: {}
+      desktop_interface: {}
+      web_interface: {}
+      accessibility: {}
+      language: {}
+    observability:
+      required_checks:
+      - Every selected resource resolves to a declared option or resource.
+      - Every required Agent Role, Rule, Skill, Tool, Enforced Guarantee, and Connection (service or package) is discoverable and usable.
+      - The selected Output Style is present and active.
+      - Effective permissions and sandbox behavior match their declarations.
+      - No project capability declaration contains a secret or machine credential.
+      - Every explicit empty category remains represented.
+      capability_statuses:
+        available: Declared and usable by the intended role.
+        activation_required: Declared but awaiting a stated activation condition.
+        unavailable: Declared but not usable in the required scope.
+        conflicting: Applicable declarations cannot be satisfied together.
+        undeclared: Observed in the runtime but absent from the project profile.
+        not_configured: Supported category explicitly contains no entry.
+      configuration_statuses:
+        reconciled: {}
+        drifted: {}
+        invalid: {}
+        unknown: {}
+      diagnostics:
+        status: {}
+        doctor: {}
+        context: {}
+        memory: {}
+        skills: {}
+        agents: {}
+        hooks: {}
+        mcp: {}
+        permissions: {}
+      evidence_records: {}
+      logs: {}
+      telemetry: {}
+      traces: {}
+      metrics: {}
+      health_checks: {}
+      cost_and_usage: {}
+      redaction:
+        secrets: true
+        hidden_reasoning: true
+    session:
+      startup: {}
+      resume: {}
+      fork: {}
+      restore: {}
+      history: {}
+      persistence: {}
+      background_work: {}
+      tasks: {}
+      isolation: {}
+      worktrees: {}
+      checkpoints: {}
+      compaction_events: {}
+      usage_limit_continuation: {}
+      cancellation: {}
+      termination: {}
+      generated_state:
+        human_authored: false
+        project_authority: false
+    native:
+      claude:
+        output_style: ADHD Explanatory
+        output_style_note: Provided by the enabled plugin adhd-output-style@claude-settings (see Connection Preferences); the plugin owns the style, and this selection names what it provides.
+        output_styles:
+          ADHD:
+            required: false
+            note: Available local style; not selected while the plugin-provided ADHD Explanatory style is active.
+          Analogy Engine:
+            required: false
+          Bedtime Story:
+            required: false
+          Caveman:
+            required: false
+          Coach:
+            required: false
+          ELI15:
+            required: false
+          Executive:
+            required: false
+          Feynman:
+            required: false
+          Gen Z:
+            required: false
+          Ladder:
+            required: false
+          No AI Slop:
+            required: false
+          No Slop:
+            required: false
+          Plain English:
+            required: false
+          Smart Brevity:
+            required: false
+          Sportscaster:
+            required: false
+          Street:
+            required: false
+          Thing Explainer:
+            required: false
+          Unslop:
+            required: false
+          Wait What:
+            required: false
+          Yoda:
+            required: false
+          ADHD Explanatory:
+            required: true
+            provided_by: plugin adhd-output-style@claude-settings
+        realization_hints:
+          output_style: Claude Code outputStyle setting or an output-styles file; a plugin that forces a style conflicts with this selection
+          session: Claude Code session resume, checkpoints, and compaction

@@ -18,4 +18,4 @@ The personality that judges whether done work satisfies what was asked, and reco
 
 ## Runs on
 
-Declared in `../preferences.yaml` under `settings.personalities.reviewer.models`, in priority order.
+Declared in `../personality.yaml` under `settings.personalities.reviewer.models`, in priority order.

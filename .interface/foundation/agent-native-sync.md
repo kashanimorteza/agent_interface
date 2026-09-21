@@ -20,16 +20,16 @@ The Skill transfers the Agent Module's portable definition of the Agent into the
 
 The Skill reads these sources in full:
 
-- `.interface/agent/guide.md` for the Agent Module's structure and shared meaning;
-- the applicable `.interface/agent/<component>/definition.md` files for portable meaning and Principles;
-- the applicable `.interface/agent/<component>/preferences.yaml` files for current declarations and selections; and
+- `.interface/agent/agent.md` for the Agent Module's structure and shared meaning;
+- the applicable `.interface/agent/<component>/<component>.md` files for portable meaning and Principles;
+- the applicable `.interface/agent/<component>/<component>.yaml` files for current declarations and selections; and
 - any file explicitly referenced by those Agent sources.
 
 The Skill discovers the current Components and referenced sources from the Agent Module itself. It does not rely on a hardcoded component list or on an earlier synchronization run.
 
 Interface Understanding is not required for synchronization. When navigation is necessary, the Skill may consult `.interface/interface.md` as a map of the Interface. It never needs Target Understanding and must not read Target sources to perform this work.
 
-The Skill must then enumerate every entry in `.interface/agent/skill/preferences.yaml` before realizing any Skill. Each declared entry is one required synchronization item: its declared Operation Component Definition and Preferences are the source of its meaning, and its Agent-side bridge is the source of its invocation and Native boundary. No declared Skill may be skipped because it is unfamiliar, already present, or not selected as the coordinating Skill. An Operation Component that has no entry in this Skill catalog — such as State when it is not declared as a Skill — must not be turned into a Skill merely because it exists in the Implementation Module.
+The Skill must then enumerate every entry in `.interface/agent/skill/skill.yaml` before realizing any Skill. Each declared entry is one required synchronization item: its declared Operation Component Definition and Preferences are the source of its meaning, and its Agent-side bridge is the source of its invocation and Native boundary. No declared Skill may be skipped because it is unfamiliar, already present, or not selected as the coordinating Skill. An Operation Component that has no entry in this Skill catalog — such as State when it is not declared as a Skill — must not be turned into a Skill merely because it exists in the Implementation Module.
 
 ## Synchronization
 

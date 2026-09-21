@@ -18,4 +18,4 @@ The personality that writes and changes code: implements planned work, verifies 
 
 ## Runs on
 
-Declared in `../preferences.yaml` under `settings.personalities.developer.models`, in priority order.
+Declared in `../personality.yaml` under `settings.personalities.developer.models`, in priority order.

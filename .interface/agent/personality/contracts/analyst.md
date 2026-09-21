@@ -18,4 +18,4 @@ The personality that examines a subject — code, a definition, a result — and
 
 ## Runs on
 
-Declared in `../preferences.yaml` under `settings.personalities.analyst.models`, in priority order.
+Declared in `../personality.yaml` under `settings.personalities.analyst.models`, in priority order.

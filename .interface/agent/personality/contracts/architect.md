@@ -18,4 +18,4 @@ The personality that creates and corrects structure: directories, boundaries, co
 
 ## Runs on
 
-Declared in `../preferences.yaml` under `settings.personalities.architect.models`, in priority order.
+Declared in `../personality.yaml` under `settings.personalities.architect.models`, in priority order.

@@ -71,7 +71,7 @@ The Target describes **what the Interface is working on**, through a Human Defin
 
 Responsibility: Explains the Target Module and maps its files; the Understanding sources remain the two definition files it points to.
 
-→ [Read more about the Target Module](target/guide.md)
+→ [Read more about the Target Module](target/target.md)
 
 <!-------------------------- Implementation -->
 ### Implementation
@@ -82,7 +82,7 @@ Responsibility: Explains the Implementation Module and maps its Development and 
 
 The Operations defined by this Interface are realized by the corresponding Operation Components under `implementation/operations/`; their Definitions and Preferences are the source for the operational Skills that perform them.
 
-→ [Read more about the Implementation Module](implementation/guide.md)
+→ [Read more about the Implementation Module](implementation/implementation.md)
 
 <!-------------------------- Agent -->
 ### Agent
@@ -91,7 +91,7 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 
 Responsibility: Explains the Agent Module and maps every Component's Definition and Preferences files; read only within an explicit Agent Native Sync invocation.
 
-→ [Read more about the Agent Module](agent/guide.md)
+→ [Read more about the Agent Module](agent/agent.md)
 
 
 
@@ -118,7 +118,7 @@ Foundation Files are the shared resources every Module and Skill depends on: the
 
 Responsibility: Explains the Foundation directory and maps the Interface section files, shared Config records, and every Schema; Config records remain owned by Plan, State, and Review.
 
-→ [Read more about Foundation Files](foundation/guide.md)
+→ [Read more about Foundation Files](foundation/foundation.md)
 
 
 

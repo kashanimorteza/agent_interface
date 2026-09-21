@@ -18,4 +18,4 @@ The personality that turns a goal into bounded, ordered, verifiable work before 
 
 ## Runs on
 
-Declared in `../preferences.yaml` under `settings.personalities.planner.models`, in priority order.
+Declared in `../personality.yaml` under `settings.personalities.planner.models`, in priority order.

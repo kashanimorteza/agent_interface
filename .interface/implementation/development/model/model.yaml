@@ -1,0 +1,99 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/implementation/development/model/model.yaml"
+  path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
+  purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
+  standard: "Agent Project Interface"
+  version: "12.0"
+  updated: "2026-09-19"
+
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved Model choices back into it."
+  changed_by: "The human, directly. A missing critical Model choice is raised through State."
+  precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Use Model's identity, language, and Platform Reference from its Component Profile in Development Preferences, then resolve the applicable language-owned Technical Purposes and Package Management from Development without assuming that a package is bound to Model. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in this file. Preserve every explicit property, including false and null, and never write resolved values back into this file."
+  selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
+  version_resolution: "This file owns no versioned technology. Development Preferences resolve every versioned technical item assigned to Model."
+  matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates a Field, relationship, or behavior."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "selected"
+  - "options"
+  - "settings"
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: "Empty. Development owns Model's configurable profile and concrete selections."
+  options: "Empty. Development catalogues Model's concrete technical alternatives and Platform reference."
+  settings: "Technology-independent conventions, grouped by the parts Model Principles name in its Architecture — Domain Definition, Declaration Vocabulary, and Model Foundation — plus Layout and Verification, which span the Component. The vocabulary's own terms are fixed by the Model Declaration Schema; this file carries only preferences about using them."
+
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- selected -->
+  selected: {}
+
+  # <!-------------------------------------------- options -->
+  options: {}
+
+  # <!-------------------------------------------- settings -->
+  settings:
+
+    # ---- Domain Definition ----
+    domain_definition:
+      recorded_choices: "Where the Target states no technical modelling parameter and Model chooses one, record the choice beside the Domain Definition it belongs to, in that definition's own module, so a reviewer meets it where the Field is declared."
+      validation:
+        declarative_constraints_first: true
+        custom_validation: "only when declarative constraints are insufficient"
+        strictness: "enable when coercion could hide invalid domain data"
+      numeric_precision:
+        exact_values: "exact decimal representation"
+        approximate_values: "only when explicitly permitted by the Target"
+      time:
+        absolute_instants: "timezone-aware"
+        canonical_timezone: "UTC"
+        naive_datetime: "only when explicitly required by the Target"
+
+    # ---- Declaration Vocabulary ----
+    declaration_vocabulary:
+      structure: ".interface/foundation/schema/model-declaration.yaml"
+      note: "The vocabulary's terms and their meanings are fixed by that Schema, not here. This group carries only Model's preferences about using it."
+      logical_types: "Resolve each Field's logical type from the Target. Where the Target implies a type without naming one, prefer the narrowest type that holds every value the Target allows."
+      precision_and_length: "State length and precision only where the Target states them; do not invent a bound the Target does not imply."
+      activation: "Declare the activation Field only where the Target gives the concept a notion of being active; whichever Field carries it, declaring it is what lets another Component enable or disable a record without guessing at a name."
+
+    # ---- Model Foundation ----
+    model_foundation:
+      serialization:
+        representation_target: "The plain structure is JSON-compatible: every published value is expressible in JSON without a custom encoder."
+        output_policy_owner: "The consuming Component. API Preferences own which Fields leave an API response, including credential exclusion."
+    # ---- Layout ----
+    layout:
+      purpose: "How the separation required by the Principle “Each Domain Definition stands in its own module” is realized in the selected technology. The Principle fixes the separation; this group fixes its shape."
+      domain_definition: "One file per Domain Definition, holding that definition and what belongs to it alone, named for the definition in the selected language's own naming standard."
+      model_foundation: "Its own file, separate from every Domain Definition."
+      public_interface: "One public entry point publishes every Domain Definition under its own identity, so a consumer imports the definition rather than the file it was declared in."
+      supporting_content: "A helper, constant, or type used by exactly one Domain Definition lives with it; anything used by more than one belongs to Model Foundation."
+      public_identity_shape: "A consumer reaches a definition through the public entry point under its own name, in the form the selected language uses for a published type — conceptually `model.<public entry point>.<DefinitionName>`."
+      naming_shape: "A definition is named for the domain concept, never for a consumer's representation of it: `Invoice`, not `InvoiceDTO`, unless the Target itself calls the concept a DTO."
+      casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as Development states it."
+
+    # ---- Verification ----
+    verification:
+      checks:
+        - "public interface"
+        - "validation behavior"
+        - "serialization behavior"
+        - "declaration vocabulary publishing"
+        - "module separation: one Domain Definition per module, Model Foundation in its own, every definition reachable through the public entry point"

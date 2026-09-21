@@ -13,7 +13,7 @@ Every definition contains these sections, in this order, each as a second-level 
 3. **What it does** — the Actions this Personality performs, as a short list. It must agree with `actions` declared for this Personality in Personality Preferences; the Preferences are the authority on conflict.
 4. **How it judges** — the rules of judgment specific to this Personality: what it prefers, what it optimizes for, how it decides between options. Rules shared by every Personality belong to Agent Rule Principles, not here.
 5. **What it never does** — the boundaries of this Personality: the adjacent work it refuses and the shortcuts it does not take.
-6. **Runs on** — a fixed sentence pointing to Preferences: "Declared in `../preferences.yaml` under `settings.personalities.<name>.models`, in priority order." No model name appears in this file.
+6. **Runs on** — a fixed sentence pointing to Preferences: "Declared in `../personality.yaml` under `settings.personalities.<name>.models`, in priority order." No model name appears in this file.
 
 A section with nothing to say states that explicitly ("None beyond the shared Rules") rather than being omitted.
 
@@ -41,5 +41,5 @@ A section with nothing to say states that explicitly ("None beyond the shared Ru
 
 ## Runs on
 
-Declared in `../preferences.yaml` under `settings.personalities.<name>.models`, in priority order.
+Declared in `../personality.yaml` under `settings.personalities.<name>.models`, in priority order.
 ```

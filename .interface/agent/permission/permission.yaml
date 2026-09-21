@@ -1,0 +1,174 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/agent/permission/permission.yaml
+  path_note: The Preferences layer of the Agent Permission Component.
+  purpose: Permission mode, allow/ask/deny rules, sandboxing, protected sources, enforced guarantees, trust, authentication, and secrets.
+  standard: Agent Project Interface
+  version: '3.0'
+  updated: '2026-09-17'
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: This file is human-owned and contains no credential or secret values.
+  changed_by: The human, directly.
+  precedence: Human authorization, every applicable Principle, deny rules, and stricter managed controls take precedence.
+
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: Resolve permissions using deny-safe least privilege before executing a protected action.
+  selection: Request authorization only when an applicable ask boundary or material undecided action requires it.
+  version_resolution: Permission syntax and sandbox facilities resolve from the selected runtime.
+  matching: Match portable Tool and resource capability patterns; Agent Sync resolves their Native syntax, and deny and stricter rules win conflicts.
+  probes: Each enforced guarantee carries, per Agent Native, at least one behavioral probe (native.<agent>.probe) that Agent Sync runs during Verification; a failed probe means the guarantee is not realized.
+
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+- selected
+- options
+- settings
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: Current file-edit approval choice and sandbox choice.
+  options: Supported file-edit approval choices.
+  settings: Rules, protected sources, enforced guarantees with optional per-Native realization, sandbox, trust, authentication references, secrets, external authorization, and Claude-specific hook mechanics.
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    file_edit_approval: not_required
+  options:
+    file_edit_approvals:
+      not_required:
+        meaning: Apply ordinary project file edits without per-edit confirmation while preserving explicit ask and deny rules.
+      per_edit:
+        meaning: Confirm every project file edit before it is applied.
+  settings:
+    rules:
+      allow:
+      - shell_execute
+      - file_read
+      - file_discover
+      - text_search
+      - file_edit
+      - file_write
+      - notebook_edit
+      - agent_delegate
+      - task_record
+      - web_fetch
+      - web_search
+      deny: []
+      ask:
+      - shell_execute(git commit:*)
+      - shell_execute(git push:*)
+      - shell_execute(git reset:*)
+      - shell_execute(git restore:*)
+      - shell_execute(git checkout:*)
+      - shell_execute(git rebase:*)
+      - shell_execute(git clean:*)
+    sandbox:
+      enabled: null
+      filesystem: {}
+      network: {}
+      process: {}
+    protected_sources:
+      protected_root: .interface/
+      mutation: deny by default
+      read_restrictions:
+        agent_module:
+          path: .interface/agent/
+          default: deny
+          consumers:
+          - foundation.agent-native-sync
+          invocation: direct-explicit-human-only
+          grant_scope: exact expanded Human prompt only; non-transferable
+          effect: The Agent Native, every Agent Instance, Skill, coordinator, Hook, lifecycle routine, automation, model-generated action, and Understanding workflow consumes synchronized Runtime artifacts
+            and cannot initiate Agent Native Sync.
+      editable_exception:
+        path: .interface/config/
+        condition: Only the active Skill's declared write authority and the owning Component's rules may authorize an exact Config record.
+      future_paths: Protected automatically unless they are inside the editable Config exception.
+    trust: {}
+    authentication_references: {}
+    credential_helpers: {}
+    secrets:
+      project_values: {}
+      logging: redact
+      output: redact
+    external_authorizations: {}
+    managed_restrictions: {}
+    enforced:
+      interface-boundary-guard:
+        guarantee: Block Agent Module reads outside the exact direct-Human Agent Sync prompt, block every non-Human attempt to invoke Agent Sync, and block direct Interface mutations outside the authorized
+          Config boundary.
+        failure_policy: fail_closed
+        required: true
+        native:
+          claude:
+            mechanism: hook
+            event: PreToolUse
+            matcher: Read|Glob|Grep|Edit|Write|NotebookEdit|Bash|Skill
+            path: resolved by Agent Sync from the selected Agent Native
+            probe:
+              action: From an ordinary subagent (not the Agent Native Sync prompt), attempt to Read .interface/agent/agent.md and to Grep inside .interface/agent/.
+              expect: Both are blocked by the PreToolUse hook with the boundary message; no content is returned.
+              also: 'Attempt to Edit .interface/interface.md from any Agent Instance; expect: blocked (Interface mutation outside the Config boundary).'
+      agent-native-read-grant:
+        guarantee: Grant Agent Module read access only to the prompt created by the Human's direct explicit invocation of Agent Native Sync; a model, Agent Native, Agent Instance,
+          Skill, coordinator, Hook, lifecycle routine, or automation can never create, inherit, or borrow this grant.
+        failure_policy: fail_closed
+        required: true
+        native:
+          claude:
+            mechanism: hook
+            event: UserPromptExpansion
+            matcher: my-interface-agent-native
+            path: resolved by Agent Sync from the selected Agent Native
+            probe:
+              action: Within the prompt created by the Human's /my-interface-agent-native invocation, Read .interface/agent/agent.md; then, from a subagent spawned by that prompt, attempt the same Read.
+              expect: The first Read succeeds; the subagent's Read is blocked (the grant is non-transferable).
+    native:
+      claude:
+        permission_mode: acceptEdits
+        permission_mode_note: Claude Code's realization of selected.file_edit_approval = not_required; a hint, never the authority.
+        hooks:
+          handler_types:
+            command: {}
+            http: {}
+            prompt: {}
+            agent: {}
+            mcp_tool: {}
+          lifecycle_events:
+            session_start: {}
+            setup: {}
+            user_prompt_submit: {}
+            user_prompt_expansion: {}
+            pre_tool_use: {}
+            permission_request: {}
+            permission_denied: {}
+            post_tool_use: {}
+            post_tool_use_failure: {}
+            notification: {}
+            subagent_start: {}
+            subagent_stop: {}
+            stop: {}
+            teammate_idle: {}
+            task_completed: {}
+            config_change: {}
+            worktree_create: {}
+            worktree_remove: {}
+            pre_compact: {}
+            session_end: {}
+            instructions_loaded: {}
+          user_hooks: {}
+          managed_hooks: {}
+          extension_hooks: {}
+          sdk_hooks: {}
+          disabled_hooks: {}
+          failure_defaults:
+            security_and_integrity: fail_closed
+            notification_only: fail_open
