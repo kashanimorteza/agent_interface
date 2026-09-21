@@ -42,6 +42,50 @@ Alongside the phases, State records the end-to-end picture: the current Implemen
 
 Everything that happened is appended to History rather than overwritten, and two things that stop work are kept explicitly: Blockers, which are stoppages requiring action, and Open Questions, which are decisions only the Human can make. Both stay visible until they are resolved, because a stoppage nobody records is a stoppage rediscovered later.
 
+### Modes
+
+State records the active Mode. Modes describe the current operational position and remain distinct from the behaviour required from the Target.
+
+#### Not Set
+
+State: `not set`.
+
+Responsibility: Represents the initial Workflow position before a Skill action is recorded, or the position restored by Reset.
+
+Inputs: None.
+
+Output: Active State with no selected work scope.
+
+#### Configuring
+
+State: `configuring`.
+
+Responsibility: Create and reconcile the persistent Application Manifest, reconcile operational Config, and synchronize phase State.
+
+Inputs: Operational Schemas, existing Config, and Target phase identities.
+
+Output: Persistent Application Manifest and current operational Config.
+
+#### Planning
+
+State: `planning`.
+
+Responsibility: Create bounded and verifiable Tasks without prescribing implementation.
+
+Inputs: Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, and operational records.
+
+Output: Updated Plan Config.
+
+#### Development
+
+State: `development`.
+
+Responsibility: Implement and verify eligible planned Tasks.
+
+Inputs: Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, Plan, State, and existing implementation.
+
+Output: Verified implementation and updated operational records.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->

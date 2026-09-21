@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/operations/configure/configure.yaml"
   path_note: "The Preferences layer of the Configure Component."
-  purpose: "Configure has no independent choices; its four Config Records follow their Schemas."
+  purpose: "Configure declares the Config directory and the records generated from their Schemas."
   standard: "Agent Project Interface"
   version: "2.0"
   updated: "2026-09-20"
@@ -11,12 +11,12 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Configure reads it without writing resolved choices back into it."
-  changed_by: "The human, directly. A missing structural requirement is resolved by the owning Config Schema."
+  changed_by: "The human, directly. An Agent or Operation must not change these declarations. A missing structural requirement is resolved by the owning Config Schema."
   precedence: "The four Config Schemas and every applicable Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Configure uses the four Config Schemas directly; this file supplies no defaults."
+  consumption: "Configure reads the Config directory and record-to-Schema mappings declared in this file."
   selection: "There is no Configure alternative to select."
   version_resolution: "No entry currently carries a version."
   matching: "There is no Configure entry to match."
@@ -31,10 +31,31 @@ read_order:
 content_map:
   selected: "Empty. Configure selects no profile."
   options: "Empty. Configure supports no alternatives."
-  settings: "Empty. Configure has no independent settings."
+  settings: "The Config directory, generated records, their Schemas, and the source used to construct the Configure Skill."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected: {}
   options: {}
-  settings: {}
+  settings:
+    config_directory:
+      path: ".interface/config/"
+      owner: "Configure"
+      purpose: "The directory in which Configure creates and reconciles structural Config records."
+    records:
+      - name: "Application Config"
+        file: "application.yaml"
+        schema: ".interface/foundation/schema/application.yaml"
+      - name: "Plan Config"
+        file: "plan.yaml"
+        schema: ".interface/foundation/schema/plan.yaml"
+      - name: "State Config"
+        file: "state.yaml"
+        schema: ".interface/foundation/schema/state.yaml"
+      - name: "Review Config"
+        file: "review.yaml"
+        schema: ".interface/foundation/schema/review.yaml"
+    skill_source:
+      definition: ".interface/implementation/operations/configure/configure.md"
+      preferences: ".interface/implementation/operations/configure/configure.yaml"
+      purpose: "The Configure Skill is constructed from this Component's Definition and Preferences."

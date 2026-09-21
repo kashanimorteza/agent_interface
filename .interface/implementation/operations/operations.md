@@ -9,7 +9,7 @@ Operations is the Implementation Subsystem that governs how authorized work is p
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Architecture](#architecture)**
+3. **[Components](#components)**
 4. **[Relationships](#relationships)**
 5. **[Layering](#layering)**
 6. **[Authority](#authority)**
@@ -43,20 +43,19 @@ Configuration prepares and reconciles the operational records. Plan turns a sele
 
 <br>
 
-<!--------------------------------------------------------------------------------- Architecture --->
-## Architecture
+<!--------------------------------------------------------------------------------- Components --->
+## Components
 
 ```text
-Operations
-└── Components
-    ├── Configure
-    ├── Plan
-    ├── Develop
-    ├── Review
-    ├── Implement
-    ├── Launch
-    ├── Reset
-    └── State
+Components
+├── Configure
+├── Plan
+├── Develop
+├── Review
+├── Implement
+├── Launch
+├── Reset
+└── State
 ```
 
 ### Configure
@@ -166,50 +165,6 @@ Responsibility: The operational position and aggregate progress needed to contin
 
 → [Definition of State](state/state.md)<br>
 → [Preferences of State](state/state.yaml)
-
-#### Modes
-
-State records the active Mode. Modes describe the current operational position and remain distinct from the behaviour required from the Target.
-
-##### Not Set
-
-State: `not set`.
-
-Responsibility: Represents the initial Workflow position before a Skill action is recorded, or the position restored by Reset.
-
-Inputs: None.
-
-Output: Active State with no selected work scope.
-
-##### Configuring
-
-State: `configuring`.
-
-Responsibility: Create and reconcile the persistent Application Manifest, reconcile operational Config, and synchronize phase State.
-
-Inputs: Operational Schemas, existing Config, and Target phase identities.
-
-Output: Persistent Application Manifest and current operational Config.
-
-##### Planning
-
-State: `planning`.
-
-Responsibility: Create bounded and verifiable Tasks without prescribing implementation.
-
-Inputs: Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, and operational records.
-
-Output: Updated Plan Config.
-
-##### Development
-
-State: `development`.
-
-Responsibility: Implement and verify eligible planned Tasks.
-
-Inputs: Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, Plan, State, and existing implementation.
-
-Output: Verified implementation and updated operational records.
 
 <br>
 

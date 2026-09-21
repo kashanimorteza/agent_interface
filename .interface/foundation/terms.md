@@ -1,4 +1,4 @@
-# Terminology
+# Terms
 
 This section defines the shared vocabulary used to understand Agent Interface, its Modules, its Foundation resources, and its operational Config boundary.
 

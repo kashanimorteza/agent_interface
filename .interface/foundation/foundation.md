@@ -56,7 +56,7 @@ The Interface routes an Agent to the relevant Foundation source or Schema. Confi
 └── foundation/
     ├── foundation.md
     ├── introduction.md
-    ├── terminology.md
+    ├── terms.md
     ├── architecture.md
     ├── understanding.md
     ├── authority.md

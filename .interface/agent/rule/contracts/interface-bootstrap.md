@@ -5,7 +5,7 @@ The Interface structure and Agent Instance realizations are independent of a par
 ## Entry points
 
 - `.interface/interface.md` is the canonical Interface document and file map, and the single Interface entry point every Skill and supporting Agent Instance starts from.
-- The Foundation section files it links — `.interface/foundation/introduction.md`, `terminology.md`, `architecture.md`, `understanding.md`, `operations.md`, `modes.md`, `authority.md`, and `workflow.md` — are part of Interface Understanding and are read together with it before acting.
+- The Foundation section files it links — `.interface/foundation/introduction.md`, `terms.md`, `architecture.md`, `understanding.md`, `authority.md`, and `workflow.md` — are part of Interface Understanding and are read together with it before acting.
 
 Establish Interface Understanding from the Interface document and those linked Foundation section files alone. When the active role needs Target meaning, establish Target Understanding from both Target definitions the Interface locates, under the precedence the Interface declares for them. Unless the Human explicitly invoked Agent Native Sync, never enter, read, search, resolve, or use `.interface/agent/` or any Agent Module source — even when the Interface file lists it. Follow only routes to Target, Implementation, Foundation, Config, and synchronized Runtime resources required by the active role. Current native Rules, role instructions, Skills, settings, and capabilities are the operational Agent contract.
 

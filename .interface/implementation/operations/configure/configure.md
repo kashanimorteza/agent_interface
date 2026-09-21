@@ -1,6 +1,6 @@
 # Configure Definition
 
-Configure is the Operation Component that creates the four structural Config records required by the Interface.
+Configure is the Operation Component that creates the structural Config records required by the Interface from their Schemas.
 
 <br>
 
@@ -9,12 +9,11 @@ Configure is the Operation Component that creates the four structural Config rec
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Architecture](#architecture)**
-4. **[Relationships](#relationships)**
-5. **[Layering](#layering)**
-6. **[Authority](#authority)**
-7. **[Principles](#principles)**
-8. **[At a Glance](#at-a-glance)**
+3. **[Relationships](#relationships)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -23,24 +22,17 @@ Configure is the Operation Component that creates the four structural Config rec
 
 ### Overview
 
-Configure is the Operation Component that creates the four Config files required by the Interface:
-
-- `application.yaml`
-- `plan.yaml`
-- `state.yaml`
-- `review.yaml`
-
-It reads their Schemas and generates one structurally valid Config file for each. Configure has no Target, phase, product, Environment, or Agent responsibility.
+Configure is the Operation Component that creates the Config records required by the Interface from their current Schemas. Configure has no Target, phase, product, Environment, or Agent responsibility.
 
 ### Purpose
 
-The Interface needs these four files to exist with known structures before its operational work can use them. Configure creates that structural foundation and does nothing beyond producing those four Schema-derived files.
+The Interface needs its Config records to exist with known structures before operational work can use them. Configure creates that structural foundation and does nothing beyond producing Schema-derived records.
 
 ### How It Works
 
-Configure reads the four Config Schemas and generates the corresponding files in Config. It does not read Target or Agent content, interpret phases, execute Workflow operations, install technical requirements, prepare an Environment, or create product Source.
+Configure reads the Config Schemas named by Configure Preferences and generates the corresponding records in the Config directory. It does not read Target or Agent content, interpret phases, execute Workflow operations, install technical requirements, prepare an Environment, or create product Source. The Configure Skill is constructed from this Definition and its Preferences, so this Component is the source of the Skill's meaning and current Config mapping.
 
-Configure is complete when the four generated files conform to their current Schemas. Any later Plan, State, Review, Application Manifest, or phase content belongs to the operation that owns it.
+Configure is complete when every generated record conforms to its current Schema. Any later operational or phase content belongs to the Operation that owns it.
 
 <br>
 
@@ -52,29 +44,14 @@ Configure is complete when the four generated files conform to their current Sch
 
 <br>
 
-<!--------------------------------------------------------------------------------- Architecture --->
-## Architecture
-
-```text
-Configure
-├── application.yaml
-├── plan.yaml
-├── state.yaml
-└── review.yaml
-```
-
-Configure has no internal operational Components. Its only responsibility is to generate these four Config Records from their corresponding Schemas.
-
-<br>
-
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Config Schemas** — reads the four structures from which the Config Records are generated.
+- **Consumes Config Schemas** — reads the structures named by Configure Preferences from which Config Records are generated.
 
 <br>
 
-The four Config Schemas own file shape and required structure. Configure Preferences are empty because Configure has no independent choices or Defaults.
+The Config Schemas own file shape and required structure. Configure Preferences own the current Config directory, record-to-Schema mapping, and the Human-only policy for those declarations.
 
 Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
@@ -90,7 +67,7 @@ Configure owns structural creation of Config records. The Config Schemas own the
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-This Definition is the authority for Configure's responsibility and limits. Its Principle is mandatory; Configure Preferences are empty and cannot expand its scope.
+This Definition is the authority for Configure's responsibility and limits. Its Principle is mandatory; Configure Preferences supply current mappings but cannot expand its scope.
 
 <br>
 
@@ -101,13 +78,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Configure generates only the four Config files from their Schemas
+### Configure generates only the declared Config records from their Schemas
 
-**Rule:** Configure reads the four Config Schemas and generates only `application.yaml`, `plan.yaml`, `state.yaml`, and `review.yaml` as structurally valid Config Records.
+**Rule:** Configure reads only the Config Schemas declared by Configure Preferences and generates only their structurally valid Config Records.
 
 **Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Operation.
 
-**Boundary:** Configure never reads or changes Target, Agent, phase, product Source, Environment, technical requirements, Workflow content, or any file outside these four Config Records.
+**Boundary:** Configure never reads or changes Target, Agent, phase, product Source, Environment, technical requirements, Workflow content, or any file outside the declared Config Records.
 
 <br>
 
@@ -116,7 +93,7 @@ Every Principle below is mandatory.
 
 Every obligation in the file, under the Principle it comes from.
 
-**Configure generates only the four Config files from their Schemas**
+**Configure generates only the declared Config records from their Schemas**
 
-- **Must** — generate the four Config Records from their current Schemas.
-- **Never** — perform another operation or change anything outside those four Config Records.
+- **Must** — generate each declared Config Record from its current Schema.
+- **Never** — perform another Operation or change anything outside those Config Records.

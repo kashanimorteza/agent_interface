@@ -8,7 +8,7 @@ Agent Interface is the Human-defined structure that coordinates Target, Implemen
 ## Navigation
 
 1. **[Introduction](#introduction)**
-2. **[Terminology](#terminology)**
+2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Modules](#modules)**
 5. **[Config](#config)**
@@ -33,14 +33,14 @@ Responsibility: Overview, purpose, how it works, independence, core idea, and de
 
 <br>
 
-<!--------------------------------------------------------------------------------- Terminology --->
-## Terminology
+<!--------------------------------------------------------------------------------- Terms --->
+## Terms
 
-Terminology defines the shared vocabulary used throughout the Interface — Interface, Human, Module, Target, Implementation, Agent, Component, Principles, Preferences, Schema, Config, Plan, Task, Understanding, Operation, Workflow, Mode, Skill, the Agent Module and its Native, Instances, Preferences, Roles, and capabilities, Agent Native Sync, and Capability Realization Kinds.
+Terms defines the shared vocabulary used throughout the Interface — Interface, Human, Module, Target, Implementation, Agent, Component, Principles, Preferences, Schema, Config, Plan, Task, Understanding, Operation, Workflow, Mode, Skill, the Agent Module and its Native, Instances, Preferences, Roles, and capabilities, Agent Native Sync, and Capability Realization Kinds.
 
 Responsibility: Defines every capitalized term the Interface uses; read before any other section; part of every Skill's required Interface Understanding.
 
-→ [Read more about Terminology](foundation/terminology.md)
+→ [Read more about Terms](foundation/terms.md)
 
 
 

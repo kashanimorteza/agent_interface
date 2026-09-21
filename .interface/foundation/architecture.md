@@ -40,7 +40,7 @@ Agent Interface
 │   └── Review
 └── Foundation
     ├── Introduction
-    ├── Terminology
+    ├── Terms
     ├── Architecture
     ├── Understanding
     ├── Operations
