@@ -8,6 +8,8 @@ According to the selected Agent Native's Skill-creation policy, create or update
 
 When the Skill is explicitly invoked, it must read and understand the complete Agent Module, then realize that understanding in the selected Agent Native. It must update an existing Native realization or create one when it is missing.
 
+Every explicit invocation is a full synchronization against the current Agent Module and the current instructions in this Foundation File. The existence of the Agent Native Sync Skill or any previously generated Native artifact never satisfies the invocation and never permits the Skill to skip creation, reconciliation, or verification under the current mechanism.
+
 ## Purpose
 
 The Skill transfers the Agent Module's portable definition of the Agent into the selected Agent Native. It makes the Agent Native understand and apply the Human's declared Components, Skills, Rules, Permissions, Commands, Tools, Connections, Context, Runtime choices, Personalities, and Agent Instances wherever the Native provides a corresponding mechanism.
@@ -50,7 +52,7 @@ Agent Sync may restate a declaration in the Native's idiom only when necessary f
 
 When a declared Skill is required, the Skill creates or updates that Native Skill according to the Native's Skill policy. When a declared Rule, Permission, Command, Tool, Connection, Context, Personality, Runtime choice, or Agent Instance has another Native mechanism, it uses that mechanism instead of forcing every concept into a Skill.
 
-For every declared Skill entry, the Skill must create the Native Skill when it is missing, update it when it is stale, and verify it after realization. It must report one result for every declared entry, including entries that are already current, unsupported, approximated, or blocked. The coordinating Skill selection affects invocation and coordination only; it does not make any other declared Skill optional.
+For every declared Skill entry, the Skill must create the Native Skill when it is missing, reconcile and update it on every synchronization when it exists, and verify it after realization. It must report one result for every declared entry, including entries that are already current, unsupported, approximated, or blocked. An existing or apparently current Native Skill is still read against the current sources and mechanism; it is never treated as a reason to skip the synchronization. The coordinating Skill selection affects invocation and coordination only; it does not make any other declared Skill optional.
 
 ## Authority and Boundaries
 
