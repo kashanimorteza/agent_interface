@@ -1,6 +1,6 @@
 # Reset Definition
 
-Reset is the Process Component that reconciles authorized operational records and outputs with a selected reset scope.
+Reset is the Operation Component that reconciles authorized operational records and outputs with a selected reset scope.
 
 <br>
 
@@ -13,7 +13,7 @@ Reset is the Process Component that reconciles authorized operational records an
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Process Contract](#process-contract)**
+7. **[Operation Contract](#operation-contract)**
 8. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -23,7 +23,7 @@ Reset is the Process Component that reconciles authorized operational records an
 
 ### Overview
 
-Reset is the Process Component that reconciles operational records and implementation outputs with an explicitly authorized reset scope while preserving what must remain.
+Reset is the Operation Component that reconciles operational records and implementation outputs with an explicitly authorized reset scope while preserving what must remain.
 
 ### Purpose
 
@@ -54,7 +54,7 @@ Reset reads the selected scope and current authorities, identifies affected reco
 
 Reset owns bounded reconciliation, not Target meaning, Development Source, or another Component's authority.
 
-Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -62,14 +62,14 @@ Every Principle in this file is mandatory. A Process Preference can never overri
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Reset owns reconciliation of its authorized scope. It does not redefine Target, repair product implementation, or take ownership of another Process Component's records.
+Reset owns reconciliation of its authorized scope. It does not redefine Target, repair product implementation, or take ownership of another Operation Component's records.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principle and Process Contract in this Definition govern Reset. Reset Preferences can guide only an explicitly authorized scope and cannot authorize a destructive scope themselves.
+The Principle and Operation Contract in this Definition govern Reset. Reset Preferences can guide only an explicitly authorized scope and cannot authorize a destructive scope themselves.
 
 <br>
 
@@ -90,8 +90,8 @@ Every Principle below is mandatory.
 <br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
-<!--------------------------------------------------------------------------------- Process Contract --->
-## Process Contract
+<!--------------------------------------------------------------------------------- Operation Contract --->
+## Operation Contract
 
 Reset accepts exactly one scope: explicit phases, all phases with generated work, `config`, or `complete`. It resolves phase identity, ownership, generated outputs, State, Plan, Review, Config, Platform Launch authorities, Task evidence, and observable repository state before mutation.
 

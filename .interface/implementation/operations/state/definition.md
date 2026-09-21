@@ -1,6 +1,6 @@
 # State Definition
 
-State is the Process Component that records the aggregate operational position, outcomes, stoppages, and history needed to continue the workflow.
+State is the Operation Component that records the aggregate operational position, outcomes, stoppages, and history needed to continue the workflow.
 
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation

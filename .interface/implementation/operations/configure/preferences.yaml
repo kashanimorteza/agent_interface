@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/implementation/process/configure/preferences.yaml"
+  path: ".interface/implementation/operations/configure/preferences.yaml"
   path_note: "The Preferences layer of the Configure Component."
   purpose: "Configure has no independent choices; its four Config Records follow their Schemas."
   standard: "Agent Project Interface"

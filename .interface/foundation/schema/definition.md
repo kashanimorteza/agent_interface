@@ -20,7 +20,7 @@ An Implementation or Agent Component describes its own responsibilities, boundar
 
 ## Scope
 
-A Definition file carries two kinds of content: what a reader must understand about the Component, and the mandatory rules it operates under. It carries nothing else. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Definitions additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary; Process-backed Skill behavior belongs to its owning Implementation Process Component, while Agent Skill Preferences hold the Agent-side bridge. A conditional external Skill may name the technology it serves without selecting that technology for a Target.
+A Definition file carries two kinds of content: what a reader must understand about the Component, and the mandatory rules it operates under. It carries nothing else. It is independent of specific implementation tools, versions, providers, and any particular project. Architectural concepts such as packages, modules, layers, roles, capabilities, and their ownership and public interfaces are permitted. Agent Skill Definitions additionally name the Skills the architecture requires and state each Skill's What, Why, scope, and boundary; Operation-backed Skill behavior belongs to its owning Implementation Operation Component, while Agent Skill Preferences hold the Agent-side bridge. A conditional external Skill may name the technology it serves without selecting that technology for a Target.
 
 A Definition file never contains:
 
@@ -29,7 +29,7 @@ A Definition file never contains:
 - the shape of any generated file, including a documentation file, which belongs to the Component's Schema when one exists or to the Preferences that own that file; or
 - instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.
 
-Process-backed Skill behavior belongs to its owning Implementation Process Component, not to Agent Skill Preferences or Agent Skill Definitions. Agent Skill Preferences declare only the Agent-side bridge, invocation, and Runtime boundary.
+Operation-backed Skill behavior belongs to its owning Implementation Operation Component, not to Agent Skill Preferences or Agent Skill Definitions. Agent Skill Preferences declare only the Agent-side bridge, invocation, and Runtime boundary.
 
 Relationships between Components are permitted and belong in Relationships. They describe what each Component consumes or provides without directing a Skill's execution.
 
@@ -60,12 +60,12 @@ A Definition file carries these parts, in this order. A part marked *optional* i
 9. **Layering** — where the Component's technical choices live instead.
 10. **Authority** — the binding force of the file and its precedence.
 11. **Principles** — the mandatory rules.
-12. **Process Contract** — the operational contract of a Process Component, when the Component is an executable Process operation. *(optional)*
+12. **Operation Contract** — the operational contract of an Operation Component, when the Component is an executable Operation. *(optional)*
 13. **At a Glance** — the derived list of every obligation in the file.
 
 The Opening Summary is the file's one-line orientation: it names what the owner is and where it belongs, without explaining the file's structure or stating a Principle. Navigation follows it so the reader sees the whole shape before entering the content. Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Process Contract is carried only by an executable Process Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, Process Contract, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Operation Contract is carried only by an executable Operation Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, Operation Contract, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle carry third-level headings, so a second-level heading always names a section and a third-level heading always names one member of it. A `<br>` separates each part from the next and each Principle from the next.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -114,7 +114,7 @@ A numbered list, one line per section the file actually carries, each linking to
 6. **[Layering](#layering)**
 7. **[Authority](#authority)**
 8. **[Principles](#principles)**
-9. **[Process Contract](#process-contract)**
+9. **[Operation Contract](#operation-contract)**
 10. **[At a Glance](#at-a-glance)**
 ```
 

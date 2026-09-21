@@ -1,6 +1,6 @@
 # Plan Definition
 
-Plan is the Process Component that turns a Target phase into bounded, understandable, and verifiable work.
+Plan is the Operation Component that turns a Target phase into bounded, understandable, and verifiable work.
 
 <br>
 
@@ -13,7 +13,7 @@ Plan is the Process Component that turns a Target phase into bounded, understand
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Process Contract](#process-contract)**
+7. **[Operation Contract](#operation-contract)**
 8. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -23,7 +23,7 @@ Plan is the Process Component that turns a Target phase into bounded, understand
 
 ### Overview
 
-Plan is the Process Component that turns one project phase into a bounded Plan of Groups and Tasks. It defines how work is organized, understood, ordered, and shown complete.
+Plan is the Operation Component that turns one project phase into a bounded Plan of Groups and Tasks. It defines how work is organized, understood, ordered, and shown complete.
 
 ### Purpose
 
@@ -70,7 +70,7 @@ Plan owns decomposition and completion conditions. Target owns intent, Developme
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principles and Process Contract in this Definition govern Plan. Plan Preferences are empty and cannot add technical or project meaning.
+The Principles and Operation Contract in this Definition govern Plan. Plan Preferences are empty and cannot add technical or project meaning.
 
 <br>
 
@@ -216,8 +216,8 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 <br>
 
-<!--------------------------------------------------------------------------------- Process Contract --->
-## Process Contract
+<!--------------------------------------------------------------------------------- Operation Contract --->
+## Operation Contract
 
 Plan accepts zero or more phase selections. An empty selection means every enabled phase. It resolves stable phase identities, removes duplicates, and preserves Target order.
 

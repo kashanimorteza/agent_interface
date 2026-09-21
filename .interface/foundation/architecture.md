@@ -13,7 +13,7 @@ Agent Interface
 │   │   ├── API
 │   │   ├── Presentation
 │   │   └── Platform
-│   └── Process
+│   └── Operations
 │       ├── Configure
 │       ├── Plan
 │       ├── Develop

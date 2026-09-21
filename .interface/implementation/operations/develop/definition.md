@@ -1,6 +1,6 @@
 # Develop Definition
 
-Develop is the Process Component that executes authorized planned Tasks and produces the resulting Development work.
+Develop is the Operation Component that executes authorized planned Tasks and produces the resulting Development work.
 
 <br>
 
@@ -13,7 +13,7 @@ Develop is the Process Component that executes authorized planned Tasks and prod
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Process Contract](#process-contract)**
+7. **[Operation Contract](#operation-contract)**
 8. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -23,7 +23,7 @@ Develop is the Process Component that executes authorized planned Tasks and prod
 
 ### Overview
 
-Develop is the Process Component that executes planned implementation Tasks and produces the authorized Development results. It does not redefine the Plan or own the product meaning it realizes.
+Develop is the Operation Component that executes planned implementation Tasks and produces the authorized Development results. It does not redefine the Plan or own the product meaning it realizes.
 
 ### Purpose
 
@@ -54,7 +54,7 @@ Develop reads the selected Plan and applicable authorities, performs the authori
 
 Technical choices and defaults belong to the owning Development Component Preferences. Develop owns execution conventions only; it does not select product architecture or technical items.
 
-Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -68,7 +68,7 @@ Develop owns execution. Plan owns the work definition, Development owns product 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principle and Process Contract in this Definition govern Develop. Develop Preferences can supply execution defaults only where the Plan and owning Development authorities are silent.
+The Principle and Operation Contract in this Definition govern Develop. Develop Preferences can supply execution defaults only where the Plan and owning Development authorities are silent.
 
 <br>
 
@@ -90,8 +90,8 @@ Every Principle below is mandatory.
 <br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
-<!--------------------------------------------------------------------------------- Process Contract --->
-## Process Contract
+<!--------------------------------------------------------------------------------- Operation Contract --->
+## Operation Contract
 
 Develop accepts zero or more phase selections. An empty selection means every phase eligible under its current Plan. It resolves stable phase identities, removes duplicates, and preserves Target order.
 

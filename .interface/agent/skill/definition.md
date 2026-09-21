@@ -29,13 +29,13 @@ Skill is a reusable capability an Agent can activate to perform a defined kind o
 
 ### Purpose
 
-Skill prevents the Agent from reconstructing the same instructions each time. Each Process-backed Skill points to one owning Process Component, whose Definition and Preferences contain the meaning the Skill executes; Agent Skill Preferences contain only the Agent-side bridge.
+Skill prevents the Agent from reconstructing the same instructions each time. Each Operation-backed Skill points to one owning Operation Component, whose Definition and Preferences contain the meaning the Skill executes; Agent Skill Preferences contain only the Agent-side bridge.
 
 ### How It Works
 
-The owning Process Component is authoritative for a Process-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Agent Native owns execution mechanics. An external provider can supply a different realization, but it does not change the owning Component's meaning.
+The owning Operation Component is authoritative for an Operation-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Agent Native owns execution mechanics. An external provider can supply a different realization, but it does not change the owning Component's meaning.
 
-Declared Agent Skills are listed in Agent Skill Preferences. Each entry points to the Definition and Preferences of its owning Process Component, so Agent Sync and the realized Skill can find the Skill's meaning and required Understanding at the source. These references identify where to read; they do not copy or redefine the Process Component's content in the Agent Skill Component.
+Declared Agent Skills are listed in Agent Skill Preferences. Each entry points to the Definition and Preferences of its owning Operation Component, so Agent Sync and the realized Skill can find the Skill's meaning and required Understanding at the source. These references identify where to read; they do not copy or redefine the Operation Component's content in the Agent Skill Component.
 
 
 
@@ -47,7 +47,7 @@ Declared Agent Skills are listed in Agent Skill Preferences. Each entry points t
 
 - **Skill** — a reusable capability activated explicitly or by a declared coordinator.
 - **Skill Preferences** — the Agent-side bridge to one Skill's owning Component, including its invocation and Agent Native boundary.
-- **Capability Realization Kind** — the declared way a Skill becomes usable: Constructed from its Process Component and Agent Skill Preferences, or Installed through a provider.
+- **Capability Realization Kind** — the declared way a Skill becomes usable: Constructed from its Operation Component and Agent Skill Preferences, or Installed through a provider.
 
 
 
@@ -57,7 +57,7 @@ Declared Agent Skills are listed in Agent Skill Preferences. Each entry points t
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Agent, Implementation, and Target** — reads the authorities required by its Agent Skill Preferences and owning Process Component.
+- **Consumes Agent, Implementation, and Target** — reads the authorities required by its Agent Skill Preferences and owning Operation Component.
 - **Consumed by Agent and permitted Coordinators** — provides an executable capability without acquiring the authority of its sources.
 
 
@@ -68,9 +68,9 @@ Declared Agent Skills are listed in Agent Skill Preferences. Each entry points t
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Process-backed Skill behavior belongs to the owning Implementation Process Component. Agent-side declarations and mappings belong to Agent Skill Preferences, while Agent Sync owns their realization in the selected Agent Native.
+Operation-backed Skill behavior belongs to the owning Implementation Operation Component. Agent-side declarations and mappings belong to Agent Skill Preferences, while Agent Sync owns their realization in the selected Agent Native.
 
-The Definition carries the portable Skill meaning; Preferences carry the Agent-side bridge. Neither layer replaces or duplicates the owning Process Component's behavior.
+The Definition carries the portable Skill meaning; Preferences carry the Agent-side bridge. Neither layer replaces or duplicates the owning Operation Component's behavior.
 
 
 
@@ -94,7 +94,7 @@ Every Principle below is mandatory and defines the shared meaning of an Agent Sk
 
 ### Each Skill layer has one owner
 
-**Rule:** This Definition explains the shared Skill concept, the owning Process Component owns Process-specific behavior, Agent Skill Preferences provide the bridge, and the selected Agent Native owns execution mechanics.
+**Rule:** This Definition explains the shared Skill concept, the owning Operation Component owns Operation-specific behavior, Agent Skill Preferences provide the bridge, and the selected Agent Native owns execution mechanics.
 
 **Why:** Clear ownership prevents duplication and conflicting authorities.
 
@@ -103,11 +103,11 @@ Every Principle below is mandatory and defines the shared meaning of an Agent Sk
 
 ### Every Skill has one owner and bridge
 
-**Rule:** Every Process-backed Skill has one owning Process Component and one Agent Preferences bridge that points to it.
+**Rule:** Every Operation-backed Skill has one owning Operation Component and one Agent Preferences bridge that points to it.
 
-**Why:** One owning Component keeps each Process Skill's behavior clear and consistent, while one Preferences bridge keeps the Agent mapping clear.
+**Why:** One owning Component keeps each Operation Skill's behavior clear and consistent, while one Preferences bridge keeps the Agent mapping clear.
 
-**Boundary:** Agent Skill Preferences do not repeat or redefine the owning Process Component's workflow.
+**Boundary:** Agent Skill Preferences do not repeat or redefine the owning Operation Component's workflow.
 
 
 ### Skill availability is proven
@@ -153,9 +153,9 @@ Every Principle below is mandatory and defines the shared meaning of an Agent Sk
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
-- **Each Skill layer has one owner** — Definition explains the shared concept; Process Component owns Skill behavior; Preferences bridge Agent to Process; Agent Sync owns Native realization.
+- **Each Skill layer has one owner** — Definition explains the shared concept; Operation Component owns Skill behavior; Preferences bridge Agent to Operations; Agent Sync owns Native realization.
 
-- **Every Skill has one owner and bridge** — define each Process-backed Skill through one owning Component and one Agent Preferences bridge.
+- **Every Skill has one owner and bridge** — define each Operation-backed Skill through one owning Component and one Agent Preferences bridge.
 
 - **Skill availability is proven** — verify Native discovery and invocation; never infer availability from declaration alone.
 

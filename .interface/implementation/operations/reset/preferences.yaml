@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/implementation/process/preferences.yaml"
-  path_note: "The Preferences layer of the Process Subsystem — defaults shared by its Process Components."
-  purpose: "Shared Process choices used when the Target and owning Process Component are silent."
+  path: ".interface/implementation/operations/reset/preferences.yaml"
+  path_note: "The Preferences layer of the Reset Component."
+  purpose: "Reset defaults used when the selected scope and owning authorities are silent."
   standard: "Agent Project Interface"
   version: "1.0"
   updated: "2026-09-20"
@@ -10,16 +10,16 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Operations read it without writing resolved choices back into it."
-  changed_by: "The human, directly. A missing critical Process choice is raised through State."
+  rule: "This file is human-owned. Reset reads it without writing resolved choices back into it."
+  changed_by: "The human, directly. A missing critical Reset choice is raised through State."
   precedence: "An explicit Target value and every applicable Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Apply a shared Process default only when neither the Target nor the owning Process Component supplies the choice."
-  selection: "There is currently no shared Process alternative to select."
+  consumption: "Apply a Reset default only when the authorized scope and owning authorities are silent."
+  selection: "Refuse an ambiguous or unsafe reset and raise the required human decision."
   version_resolution: "No entry currently carries a version."
-  matching: "There is currently no shared Process entry to match."
+  matching: "Match reset settings to the explicitly selected record or output scope."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -29,9 +29,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty. Process selects no shared technical profile."
-  options: "Empty. Process catalogues no shared alternatives."
-  settings: "Empty. Each Process Component currently owns its own settings."
+  selected: "Empty. Reset selects no shared reset profile."
+  options: "Empty. Reset catalogues no shared alternatives."
+  settings: "Empty. Reset defaults remain to be declared when needed."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:

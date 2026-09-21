@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/implementation/process/state/preferences.yaml"
+  path: ".interface/implementation/operations/state/preferences.yaml"
   path_note: "The Preferences layer of the State Component. It currently defines no technical choices for operational progress, runtime state, or history."
   purpose: "Where technical choices owned by State would be recorded. State currently makes none."
   standard: "Agent Project Interface"

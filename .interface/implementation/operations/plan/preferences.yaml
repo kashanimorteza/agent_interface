@@ -1,6 +1,6 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
-  path: ".interface/implementation/process/plan/preferences.yaml"
+  path: ".interface/implementation/operations/plan/preferences.yaml"
   path_note: "The Preferences layer of the Plan Component. It currently defines no Component-specific technical choices or defaults."
   purpose: "Where the Plan Component's technical choices would be recorded. The Plan Component currently makes none."
   standard: "Agent Project Interface"

@@ -1,6 +1,6 @@
 # Configure Definition
 
-Configure is the Process Component that creates the four structural Config records required by the Interface.
+Configure is the Operation Component that creates the four structural Config records required by the Interface.
 
 <br>
 
@@ -23,7 +23,7 @@ Configure is the Process Component that creates the four structural Config recor
 
 ### Overview
 
-Configure is the Process Component that creates the four Config files required by the Interface:
+Configure is the Operation Component that creates the four Config files required by the Interface:
 
 - `application.yaml`
 - `plan.yaml`
@@ -76,14 +76,14 @@ Configure has no internal operational Components. Its only responsibility is to 
 
 The four Config Schemas own file shape and required structure. Configure Preferences are empty because Configure has no independent choices or Defaults.
 
-Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Configure owns structural creation of Config records. The Config Schemas own their shapes, while later Process Components own the operational content written into those records.
+Configure owns structural creation of Config records. The Config Schemas own their shapes, while later Operation Components own the operational content written into those records.
 
 <br>
 
@@ -105,7 +105,7 @@ Every Principle below is mandatory.
 
 **Rule:** Configure reads the four Config Schemas and generates only `application.yaml`, `plan.yaml`, `state.yaml`, and `review.yaml` as structurally valid Config Records.
 
-**Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Process operation.
+**Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Operation.
 
 **Boundary:** Configure never reads or changes Target, Agent, phase, product Source, Environment, technical requirements, Workflow content, or any file outside these four Config Records.
 

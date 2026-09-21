@@ -1,6 +1,6 @@
 # Launch Definition
 
-Launch is the Process Component that activates a completed implementation and records the observable runtime result.
+Launch is the Operation Component that activates a completed implementation and records the observable runtime result.
 
 <br>
 
@@ -13,7 +13,7 @@ Launch is the Process Component that activates a completed implementation and re
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Process Contract](#process-contract)**
+7. **[Operation Contract](#operation-contract)**
 8. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -23,7 +23,7 @@ Launch is the Process Component that activates a completed implementation and re
 
 ### Overview
 
-Launch is the Process Component that brings a completed implementation online and records the observable runtime result.
+Launch is the Operation Component that brings a completed implementation online and records the observable runtime result.
 
 ### Purpose
 
@@ -54,7 +54,7 @@ Launch reads the applicable Platform and operational authorities, verifies readi
 
 Launch owns activation and observation, not product Source, Platform definitions, or runtime secrets.
 
-Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -68,7 +68,7 @@ Launch owns activation and its observable result. Development owns the implement
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principle and Process Contract in this Definition govern Launch. Launch Preferences supply only activation defaults where higher authorities are silent.
+The Principle and Operation Contract in this Definition govern Launch. Launch Preferences supply only activation defaults where higher authorities are silent.
 
 <br>
 
@@ -90,8 +90,8 @@ Every Principle below is mandatory.
 <br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
-<!--------------------------------------------------------------------------------- Process Contract --->
-## Process Contract
+<!--------------------------------------------------------------------------------- Operation Contract --->
+## Operation Contract
 
 Launch accepts one optional scope: `api`, `presentation`, `logic`, or `complete` (`all` is an alias). With no scope, it asks the Human to choose one. It consumes Target and Platform selections, Platform authorities, State, developed parts, public interfaces, and observable runtime state.
 

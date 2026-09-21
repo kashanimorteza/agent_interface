@@ -1,6 +1,6 @@
 # Review Definition
 
-Review is the Process Component that independently judges selected-phase Plans and available implementation against their applicable authorities.
+Review is the Operation Component that independently judges selected-phase Plans and available implementation against their applicable authorities.
 
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
@@ -11,7 +11,7 @@ Review is the Process Component that independently judges selected-phase Plans a
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Process Contract](#process-contract)**
+7. **[Operation Contract](#operation-contract)**
 8. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -82,7 +82,7 @@ Review owns assurance and Findings. Plan owns planned work, Develop owns impleme
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principles and Process Contract in this Definition govern Review. Review Preferences are empty and cannot lower the evidence or independence required by those Principles.
+The Principles and Operation Contract in this Definition govern Review. Review Preferences are empty and cannot lower the evidence or independence required by those Principles.
 
 <br>
 
@@ -163,8 +163,8 @@ Every Principle below is mandatory.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Process Contract --->
-## Process Contract
+<!--------------------------------------------------------------------------------- Operation Contract --->
+## Operation Contract
 
 Review accepts zero or more phase selections. An empty selection means every enabled phase that has an implementation. It resolves stable phase identities, removes duplicates, and preserves Target order.
 

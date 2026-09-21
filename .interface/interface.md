@@ -14,10 +14,8 @@ Agent Interface is the Human-defined structure that coordinates Target, Implemen
 5. **[Config](#config)**
 6. **[Foundation Files](#foundation-files)**
 7. **[Understanding](#understanding)**
-8. **[Operations](#operations)**
-9. **[Modes](#modes)**
-10. **[Authority and Ownership](#authority-and-ownership)**
-11. **[Workflow](#workflow)**
+8. **[Authority and Ownership](#authority-and-ownership)**
+9. **[Workflow](#workflow)**
 
 
 <br>
@@ -78,9 +76,11 @@ Responsibility: Explains the Target Module and maps its files; the Understanding
 <!-------------------------- Implementation -->
 ### Implementation
 
-The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its Development and Process Subsystems.
+The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its Development and Operations Subsystems.
 
-Responsibility: Explains the Implementation Module and maps its Development and Process Subsystems and their Components.
+Responsibility: Explains the Implementation Module and maps its Development and Operations Subsystems and their Components.
+
+The Operations defined by this Interface are realized by the corresponding Operation Components under `implementation/operations/`; their Definitions and Preferences are the source for the operational Skills that perform them.
 
 → [Read more about the Implementation Module](implementation/guide.md)
 
@@ -132,32 +132,6 @@ Understanding is the current context an Agent Native or Agent Instance establish
 Responsibility: Defines Interface Understanding and Target Understanding, their sources, precedence, and the Agent Module exception; part of every Skill's required Interface Understanding.
 
 → [Read more about Understanding](foundation/understanding.md)
-
-
-
-<br>
-
-<!--------------------------------------------------------------------------------- Operations --->
-## Operations
-
-Operations are the defined actions performed through the eight Interface-owned Skills — Configure, Plan, Develop, Review, Launch, Implement, Reset, and Agent Native Sync — each with exactly one Skill and one summarized outcome.
-
-Responsibility: Defines every Operation, its Skill entry point, and the outcome that Skill is responsible for; part of every Skill's required Interface Understanding.
-
-→ [Read more about Operations](foundation/operations.md)
-
-
-
-<br>
-
-<!--------------------------------------------------------------------------------- Modes --->
-## Modes
-
-Modes are the operational positions recorded by State — Not Set, Configuring, Planning, Development — each with its responsibility, inputs, and output.
-
-Responsibility: Defines every Mode State may record, with its responsibility, inputs, and output; part of every Skill's required Interface Understanding.
-
-→ [Read more about Modes](foundation/modes.md)
 
 
 

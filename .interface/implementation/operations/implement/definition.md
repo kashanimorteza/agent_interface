@@ -1,6 +1,6 @@
 # Implement Definition
 
-Implement is the Process Component that coordinates the authorized Process sequence across the selected phases.
+Implement is the Operation Component that coordinates the authorized Operations sequence across the selected phases.
 
 <br>
 
@@ -13,7 +13,7 @@ Implement is the Process Component that coordinates the authorized Process seque
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Process Contract](#process-contract)**
+7. **[Operation Contract](#operation-contract)**
 8. **[At a Glance](#at-a-glance)**
 
 <br>
@@ -23,7 +23,7 @@ Implement is the Process Component that coordinates the authorized Process seque
 
 ### Overview
 
-Implement is the Process Component that coordinates the workflow across Plan, Develop, and Review under the current authorities.
+Implement is the Operation Component that coordinates the workflow across Plan, Develop, and Review under the current authorities.
 
 ### Purpose
 
@@ -31,15 +31,15 @@ Implementation work needs one accountable workflow that can move through plannin
 
 ### How It Works
 
-Implement reads State and the selected authorities, invokes the applicable Process operations in order, carries forward their outcomes, and stops when a required condition or human decision prevents safe continuation.
+Implement reads State and the selected authorities, invokes the applicable Operations in order, carries forward their outcomes, and stops when a required condition or human decision prevents safe continuation.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Implementation Cycle** — one coordinated passage through the applicable Process operations for a selected phase.
-- **Process Outcome** — the recorded result of one coordinated Process operation.
+- **Implementation Cycle** — one coordinated passage through the applicable Operations for a selected phase.
+- **Operation Outcome** — the recorded result of one coordinated Operation.
 
 <br>
 
@@ -54,7 +54,7 @@ Implement reads State and the selected authorities, invokes the applicable Proce
 
 Implement owns coordination, not product Source, Plan content, Review Findings, or State authority.
 
-Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -68,7 +68,7 @@ Implement owns coordination, not the work performed by Configure, Plan, Develop,
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principle and Process Contract in this Definition govern coordination. Implement Preferences supply only coordination defaults and never replace an owning Component's authority.
+The Principle and Operation Contract in this Definition govern coordination. Implement Preferences supply only coordination defaults and never replace an owning Component's authority.
 
 <br>
 
@@ -79,7 +79,7 @@ Every Principle below is mandatory.
 
 <br>
 
-### Implement coordinates the Process workflow
+### Implement coordinates the Operations workflow
 
 **Rule:** Implement coordinates only the authorized sequence of Plan, Develop, and Review operations, preserving each Component's scope, authority, outcomes, and stopping conditions.
 
@@ -90,8 +90,8 @@ Every Principle below is mandatory.
 <br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
-<!--------------------------------------------------------------------------------- Process Contract --->
-## Process Contract
+<!--------------------------------------------------------------------------------- Operation Contract --->
+## Operation Contract
 
 Implement is the explicit Human coordinator for zero or more phase selections. An empty selection means every phase currently enabled and ready. It resolves and validates the complete selection before mutation and preserves Target order.
 
@@ -99,7 +99,7 @@ Implement establishes current Interface and Target Understanding, resolves the s
 
 When no phase is selected, Implement runs Configure exactly once and verifies readiness. For each phase it runs the required Plan → Develop → Review cycle, reconciles Findings through their owning operations, and repeats only while the cycle closes or materially advances a Finding. It advances only after current Plan and Implementation Assurance succeed.
 
-Implement owns only its own status and step-by-step run log. Every delegated mutation remains owned by the invoked Process Component. It never bypasses Human approval, combines operation ownership, invokes Reset or Agent Native, or changes Target intent.
+Implement owns only its own status and step-by-step run log. Every delegated mutation remains owned by the invoked Operation Component. It never bypasses Human approval, combines operation ownership, invokes Reset or Agent Native, or changes Target intent.
 
 Launch is eligible only after every enabled and ready phase has completed Planning and Development and has satisfied the required Review assurances. Implement stops on invalid input, unavailable or incompatible child Skill, unmet dependency, failed operation gate, repeated unresolved Finding, no observable progress, inconclusive assurance, or required Human decision.
 
@@ -109,7 +109,7 @@ Launch is eligible only after every enabled and ready phase has completed Planni
 
 Every obligation in the file, under the Principle it comes from.
 
-**Implement coordinates the Process workflow**
+**Implement coordinates the Operations workflow**
 
 - **Must** — preserve the declared sequence and authority of Plan, Develop, and Review.
-- **Never** — take ownership of another Process Component's records or results.
+- **Never** — take ownership of another Operation Component's records or results.
