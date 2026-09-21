@@ -97,7 +97,7 @@ The Opening Summary is written as one unheaded paragraph immediately after the T
 
 The map of the file's own sections, so a reader — and an Agent looking for one part of it — sees the whole shape before reading any of it.
 
-A numbered list, one line per section the file actually carries, each linking to that section's heading. Nothing else: no description beside an entry, and no entry for a section the file omits. The Principles are one entry, with each Principle's title listed beneath it:
+A numbered list, one line per section the file actually carries, each linking to that section's heading. Nothing else: no description beside an entry, and no entry for a section the file omits. The Principles are one entry; individual Principle titles are not listed as Navigation subentries:
 
 ```markdown
 ## Navigation
@@ -114,13 +114,11 @@ A numbered list, one line per section the file actually carries, each linking to
 6. **[Layering](#layering)**
 7. **[Authority](#authority)**
 8. **[Principles](#principles)**
-   - **[<Title>](#title)**
-   - **[<Title>](#title)**
 9. **[Process Contract](#process-contract)**
 10. **[At a Glance](#at-a-glance)**
 ```
 
-Introduction's own parts are listed beneath it. Navigation is rewritten whenever a section or a Principle is added or renamed, like At a Glance.
+Navigation is rewritten whenever a section is added, removed, or renamed, like At a Glance.
 
 
 <!--------------------------------------------------------------------------------- Introduction --->
@@ -387,7 +385,6 @@ This section is derived, never authoritative, and it is rewritten whenever a Pri
 6. **[Layering](#layering)**
 7. **[Authority](#authority)**
 8. **[Principles](#principles)**
-   - **[<Title>](#title)**
 9. **[At a Glance](#at-a-glance)**
 
 ## Introduction

@@ -2,8 +2,7 @@
 meta:
   path: .interface/agent/connection/preferences.yaml
   path_note: The Preferences layer of the Agent Connection Component.
-  purpose: External services (MCP, LSP, channels, application connectors) and installable packages (plugins, marketplaces, capability packages), their trust, and their lifecycle. Absorbs the former Integration
-    and Extension Preferences.
+  purpose: External services (MCP, LSP, channels, application connectors) and installable packages (plugins, marketplaces, capability packages), their trust, and their lifecycle.
   standard: Agent Project Interface
   version: '3.0'
   updated: '2026-09-17'
@@ -14,7 +13,6 @@ policy:
   rule: This file is human-owned and contains references only, never credential values; discovery never authorizes provisioning.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
-  absorbed: integration/preferences.yaml (v1.0) under settings.services and extension/preferences.yaml (v1.0) under settings.packages, merged verbatim on 2026-09-17.
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->
@@ -154,4 +152,3 @@ content:
       extension_settings: {}
       disabled_extensions: {}
       update_policy: {}
-

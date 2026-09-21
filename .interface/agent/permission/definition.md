@@ -30,7 +30,7 @@ This definition describes the enforceable boundaries that control what an Agent 
 
 ### Overview
 
-Agent Permission governs what Agent Roles and capabilities may read, change, execute, connect to, or disclose. It defines authorization policy, sandbox boundaries, trust decisions, secret handling, and Enforced Guarantees.
+Agent Permission governs what Agent Instances and capabilities may read, change, execute, connect to, or disclose. It defines authorization policy, sandbox boundaries, trust decisions, secret handling, and Enforced Guarantees.
 
 It owns enforceable access decisions and deterministic boundaries. It does not own Human intent, external account authority, or a capability's functional contract.
 
@@ -44,7 +44,7 @@ The Component exists because a boundary that depends on good reasoning is not a 
 
 ### How It Works
 
-Access starts closed. The Interface is read-only to every Role and Skill, and the only writable exception is an operational record inside the Config boundary, changed by the one Skill whose declared responsibility and owning Component give it authority over that exact record. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Role or lower layer can widen what it was given.
+Access starts closed. The Interface is read-only to every Agent Instance and Skill, and the only writable exception is an operational record inside the Config boundary, changed by the one Skill whose declared responsibility and owning Component give it authority over that exact record. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Agent Instance or lower layer can widen what it was given.
 
 The Agent Module is protected by an explicit Human-only read boundary. Permission enforces that boundary; Agent Sync performs the authorized read and produces the Native realization, while every other consumer uses the synchronized Native artifacts.
 
@@ -73,7 +73,7 @@ Secrets are never values in a declaration. A declaration references a credential
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Agent authorization and Role scope** — derives the maximum permitted action boundary.
+- **Consumes Agent authorization and Agent Instance scope** — derives the maximum permitted action boundary.
 - **Consumed by Agent, Skills, Tools, Connections, and other executing Components** — constrains their reads, mutations, execution, connections, and disclosures.
 - **Consumes Rule guidance** — enforces boundaries that Rules can explain but cannot guarantee.
 
@@ -115,7 +115,7 @@ Every Principle below is mandatory.
 
 ### Interface is read-only except for authorized Config records
 
-**Rule:** The entire Interface is read-only to every Agent Role and Skill by default. Only operational records inside the Interface Config boundary may be changed, and only by a Skill whose declared responsibility and owning Component grant authority over that exact record. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
+**Rule:** The entire Interface is read-only to every Agent Instance and Skill by default. Only operational records inside the Interface Config boundary may be changed, and only by a Skill whose declared responsibility and owning Component grant authority over that exact record. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
 
 **Why:** New or moved Interface sources remain protected automatically, while operational workflow records remain maintainable by their authorized owners.
 
@@ -125,7 +125,7 @@ Every Principle below is mandatory.
 
 ### Permission is least-privilege and deny-safe
 
-**Rule:** Every capability receives only the minimum access required by its contract. Deny rules and stricter authorities take precedence; no lower layer or delegated role can broaden them.
+**Rule:** Every capability receives only the minimum access required by its contract. Deny rules and stricter authorities take precedence; no lower layer or delegated Agent Instance can broaden them.
 
 **Why:** Broad ambient access turns a bounded mistake into a system-wide one.
 

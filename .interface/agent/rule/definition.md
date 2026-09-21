@@ -1,6 +1,6 @@
 # Agent Rule Definition
 
-This definition describes persistent behavioral guidance for an Agent.
+Agent Rule is the Component for persistent behavioral guidance applied across sessions or declared scopes.
 
 
 
@@ -8,6 +8,7 @@ This definition describes persistent behavioral guidance for an Agent.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -20,6 +21,7 @@ This definition describes persistent behavioral guidance for an Agent.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -48,6 +50,7 @@ What must be guaranteed rather than followed is not written here: it is declared
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Agent Rule** — persistent behavioral guidance loaded for all work or a matching scope.
@@ -63,6 +66,7 @@ What must be guaranteed rather than followed is not written here: it is declared
 - **Resume** — continuation of an existing Session with its available conversation and runtime state.
 - **Background Work** — execution that continues without occupying the active interaction path.
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumed by Agent** — supplies persistent behavioral guidance to the Agent and its Native realization.
@@ -73,18 +77,21 @@ What must be guaranteed rather than followed is not written here: it is declared
 
 <br>
 
+<!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 This Definition carries the portable meaning and mandatory Principles of the Rule Component. Preferences carry current Rule selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -211,6 +218,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

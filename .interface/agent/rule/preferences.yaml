@@ -2,7 +2,7 @@
 meta:
   path: .interface/agent/rule/preferences.yaml
   path_note: The Preferences layer of the Agent Rule Component.
-  purpose: The declared Agent Rules, each with its complete definition file, plus the conduct settings of the former Interaction, Observability, and Session Components.
+  purpose: The declared Agent Rules, each with its complete definition file, plus the conduct settings owned by Rule.
   standard: Agent Project Interface
   version: '3.0'
   updated: '2026-09-18'
@@ -45,8 +45,7 @@ content:
   options:
     response_styles:
       explanatory_structured:
-        meaning: Explanatory, structured responses that keep the technical substance exact (Rule Principle “Presentation preserves technical substance”); realized in Claude Code by the Output Style named under settings.native.claude.
-        former_key: output_style = ADHD Explanatory (renamed 2026-09-18; the Output Style catalog moved to settings.native.claude.output_styles)
+        meaning: Explanatory, structured responses that preserve exact technical substance; realized in Claude Code by the Output Style named under settings.native.claude.
     progress_behaviors:
       material_updates:
         meaning: Report meaningful progress and blockers without narrating routine internals.
@@ -87,7 +86,7 @@ content:
         responsibility: Never run git commit or git push unless the Human explicitly asks for it in the current message; 'save it' means write files to disk, not commit. Explains the boundary that Permission
           enforces through its ask rules on git commit, push, reset, restore, checkout, rebase, and clean.
         required: true
-    placement_note: "Where a Rule lives in the Native (project, user, managed, extension, path-scoped) is Agent Sync's decision from the Native's own layout; the former categories project_rules, path_scoped_rules, user_rules, managed_rules, extension_rules, and runtime_rules were collapsed into `rules` on 2026-09-18 because they mirrored one Native's layout. A Rule that must land in a particular place may say so in its own `native.<agent-native>` hint."
+    placement_note: "Where a Rule lives in the Native (project, user, managed, extension, or path-scoped) is Agent Sync's decision from the Native's own layout. A Rule that must land in a particular place may say so in its own `native.<agent-native>` hint."
     conflicts: {}
     interaction:
       output_style_defaults:
@@ -168,11 +167,11 @@ content:
     native:
       claude:
         output_style: ADHD Explanatory
-        output_style_note: Provided by the enabled plugin adhd-output-style@claude-settings (see connection Preferences); the plugin owns the style, this selection names what it provides. Decided 2026-09-17.
+        output_style_note: Provided by the enabled plugin adhd-output-style@claude-settings (see Connection Preferences); the plugin owns the style, and this selection names what it provides.
         output_styles:
           ADHD:
             required: false
-            note: Local style file; superseded as the selected style by the plugin-provided ADHD Explanatory on 2026-09-17.
+            note: Available local style; not selected while the plugin-provided ADHD Explanatory style is active.
           Analogy Engine:
             required: false
           Bedtime Story:

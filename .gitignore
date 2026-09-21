@@ -1,3 +1,18 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# Database
+database/data/
+database/.secrets/
+my_database/data/
+my_database/.secrets/
+
 # Python
 .venv/
 __pycache__/
@@ -7,17 +22,3 @@ dist/
 .pytest_cache/
 .ruff_cache/
 
-# Database
-database/data/
-database/.secrets/
-my_database/data/
-my_database/.secrets/
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
-.fseventsd

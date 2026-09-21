@@ -22,7 +22,6 @@ resolution:
   version_resolution: Permission syntax and sandbox facilities resolve from the selected runtime.
   matching: Match portable Tool and resource capability patterns; Agent Sync resolves their Native syntax, and deny and stricter rules win conflicts.
   probes: Each enforced guarantee carries, per Agent Native, at least one behavioral probe (native.<agent>.probe) that Agent Sync runs during Verification; a failed probe means the guarantee is not realized.
-    Decided 2026-09-17.
 
 
 
@@ -117,7 +116,7 @@ content:
             probe:
               action: From an ordinary subagent (not the Agent Native Sync prompt), attempt to Read .interface/agent/guide.md and to Grep inside .interface/agent/.
               expect: Both are blocked by the PreToolUse hook with the boundary message; no content is returned.
-              also: 'Attempt to Edit .interface/interface.md from any role; expect: blocked (Interface mutation outside the Config boundary).'
+              also: 'Attempt to Edit .interface/interface.md from any Agent Instance; expect: blocked (Interface mutation outside the Config boundary).'
       agent-native-read-grant:
         guarantee: Grant Agent Module read access only to the prompt created by the Human's direct explicit invocation of Agent Native Sync; a model, Agent Native, Agent Instance,
           Skill, coordinator, Hook, lifecycle routine, or automation can never create, inherit, or borrow this grant.
