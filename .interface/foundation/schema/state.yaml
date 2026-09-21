@@ -1,15 +1,15 @@
 schema:
   id: "agent-interface-state"
-  version: "12.6"
+  version: "12.7"
   purpose: "Operational State format; State Principles define record meaning and ownership."
 operational_scope:
-  stores: "Active Workflow position, aggregate phase progress, and append-only Skill execution history."
-  excludes: "Target meaning, technical decisions, individual Task status or history, Finding details, product code, secrets, and command transcripts."
+  stores: "Active Workflow position, aggregate phase progress, and append-only Skill execution log."
+  excludes: "Target meaning, technical decisions, individual Task status or history, product code, secrets, and command transcripts."
 initialization:
   source: "initial"
-  purpose: "Create State Config from this template, then synchronize phase identities from Target without interpreting phase content."
+  purpose: "Create State Config from this template; phase identities are populated later by the operation that owns phase reconciliation."
   preservation: "Reconciliation preserves existing operational records and never replaces them with defaults."
-structure: ["active", "phases", "history"]
+structure: ["active", "phases", "log"]
 sections:
   active:
     required: true
@@ -18,7 +18,7 @@ sections:
       mode:
         required: true
         default: "not set"
-        allowed: ["not set", "configuring", "planning", "development"]
+        allowed: ["not set", "configuring", "planning", "development", "reviewing", "implementing"]
       phase: {required: true, default: null, nullable: true}
       mode_reason: {required: true, default: "No Workflow operation has been recorded."}
       set_by: {required: true, default: "initialization"}
@@ -44,17 +44,17 @@ sections:
           review:
             required: true
             default: "not started"
-            allowed: ["not started", "in progress", "plan satisfied", "satisfied", "not satisfied", "inconclusive"]
+            allowed: ["not started", "in progress", "satisfied", "not satisfied", "inconclusive"]
           updated_by: {required: true, default: "initialization"}
           updated_at: {required: true, default: null, nullable: true}
-  history:
+  log:
     required: true
     default: []
-    purpose: "Append-only concise records of State-changing Workflow events."
+    purpose: "Append-only records of Skill executions and State-changing Workflow events."
     item:
       fields:
-        id: {required: false, default: "", purpose: "The stable identifier of this History record when one is assigned."}
-        number: {required: false, default: null, nullable: true, purpose: "The chronological sequence number of this History record when one is assigned."}
+        id: {required: false, default: "", purpose: "The stable identifier of this Log Entry when one is assigned."}
+        number: {required: false, default: null, nullable: true, purpose: "The chronological sequence number of this Log Entry when one is assigned."}
         skill: {required: false, default: "", purpose: "The Skill that performed this recorded action when one is assigned."}
         parent_id: {required: false, default: "", purpose: "The identifier of the Skill or coordinator that invoked this record when applicable."}
         phase: {required: false, default: null, nullable: true}
@@ -97,15 +97,15 @@ sections:
 initial:
   meta:
     path: ".interface/config/state.yaml"
-    path_note: "Mutable Workflow position, aggregate progress, and append-only Skill execution history."
+    path_note: "Mutable Workflow position, aggregate progress, and append-only Skill execution log."
   policy:
     agent_may_edit: true
     rule: "Apply the current State Component and the active operation's ownership rules."
-  read_order: ["active", "phases", "history"]
+  read_order: ["active", "phases", "log"]
   content_map:
     active: "Current or most recently recorded Workflow position."
     phases: "Aggregate Planning, Development, and Review progress by phase identifier."
-    history: "Append-only State-changing Workflow events."
+    log: "Append-only Skill execution and State-changing Workflow events."
   content:
     active:
       mode: "not set"
@@ -114,4 +114,4 @@ initial:
       set_by: "initialization"
       set_at: null
     phases: {}
-    history: []
+    log: []

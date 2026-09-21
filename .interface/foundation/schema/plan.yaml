@@ -64,13 +64,12 @@ sections:
           planning:
             required: true
             default: {}
-            purpose: "The latest Planning reconciliation report for this phase. It records the planning run, current revision, Review Findings considered, and Task changes without becoming a second Plan history."
+            purpose: "The latest Planning reconciliation report for this phase. It records the planning run, current revision, and Task changes without becoming a second Plan log."
             fields:
-              run_id: {required: true, default: "", purpose: "The identifier of the Planning invocation that produced this report."}
+              log_id: {required: true, default: "", purpose: "The State Log Entry identifier of the Planning invocation that produced this report."}
               recorded_at: {required: true, default: "", purpose: "When this Planning reconciliation was recorded."}
               outcome: {required: true, default: "", purpose: "The truthful result of this phase's Planning reconciliation."}
               plan_revision: {required: true, default: 0, purpose: "The Plan revision after this reconciliation."}
-              review_findings_considered: {required: true, default: [], purpose: "The Review Finding identifiers read and considered for this phase; empty when none existed."}
               tasks_added: {required: true, default: [], purpose: "Task identifiers added by this Planning reconciliation."}
               tasks_removed: {required: true, default: [], purpose: "Task identifiers removed by this Planning reconciliation, with removal reasons recorded in the report."}
               tasks_changed: {required: true, default: [], purpose: "Task identifiers whose Planning-owned content changed."}
@@ -143,6 +142,13 @@ sections:
                             required: true
                             default: ""
                             purpose: "The Task identifier, unique across all Plans. It carries the identifiers of the Plan and Group that contain it, so the Task can be named unambiguously outside this file without storing its phase and Group again."
+                          source:
+                            required: false
+                            default: {}
+                            purpose: "The Skill execution that created or last materially contributed to this Task."
+                            fields:
+                              skill: {required: false, default: "", purpose: "The Skill that created or contributed to the Task."}
+                              log_id: {required: false, default: "", purpose: "The State Log Entry that recorded that contribution."}
                           title:
                             required: true
                             default: ""

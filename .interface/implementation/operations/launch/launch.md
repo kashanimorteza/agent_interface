@@ -63,7 +63,7 @@ Every Principle in this file is mandatory. An Operations Preference can never ov
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Launch owns activation and its observable result. Development owns the implementation, Platform owns runtime capability, and State owns the recorded Launch History data.
+Launch owns activation and its observable result. Development owns the implementation, Platform owns runtime capability, and State owns the recorded Launch Log data.
 
 <br>
 
@@ -99,7 +99,7 @@ Launch accepts one optional scope: `api`, `presentation`, `logic`, or `complete`
 
 Launch establishes current Interface and Target Understanding, reads Platform Principles and Preferences and operational State, and resolves the Environment and Launch definition from explicit Target decisions before Platform defaults. It never invents a missing definition.
 
-Launch prepares only declared project-scoped runtime requirements, verifies readiness, activates only the selected parts in dependency order, preserves already healthy parts, delivers bindings through public boundaries without recording secrets, and records startup or preservation outcomes, readiness evidence, Access Points, and its History data, including Blockers and Open Questions.
+Launch prepares only declared project-scoped runtime requirements, verifies readiness, activates only the selected parts in dependency order, preserves already healthy parts, delivers bindings through public boundaries without recording secrets, and records startup or preservation outcomes, readiness evidence, Access Points, and its Log data, including Blockers and Open Questions.
 
 Launch never repairs product Source, changes Target meaning, redefines Platform authority, or exposes secrets. It stops on unresolved Environment or Launch, missing system preparation, failed preparation or prerequisite startup, incomplete Development, failed readiness, or an unsafe binding.
 

@@ -115,7 +115,7 @@ Reset reconciles an authorized records and outputs scope.
 
 ### State
 
-State records aggregate operational position and history.
+State records aggregate operational position and the execution log.
 
 → [Definition of State](state/state.md)<br>
 → [Preferences of State](state/state.yaml)
@@ -174,7 +174,7 @@ Every Principle below is mandatory.
 
 ### Each operational concern has one owning Component
 
-**Rule:** Configure owns Config preparation and reconciliation, Plan owns planned activities, Develop owns planned implementation work, Review owns assurance and Findings, Implement owns workflow coordination, Launch owns runtime activation, Reset owns bounded reconciliation, and State owns aggregate operational position and history. No Operation Component writes another's owned content unless the Interface explicitly grants that write under the owning Component's rules.
+**Rule:** Configure owns Config preparation and reconciliation, Plan owns planned activities, Develop owns planned implementation work, Review owns assurance and Findings, Implement owns workflow coordination, Launch owns runtime activation, Reset owns bounded reconciliation, and State owns aggregate operational position and the execution log. No Operation Component writes another's owned content unless the Interface explicitly grants that write under the owning Component's rules.
 
 **Why:** One owner for each operational concern keeps progress, evidence, and authority consistent across separate runs.
 

@@ -24,7 +24,7 @@ Responsibility: The creation and structural reconciliation of Config records fro
 
 ### Overview
 
-Configure is the Operation Component that creates the Config records required by the Interface from their current Schemas. Configure has no Target, phase, product, Environment, or Agent responsibility.
+Configure is the Operation Component that creates the three structural Config records from their current Schemas.
 
 ### Purpose
 
@@ -32,9 +32,9 @@ The Interface needs its Config records to exist with known structures before ope
 
 ### How It Works
 
-Configure establishes current Interface Understanding and Target Understanding, then reads the Config Schemas named by Configure Preferences and generates the corresponding records in the Config directory. When State already exists, it also reads the latest Configure operation log to reconcile its own previous outcome. It does not interpret Target phases, execute Workflow operations, install technical requirements, prepare an Environment, or create product Source. The Configure Skill is constructed from this Definition and its Preferences, so this Component is the source of the Skill's meaning and current Config mapping.
+Configure reads the three Config Schemas named by Configure Preferences and generates or reconciles the corresponding records in the Config directory. Every execution appends one Configure Log Entry to `state.yaml`; the common execution fields are recorded in the entry and Configure-specific details are recorded in its `data`. The Configure Skill is constructed from this Definition and its Preferences, so this Component is the source of the Skill's meaning and current Config mapping.
 
-Configure is complete when every generated record conforms to its current Schema. Any later operational or phase content belongs to the Operation that owns it.
+Configure is complete when every generated record conforms to its current Schema. Any later operational content belongs to the Operation that owns it.
 
 <br>
 
@@ -86,7 +86,7 @@ Every Principle below is mandatory.
 
 **Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Operation.
 
-**Boundary:** Configure never reads or changes Target, Agent, phase, product Source, Environment, technical requirements, Workflow content, or any file outside the declared Config Records.
+**Boundary:** Configure changes only the three declared Config Records and the Configure Log Entry appended to State.
 
 <br>
 

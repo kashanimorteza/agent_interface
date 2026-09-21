@@ -47,14 +47,13 @@ A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic T
 - **Acceptance** — the observable criterion that determines whether a Task's result is correct.
 - **Verification** — the condition that must be observed to prove acceptance, stated as behaviour rather than as a command.
 - **Status** — the current progress value of a Task, owned by Plan and distinct from the aggregate Workflow State.
-- **Log** — the append-only record of a Task's meaningful transitions and completion evidence, not the project's Workflow History.
+- **Log** — the append-only State record of a Skill execution and its result.
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes State** — History items containing Blockers and the aggregate phase progress Planning updates without duplicating Task records.
-- **Consumes Review** — the gap Findings that name required work no planned activity yet covers.
-- **Consumed by Review** — the planned outcomes, acceptance criteria, and execution evidence used to judge the implemented result.
+- **Consumes State** — Log Entries containing prior Planning results, Blockers, Open Questions, and aggregate phase progress without duplicating Task records.
+- **Consumed by Develop** — the planned outcomes, acceptance criteria, dependencies, and execution conditions used to perform the work.
 
 <br>
 
@@ -131,13 +130,13 @@ Plan Preferences currently define no technical choices or defaults. The generate
 
 <br>
 
-### Every planning invocation re-evaluates its selected phase
+### Planning re-evaluates changed understanding and reconciles existing work
 
-**Rule:** Every invocation establishes fresh Interface and Target Understanding, reads the current Plan, State History, and Review Findings for each selected phase, and re-evaluates the phase even when a previous Plan exists or its Tasks are complete. It reconciles the current Groups and Tasks with the current authorities, preserves still-valid work, and records what it added, removed, changed, and preserved.
+**Rule:** Every invocation establishes current Interface and Target Understanding and compares them with the understanding used by the existing Plan. When the relevant understanding is unchanged, it preserves the existing Groups and Tasks and records that no Planning change was required. When it changed, Planning reconciles the current Groups and Tasks with the current authorities, preserves still-valid work, adds newly required work, and changes or retires only work that is no longer valid with an explicit reason. A Task created or materially changed by a Skill records that Skill and its State Log Entry in `source`.
 
-**Why:** A later Target, Principle, Preference, implementation result, or Review Finding can change what the phase requires, and a previous completion does not prove that the current Plan remains sufficient.
+**Why:** A later Target, Interface, Principle, or Preference change can change what the phase requires, while an unchanged understanding makes wholesale Task regeneration unnecessary.
 
-**Boundary:** Plan reads Review and State as authorities and records, and may use any supporting Skill, but it never invokes another Operation Skill. It performs only its own Planning responsibility.
+**Boundary:** Plan reads State as an execution record, may use any supporting Skill, but never reads Review as a prerequisite, invokes another Operation Skill, or performs another Operation's responsibility.
 
 <br>
 
@@ -210,7 +209,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 **Why:** Progress belongs with the work it describes, while the question of where the Workflow stands is shared by everything that touches the project and belongs to one small record.
 
-**Boundary:** State owns active Workflow position, aggregate phase progress, and the History items containing Blockers and Open Questions. Aggregate Planning progress summarizes the phase and never replaces or duplicates Task status and history. Each operation changes only the portions its contract grants it.
+**Boundary:** State owns active Workflow position, aggregate phase progress, and the Log Entries containing Blockers and Open Questions. Aggregate Planning progress summarizes the phase and never replaces or duplicates Task status and Task log. Each operation changes only the portions its contract grants it.
 
 <br>
 
@@ -239,15 +238,15 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 Plan accepts zero or more phase selections. An empty selection means every enabled phase. It resolves stable phase identities, removes duplicates, and preserves Target order.
 
-Plan consumes current Target Understanding, applicable Component authorities, Plan, State, Review Findings, Schemas, and relevant implementation evidence. It establishes fresh Interface and Target Understanding before planning.
+Plan consumes current Interface and Target Understanding, applicable Component authorities, the existing Plan, State, Schemas, and relevant implementation evidence. It establishes current Interface and Target Understanding before planning.
 
-Plan creates or reconciles only Planning-owned Plan content, Plan Revision, aggregate Planning State and History, permitted Blockers and Open Questions, Task Agent parameters, `agent_skills` associations, and the current phase Planning report. The operation log in State records the Skills actually used, elapsed time, available token usage, and the Planning report; the Plan report records Review Findings considered and Task identifiers added, removed, changed, and preserved. A standalone Planning invocation also appends its report to State History; an invocation coordinated by Implement records it in the corresponding State run cycle. It never writes implementation, Target intent, Review ownership, or fields outside Planning authority.
+Plan creates or reconciles only Planning-owned Plan content, Plan Revision, aggregate Planning State and Log, permitted Blockers and Open Questions, Task Agent parameters, `agent_skills` associations, Task `source`, and the current phase Planning report. Its State Log Entry records the Skill execution, elapsed time, available token usage, and Planning report; the Plan report records Task identifiers added, removed, changed, and preserved. It never writes implementation, Target intent, or fields outside Planning authority.
 
-Every planning run validates the complete selection before mutation, verifies the required Plan and State Config records, maps every selected requirement and unresolved Finding to one Task or inherited phase context, preserves valid identities and progress, and keeps planning content independent of files, paths, packages, commands, and implementation layout. A new Plan starts at revision `1`; semantic Planning changes increment the revision exactly once, while progress-only changes do not.
+Every planning run validates the complete selection before mutation, verifies the required Plan and State Config records, maps every selected requirement to one Task or inherited phase context, preserves valid identities and progress, and keeps planning content independent of files, paths, packages, commands, and implementation layout. A new Plan starts at revision `1`; semantic Planning changes increment the revision exactly once, while progress-only changes do not.
 
-Completion requires every Task to have observable acceptance and verification. Testing scope is inherited from the applicable Implementation authorities; it is never widened merely because a test tool is available. Review Findings are reconciled through Planning when they identify missing or changed planned work. If a required Config record is missing, Planning stops and suggests Configure without invoking it.
+Completion requires every Task to have observable acceptance and verification. Testing scope is inherited from the applicable Implementation authorities; it is never widened merely because a test tool is available. If a required Config record is missing, Planning stops and suggests Configure without invoking it.
 
-Every planning invocation is repeatable but never skipped because a Plan already exists or its Tasks are complete. Against unchanged authorities it may preserve the same semantic Plan and revision, while still recording the run and its reconciliation report. It stops on invalid selection, missing Config records, contradictory coverage, unresolved ownership, unavailable prerequisites, or a required Human decision.
+Every planning invocation checks its understanding even when a Plan already exists or its Tasks are complete. Against unchanged understanding it preserves the same semantic Plan and revision; against changed understanding it reconciles rather than regenerating all Tasks. It stops on invalid selection, missing Config records, contradictory coverage, unresolved ownership, unavailable prerequisites, or a required Human decision.
 
 <br>
 
@@ -267,11 +266,11 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — require structurally valid Plan Config and State Config before planning
 - **Never** — invoke Configure or create, repair, or replace a missing Config record
 
-**Every planning invocation re-evaluates its selected phase**
+**Planning re-evaluates changed understanding and reconciles existing work**
 
-- **Must** — establish current Understanding, read Review Findings and State History, and reconcile the selected phase again
-- **Must** — report added, removed, changed, and preserved Tasks and the Skills used for the phase
-- **Never** — skip Planning because a previous Plan or completed Tasks exist, or invoke another Operation Skill
+- **Must** — establish current Interface and Target Understanding and compare it with the understanding used by the existing Plan
+- **Must** — preserve valid Tasks, add newly required Tasks, and record each Task's creating Skill and State Log Entry in `source`
+- **Never** — regenerate all Tasks because a previous Plan exists, read Review as a prerequisite, or invoke another Operation Skill
 
 **Groups organize related work**
 

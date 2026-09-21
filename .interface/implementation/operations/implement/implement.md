@@ -33,7 +33,7 @@ Implementation work needs one accountable workflow that can move through plannin
 
 ### How It Works
 
-Implement establishes current Interface Understanding and Target Understanding, reads State and the selected authorities, invokes the applicable primary Operations in order, carries forward their outcomes, and stops when a required condition or human decision prevents safe continuation.
+Implement reads the selected phase or phases, ensures the Config records are ready, and invokes the applicable primary Operations in order. It carries forward their outcomes and stops when a required condition or human decision prevents safe continuation.
 
 <br>
 
@@ -63,7 +63,7 @@ Every Principle in this file is mandatory. An Operations Preference can never ov
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Implement owns coordination, not the work performed by Configure, Plan, Develop, Review, Launch, Reset, or State. Each participating Component retains its own authority and records.
+Implement owns coordination, not the work performed by Configure, Plan, Develop, Review, or State. Each participating Component retains its own authority and records.
 
 <br>
 
@@ -97,13 +97,13 @@ Every Principle below is mandatory.
 
 Implement is the explicit Human coordinator for zero or more phase selections. An empty selection means every phase currently enabled and ready. It resolves and validates the complete selection before mutation and preserves Target order.
 
-Implement establishes current Interface and Target Understanding and passes that current context to each invoked primary Operation. It resolves the synchronized Runtime implementations of Configure, Plan, Develop, Review, and Launch, and proves that each is available for coordinator invocation. It never enters the Agent Module to resolve them.
+Implement does not establish an independent Interface or Target Understanding. It invokes Configure, Plan, Develop, and Review, and each invoked Skill establishes the Understanding required for its own work. It never enters the Agent Module to resolve them.
 
-Implement ensures Configure has run and the required Config records are ready before phase work. When no phase is selected, it applies that preparation to every enabled and ready phase. For each selected phase it first reads the latest Review and State logs, then runs the required Plan → Develop → Review cycle, reconciles Findings through their owning operations, and repeats while the cycle closes or materially advances a Finding. It advances only after current Plan and Implementation Assurance succeed.
+Implement checks whether the three Config records are ready and invokes Configure when they are missing or structurally unready. For each selected phase it runs Plan, then Develop, then Review. When no phase is selected, it applies this sequence to every enabled phase. Review owns its internal recheck cycle; Implement does not invoke Plan or Develop on Review's behalf.
 
-Implement owns only its own status and step-by-step run log. Every delegated mutation remains owned by the invoked Operation Component, and every child Operation writes its own State Operation Log. It never bypasses Human approval, combines operation ownership, invokes Reset or Agent Native, or changes Target intent.
+Implement owns only its own coordination Log Entry. Every delegated mutation remains owned by the invoked Operation Component, and every child Operation writes its own State Log Entry. It never bypasses Human approval, combines operation ownership, invokes Reset or Agent Native, or changes Target intent.
 
-Launch is eligible only after every enabled and ready phase has completed Planning and Development and has satisfied the required Review assurances. Implement stops on invalid input, unavailable or incompatible child Skill, unmet dependency, failed operation gate, repeated unresolved Finding, no observable progress, inconclusive assurance, or required Human decision.
+Implement stops on invalid input, unavailable or incompatible child Skill, unmet dependency, failed operation gate, an unresolved Review blocker, or a required Human decision.
 
 <br>
 
