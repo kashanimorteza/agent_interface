@@ -1,35 +1,32 @@
 # Foundation Files
 
-This document explains the Foundation directory: what it holds, why those files are shared by the whole Interface, and who may change them. It is Human-owned and explains; it does not redefine. The canonical definition remains `interface.md`, one level above this directory, which describes the complete system; this document describes only this directory and its contents.
+This guide explains what Foundation Files contain, why they are shared, and who owns them.
 
 Foundation is not one of the three Modules (Target, Implementation, Agent). It is the set of shared resources those Modules and every Skill depend on.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
+This guide maps Foundation Files to their authoritative sources.
+
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
-4. **[Relationships](#relationships)**
-5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
-10. **[Understanding record](#understanding-record)**
-11. **[Open decisions](#open-decisions)**
+4. **[Agent Native Sync](#agent-native-sync)**
+5. **[Schema](#schema)**
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
 
-Foundation Files provide the foundational definitions and schemas required by the Interface: the canonical Interface document that every Understanding starts from and the Schemas that define how authored and generated files are shaped. The Foundation Guide also maps the separate Config boundary that coordinates the Workflow.
+This document explains the Foundation directory: what it holds, why those files are shared by the whole Interface, and who may change them. It is Human-owned and explains; it does not redefine. The canonical definition remains `interface.md`, one level above this directory, which describes the complete system; this document describes only this directory and its contents.
+
+Foundation Files provide the foundational definitions and schemas required by the Interface: the canonical Interface document that every Understanding starts from and the Schemas that define how authored and generated files are shaped. Config is a separate operational boundary that uses some of these Schemas.
 
 ### Purpose
 
@@ -37,10 +34,11 @@ Foundation keeps shared Interface resources separate from the Target, Implementa
 
 ### How It Works
 
-The Interface routes an Agent to the relevant Foundation source, Schema, or Config record. Each source remains owned by its stated authority.
+The Interface routes an Agent to the relevant Foundation source or Schema. Config records use the applicable Foundation Schemas and remain owned by their declared operational authority.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Foundation** — shared resources required by the Modules and Skills.
@@ -50,16 +48,11 @@ The Interface routes an Agent to the relevant Foundation source, Schema, or Conf
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ```text
 .interface/
-├── interface.md                  ← the Interface file
-├── config/                        ← mutable operational records, outside Foundation
-│   ├── application.yaml
-│   ├── state.yaml
-│   ├── plan.yaml
-│   └── review.yaml
 └── foundation/
     ├── guide.md
     ├── introduction.md
@@ -84,204 +77,19 @@ The Interface routes an Agent to the relevant Foundation source, Schema, or Conf
 
 <br>
 
-### Interface file
-
-[`interface.md`](../interface.md), one level above this directory, is the canonical definition, navigation entry point, and complete file map of Agent Interface. Interface Understanding — required by every Skill — starts exclusively from this file and follows only the routes it provides for the active role. For every operation except Agent Sync, those routes lead to Target, Implementation, Foundation, Config, and synchronized Runtime resources; seeing the Agent Structure in this file never authorizes entry into the Agent Module.
-
-```yaml
-name: Interface
-path: .interface/interface.md
-responsibility: Canonical definition, navigation entry point, and entry point to the complete file map of Agent Interface; each Module's own files are mapped in its guide
-```
-
-→ [Interface](../interface.md)
-
-<br>
-
-### Agent Native Sync
+<!--------------------------------------------------------------------------------- Agent Native Sync --->
+## Agent Native Sync
 
 The Foundation instruction that creates and updates the `/my-interface-agent-native` Skill and uses it to synchronize the complete Agent Module with the selected Agent Native.
 
-```yaml
-path: .interface/foundation/agent-native-sync.md
-responsibility: Defines the Agent Native Sync Skill and its read-only Agent Module synchronization procedure
-```
+Responsibility: Defines the Agent Native Sync Skill and its read-only Agent Module synchronization procedure.
 
-→ [Agent Native Sync](agent-native-sync.md)
+→ [Read more about Agent Native Sync](agent-native-sync.md)
 
 <br>
 
-### Interface sections kept as separate files
-
-Eight sections of the Interface were moved out of `interface.md` verbatim — five on 2026-09-17; Introduction, Terminology, and Architecture on 2026-09-18 — so that the entry file stays a map. Each is part of Interface Understanding: a Skill reads `interface.md` and then these files before acting.
-
-### Introduction
-
-What Agent Interface is, its purpose, independence, core idea, and design goals.
-
-```yaml
-name: Introduction
-path: .interface/foundation/introduction.md
-responsibility: States what Agent Interface is, its purpose, independence, core idea, and design goals
-```
-
-→ [Introduction](introduction.md)
-
-### Terminology
-
-The shared vocabulary of the Interface.
-
-```yaml
-name: Terminology
-path: .interface/foundation/terminology.md
-responsibility: Defines the shared vocabulary of the Interface
-```
-
-→ [Terminology](terminology.md)
-
-### Architecture
-
-The conceptual architecture tree and what each part contributes.
-
-```yaml
-name: Architecture
-path: .interface/foundation/architecture.md
-responsibility: Presents the conceptual architecture tree and what each part contributes
-```
-
-→ [Architecture](architecture.md)
-
-### Understanding
-
-Interface Understanding and Target Understanding, their sources and precedence, and the Agent Module exception.
-
-```yaml
-name: Understanding
-path: .interface/foundation/understanding.md
-responsibility: Defines Interface Understanding and Target Understanding, their sources and precedence, and the Agent Module exception
-```
-
-→ [Understanding](understanding.md)
-
-### Operations
-
-The nine Operations and the Skill that performs each.
-
-```yaml
-name: Operations
-path: .interface/foundation/operations.md
-responsibility: Lists the nine Operations and the Skill that performs each
-```
-
-→ [Operations](operations.md)
-
-### Modes
-
-The Modes State may record.
-
-```yaml
-name: Modes
-path: .interface/foundation/modes.md
-responsibility: Defines the Modes State may record
-```
-
-→ [Modes](modes.md)
-
-### Authority and Ownership
-
-Record ownership and each Skill's write authority.
-
-```yaml
-name: Authority and Ownership
-path: .interface/foundation/authority.md
-responsibility: Defines record ownership and each Skill's write authority
-```
-
-→ [Authority and Ownership](authority.md)
-
-### Workflow
-
-The Workflow and its Default, Normal, and Detailed paths.
-
-```yaml
-name: Workflow
-path: .interface/foundation/workflow.md
-responsibility: Defines the Workflow and its Default, Normal, and Detailed paths
-```
-
-→ [Workflow](workflow.md)
-
-<br>
-
-### Config
-
-Config stores the mutable operational records used while executing the Interface. It coordinates the Workflow and records where work stands; it does not store what the Target means and never becomes a second project definition.
-
-```text
-.interface/config/
-├── application.yaml
-├── state.yaml
-├── plan.yaml
-└── review.yaml
-```
-
-`config/` is the only mutable exception in the otherwise read-only `.interface/` tree. Configure creates these files from their Schemas; afterwards each Skill writes only the records it has authority over, always under the rules of the owning Component (Plan, Review, or State). Until Configure has run, the files below may not exist yet.
-
-### Application Manifest Config
-
-One public metadata section for every Implementation Component; sections may remain empty until their owners publish metadata.
-
-```yaml
-name: Application Manifest Config
-path: .interface/config/application.yaml
-schema: .interface/foundation/schema/application.yaml
-responsibility: Stores one public metadata section for every Implementation Component; sections may remain empty until their owners publish metadata
-```
-
-→ [Application Manifest Config](../config/application.yaml)
-
-### State Config
-
-Active Workflow position, aggregate phase progress, Implement and Launch results, access points, History, Blockers, and Open Questions.
-
-```yaml
-name: State Config
-path: .interface/config/state.yaml
-schema: .interface/foundation/schema/state.yaml
-responsibility: Stores active Workflow position, aggregate phase progress, Implement and Launch results, access points, History, Blockers, and Open Questions
-```
-
-→ [State Config](../config/state.yaml)
-
-### Plan Config
-
-Plans, Groups, Tasks, their dependencies, status, and history.
-
-```yaml
-name: Plan Config
-path: .interface/config/plan.yaml
-schema: .interface/foundation/schema/plan.yaml
-responsibility: Stores Plans, Groups, Tasks, their dependencies, status, and history
-```
-
-→ [Plan Config](../config/plan.yaml)
-
-### Review Config
-
-Reviewed phases, outcomes, Findings, evidence, and Finding status.
-
-```yaml
-name: Review Config
-path: .interface/config/review.yaml
-schema: .interface/foundation/schema/review.yaml
-responsibility: Stores reviewed phases, outcomes, Findings, evidence, and Finding status
-```
-
-→ [Review Config](../config/review.yaml)
-
-<br>
-
-### Schema
+<!--------------------------------------------------------------------------------- Schema --->
+## Schema
 
 Schemas define the structure followed by authored Interface files and generated operational records. Two kinds exist: **Structure standards**, the shape a Human-authored file follows, and **Operational formats**, the stored structure and initial template of a generated record. Schema definition files use their own formats and do not follow the outer YAML frame they define.
 
@@ -298,184 +106,78 @@ Schemas define the structure followed by authored Interface files and generated 
 └── review.yaml
 ```
 
-### Structure standards
-
-The shape a Human-authored file follows.
-
-#### YAML Schema
+### YAML Schema
 
 The common outer frame (meta, policy, read_order, content_map, content) followed by Component Preferences and Config files.
 
-```yaml
-name: YAML Schema
-path: .interface/foundation/schema/yaml.yaml
-kind: Structure standard
-responsibility: Defines the common outer structure followed by Component Preferences and Config files
-scope: Schema definition files use their own formats and do not follow this outer structure
-```
+Responsibility: Defines the common outer structure followed by Component Preferences and Config files. Schema definition files use their own formats and do not follow this outer structure.
 
-→ [YAML Schema](schema/yaml.yaml)
+→ [Read more about YAML Schema](schema/yaml.yaml)
 
-#### Definition Schema
+### Definition Schema
 
 The common Markdown structure of every Implementation and Agent Component `definition.md`.
 
-```yaml
-name: Definition Schema
-path: .interface/foundation/schema/definition.md
-kind: Structure standard
-responsibility: Defines the common Markdown structure followed by every Implementation and Agent Component definition.md file
-```
+Responsibility: Defines the common Markdown structure followed by every Implementation and Agent Component `definition.md` file.
 
-→ [Definition Schema](schema/definition.md)
+→ [Read more about Definition Schema](schema/definition.md)
 
-#### Preferences Schema
+### Preferences Schema
 
 The common structure of every Component `preferences.yaml`.
 
-```yaml
-name: Preferences Schema
-path: .interface/foundation/schema/preferences.yaml
-kind: Structure standard
-responsibility: Defines the common Preferences structure followed by every Component preferences.yaml file
-```
+Responsibility: Defines the common Preferences structure followed by every Component `preferences.yaml` file.
 
-→ [Preferences Schema](schema/preferences.yaml)
+→ [Read more about Preferences Schema](schema/preferences.yaml)
 
 #### Personality Schema
 
 The structure of every Personality Contract file under `agent/personality/contracts/`.
 
-```yaml
-name: Personality Schema
-path: .interface/foundation/schema/personality.md
-kind: Structure standard
-responsibility: Defines the structure followed by every Personality Contract file under agent/personality/contracts/
-```
+Responsibility: Defines the structure followed by every Personality Contract file under `agent/personality/contracts/`.
 
-→ [Personality Schema](schema/personality.md)
+→ [Read more about Personality Schema](schema/personality.md)
 
 #### Database Configuration Schema
 
 The structure of the Database Component's runtime configuration file — supported Engines, selectable Instances with their connection settings and credentials, and the default Instance. It is conditional: it applies when the Implementation declares a Database Component, and an Implementation without one ignores it.
 
-```yaml
-name: Database Configuration Schema
-path: .interface/foundation/schema/database.yaml
-kind: Structure standard (conditional)
-generates: <database component path>/database.yaml
-responsibility: Defines the shape of the Database Component's runtime configuration file, so that adding an Instance or changing a credential is one edit in one file and no value is hardcoded in source
-```
+Responsibility: Defines the conditional shape of the Database Component's runtime configuration file so that adding an Instance or changing a credential is one edit in one file and no value is hardcoded in source.
 
-→ [Database Configuration Schema](schema/database.yaml)
+→ [Read more about Database Configuration Schema](schema/database.yaml)
 
 ### Operational formats
 
 The stored structure and initial template of a generated record.
 
-#### Application Manifest Schema
+### Application Manifest Schema
 
 Generates `config/application.yaml`.
 
-```yaml
-name: Application Manifest Schema
-path: .interface/foundation/schema/application.yaml
-kind: Operational format
-generates: .interface/config/application.yaml
-responsibility: Defines the shared Component metadata sections and their empty initial structure
-```
+Responsibility: Defines the shared Component metadata sections and their empty initial structure for `config/application.yaml`.
 
-→ [Application Manifest Schema](schema/application.yaml)
+→ [Read more about Application Manifest Schema](schema/application.yaml)
 
-#### State Schema
+### State Schema
 
 Generates `config/state.yaml`.
 
-```yaml
-name: State Schema
-path: .interface/foundation/schema/state.yaml
-kind: Operational format
-generates: .interface/config/state.yaml
-responsibility: Defines the stored structure and initial values of State Config
-```
+Responsibility: Defines the stored structure and initial values of State Config for `config/state.yaml`.
 
-→ [State Schema](schema/state.yaml)
+→ [Read more about State Schema](schema/state.yaml)
 
-#### Plan Schema
+### Plan Schema
 
 Generates `config/plan.yaml`.
 
-```yaml
-name: Plan Schema
-path: .interface/foundation/schema/plan.yaml
-kind: Operational format
-generates: .interface/config/plan.yaml
-responsibility: Defines the stored structure and initial values of Plan Config
-```
+Responsibility: Defines the stored structure and initial values of Plan Config for `config/plan.yaml`.
 
-→ [Plan Schema](schema/plan.yaml)
+→ [Read more about Plan Schema](schema/plan.yaml)
 
-#### Review Schema
+### Review Schema
 
 Generates `config/review.yaml`.
 
-```yaml
-name: Review Schema
-path: .interface/foundation/schema/review.yaml
-kind: Operational format
-generates: .interface/config/review.yaml
-responsibility: Defines the stored structure and initial values of Review Config
-```
+Responsibility: Defines the stored structure and initial values of Review Config for `config/review.yaml`.
 
-→ [Review Schema](schema/review.yaml)
-
-The Interface file's own statement of the Foundation Files — "Foundation Files provide foundational definitions and schemas required by the Interface." — was moved here verbatim on 2026-09-17 and merged into the entries above on 2026-09-18. Its earlier structure tree listed `interface.md` inside `foundation/`; the Structure tree at the top of this document supersedes it.
-
-
-## Relationships
-
-The Human owns `interface.md`, this document, the eight section files, and every Schema. Config records belong to the Components that own them — Plan, State, and Review — and are written only by the Skills the Interface authorizes for each record. Target definitions are intentionally **not** considered Foundation Files because they belong to the Target concept itself; they live in the Target Module.
-
-<br>
-
-## Boundaries
-
-Foundation defines shared resources and their structure. It does not define Target meaning, Implementation choices, Agent selections, or resolved runtime state.
-
-<br>
-
-## Layering
-
-Definitions explain portable meaning, Preferences record current choices, Schemas define file structure, and Config records store operational state. Each layer remains under its owning authority.
-
-<br>
-
-## Authority
-
-The Interface file is the canonical navigation authority. Each Definition, Preferences file, Schema, and Config record remains authoritative only within its declared ownership.
-
-<br>
-
-## Principles
-
-Foundation Guides explain shared resources and map their owners; they do not replace the Definitions, Preferences, Schemas, or Config records they reference.
-
-<br>
-
-## At a Glance
-
-- **Must** — follow the Interface routes to the relevant Foundation source.
-- **Must** — use each Schema for the file type it owns.
-- **Never** — treat a Guide as a replacement for its authoritative source.
-
-<br>
-
-## Understanding record
-
-Not yet recorded. The Human's own explanation of Foundation — why the Interface file is the single entry point, how Schemas are meant to evolve, and what Config must never become — will be captured here in a later session, in the same form as the Agent Module Guide.
-
-<br>
-
-## Open decisions
-
-None recorded yet.
+→ [Read more about Review Schema](schema/review.yaml)

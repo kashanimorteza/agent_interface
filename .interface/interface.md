@@ -51,7 +51,7 @@ Responsibility: Defines every capitalized term the Interface uses; read before a
 <!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
-Architecture shows the high-level shape of Agent Interface as one tree — the three Modules (Target, Implementation, Agent), Foundation Files, Understanding, Operations, Modes, Authority and Ownership, and Workflow — and states what each part contributes.
+Architecture shows the high-level shape of Agent Interface as one tree, including the principal Modules, the Config boundary, and the main Foundation resources with their immediate parts.
 
 Responsibility: The conceptual architecture tree of Agent Interface and one sentence on what each part contributes; part of every Skill's required Interface Understanding.
 
@@ -104,12 +104,10 @@ Config is the separate shared operational boundary for the generated records tha
 
 Responsibility: Holds the generated Application, State, Plan, and Review records; each record remains owned and writable only under its owning Component's authority.
 
-- **Application Config** — shared public metadata that lets Components discover and compose one another.
-- **State Config** — current Workflow position, phase progress, outcomes, Blockers, Open Questions, and History.
-- **Plan Config** — Plans, Groups, Tasks, dependencies, completion conditions, and planning progress.
-- **Review Config** — review outcomes, Findings, evidence, assurance results, and Finding status.
-
-→ [Read more about Config records](config/)
+- **Application Config** — shared public metadata that lets Components discover and compose one another. [Read more about Application Config](config/application.yaml)
+- **State Config** — current Workflow position, phase progress, outcomes, Blockers, Open Questions, and History. [Read more about State Config](config/state.yaml)
+- **Plan Config** — Plans, Groups, Tasks, dependencies, completion conditions, and planning progress. [Read more about Plan Config](config/plan.yaml)
+- **Review Config** — review outcomes, Findings, evidence, assurance results, and Finding status. [Read more about Review Config](config/review.yaml)
 
 <br>
 

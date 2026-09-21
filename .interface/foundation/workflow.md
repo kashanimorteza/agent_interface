@@ -1,9 +1,20 @@
 # Workflow
 
-This file carries the Workflow section of the Interface, moved here verbatim from `interface.md` on 2026-09-17. It is part of Interface Understanding: every Skill reads `interface.md` and this file before acting. The Interface file remains the canonical entry point; this file is one of its sections.
+This section defines the Workflow paths used to run Agent Interface.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
+## Navigation
+
+1. **[Define the Project](#define-the-project)**
+2. **[Default](#default)**
+3. **[Normal](#normal)**
+4. **[Detailed](#detailed)**
+
+<br>
+
+<!--------------------------------------------------------------------------------- Define the Project --->
 ## Define the Project
 
 Define the Target before selecting a Workflow Path:
@@ -19,8 +30,9 @@ After the Project is defined, select Default, Normal, or Detailed. The path cont
 
 
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Default --->
 ## Default
 
 For the simplest complete run:
@@ -33,8 +45,9 @@ Implement processes all enabled and ready phases and performs Launch when every 
 
 
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Normal --->
 ## Normal
 
 For complete orchestration with phase selection:
@@ -59,8 +72,9 @@ Launch runs after all required phases are complete.
 
 
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Detailed --->
 ## Detailed
 
 For direct control over every operation:

@@ -1,47 +1,73 @@
 # Modes
 
-This file carries the Modes section of the Interface, moved here verbatim from `interface.md` on 2026-09-17. It is part of Interface Understanding: every Skill reads `interface.md` and this file before acting. The Interface file remains the canonical entry point; this file is one of its sections.
+This section defines the operational Modes recorded in State.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
+## Navigation
+
+1. **[Overview](#overview)**
+2. **[Not Set](#not-set)**
+3. **[Configuring](#configuring)**
+4. **[Planning](#planning)**
+5. **[Development](#development)**
+
+<br>
+
+<!--------------------------------------------------------------------------------- Overview --->
+## Overview
+
 State records the active Mode. Modes describe the current operational position and remain distinct from the behaviour required from the Target.
 
-<!-------------------------- Not Set -->
-### Not Set
+<br>
 
-```text
-state = not set
-responsibility = Represents the initial Workflow position before a Skill action is recorded, or the position restored by Reset
-inputs = none
-output = Active State with no selected work scope
-```
+<!--------------------------------------------------------------------------------- Not Set --->
+## Not Set
 
-<!-------------------------- Configuring -->
-### Configuring
+State: `not set`.
 
-```text
-state = configuring
-responsibility = Create and reconcile the persistent Application Manifest, reconcile operational Config, and synchronize phase State
-inputs = Operational Schemas, existing Config, and Target phase identities
-output = Persistent Application Manifest and current operational Config
-```
+Responsibility: Represents the initial Workflow position before a Skill action is recorded, or the position restored by Reset.
 
-<!-------------------------- Planning -->
-### Planning
+Inputs: None.
 
-```text
-state = planning
-responsibility = Create bounded and verifiable Tasks without prescribing implementation
-inputs = Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, and operational records
-output = Updated Plan Config
-```
+Output: Active State with no selected work scope.
 
-<!-------------------------- Development -->
-### Development
+<br>
 
-```text
-state = development
-responsibility = Implement and verify eligible planned Tasks
-inputs = Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, Plan, State, and existing implementation
-output = Verified implementation and updated operational records
-```
+<!--------------------------------------------------------------------------------- Configuring --->
+## Configuring
+
+State: `configuring`.
+
+Responsibility: Create and reconcile the persistent Application Manifest, reconcile operational Config, and synchronize phase State.
+
+Inputs: Operational Schemas, existing Config, and Target phase identities.
+
+Output: Persistent Application Manifest and current operational Config.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Planning --->
+## Planning
+
+State: `planning`.
+
+Responsibility: Create bounded and verifiable Tasks without prescribing implementation.
+
+Inputs: Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, and operational records.
+
+Output: Updated Plan Config.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Development --->
+## Development
+
+State: `development`.
+
+Responsibility: Implement and verify eligible planned Tasks.
+
+Inputs: Current Target, applicable Implementation Principles and Preferences, synchronized Runtime rules, Plan, State, and existing implementation.
+
+Output: Verified implementation and updated operational records.
