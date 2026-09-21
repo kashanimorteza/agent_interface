@@ -32,7 +32,7 @@ The Interface needs its Config records to exist with known structures before ope
 
 ### How It Works
 
-Configure reads the three Config Schemas named by Configure Preferences and generates or reconciles the corresponding records in the Config directory. Every execution appends one Configure Log Entry to `state.yaml`; the common execution fields are recorded in the entry and Configure-specific details are recorded in its `data`. The Configure Skill is constructed from this Definition and its Preferences, so this Component is the source of the Skill's meaning and current Config mapping.
+Configure reads the three Config Schemas named by Configure Preferences and generates or reconciles the corresponding records in the Config directory, preserving the explanatory comments defined by each Schema. Every execution appends one Configure Log Entry to `state.yaml`; the common execution fields are recorded in the entry and Configure-specific details are recorded in its `data`. The Configure Skill is constructed from this Definition and its Preferences, so this Component is the source of the Skill's meaning and current Config mapping.
 
 Configure is complete when every generated record conforms to its current Schema. Any later operational content belongs to the Operation that owns it.
 
@@ -82,7 +82,7 @@ Every Principle below is mandatory.
 
 ### Configure generates only the declared Config records from their Schemas
 
-**Rule:** Configure reads only the Config Schemas declared by Configure Preferences and generates only their structurally valid Config Records.
+**Rule:** Configure reads only the Config Schemas declared by Configure Preferences, generates only their structurally valid Config Records, and preserves the Schemas' comments in the generated records.
 
 **Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Operation.
 
@@ -97,5 +97,5 @@ Every obligation in the file, under the Principle it comes from.
 
 **Configure generates only the declared Config records from their Schemas**
 
-- **Must** — generate each declared Config Record from its current Schema.
+- **Must** — generate each declared Config Record from its current Schema and preserve its comments.
 - **Never** — perform another Operation or change anything outside those Config Records.

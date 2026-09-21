@@ -54,7 +54,6 @@ sections:
     item:
       fields:
         id: {required: false, default: "", purpose: "The stable identifier of this Log Entry when one is assigned."}
-        number: {required: false, default: null, nullable: true, purpose: "The chronological sequence number of this Log Entry when one is assigned."}
         skill: {required: false, default: "", purpose: "The Skill that performed this recorded action when one is assigned."}
         parent_id: {required: false, default: "", purpose: "The identifier of the Skill or coordinator that invoked this record when applicable."}
         phase: {required: false, default: null, nullable: true}
@@ -92,8 +91,6 @@ sections:
         data:
           required: false
           purpose: "An optional Skill-owned YAML value for information specific to this record. It may be a nested mapping or list and has no shared fixed fields."
-        recorded_by: {required: false, default: ""}
-        recorded_at: {required: false, default: null, nullable: true}
 initial:
   meta:
     path: ".interface/config/state.yaml"

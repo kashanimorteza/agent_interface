@@ -229,7 +229,7 @@ Every Principle below is mandatory.
 
 ### The Log is append-only operational evidence
 
-**Rule:** Every Skill execution appends one Log Entry. Common fields are optional and include identity, sequence, Skill, parent, phase, event, outcome, timing, token usage, open questions, blockers, report, and recorder. Skill-specific values belong only under that entry's `data`, which may be a nested mapping or list.
+**Rule:** Every Skill execution appends one Log Entry. Common fields are optional and include identity, Skill, parent, phase, event, outcome, timing, token usage, open questions, blockers, and report. Skill-specific values belong only under that entry's `data`, which may be a nested mapping or list.
 
 **Why:** Active records show the present while the Log explains how the Workflow reached it.
 

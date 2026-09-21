@@ -22,7 +22,6 @@ resolution:
   selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
   matching: "Match Components by canonical identifier; languages and databases by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
-  additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the resolved dependency with the implementation and in the README; a consequential recurring choice is added by the human under the relevant Language Item and Technical Purpose."
 
 
 
@@ -321,7 +320,6 @@ content:
       file: "README.md"
       location: "the Component's path root, at the file its Profile's documentation key names"
       format: "markdown"
-      purpose: "Anyone who reads it understands how this Component works and can use it."
       order:
         - overview          # what it is, what it does, where it sits
         - interface         # the Public Interface: every Category and Operation, what each accepts and returns, the outcomes it can produce, and a runnable example of calling it
@@ -329,11 +327,9 @@ content:
         - run               # how to start or use it
         - verify            # how to check it works
         - troubleshooting
-      subject: "The Public Interface. The README explains how to work with this Component through its Operations, not how the Component is built inside; its internal structure is stated in its Principles and Preferences."
       examples: "required wherever something is executable; written for the Component's resolved technology so they run as written"
       per_component: "each Component fills this order through its own mechanism; a part that does not apply says so rather than being omitted"
       secrets: "placeholders, environment-variable names, or safe secret references only; never a usable credential"
-      authority: "derived, non-authoritative; never copies or overrides Principles, Preferences, the implemented Public Interface, or a Target source"
 
     connections:
       presentation_to_api:
@@ -359,6 +355,9 @@ content:
       publish: false
 
     cross_cutting:
+      activation: "An empty applies_to list leaves a capability inactive; a non-empty list activates it only for its unique canonical Component identifiers."
+      target_resolution: "An explicit Target requirement or exclusion takes precedence for the current Target."
+      ownership: "Each listed Component applies the shared requirement while retaining ownership of its internal realization."
       testing:
         applies_to:
           - "logic"

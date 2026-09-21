@@ -1,0 +1,80 @@
+schema:
+  id: "agent-interface-model-declaration"
+  version: "1.0"
+  purpose: "The technology-independent vocabulary carried by every Model Domain Definition."
+
+vocabulary:
+  definition:
+    required_fields:
+      id:
+        required: true
+        purpose: "The unambiguous identity of the Domain Definition."
+      name:
+        required: true
+        purpose: "The Target-derived domain name of the definition."
+      persistent:
+        required: true
+        allowed: ["persistent", "non-persistent"]
+        purpose: "Whether the Domain Definition declares itself persistent."
+      fields:
+        required: true
+        purpose: "The complete Target-derived set of Fields owned by the definition."
+      relationships:
+        required: true
+        purpose: "The complete Target-derived set of Domain Relationships."
+
+  field:
+    required_fields:
+      name:
+        required: true
+        purpose: "The Target-derived identity of the Field."
+      logical_type:
+        required: true
+        purpose: "The technology-independent logical type of the Field."
+      nullable:
+        required: true
+        purpose: "Whether the Field may hold an explicit null value."
+      required:
+        required: true
+        purpose: "Whether the Field must be supplied when the definition is constructed."
+      default:
+        required: false
+        purpose: "The Target-declared default when one exists."
+      identity:
+        required: false
+        purpose: "Whether the Field identifies the Domain Definition when declared."
+      generated:
+        required: false
+        purpose: "Whether the Field is generated under the Target-declared meaning."
+      length:
+        required: false
+        purpose: "The Target-declared length when one exists."
+      precision:
+        required: false
+        purpose: "The Target-declared precision when one exists."
+      unique:
+        required: false
+        purpose: "Whether the Field is individually unique when declared."
+      constraints:
+        required: false
+        purpose: "Single-Field constraints declared by the Target."
+
+  relationship:
+    required_fields:
+      name:
+        required: true
+        purpose: "The Target-derived identity of the Domain Relationship."
+      definition:
+        required: true
+        purpose: "The referenced Domain Definition itself, not only a name."
+      cardinality:
+        required: true
+        purpose: "The Target-declared cardinality of the relationship."
+      optional:
+        required: true
+        purpose: "Whether the relationship is optional under the Target."
+
+rules:
+  target_meaning: "The vocabulary carries Target meaning and never invents a Field, relationship, default, generated value, or absence state."
+  technology_independence: "Vocabulary values remain independent of language, package, database, engine, and runtime."
+  completeness: "A Domain Definition carries its complete Target-derived Fields and relationships."

@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
   purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
   standard: "Agent Project Interface"
-  version: "12.0"
-  updated: "2026-09-19"
+  version: "12.1"
+  updated: "2026-09-22"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -52,11 +52,11 @@ content:
 
     # ---- Domain Definition ----
     domain_definition:
-      recorded_choices: "Where the Target states no technical modelling parameter and Model chooses one, record the choice beside the Domain Definition it belongs to, in that definition's own module, so a reviewer meets it where the Field is declared."
       validation:
         declarative_constraints_first: true
         custom_validation: "only when declarative constraints are insufficient"
         strictness: "enable when coercion could hide invalid domain data"
+        coercion: "reject conversion-in values whose conversion would hide invalid domain data; apply the same validation rules as construction"
       numeric_precision:
         exact_values: "exact decimal representation"
         approximate_values: "only when explicitly permitted by the Target"
@@ -71,13 +71,13 @@ content:
       note: "The vocabulary's terms and their meanings are fixed by that Schema, not here. This group carries only Model's preferences about using it."
       logical_types: "Resolve each Field's logical type from the Target. Where the Target implies a type without naming one, prefer the narrowest type that holds every value the Target allows."
       precision_and_length: "State length and precision only where the Target states them; do not invent a bound the Target does not imply."
-      activation: "Declare the activation Field only where the Target gives the concept a notion of being active; whichever Field carries it, declaring it is what lets another Component enable or disable a record without guessing at a name."
 
     # ---- Model Foundation ----
     model_foundation:
       serialization:
         representation_target: "The plain structure is JSON-compatible: every published value is expressible in JSON without a custom encoder."
-        output_policy_owner: "The consuming Component. API Preferences own which Fields leave an API response, including credential exclusion."
+        non_finite_numbers: "Reject NaN and positive or negative infinity at construction, assignment, conversion in, and conversion out."
+        deserialization: "Accept only the input forms permitted by the Domain Definition; do not apply general coercion that construction would refuse."
     # ---- Layout ----
     layout:
       purpose: "How the separation required by the Principle “Each Domain Definition stands in its own module” is realized in the selected technology. The Principle fixes the separation; this group fixes its shape."
