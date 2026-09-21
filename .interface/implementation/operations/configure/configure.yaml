@@ -12,7 +12,7 @@ policy:
   agent_may_edit: false
   rule: "This file is human-owned. Configure reads it without writing resolved choices back into it."
   changed_by: "The human, directly. An Agent or Operation must not change these declarations. A missing structural requirement is resolved by the owning Config Schema."
-  precedence: "The four Config Schemas and every applicable Principle take precedence over this file."
+  precedence: "The three Config Schemas and every applicable Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
@@ -52,9 +52,6 @@ content:
       - name: "State Config"
         file: "state.yaml"
         schema: ".interface/foundation/schema/state.yaml"
-      - name: "Review Config"
-        file: "review.yaml"
-        schema: ".interface/foundation/schema/review.yaml"
     skill_source:
       definition: ".interface/implementation/operations/configure/configure.md"
       preferences: ".interface/implementation/operations/configure/configure.yaml"

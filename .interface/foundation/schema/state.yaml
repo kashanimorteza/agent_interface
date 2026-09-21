@@ -1,15 +1,15 @@
 schema:
   id: "agent-interface-state"
-  version: "12.5"
+  version: "12.6"
   purpose: "Operational State format; State Principles define record meaning and ownership."
 operational_scope:
-  stores: "Active Workflow position, aggregate phase progress, Implement and Launch results, operational history, Blockers, and Open Questions."
+  stores: "Active Workflow position, aggregate phase progress, and append-only Skill execution history."
   excludes: "Target meaning, technical decisions, individual Task status or history, Finding details, product code, secrets, and command transcripts."
 initialization:
   source: "initial"
   purpose: "Create State Config from this template, then synchronize phase identities from Target without interpreting phase content."
   preservation: "Reconciliation preserves existing operational records and never replaces them with defaults."
-structure: ["active", "phases", "implementation", "launch", "history", "blockers", "open_questions"]
+structure: ["active", "phases", "history"]
 sections:
   active:
     required: true
@@ -47,251 +47,65 @@ sections:
             allowed: ["not started", "in progress", "plan satisfied", "satisfied", "not satisfied", "inconclusive"]
           updated_by: {required: true, default: "initialization"}
           updated_at: {required: true, default: null, nullable: true}
-  implementation:
-    required: true
-    default: {}
-    fields:
-      status:
-        required: true
-        default: "not started"
-        allowed: ["not started", "in progress", "completed", "blocked"]
-      started_at: {required: true, default: null, nullable: true}
-      completed_at: {required: true, default: null, nullable: true}
-      updated_by: {required: true, default: "initialization"}
-      updated_at: {required: true, default: null, nullable: true}
-      runs:
-        required: true
-        default: []
-        purpose: "Step-by-step log of every Implement invocation, appended by Implement only, so a reader can see what Implement did, phase by phase and cycle by cycle. Added 2026-09-17."
-        item:
-          id: {required: true, purpose: "Stable run identifier, e.g. R1, R2."}
-          started_at: {required: true}
-          completed_at: {required: true, nullable: true}
-          selection: {required: true, purpose: "Phase identifiers the invocation resolved; empty list means every enabled and ready phase."}
-          configure: {required: true, allowed: ["run", "skipped"], purpose: "run when no phase was selected, otherwise skipped."}
-          phases:
-            required: true
-            purpose: "One entry per processed phase, in Target order."
-            item:
-              id: {required: true}
-              entry: {required: true, allowed: ["review-first", "planning-first"], purpose: "review-first when the phase already had an implementation and Review ran before any Planning; planning-first when the phase had none."}
-              cycles:
-                required: true
-                purpose: "One entry per Planning -> Developing -> Reviewing cycle for this phase."
-                item:
-                  number: {required: true}
-                  planning:
-                    required: false
-                    purpose: "Planning outcome, Plan revision, Skills used, Review Findings considered, and Task reconciliation for this cycle. Absent only in cycle 0 of a review-first entry."
-                    fields:
-                      outcome: {required: true, default: ""}
-                      plan_revision: {required: true, default: 0}
-                      skills_used:
-                        required: true
-                        default: []
-                        purpose: "The Skills actually used by Planning in this cycle."
-                        item:
-                          name: {required: true, default: ""}
-                          duration_ms: {required: true, default: null, nullable: true}
-                          token_usage:
-                            required: true
-                            default: {}
-                            fields:
-                              input: {required: true, default: null, nullable: true}
-                              output: {required: true, default: null, nullable: true}
-                              total: {required: true, default: null, nullable: true}
-                          report: {required: true, default: ""}
-                      review_findings_considered: {required: true, default: []}
-                      tasks_added: {required: true, default: []}
-                      tasks_removed: {required: true, default: []}
-                      tasks_changed: {required: true, default: []}
-                      tasks_preserved: {required: true, default: []}
-                  developing:
-                    required: false
-                    purpose: "Outcome: tasks completed, withheld, checks run, and Skills actually used. Absent only in cycle 0 of a review-first entry."
-                    fields:
-                      outcome: {required: true, default: ""}
-                      skills_used:
-                        required: true
-                        default: []
-                        purpose: "The Skills actually used by Develop in this cycle."
-                        item:
-                          name: {required: true, default: ""}
-                          duration_ms: {required: true, default: null, nullable: true}
-                          token_usage:
-                            required: true
-                            default: {}
-                            fields:
-                              input: {required: true, default: null, nullable: true}
-                              output: {required: true, default: null, nullable: true}
-                              total: {required: true, default: null, nullable: true}
-                          report: {required: true, default: ""}
-                  reviewing:
-                    required: true
-                    purpose: "Review outcome, assurance results, Skills used, Finding reconciliation, and report. In a review-first entry, cycle 0 holds only this field."
-                    fields:
-                      review_id: {required: true, default: ""}
-                      plan_revision: {required: true, default: 0}
-                      plan_outcome: {required: true, default: "inconclusive"}
-                      implementation_outcome: {required: true, default: "not reviewed"}
-                      skills_used:
-                        required: true
-                        default: []
-                        purpose: "The Skills actually used by Review in this cycle."
-                        item:
-                          name: {required: true, default: ""}
-                          duration_ms: {required: true, default: null, nullable: true}
-                          token_usage:
-                            required: true
-                            default: {}
-                            fields:
-                              input: {required: true, default: null, nullable: true}
-                              output: {required: true, default: null, nullable: true}
-                              total: {required: true, default: null, nullable: true}
-                          report: {required: true, default: ""}
-                      findings_created: {required: true, default: []}
-                      findings_resolved: {required: true, default: []}
-                      findings_open: {required: true, default: []}
-                      report: {required: true, default: ""}
-                  configure: {required: false, purpose: "Present only when a Finding named Configure and it was rerun in this cycle."}
-              outcome: {required: true, allowed: ["satisfied", "stopped", "withheld"]}
-              stop_reason: {required: false, purpose: "Why the loop stopped when outcome is stopped: repeated Finding, no progress, inconclusive, unmet dependency, failed gate, Human decision."}
-          launch: {required: true, allowed: ["run", "not eligible", "skipped"]}
-          result: {required: true, purpose: "One truthful sentence: selected-scope completion versus whole-Target completion."}
-  launch:
-    required: true
-    default: {}
-    fields:
-      status:
-        required: true
-        default: "not launched"
-        allowed: ["not launched", "launching", "launched", "failed", "stopped"]
-      environment: {required: true, default: null, nullable: true}
-      method: {required: true, default: null, nullable: true}
-      access_points:
-        required: true
-        default: []
-        item:
-          fields:
-            name: {required: true, default: ""}
-            kind: {required: true, default: ""}
-            address: {required: true, default: ""}
-      updated_by: {required: true, default: "initialization"}
-      updated_at: {required: true, default: null, nullable: true}
   history:
     required: true
     default: []
     purpose: "Append-only concise records of State-changing Workflow events."
     item:
       fields:
-        id: {required: true, default: ""}
-        operation: {required: true, default: ""}
-        phase: {required: true, default: null, nullable: true}
-        event: {required: true, default: ""}
-        outcome: {required: true, default: ""}
-        started_at: {required: true, default: ""}
-        completed_at: {required: true, default: null, nullable: true}
-        duration_ms: {required: true, default: null, nullable: true, purpose: "Elapsed operation time in milliseconds when it can be measured."}
+        id: {required: false, default: "", purpose: "The stable identifier of this History record when one is assigned."}
+        number: {required: false, default: null, nullable: true, purpose: "The chronological sequence number of this History record when one is assigned."}
+        skill: {required: false, default: "", purpose: "The Skill that performed this recorded action when one is assigned."}
+        parent_id: {required: false, default: "", purpose: "The identifier of the Skill or coordinator that invoked this record when applicable."}
+        phase: {required: false, default: null, nullable: true}
+        event: {required: false, default: ""}
+        outcome: {required: false, default: ""}
+        started_at: {required: false, default: null, nullable: true}
+        completed_at: {required: false, default: null, nullable: true}
+        duration_ms: {required: false, default: null, nullable: true, purpose: "Elapsed execution time in milliseconds when it can be measured."}
         token_usage:
-          required: true
+          required: false
           default: {}
           purpose: "Measured token consumption when the Runtime exposes it; unknown values remain null."
           fields:
-            input: {required: true, default: null, nullable: true}
-            output: {required: true, default: null, nullable: true}
-            total: {required: true, default: null, nullable: true}
+            input: {required: false, default: null, nullable: true}
+            output: {required: false, default: null, nullable: true}
+            total: {required: false, default: null, nullable: true}
         skills_used:
-          required: true
+          required: false
           default: []
           purpose: "The Skills actually used by this operation."
           item:
-            name: {required: true, default: ""}
-            duration_ms: {required: true, default: null, nullable: true}
+            name: {required: false, default: ""}
+            duration_ms: {required: false, default: null, nullable: true}
             token_usage:
-              required: true
+              required: false
               default: {}
               fields:
-                input: {required: true, default: null, nullable: true}
-                output: {required: true, default: null, nullable: true}
-                total: {required: true, default: null, nullable: true}
-            report: {required: true, default: ""}
-        report: {required: true, default: "", purpose: "The operation's concise explanation of what it did and what the next operation should know."}
-        review:
+                input: {required: false, default: null, nullable: true}
+                output: {required: false, default: null, nullable: true}
+                total: {required: false, default: null, nullable: true}
+            report: {required: false, default: ""}
+        open_questions: {required: false, default: [], purpose: "Open Question identifiers created, read, or affected by this record when applicable."}
+        blockers: {required: false, default: [], purpose: "Blocker identifiers created, read, or affected by this record when applicable."}
+        report: {required: false, default: "", purpose: "A concise explanation of what this record did and what a later Skill should know."}
+        data:
           required: false
-          purpose: "Structured Review outcome when this Operation Log was produced by Review."
-          fields:
-            review_id: {required: true, default: ""}
-            plan_revision: {required: true, default: 0}
-            plan_outcome: {required: true, default: "inconclusive"}
-            implementation_outcome: {required: true, default: "not reviewed"}
-            findings_created: {required: true, default: []}
-            findings_resolved: {required: true, default: []}
-            findings_open: {required: true, default: []}
-        recorded_by: {required: true, default: ""}
-        recorded_at: {required: true, default: ""}
-        planning:
-          required: false
-          purpose: "The Planning report for a State event created by a standalone Planning invocation."
-          fields:
-            plan_revision: {required: true, default: 0}
-            review_findings_considered: {required: true, default: []}
-            tasks_added: {required: true, default: []}
-            tasks_removed: {required: true, default: []}
-            tasks_changed: {required: true, default: []}
-            tasks_preserved: {required: true, default: []}
-  blockers:
-    required: true
-    default: {}
-    fields:
-      "<blocker>":
-        required: false
-        default: {}
-        fields:
-          id: {required: true, default: ""}
-          blocks: {required: true, default: ""}
-          what_is_missing: {required: true, default: ""}
-          consequence: {required: true, default: ""}
-          resolution_owner: {required: true, default: ""}
-          raised_by: {required: true, default: ""}
-          raised_at: {required: true, default: ""}
-  open_questions:
-    required: true
-    default: {}
-    fields:
-      "<question>":
-        required: false
-        default: {}
-        fields:
-          id: {required: true, default: ""}
-          question: {required: true, default: ""}
-          why_it_matters: {required: true, default: ""}
-          blocks: {required: false, default: null, nullable: true}
-          raised_by: {required: true, default: ""}
-          raised_at: {required: true, default: ""}
-          answered_so_far:
-            required: false
-            default: null
-            nullable: true
-            fields:
-              answer: {required: true, default: ""}
-              answered_by: {required: true, default: ""}
-              answered_at: {required: true, default: ""}
+          purpose: "An optional Skill-owned YAML value for information specific to this record. It may be a nested mapping or list and has no shared fixed fields."
+        recorded_by: {required: false, default: ""}
+        recorded_at: {required: false, default: null, nullable: true}
 initial:
   meta:
     path: ".interface/config/state.yaml"
-    path_note: "Mutable Workflow position, aggregate progress, runtime result, operational history, Blockers, and Open Questions."
+    path_note: "Mutable Workflow position, aggregate progress, and append-only Skill execution history."
   policy:
     agent_may_edit: true
     rule: "Apply the current State Component and the active operation's ownership rules."
-  read_order: ["active", "phases", "implementation", "launch", "history", "blockers", "open_questions"]
+  read_order: ["active", "phases", "history"]
   content_map:
     active: "Current or most recently recorded Workflow position."
     phases: "Aggregate Planning, Development, and Review progress by phase identifier."
-    implementation: "Latest end-to-end Implement result and the step-by-step log of every Implement run."
-    launch: "Current runtime result and verified access points."
     history: "Append-only State-changing Workflow events."
-    blockers: "Unresolved critical conditions."
-    open_questions: "Unresolved critical questions."
   content:
     active:
       mode: "not set"
@@ -300,20 +114,4 @@ initial:
       set_by: "initialization"
       set_at: null
     phases: {}
-    implementation:
-      status: "not started"
-      started_at: null
-      completed_at: null
-      updated_by: "initialization"
-      updated_at: null
-      runs: []
-    launch:
-      status: "not launched"
-      environment: null
-      method: null
-      access_points: []
-      updated_by: "initialization"
-      updated_at: null
     history: []
-    blockers: {}
-    open_questions: {}

@@ -42,7 +42,7 @@ Human: Owns Interface, Target, Principles, Implementation Preferences, Agent Pre
 
 Plan: Owns Plans, Groups, Tasks, their status, and their history.
 
-State: Owns active Workflow position, aggregate phase progress, Implement and Launch results, operational History, Blockers, and Open Questions.
+State: Owns active Workflow position, aggregate phase progress, and the operational History in which every Skill records results, Blockers, and Open Questions.
 
 Review: Owns recorded Findings and their state.
 
@@ -63,9 +63,9 @@ Reviewer: Writes Findings under Review, and Review progress and History under St
 
 Configure, Planning, and Developing: Write the active Workflow position under State.
 
-Launch: Changes runtime state through Platform and writes Launch State, access points, and History under State.
+Launch: Changes runtime state through Platform and writes its status, access points, and History data under State.
 
-Implement: Coordinates operation Skills and writes only Implementation State and its History under State.
+Implement: Coordinates operation Skills and writes its coordination result and child relationships as History data under State.
 
 Reset: After Human confirmation of the preview, removes or resets explicit-phase outputs, every generated phase when no phase is supplied, Config only, or the complete set of Config and all-phase implementation outputs, including reconciliation of the Workflow position, under the owning Components' rules.
 

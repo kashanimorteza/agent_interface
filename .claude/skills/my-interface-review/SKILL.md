@@ -21,7 +21,8 @@ This Skill is the Claude Code bridge to the **Review** Operation Component. The 
 3. Establish current **Target Understanding** from the Target definitions the Interface locates, under the precedence the Interface declares.
 4. Read the owning Component, in this order:
    - Definition: `.interface/implementation/operations/review/review.md` (meaning, mandatory Principles, Operation Contract)
-   - Preferences: `.interface/implementation/operations/review/review.yaml` (follow its `policy`, `resolution`, `read_order`, and `content_map`)
+   - Preferences: `.interface/implementation/operations/review/review.yaml` (follow its `policy`, `resolution`, `read_order`, and `content_map`; it defines no generated Review record)
+5. Read the latest relevant State History items for Plan, Develop, and prior Review executions before judging.
 
 ## Execute
 
@@ -29,7 +30,7 @@ Follow the Review Definition and Preferences exactly. They own responsibility, p
 
 ## Authority
 
-- Write only through the Operation the Review Component defines: Review-owned Findings, assurance records, and the exact State records it owns. Every other Interface path is read-only. Review never repairs what it judges.
+- Write only through the Operation the Review Component defines: one State History item containing Review's Findings, assurance data, report, and the execution metadata it owns. Every other Interface path is read-only. Review never repairs what it judges.
 - Never read, search, resolve, or use `.interface/agent/` or any Agent Module source. If a required Runtime Rule, Skill, mapping, or capability is missing or unusable, report Runtime drift and ask the Human to run `/my-interface-agent-native`. Never invoke it yourself.
 - Never invoke another Operation Skill. Supporting Skills may be used within the active role and requested scope.
 - Report the outcome with current observable evidence, and expose unfinished work, blockers, and required Human actions before claiming completion.

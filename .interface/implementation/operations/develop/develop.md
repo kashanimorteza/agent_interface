@@ -99,7 +99,7 @@ Develop accepts zero or more phase selections. An empty selection means every ph
 
 Develop consumes current Interface and Target Understanding, applicable Implementation Components, selected Plans and State, the latest relevant Planning and Review operation logs, public interfaces, existing implementation, Review Findings, and the Agent parameters recorded for the work. It must establish the current authorities before mutation.
 
-Develop executes only eligible planned Tasks. It may create authorized Source, tests, executable documentation, dependencies, and configuration within the resolved Plan and Component boundaries, and records truthful Task progress, evidence, aggregate Development State, History, Blockers, Open Questions, applied Agent parameters, and the Skills actually used by the Develop operation.
+Develop executes only eligible planned Tasks. It may create authorized Source, tests, executable documentation, dependencies, and configuration within the resolved Plan and Component boundaries, and records truthful Task progress, evidence, aggregate Development State, History, Blockers, Open Questions, applied Agent parameters, and the Skills actually used by the Develop operation in State History.
 
 Develop never creates or changes Plan content, Target intent, Review Findings, unrelated work, or another operation's records. It resolves declared technical requirements from owning Implementation Preferences, verifies or installs only what is missing, and records concrete versions and verification results. It performs only its own Develop Operation and does not invoke another Operation to complete its work.
 

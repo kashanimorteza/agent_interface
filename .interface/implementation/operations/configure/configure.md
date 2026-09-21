@@ -41,7 +41,7 @@ Configure is complete when every generated record conforms to its current Schema
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Config Schema** — the structure that defines one of the four Config files.
+- **Config Schema** — the structure that defines one of the three Config files.
 - **Config Record** — a generated Config file that conforms to its Config Schema.
 
 <br>

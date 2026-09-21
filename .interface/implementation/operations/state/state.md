@@ -22,7 +22,7 @@ Responsibility: The operational position and aggregate progress needed to contin
 
 ### Overview
 
-State records the operational condition of the Interface Workflow: the active mode, aggregate progress for each Target phase, end-to-end implementation, runtime launch, critical stoppages, and the operation log.
+State records the operational condition of the Interface Workflow: the active mode, aggregate progress for each Target phase, and the append-only History of every Skill execution.
 
 State never contains Target meaning, implementation instructions, application configuration, product code, or the status and history of individual Tasks.
 
@@ -30,7 +30,7 @@ State never contains Target meaning, implementation instructions, application co
 
 Work that spans phases, operations, and sessions needs somewhere to say where it currently stands. Without it, every operation starts by guessing: has this phase been planned, was it reviewed, did the last launch succeed, is there something blocking that nobody has acted on. Guessing from artifacts is unreliable — files exist for many reasons — and asking the Human every time is worse.
 
-State exists to answer that question and only that question. It records the active Workflow position, the aggregate progress of each phase, the outcome of end-to-end runs and launches, the stoppages that are blocking, and the history of what happened. Any operation can read it and know where it is.
+State exists to answer that question and only that question. It records the active Workflow position, aggregate progress for each phase, and the History of what happened. Any Skill can read it and know where the Workflow stands and what preceding Skills reported.
 
 It is deliberately thin. State holds no Target meaning, no implementation instruction, no Task-level detail — those have their own owners, and duplicating them here would create a second version of the truth that drifts from the first. Its operation log holds only execution metadata and concise reports: enough to resume with current context, never enough to replace the sources.
 
@@ -40,11 +40,9 @@ An operation begins by reading State: which mode is active, which phase it conce
 
 Each operation then updates only the field it owns. Planning moves a phase's planning progress, Developing its development progress, Review its review progress; none of them writes another's field, and none of them writes Task-level detail, which belongs to Plan. Phase records reconcile as the Target changes — a new phase appears at its initial values, an existing one keeps the progress it has.
 
-Every Planning invocation also records its phase report in State: the Plan revision, Skills actually used, Review Findings considered, and Task identifiers added, removed, changed, or preserved. State records this as operational history; the current Plan remains the source for the plan itself.
+Every Skill invocation records one History item in State. Shared execution metadata goes in the common fields; the Skill's own report and records go under `data`. State is the source of execution history, while Plan remains the source of planned work.
 
-Alongside the phases, State records the end-to-end picture: the current Implement run across the phases that are presently implementable, and the Launch result with the access points that were actually verified.
-
-Everything that happened is appended to History rather than overwritten. Each operation log records the operation, phase, start and completion times, measurable duration, available token usage, Skills actually used, outcome, and a concise report for the next operation. The next operation reads the latest relevant logs before acting. Two things that stop work are kept explicitly: Blockers, which are stoppages requiring action, and Open Questions, which are decisions only the Human can make. Both stay visible until they are resolved, because a stoppage nobody records is a stoppage rediscovered later.
+Everything that happened is appended to History rather than overwritten. Each item may record its parent Skill, phase, start and completion times, measurable duration, available token usage, Skills it used, open questions, blockers, outcome, and a concise report. The next Skill reads the latest relevant History items before acting. Skill-specific information is stored in that item's `data` mapping or list.
 
 ### Modes
 
@@ -97,10 +95,7 @@ Output: Verified implementation and updated operational records.
 
 - **Active State** — the current or most recently entered Workflow mode, its phase when applicable, and update provenance.
 - **Phase State** — aggregate Planning, Development, and Review progress for one stable Target phase identifier.
-- **Implementation State** — progress of the current end-to-end Implement run across phases that are presently implementable.
-- **Launch State** — runtime condition, selected Environment and Launch method, and verified access points.
-- **Operation Log** — one append-only record of an operation's execution metadata, outcome, Skills used, and concise report; each Skill entry may carry its own duration, token usage, and report.
-- **History Event** — the State-level operation log entry that explains what happened and what the next operation should know.
+- **History Item** — one append-only record of a Skill execution, its common execution metadata, outcome, and report.
 - **Blocker** — a condition that genuinely prevents safe or valid continuation.
 - **Open Question** — a critical decision that cannot safely be made without a human.
 
@@ -192,19 +187,19 @@ Every Principle below is mandatory.
 
 <br>
 
-### Implementation State represents end-to-end orchestration
+### Implement results belong to History
 
-**Rule:** Implement records `not started`, `in progress`, `completed`, or `blocked`, with start, completion, and update provenance. `completed` means Configure succeeded, every phase implementable at that invocation was planned and developed, and Launch succeeded.
+**Rule:** Implement records its coordination outcome, selection, child Skill results, and completion condition in one History item's `data`. The active mode and per-phase aggregate fields remain the current State summary.
 
-**Why:** End-to-end orchestration needs one truthful overall result in addition to per-phase progress.
+**Why:** End-to-end orchestration needs one truthful historical result in addition to per-phase progress.
 
 **Boundary:** Disabled, unready, and future phases are never marked complete. A later Target change can make additional phases implementable.
 
 <br>
 
-### Launch State records the observable runtime result
+### Launch results belong to History
 
-**Rule:** Launch State records `not launched`, `launching`, `launched`, `failed`, or `stopped`, together with the Environment, Launch method, provenance, and verified access points. Each access point has a name, kind, and address.
+**Rule:** Launch records `not launched`, `launching`, `launched`, `failed`, or `stopped`, together with the Environment, Launch method, provenance, and verified access points in its History item's `data`.
 
 **Why:** A successful launch is useful only when people and systems know how to reach it.
 
@@ -214,11 +209,11 @@ Every Principle below is mandatory.
 
 ### History is append-only operational evidence
 
-**Rule:** Every operation that changes State appends an Operation Log containing a stable identifier, operation, optional phase, event, outcome, start and completion times, measurable duration when available, operation-level token usage when exposed by the Runtime, recorder, Skills actually used, and a concise report. Each Skill entry may also record its own duration, token usage, and report. A Planning event also carries its Plan revision, Review Findings considered, and Task reconciliation report.
+**Rule:** Every Skill execution appends one History Item. Common fields are optional and include identity, sequence, Skill, parent, phase, event, outcome, timing, token usage, open questions, blockers, report, and recorder. Skill-specific values belong only under that item’s `data`, which may be a nested mapping or list.
 
 **Why:** Active records show the present while History explains how the Workflow reached it.
 
-**Boundary:** History never copies Task histories, review Findings, command transcripts, secrets, or Target content. Skill usage belongs to the operation's State log, not to Plan or Task content.
+**Boundary:** History never copies Task histories, command transcripts, secrets, or Target content. It may preserve concise Review findings and evidence under the Review item's `data`; detailed Task history remains owned by Plan.
 
 <br>
 
@@ -234,7 +229,7 @@ Every Principle below is mandatory.
 
 ### Reset reconciles State with what it removes
 
-**Rule:** A confirmed phase Reset returns only selected phase fields, Implementation State, and Launch State to values consistent with outputs that remain, preserves unselected phase State, and appends one reset History Event per selected phase. A confirmed Config or Complete Reset removes State with the other operational Config records.
+**Rule:** A confirmed phase Reset returns only selected phase fields to values consistent with outputs that remain, preserves unselected phase State, and appends one Reset History Item per selected phase. A confirmed Config or Complete Reset removes State with the other operational Config records.
 
 **Why:** State must not claim removed plans, implementation, review evidence, or runtime still exists.
 
@@ -242,9 +237,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Blockers are critical stoppages
+### History records critical Blockers
 
-**Rule:** A Blocker records what cannot continue, what is missing, why continuation is impossible, who can resolve it, and who raised it. It is removed only after verified resolution and authorized reconciliation of current references.
+**Rule:** A History Item records a Blocker when it identifies what cannot continue, what is missing, why continuation is impossible, who can resolve it, and who raised it. The Blocker remains referenced until verified resolution and authorized reconciliation of current references.
 
 **Why:** A Blocker must identify a real, current stoppage.
 
@@ -252,9 +247,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Open Questions belong to the human
+### History records Open Questions for the Human
 
-**Rule:** An Open Question records the decision, why it matters, any Blocker it releases, and provenance. A human answer records its value, author, and time; the question is removed when fully resolved.
+**Rule:** A History Item records an Open Question with the decision, why it matters, any Blocker it releases, and provenance. A human answer records its value, author, and time under the relevant History item's `data`.
 
 **Why:** Some choices materially change intent and cannot safely be guessed.
 
@@ -281,11 +276,11 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — preserve existing progress while reconciling phase identity
 
-**Implementation State represents end-to-end orchestration**
+**Implement results belong to History**
 
-- **Must** — record truthful Implement progress and exclude disabled or unready phases from completion
+- **Must** — record truthful Implement results and exclude disabled or unready phases from completion
 
-**Launch State records the observable runtime result**
+**Launch results belong to History**
 
 - **Must** — record Launch status and verified access points without secrets
 
@@ -297,6 +292,6 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — keep operations repeatable and make confirmed Reset outcomes agree with State
 
-**Blockers are critical stoppages**
+**History records critical Blockers**
 
 - **Must** — reserve Blockers and Open Questions for genuine critical conditions

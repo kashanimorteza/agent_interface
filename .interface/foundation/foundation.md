@@ -28,7 +28,7 @@ This document explains the Foundation directory: what it holds, why those files 
 
 Foundation Files provide the foundational definitions and schemas required by the Interface: the canonical Interface document that every Understanding starts from and the Schemas that define how authored and generated files are shaped. Config is a separate operational boundary that uses some of these Schemas.
 
-Config contains the generated Application, State, Plan, and Review records. It is outside the Foundation directory and is the only writable area of the Interface for authorized Skills; each record remains owned and writable only under its owning Component's authority.
+Config contains the generated Application, Plan, and State records. It is outside the Foundation directory and is the only writable area of the Interface for authorized Skills; each record remains owned and writable only under its owning Component's authority.
 
 ### Purpose
 
@@ -72,7 +72,6 @@ The Interface routes an Agent to the relevant Foundation source or Schema. Confi
         ├── personality.md
         ├── state.yaml
         ├── plan.yaml
-        └── review.yaml
 ```
 
 <br>
@@ -103,7 +102,6 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── application.yaml
 ├── state.yaml
 ├── plan.yaml
-└── review.yaml
 ```
 
 ### YAML Schema
@@ -173,11 +171,3 @@ Generates `config/plan.yaml`.
 Responsibility: Defines the stored structure and initial values of Plan Config for `config/plan.yaml`.
 
 → [Read more about Plan Schema](schema/plan.yaml)
-
-### Review Schema
-
-Generates `config/review.yaml`.
-
-Responsibility: Defines the stored structure and initial values of Review Config for `config/review.yaml`.
-
-→ [Read more about Review Schema](schema/review.yaml)

@@ -52,7 +52,7 @@ A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic T
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes State** — shared Blockers and the aggregate phase progress Planning updates without duplicating Task records.
+- **Consumes State** — History items containing Blockers and the aggregate phase progress Planning updates without duplicating Task records.
 - **Consumes Review** — the gap Findings that name required work no planned activity yet covers.
 - **Consumed by Review** — the planned outcomes, acceptance criteria, and execution evidence used to judge the implemented result.
 
@@ -210,7 +210,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 **Why:** Progress belongs with the work it describes, while the question of where the Workflow stands is shared by everything that touches the project and belongs to one small record.
 
-**Boundary:** State owns active Workflow position, aggregate phase progress, and shared Blockers and Open Questions. Aggregate Planning progress summarizes the phase and never replaces or duplicates Task status and history. Each operation changes only the portions its contract grants it.
+**Boundary:** State owns active Workflow position, aggregate phase progress, and the History items containing Blockers and Open Questions. Aggregate Planning progress summarizes the phase and never replaces or duplicates Task status and history. Each operation changes only the portions its contract grants it.
 
 <br>
 
