@@ -2,6 +2,8 @@
 
 Review is the Operation Component that independently judges selected-phase Plans and available implementation against their applicable authorities.
 
+Responsibility: The assurance of phase Plans and implemented results against their applicable authorities.
+
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 

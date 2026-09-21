@@ -2,6 +2,8 @@
 
 Implement is the Operation Component that coordinates the authorized Operations sequence across the selected phases.
 
+Responsibility: The coordination of the Operations workflow across planning, development, and review.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->

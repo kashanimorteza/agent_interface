@@ -2,6 +2,8 @@
 
 Develop is the Operation Component that executes authorized planned Tasks and produces the resulting Development work.
 
+Responsibility: The execution of planned implementation Tasks and production of authorized Development results.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->

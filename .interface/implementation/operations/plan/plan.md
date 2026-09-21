@@ -2,6 +2,8 @@
 
 Plan is the Operation Component that turns a Target phase into bounded, understandable, and verifiable work.
 
+Responsibility: The decomposition of each Target phase into Plans, Groups, and Tasks.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->

@@ -2,6 +2,8 @@
 
 Launch is the Operation Component that activates a completed implementation and records the observable runtime result.
 
+Responsibility: The controlled activation of the completed implementation and recording of its runtime result.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->

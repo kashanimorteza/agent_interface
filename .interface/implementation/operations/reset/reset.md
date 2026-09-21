@@ -2,6 +2,8 @@
 
 Reset is the Operation Component that reconciles authorized operational records and outputs with a selected reset scope.
 
+Responsibility: The bounded reconciliation of operational records and outputs after an authorized reset.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->

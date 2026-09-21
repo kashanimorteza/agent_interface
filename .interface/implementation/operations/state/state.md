@@ -2,6 +2,8 @@
 
 State is the Operation Component that records the aggregate operational position, outcomes, stoppages, and history needed to continue the workflow.
 
+Responsibility: The operational position and aggregate progress needed to continue Implementation work.
+
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 

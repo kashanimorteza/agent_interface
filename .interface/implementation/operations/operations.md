@@ -60,9 +60,7 @@ Components
 
 ### Configure
 
-Configure creates the structural Config records from their Schemas.
-
-Responsibility: The creation and structural reconciliation of Config records from their Schemas.
+Configure creates Schema-derived Config records.
 
 → [Definition of Configure](configure/configure.md)<br>
 → [Preferences of Configure](configure/configure.yaml)
@@ -70,9 +68,7 @@ Responsibility: The creation and structural reconciliation of Config records fro
 
 ### Plan
 
-Plan turns Target phases into bounded, understandable, and verifiable activities.
-
-Responsibility: The decomposition of each Target phase into Plans, Groups, and Tasks.
+Plan turns Target phases into verifiable work.
 
 → [Definition of Plan](plan/plan.md)<br>
 → [Preferences of Plan](plan/plan.yaml)
@@ -80,18 +76,14 @@ Responsibility: The decomposition of each Target phase into Plans, Groups, and T
 
 ### Develop
 
-Develop performs the planned implementation work and produces the authorized Development results.
-
-Responsibility: The execution of planned implementation Tasks and production of authorized Development results.
+Develop executes authorized planned Tasks.
 
 → [Definition of Develop](develop/develop.md)<br>
 → [Preferences of Develop](develop/develop.yaml)
 
 ### Review
 
-Review establishes whether selected-phase work satisfies its applicable authorities and owns the recorded Findings.
-
-Responsibility: The assurance of phase Plans and implemented results against their applicable authorities.
+Review checks selected-phase work against its applicable authorities.
 
 → [Definition of Review](review/review.md)<br>
 → [Preferences of Review](review/review.yaml)
@@ -99,9 +91,7 @@ Responsibility: The assurance of phase Plans and implemented results against the
 
 ### Implement
 
-Implement coordinates the Operations workflow across Plan, Develop, and Review under the current authorities.
-
-Responsibility: The coordination of the Operations workflow across planning, development, and review.
+Implement coordinates the Operations workflow.
 
 → [Definition of Implement](implement/implement.md)<br>
 → [Preferences of Implement](implement/implement.yaml)
@@ -109,9 +99,7 @@ Responsibility: The coordination of the Operations workflow across planning, dev
 
 ### Launch
 
-Launch brings the completed implementation online and records the observable runtime result.
-
-Responsibility: The controlled activation of the completed implementation and recording of its runtime result.
+Launch activates the completed implementation.
 
 → [Definition of Launch](launch/launch.md)<br>
 → [Preferences of Launch](launch/launch.yaml)
@@ -119,9 +107,7 @@ Responsibility: The controlled activation of the completed implementation and re
 
 ### Reset
 
-Reset reconciles operational records and outputs with the selected reset scope while preserving what must remain.
-
-Responsibility: The bounded reconciliation of operational records and outputs after an authorized reset.
+Reset reconciles an authorized records and outputs scope.
 
 → [Definition of Reset](reset/reset.md)<br>
 → [Preferences of Reset](reset/reset.yaml)
@@ -129,9 +115,7 @@ Responsibility: The bounded reconciliation of operational records and outputs af
 
 ### State
 
-State records aggregate operational position, progress, outcomes, History, Blockers, and Open Questions.
-
-Responsibility: The operational position and aggregate progress needed to continue Implementation work.
+State records aggregate operational position and history.
 
 → [Definition of State](state/state.md)<br>
 → [Preferences of State](state/state.yaml)

@@ -2,6 +2,8 @@
 
 Configure is the Operation Component that creates the structural Config records required by the Interface from their Schemas.
 
+Responsibility: The creation and structural reconciliation of Config records from their Schemas.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
