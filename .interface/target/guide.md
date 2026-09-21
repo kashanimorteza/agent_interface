@@ -1,15 +1,13 @@
 # Target Guide
 
-This Guide explains the Target Module: what it is, what its files hold, who owns them, and how the rest of the Interface reads them. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/interface.md`, and where the two disagree the Interface file is correct.
+This Guide explains the Target Module and its authoritative definitions.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
@@ -23,9 +21,12 @@ This Guide explains the Target Module: what it is, what its files hold, who owns
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
+
+This Guide explains the Target Module: what it is, what its files hold, who owns them, and how the rest of the Interface reads them. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/interface.md`, and where the two disagree the Interface file is correct.
 
 The Target describes what the Interface is working on: an application, platform, service, API, module, package, subsystem, or other development subject.
 
@@ -39,6 +40,7 @@ Target Understanding reads the two complementary Target definitions under their 
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Target** — the subject the Interface is working on.
@@ -48,6 +50,7 @@ Target Understanding reads the two complementary Target definitions under their 
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ```text
@@ -64,28 +67,21 @@ The Target is defined through two complementary, Human-owned sources. Each Targe
 
 The Human's initial statement of intent, context, and requirements without requiring technical formulation. An empty file contributes no information.
 
-```yaml
-name: Non-Technical Definition
-path: .interface/target/non-technical.md
-responsibility: The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information
-```
+Responsibility: The Human's initial statement of intent, context, and requirements without requiring technical formulation; an empty file contributes no information.
 
-→ [Non-Technical Definition](non-technical.md)
+→ [Read more about Non-Technical Definition](non-technical.md)
 
 ### Technical Definition
 
 The Human, acting as the implementation, translates the Non-Technical Definition into this technical form without changing its meaning. It is the primary authority for the Target and takes precedence wherever the two definitions conflict.
 
-```yaml
-name: Technical Definition
-path: .interface/target/technical.md
-responsibility: The Human's technical translation of the Non-Technical Definition, without changing its meaning; the primary authority on conflict
-```
+Responsibility: The Human's technical translation of the Non-Technical Definition without changing its meaning; the primary authority on conflict.
 
-→ [Technical Definition](technical.md)
+→ [Read more about Technical Definition](technical.md)
 
 <br>
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumed by Target Understanding** — supplies the current meaning of the Target.
@@ -94,30 +90,35 @@ responsibility: The Human's technical translation of the Non-Technical Definitio
 
 <br>
 
+<!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
 Target definitions do not contain Implementation philosophy, Agent behavior, generated Config, or runtime state. Target definitions are intentionally not Foundation Files: they belong to the Target concept itself.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 The Non-Technical Definition provides intent and context. The Technical Definition provides the technical translation and takes precedence wherever the two conflict.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Human owns both Target definitions and every other authored Interface source. No Skill writes to `.interface/target/`. The Interface file remains the canonical navigation authority.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 The Target definitions are the authorities for Target meaning. This Guide explains and maps them; it does not introduce a second Target definition.
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 - **Must** — read both Target definitions when Target Understanding is required.
@@ -126,12 +127,14 @@ The Target definitions are the authorities for Target meaning. This Guide explai
 
 <br>
 
+<!--------------------------------------------------------------------------------- Understanding record --->
 ## Understanding record
 
 Not yet recorded. The Human's own explanation of the Target Module — its intent, how the two definitions are meant to be written, and what a good Target definition looks like — will be captured here in a later session, in the same form as the Agent Module Guide.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Open decisions --->
 ## Open decisions
 
 - The current Non-Technical Definition is empty; the Target is defined only technically. Whether that is intended for this Target, or the Human wants to record intent there, is undecided.
