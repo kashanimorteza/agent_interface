@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/process/preferences.yaml"
-  path_note: "The Preferences layer of the Process Subsystem — defaults shared by Configuration, Plan, Review, and State."
+  path_note: "The Preferences layer of the Process Subsystem — defaults shared by its Process Components."
   purpose: "Shared Process choices used when the Target and owning Process Component are silent."
   standard: "Agent Project Interface"
   version: "1.0"

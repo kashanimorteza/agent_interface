@@ -1,6 +1,6 @@
 # Implementation Module Guide
 
-This Guide explains the Implementation Module. The Interface and each subject's Definition remain authoritative.
+Implementation is the Module that defines how a Target is built and how that work is configured, planned, reviewed, and recorded.
 
 <br>
 
@@ -8,24 +8,16 @@ This Guide explains the Implementation Module. The Interface and each subject's 
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
-   - **[Development](#development)**
-   - **[Process](#process)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
 6. **[Layering](#layering)**
 7. **[Authority](#authority)**
 8. **[Principles](#principles)**
-   - **[Implementation has Development and Process Subsystems](#implementation-has-development-and-process-subsystems)**
-   - **[Each subject is defined by one Definition and one Preferences file](#each-subject-is-defined-by-one-definition-and-one-preferences-file)**
-   - **[Development and Process retain separate ownership](#development-and-process-retain-separate-ownership)**
 9. **[At a Glance](#at-a-glance)**
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
@@ -42,7 +34,7 @@ This Guide explains the Module's structure and keeps the Human's understanding o
 
 The Definition is authoritative for mandatory meaning and Principles. Preferences hold current choices. Skills operate under the authority of the relevant subject.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
@@ -56,7 +48,7 @@ The Definition is authoritative for mandatory meaning and Principles. Preference
 - **Preference** — a human-owned choice or default used where a higher authority is silent; it never overrides a Principle.
 - **Subject** — any Implementation Subsystem or Component described by a Definition and Preferences file.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
@@ -65,22 +57,19 @@ The Definition is authoritative for mandatory meaning and Principles. Preference
 Implementation
 └── Subsystems
     ├── Development
+    │   └── Components
     └── Process
+        └── Components
 ```
 
 ### Development
 
 Development defines how independent product Components form one application system. It owns their composition, Component Profiles, Connections, shared technical catalogues, and cross-cutting standards.
 
-```yaml
-name: Development
-definition: .interface/implementation/development/definition.md
-preferences: .interface/implementation/development/preferences.yaml
-responsibility: The product composition and technical realization of the independent Components that form the Target application.
-```
+Responsibility: The product composition and technical realization of the independent Components that form the Target application.
 
-→ [Definition](development/definition.md)<br>
-→ [Preferences](development/preferences.yaml)
+→ [Definition of Development](development/definition.md)<br>
+→ [Preferences of Development](development/preferences.yaml)
 
 Model defines shared domain meaning and Domain Definitions. Database owns persistence and the public operations for stored data. Logic owns application Behaviour and exposes it through its Public Interface. API publishes the application's external API through Logic. Presentation presents the application through capabilities published by Logic. Platform defines how completed Development Components are prepared and brought online.
 
@@ -88,19 +77,14 @@ Model defines shared domain meaning and Domain Definitions. Database owns persis
 
 Process defines how work on Development is configured, planned, reviewed, and recorded. It owns no product Behaviour or Source.
 
-```yaml
-name: Process
-definition: .interface/implementation/process/definition.md
-preferences: .interface/implementation/process/preferences.yaml
-responsibility: The configuration, planning, review, and operational recording of Implementation work.
-```
+Responsibility: The configuration, planning, review, and operational recording of Implementation work.
 
-→ [Definition](process/definition.md)<br>
-→ [Preferences](process/preferences.yaml)
+→ [Definition of Process](process/definition.md)<br>
+→ [Preferences of Process](process/preferences.yaml)
 
 Configure prepares the operational Config records. Plan turns Target phases into bounded, understandable, and verifiable activities. Review establishes whether selected-phase work satisfies its applicable authorities and owns recorded Findings. State records aggregate operational position, progress, outcomes, History, Blockers, and Open Questions. The remaining Process Components coordinate the lifecycle around these responsibilities.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -110,14 +94,14 @@ Configure prepares the operational Config records. Plan turns Target phases into
 - **Contains Development and Process** — defines the product and operational ownership boundaries used by the Interface.
 - **Contains one Definition and one Preferences file per subject** — keeps each subject's meaning separate from its current choices.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
 Development owns product responsibilities. Process owns configuration, planning, review, and operational records. Neither Subsystem replaces the other.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
@@ -126,14 +110,14 @@ Technical choices and defaults belong to the Preferences file of the subject tha
 
 No shared Implementation choices are currently declared; Development and Process subjects own their specific choices. Subject Preferences remain human-owned, are read in `selected`, `options`, `settings` order, and never override an explicit Target value or an applicable Definition Principle.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Definition and Principles of each subject are authoritative for its meaning and mandatory rules. Preferences never override them. This Guide explains and maps those sources; it does not become a second authority.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
@@ -164,9 +148,9 @@ The mandatory Principles are stated by the Definition files of the owning subjec
 
 **Boundary:** A Component within Process may inspect Development results when its responsibility requires it, but it never changes a Development-owned result directly.
 
-<br><br>
+<br>
 
-<!--------------------------------------------------------------------------------- At_a_Glance --->
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 - **Must** — keep product construction in Development and implementation control in Process.
