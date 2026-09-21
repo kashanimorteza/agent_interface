@@ -2,33 +2,20 @@
 
 State is the Process Component that records the aggregate operational position, outcomes, stoppages, and history needed to continue the workflow.
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[State records the active Workflow position](#state-records-the-active-workflow-position)**
-   - **[The Workflow has four modes](#the-workflow-has-four-modes)**
-   - **[Every Target phase has aggregate operational State](#every-target-phase-has-aggregate-operational-state)**
-   - **[Phase records reconcile without erasing progress](#phase-records-reconcile-without-erasing-progress)**
-   - **[Operations update only their aggregate phase field](#operations-update-only-their-aggregate-phase-field)**
-   - **[Implementation State represents end-to-end orchestration](#implementation-state-represents-end-to-end-orchestration)**
-   - **[Launch State records the observable runtime result](#launch-state-records-the-observable-runtime-result)**
-   - **[History is append-only operational evidence](#history-is-append-only-operational-evidence)**
-   - **[Workflow operations remain repeatable](#workflow-operations-remain-repeatable)**
-   - **[Reset reconciles State with what it removes](#reset-reconciles-state-with-what-it-removes)**
-   - **[Blockers are critical stoppages](#blockers-are-critical-stoppages)**
-   - **[Open Questions belong to the human](#open-questions-belong-to-the-human)**
 7. **[At a Glance](#at-a-glance)**
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -57,6 +44,7 @@ Everything that happened is appended to History rather than overwritten, and two
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Active State** — the current or most recently entered Workflow mode, its phase when applicable, and update provenance.
@@ -67,6 +55,7 @@ Everything that happened is appended to History rather than overwritten, and two
 - **Blocker** — a condition that genuinely prevents safe or valid continuation.
 - **Open Question** — a critical decision that cannot safely be made without a human.
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Target phase identity** — uses stable phase identifiers without copying phase goals or Target meaning.
@@ -82,19 +71,22 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
+<!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 State owns aggregate operational records. Individual operations own their detailed records and evidence, while Target and Development remain the authorities for project and product meaning.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Authority --->
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Principles in this Definition govern State. State Preferences are empty; the State Schema owns record shape, and operations may update only the fields granted to them.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -221,6 +213,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

@@ -8,19 +8,15 @@ Configure is the Process Component that creates the four structural Config recor
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Layering](#layering)**
 6. **[Authority](#authority)**
 7. **[Principles](#principles)**
-   - **[Configure generates only the four Config files from their Schemas](#configure-generates-only-the-four-config-files-from-their-schemas)**
 8. **[At a Glance](#at-a-glance)**
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
@@ -46,7 +42,7 @@ Configure reads the four Config Schemas and generates the corresponding files in
 
 Configure is complete when the four generated files conform to their current Schemas. Any later Plan, State, Review, Application Manifest, or phase content belongs to the operation that owns it.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
@@ -54,7 +50,7 @@ Configure is complete when the four generated files conform to their current Sch
 - **Config Schema** — the structure that defines one of the four Config files.
 - **Config Record** — a generated Config file that conforms to its Config Schema.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
@@ -69,7 +65,7 @@ Configure
 
 Configure has no internal operational Components. Its only responsibility is to generate these four Config Records from their corresponding Schemas.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -82,21 +78,21 @@ The four Config Schemas own file shape and required structure. Configure Prefere
 
 Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 Configure owns structural creation of Config records. The Config Schemas own their shapes, while later Process Components own the operational content written into those records.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 This Definition is the authority for Configure's responsibility and limits. Its Principle is mandatory; Configure Preferences are empty and cannot expand its scope.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
@@ -113,7 +109,7 @@ Every Principle below is mandatory.
 
 **Boundary:** Configure never reads or changes Target, Agent, phase, product Source, Environment, technical requirements, Workflow content, or any file outside these four Config Records.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance

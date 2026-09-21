@@ -2,36 +2,23 @@
 
 Plan is the Process Component that turns a Target phase into bounded, understandable, and verifiable work.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Every phase has its own Plan](#every-phase-has-its-own-plan)**
-   - **[Groups organize related work](#groups-organize-related-work)**
-   - **[A Task is one atomic action](#a-task-is-one-atomic-action)**
-   - **[Context is written once and inherited](#context-is-written-once-and-inherited)**
-   - **[Every Task is understandable in its context](#every-task-is-understandable-in-its-context)**
-   - **[A Task is independent of the implementation structure](#a-task-is-independent-of-the-implementation-structure)**
-   - **[Task defines the activity and Development defines the implementation](#task-defines-the-activity-and-development-defines-the-implementation)**
-   - **[Dependencies are explicit](#dependencies-are-explicit)**
-   - **[Completion must be demonstrable](#completion-must-be-demonstrable)**
-   - **[Task progress and Workflow State remain separate](#task-progress-and-workflow-state-remain-separate)**
-   - **[Existing work is never silently destroyed](#existing-work-is-never-silently-destroyed)**
-   - **[The record holds work and progress, not project meaning](#the-record-holds-work-and-progress-not-project-meaning)**
 7. **[Process Contract](#process-contract)**
 8. **[At a Glance](#at-a-glance)**
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -48,6 +35,7 @@ A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic T
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Plan** — the work required by one project phase, holding the context that applies to the whole phase and decomposing its outcome into Groups.
@@ -61,6 +49,7 @@ A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic T
 - **Status** — the current progress value of a Task, owned by Plan and distinct from the aggregate Workflow State.
 - **Log** — the append-only record of a Task's meaningful transitions and completion evidence, not the project's Workflow History.
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes State** — shared Blockers and the aggregate phase progress Planning updates without duplicating Task records.
@@ -76,15 +65,16 @@ A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic T
 
 Plan owns decomposition and completion conditions. Target owns intent, Development owns realization, Develop owns execution, and State owns aggregate progress.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Principles and Process Contract in this Definition govern Plan. Plan Preferences are empty and cannot add technical or project meaning.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -226,6 +216,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 <br>
 
+<!--------------------------------------------------------------------------------- Process Contract --->
 ## Process Contract
 
 Plan accepts zero or more phase selections. An empty selection means every enabled phase. It resolves stable phase identities, removes duplicates, and preserves Target order.
@@ -240,8 +231,9 @@ Completion requires every Task to have observable acceptance and verification. T
 
 Plan is idempotent: repeated planning against unchanged authorities preserves valid work and produces no unnecessary semantic change. It stops on invalid selection, missing or contradictory coverage, unresolved ownership, unavailable prerequisites, or a required Human decision.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

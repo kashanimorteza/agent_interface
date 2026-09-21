@@ -2,25 +2,21 @@
 
 Reset is the Process Component that reconciles authorized operational records and outputs with a selected reset scope.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Reset reconciles only its authorized scope](#reset-reconciles-only-its-authorized-scope)**
 7. **[Process Contract](#process-contract)**
 8. **[At a Glance](#at-a-glance)**
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
@@ -37,7 +33,7 @@ Long-running implementation work needs a safe way to remove or reconcile selecte
 
 Reset reads the selected scope and current authorities, identifies affected records and outputs, preserves protected content, performs only the authorized reconciliation, and records the resulting position.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
@@ -45,7 +41,7 @@ Reset reads the selected scope and current authorities, identifies affected reco
 - **Reset Scope** — the explicit set of records or outputs a Reset operation may reconcile.
 - **Protected Content** — content outside the authorized scope or owned by a different authority that Reset must preserve.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -60,7 +56,7 @@ Reset owns bounded reconciliation, not Target meaning, Development Source, or an
 
 Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Principles --->
 <!--------------------------------------------------------------------------------- Layering --->
@@ -68,14 +64,14 @@ Every Principle in this file is mandatory. A Process Preference can never overri
 
 Reset owns reconciliation of its authorized scope. It does not redefine Target, repair product implementation, or take ownership of another Process Component's records.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Principle and Process Contract in this Definition govern Reset. Reset Preferences can guide only an explicitly authorized scope and cannot authorize a destructive scope themselves.
 
-<br><br>
+<br>
 
 ## Principles
 
@@ -91,9 +87,10 @@ Every Principle below is mandatory.
 
 **Boundary:** Reset never changes Target intent, Principles, Preferences, or Development results outside its explicit scope.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
+<!--------------------------------------------------------------------------------- Process Contract --->
 ## Process Contract
 
 Reset accepts exactly one scope: explicit phases, all phases with generated work, `config`, or `complete`. It resolves phase identity, ownership, generated outputs, State, Plan, Review, Config, Platform Launch authorities, Task evidence, and observable repository state before mutation.
@@ -104,7 +101,7 @@ An explicit-phase reset removes that phase's Plan, Task content and history, Rev
 
 Reset resolves shared paths conservatively; unresolved attribution stops mutation. It stops affected runtime parts in dependency order, uses bounded file removal, verifies every previewed target and every protected target, and never invokes another workflow operation. Repeating an already realized reset produces no additional deletion beyond a newly resolved and confirmed preview.
 
-<br><br>
+<br>
 
 ## At a Glance
 

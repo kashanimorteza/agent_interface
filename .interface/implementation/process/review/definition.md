@@ -2,29 +2,21 @@
 
 Review is the Process Component that independently judges selected-phase Plans and available implementation against their applicable authorities.
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Review always assures the Plan before available implementation](#review-always-assures-the-plan-before-available-implementation)**
-   - **[Review passes report; reconciliation stays with the owning operation](#review-passes-report-reconciliation-stays-with-the-owning-operation)**
-   - **[Review is independent of how the work was done](#review-is-independent-of-how-the-work-was-done)**
-   - **[Every Finding is grounded in an observation](#every-finding-is-grounded-in-an-observation)**
-   - **[Missing evidence is a Finding, not an absence](#missing-evidence-is-a-finding-not-an-absence)**
-   - **[A Finding is required work no activity covers](#a-finding-is-required-work-no-activity-covers)**
-   - **[A Finding outlives the session that raised it](#a-finding-outlives-the-session-that-raised-it)**
 7. **[Process Contract](#process-contract)**
 8. **[At a Glance](#at-a-glance)**
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -45,6 +37,7 @@ Review works one phase at a time from current authorities. It establishes the Pl
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Review** — one independent examination of one phase's Plan and, when present, implemented result against the current Interface and Target.
@@ -57,6 +50,7 @@ Review works one phase at a time from current authorities. It establishes the Pl
 - **Missing evidence** — an acceptance criterion for which nothing observable demonstrates that it holds.
 - **Gap** — required work that no planned activity covers, found by reviewing the phase rather than any one activity.
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Interface, Target, and Plan** — takes their current meaning, Plan coverage, acceptance criteria, and verification conditions as the baseline for a phase.
@@ -77,19 +71,22 @@ Every Principle in this file is mandatory. An Implementation Preference can neve
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
+<!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 Review owns assurance and Findings. Plan owns planned work, Develop owns implementation, and the Human or the owning operation resolves what Review reports.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Authority --->
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Principles and Process Contract in this Definition govern Review. Review Preferences are empty and cannot lower the evidence or independence required by those Principles.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -166,6 +163,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Process Contract --->
 ## Process Contract
 
 Review accepts zero or more phase selections. An empty selection means every enabled phase that has an implementation. It resolves stable phase identities, removes duplicates, and preserves Target order.
@@ -178,8 +176,9 @@ Review invokes no other Skill and never repairs implementation, Plan content, Ta
 
 Review is idempotent and evidence-first. It stops on invalid selection, missing implementation or generated Source, inconclusive evidence, unavailable authority, or an unresolved condition that prevents assurance.
 
-<br><br>
+<br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

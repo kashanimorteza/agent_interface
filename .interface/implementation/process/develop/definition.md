@@ -2,25 +2,21 @@
 
 Develop is the Process Component that executes authorized planned Tasks and produces the resulting Development work.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Develop executes planned work within its authority](#develop-executes-planned-work-within-its-authority)**
 7. **[Process Contract](#process-contract)**
 8. **[At a Glance](#at-a-glance)**
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
@@ -37,7 +33,7 @@ Planned work needs a bounded operation that turns Tasks into observable implemen
 
 Develop reads the selected Plan and applicable authorities, performs the authorized Tasks, preserves existing valid work, and records evidence and outcomes for Review and State.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
@@ -45,7 +41,7 @@ Develop reads the selected Plan and applicable authorities, performs the authori
 - **Development Result** — the authorized Source, interface, configuration, or evidence produced by a completed development Task.
 - **Task Evidence** — the observable information showing what a Develop operation produced and verified.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -60,21 +56,21 @@ Technical choices and defaults belong to the owning Development Component Prefer
 
 Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 Develop owns execution. Plan owns the work definition, Development owns product meaning and technical choices, and State and Review own their respective records and judgments.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Principle and Process Contract in this Definition govern Develop. Develop Preferences can supply execution defaults only where the Plan and owning Development authorities are silent.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
@@ -91,9 +87,10 @@ Every Principle below is mandatory.
 
 **Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
+<!--------------------------------------------------------------------------------- Process Contract --->
 ## Process Contract
 
 Develop accepts zero or more phase selections. An empty selection means every phase eligible under its current Plan. It resolves stable phase identities, removes duplicates, and preserves Target order.
@@ -108,7 +105,7 @@ Every Task is claimed before mutation, its acceptance and verification condition
 
 Develop stops on invalid selection, missing or stale Plan, unmet dependency, unavailable prerequisite, failed verification, unresolved Blocker, unavailable required Skill, or a required Human decision.
 
-<br><br>
+<br>
 
 ## At a Glance
 

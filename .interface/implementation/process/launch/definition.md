@@ -2,25 +2,21 @@
 
 Launch is the Process Component that activates a completed implementation and records the observable runtime result.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Launch activates only a ready implementation](#launch-activates-only-a-ready-implementation)**
 7. **[Process Contract](#process-contract)**
 8. **[At a Glance](#at-a-glance)**
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
@@ -37,7 +33,7 @@ A completed implementation is not the same as a safely running one. Launch provi
 
 Launch reads the applicable Platform and operational authorities, verifies readiness, performs the authorized activation, observes the result, and records success, failure, or the need for human action.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
@@ -45,7 +41,7 @@ Launch reads the applicable Platform and operational authorities, verifies readi
 - **Launch Result** — the observable outcome of activating the implementation.
 - **Readiness** — the state in which the implementation and its required dependencies may be activated safely.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -60,21 +56,21 @@ Launch owns activation and observation, not product Source, Platform definitions
 
 Every Principle in this file is mandatory. A Process Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 Launch owns activation and its observable result. Development owns the implementation, Platform owns runtime capability, and State owns the recorded Launch State.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Principle and Process Contract in this Definition govern Launch. Launch Preferences supply only activation defaults where higher authorities are silent.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
@@ -91,9 +87,10 @@ Every Principle below is mandatory.
 
 **Boundary:** Launch never changes Target meaning, product Source, or Platform authority to make an activation appear ready.
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
+<!--------------------------------------------------------------------------------- Process Contract --->
 ## Process Contract
 
 Launch accepts one optional scope: `api`, `presentation`, `logic`, or `complete` (`all` is an alias). With no scope, it asks the Human to choose one. It consumes Target and Platform selections, Platform authorities, State, developed parts, public interfaces, and observable runtime state.
@@ -106,7 +103,7 @@ Launch never repairs product Source, changes Target meaning, redefines Platform 
 
 Launch is idempotent: a healthy running part is preserved and only runtime elements that do not satisfy the current scope are changed.
 
-<br><br>
+<br>
 
 ## At a Glance
 
