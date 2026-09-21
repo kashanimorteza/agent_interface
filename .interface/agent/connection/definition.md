@@ -1,26 +1,26 @@
 # Agent Connection Definition
 
+This definition describes the external connections and installable packages an Agent obtains from outside the project.
+
+
+
+
+<br>
+
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Every Integration declares its trust boundary](#every-integration-declares-its-trust-boundary)**
-   - **[Connection is proven before dependence](#connection-is-proven-before-dependence)**
-   - **[External effects retain external authorization](#external-effects-retain-external-authorization)**
-   - **[Extension provenance and contents are explicit](#extension-provenance-and-contents-are-explicit)**
-   - **[Extension lifecycle is controlled](#extension-lifecycle-is-controlled)**
-   - **[Packaged capabilities retain their owners](#packaged-capabilities-retain-their-owners)**
 7. **[At a Glance](#at-a-glance)**
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -55,6 +55,7 @@ Packaged capabilities keep their owners. An Extension declares its provenance, i
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Integration** — a declared connection between the Agent Runtime and an external capability provider.
@@ -64,6 +65,7 @@ Packaged capabilities keep their owners. An Extension declares its provenance, i
 - **Marketplace** — a catalog or source from which Extensions can be discovered.
 - **Provisioning** — installation, enabling, updating, disabling, or removal of an Extension.
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Agent Runtime and Permission** — connects through supported mechanisms within security policy.
@@ -83,18 +85,21 @@ Every Principle in this file is mandatory. An Agent Preference can never overrid
 
 <br>
 
+<!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 This Definition carries the portable meaning and mandatory Principles of the Connection Component. Preferences carry current connection selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -167,6 +172,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

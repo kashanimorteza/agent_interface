@@ -1,28 +1,21 @@
 # Agent Rule Definition
 
+This definition describes persistent behavioral guidance for an Agent.
+
+
+
+
+
+<br>
+
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Rules guide behavior without replacing authority](#rules-guide-behavior-without-replacing-authority)**
-   - **[Rule scope and conflict are explicit](#rule-scope-and-conflict-are-explicit)**
-   - **[Security boundaries use enforcement](#security-boundaries-use-enforcement)**
-   - **[Presentation preserves technical substance](#presentation-preserves-technical-substance)**
-   - **[Interaction keeps work legible](#interaction-keeps-work-legible)**
-   - **[Interaction requests only material decisions](#interaction-requests-only-material-decisions)**
-   - **[Completion is evidence-backed](#completion-is-evidence-backed)**
-   - **[Material execution is observable](#material-execution-is-observable)**
-   - **[Health claims use controlled status vocabulary](#health-claims-use-controlled-status-vocabulary)**
-   - **[Session state is not authoritative project state](#session-state-is-not-authoritative-project-state)**
-   - **[Resume revalidates before mutation](#resume-revalidates-before-mutation)**
-   - **[Session termination exposes unfinished work](#session-termination-exposes-unfinished-work)**
 7. **[At a Glance](#at-a-glance)**
 
 <br>

@@ -1,31 +1,24 @@
 # Agent Skill Definition
 
+This definition describes the portable meaning and Agent-side bridge of a Skill.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Each Skill layer has one owner](#each-skill-layer-has-one-owner)**
-   - **[Every Skill has one owner and bridge](#every-skill-has-one-owner-and-bridge)**
-   - **[Skill availability is proven](#skill-availability-is-proven)**
-   - **[Skill execution is repeatable](#skill-execution-is-repeatable)**
-   - **[Every Skill has one Realization Kind](#every-skill-has-one-realization-kind)**
-   - **[Skill owns executable capability only](#skill-owns-executable-capability-only)**
 7. **[At a Glance](#at-a-glance)**
 
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
@@ -47,7 +40,7 @@ Declared Agent Skills are listed in Agent Skill Preferences. Each entry points t
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
@@ -59,7 +52,7 @@ Declared Agent Skills are listed in Agent Skill Preferences. Each entry points t
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -70,7 +63,7 @@ Declared Agent Skills are listed in Agent Skill Preferences. Each entry points t
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
@@ -82,7 +75,7 @@ The Definition carries the portable Skill meaning; Preferences carry the Agent-s
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
@@ -92,7 +85,7 @@ The Human owns this Definition and its Preferences. Every Principle in this file
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
@@ -155,7 +148,7 @@ Every Principle below is mandatory and defines the shared meaning of an Agent Sk
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance

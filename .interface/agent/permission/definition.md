@@ -1,28 +1,31 @@
 # Agent Permission Definition
 
+This definition describes the enforceable boundaries that control what an Agent may read, change, execute, connect to, or disclose.
+
+<br>
+
+
+
+
+
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Relationships](#relationships)**
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-   - **[Interface is read-only except for authorized Config records](#interface-is-read-only-except-for-authorized-config-records)**
-   - **[Permission is least-privilege and deny-safe](#permission-is-least-privilege-and-deny-safe)**
-   - **[Agent Module reads belong only to the explicit Agent Native Sync](#agent-module-reads-belong-only-to-the-explicit-agent-native-sync)**
-   - **[Secrets never enter project declarations or reports](#secrets-never-enter-project-declarations-or-reports)**
-   - **[Unrelated Human work is preserved](#unrelated-human-work-is-preserved)**
-   - **[An Enforced Guarantee is deterministic and bounded](#an-enforced-guarantee-is-deterministic-and-bounded)**
-   - **[Guarantees fail visibly and safely](#guarantees-fail-visibly-and-safely)**
-   - **[A guarantee's authority does not expand on trigger](#a-guarantees-authority-does-not-expand-on-trigger)**
 7. **[At a Glance](#at-a-glance)**
+
+
+
+
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -51,6 +54,7 @@ Secrets are never values in a declaration. A declaration references a credential
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Permission** — an enforceable allow, ask, or deny decision for an action or resource.
@@ -60,6 +64,13 @@ Secrets are never values in a declaration. A declaration references a credential
 - **Event** — a named observable point in Agent or Tool execution.
 - **Blocking Guarantee** — an Enforced Guarantee authorized to prevent or reject the triggering action.
 
+
+
+
+
+<br>
+
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Agent authorization and Role scope** — derives the maximum permitted action boundary.
@@ -68,22 +79,34 @@ Secrets are never values in a declaration. A declaration references a credential
 
 Technical permission rules, sandbox settings, trust policy, credential references, and Native enforcement mechanisms belong to Agent Permission Preferences.
 
-<br>
+
+
+
 
 <br>
 
+<!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
 
+
+
+
+
 <br>
 
+<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
+
+
+
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -170,6 +193,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

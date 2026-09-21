@@ -8,34 +8,21 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
-   - **[Runtime](#runtime)**
-   - **[Agent](#agent)**
-   - **[Personality](#personality)**
-   - **[Rule](#rule)**
-   - **[Skill](#skill)**
-   - **[Command](#command)**
-   - **[Tool](#tool)**
-   - **[Permission](#permission)**
-   - **[Connection](#connection)**
-   - **[Context](#context)**
-4. **[Relationships](#relationships)**
-5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-   - **[What success means](#what-success-means)**
-9. **[At a Glance](#at-a-glance)**
+4. **[Components](#components)**
+5. **[Relationships](#relationships)**
+6. **[Boundaries](#boundaries)**
+7. **[Layering](#layering)**
+8. **[Authority](#authority)**
+9. **[Principles](#principles)**
+10. **[At a Glance](#at-a-glance)**
 
 
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
@@ -72,7 +59,7 @@ The Human invokes synchronization with `/my-interface-agent-native`; no mode or 
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
@@ -85,7 +72,7 @@ The Human invokes synchronization with `/my-interface-agent-native`; no mode or 
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
@@ -109,7 +96,16 @@ Agent
 
 Agent Sync reads the complete Agent Module through its authorized Foundation instruction and realizes its Components in the selected Agent Native. Other operations use the synchronized Native realization and do not read Module sources directly.
 
-Each Agent Component below has a Definition for meaning and Preferences for current declarations. Agent Native Sync is a Foundation File, not an Agent Component.
+
+
+
+
+<br>
+
+<!--------------------------------------------------------------------------------- Components --->
+## Components
+
+Each Agent Component has a Definition for meaning and Preferences for current declarations. Agent Native Sync is a Foundation File, not an Agent Component.
 
 ### Runtime
 
@@ -117,13 +113,8 @@ Runtime identity, provider, model, compatibility, and native capability mapping.
 
 Responsibility: Runtime identity, provider, model, compatibility, and native capability mapping.
 
-```yaml
-definition: .interface/agent/runtime/definition.md
-preferences: .interface/agent/runtime/preferences.yaml
-```
-
-→ [Definition](runtime/definition.md)<br>
-→ [Preferences](runtime/preferences.yaml)
+→ [Definition of Runtime](runtime/definition.md)<br>
+→ [Preferences of Runtime](runtime/preferences.yaml)
 
 ### Agent
 
@@ -131,13 +122,8 @@ The selected Agent Native and its General and Specialized Agent Instances. Absor
 
 Responsibility: The selected Agent Native and its General and Specialized Agent Instances.
 
-```yaml
-definition: .interface/agent/agent/definition.md
-preferences: .interface/agent/agent/preferences.yaml
-```
-
-→ [Definition](agent/definition.md)<br>
-→ [Preferences](agent/preferences.yaml)
+→ [Definition of Agent](agent/definition.md)<br>
+→ [Preferences of Agent](agent/preferences.yaml)
 
 ### Personality
 
@@ -145,15 +131,9 @@ The personalities an Agent can take on: who it is during a kind of work, the Act
 
 Responsibility: The personalities an Agent can take on, the Actions each performs, and the models each prefers in priority order.
 
-```yaml
-definition: .interface/agent/personality/definition.md
-preferences: .interface/agent/personality/preferences.yaml
-contracts: .interface/agent/personality/contracts/<personality>.md
-```
-
-→ [Definition](personality/definition.md)<br>
-→ [Preferences](personality/preferences.yaml)<br>
-→ [Contracts](personality/contracts/)
+→ [Definition of Personality](personality/definition.md)<br>
+→ [Preferences of Personality](personality/preferences.yaml)<br>
+→ [Contracts of Personality](personality/contracts/)
 
 ### Rule
 
@@ -161,15 +141,9 @@ Persistent global and scoped behavioral instructions. Absorbs the former Interac
 
 Responsibility: Persistent global and scoped behavioral instructions.
 
-```yaml
-definition: .interface/agent/rule/definition.md
-preferences: .interface/agent/rule/preferences.yaml
-contracts: .interface/agent/rule/contracts/<rule>.md
-```
-
-→ [Definition](rule/definition.md)<br>
-→ [Preferences](rule/preferences.yaml)<br>
-→ [Contracts](rule/contracts/)
+→ [Definition of Rule](rule/definition.md)<br>
+→ [Preferences of Rule](rule/preferences.yaml)<br>
+→ [Contracts of Rule](rule/contracts/)
 
 ### Skill
 
@@ -177,13 +151,8 @@ Reusable knowledge and workflows, including all declared Agent Skills.
 
 Responsibility: Reusable knowledge and workflows, including all declared Agent Skills.
 
-```yaml
-definition: .interface/agent/skill/definition.md
-preferences: .interface/agent/skill/preferences.yaml
-```
-
-→ [Definition](skill/definition.md)<br>
-→ [Preferences](skill/preferences.yaml)<br>
+→ [Definition of Skill](skill/definition.md)<br>
+→ [Preferences of Skill](skill/preferences.yaml)<br>
 
 ### Command
 
@@ -191,13 +160,8 @@ Named and slash invocation entry points, arguments, aliases, and routing.
 
 Responsibility: Named and slash invocation entry points, arguments, aliases, and routing.
 
-```yaml
-definition: .interface/agent/command/definition.md
-preferences: .interface/agent/command/preferences.yaml
-```
-
-→ [Definition](command/definition.md)<br>
-→ [Preferences](command/preferences.yaml)
+→ [Definition of Command](command/definition.md)<br>
+→ [Preferences of Command](command/preferences.yaml)
 
 ### Tool
 
@@ -205,13 +169,8 @@ Atomic built-in and externally provided executable capabilities.
 
 Responsibility: Atomic built-in and externally provided executable capabilities.
 
-```yaml
-definition: .interface/agent/tool/definition.md
-preferences: .interface/agent/tool/preferences.yaml
-```
-
-→ [Definition](tool/definition.md)<br>
-→ [Preferences](tool/preferences.yaml)
+→ [Definition of Tool](tool/definition.md)<br>
+→ [Preferences of Tool](tool/preferences.yaml)
 
 ### Permission
 
@@ -219,13 +178,8 @@ Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets. A
 
 Responsibility: Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets.
 
-```yaml
-definition: .interface/agent/permission/definition.md
-preferences: .interface/agent/permission/preferences.yaml
-```
-
-→ [Definition](permission/definition.md)<br>
-→ [Preferences](permission/preferences.yaml)
+→ [Definition of Permission](permission/definition.md)<br>
+→ [Preferences of Permission](permission/preferences.yaml)
 
 ### Connection
 
@@ -233,13 +187,8 @@ External services and installable packages the Agent obtains from outside the pr
 
 Responsibility: External services and installable packages the Agent obtains from outside the project, with their trust boundaries and lifecycle.
 
-```yaml
-definition: .interface/agent/connection/definition.md
-preferences: .interface/agent/connection/preferences.yaml
-```
-
-→ [Definition](connection/definition.md)<br>
-→ [Preferences](connection/preferences.yaml)
+→ [Definition of Connection](connection/definition.md)<br>
+→ [Preferences of Connection](connection/preferences.yaml)
 
 ### Context
 
@@ -247,13 +196,8 @@ Persistent instructions, Understanding, Memory, imports, loading, and compaction
 
 Responsibility: Persistent instructions, Understanding, Memory, imports, loading, and compaction.
 
-```yaml
-definition: .interface/agent/context/definition.md
-preferences: .interface/agent/context/preferences.yaml
-```
-
-→ [Definition](context/definition.md)<br>
-→ [Preferences](context/preferences.yaml)
+→ [Definition of Context](context/definition.md)<br>
+→ [Preferences of Context](context/preferences.yaml)
 
 Every Agent Component's Principles and Preferences are authoritative for that Component only. A runtime artifact not declared in the owning Preferences are an optional runtime capability; a required declaration not usable by the selected runtime is Agent Preferences gap.
 
@@ -261,7 +205,7 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -272,7 +216,7 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
@@ -285,7 +229,7 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
@@ -298,7 +242,7 @@ Two conventions keep Preferences ready for synchronization without duplicating t
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
@@ -310,7 +254,7 @@ Every Principle in this Guide is mandatory. Agent Preferences can never override
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
@@ -325,7 +269,7 @@ Agent Sync has succeeded when it has understood the complete Module, transferred
 
 
 
-<br><br>
+<br>
 
 <!--------------------------------------------------------------------------------- At_a_Glance --->
 ## At a Glance
