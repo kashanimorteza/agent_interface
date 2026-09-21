@@ -60,15 +60,9 @@ Components
 
 ### Configure
 
-Configure prepares and structurally reconciles the operational Config records and maintains the Application Manifest.
+Configure creates the structural Config records from their Schemas.
 
-**Agent Skill:** `/my-interface-configure`
-
-Configure initializes and reconciles the four operational Config files and synchronizes phase State. It installs nothing and prepares no Environment: Develop installs the technical requirements of the phase it implements, and Launch prepares the Environment of the selected Launch Item.
-
-A Skill named by an `agent_skills` association reaches the Runtime through its ecosystem's own provisioning mechanism when the environment is prepared, and through Develop when Develop installs the packages that bundle it. Plan, Develop, and every other Operation use such a Skill when it is discoverable and usable, and never install it. The separation exists because a package-provided Skill cannot exist before its package does, and because provisioning one never makes it an Agent Module declaration.
-
-Responsibility: The preparation and structural reconciliation of operational Config and the Application Manifest.
+Responsibility: The creation and structural reconciliation of Config records from their Schemas.
 
 → [Definition of Configure](configure/configure.md)<br>
 → [Preferences of Configure](configure/configure.yaml)
@@ -77,10 +71,6 @@ Responsibility: The preparation and structural reconciliation of operational Con
 ### Plan
 
 Plan turns Target phases into bounded, understandable, and verifiable activities.
-
-**Agent Skill:** `/my-interface-plan`
-
-Plan converts the current Target and applicable Implementation guidance into bounded, understandable, and verifiable Tasks.
 
 Responsibility: The decomposition of each Target phase into Plans, Groups, and Tasks.
 
@@ -92,10 +82,6 @@ Responsibility: The decomposition of each Target phase into Plans, Groups, and T
 
 Develop performs the planned implementation work and produces the authorized Development results.
 
-**Agent Skill:** `/my-interface-develop`
-
-Develop implements and verifies eligible Tasks from a valid current Plan. Review evaluates the resulting implementation afterward.
-
 Responsibility: The execution of planned implementation Tasks and production of authorized Development results.
 
 → [Definition of Develop](develop/develop.md)<br>
@@ -104,10 +90,6 @@ Responsibility: The execution of planned implementation Tasks and production of 
 ### Review
 
 Review establishes whether selected-phase work satisfies its applicable authorities and owns the recorded Findings.
-
-**Agent Skill:** `/my-interface-review`
-
-Review assures each selected phase's Plan and existing implementation against current Interface and Target Understanding, recording every misalignment as a Finding owned by Configure, Plan, or Develop, without invoking them or repairing anything. Implement or the Human reruns those Operations and Review until it is satisfied. With no phase input, it reviews every enabled phase.
 
 Responsibility: The assurance of phase Plans and implemented results against their applicable authorities.
 
@@ -119,10 +101,6 @@ Responsibility: The assurance of phase Plans and implemented results against the
 
 Implement coordinates the Operations workflow across Plan, Develop, and Review under the current authorities.
 
-**Agent Skill:** `/my-interface-implement`
-
-Implement executes Configure once when no phase was selected, then processes each selected phase in Target order. It reviews an existing implementation before rework, plans a phase with no implementation, repeats the Plan, Develop, and Review cycle while Findings remain, advances only after the phase is satisfied, and finally performs eligible Launch. With no phase input, it processes every enabled and ready phase.
-
 Responsibility: The coordination of the Operations workflow across planning, development, and review.
 
 → [Definition of Implement](implement/implement.md)<br>
@@ -133,10 +111,6 @@ Responsibility: The coordination of the Operations workflow across planning, dev
 
 Launch brings the completed implementation online and records the observable runtime result.
 
-**Agent Skill:** `/my-interface-launch`
-
-Launch reads the selected Launch definition and its Component Runtime Requirements, starts only the requested scope (or all developed parts for `complete`/`all`), verifies readiness, and reports access points. When no scope is supplied, the Launch Skill asks the Human to choose one.
-
 Responsibility: The controlled activation of the completed implementation and recording of its runtime result.
 
 → [Definition of Launch](launch/launch.md)<br>
@@ -146,10 +120,6 @@ Responsibility: The controlled activation of the completed implementation and re
 ### Reset
 
 Reset reconciles operational records and outputs with the selected reset scope while preserving what must remain.
-
-**Agent Skill:** `/my-interface-reset`
-
-Reset resets selected phases; with no phase input it resets every phase with generated work. `config` removes only operational Config files, while `complete` removes those Config files and the implementation outputs of all phases. Emptying or reinitializing a Config file is not removal. Every mode previews its exact impact and requires separate Human confirmation before mutation.
 
 Responsibility: The bounded reconciliation of operational records and outputs after an authorized reset.
 
