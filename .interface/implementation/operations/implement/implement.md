@@ -25,7 +25,7 @@ Responsibility: The coordination of the Operations workflow across planning, dev
 
 ### Overview
 
-Implement is the Operation Component that coordinates the workflow across Plan, Develop, and Review under the current authorities.
+Implement is the Operation Component that coordinates Configure, Plan, Develop, and Review across the selected phases under the current authorities.
 
 ### Purpose
 
@@ -33,7 +33,7 @@ Implementation work needs one accountable workflow that can move through plannin
 
 ### How It Works
 
-Implement reads State and the selected authorities, invokes the applicable Operations in order, carries forward their outcomes, and stops when a required condition or human decision prevents safe continuation.
+Implement establishes current Interface Understanding and Target Understanding, reads State and the selected authorities, invokes the applicable primary Operations in order, carries forward their outcomes, and stops when a required condition or human decision prevents safe continuation.
 
 <br>
 
@@ -83,7 +83,7 @@ Every Principle below is mandatory.
 
 ### Implement coordinates the Operations workflow
 
-**Rule:** Implement coordinates only the authorized sequence of Plan, Develop, and Review operations, preserving each Component's scope, authority, outcomes, and stopping conditions.
+**Rule:** Implement is the only primary Operation that invokes another primary Operation Skill. It coordinates Configure, Plan, Develop, and Review in the authorized sequence, preserving each Component's scope, authority, outcomes, and stopping conditions.
 
 **Why:** One coordinator keeps the implementation cycle coherent without turning coordination into ownership of the work it invokes.
 
@@ -97,11 +97,11 @@ Every Principle below is mandatory.
 
 Implement is the explicit Human coordinator for zero or more phase selections. An empty selection means every phase currently enabled and ready. It resolves and validates the complete selection before mutation and preserves Target order.
 
-Implement establishes current Interface and Target Understanding, resolves the synchronized Runtime implementations of Configure, Plan, Develop, Review, and Launch, and proves that each is available for coordinator invocation. It never enters the Agent Module to resolve them.
+Implement establishes current Interface and Target Understanding and passes that current context to each invoked primary Operation. It resolves the synchronized Runtime implementations of Configure, Plan, Develop, Review, and Launch, and proves that each is available for coordinator invocation. It never enters the Agent Module to resolve them.
 
-When no phase is selected, Implement runs Configure exactly once and verifies readiness. For each phase it runs the required Plan → Develop → Review cycle, reconciles Findings through their owning operations, and repeats only while the cycle closes or materially advances a Finding. It advances only after current Plan and Implementation Assurance succeed.
+Implement ensures Configure has run and the required Config records are ready before phase work. When no phase is selected, it applies that preparation to every enabled and ready phase. For each selected phase it first reads the latest Review and State logs, then runs the required Plan → Develop → Review cycle, reconciles Findings through their owning operations, and repeats while the cycle closes or materially advances a Finding. It advances only after current Plan and Implementation Assurance succeed.
 
-Implement owns only its own status and step-by-step run log. Every delegated mutation remains owned by the invoked Operation Component. It never bypasses Human approval, combines operation ownership, invokes Reset or Agent Native, or changes Target intent.
+Implement owns only its own status and step-by-step run log. Every delegated mutation remains owned by the invoked Operation Component, and every child Operation writes its own State Operation Log. It never bypasses Human approval, combines operation ownership, invokes Reset or Agent Native, or changes Target intent.
 
 Launch is eligible only after every enabled and ready phase has completed Planning and Development and has satisfied the required Review assurances. Implement stops on invalid input, unavailable or incompatible child Skill, unmet dependency, failed operation gate, repeated unresolved Finding, no observable progress, inconclusive assurance, or required Human decision.
 

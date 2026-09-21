@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Agent Skill Component. It declares Agent-side Skill selection, invocation, and Runtime bridges; Operation meaning remains in the owning Implementation Component."
   purpose: "Declared Agent Skills and their bridges to the owning Operation Components."
   standard: "Agent Project Interface"
-  version: "1.0"
-  updated: "2026-09-20"
+  version: "1.1"
+  updated: "2026-09-21"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -42,11 +42,12 @@ content:
     skills:
       configure:
           name: my-interface-configure
+          primary_operation: true
           component_definition: .interface/implementation/operations/configure/configure.md
           component_preferences: .interface/implementation/operations/configure/configure.yaml
           invocation: human-or-declared-coordinator
           human_invocation: enabled
-          coordinator_invocation: enabled for declared coordinators
+          coordinator_invocation: enabled only for skills.implement
           autonomous_invocation: disabled
           required: true
           bridge:
@@ -54,17 +55,18 @@ content:
             inputs: Use the inputs declared by the Configure Component Definition and Preferences.
             outputs: Use the outputs declared by the Configure Component Definition and Preferences.
             responsibility: Read and execute the Configure Component without redefining its meaning or workflow.
-            trigger: Activate when invoked by the Human or a declared coordinator.
-            required_understanding: Read the Configure Component Definition and Preferences before execution.
+            trigger: Activate when invoked by the Human or skills.implement.
+            required_understanding: Establish current Interface Understanding and Target Understanding, then read the Configure Component Definition and Preferences before execution.
             authority: Follow the Configure Component authority and write only through the Operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       plan:
           name: my-interface-plan
+          primary_operation: true
           component_definition: .interface/implementation/operations/plan/plan.md
           component_preferences: .interface/implementation/operations/plan/plan.yaml
           invocation: human-or-declared-coordinator
           human_invocation: enabled
-          coordinator_invocation: enabled for declared coordinators
+          coordinator_invocation: enabled only for skills.implement
           autonomous_invocation: disabled
           required: true
           bridge:
@@ -72,17 +74,18 @@ content:
             inputs: Use the inputs declared by the Plan Component Definition and Preferences.
             outputs: Use the outputs declared by the Plan Component Definition and Preferences.
             responsibility: Read and execute the Plan Component without redefining its meaning or workflow.
-            trigger: Activate explicitly for zero or more phase selections, or when a declared coordinator requires a current Plan.
-            required_understanding: Read the Plan Component Definition and Preferences before execution.
+            trigger: Activate explicitly for zero or more phase selections, or when skills.implement requires a current Plan.
+            required_understanding: Establish current Interface Understanding and Target Understanding, then read the Plan Component Definition and Preferences before execution.
             authority: Follow the Plan Component authority and write only through the Operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       develop:
           name: my-interface-develop
+          primary_operation: true
           component_definition: .interface/implementation/operations/develop/develop.md
           component_preferences: .interface/implementation/operations/develop/develop.yaml
           invocation: human-or-declared-coordinator
           human_invocation: enabled
-          coordinator_invocation: enabled for declared coordinators
+          coordinator_invocation: enabled only for skills.implement
           autonomous_invocation: disabled
           required: true
           bridge:
@@ -90,17 +93,18 @@ content:
             inputs: Use the inputs declared by the Develop Component Definition and Preferences.
             outputs: Use the outputs declared by the Develop Component Definition and Preferences.
             responsibility: Read and execute the Develop Component without redefining its meaning or workflow.
-            trigger: Activate explicitly for zero or more phase selections after a valid current Plan exists and prerequisites are ready.
-            required_understanding: Read the Develop Component Definition and Preferences before execution.
+            trigger: Activate explicitly for zero or more phase selections after a valid current Plan exists and prerequisites are ready, or when skills.implement requires Development.
+            required_understanding: Establish current Interface Understanding and Target Understanding, then read the Develop Component Definition and Preferences before execution.
             authority: Follow the Develop Component authority and write only through the Operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       review:
           name: my-interface-review
+          primary_operation: true
           component_definition: .interface/implementation/operations/review/review.md
           component_preferences: .interface/implementation/operations/review/review.yaml
           invocation: human-or-declared-coordinator
           human_invocation: enabled
-          coordinator_invocation: enabled for declared coordinators
+          coordinator_invocation: enabled only for skills.implement
           autonomous_invocation: disabled
           required: true
           bridge:
@@ -108,8 +112,8 @@ content:
             inputs: Use the inputs declared by the Review Component Definition and Preferences.
             outputs: Use the outputs declared by the Review Component Definition and Preferences.
             responsibility: Read and execute the Review Component without redefining its meaning or workflow.
-            trigger: Activate explicitly for zero or more phase selections after implementation exists.
-            required_understanding: Read the Review Component Definition and Preferences before execution.
+            trigger: Activate explicitly for zero or more phase selections after implementation exists, or when skills.implement requires Review.
+            required_understanding: Establish current Interface Understanding and Target Understanding, then read the Review Component Definition and Preferences before execution.
             authority: Follow the Review Component authority and write only through the Operation it defines.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       launch:
@@ -132,6 +136,7 @@ content:
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
       implement:
           name: my-interface-implement
+          primary_operation: true
           component_definition: .interface/implementation/operations/implement/implement.md
           component_preferences: .interface/implementation/operations/implement/implement.yaml
           invocation: explicit-human
@@ -145,7 +150,7 @@ content:
             outputs: Use the outputs declared by the Implement Component Definition and Preferences.
             responsibility: Read and coordinate the Implement Component without redefining its meaning or workflow.
             trigger: Activate only through explicit Human invocation for zero or more phase selections.
-            required_understanding: Read the Implement Component Definition and Preferences before execution.
+            required_understanding: Establish current Interface Understanding and Target Understanding, then read the Implement Component Definition and Preferences before execution.
             authority: Follow the Implement Component authority and invoke child Operation Skills only through the Runtime's own Skill mechanism.
             runtime_realization: The selected Agent Native supplies invocation and Runtime mechanics only.
           coordination:
@@ -179,3 +184,10 @@ content:
     external_providers: {}
     disabled_skills: {}
     overrides: {}
+    primary_operation_skills:
+      - skills.configure
+      - skills.plan
+      - skills.develop
+      - skills.review
+      - skills.implement
+    primary_operation_invocation: "Only skills.implement may invoke skills.configure, skills.plan, skills.develop, or skills.review. All supporting Skills remain available to every Operation according to their declarations."

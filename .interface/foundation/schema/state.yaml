@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-state"
-  version: "12.1"
+  version: "12.5"
   purpose: "Operational State format; State Principles define record meaning and ownership."
 operational_scope:
   stores: "Active Workflow position, aggregate phase progress, Implement and Launch results, operational history, Blockers, and Open Questions."
@@ -80,9 +80,79 @@ sections:
                 purpose: "One entry per Planning -> Developing -> Reviewing cycle for this phase."
                 item:
                   number: {required: true}
-                  planning: {required: false, purpose: "Outcome and Plan revision produced or preserved. Absent only in cycle 0 of a review-first entry."}
-                  developing: {required: false, purpose: "Outcome: tasks completed, withheld, checks run. Absent only in cycle 0 of a review-first entry."}
-                  reviewing: {required: true, purpose: "Outcome: satisfied, not satisfied, or inconclusive, with Findings closed and remaining. In a review-first entry, cycle 0 holds only this field."}
+                  planning:
+                    required: false
+                    purpose: "Planning outcome, Plan revision, Skills used, Review Findings considered, and Task reconciliation for this cycle. Absent only in cycle 0 of a review-first entry."
+                    fields:
+                      outcome: {required: true, default: ""}
+                      plan_revision: {required: true, default: 0}
+                      skills_used:
+                        required: true
+                        default: []
+                        purpose: "The Skills actually used by Planning in this cycle."
+                        item:
+                          name: {required: true, default: ""}
+                          duration_ms: {required: true, default: null, nullable: true}
+                          token_usage:
+                            required: true
+                            default: {}
+                            fields:
+                              input: {required: true, default: null, nullable: true}
+                              output: {required: true, default: null, nullable: true}
+                              total: {required: true, default: null, nullable: true}
+                          report: {required: true, default: ""}
+                      review_findings_considered: {required: true, default: []}
+                      tasks_added: {required: true, default: []}
+                      tasks_removed: {required: true, default: []}
+                      tasks_changed: {required: true, default: []}
+                      tasks_preserved: {required: true, default: []}
+                  developing:
+                    required: false
+                    purpose: "Outcome: tasks completed, withheld, checks run, and Skills actually used. Absent only in cycle 0 of a review-first entry."
+                    fields:
+                      outcome: {required: true, default: ""}
+                      skills_used:
+                        required: true
+                        default: []
+                        purpose: "The Skills actually used by Develop in this cycle."
+                        item:
+                          name: {required: true, default: ""}
+                          duration_ms: {required: true, default: null, nullable: true}
+                          token_usage:
+                            required: true
+                            default: {}
+                            fields:
+                              input: {required: true, default: null, nullable: true}
+                              output: {required: true, default: null, nullable: true}
+                              total: {required: true, default: null, nullable: true}
+                          report: {required: true, default: ""}
+                  reviewing:
+                    required: true
+                    purpose: "Review outcome, assurance results, Skills used, Finding reconciliation, and report. In a review-first entry, cycle 0 holds only this field."
+                    fields:
+                      review_id: {required: true, default: ""}
+                      plan_revision: {required: true, default: 0}
+                      plan_outcome: {required: true, default: "inconclusive"}
+                      implementation_outcome: {required: true, default: "not reviewed"}
+                      skills_used:
+                        required: true
+                        default: []
+                        purpose: "The Skills actually used by Review in this cycle."
+                        item:
+                          name: {required: true, default: ""}
+                          duration_ms: {required: true, default: null, nullable: true}
+                          token_usage:
+                            required: true
+                            default: {}
+                            fields:
+                              input: {required: true, default: null, nullable: true}
+                              output: {required: true, default: null, nullable: true}
+                              total: {required: true, default: null, nullable: true}
+                          report: {required: true, default: ""}
+                      findings_created: {required: true, default: []}
+                      findings_resolved: {required: true, default: []}
+                      findings_open: {required: true, default: []}
+                      report: {required: true, default: ""}
                   configure: {required: false, purpose: "Present only when a Finding named Configure and it was rerun in this cycle."}
               outcome: {required: true, allowed: ["satisfied", "stopped", "withheld"]}
               stop_reason: {required: false, purpose: "Why the loop stopped when outcome is stopped: repeated Finding, no progress, inconclusive, unmet dependency, failed gate, Human decision."}
@@ -119,8 +189,56 @@ sections:
         phase: {required: true, default: null, nullable: true}
         event: {required: true, default: ""}
         outcome: {required: true, default: ""}
+        started_at: {required: true, default: ""}
+        completed_at: {required: true, default: null, nullable: true}
+        duration_ms: {required: true, default: null, nullable: true, purpose: "Elapsed operation time in milliseconds when it can be measured."}
+        token_usage:
+          required: true
+          default: {}
+          purpose: "Measured token consumption when the Runtime exposes it; unknown values remain null."
+          fields:
+            input: {required: true, default: null, nullable: true}
+            output: {required: true, default: null, nullable: true}
+            total: {required: true, default: null, nullable: true}
+        skills_used:
+          required: true
+          default: []
+          purpose: "The Skills actually used by this operation."
+          item:
+            name: {required: true, default: ""}
+            duration_ms: {required: true, default: null, nullable: true}
+            token_usage:
+              required: true
+              default: {}
+              fields:
+                input: {required: true, default: null, nullable: true}
+                output: {required: true, default: null, nullable: true}
+                total: {required: true, default: null, nullable: true}
+            report: {required: true, default: ""}
+        report: {required: true, default: "", purpose: "The operation's concise explanation of what it did and what the next operation should know."}
+        review:
+          required: false
+          purpose: "Structured Review outcome when this Operation Log was produced by Review."
+          fields:
+            review_id: {required: true, default: ""}
+            plan_revision: {required: true, default: 0}
+            plan_outcome: {required: true, default: "inconclusive"}
+            implementation_outcome: {required: true, default: "not reviewed"}
+            findings_created: {required: true, default: []}
+            findings_resolved: {required: true, default: []}
+            findings_open: {required: true, default: []}
         recorded_by: {required: true, default: ""}
         recorded_at: {required: true, default: ""}
+        planning:
+          required: false
+          purpose: "The Planning report for a State event created by a standalone Planning invocation."
+          fields:
+            plan_revision: {required: true, default: 0}
+            review_findings_considered: {required: true, default: []}
+            tasks_added: {required: true, default: []}
+            tasks_removed: {required: true, default: []}
+            tasks_changed: {required: true, default: []}
+            tasks_preserved: {required: true, default: []}
   blockers:
     required: true
     default: {}

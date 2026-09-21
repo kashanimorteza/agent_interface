@@ -35,7 +35,7 @@ What makes it useful is that it only judges. It reconciles nothing and fixes not
 
 ### How It Works
 
-Review works one phase at a time from current authorities. It establishes the Plan as its baseline, then, when available, examines the generated Source, Public Interface, implemented result, and evidence against that baseline. It records the outcome and any Finding for the operation that owns its resolution.
+Review works one phase at a time from current authorities. It reads the latest relevant Plan, Develop, and prior Review operation logs before judging. It establishes the Plan as its baseline, then, when available, examines the generated Source, Public Interface, implemented result, and evidence against that baseline. It writes detailed Findings and assurance results to the Review record, and writes only its execution metadata and concise report to the State Operation Log.
 
 <br>
 
@@ -45,6 +45,7 @@ Review works one phase at a time from current authorities. It establishes the Pl
 - **Review** — one independent examination of one phase's Plan and, when present, implemented result against the current Interface and Target.
 - **Plan Assurance** — the mandatory Review judgment that a phase Plan completely and correctly covers current Target Understanding and applicable Component authorities.
 - **Assured Plan Revision** — the exact Plan Revision examined by Plan Assurance and stored with its outcome.
+- **Review ID** — the stable identifier of the current Review invocation and its reconciled Review record, referenced by State.
 - **Implementation Assurance** — the conditional Review judgment that existing implementation and evidence satisfy the assured Plan and its current authorities.
 - **Finding** — one specific way in which the result does not demonstrably satisfy what was asked, recorded with what was expected, what was observed, and where.
 - **Evidence** — the exact location or observable result that supports a finding, so that a reader can see it without repeating the review.
@@ -58,7 +59,7 @@ Review works one phase at a time from current authorities. It establishes the Pl
 - **Consumes Interface, Target, and Plan** — takes their current meaning, Plan coverage, acceptance criteria, and verification conditions as the baseline for a phase.
 - **Consumes State** — uses current aggregate progress and prior Review records without treating either as authority.
 - **Consumed by Plan** — a recorded Gap identifies work the Plan must cover without copying the Finding into Plan content.
-- **Consumed by State** — provides the phase's aggregate Review outcome and a concise History event; Findings remain Review-owned.
+- **Consumed by State** — provides the phase's aggregate Review outcome and an Operation Log containing execution metadata and a concise report; detailed Findings remain in the Review record.
 
 <br>
 
@@ -170,11 +171,13 @@ Every Principle below is mandatory.
 
 Review accepts zero or more phase selections. An empty selection means every enabled phase that has an implementation. It resolves stable phase identities, removes duplicates, and preserves Target order.
 
-Review establishes fresh Interface Understanding and Target Understanding on every invocation. It reads the selected Plan, State, applicable Implementation authorities, synchronized Runtime rules, implementation, generated Source, public interfaces, prior Review records, and evidence. It never reads Agent Module sources.
+Review establishes fresh Interface Understanding and Target Understanding on every invocation. It reads the selected Plan, State, the latest relevant Planning and Develop operation logs, applicable Implementation authorities, synchronized Runtime rules, implementation, generated Source, public interfaces, prior Review records, and evidence. It never reads Agent Module sources.
 
-Review independently compares the current Plan and implementation with those authorities. It produces Plan Assurance and Implementation Assurance for each reviewable phase, records Review-owned Findings, aggregate Review State and History, obligation coverage, and a phase report. A phase without implementation is not reviewable and receives no assurance outcome.
+Review independently compares the current Plan and implementation with those authorities. It produces Plan Assurance and Implementation Assurance for each reviewable phase, assigns a stable Review ID, records Review-owned Findings, aggregate Review State and History, obligation coverage, and a phase report. A phase without implementation is not reviewable and receives no assurance outcome.
 
-Review invokes no other Skill and never repairs implementation, Plan content, Task progress, Target, or another operation's records. Each Finding names the operation that owns its resolution. Implement or the Human reruns the owning operations and Review.
+Review writes one State Operation Log for every invocation. The log records the start and completion times, measurable duration, available operation-level token usage, the Skills actually used with their available metrics and reports, and a concise summary of the assurance outcome. It also records the reviewed phase and Plan Revision, both assurance outcomes, and the identifiers of Findings created, resolved, and still open. Detailed Findings, evidence, and assurance records remain in the Review Config.
+
+Review may use any supporting Skill and records the Skills it actually used. It never invokes another Operation Skill and never repairs implementation, Plan content, Task progress, Target, or another operation's records. Each Finding names the operation that owns its resolution. Implement or the Human reruns the owning operations and Review.
 
 Review is idempotent and evidence-first. It stops on invalid selection, missing implementation or generated Source, inconclusive evidence, unavailable authority, or an unresolved condition that prevents assurance.
 

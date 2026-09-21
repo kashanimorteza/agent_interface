@@ -61,6 +61,20 @@ sections:
             required: true
             default: 0
             purpose: "The positive Planning-owned revision of this phase Plan. Planning sets 1 when the Plan is first made and increments it exactly once whenever Planning-owned semantic content changes. Task status, blocker references, and execution logs do not change it."
+          planning:
+            required: true
+            default: {}
+            purpose: "The latest Planning reconciliation report for this phase. It records the planning run, current revision, Review Findings considered, and Task changes without becoming a second Plan history."
+            fields:
+              run_id: {required: true, default: "", purpose: "The identifier of the Planning invocation that produced this report."}
+              recorded_at: {required: true, default: "", purpose: "When this Planning reconciliation was recorded."}
+              outcome: {required: true, default: "", purpose: "The truthful result of this phase's Planning reconciliation."}
+              plan_revision: {required: true, default: 0, purpose: "The Plan revision after this reconciliation."}
+              review_findings_considered: {required: true, default: [], purpose: "The Review Finding identifiers read and considered for this phase; empty when none existed."}
+              tasks_added: {required: true, default: [], purpose: "Task identifiers added by this Planning reconciliation."}
+              tasks_removed: {required: true, default: [], purpose: "Task identifiers removed by this Planning reconciliation, with removal reasons recorded in the report."}
+              tasks_changed: {required: true, default: [], purpose: "Task identifiers whose Planning-owned content changed."}
+              tasks_preserved: {required: true, default: [], purpose: "Task identifiers re-evaluated and retained as still valid."}
           target:
             required: true
             default: ""

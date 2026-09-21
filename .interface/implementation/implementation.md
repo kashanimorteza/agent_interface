@@ -26,17 +26,17 @@ Implementation is the Module that defines how a Target is built and how that wor
 
 Implementation is the reusable programming perspective applied to a Target. It has two distinct Subsystems: Development defines the product being built, and Operations controls the work that builds, evaluates, and records it.
 
-The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its Development and Operations Subsystems. The Operations defined by the Interface are realized by the corresponding Operation Components under `implementation/operations/`; their Definitions and Preferences are the source for the operational Skills that perform them.
+The Implementation Module defines the reusable programming perspective, standards, and engineering authorities applied to a Target through its Development and Operations Subsystems. The Operations defined by the Interface are realized by the corresponding Operation Components under `implementation/operations/`; their Definitions and Preferences are the source for the operational Skills that perform them.
 
 ### Purpose
 
 This Guide explains the Module's structure and keeps the Human's understanding of its two Subsystems available to later readers.
 
-It also maps the Development and Operations Subsystems and their Components so that the product authorities and the operational Skills remain connected without duplicating their meaning in the Interface document.
+It also maps the Development and Operations Subsystems and their Components so that product authorities, operational Skills, generated records, and State Operation Logs remain connected without duplicating their meaning in the Interface document.
 
 ### How It Works
 
-The Definition is authoritative for mandatory meaning and Principles. Preferences hold current choices. Skills operate under the authority of the relevant subject.
+The Definition of each Subsystem or Component is authoritative for its mandatory meaning and Principles. Preferences hold current choices. Skills operate under the authority of the relevant subject and record their operation in State; the subject's owned Config record keeps its detailed result when one exists.
 
 <br>
 
@@ -48,9 +48,9 @@ The Definition is authoritative for mandatory meaning and Principles. Preference
 - **Operations** — the Subsystem that defines configuration, planning, development, review, implementation, launch, reset, coordination, and operational recording.
 - **Subsystem** — a major part of Implementation with separate ownership.
 - **Component** — a bounded subject within a Subsystem with its own Definition and Preferences.
-- **Definition** — the authoritative description of a subject's Understanding, relationships, boundaries, and mandatory Principles.
+- **Definition** — the authoritative description of a Subsystem or Component's Understanding, relationships, boundaries, and mandatory Principles.
 - **Preference** — a human-owned choice or default used where a higher authority is silent; it never overrides a Principle.
-- **Subject** — any Implementation Subsystem or Component described by a Definition and Preferences file.
+- **Subject** — any Implementation Subsystem or Component described by a Definition and, when it has choices, a Preferences file.
 
 <br>
 
@@ -85,7 +85,7 @@ Responsibility: The configuration, planning, review, and operational recording o
 → [Definition of Operations](operations/operations.md)<br>
 → [Preferences of Operations](operations/operations.yaml)
 
-Configure prepares the operational Config records. Plan turns Target phases into bounded, understandable, and verifiable activities. Develop performs authorized implementation work. Review establishes whether selected-phase work satisfies its applicable authorities and owns recorded Findings. Implement coordinates the workflow, Launch activates a completed implementation, Reset reconciles an authorized scope, and State records aggregate operational position, progress, outcomes, History, Blockers, and Open Questions. The remaining Operation Components coordinate the lifecycle around these responsibilities.
+Configure prepares the operational Config records. Plan turns Target phases into bounded, understandable, and verifiable activities. Develop performs authorized implementation work. Review establishes whether selected-phase work satisfies its applicable authorities and owns detailed Findings. Implement coordinates the workflow, Launch activates a completed implementation, Reset reconciles an authorized scope, and State records aggregate operational position, progress, outcomes, Operation Logs, Blockers, and Open Questions. Each Operation records its execution metadata and concise report in State; its owned Config record keeps detailed operational content when applicable. The remaining Operation Components coordinate the lifecycle around these responsibilities.
 
 These Operation Components realize the Implementation-owned Operations. Agent Native Sync remains a Foundation operation because it synchronizes the Agent Module into the selected Agent Native rather than performing Implementation work.
 
@@ -97,7 +97,7 @@ These Operation Components realize the Implementation-owned Operations. Agent Na
 - **Consumes Target** — applies current Target intent and phase requirements without becoming another Target definition.
 - **Consumed by operational Skills** — supplies the Development and Operations authorities used while implementation work is performed.
 - **Contains Development and Operations** — defines the product and operational ownership boundaries used by the Interface.
-- **Contains one Definition and one Preferences file per subject** — keeps each subject's meaning separate from its current choices.
+- **Contains a named Definition and, where applicable, Preferences file per subject** — keeps each subject's meaning separate from its current choices.
 
 <br>
 
@@ -111,16 +111,16 @@ Development owns product responsibilities. Operations owns configuration, planni
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Technical choices and defaults belong to the Preferences file of the subject that owns them. Shared choices that genuinely span Development and Operations would belong to a shared Implementation Preferences file. The shape of a generated operational record belongs to its Schema.
+Technical choices and defaults belong to the Preferences file of the subject that owns them. The shape of a generated operational record belongs to its Schema, while State owns the common Operation Log shape.
 
-No shared Implementation choices are currently declared; Development and Operations subjects own their specific choices. Subject Preferences remain human-owned, are read in `selected`, `options`, `settings` order, and never override an explicit Target value or an applicable Definition Principle.
+No shared Module-level Preferences are currently declared; Development and Operations subjects own their specific choices. Subject Preferences remain human-owned, are read in `selected`, `options`, `settings` order, and never override an explicit Target value or an applicable Definition Principle.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Definition and Principles of each subject are authoritative for its meaning and mandatory rules. Preferences never override them. This Guide explains and maps those sources; it does not become a second authority.
+The Definition and Principles of each Subsystem or Component are authoritative for its meaning and mandatory rules. Preferences never override them. This Guide explains and maps those sources; it does not become a second authority.
 
 <br>
 
@@ -137,13 +137,21 @@ The mandatory Principles are stated by the Definition files of the owning subjec
 
 **Boundary:** Development does not own Operations records, and Operations does not own product Behaviour, Source, or public interfaces.
 
-### Each subject is defined by one Definition and one Preferences file
+### Each Subsystem and Component has an explicit source pair
 
-**Rule:** Every Implementation Subsystem and Component has one `<subject>.md` and one `<subject>.yaml`. The Markdown file carries its Understanding and mandatory Principles; the YAML file carries its choices, defaults, and realization conventions.
+**Rule:** Every Implementation Subsystem and Component has a Definition file named for the subject and, when it has choices, a Preferences file named for the subject. The Definition carries its Understanding and mandatory Principles; Preferences carry its choices, defaults, and realization conventions.
 
-**Why:** A stable pair separates what the subject is and must preserve from how it is preferably realized.
+**Why:** A stable source pair separates what the subject is and must preserve from how it is preferably realized, while allowing subjects with no choices to keep Preferences empty or absent by design.
 
 **Boundary:** A subject's Preferences never override its Definition, and a child subject does not duplicate the authority of its parent or sibling.
+
+### Operations separate execution logs from detailed records
+
+**Rule:** Every Operation records execution metadata, Skills used, available timing and token measurements, outcome, and a concise report in State. A Component-owned Config record stores detailed operational content when the Operation produces one, such as Plan, Review, or Task records.
+
+**Why:** State provides the shared operational history that later Operations need, while each owned record preserves the detail without turning State into a duplicate of every Component record.
+
+**Boundary:** An Operation Log never replaces a Component-owned record, and a Component-owned record never replaces the Operation Log.
 
 ### Development and Operations retain separate ownership
 
@@ -160,6 +168,7 @@ The mandatory Principles are stated by the Definition files of the owning subjec
 
 - **Must** — keep product construction in Development and implementation control in Operations.
 - **Must** — keep each subject's Understanding and mandatory Principles in Definition and its choices in Preferences.
+- **Must** — record every Operation's execution metadata and concise report in State and keep detailed results in their owning records.
 - **Must** — keep choices owned by Development or Operations unless a choice genuinely spans both Subsystems.
 - **Must** — read each subject's Definition and Preferences through the links above.
 - **Never** — let this Guide replace a subject's Definition, Preferences, or Schema.

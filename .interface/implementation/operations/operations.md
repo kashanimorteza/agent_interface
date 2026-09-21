@@ -133,6 +133,8 @@ State records aggregate operational position and history.
 
 Technical choices and defaults shared by Operations belong to Operations Preferences. Choices owned by Configure, Plan, Review, or State remain in that Component's Preferences. Operational record shapes belong to their Schemas.
 
+Every Operation may use any available supporting Skill. The five primary Operation Skills are Configure, Plan, Develop, Review, and Implement. Only Implement may invoke the other four primary Operation Skills; the other primary Skills never invoke one another. Supporting Skills remain available to every Operation according to their own declarations.
+
 <br>
 
 Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.

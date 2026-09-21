@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-review"
-  version: "1.2"
+  version: "1.3"
   purpose: "Operational Review file structure. Sections describe stored Plan Assurance, Implementation Assurance, and Findings; initial is the empty configuration template."
 initialization:
   source: "initial"
@@ -34,6 +34,10 @@ sections:
         default: {}
         purpose: "The current review record for one phase."
         fields:
+          review_id:
+            required: true
+            default: ""
+            purpose: "A stable identifier for the current Review invocation and record, referenced by the State Operation Log."
           id:
             required: true
             default: ""

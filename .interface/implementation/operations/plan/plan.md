@@ -58,8 +58,6 @@ A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic T
 
 <br>
 
-<br>
-
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
@@ -120,6 +118,26 @@ Plan Preferences currently define no technical choices or defaults. The generate
 **Why:** The Task identifier carries the Plan and Group identifiers, so a Task can be named unambiguously outside the file while the nesting answers everything else. Context repeated in every Task makes the record large and turns one correction into many edits that can disagree with each other.
 
 **Boundary:** A Task or Group may add to inherited context or make it stricter; it never repeats it and never contradicts it. The same statement never appears in more than one Task of a Plan: when the same statement is being written into several Tasks, it belongs to their common Group or Plan and is moved there.
+
+<br>
+
+### Planning requires the operational Config records
+
+**Rule:** Planning starts only when the Plan Config and State Config exist and are structurally valid. If either required record is missing or invalid, Plan stops, records the unmet prerequisite, and suggests that the Human run Configure. Plan never invokes Configure itself.
+
+**Why:** Planning needs a place to preserve the Plan and to record aggregate progress and the planning event before it can safely produce work.
+
+**Boundary:** A missing Config prerequisite stops Plan; it does not authorize Plan to create, repair, initialize, or replace that record.
+
+<br>
+
+### Every planning invocation re-evaluates its selected phase
+
+**Rule:** Every invocation establishes fresh Interface and Target Understanding, reads the current Plan, State History, and Review Findings for each selected phase, and re-evaluates the phase even when a previous Plan exists or its Tasks are complete. It reconciles the current Groups and Tasks with the current authorities, preserves still-valid work, and records what it added, removed, changed, and preserved.
+
+**Why:** A later Target, Principle, Preference, implementation result, or Review Finding can change what the phase requires, and a previous completion does not prove that the current Plan remains sufficient.
+
+**Boundary:** Plan reads Review and State as authorities and records, and may use any supporting Skill, but it never invokes another Operation Skill. It performs only its own Planning responsibility.
 
 <br>
 
@@ -198,7 +216,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 ### Existing work is never silently destroyed
 
-**Rule:** Replanning or regeneration reconciles unchanged work and adds newly required work without silently overwriting completed, active, or otherwise meaningful Task content.
+**Rule:** Replanning reconciles unchanged work, adds newly required work, and removes or replaces no-longer-required work only with an explicit reason recorded in the planning report. It never silently overwrites completed, active, or otherwise meaningful Task content.
 
 **Why:** Planning runs many times over the life of a phase, and work already done or already underway is the most expensive thing the record holds.
 
@@ -223,13 +241,13 @@ Plan accepts zero or more phase selections. An empty selection means every enabl
 
 Plan consumes current Target Understanding, applicable Component authorities, Plan, State, Review Findings, Schemas, and relevant implementation evidence. It establishes fresh Interface and Target Understanding before planning.
 
-Plan creates or reconciles only Planning-owned Plan content, Plan Revision, aggregate Planning State and History, permitted Blockers and Open Questions, Task Agent parameters, `agent_skills` associations, and a phase report. It never writes implementation, Target intent, Review ownership, or fields outside Planning authority.
+Plan creates or reconciles only Planning-owned Plan content, Plan Revision, aggregate Planning State and History, permitted Blockers and Open Questions, Task Agent parameters, `agent_skills` associations, and the current phase Planning report. The operation log in State records the Skills actually used, elapsed time, available token usage, and the Planning report; the Plan report records Review Findings considered and Task identifiers added, removed, changed, and preserved. A standalone Planning invocation also appends its report to State History; an invocation coordinated by Implement records it in the corresponding State run cycle. It never writes implementation, Target intent, Review ownership, or fields outside Planning authority.
 
-Every planning run validates the complete selection before mutation, maps every selected requirement and unresolved Finding to one Task or inherited phase context, preserves valid identities and progress, and keeps planning content independent of files, paths, packages, commands, and implementation layout. A new Plan starts at revision `1`; semantic Planning changes increment the revision exactly once, while progress-only changes do not.
+Every planning run validates the complete selection before mutation, verifies the required Plan and State Config records, maps every selected requirement and unresolved Finding to one Task or inherited phase context, preserves valid identities and progress, and keeps planning content independent of files, paths, packages, commands, and implementation layout. A new Plan starts at revision `1`; semantic Planning changes increment the revision exactly once, while progress-only changes do not.
 
-Completion requires every Task to have observable acceptance and verification. Testing scope is inherited from the applicable Implementation authorities; it is never widened merely because a test tool is available. Review Findings are reconciled through Planning when they identify missing or changed planned work.
+Completion requires every Task to have observable acceptance and verification. Testing scope is inherited from the applicable Implementation authorities; it is never widened merely because a test tool is available. Review Findings are reconciled through Planning when they identify missing or changed planned work. If a required Config record is missing, Planning stops and suggests Configure without invoking it.
 
-Plan is idempotent: repeated planning against unchanged authorities preserves valid work and produces no unnecessary semantic change. It stops on invalid selection, missing or contradictory coverage, unresolved ownership, unavailable prerequisites, or a required Human decision.
+Every planning invocation is repeatable but never skipped because a Plan already exists or its Tasks are complete. Against unchanged authorities it may preserve the same semantic Plan and revision, while still recording the run and its reconciliation report. It stops on invalid selection, missing Config records, contradictory coverage, unresolved ownership, unavailable prerequisites, or a required Human decision.
 
 <br>
 
@@ -243,6 +261,17 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — every phase has one Plan holding its identity, order, target, outcome, and phase-wide context
 - **Must** — every Plan has a Planning-owned revision that changes exactly when its semantic planning content changes
 - **Never** — planning invents a new phase or silently changes the meaning of an existing one
+
+**Planning requires the operational Config records**
+
+- **Must** — require structurally valid Plan Config and State Config before planning
+- **Never** — invoke Configure or create, repair, or replace a missing Config record
+
+**Every planning invocation re-evaluates its selected phase**
+
+- **Must** — establish current Understanding, read Review Findings and State History, and reconcile the selected phase again
+- **Must** — report added, removed, changed, and preserved Tasks and the Skills used for the phase
+- **Never** — skip Planning because a previous Plan or completed Tasks exist, or invoke another Operation Skill
 
 **Groups organize related work**
 

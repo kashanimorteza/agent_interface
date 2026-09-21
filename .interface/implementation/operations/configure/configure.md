@@ -32,7 +32,7 @@ The Interface needs its Config records to exist with known structures before ope
 
 ### How It Works
 
-Configure reads the Config Schemas named by Configure Preferences and generates the corresponding records in the Config directory. It does not read Target or Agent content, interpret phases, execute Workflow operations, install technical requirements, prepare an Environment, or create product Source. The Configure Skill is constructed from this Definition and its Preferences, so this Component is the source of the Skill's meaning and current Config mapping.
+Configure establishes current Interface Understanding and Target Understanding, then reads the Config Schemas named by Configure Preferences and generates the corresponding records in the Config directory. When State already exists, it also reads the latest Configure operation log to reconcile its own previous outcome. It does not interpret Target phases, execute Workflow operations, install technical requirements, prepare an Environment, or create product Source. The Configure Skill is constructed from this Definition and its Preferences, so this Component is the source of the Skill's meaning and current Config mapping.
 
 Configure is complete when every generated record conforms to its current Schema. Any later operational or phase content belongs to the Operation that owns it.
 

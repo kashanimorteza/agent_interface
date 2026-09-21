@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Review Component. It currently defines no Component-specific technical choices or defaults."
   purpose: "Where the Review Component's technical choices would be recorded. The Review Component currently makes none."
   standard: "Agent Project Interface"
-  version: "2.0"
-  updated: "2026-09-12"
+  version: "2.1"
+  updated: "2026-09-21"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -37,7 +37,7 @@ read_order:
 content_map:
   selected: "Empty. The Review Component chooses among no catalogued alternatives and owns no code path."
   options: "Empty. The Review Component catalogues no alternatives."
-  settings: "Empty. The Review Component configures nothing."
+  settings: "The source used to construct the Review Skill. Review-specific technical defaults remain empty."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -50,4 +50,8 @@ content:
   options: {}
 
   # <!-------------------------------------------- settings -->
-  settings: {}
+  settings:
+    skill_source:
+      definition: ".interface/implementation/operations/review/review.md"
+      preferences: ".interface/implementation/operations/review/review.yaml"
+      purpose: "The Review Skill is constructed from this Component's Definition and Preferences."

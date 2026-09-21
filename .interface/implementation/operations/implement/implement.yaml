@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/operations/implement/implement.yaml"
   path_note: "The Preferences layer of the Implement Component."
-  purpose: "Implement coordination defaults used when the Operations authorities are silent."
+  purpose: "Implement coordination defaults and the source used to construct its Skill."
   standard: "Agent Project Interface"
-  version: "1.0"
-  updated: "2026-09-20"
+  version: "1.1"
+  updated: "2026-09-21"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -31,10 +31,14 @@ read_order:
 content_map:
   selected: "Empty. Implement selects no shared coordination profile."
   options: "Empty. Implement catalogues no shared alternatives."
-  settings: "Empty. Coordination defaults remain to be declared when needed."
+  settings: "Coordination defaults and the source used to construct the Implement Skill."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected: {}
   options: {}
-  settings: {}
+  settings:
+    skill_source:
+      definition: ".interface/implementation/operations/implement/implement.md"
+      preferences: ".interface/implementation/operations/implement/implement.yaml"
+      purpose: "The Implement Skill is constructed from this Component's Definition and Preferences."
