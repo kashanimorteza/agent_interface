@@ -82,53 +82,5 @@
     }
   },
   "outputStyle": "adhd-output-style:ADHD Explanatory",
-  "autoMemoryEnabled": false,
-  "hooks": {
-    "UserPromptExpansion": [
-      {
-        "matcher": "my-interface-agent-native",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/interface_guard.py\" grant",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Read|Glob|Grep|Edit|Write|NotebookEdit|Bash|Skill",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/interface_guard.py\" guard",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/interface_guard.py\" revoke",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/interface_guard.py\" revoke",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  }
+  "autoMemoryEnabled": false
 }
