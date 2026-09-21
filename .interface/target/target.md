@@ -28,7 +28,9 @@ This Guide explains the Target Module and its authoritative definitions.
 
 This Guide explains the Target Module: what it is, what its files hold, who owns them, and how the rest of the Interface reads them. It is Human-owned and explains; it does not redefine. The canonical definition remains `.interface/interface.md`, and where the two disagree the Interface file is correct.
 
-The Target describes what the Interface is working on: an application, platform, service, API, module, package, subsystem, or other development subject.
+The Target describes what the Interface is working on: an application, platform, service, API, module, package, subsystem, or other development subject. It is defined through a Human Definition and a Technical Definition, with the Technical Definition taking precedence when they conflict.
+
+This Guide explains and maps the Target Module and its files. Target Understanding remains grounded in the two Target definitions under their declared precedence.
 
 ### Purpose
 

@@ -43,8 +43,6 @@ Agent Interface
     ├── Terms
     ├── Architecture
     ├── Understanding
-    ├── Operations
-    ├── Modes
     ├── Authority and Ownership
     ├── Workflow
     ├── Agent Native Sync

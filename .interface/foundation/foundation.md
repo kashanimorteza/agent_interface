@@ -28,6 +28,8 @@ This document explains the Foundation directory: what it holds, why those files 
 
 Foundation Files provide the foundational definitions and schemas required by the Interface: the canonical Interface document that every Understanding starts from and the Schemas that define how authored and generated files are shaped. Config is a separate operational boundary that uses some of these Schemas.
 
+Config contains the generated Application, State, Plan, and Review records. It is outside the Foundation directory and is the only writable area of the Interface for authorized Skills; each record remains owned and writable only under its owning Component's authority.
+
 ### Purpose
 
 Foundation keeps shared Interface resources separate from the Target, Implementation, and Agent Modules.

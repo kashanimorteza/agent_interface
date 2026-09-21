@@ -31,6 +31,8 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 
 The Agent Module is one of the three primary Interface Modules, alongside Target and Implementation. It is the Human-owned, Runtime-independent declaration of how an Agent operates: its behavior, Skills, Rules, limits, responsibilities, capabilities, and boundaries.
 
+The Guide explains the Agent Module and maps every Component's Definition and Preferences files. The Module is read only within an explicit Agent Native Sync invocation; only Agent Native Sync enters it, and every other role uses the synchronized Runtime realization.
+
 ### Purpose
 
 The Module exists so the Human defines the Agent once instead of creating a separate configuration for Claude, Codex, Copilot, or another Agent Native. The Human's complete view of Agent behavior is organized here through the Module's Components and can then be realized by different Native environments. The Module does not define the Target, the Implementation, or a Native vendor's files, commands, configuration format, or execution mechanism.

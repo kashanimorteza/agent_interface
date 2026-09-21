@@ -26,9 +26,13 @@ Implementation is the Module that defines how a Target is built and how that wor
 
 Implementation is the reusable programming perspective applied to a Target. It has two distinct Subsystems: Development defines the product being built, and Operations controls the work that builds, evaluates, and records it.
 
+The Implementation Module defines the reusable programming personality, standards, and engineering perspective applied to a Target through its Development and Operations Subsystems. The Operations defined by the Interface are realized by the corresponding Operation Components under `implementation/operations/`; their Definitions and Preferences are the source for the operational Skills that perform them.
+
 ### Purpose
 
 This Guide explains the Module's structure and keeps the Human's understanding of its two Subsystems available to later readers.
+
+It also maps the Development and Operations Subsystems and their Components so that the product authorities and the operational Skills remain connected without duplicating their meaning in the Interface document.
 
 ### How It Works
 
