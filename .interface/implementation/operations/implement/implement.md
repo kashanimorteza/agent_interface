@@ -22,7 +22,7 @@ Implement is the Operation Component that coordinates the authorized Operations 
 
 ### Overview
 
-Implement is the Operation Component that coordinates Configure, Plan, Develop, and Review across the selected phases under the current authorities.
+Implement is the Operation Component that coordinates Configure, Plan, Develop, and Review across the selected phases.
 
 ### Purpose
 
@@ -45,9 +45,8 @@ Implement accepts one or more selected phases, or coordinates every phase when n
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes State and Plan** — determines the current position and work to coordinate.
-- **Consumes Development and Target** — carries their authorities into the workflow.
-- **Consumed by State** — supplies aggregate outcomes and stopping information.
+- **Coordinates Configure, Plan, Develop, and Review** — invokes each Operation in the required order while each retains responsibility for its own Understanding, work, and outcome.
+- **Records in State** — appends its coordination outcome and stopping information to its own Log Entry.
 
 <br>
 

@@ -19,7 +19,7 @@ policy:
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "The empty content provides no Review defaults; consumers continue with the other applicable authorities."
-  selection: "There is nothing to select. A technology needed to observe a result is resolved from the Preferences of the Component that owns it, because Review judges a result rather than building one."
+  selection: "There is nothing to select."
   version_resolution: "No entry here carries a version, because no technology is recorded."
   matching: "There is nothing to match. An empty section is an absence of defaults, not a wildcard."
 

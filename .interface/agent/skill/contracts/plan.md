@@ -10,6 +10,10 @@ Required. Stable key: `plan`. Skill name: `my-interface-plan`.
 
 An invocation request and an optional phase selection.
 
+## Requirements
+
+A successful Configure execution must have established the required Config records before this Skill runs.
+
 ## Outputs
 
 The Skill execution result and status.

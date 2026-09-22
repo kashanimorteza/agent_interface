@@ -45,7 +45,7 @@ Components
 
 ### Core Skills
 
-Each Core Skill has one Contract in `contracts/`. Its Contract holds the Skill's identity, inputs, outputs, and Skill-specific declarations.
+Each Core Skill has one Contract in `contracts/`.
 
 The Contract's `Source` section identifies where the Core Skill's Understanding begins. The Contract and every source it names are read together to establish the Skill's complete Meaning and Content. A Core Skill is implemented from that Understanding rather than by copying its sources verbatim.
 

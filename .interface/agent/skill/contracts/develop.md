@@ -10,6 +10,12 @@ Required. Stable key: `develop`. Skill name: `my-interface-develop`.
 
 An invocation request and an optional phase selection.
 
+## Requirements
+
+A successful Configure execution must have established the required Config records before this Skill runs.
+
+Each selected phase must have a current Plan.
+
 ## Outputs
 
 The Skill execution result and status.

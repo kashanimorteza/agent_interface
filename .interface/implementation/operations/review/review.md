@@ -85,7 +85,7 @@ Every Principle below is mandatory.
 
 <br>
 
-### Review always assures the Plan before implementation
+### Review always assures the Plan before implementation assurance
 
 **Rule:** A Review reconstructs current Interface Understanding and Target Understanding only after the selected Plan and Development result are available. It independently judges one phase's Plan against the current Target and every applicable Principle and Preference, records the exact Assured Plan Revision, and then judges the generated Source, Public Interface, implementation, and evidence against that assured Plan and the same current authorities.
 
@@ -101,7 +101,7 @@ Every Principle below is mandatory.
 
 **Why:** Recording the Finding before resolving it preserves the original observation while allowing Review to close the loop and verify the result.
 
-**Boundary:** Review never changes Target meaning, Plan content, Task status, or another operation's owned records. Its resolution scope is limited to the reviewed implementation and the evidence needed to establish the result.
+**Boundary:** Review may change only the reviewed implementation and the evidence needed to resolve one of its recorded Findings. It never changes Target meaning, Plan content, Task status, or any other Operation's owned record.
 
 <br>
 
@@ -160,7 +160,7 @@ Every Principle below is mandatory.
 
 Every obligation in the file, under the Principle it comes from.
 
-**Review always assures the Plan before implementation**
+**Review always assures the Plan before implementation assurance**
 
 - **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging generated Source, Public Interface, implementation, and evidence
 - **Must** — record Plan Assurance and Implementation Assurance separately after the selected Plan and Development result are available

@@ -88,4 +88,4 @@ Every obligation in the file, under the Principle it comes from.
 **Configure generates only the declared Config records from their Schemas**
 
 - **Must** — generate each declared Config Record from its current Schema, preserve its comments, and preserve valid operational content during reconciliation.
-- **Never** — perform another Operation or change anything outside those Config Records.
+- **Never** — perform another Operation or change anything outside those Config Records and its own Configure Log Entry.

@@ -17,7 +17,7 @@ policy:
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "The empty content provides no Develop defaults; consumers continue with the other applicable authorities."
-  selection: "There is nothing to select. A technical need is resolved by the Development Component that owns it, or raised through State when no Component owns it."
+  selection: "There is nothing to select."
   version_resolution: "No entry currently carries a version."
   matching: "There is nothing to match. An empty section is an absence of defaults, not a wildcard."
 

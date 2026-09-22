@@ -136,7 +136,7 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Planning re-evaluates changed understanding and reconciles existing work
 
-**Rule:** Every invocation establishes current Interface and Target Understanding and compares them with the understanding used by the existing Plan. When the relevant understanding is unchanged, it preserves the existing Groups and Tasks and records that no Planning change was required. When it changed, Planning reconciles the current Groups and Tasks with the current authorities, preserves still-valid work, adds newly required work, and changes or retires only work that is no longer valid with an explicit reason. A Task created or materially changed by a Skill records that Skill and its State Log Entry in `source`.
+**Rule:** Every invocation establishes current Interface and Target Understanding and compares them with the understanding used by the existing Plan. When the relevant Understanding is unchanged, Planning records that no change is required. When it changed, Planning records that the current Plan must be reconciled against the current authorities.
 
 **Why:** A later Target, Interface, Principle, or Preference change can change what the phase requires, while an unchanged understanding makes wholesale Task regeneration unnecessary.
 
@@ -181,7 +181,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 **Why:** The implementation method and the arrangement of the source belong to whoever implements the Task, working from the current project sources and the existing implementation.
 
-**Boundary:** Task does not prescribe implementation steps, algorithms, source layout, classes, functions, code, or commands for performing the work, and it makes no new technical decision.
+**Boundary:** Task does not take ownership of its implementation or make a new technical decision.
 
 <br>
 
@@ -219,7 +219,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 ### Existing work is never silently destroyed
 
-**Rule:** Replanning reconciles unchanged work, adds newly required work, and removes or replaces no-longer-required work only with an explicit reason recorded in the planning report. It never silently overwrites completed, active, or otherwise meaningful Task content.
+**Rule:** When current Understanding requires replanning, Planning preserves still-valid work, adds newly required work, and removes or replaces no-longer-required work only with an explicit reason recorded in the planning report. A Task created or materially changed by a Skill records that Skill and its State Log Entry in `source`. Planning never silently overwrites completed, active, or otherwise meaningful Task content.
 
 **Why:** Planning runs many times over the life of a phase, and work already done or already underway is the most expensive thing the record holds.
 
@@ -256,8 +256,8 @@ Every obligation in the file, under the Principle it comes from.
 **Planning re-evaluates changed understanding and reconciles existing work**
 
 - **Must** — establish current Interface and Target Understanding and compare it with the understanding used by the existing Plan
-- **Must** — preserve valid Tasks, add newly required Tasks, and record each Task's creating Skill and State Log Entry in `source`
-- **Never** — regenerate all Tasks because a previous Plan exists or read Review as a prerequisite
+- **Must** — record whether the current Plan requires reconciliation
+- **Never** — treat a previous Plan as current without comparing its Understanding or read Review as a prerequisite
 
 **Groups organize related work**
 
@@ -289,7 +289,7 @@ Every obligation in the file, under the Principle it comes from.
 **Task defines the activity and Development defines the implementation**
 
 - **Must** — a Task states what must be achieved, why, where the responsibility belongs, and what proves completion
-- **Never** — a Task prescribes implementation steps, algorithms, source layout, code, or commands, or makes a technical decision
+- **Never** — a Task takes ownership of its implementation or makes a technical decision
 
 **Dependencies are explicit**
 
@@ -313,7 +313,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Existing work is never silently destroyed**
 
-- **Must** — replanning reconciles unchanged work and adds what is newly required
+- **Must** — replanning preserves valid work, adds what is newly required, and records the creating Skill and State Log Entry for every created or materially changed Task
 - **Never** — completed, active, or meaningful Task content is removed without an authorized operation or a surfaced conflict
 
 **The record holds work and progress, not project meaning**
