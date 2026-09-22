@@ -29,7 +29,7 @@ The Skill discovers the current Components and referenced sources from the Agent
 
 Interface Understanding is not required for synchronization. When navigation is necessary, the Skill may consult `.interface/interface.md` as a map of the Interface. It never needs Target Understanding and must not read Target sources to perform this work.
 
-The Skill must then enumerate every entry in `.interface/agent/skill/skill.yaml` before realizing any Skill. Each declared entry is one required synchronization item: its declared Operation Component Definition and Preferences are the source of its meaning, and its Agent-side bridge is the source of its invocation and Native boundary. No declared Skill may be skipped because it is unfamiliar, already present, or not selected as the coordinating Skill. An Operation Component that has no entry in this Skill catalog — such as State when it is not declared as a Skill — must not be turned into a Skill merely because it exists in the Implementation Module.
+The Skill must then enumerate every Contract in `.interface/agent/skill/contracts/` before realizing any Skill. Each Contract is one required synchronization item: its named Operation Component Definition and Preferences are the source of its meaning, and the Contract is the source of its invocation and Native boundary. No declared Skill may be skipped because it is unfamiliar, already present, or not selected as the coordinating Skill. An Operation Component that has no Contract — such as State when it is not declared as a Skill — must not be turned into a Skill merely because it exists in the Implementation Module.
 
 ## Synchronization
 

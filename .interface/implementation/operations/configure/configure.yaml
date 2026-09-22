@@ -31,7 +31,7 @@ read_order:
 content_map:
   selected: "Empty. Configure selects no profile."
   options: "Empty. Configure supports no alternatives."
-  settings: "The Config directory, generated records, their Schemas, and the source used to construct the Configure Skill."
+  settings: "The Config directory, generated records, and their Schemas."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -53,7 +53,3 @@ content:
       - name: "State Config"
         file: "state.yaml"
         schema: ".interface/foundation/schema/state.yaml"
-    skill_source:
-      definition: ".interface/implementation/operations/configure/configure.md"
-      preferences: ".interface/implementation/operations/configure/configure.yaml"
-      purpose: "The Configure Skill is constructed from this Component's Definition and Preferences."

@@ -1,6 +1,6 @@
 # Agent Skill Definition
 
-Agent Skill is the Agent Component that defines a Skill's portable meaning and Agent-side bridge.
+Agent Skill is the Agent Component that defines a Skill's portable meaning and per-Skill Contract.
 
 <br>
 
@@ -9,11 +9,8 @@ Agent Skill is the Agent Component that defines a Skill's portable meaning and A
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
-5. **[Authority](#authority)**
-6. **[Principles](#principles)**
-7. **[At a Glance](#at-a-glance)**
+3. **[Layering](#layering)**
+4. **[Authority](#authority)**
 
 
 
@@ -29,13 +26,15 @@ Skill is a reusable capability an Agent can activate to perform a defined kind o
 
 ### Purpose
 
-Skill prevents the Agent from reconstructing the same instructions each time. Each Operation-backed Skill points to one owning Operation Component, whose Definition and Preferences contain the meaning the Skill executes; Agent Skill Preferences contain only the Agent-side bridge.
+Skill provides one consistent way to describe a reusable capability without repeating its framework or its Skill-specific content.
 
 ### How It Works
 
-The owning Operation Component is authoritative for an Operation-backed Skill's behavior, responsibility, inputs, outputs, authority, verification, and stopping conditions. Agent Skill Preferences bridge that Component to Agent Sync; the selected Agent Native owns execution mechanics. An external provider can supply a different realization, but it does not change the owning Component's meaning.
+Each Skill has one Contract. The Contract holds its framework: inputs, outputs, invocation rules, boundaries, and declarations specific to that Skill.
 
-Declared Agent Skills are listed in Agent Skill Preferences. Each entry points to the Definition and Preferences of its owning Operation Component, so Agent Sync and the realized Skill can find the Skill's meaning and required Understanding at the source. These references identify where to read; they do not copy or redefine the Operation Component's content in the Agent Skill Component.
+For a Core Skill, the Contract's `Source` section identifies the starting point for Understanding. The Contract and the path beginning at that Source are read together to establish the Skill's complete Meaning and Content. A Core Skill is implemented from that Understanding rather than by copying its sources verbatim.
+
+A Provider Skill has no `Source` section because its Contract and directory already contain everything it needs. Provider content is copied as it stands from `providers/`. When a Skill is implemented again, declared changes are applied; when nothing changed, the valid existing implementation is preserved.
 
 
 
@@ -46,19 +45,8 @@ Declared Agent Skills are listed in Agent Skill Preferences. Each entry points t
 ## Terms
 
 - **Skill** — a reusable capability activated explicitly or by a declared coordinator.
-- **Skill Preferences** — the Agent-side bridge to one Skill's owning Component, including its invocation and Agent Native boundary.
-- **Capability Realization Kind** — the declared way a Skill becomes usable: Constructed from its Operation Component and Agent Skill Preferences, or Installed through a provider.
-
-
-
-
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Agent, Implementation, and Target** — reads the authorities required by its Agent Skill Preferences and owning Operation Component.
-- **Consumed by Agent and permitted Coordinators** — provides an executable capability without acquiring the authority of its sources.
+- **Skill Contract** — the per-Skill framework, including its invocation rules and Understanding sources.
+- **Provider Skill** — a self-contained Skill held in `providers/` without a Source section.
 
 
 
@@ -68,9 +56,9 @@ Declared Agent Skills are listed in Agent Skill Preferences. Each entry points t
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Operation-backed Skill behavior belongs to the owning Implementation Operation Component. Agent-side declarations and mappings belong to Agent Skill Preferences, while Agent Sync owns their realization in the selected Agent Native.
+Skill-specific behavior belongs to the sources named by the Skill Contract. The Contract carries the Skill framework and mappings.
 
-The Definition carries the portable Skill meaning; Preferences carry the Agent-side bridge. Neither layer replaces or duplicates the owning Operation Component's behavior.
+The Definition carries the shared portable Skill concept; each Contract carries one Skill's framework, source references, and any Skill-specific declarations.
 
 
 
@@ -80,87 +68,7 @@ The Definition carries the portable Skill meaning; Preferences carry the Agent-s
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Agent Preferences can never override a Principle, and a Native realization may only preserve or strengthen the Skill's meaning, never weaken it.
+This Definition is authoritative for the shared Skill concept. A Contract provides the framework and declarations of one Skill; the Source path identified by a Core Skill's Contract provides its Meaning and Content.
 
 
 
-
-<br>
-
-<!--------------------------------------------------------------------------------- Principles --->
-## Principles
-
-Every Principle below is mandatory and defines the shared meaning of an Agent Skill.
-
-### Each Skill layer has one owner
-
-**Rule:** This Definition explains the shared Skill concept, the owning Operation Component owns Operation-specific behavior, Agent Skill Preferences provide the bridge, and the selected Agent Native owns execution mechanics.
-
-**Why:** Clear ownership prevents duplication and conflicting authorities.
-
-**Boundary:** No layer replaces, overrides, or duplicates another layer's authority.
-
-
-### Every Skill has one owner and bridge
-
-**Rule:** Every Operation-backed Skill has one owning Operation Component and one Agent Preferences bridge that points to it.
-
-**Why:** One owning Component keeps each Operation Skill's behavior clear and consistent, while one Preferences bridge keeps the Agent mapping clear.
-
-**Boundary:** Agent Skill Preferences do not repeat or redefine the owning Operation Component's workflow.
-
-
-### Skill availability is proven
-
-**Rule:** A Skill is usable only when the selected Agent Native can discover and invoke it.
-
-**Why:** A declaration alone does not make a capability available.
-
-**Boundary:** Invocation never expands the Skill's authority or responsibility.
-
-
-### Skill execution is repeatable
-
-**Rule:** Repeating a Skill preserves valid work and avoids unnecessary changes.
-
-**Why:** Skills may be resumed or invoked more than once.
-
-**Boundary:** Repeatability never authorizes destructive replacement of meaningful work.
-
-
-### Every Skill has one Realization Kind
-
-**Rule:** Each Skill has one realization path: Constructed or Installed.
-
-**Why:** The Runtime needs one clear realization path for every Skill.
-
-**Boundary:** Realization never changes the Contract's meaning or authority.
-
-
-### Skill owns executable capability only
-
-**Rule:** A Skill owns its executable capability and does not own Target meaning, Implementation policy, Agent Native mechanics, or another Component's records.
-
-**Why:** Clear ownership keeps reusable capability separate from the authorities it consumes.
-
-**Boundary:** A Skill may read required authorities and produce its declared outputs without acquiring ownership of them.
-
-
-
-
-<br>
-
-<!--------------------------------------------------------------------------------- At a Glance --->
-## At a Glance
-
-- **Each Skill layer has one owner** — Definition explains the shared concept; Operation Component owns Skill behavior; Preferences bridge Agent to Operations; Agent Sync owns Native realization.
-
-- **Every Skill has one owner and bridge** — define each Operation-backed Skill through one owning Component and one Agent Preferences bridge.
-
-- **Skill availability is proven** — verify Native discovery and invocation; never infer availability from declaration alone.
-
-- **Skill execution is repeatable** — preserve valid work on repetition; never replace meaningful work destructively.
-
-- **Every Skill has one Realization Kind** — use exactly one of Constructed or Installed.
-
-- **Skill owns executable capability only** — keep ownership limited to the declared capability.
