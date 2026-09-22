@@ -1,6 +1,6 @@
 # Agent Skill Definition
 
-This definition describes the portable meaning and Agent-side bridge of a Skill.
+Agent Skill is the Agent Component that defines a Skill's portable meaning and Agent-side bridge.
 
 <br>
 

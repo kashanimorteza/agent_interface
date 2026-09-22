@@ -75,8 +75,6 @@ What must be guaranteed rather than followed is not written here: it is declared
 
 <br>
 
-<br>
-
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 

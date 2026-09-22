@@ -1,26 +1,24 @@
 # Presentation Definition
 
-## Navigation
-
-1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
-2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
-   - **[Presentation has three internal layers](#presentation-has-three-internal-layers)**
-   - **[Presentation is component-based](#presentation-is-component-based)**
-   - **[Interaction Logic owns user-interface behaviour](#interaction-logic-owns-user-interface-behaviour)**
-   - **[API Access is the only door to application data](#api-access-is-the-only-door-to-application-data)**
-   - **[Domain Models are shared, never copied](#domain-models-are-shared-never-copied)**
-   - **[Presentation implements only Presentation-targeted project Behaviour](#presentation-implements-only-presentation-targeted-project-behaviour)**
-   - **[Appearance is governed by one coherent visual system](#appearance-is-governed-by-one-coherent-visual-system)**
-   - **[Presentation preserves its boundary](#presentation-preserves-its-boundary)**
-5. **[At a Glance](#at-a-glance)**
+Presentation is the Development Component that renders the user experience and consumes application capabilities through API.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
+## Navigation
+
+1. **[Introduction](#introduction)**
+2. **[Terms](#terms)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Layering](#layering)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
+
+<br>
+
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -47,6 +45,7 @@ The Theme resolves appearance for all of it — colours, typography, spacing, di
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Presentation** — the layer that renders pages and views by composing reusable user-interface Components.
@@ -55,20 +54,42 @@ The Theme resolves appearance for all of it — colours, typography, spacing, di
 - **Component (user-interface)** — one focused, composable unit of Presentation, reused wherever the same user-interface concept appears.
 - **Theme** — the coherent visual system whose colours, typography, spacing, direction, and display mode are resolved once and consumed by every Component.
 
+<br>
+
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+```text
+Presentation
+├── Presentation          ← pages, views, and reusable user-interface Components
+├── Interaction Logic     ← user-interface state and interaction behaviour
+└── API Access            ← the only Presentation boundary consuming API
+```
+
+The dependency direction is Presentation → Interaction Logic → API Access → API Component. No layer bypasses the layer responsible for the next boundary.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes API** — the public API through which all application data and application capabilities are reached.
 - **Consumes Development** — the common package standard and the cross-cutting capabilities selected for the project.
 - **Consumed by no other Component** — Presentation is an outermost layer, and nothing in the architecture depends on it.
 
-Technical choices and defaults belong to Presentation Preferences. Presentation implementation applies those choices to the current project definition.
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
 
-Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+Presentation owns rendering, user interaction, API access, and the visual system. Technical choices and defaults belong to Presentation Preferences; API owns the external contract, Logic owns application Behaviour, and Model owns domain meaning.
+
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+Presentation Definition Principles are mandatory. Presentation Preferences provide configurable defaults and conventions, while explicit Target meaning and applicable Principles take precedence. Preferences may make a rule stricter but may not weaken it.
 
 <br>
 
-<br>
-
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -165,6 +186,7 @@ Presentation derives operation-specific input and output representations from th
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

@@ -1,24 +1,24 @@
 # Platform Definition
 
-## Navigation
-
-1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
-2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Principles](#principles)**
-   - **[Platform remains separate from developed Components](#platform-remains-separate-from-developed-components)**
-   - **[Every Launch Item is one coherent selectable definition](#every-launch-item-is-one-coherent-selectable-definition)**
-   - **[Each Launch Item declares Component Runtime Requirements](#each-launch-item-declares-component-runtime-requirements)**
-   - **[Component Runtime Requirements are explicit and scoped](#component-runtime-requirements-are-explicit-and-scoped)**
-   - **[Launch delivers required Bindings safely](#launch-delivers-required-bindings-safely)**
-   - **[Launch reports only verified Access Points](#launch-reports-only-verified-access-points)**
-5. **[At a Glance](#at-a-glance)**
+Platform is the Development Component that defines how a completed Target is prepared, operated, and verified at runtime.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
+## Navigation
+
+1. **[Introduction](#introduction)**
+2. **[Terms](#terms)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Layering](#layering)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
+
+<br>
+
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -49,6 +49,7 @@ When the parts are running, Platform reports Access Points, and only the ones it
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Launch Item** — one named, selectable definition for preparing and operating a completed Target.
@@ -58,6 +59,21 @@ When the parts are running, Platform reports Access Points, and only the ones it
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+```text
+Platform
+└── Launch Item
+    ├── Component Runtime Requirements
+    └── Verified Access Points
+```
+
+A Launch Item is the complete selectable definition. Its Component Runtime Requirements state what each applicable Component needs, and its Verified Access Points state what the running Target exposes after verification.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Development** — uses the declared Components, Connections, and public boundaries of the composed application.
@@ -65,16 +81,19 @@ When the parts are running, Platform reports Access Points, and only the ones it
 
 <br>
 
-Named Launch Items and their Component Runtime Requirements belong to Platform Preferences. Implementation applies the selected Launch Item to the current Target without writing the resolved result back into Preferences.
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Platform owns runtime preparation, Bindings, Component Runtime Requirements, and verified Access Points. Named Launch Items and their runtime defaults belong to Platform Preferences; developed Components retain their own implementation and runtime contracts.
 
 <br>
 
-Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
 
-<br>
+Platform Definition Principles are mandatory. Platform Preferences provide selectable Launch Items and runtime defaults, while explicit Target meaning and applicable Principles take precedence. Preferences may make a rule stricter but may not weaken it.
 
-<br>
-
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -141,6 +160,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

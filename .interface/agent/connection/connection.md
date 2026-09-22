@@ -1,9 +1,6 @@
 # Agent Connection Definition
 
-This definition describes the external connections and installable packages an Agent obtains from outside the project.
-
-
-
+Agent Connection is the Agent Component that declares the external connections and installable packages an Agent obtains from outside the project.
 
 <br>
 
@@ -52,6 +49,7 @@ Packaged capabilities keep their owners. An Extension declares its provenance, i
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Connection** — a declared connection between the Agent Runtime and an external capability provider.
@@ -60,6 +58,8 @@ Packaged capabilities keep their owners. An Extension declares its provenance, i
 - **Extension** — an installable or loadable package that contributes one or more Agent capabilities.
 - **Marketplace** — a catalog or source from which Extensions can be discovered.
 - **Provisioning** — installation, enabling, updating, disabling, or removal of an Extension.
+
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -71,20 +71,12 @@ Packaged capabilities keep their owners. An Extension declares its provenance, i
 - **Consumes Agent Permission** — performs Provisioning within authorization.
 - **Consumed by Agent Runtime** — supplies runtime-loadable capability bundles and declarations.
 
-Technical MCP, LSP, channel, application, transport, and authentication-reference choices belong to Agent Connection Preferences.
-
-Technical Extension catalogs, versions, sources, enabled state, and expected contents belong to Agent Connection Preferences.
-
-Every Principle in this file is mandatory. An Agent Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
-
-<br>
-
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-This Definition carries the portable meaning and mandatory Principles of the Connection Component. Preferences carry current connection selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+This Definition carries the portable meaning and mandatory Principles of the Connection Component. Preferences carry current connection selections, declarations, technical protocol and package choices, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
 
 <br>
 

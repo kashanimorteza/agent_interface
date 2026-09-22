@@ -1,6 +1,6 @@
 # Agent Permission Definition
 
-This definition describes the enforceable boundaries that control what an Agent may read, change, execute, connect to, or disclose.
+Agent Permission is the Agent Component that defines the enforceable boundaries controlling what an Agent may read, change, execute, connect to, or disclose.
 
 <br>
 
@@ -77,18 +77,12 @@ Secrets are never values in a declaration. A declaration references a credential
 - **Consumed by Agent, Skills, Tools, Connections, and other executing Components** — constrains their reads, mutations, execution, connections, and disclosures.
 - **Consumes Rule guidance** — enforces boundaries that Rules can explain but cannot guarantee.
 
-Technical permission rules, sandbox settings, trust policy, credential references, and Native enforcement mechanisms belong to Agent Permission Preferences.
-
-
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, technical sandbox and trust settings, credential references, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
 
 
 

@@ -1,34 +1,24 @@
 # API Definition
 
-## Navigation
-
-1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
-2. **[Terms](#terms)**
-3. **[Architecture](#architecture)**
-4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
-   - **[API documentation describes the external contract only](#api-documentation-describes-the-external-contract-only)**
-   - **[API is an independent executable](#api-is-an-independent-executable)**
-   - **[Application Bootstrap owns API composition](#application-bootstrap-owns-api-composition)**
-   - **[Router owns the HTTP boundary](#router-owns-the-http-boundary)**
-   - **[Service mediates API operations](#service-mediates-api-operations)**
-   - **[API consumes explicit Public Interfaces](#api-consumes-explicit-public-interfaces)**
-   - **[API exposes Target capabilities](#api-exposes-target-capabilities)**
-   - **[API owns the external contract](#api-owns-the-external-contract)**
-   - **[Transport validation does not replace domain validation](#transport-validation-does-not-replace-domain-validation)**
-   - **[Credentials never leave the API boundary](#credentials-never-leave-the-api-boundary)**
-   - **[Outcomes and failures are mapped safely](#outcomes-and-failures-are-mapped-safely)**
-   - **[Identity and authorization remain separate](#identity-and-authorization-remain-separate)**
-   - **[Queries are bounded and explicit](#queries-are-bounded-and-explicit)**
-   - **[Lifecycle is observable](#lifecycle-is-observable)**
-   - **[API verification covers the boundary](#api-verification-covers-the-boundary)**
-6. **[At a Glance](#at-a-glance)**
+API is the Development Component that owns the external communication boundary and publishes application capabilities through a transport.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
+## Navigation
+
+1. **[Introduction](#introduction)**
+2. **[Terms](#terms)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
+5. **[Layering](#layering)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
+
+<br>
+
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -57,6 +47,7 @@ Around all of it sits the process: the Application Bootstrap composes and wires 
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **API Interface** — the public boundary that receives requests and publishes responses.
@@ -70,6 +61,7 @@ Around all of it sits the process: the Application Bootstrap composes and wires 
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ```text
@@ -89,6 +81,7 @@ Dependencies run in that order — Bootstrap wires them, Router calls Service, S
 
 <br>
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Logic** — invokes application Behaviour through Logic's Public Interface, and reaches the application no other way.
@@ -99,14 +92,21 @@ Dependencies run in that order — Bootstrap wires them, Router calls Service, S
 
 <br>
 
-API-owned transport conventions and boundary defaults belong to API Preferences. Concrete API technology, package, framework, and runtime selections belong to the API Component Profile in Development Preferences. Implementation applies those sources to the current Target.
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+API owns the external transport boundary, its composition, validation, mapping, and lifecycle contract. Development supplies the Component's technical selections and Platform supplies runtime bindings; Logic owns application Behaviour and Model owns domain meaning.
 
 <br>
 
-Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+API Definition Principles are mandatory. API Preferences provide configurable boundary defaults and conventions, while explicit Target meaning and applicable Principles take precedence. Preferences may make a rule stricter but may not weaken it.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -221,6 +221,7 @@ Every Principle below is mandatory.
 
 **Boundary:** Verification here covers the boundary alone. Behaviour is verified by Logic and persistence by Database; this verification never substitutes for either.
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
