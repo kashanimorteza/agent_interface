@@ -14,17 +14,7 @@ An invocation request.
 
 The Skill execution result and status.
 
-## Responsibility
-
-Activate through direct invocation or `skills.implement`.
-
-## Boundaries
-
-- Direct invocation is enabled.
-- Invocation by the declared coordinator is enabled only for `skills.implement`.
-- Autonomous invocation is disabled.
-
 ## Source
 
-- Understanding starts at: `.interface/implementation/operations/configure/configure.md`
-- Context: `.interface/implementation/operations/configure/configure.yaml`
+- `.interface/implementation/operations/configure/configure.md`
+- `.interface/implementation/operations/configure/configure.yaml`

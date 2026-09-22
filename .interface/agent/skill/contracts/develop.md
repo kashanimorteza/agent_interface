@@ -14,17 +14,7 @@ An invocation request and an optional phase selection.
 
 The Skill execution result and status.
 
-## Responsibility
-
-Activate through direct invocation or `skills.implement`.
-
-## Boundaries
-
-- Direct invocation is enabled.
-- Invocation by the declared coordinator is enabled only for `skills.implement`.
-- Autonomous invocation is disabled.
-
 ## Source
 
-- Understanding starts at: `.interface/implementation/operations/develop/develop.md`
-- Context: `.interface/implementation/operations/develop/develop.yaml`
+- `.interface/implementation/operations/develop/develop.md`
+- `.interface/implementation/operations/develop/develop.yaml`
