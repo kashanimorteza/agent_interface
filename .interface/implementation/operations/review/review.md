@@ -15,8 +15,7 @@ Responsibility: Assurance of phase Plans and implemented results.
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Operation Contract](#operation-contract)**
-8. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -38,6 +37,8 @@ Review first records what it finds, then resolves the findings it is authorized 
 ### How It Works
 
 Review works one phase at a time from current authorities. It requires the selected Plan and available Development result, establishes the Plan as its baseline, then examines the generated Source, Public Interface, implemented result, and evidence against that baseline. It writes one Log Entry for every review pass, records its Findings in `data`, resolves what it can, and starts another pass until no Finding remains or a blocker prevents continuation.
+
+Review stops when the required result or evidence is unavailable, an authority cannot be established, or an unresolved condition prevents assurance.
 
 <br>
 
@@ -74,7 +75,7 @@ Review owns assurance, Findings, and the resolutions it can perform. Plan owns p
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principles and Operation Contract in this Definition govern Review. Review Preferences cannot lower the evidence or independence required by those Principles.
+The Principles in this Definition govern Review. Review Preferences cannot lower the evidence or independence required by those Principles.
 
 <br>
 
@@ -141,7 +142,7 @@ Every Principle below is mandatory.
 
 **Why:** The most consequential thing a review can notice is what nobody thought to do, and a record that can only attach a Finding to an existing activity is structurally unable to hold it.
 
-**Boundary:** Recording such a Finding does not authorize Review to create Plan content or invoke Plan. Review either resolves the issue within its scope or records the unresolved condition.
+**Boundary:** Recording such a Finding does not authorize Review to create Plan content. Review either resolves the issue within its scope or records the unresolved condition.
 
 <br>
 
@@ -151,24 +152,7 @@ Every Principle below is mandatory.
 
 **Why:** A finding reported only in conversation is gone when the session ends, and the next run has no way to know it was ever raised. A stored finding is the only thing that makes the second review of a phase worth more than the first.
 
-**Boundary:** Review records its Findings, resolutions, and aggregate outcome in its State Log Entries. It does not reopen Tasks, change Plan content, invoke another primary Operation Skill, or change the active Workflow mode to reflect what it found.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Operation Contract --->
-## Operation Contract
-
-Review accepts zero or more phase selections. An empty selection means every enabled phase that has an implementation. It resolves stable phase identities, removes duplicates, and preserves Target order.
-
-Review establishes fresh Interface Understanding and Target Understanding on every invocation. It reads the selected Plan, State, applicable Implementation authorities, synchronized Runtime rules, implementation, generated Source, public interfaces, prior Review Log Entries, and evidence. It never reads Agent Module sources.
-
-Review independently compares the current Plan and implementation with those authorities. It produces Plan Assurance and Implementation Assurance for each reviewable phase, assigns a stable Review ID, records Review-owned Findings and resolutions, aggregate Review State and Log Entries, obligation coverage, and a phase report. A phase without a completed Plan and Development result is not reviewable and receives no assurance outcome.
-
-Review writes one State Log Entry for every review pass. The entry stores the start and completion times, measurable duration, available operation-level token usage, the Skills actually used with their available metrics and reports, a concise summary of the assurance outcome, and Review-specific `data`. That data includes the reviewed phase and Plan Revision, both assurance outcomes, Finding identifiers, detailed evidence, and any resolution. Review has no separate generated Config record.
-
-Review may use any supporting Skill and records the Skills it actually used. It never invokes another primary Operation Skill and never changes Plan content, Task progress, Target, or another operation's records. It repeats its own review after each resolution until the result is satisfied or an unresolved condition is recorded.
-
-Review is idempotent and evidence-first. It stops on invalid selection, missing implementation or generated Source, inconclusive evidence, unavailable authority, or an unresolved condition that prevents assurance.
+**Boundary:** Review records its Findings, resolutions, and aggregate outcome in its State Log Entries. It does not reopen Tasks, change Plan content, or change the active Workflow mode to reflect what it found.
 
 <br>
 
@@ -187,7 +171,7 @@ Every obligation in the file, under the Principle it comes from.
 **Review records, resolves, and rechecks its findings**
 
 - **Must** — record Findings before resolving them, record each resolution, and perform another pass after each resolution
-- **Never** — Review writes Plan content, changes Target, changes Task progress, or invokes another primary Operation Skill
+- **Never** — Review writes Plan content, changes Target, or changes Task progress
 
 **Review is independent of how the work was done**
 

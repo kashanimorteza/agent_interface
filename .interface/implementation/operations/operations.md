@@ -172,16 +172,6 @@ Every Principle below is mandatory.
 
 <br>
 
-### Operation Skill invocation remains bounded
-
-**Rule:** Every Operation may use any available Supporting Skill. The primary Operation Skills are Configure, Plan, Develop, Review, and Implement. Only Implement may invoke the other four primary Operation Skills; those four never invoke one another. Supporting Skills remain available to every Operation according to their own declarations.
-
-**Why:** Separating primary Operation coordination from reusable Supporting Skills keeps the workflow explicit without limiting useful assistance.
-
-**Boundary:** This rule governs invocation of primary Operation Skills; it does not restrict an Operation from using a compatible Supporting Skill.
-
-<br>
-
 ### Operational records remain separate from their authorities
 
 **Rule:** An Operational Record records what happened, what exists, or where work stands. It never redefines Target intent, Development meaning, a Principle, a Preference, or a Schema.
@@ -206,12 +196,6 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Configure, Plan, Develop, Review, Implement, Launch, Reset, and State each retain their declared ownership.
 - **Never** — an Operation Component writes another's owned content without explicit Interface authority under that owner's rules.
-
-**Operation Skill invocation remains bounded**
-
-- **Must** — Let every Operation use compatible Supporting Skills according to their declarations.
-- **Must** — Let only Implement invoke the other primary Operation Skills.
-- **Never** — Let Configure, Plan, Develop, or Review invoke another primary Operation Skill.
 
 **Operational records remain separate from their authorities**
 

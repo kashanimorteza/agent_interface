@@ -15,8 +15,7 @@ Responsibility: Coordination of the Operations workflow across configuration, pl
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Operation Contract](#operation-contract)**
-8. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -33,7 +32,7 @@ Implementation work needs one accountable workflow that can move through plannin
 
 ### How It Works
 
-Implement reads the selected phase or phases, ensures the Config records are ready, and invokes the applicable primary Operations in order. It carries forward their outcomes and stops when a required condition or human decision prevents safe continuation.
+Implement coordinates the applicable work in order, carries forward its outcomes, and stops when a required condition or unresolved decision prevents safe continuation.
 
 <br>
 
@@ -64,7 +63,7 @@ Implement owns coordination, not the work performed by Configure, Plan, Develop,
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principle and Operation Contract in this Definition govern coordination. Implement Preferences supply only coordination defaults and never replace an owning Component's authority.
+The Principle in this Definition governs coordination. Implement Preferences supply only coordination defaults and never replace an owning Component's authority.
 
 <br>
 
@@ -77,26 +76,11 @@ Every Principle below is mandatory.
 
 ### Implement coordinates the Operations workflow
 
-**Rule:** Implement is the only primary Operation that invokes another primary Operation Skill. It coordinates Configure, Plan, Develop, and Review in the authorized sequence, preserving each Component's scope, authority, outcomes, and stopping conditions.
+**Rule:** Implement coordinates Configure, Plan, Develop, and Review in the authorized sequence, preserving each Component's scope, authority, outcomes, and stopping conditions.
 
-**Why:** One coordinator keeps the implementation cycle coherent without turning coordination into ownership of the work it invokes.
+**Why:** One coordinator keeps the implementation cycle coherent without turning coordination into ownership of the work it coordinates.
 
 **Boundary:** Implement never changes a Plan, Development result, Review Finding, or State record outside the authority of its owning Component.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Operation Contract --->
-## Operation Contract
-
-Implement is the coordinating Operation for zero or more phase selections. An empty selection means every phase currently enabled and ready. It resolves and validates the complete selection before mutation and preserves Target order.
-
-Implement does not establish an independent Interface or Target Understanding. It invokes Configure, Plan, Develop, and Review, and each invoked Skill establishes the Understanding required for its own work. It never enters the Agent Module to resolve them.
-
-Implement checks whether the three Config records are ready and invokes Configure when they are missing or structurally unready. For each selected phase it runs Plan, then Develop, then Review. When no phase is selected, it applies this sequence to every enabled phase. Review owns its internal recheck cycle; Implement does not invoke Plan or Develop on Review's behalf.
-
-Implement owns only its own coordination Log Entry. Every delegated mutation remains owned by the invoked Operation Component, and every child Operation writes its own State Log Entry. It never bypasses Human approval, combines operation ownership, invokes Reset or Agent Native, or changes Target intent.
-
-Implement stops on invalid input, unavailable or incompatible child Skill, unmet dependency, failed operation gate, an unresolved Review blocker, or a required Human decision.
 
 <br>
 

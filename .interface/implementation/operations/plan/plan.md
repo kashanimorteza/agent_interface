@@ -13,8 +13,7 @@ Plan is the Operation Component that turns a Target phase into bounded, understa
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Operation Contract](#operation-contract)**
-8. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -32,6 +31,8 @@ Work must be precise enough to execute, order, and verify. Plan provides that st
 ### How It Works
 
 A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward. Planning reconciles the record as understanding changes, preserving valid work and changing the Plan Revision only when planning meaning changes.
+
+Plan records its outcome and any unresolved condition in State. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
 
 <br>
 
@@ -67,7 +68,7 @@ Plan owns decomposition and completion conditions. Target owns intent, Developme
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principles and Operation Contract in this Definition govern Plan. Plan Preferences, when present, cannot add technical or project meaning.
+The Principles in this Definition govern Plan. Plan Preferences, when present, cannot add technical or project meaning.
 
 <br>
 
@@ -122,7 +123,7 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Planning requires the operational Config records
 
-**Rule:** Planning starts only when the Plan Config and State Config exist and are structurally valid. If either required record is missing or invalid, Plan stops, records the unmet prerequisite, and suggests that the Human run Configure. Plan never invokes Configure itself.
+**Rule:** Planning starts only when the Plan Config and State Config exist and are structurally valid. If either required record is missing or invalid, Plan stops and records the unmet prerequisite.
 
 **Why:** Planning needs a place to preserve the Plan and to record aggregate progress and the planning event before it can safely produce work.
 
@@ -136,7 +137,7 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 **Why:** A later Target, Interface, Principle, or Preference change can change what the phase requires, while an unchanged understanding makes wholesale Task regeneration unnecessary.
 
-**Boundary:** Plan reads State as an execution record, may use any supporting Skill, but never reads Review as a prerequisite, invokes another primary Operation Skill, or performs another Operation's responsibility.
+**Boundary:** Plan reads State as an execution record, never reads Review as a prerequisite, and never performs another Operation's responsibility.
 
 <br>
 
@@ -233,23 +234,6 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 <br>
 
-<!--------------------------------------------------------------------------------- Operation Contract --->
-## Operation Contract
-
-Plan accepts zero or more phase selections. An empty selection means every enabled phase. It resolves stable phase identities, removes duplicates, and preserves Target order.
-
-Plan consumes current Interface and Target Understanding, applicable Component authorities, the existing Plan, State, Schemas, and relevant implementation evidence. It establishes current Interface and Target Understanding before planning.
-
-Plan creates or reconciles only Planning-owned Plan content, Plan Revision, aggregate Planning State and Log references to Blockers and Open Questions, Task `source`, and the current phase Planning report. Its State Log Entry records the Skill execution, elapsed time, available token usage, and Planning report; the Plan report records Task identifiers added, removed, changed, and preserved. It never writes implementation, Target intent, or fields outside Planning authority.
-
-Every planning run validates the complete selection before mutation, verifies the required Plan and State Config records, maps every selected requirement to one Task or inherited phase context, preserves valid identities and progress, and keeps planning content independent of files, paths, packages, commands, and implementation layout. A new Plan starts at revision `1`; semantic Planning changes increment the revision exactly once, while progress-only changes do not.
-
-Completion requires every Task to have observable acceptance and verification. Testing scope is inherited from the applicable Implementation authorities; it is never widened merely because a test tool is available.
-
-Every planning invocation checks its understanding even when a Plan already exists or its Tasks are complete. Against unchanged understanding it preserves the same semantic Plan and revision; against changed understanding it reconciles rather than regenerating all Tasks. It stops on invalid selection, missing Config records, contradictory coverage, unresolved ownership, unavailable prerequisites, or a required Human decision.
-
-<br>
-
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
@@ -264,13 +248,13 @@ Every obligation in the file, under the Principle it comes from.
 **Planning requires the operational Config records**
 
 - **Must** — require structurally valid Plan Config and State Config before planning
-- **Never** — invoke Configure or create, repair, or replace a missing Config record
+- **Never** — create, repair, or replace a missing Config record
 
 **Planning re-evaluates changed understanding and reconciles existing work**
 
 - **Must** — establish current Interface and Target Understanding and compare it with the understanding used by the existing Plan
 - **Must** — preserve valid Tasks, add newly required Tasks, and record each Task's creating Skill and State Log Entry in `source`
-- **Never** — regenerate all Tasks because a previous Plan exists, read Review as a prerequisite, or invoke another primary Operation Skill
+- **Never** — regenerate all Tasks because a previous Plan exists or read Review as a prerequisite
 
 **Groups organize related work**
 

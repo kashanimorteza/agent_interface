@@ -1,8 +1,8 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/operations/develop/develop.yaml"
-  path_note: "The Preferences layer of the Develop Component."
-  purpose: "Develop declares execution defaults and the source used to construct its Skill."
+  path_note: "The Preferences layer of the Develop Component. It currently defines no Component-specific technical choices or defaults."
+  purpose: "Where the Develop Component's technical choices would be recorded. The Develop Component currently makes none."
   standard: "Agent Project Interface"
   version: "1.0"
   updated: "2026-09-20"
@@ -31,14 +31,10 @@ read_order:
 content_map:
   selected: "Empty. Develop selects no shared execution profile."
   options: "Empty. Develop catalogues no shared alternatives."
-  settings: "Task execution defaults and the source used to construct the Develop Skill."
+  settings: "Develop-specific technical defaults remain empty."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected: {}
   options: {}
-  settings:
-    skill_source:
-      definition: ".interface/implementation/operations/develop/develop.md"
-      preferences: ".interface/implementation/operations/develop/develop.yaml"
-      purpose: "The Develop Skill is constructed from this Component's Definition and Preferences."
+  settings: {}

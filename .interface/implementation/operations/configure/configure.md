@@ -13,8 +13,7 @@ Configure is the Operation Component that creates the structural Config records 
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Operation Contract](#operation-contract)**
-8. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -33,7 +32,7 @@ The Interface needs its Config records to exist with known structures before ope
 
 Configure reads the three Config Schemas named by Configure Preferences and generates or reconciles the corresponding records in the Config directory, preserving the explanatory comments defined by each Schema. Every execution appends one Configure Log Entry to `state.yaml`; the common execution fields are recorded in the entry and Configure-specific details are recorded in its `data`.
 
-Configure is complete when every generated record conforms to its current Schema. Any later operational content belongs to the Operation that owns it.
+Configure is complete when every generated record conforms to its current Schema. It stops when a required Schema or mapping is invalid or unavailable, or when an authorized Config record or Log Entry cannot be written. Any later operational content belongs to the Operation that owns it.
 
 <br>
 
@@ -78,17 +77,6 @@ Every Principle below is mandatory.
 **Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Operation.
 
 **Boundary:** Configure changes only the three declared Config Records and the Configure Log Entry appended to State.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Operation Contract --->
-## Operation Contract
-
-Configure establishes the structural Config foundation for the Interface. It reads the current Config Schemas and Configure Preferences, then creates or reconciles only the declared Application, Plan, and State Config records in the Config directory.
-
-Configure preserves Schema comments and appends its own State Log Entry with execution metadata and Configure-specific data after the structural operation.
-
-Completion requires every declared Config Record to conform to its current Schema. Configure stops on an unavailable or invalid Schema, an invalid mapping, or an inability to write the authorized Config records or State Log Entry.
 
 <br>
 

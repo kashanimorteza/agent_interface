@@ -37,7 +37,7 @@ read_order:
 content_map:
   selected: "Empty. The Review Component chooses among no catalogued alternatives and owns no code path."
   options: "Empty. The Review Component catalogues no alternatives."
-  settings: "The source used to construct the Review Skill. Review-specific technical defaults remain empty."
+  settings: "Review-specific technical defaults remain empty."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -50,8 +50,4 @@ content:
   options: {}
 
   # <!-------------------------------------------- settings -->
-  settings:
-    skill_source:
-      definition: ".interface/implementation/operations/review/review.md"
-      preferences: ".interface/implementation/operations/review/review.yaml"
-      purpose: "The Review Skill is constructed from this Component's Definition and Preferences."
+  settings: {}

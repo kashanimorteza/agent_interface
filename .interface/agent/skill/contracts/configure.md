@@ -2,13 +2,9 @@
 
 ## What it is
 
-The Agent Skill bridge to the Configure Operation Component.
+The Core Skill for configuring.
 
-This is a required primary Operation Skill with the stable key `configure`.
-
-## What it does
-
-Exposes the Configure Operation as an Agent Skill through its declared bridge.
+Required. Stable key: `configure`. Skill name: `my-interface-configure`.
 
 ## Inputs
 
@@ -20,18 +16,15 @@ The Skill execution result and status.
 
 ## Responsibility
 
-Activate through a direct invocation or `skills.implement` and delegate execution to the Configure Operation.
+Activate through direct invocation or `skills.implement`.
 
 ## Boundaries
 
 - Direct invocation is enabled.
 - Invocation by the declared coordinator is enabled only for `skills.implement`.
 - Autonomous invocation is disabled.
-- The skill is required and follows the Configure Component authority.
-- It does not redefine the Configure Operation's behavior, records, or workflow.
 
 ## Source
 
-- Skill name: `my-interface-configure`
-- Meaning and Understanding: `.interface/implementation/operations/configure/configure.md`
-- Current declarations: `.interface/implementation/operations/configure/configure.yaml`
+- Understanding starts at: `.interface/implementation/operations/configure/configure.md`
+- Context: `.interface/implementation/operations/configure/configure.yaml`

@@ -37,7 +37,7 @@ read_order:
 content_map:
   selected: "Empty. The Plan Component chooses among no catalogued alternatives and owns no code path."
   options: "Empty. The Plan Component catalogues no alternatives."
-  settings: "The source used to construct the Plan Skill. Plan-specific technical defaults remain empty."
+  settings: "Plan-specific technical defaults remain empty."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -50,8 +50,4 @@ content:
   options: {}
 
   # <!-------------------------------------------- settings -->
-  settings:
-    skill_source:
-      definition: ".interface/implementation/operations/plan/plan.md"
-      preferences: ".interface/implementation/operations/plan/plan.yaml"
-      purpose: "The Plan Skill is constructed from this Component's Definition and Preferences."
+  settings: {}

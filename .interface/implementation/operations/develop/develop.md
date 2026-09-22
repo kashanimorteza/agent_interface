@@ -15,8 +15,7 @@ Responsibility: The execution of planned implementation Tasks and production of 
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Operation Contract](#operation-contract)**
-8. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -33,7 +32,7 @@ Planned work needs a bounded operation that turns Tasks into observable implemen
 
 ### How It Works
 
-Develop reads the selected Plan and current Interface and Target authorities, performs the authorized unfinished Tasks, preserves existing valid work, and records evidence and outcomes in State Log. If no eligible Task exists, Develop records that no development was required. The Develop Skill is constructed from this Definition and its Preferences, so this Component is the source of the Skill's meaning and execution boundary.
+Develop reads the selected Plan and current Interface and Target authorities, performs the authorized unfinished Tasks, preserves existing valid work, and records evidence and outcomes in State Log. If no eligible Task exists, Develop records that no development was required. It stops when the Plan is missing or stale, a dependency or prerequisite is unmet, verification fails, or an unresolved condition prevents completion.
 
 <br>
 
@@ -64,7 +63,7 @@ Develop owns execution conventions. Technical choices and defaults belong to the
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principle and Operation Contract in this Definition govern Develop. Develop Preferences can supply execution defaults only where the Plan and owning Development authorities are silent.
+The Principle in this Definition governs Develop. Develop Preferences can supply execution defaults only where the Plan and owning Development authorities are silent.
 
 <br>
 
@@ -81,26 +80,7 @@ Every Principle below is mandatory.
 
 **Why:** Bounded execution keeps implementation traceable to the Plan and prevents an execution operation from becoming an unplanned design authority.
 
-**Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It may use any supporting Skill, but it does not invoke another primary Operation Skill; it stops and reports when another Operation is required.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Operation Contract --->
-## Operation Contract
-
-Develop accepts zero or more phase selections. An empty selection means every phase eligible under its current Plan. It resolves stable phase identities, removes duplicates, and preserves Target order.
-
-Develop consumes current Interface and Target Understanding, applicable Implementation Components, the selected Plan and State, public interfaces, and existing implementation. It must establish the current authorities before mutation.
-
-Develop executes only eligible unfinished planned Tasks. It may create authorized Source, tests, executable documentation, dependencies, and configuration within the resolved Plan and Component boundaries, and records truthful Task progress, evidence, aggregate Development State, Log, Blockers, Open Questions, and the Skills actually used by the Develop operation in the State Log.
-
-Develop never creates or changes Plan content, Target intent, unrelated work, or another operation's records. It resolves declared technical requirements from owning Implementation Preferences, verifies or installs only what is missing, and records concrete versions and verification results. It performs only its own Develop Operation and does not invoke another primary Operation to complete its work.
-
-Every Task is claimed before mutation, its acceptance and verification conditions are checked, and its evidence is recorded. Components outside the declared testing scope do not acquire tests, test configuration, or test dependencies as a side effect. Existing valid work is preserved and repeated execution is idempotent.
-
-Develop records one State Log Entry containing its start and completion times, measurable duration, available operation-level token usage, concise report, and one entry for each Skill actually used. Each Skill entry records its own duration, available token usage, and report when measurable. Skill usage is operational log data, not Plan or Task content. It does not claim a Skill was used unless the operation actually used it.
-
-Develop stops on invalid selection, missing or stale Plan, unmet dependency, unavailable prerequisite, failed verification, unresolved Blocker, unavailable required Skill, or a required Human decision.
+**Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It stops and reports when another Operation is required.
 
 <br>
 
