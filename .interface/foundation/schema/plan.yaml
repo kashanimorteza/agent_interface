@@ -26,7 +26,7 @@ structure_independence:
   purpose: "Planning content describes responsibilities, behaviour, and observable results; execution logs retain the concrete evidence of work performed."
   excluded: "No file, folder, path, module, package layout, class, function, symbol, or command is stored in planning content, and planning content never asserts an artifact's location. Task logs may contain actual checks, relevant locations, and observed results without secret values."
   target_and_area: "target and area identify a Component and a responsibility inside it, not a directory."
-  sources: "Planning content stores no list of sources to consult. Understanding is established from the Human and Technical Definitions and applicable Implementation Principles and Preferences located through the Interface document under synchronized Runtime rules. Agent Module sources are reserved for Agent Sync."
+  sources: "Planning content stores no list of sources to consult. Understanding is established from the current Interface and Target authorities and the applicable Implementation Definitions and Preferences."
 structure:
   - "task_count"
   - "plans"
@@ -156,7 +156,7 @@ sections:
                           description:
                             required: true
                             default: ""
-                            purpose: "A complete explanation of what must be done, expressed as responsibility and behaviour without naming files, paths, or code, and without restating rules that the Implementation Principles, Implementation Preferences, synchronized Runtime rules, or Target definition already state."
+                            purpose: "A complete explanation of what must be done, expressed as responsibility and behaviour without naming files, paths, or code, and without restating rules that current Interface, Target, and Implementation authorities already state."
                           reason:
                             required: true
                             default: ""
@@ -169,6 +169,10 @@ sections:
                             required: true
                             default: []
                             purpose: "The information, interfaces, or completed results consumed by the Task, named by what they are rather than where they are stored; empty when none apply."
+                          skills:
+                            required: true
+                            default: []
+                            purpose: "The Skills Planning identifies as useful for completing this Task, named by stable Skill key; empty when none are identified. This guidance helps Develop choose a suitable Skill but does not limit Develop to this list. It is distinct from source.skill, which records the Skill that created or changed the Task."
                           expected_result:
                             required: true
                             default: ""
@@ -180,7 +184,7 @@ sections:
                           constraints:
                             required: true
                             default: []
-                            purpose: "Restrictions and invariants specific to this Task alone and derivable from no other source, stated as observable boundaries; empty when none apply, which is the normal case. A restriction stated by the Target definition, an Implementation Principle, an Implementation Preference, or a synchronized Runtime rule is resolved from its own source and is never copied here; one shared with another Task of the same Plan belongs to their Group or Plan instead."
+                            purpose: "Restrictions and invariants specific to this Task alone and derivable from no other source, stated as observable boundaries; empty when none apply, which is the normal case. A restriction stated by a current Interface, Target, or Implementation authority is resolved from its own source and is never copied here; one shared with another Task of the same Plan belongs to their Group or Plan instead."
                           acceptance:
                             required: true
                             default: ""

@@ -10,6 +10,10 @@ Required. Stable key: `configure`. Skill name: `my-interface-configure`.
 
 An invocation request.
 
+## Invocation
+
+This Skill may be invoked directly by a Human or by an Agent.
+
 ## Outputs
 
 The Skill execution result and status.

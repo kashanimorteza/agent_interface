@@ -10,6 +10,10 @@ Required. Stable key: `implement`. Skill name: `my-interface-implement`.
 
 An invocation request and an optional phase selection.
 
+## Invocation
+
+This Skill may be invoked directly by a Human or by an Agent.
+
 ## Outputs
 
 The Skill execution result and status.

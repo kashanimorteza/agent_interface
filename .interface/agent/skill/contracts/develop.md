@@ -10,6 +10,10 @@ Required. Stable key: `develop`. Skill name: `my-interface-develop`.
 
 An invocation request and an optional phase selection.
 
+## Invocation
+
+This Skill may be invoked directly by a Human or by an Agent.
+
 ## Requirements
 
 A successful Configure execution must have established the required Config records before this Skill runs.

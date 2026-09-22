@@ -1,6 +1,6 @@
 # Understanding
 
-This section defines how an Agent establishes Interface Understanding and Target Understanding before acting.
+This section defines how an Agent establishes Interface Understanding, Target Understanding, and Source Understanding before acting.
 
 <br>
 
@@ -9,6 +9,7 @@ This section defines how an Agent establishes Interface Understanding and Target
 
 1. **[Interface Understanding](#interface-understanding)**
 2. **[Target Understanding](#target-understanding)**
+3. **[Source Understanding](#source-understanding)**
 
 <br>
 
@@ -31,5 +32,14 @@ An empty Human Definition contributes no information. Understanding is reconstru
 → [Read more about the Non-Technical Definition](../target/non-technical.md)
 
 → [Read more about the Technical Definition](../target/technical.md)
+
+<br>
+
+<!--------------------------------------------------------------------------------- Source Understanding --->
+## Source Understanding
+
+Source Understanding is the understanding of generated Source that an Agent establishes when its role needs to inspect, assess, or work from that Source. It may be limited to one or more selected Development Components — such as Model, Database, Logic, API, or Presentation — rather than requiring the Agent to read all generated Source.
+
+Source Understanding is established from the current generated Source within the required scope. It does not replace Interface Understanding or Target Understanding: each is established as well whenever the role needs the authorities or intent they provide.
 
 <br>

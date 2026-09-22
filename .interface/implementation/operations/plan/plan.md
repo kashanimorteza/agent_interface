@@ -22,7 +22,7 @@ Plan is the Operation Component that turns a Target phase into bounded, understa
 
 ### Overview
 
-Plan is the Operation Component that turns one project phase into a bounded Plan of Groups and Tasks. It defines how work is organized, understood, ordered, and shown complete.
+Plan is the Operation Component that turns each selected or otherwise eligible project phase into a bounded Plan of Groups and Tasks. It defines how work is organized, understood, ordered, and shown complete.
 
 ### Purpose
 
@@ -30,9 +30,9 @@ Work must be precise enough to execute, order, and verify. Plan provides that st
 
 ### How It Works
 
-A phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward. Planning reconciles the record as understanding changes, preserving valid work and changing the Plan Revision only when planning meaning changes.
+A Planning invocation establishes current Interface Understanding and Target Understanding. It accepts one or more selected phases, or considers every eligible phase when none is selected. Each applicable phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward. Planning reconciles the record as Understanding changes, preserving valid work and changing the Plan Revision only when Planning meaning changes.
 
-Plan records its outcome and any unresolved condition in State. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
+Plan records its outcome, unresolved conditions, and the Skills actually used by Planning in its State Log Entry. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
 
 <br>
 
@@ -47,8 +47,10 @@ Plan records its outcome and any unresolved condition in State. It stops when re
 - **Dependency** — another Task whose completed result this Task requires before it can begin.
 - **Acceptance** — the observable criterion that determines whether a Task's result is correct.
 - **Verification** — the condition that must be observed to prove acceptance, stated as behaviour rather than as a command.
+- **Task Skills** — the Skills Planning identifies as useful for completing one Task, distinct from the Skill that created or changed that Task.
 - **Status** — the current progress value of a Task, owned by Plan and distinct from the aggregate Workflow State.
-- **Log** — the append-only State record of a Skill execution and its result.
+- **State Log** — the append-only State record of a Skill execution and its result.
+- **Task Log** — the append-only history of progress, evidence, and verified transitions for one Task, distinct from the State Log.
 
 <br>
 
@@ -86,7 +88,7 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Every phase has its own Plan
 
-**Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, intended outcome, and Plan Revision, then decomposes that outcome into Groups and Tasks. Planning sets revision `1` when it first creates the Plan and increments it exactly once whenever Planning-owned semantic content changes. Task status, blocker references, and logs never change the Plan Revision. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
+**Rule:** Planning accepts one or more selected phases, or considers every eligible phase when none is selected. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, intended outcome, and Plan Revision, then decomposes that outcome into Groups and Tasks. Planning sets revision `1` when it first creates the Plan and increments it exactly once whenever Planning-owned semantic content changes. Task status, blocker references, and logs never change the Plan Revision. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
 **Why:** Stated once in the Plan, that context is inherited by every Group and Task beneath it, so the phase is described in one place rather than restated by everything it contains.
 
@@ -136,11 +138,11 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Planning re-evaluates changed understanding and reconciles existing work
 
-**Rule:** Every invocation establishes current Interface and Target Understanding and compares them with the understanding used by the existing Plan. When the relevant Understanding is unchanged, Planning records that no change is required. When it changed, Planning records that the current Plan must be reconciled against the current authorities.
+**Rule:** Every invocation establishes current Interface Understanding and Target Understanding and compares them with the Understanding used by the existing Plan. When the relevant Understanding is unchanged, Planning records that no change is required. When it changed, Planning records that the current Plan must be reconciled against the current authorities. Its State Log Entry records the outcome, unresolved conditions, and the Skills actually used by Planning.
 
 **Why:** A later Target, Interface, Principle, or Preference change can change what the phase requires, while an unchanged understanding makes wholesale Task regeneration unnecessary.
 
-**Boundary:** Plan reads State as an execution record, never reads Review as a prerequisite, and never performs another Operation's responsibility.
+**Boundary:** Plan reads State as an execution record and never performs another Operation's responsibility.
 
 <br>
 
@@ -154,14 +156,14 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 - which phase and Group provide its planning context;
 - which Component and specific work area it targets;
 - which applicable authorities and constraints govern it;
-- which inputs, dependencies, and constraints matter; and
+- which inputs, dependencies, constraints, and Task Skills matter; and
 - how completion is accepted and verified.
 
-The Task itself carries only what is its own: the activity, its reason, its inputs and dependencies, its expected result, its acceptance and verification, its progress, and any constraint that applies to it alone.
+The Task itself carries only what is its own: the activity, its reason, its inputs and dependencies, its Task Skills, its expected result, its acceptance and verification, its progress, and any constraint that applies to it alone. Planning records every Skill it identifies as useful for completing the Task in Task Skills. That guidance helps Develop choose a suitable Skill but does not limit Develop to that list.
 
 **Why:** Understanding is a property of the Task together with its place in the Plan, so completeness is measured across the three levels rather than inside one record.
 
-**Boundary:** A Task does not repeat the identity or general description of the project, of its phase, or of its Group.
+**Boundary:** A Task does not repeat the identity or general description of the project, of its phase, or of its Group. Task Skills are execution guidance, not a record of the Skill that created or changed the Task.
 
 <br>
 
@@ -245,6 +247,7 @@ Every obligation in the file, under the Principle it comes from.
 **Every phase has its own Plan**
 
 - **Must** — every phase has one Plan holding its identity, order, target, outcome, and phase-wide context
+- **Must** — plan every selected phase, or every eligible phase when none is selected
 - **Must** — every Plan has a Planning-owned revision that changes exactly when its semantic planning content changes
 - **Never** — planning invents a new phase or silently changes the meaning of an existing one
 
@@ -257,7 +260,8 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — establish current Interface and Target Understanding and compare it with the understanding used by the existing Plan
 - **Must** — record whether the current Plan requires reconciliation
-- **Never** — treat a previous Plan as current without comparing its Understanding or read Review as a prerequisite
+- **Must** — record the Planning outcome, unresolved conditions, and Skills actually used in its State Log Entry
+- **Never** — treat a previous Plan as current without comparing its Understanding
 
 **Groups organize related work**
 
@@ -278,6 +282,7 @@ Every obligation in the file, under the Principle it comes from.
 **Every Task is understandable in its context**
 
 - **Must** — a Task carries only what is its own, and is read together with its Group and Plan
+- **Must** — record every Skill Planning identifies as useful for completing a Task as Task Skills
 - **Never** — a Task repeats the identity or general description of the project, its phase, or its Group
 
 **A Task is independent of the implementation structure**

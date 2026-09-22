@@ -28,7 +28,8 @@ This section defines the shared vocabulary used to understand Agent Interface, i
 - **Config Record** — one generated operational file inside `.interface/config/`, owned and writable only under its Component's authority.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
-- **Understanding** — the current context an Agent Native or Agent Instance establishes from authoritative sources before performing a Skill's role; it is either about Agent Interface itself or about the active Target.
+- **Understanding** — the current context an Agent Native or Agent Instance establishes from authoritative sources before performing a Skill's role; it may be Interface Understanding, Target Understanding, or Source Understanding.
+- **Source Understanding** — the understanding of generated Source within the scope required by a role. It may cover one or more selected Development Components, such as Model, Database, Logic, API, or Presentation, without requiring all generated Source to be read.
 - **Operation** — one defined action performed through an Agent Skill to configure, plan, develop, review, launch, implement, reset, or synchronize the Agent Native.
 - **Workflow** — the ordered path from the Human's Target definition to running software: Define Target, Configure, Plan, Develop, Review, and Launch.
 - **Workflow Path** — the Human's selected level of direct orchestration over that same Workflow: Default, Normal, or Detailed; it is an invocation style, not a State Mode.
