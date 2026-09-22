@@ -30,7 +30,9 @@ Planned work needs a bounded operation that turns Tasks into observable implemen
 
 ### How It Works
 
-Develop reads the selected Plan and current Interface and Target authorities, performs the authorized unfinished Tasks, preserves existing valid work, and records evidence and outcomes in State Log. If no eligible Task exists, Develop records that no development was required. It stops when the Plan is missing or stale, a dependency or prerequisite is unmet, verification fails, or an unresolved condition prevents completion.
+Develop accepts one or more Target phase identifiers, or considers every active and developable Target phase when none is selected, in Target order. It establishes current Interface and Target Understanding, reads the current Plan for each applicable phase, and performs its authorized unfinished Tasks. A phase is developable only when the required Config records are valid and its current Plan exists. If either condition is absent, Develop stops and records the unmet prerequisite in State; it does not run Configure or Plan.
+
+For each eligible Task, Develop considers the Task Skills identified by Planning and may use any other suitable available Skill. It does not invoke another Core Operation. Develop claims the Task before work begins, preserves valid existing work, records evidence and progress in that Task's Task Log, and updates its status. Develop records the overall outcome, unresolved conditions, and Skills used by the Develop operation in its State Log Entry. If no eligible Task exists, it records that no development was required. It stops when a dependency or prerequisite is unmet, verification fails, or an unresolved condition prevents completion.
 
 <br>
 
@@ -39,6 +41,7 @@ Develop reads the selected Plan and current Interface and Target authorities, pe
 
 - **Development Result** — the authorized Source, interface, configuration, or evidence produced by a completed development Task.
 - **Task Evidence** — the observable information showing what a Develop operation produced and verified.
+- **Developable Phase** — an active Target phase whose required Config records are valid and whose current Plan exists.
 
 <br>
 
@@ -48,14 +51,14 @@ Develop reads the selected Plan and current Interface and Target authorities, pe
 - **Consumes Plan** — takes the selected Groups, Tasks, context, dependencies, and completion conditions.
 - **Consumes Interface and Target** — applies their current authorities while performing the selected Tasks.
 - **Consumes Development authorities** — realizes the product under the Development Components' Definitions and Preferences.
-- **Consumed by State** — supplies results, evidence, and aggregate progress for recording.
+- **Recorded in State** — supplies the Develop operation's overall result, unresolved conditions, and Skills used for recording.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Develop owns execution conventions. Technical choices and defaults belong to the owning Development Component Preferences; Plan owns the work definition, Development owns product meaning, and State and Review own their respective records and judgments.
+Develop owns Task execution. Technical choices and defaults belong to the owning Development Component Preferences; Plan owns the work definition, Development owns product meaning, Task Logs own Task evidence and progress, and State owns Operation Logs and aggregate progress.
 
 <br>
 
@@ -75,11 +78,13 @@ Every Principle below is mandatory.
 
 ### Develop executes planned work within its authority
 
-**Rule:** Develop executes only selected Tasks whose authority, scope, inputs, outputs, and completion conditions are understood. It preserves valid existing work and records evidence for each result.
+**Rule:** Develop accepts one or more Target phase identifiers, or considers every active and developable Target phase when none is selected, in Target order. It starts only when required Config records are valid and the current Plan for each applicable phase exists. Develop executes only selected eligible Tasks whose authority, scope, inputs, outputs, and completion conditions are understood. It considers each Task's Task Skills, may use any other suitable available Skill, and never invokes another Core Operation.
+
+Before changing a Task's result, Develop claims that eligible Task. It preserves valid existing work, records Task-specific evidence, progress transitions, verification results, and any Task-specific Blocker in the Task Log, and updates the Task status accordingly. When a new Task identifies an earlier developed Task through `replaces`, Develop marks that earlier Task as `replaced` and records the relationship in its Task Log before executing the new Task. It records the overall Develop outcome, unresolved conditions, and Skills used by the operation in its State Log Entry. If Config or Plan is unavailable, Develop stops and records the prerequisite; it does not execute Configure or Plan.
 
 **Why:** Bounded execution keeps implementation traceable to the Plan and prevents an execution operation from becoming an unplanned design authority.
 
-**Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It stops and reports when another Operation is required.
+**Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It does not design or change Tasks, does not run another Core Operation, and stops and reports when another Operation is required.
 
 <br>
 
@@ -90,5 +95,9 @@ Every obligation in the file, under the Principle it comes from.
 
 **Develop executes planned work within its authority**
 
-- **Must** — execute only understood Tasks and record evidence for their results.
-- **Never** — expand Task scope or replace Target, Plan, or Development authority.
+- **Must** — select one or more Target phases, or every active and developable phase when none is selected, in Target order.
+- **Must** — require valid Config and a current Plan before development; record and stop when either is absent.
+- **Must** — execute only understood, claimed, eligible Tasks; consider their Task Skills and record Task evidence and progress in their Task Logs.
+- **Must** — mark an earlier developed Task as `replaced` and record the relationship before executing a new Task that identifies it through `replaces`.
+- **Must** — record the Develop operation's outcome, unresolved conditions, and Skills used in State.
+- **Never** — invoke another Core Operation, expand Task scope, or replace Target, Plan, or Development authority.

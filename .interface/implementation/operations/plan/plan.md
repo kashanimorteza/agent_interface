@@ -22,7 +22,7 @@ Plan is the Operation Component that turns a Target phase into bounded, understa
 
 ### Overview
 
-Plan is the Operation Component that turns each selected or otherwise eligible project phase into a bounded Plan of Groups and Tasks. It defines how work is organized, understood, ordered, and shown complete.
+Plan is the Operation Component that turns each selected and plannable project phase into a bounded Plan of Groups and Tasks. It defines how work is organized, understood, ordered, and shown complete.
 
 ### Purpose
 
@@ -30,9 +30,9 @@ Work must be precise enough to execute, order, and verify. Plan provides that st
 
 ### How It Works
 
-A Planning invocation establishes current Interface Understanding and Target Understanding. It accepts one or more selected phases, or considers every eligible phase when none is selected. Each applicable phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward. Planning reconciles the record as Understanding changes, preserving valid work and changing the Plan Revision only when Planning meaning changes.
+A Planning invocation establishes current Interface Understanding and Target Understanding. A selected value is a Target phase identifier. Planning considers selected phases, or every active and plannable Target phase when none is selected, in Target order. It does not proceed to a later phase until Planning of every earlier applicable phase has concluded without an open Blocker. Each applicable phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward.
 
-Plan records its outcome, unresolved conditions, and the Skills actually used by Planning in its State Log Entry. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
+Each Planning invocation produces or reconciles the applicable Plans once against the current Understanding, then records its outcome, unresolved conditions, and the Skills actually used in one State Log Entry. Planning uses any suitable available Skill, but does not invoke another Core Operation. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
 
 <br>
 
@@ -43,14 +43,15 @@ Plan records its outcome, unresolved conditions, and the Skills actually used by
 - **Group** — one coherent implementation area within a Plan, holding the context its Tasks share.
 - **Task** — one small, concrete activity with one independently observable result.
 - **Phase** — the project stage a Plan represents, identified by its stable identifier and carrying its order and target.
-- **Plan Revision** — the positive Planning-owned version of a phase Plan's semantic planning content.
+- **Plannable Phase** — an active Target phase whose Target-defined prerequisites permit Planning to begin.
 - **Dependency** — another Task whose completed result this Task requires before it can begin.
 - **Acceptance** — the observable criterion that determines whether a Task's result is correct.
 - **Verification** — the condition that must be observed to prove acceptance, stated as behaviour rather than as a command.
-- **Task Skills** — the Skills Planning identifies as useful for completing one Task, distinct from the Skill that created or changed that Task.
-- **Status** — the current progress value of a Task, owned by Plan and distinct from the aggregate Workflow State.
+- **Task Skills** — the Skills Planning identifies as useful for completing one Task, distinct from that Task's Source ID.
+- **Status** — the current progress value of a Task, updated by Develop and distinct from the aggregate Workflow State.
 - **State Log** — the append-only State record of a Skill execution and its result.
 - **Task Log** — the append-only history of progress, evidence, and verified transitions for one Task, distinct from the State Log.
+- **Task Source ID** — the State Log Entry identifier of the Planning invocation that last created or materially changed a Task.
 
 <br>
 
@@ -88,11 +89,11 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Every phase has its own Plan
 
-**Rule:** Planning accepts one or more selected phases, or considers every eligible phase when none is selected. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, intended outcome, and Plan Revision, then decomposes that outcome into Groups and Tasks. Planning sets revision `1` when it first creates the Plan and increments it exactly once whenever Planning-owned semantic content changes. Task status, blocker references, and logs never change the Plan Revision. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
+**Rule:** Planning accepts one or more Target phase identifiers, or considers every active and plannable Target phase when none is selected. It processes them in Target order. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
 **Why:** Stated once in the Plan, that context is inherited by every Group and Task beneath it, so the phase is described in one place rather than restated by everything it contains.
 
-**Boundary:** Planning does not invent a new project phase or silently change the meaning of an existing one. A reconciliation that changes no Planning-owned meaning preserves the revision; a semantic change never preserves it. The phase remains the unit selected for planning and development.
+**Boundary:** Planning does not invent a new project phase or silently change the meaning of an existing one. A selected inactive or unplannable phase is recorded as skipped with its reason as a Blocker in the State Log. An open Blocker for an earlier applicable phase stops Planning before a later phase begins. The phase remains the unit selected for planning and development.
 
 <br>
 
@@ -136,13 +137,13 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 <br>
 
-### Planning re-evaluates changed understanding and reconciles existing work
+### Planning establishes current understanding and reconciles existing work
 
-**Rule:** Every invocation establishes current Interface Understanding and Target Understanding and compares them with the Understanding used by the existing Plan. When the relevant Understanding is unchanged, Planning records that no change is required. When it changed, Planning records that the current Plan must be reconciled against the current authorities. Its State Log Entry records the outcome, unresolved conditions, and the Skills actually used by Planning.
+**Rule:** Every invocation establishes current Interface Understanding and Target Understanding, then produces or reconciles the existing Plan against them once. The invocation records its outcome, unresolved conditions, and Skills actually used in one State Log Entry.
 
 **Why:** A later Target, Interface, Principle, or Preference change can change what the phase requires, while an unchanged understanding makes wholesale Task regeneration unnecessary.
 
-**Boundary:** Plan reads State as an execution record and never performs another Operation's responsibility.
+**Boundary:** Plan reads State as an execution record and never performs another Core Operation's responsibility. It may use any other suitable available Skill.
 
 <br>
 
@@ -209,9 +210,9 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 ### Task progress and Workflow State remain separate
 
-**Rule:** The Plan Component owns Plans, Groups, Task content, Task status, a Task's reference to any Blocker, and Task-local history. An executor claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task log while that Task exists.
+**Rule:** Plan owns Plans, Groups, and Task planning content. It provides the Task status, Blocker reference, and Task Log fields but does not update execution progress. Develop claims eligible work before modifying it, records meaningful progress transitions, and preserves an append-only Task Log while that Task exists.
 
-When a blocking condition is verified as resolved, an operation authorized to update Task progress records the resolution evidence and transition in the log, clears the obsolete Blocker reference, and returns unfinished blocked work to its initial pending status. Dependencies and any remaining blocking conditions are checked again before the Task can be claimed; resolving a Blocker never marks work complete. If another condition still blocks the Task, its reference identifies that current condition. Removal of the State Blocker is coordinated with these updates. A missing Blocker record alone is not evidence of resolution; the underlying condition must be verified before progress is changed.
+When a blocking condition is verified as resolved, Develop records the resolution evidence and transition in the Task Log, clears the obsolete Blocker reference, and returns unfinished blocked work to its initial pending status. Dependencies and any remaining blocking conditions are checked again before the Task can be claimed; resolving a Blocker never marks work complete. If another condition still blocks the Task, its reference identifies that current condition. Removal of the State Blocker is coordinated with these updates. A missing Blocker record alone is not evidence of resolution; the underlying condition must be verified before progress is changed.
 
 **Why:** Progress belongs with the work it describes, while the question of where the Workflow stands is shared by everything that touches the project and belongs to one small record.
 
@@ -221,11 +222,11 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 ### Existing work is never silently destroyed
 
-**Rule:** When current Understanding requires replanning, Planning preserves still-valid work, adds newly required work, and removes or replaces no-longer-required work only with an explicit reason recorded in the planning report. A Task created or materially changed by a Skill records that Skill and its State Log Entry in `source`. Planning never silently overwrites completed, active, or otherwise meaningful Task content.
+**Rule:** When current Understanding requires replanning, Planning preserves still-valid work and adds newly required work. A Task that Develop has not begun may be removed and replaced. A Task that Develop has begun or completed is never removed or rewritten: Planning creates a new Task with `replaces` pointing to the earlier Task, and Develop marks the earlier Task as `replaced` when that relationship takes effect. Every created or materially changed Task records the State Log Entry identifier of the Planning invocation in `source_id`. Every addition, change, removal, preservation, or replacement is recorded with its reason in that invocation's State Log Entry.
 
 **Why:** Planning runs many times over the life of a phase, and work already done or already underway is the most expensive thing the record holds.
 
-**Boundary:** Removing or invalidating such work requires an explicit authorized operation or a surfaced critical conflict.
+**Boundary:** Planning never silently overwrites meaningful Task content. A Task with a `replaces` reference keeps its earlier Task visible and does not itself change that earlier Task's execution status.
 
 <br>
 
@@ -246,9 +247,9 @@ Every obligation in the file, under the Principle it comes from.
 
 **Every phase has its own Plan**
 
-- **Must** — every phase has one Plan holding its identity, order, target, outcome, and phase-wide context
-- **Must** — plan every selected phase, or every eligible phase when none is selected
-- **Must** — every Plan has a Planning-owned revision that changes exactly when its semantic planning content changes
+- **Must** — every planned phase has one Plan holding its identity, order, target, outcome, and phase-wide context
+- **Must** — plan selected active and plannable phases in Target order, or every active and plannable phase when none is selected
+- **Must** — stop before a later phase when an earlier applicable phase has an open Blocker
 - **Never** — planning invents a new phase or silently changes the meaning of an existing one
 
 **Planning requires the operational Config records**
@@ -256,10 +257,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — require structurally valid Plan Config and State Config before planning
 - **Never** — create, repair, or replace a missing Config record
 
-**Planning re-evaluates changed understanding and reconciles existing work**
+**Planning establishes current understanding and reconciles existing work**
 
-- **Must** — establish current Interface and Target Understanding and compare it with the understanding used by the existing Plan
-- **Must** — record whether the current Plan requires reconciliation
+- **Must** — establish current Interface and Target Understanding, then produce or reconcile the existing Plan once
+- **Must** — record the Planning invocation and its outcome in State
 - **Must** — record the Planning outcome, unresolved conditions, and Skills actually used in its State Log Entry
 - **Never** — treat a previous Plan as current without comparing its Understanding
 
@@ -311,15 +312,16 @@ Every obligation in the file, under the Principle it comes from.
 
 **Task progress and Workflow State remain separate**
 
-- **Must** — an executor claims eligible work before modifying it and preserves an append-only Task log
+- **Must** — Develop claims eligible work before modifying it and preserves an append-only Task log
 - **Must** — authorized Task progress updates record verified Blocker resolution, reconcile its reference and pending status, and recheck dependencies and remaining conditions before claiming work
 - **Never** — Blocker removal alone proves resolution, or resolution marks a Task complete
 - **Never** — Task duplicates the active Workflow position or the shared Blocker and Open Question records
 
 **Existing work is never silently destroyed**
 
-- **Must** — replanning preserves valid work, adds what is newly required, and records the creating Skill and State Log Entry for every created or materially changed Task
-- **Never** — completed, active, or meaningful Task content is removed without an authorized operation or a surfaced conflict
+- **Must** — replanning preserves valid work, adds what is newly required, and records the Planning State Log Entry for every created or materially changed Task
+- **Must** — replace a developed Task through a new Task that references it; Develop marks the prior Task as replaced
+- **Never** — a developed Task is removed or rewritten by Planning
 
 **The record holds work and progress, not project meaning**
 

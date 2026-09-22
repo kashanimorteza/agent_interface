@@ -57,23 +57,6 @@ sections:
             required: true
             default: 0
             purpose: "The phase's one-based position in project order."
-          revision:
-            required: true
-            default: 0
-            purpose: "The positive Planning-owned revision of this phase Plan. Planning sets 1 when the Plan is first made and increments it exactly once whenever Planning-owned semantic content changes. Task status, blocker references, and execution logs do not change it."
-          planning:
-            required: true
-            default: {}
-            purpose: "The latest Planning reconciliation report for this phase. It records the planning run, current revision, and Task changes without becoming a second Plan log."
-            fields:
-              log_id: {required: true, default: "", purpose: "The State Log Entry identifier of the Planning invocation that produced this report."}
-              recorded_at: {required: true, default: "", purpose: "When this Planning reconciliation was recorded."}
-              outcome: {required: true, default: "", purpose: "The truthful result of this phase's Planning reconciliation."}
-              plan_revision: {required: true, default: 0, purpose: "The Plan revision after this reconciliation."}
-              tasks_added: {required: true, default: [], purpose: "Task identifiers added by this Planning reconciliation."}
-              tasks_removed: {required: true, default: [], purpose: "Task identifiers removed by this Planning reconciliation, with removal reasons recorded in the report."}
-              tasks_changed: {required: true, default: [], purpose: "Task identifiers whose Planning-owned content changed."}
-              tasks_preserved: {required: true, default: [], purpose: "Task identifiers re-evaluated and retained as still valid."}
           target:
             required: true
             default: ""
@@ -127,7 +110,7 @@ sections:
                   task_count:
                     required: true
                     default: 0
-                    purpose: "A non-negative integer equal to the number of Tasks currently contained in the Group, regardless of status, including cancelled and superseded Tasks while they remain stored. Recalculate whenever Tasks are added or removed."
+                    purpose: "A non-negative integer equal to the number of Tasks currently contained in the Group, regardless of status, including replaced Tasks while they remain stored. Recalculate whenever Tasks are added or removed."
                   tasks:
                     required: true
                     default: {}
@@ -142,13 +125,10 @@ sections:
                             required: true
                             default: ""
                             purpose: "The Task identifier, unique across all Plans. It carries the identifiers of the Plan and Group that contain it, so the Task can be named unambiguously outside this file without storing its phase and Group again."
-                          source:
-                            required: false
-                            default: {}
-                            purpose: "The Skill execution that created or last materially contributed to this Task."
-                            fields:
-                              skill: {required: false, default: "", purpose: "The Skill that created or contributed to the Task."}
-                              log_id: {required: false, default: "", purpose: "The State Log Entry that recorded that contribution."}
+                          source_id:
+                            required: true
+                            default: ""
+                            purpose: "The State Log Entry identifier of the Planning invocation that created or last materially changed this Task."
                           title:
                             required: true
                             default: ""
@@ -161,10 +141,6 @@ sections:
                             required: true
                             default: ""
                             purpose: "Why the Task is necessary."
-                          kind:
-                            required: true
-                            default: ""
-                            purpose: "The nature of the work, such as code, configuration, documentation, data, or command execution."
                           inputs:
                             required: true
                             default: []
@@ -172,7 +148,11 @@ sections:
                           skills:
                             required: true
                             default: []
-                            purpose: "The Skills Planning identifies as useful for completing this Task, named by stable Skill key; empty when none are identified. This guidance helps Develop choose a suitable Skill but does not limit Develop to this list. It is distinct from source.skill, which records the Skill that created or changed the Task."
+                            purpose: "The Skills Planning identifies as useful for completing this Task, named by stable Skill key; empty when none are identified. This guidance helps Develop choose a suitable Skill but does not limit Develop to this list. It is distinct from source_id, which identifies the Planning invocation that created or changed the Task."
+                          replaces:
+                            required: false
+                            default: null
+                            purpose: "The identifier of an earlier developed Task this new Task replaces; absent unless Planning created this Task to replace earlier work. The earlier Task remains stored and Develop marks it replaced when the relationship takes effect."
                           expected_result:
                             required: true
                             default: ""
@@ -196,18 +176,17 @@ sections:
                           status:
                             required: true
                             default: "todo"
-                            purpose: "The current Task progress value."
+                            purpose: "The current Task progress value, updated by Develop during execution."
                             allowed:
                               - "todo"
                               - "claimed"
                               - "blocked"
                               - "done"
-                              - "cancelled"
-                              - "superseded"
+                              - "replaced"
                           blocker:
                             required: false
                             default: null
-                            purpose: "The identifier of the current critical Blocker when the Task is blocked; absent otherwise. Resolution evidence and the resulting progress transition belong in the log under Task's reconciliation rules. A missing referenced State record does not itself establish resolution."
+                            purpose: "The identifier of the current critical Blocker when the Task is blocked; absent otherwise. Resolution evidence and the resulting progress transition belong in the Task Log. A missing referenced State record does not itself establish resolution."
                           log:
                             required: false
                             default: []
@@ -218,8 +197,7 @@ definitions:
     claimed: "Claimed by an executor before work begins."
     blocked: "Waiting on the referenced critical Blocker."
     done: "Acceptance proven by verification."
-    cancelled: "No longer required, with the reason recorded in its log."
-    superseded: "Replaced by another Task identified in its log."
+    replaced: "No longer executable because a newer Task identifies it through that Task's replaces field."
 initial:
   meta:
     path: ".interface/config/plan.yaml"

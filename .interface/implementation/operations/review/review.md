@@ -24,7 +24,7 @@ Review is the Operation Component that independently judges selected-phase Plans
 
 Review is the Operation Component that establishes whether a phase Plan and its implemented result satisfy the current Interface and Target, and records what it found.
 
-Review owns its Findings and the Log data that records what was reviewed. It does not own Plan, Target, or the active Workflow position, and it never enters or changes a Workflow Mode. It records aggregate Review progress and its Log outcome under State.
+Review owns its Findings and the Log data that records what was reviewed. It does not own Plan or Target. When it runs, it records the active Workflow position as `reviewing`, then records aggregate Review progress and its outcome under State.
 
 ### Purpose
 
@@ -34,7 +34,7 @@ Review first records what it finds, then resolves the findings it is authorized 
 
 ### How It Works
 
-Review works one phase at a time from current authorities. It requires the selected Plan and Development result, establishes the Plan as its baseline, then examines the generated Source, Public Interface, implemented result, and evidence against that baseline. It writes one Log Entry for every review pass, records its Findings in `data`, resolves what it can, and starts another pass until no Finding remains or a blocker prevents continuation.
+Review accepts one or more Target phase identifiers, or considers every phase when none is selected. For each phase, it establishes current Target Understanding, Interface Understanding, and Source Understanding within that phase's scope. Once generated Source is available, it reads the current Plan and examines the generated Source, Public Interface, implemented result, and evidence against that Plan and the current authorities. It writes one Log Entry for every review pass, records its Findings in `data`, resolves what it can, and starts another pass until no Finding remains or a Blocker prevents continuation.
 
 Review stops when the required result or evidence is unavailable, an authority cannot be established, or an unresolved condition prevents assurance.
 
@@ -44,14 +44,11 @@ Review stops when the required result or evidence is unavailable, an authority c
 ## Terms
 
 - **Review** — one independent examination of one phase's Plan and implemented result against the current Interface and Target.
-- **Plan Assurance** — the mandatory Review judgment that a phase Plan completely and correctly covers current Target Understanding and applicable Component authorities.
-- **Assured Plan Revision** — the exact Plan Revision examined by Plan Assurance and stored with its outcome.
-- **Implementation Assurance** — the Review judgment that the implemented result and evidence satisfy the assured Plan and its current authorities.
+- **Source Understanding** — understanding the generated Source needed to examine the selected phase without reading unrelated Source.
 - **Finding** — one specific way in which the result does not demonstrably satisfy what was asked, recorded with what was expected, what was observed, and where.
 - **Evidence** — the exact location or observable result that supports a finding, so that a reader can see it without repeating the review.
-- **Outcome** — the aggregate result: `satisfied` when Plan Assurance and Implementation Assurance pass, or the exact `not satisfied` or `inconclusive` result otherwise.
+- **Outcome** — the aggregate result: `satisfied` when the reviewed result satisfies the current Plan and applicable authorities, or the exact `not satisfied` or `inconclusive` result otherwise.
 - **Missing evidence** — an acceptance criterion for which nothing observable demonstrates that it holds.
-- **Gap** — required work that no planned activity covers, found by reviewing the phase rather than any one activity.
 
 <br>
 
@@ -67,7 +64,7 @@ Review stops when the required result or evidence is unavailable, an authority c
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Review owns assurance, Findings, and the resolutions it can perform. Plan owns planned work and Develop owns implementation work outside Review's resolution scope.
+Review owns its Findings, review data, and the resolutions it can perform. Plan owns planned work and Develop owns implementation work outside Review's resolution scope.
 
 <br>
 
@@ -85,19 +82,19 @@ Every Principle below is mandatory.
 
 <br>
 
-### Review always assures the Plan before implementation assurance
+### Review examines Source against the current Plan and authorities
 
-**Rule:** A Review reconstructs current Interface Understanding and Target Understanding only after the selected Plan and Development result are available. It independently judges one phase's Plan against the current Target and every applicable Principle and Preference, records the exact Assured Plan Revision, and then judges the generated Source, Public Interface, implementation, and evidence against that assured Plan and the same current authorities.
+**Rule:** A Review accepts one or more Target phase identifiers, or considers every phase when none is selected. Once generated Source is available for a phase, it establishes current Target Understanding, Interface Understanding, and Source Understanding within that phase's scope. It reads the current Plan, then judges the generated Source, Public Interface, implemented result, and evidence against that Plan and the same current authorities.
 
-**Why:** A result can only be wrong relative to something. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
+**Why:** A result can only be wrong relative to a current intended outcome, its governing rules, and the work that was planned for it. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
 
-**Boundary:** Review does not define new requirements. A Plan Assurance outcome applies only to its recorded revision and becomes stale when the current Plan Revision differs. When the authoritative baseline is silent about something, that silence is a fact about the baseline, not a licence to supply the missing requirement and then find the Plan or result wanting.
+**Boundary:** Review does not define new requirements or change Plan content. Work newly required by Target belongs to Planning. When the authoritative baseline is silent about something, that silence is a fact about the baseline, not a licence to supply the missing requirement and then find the result wanting.
 
 <br>
 
 ### Review records, resolves, and rechecks its findings
 
-**Rule:** Every Review pass first records its Findings, then resolves each Finding that Review is authorized and able to resolve. It records the resolution in a new Log Entry and runs another independent pass. A Finding that cannot be resolved is recorded in `open_questions` or `blockers` and stops the cycle.
+**Rule:** When Review begins, it records the active Workflow position as `reviewing`. Every Review pass first records its Findings, then resolves each Finding that Review is authorized and able to resolve. It records the resolution in a new Log Entry and runs another independent pass. A Finding that cannot be resolved is recorded in `open_questions` or `blockers` and stops the cycle.
 
 **Why:** Recording the Finding before resolving it preserves the original observation while allowing Review to close the loop and verify the result.
 
@@ -135,23 +132,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### A Finding is required work no activity covers
-
-**Rule:** A Review may find that the phase requires something no planned activity covers. That is recorded as a Finding of the phase rather than of any activity, because it belongs to none.
-
-**Why:** The most consequential thing a review can notice is what nobody thought to do, and a record that can only attach a Finding to an existing activity is structurally unable to hold it.
-
-**Boundary:** Recording such a Finding does not authorize Review to create Plan content. Review either resolves the issue within its scope or records the unresolved condition.
-
-<br>
-
 ### A Finding outlives the session that raised it
 
 **Rule:** Every Finding is stored in the Review Skill's State Log `data`, and remains traceable through the pass that raised it and any later pass that resolved it or left it open. Its state is part of the Log Entry data.
 
 **Why:** A finding reported only in conversation is gone when the session ends, and the next run has no way to know it was ever raised. A stored finding is the only thing that makes the second review of a phase worth more than the first.
 
-**Boundary:** Review records its Findings, resolutions, and aggregate outcome in its State Log Entries. It does not reopen Tasks, change Plan content, or change the active Workflow mode to reflect what it found.
+**Boundary:** Review records its Findings, resolutions, and aggregate outcome in its State Log Entries. It does not reopen Tasks or change Plan content.
 
 <br>
 
@@ -160,16 +147,17 @@ Every Principle below is mandatory.
 
 Every obligation in the file, under the Principle it comes from.
 
-**Review always assures the Plan before implementation assurance**
+**Review examines Source against the current Plan and authorities**
 
-- **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging generated Source, Public Interface, implementation, and evidence
-- **Must** — record Plan Assurance and Implementation Assurance separately after the selected Plan and Development result are available
-- **Must** — bind every Plan Assurance outcome to the exact Plan Revision it examined
-- **Never** — Review defines a new requirement, or treats silence in the baseline as one
+- **Must** — accept one or more Target phases, or every phase when none is selected
+- **Must** — establish Target, Interface, and Source Understanding for the selected phase once generated Source is available
+- **Must** — judge generated Source, Public Interface, implementation, and evidence against the current Plan and authorities
+- **Never** — Review defines a new requirement, changes Plan content, or treats silence in the baseline as a requirement
 
 **Review records, resolves, and rechecks its findings**
 
 - **Must** — record Findings before resolving them, record each resolution, and perform another pass after each resolution
+- **Must** — record the active Workflow position as `reviewing` when Review begins
 - **Never** — Review writes Plan content, changes Target, or changes Task progress
 
 **Review is independent of how the work was done**
@@ -187,12 +175,7 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — an acceptance criterion with nothing observable behind it is recorded as a Finding of missing evidence
 - **Never** — Review reconstructs missing evidence, infers it, or accepts an explanation in its place
 
-**A Finding is required work no activity covers**
-
-- **Must** — required work that no planned activity covers is recorded as a Finding of the phase
-- **Never** — Review plans the work that would fill a gap it found
-
 **A Finding outlives the session that raised it**
 
 - **Must** — every Finding is stored with its Review and keeps its state until resolved or accepted
-- **Never** — Review reopens Tasks, changes Plan content, or changes the active Workflow mode
+- **Never** — Review reopens Tasks or changes Plan content
