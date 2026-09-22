@@ -2,8 +2,6 @@
 
 Develop is the Operation Component that executes authorized planned Tasks and produces the resulting Development work.
 
-Responsibility: The execution of planned implementation Tasks and production of authorized Development results.
-
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -48,6 +46,7 @@ Develop reads the selected Plan and current Interface and Target authorities, pe
 ## Relationships
 
 - **Consumes Plan** — takes the selected Groups, Tasks, context, dependencies, and completion conditions.
+- **Consumes Interface and Target** — applies their current authorities while performing the selected Tasks.
 - **Consumes Development authorities** — realizes the product under the Development Components' Definitions and Preferences.
 - **Consumed by State** — supplies results, evidence, and aggregate progress for recording.
 

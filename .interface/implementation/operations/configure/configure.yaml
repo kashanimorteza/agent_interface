@@ -40,7 +40,8 @@ content:
   settings:
     config_directory:
       path: ".interface/config/"
-      owner: "Configure"
+      structural_owner: "Configure"
+      operational_content_owner: "The Operation that owns the content of each Config Record."
       purpose: "The directory in which Configure creates and reconciles structural Config records."
       preserve_schema_comments: true
     records:

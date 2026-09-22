@@ -16,10 +16,10 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Apply a Develop default only when the selected Plan, Target, and owning Development Component are silent."
-  selection: "Use professional judgment under Develop Principles when no compatible preference exists."
+  consumption: "The empty content provides no Develop defaults; consumers continue with the other applicable authorities."
+  selection: "There is nothing to select. A technical need is resolved by the Development Component that owns it, or raised through State when no Component owns it."
   version_resolution: "No entry currently carries a version."
-  matching: "Match a setting to the selected Task or execution concern that owns it."
+  matching: "There is nothing to match. An empty section is an absence of defaults, not a wildcard."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

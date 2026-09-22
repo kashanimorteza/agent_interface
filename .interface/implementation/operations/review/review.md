@@ -1,8 +1,6 @@
 # Review Definition
 
-Review is the Operation Component that independently judges selected-phase Plans and available implementation against their applicable authorities.
-
-Responsibility: Assurance of phase Plans and implemented results.
+Review is the Operation Component that independently judges selected-phase Plans and implemented results against their applicable authorities.
 
 <br>
 
@@ -24,19 +22,19 @@ Responsibility: Assurance of phase Plans and implemented results.
 
 ### Overview
 
-Review is the Component that establishes whether a phase Plan and, when implementation exists, its implemented result satisfy the current Interface and Target, and records what it found.
+Review is the Operation Component that establishes whether a phase Plan and its implemented result satisfy the current Interface and Target, and records what it found.
 
 Review owns its Findings and the Log data that records what was reviewed. It does not own Plan, Target, or the active Workflow position, and it never enters or changes a Workflow Mode. It records aggregate Review progress and its Log outcome under State.
 
 ### Purpose
 
-Review is the reader who does not hold the producer's intent. It takes the current authorities and Target, builds the obligations they impose, and judges the Plan and, when it exists, the implemented result against them.
+Review is the reader who does not hold the producer's intent. It takes the current authorities and Target, builds the obligations they impose, and judges the Plan and implemented result against them.
 
 Review first records what it finds, then resolves the findings it is authorized and able to resolve. After each resolution it reviews the result again. A finding that cannot be resolved is retained in the Log Entry's `open_questions` or `blockers`.
 
 ### How It Works
 
-Review works one phase at a time from current authorities. It requires the selected Plan and available Development result, establishes the Plan as its baseline, then examines the generated Source, Public Interface, implemented result, and evidence against that baseline. It writes one Log Entry for every review pass, records its Findings in `data`, resolves what it can, and starts another pass until no Finding remains or a blocker prevents continuation.
+Review works one phase at a time from current authorities. It requires the selected Plan and Development result, establishes the Plan as its baseline, then examines the generated Source, Public Interface, implemented result, and evidence against that baseline. It writes one Log Entry for every review pass, records its Findings in `data`, resolves what it can, and starts another pass until no Finding remains or a blocker prevents continuation.
 
 Review stops when the required result or evidence is unavailable, an authority cannot be established, or an unresolved condition prevents assurance.
 
@@ -45,16 +43,17 @@ Review stops when the required result or evidence is unavailable, an authority c
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Review** — one independent examination of one phase's Plan and, when present, implemented result against the current Interface and Target.
+- **Review** — one independent examination of one phase's Plan and implemented result against the current Interface and Target.
 - **Plan Assurance** — the mandatory Review judgment that a phase Plan completely and correctly covers current Target Understanding and applicable Component authorities.
 - **Assured Plan Revision** — the exact Plan Revision examined by Plan Assurance and stored with its outcome.
-- **Review ID** — the stable identifier of the current Review invocation, recorded in its State Log data.
-- **Implementation Assurance** — the conditional Review judgment that existing implementation and evidence satisfy the assured Plan and its current authorities.
+- **Implementation Assurance** — the Review judgment that the implemented result and evidence satisfy the assured Plan and its current authorities.
 - **Finding** — one specific way in which the result does not demonstrably satisfy what was asked, recorded with what was expected, what was observed, and where.
 - **Evidence** — the exact location or observable result that supports a finding, so that a reader can see it without repeating the review.
 - **Outcome** — the aggregate result: `satisfied` when Plan Assurance and Implementation Assurance pass, or the exact `not satisfied` or `inconclusive` result otherwise.
 - **Missing evidence** — an acceptance criterion for which nothing observable demonstrates that it holds.
 - **Gap** — required work that no planned activity covers, found by reviewing the phase rather than any one activity.
+
+<br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
@@ -86,7 +85,7 @@ Every Principle below is mandatory.
 
 <br>
 
-### Review always assures the Plan before available implementation
+### Review always assures the Plan before implementation
 
 **Rule:** A Review reconstructs current Interface Understanding and Target Understanding only after the selected Plan and Development result are available. It independently judges one phase's Plan against the current Target and every applicable Principle and Preference, records the exact Assured Plan Revision, and then judges the generated Source, Public Interface, implementation, and evidence against that assured Plan and the same current authorities.
 
@@ -161,9 +160,9 @@ Every Principle below is mandatory.
 
 Every obligation in the file, under the Principle it comes from.
 
-**Review always assures the Plan before available implementation**
+**Review always assures the Plan before implementation**
 
-- **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging available generated Source, Public Interface, implementation, and evidence
+- **Must** — every Review reconstructs current Interface and Target Understanding and assures the selected phase's Plan before judging generated Source, Public Interface, implementation, and evidence
 - **Must** — record Plan Assurance and Implementation Assurance separately after the selected Plan and Development result are available
 - **Must** — bind every Plan Assurance outcome to the exact Plan Revision it examined
 - **Never** — Review defines a new requirement, or treats silence in the baseline as one

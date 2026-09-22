@@ -16,10 +16,10 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Apply an Implement default only when the Operations authorities and selected phase are silent."
-  selection: "Use the declared Operations sequence; raise an Open Question when safe coordination cannot be established."
+  consumption: "The empty content provides no Implement defaults; consumers continue with the other applicable authorities."
+  selection: "There is nothing to select. The Operations sequence is governed by the Implement Definition."
   version_resolution: "No entry currently carries a version."
-  matching: "Match coordination settings to the selected phase and its owning Operation Components."
+  matching: "There is nothing to match. An empty section is an absence of defaults, not a wildcard."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

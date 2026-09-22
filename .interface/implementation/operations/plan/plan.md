@@ -50,9 +50,12 @@ Plan records its outcome and any unresolved condition in State. It stops when re
 - **Status** — the current progress value of a Task, owned by Plan and distinct from the aggregate Workflow State.
 - **Log** — the append-only State record of a Skill execution and its result.
 
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
+- **Consumes Interface and Target** — establishes the current authorities and intended outcome from which phase work is derived.
 - **Consumes State** — Log Entries containing prior Planning results, Blockers, Open Questions, and aggregate phase progress without duplicating Task records.
 - **Consumed by Develop** — the planned outcomes, acceptance criteria, dependencies, and execution conditions used to perform the work.
 
@@ -83,7 +86,7 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Every phase has its own Plan
 
-**Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, intended outcome, and Plan Revision, then decomposes that outcome into Groups and Tasks. Planning sets revision `1` when it first creates the Plan and increments it exactly once whenever Planning-owned semantic content changes. Development-owned Task status, blocker references, and logs never change the Plan Revision. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
+**Rule:** A Plan represents the work required by one project phase. It preserves the phase's identity, order, target, intended outcome, and Plan Revision, then decomposes that outcome into Groups and Tasks. Planning sets revision `1` when it first creates the Plan and increments it exactly once whenever Planning-owned semantic content changes. Task status, blocker references, and logs never change the Plan Revision. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
 **Why:** Stated once in the Plan, that context is inherited by every Group and Task beneath it, so the phase is described in one place rather than restated by everything it contains.
 
@@ -210,7 +213,7 @@ When a blocking condition is verified as resolved, an operation authorized to up
 
 **Why:** Progress belongs with the work it describes, while the question of where the Workflow stands is shared by everything that touches the project and belongs to one small record.
 
-**Boundary:** State owns active Workflow position, aggregate phase progress, and the Log Entries containing Blockers and Open Questions. Aggregate Planning progress summarizes the phase and never replaces or duplicates Task status and Task log. Each operation changes only the portions its contract grants it.
+**Boundary:** State owns active Workflow position, aggregate phase progress, and the Log Entries containing Blockers and Open Questions. Aggregate Planning progress summarizes the phase and never replaces or duplicates Task status and Task log. Each Operation acts only within the authority of the Component that owns the content it changes.
 
 <br>
 

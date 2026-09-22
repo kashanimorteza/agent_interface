@@ -2,8 +2,6 @@
 
 Implement is the Operation Component that coordinates the authorized Operations sequence across the selected phases.
 
-Responsibility: Coordination of the Operations workflow across configuration, planning, development, and review.
-
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -32,7 +30,7 @@ Implementation work needs one accountable workflow that can move through plannin
 
 ### How It Works
 
-Implement coordinates the applicable work in order, carries forward its outcomes, and stops when a required condition or unresolved decision prevents safe continuation.
+Implement accepts one or more selected phases, or coordinates every phase when none is selected. For each selected phase, it first ensures the required Config records are available, coordinating Configure when they are not. It then coordinates Plan, Develop, and Review in that order, carrying each outcome forward and stopping when a required condition or unresolved decision prevents safe continuation. Every execution appends one Implement Log Entry to State, recording common execution fields and coordination-specific outcomes in its `data`. Implement does not establish Target or Interface Understanding for the work; each participating Operation establishes the Understanding required for its own responsibility.
 
 <br>
 
@@ -76,11 +74,11 @@ Every Principle below is mandatory.
 
 ### Implement coordinates the Operations workflow
 
-**Rule:** Implement coordinates Configure, Plan, Develop, and Review in the authorized sequence, preserving each Component's scope, authority, outcomes, and stopping conditions.
+**Rule:** Implement coordinates the selected phases, or every phase when none is selected. For each phase, it ensures required Config records are available, then coordinates Plan, Develop, and Review in that order, preserving each Component's scope, authority, outcomes, and stopping conditions. It records its coordination outcome in an Implement Log Entry.
 
 **Why:** One coordinator keeps the implementation cycle coherent without turning coordination into ownership of the work it coordinates.
 
-**Boundary:** Implement never changes a Plan, Development result, Review Finding, or State record outside the authority of its owning Component.
+**Boundary:** Apart from appending its own Implement Log Entry, Implement never changes a Plan, Development result, Review Finding, or State record outside the authority of its owning Component.
 
 <br>
 
@@ -91,5 +89,5 @@ Every obligation in the file, under the Principle it comes from.
 
 **Implement coordinates the Operations workflow**
 
-- **Must** — preserve the declared sequence and authority of Configure, Plan, Develop, and Review.
+- **Must** — coordinate the selected phases, or every phase when none is selected, ensure Config is available before coordinating Plan, Develop, and Review in that order, and record its coordination outcome in its Log Entry.
 - **Never** — take ownership of another Operation Component's records or results.
