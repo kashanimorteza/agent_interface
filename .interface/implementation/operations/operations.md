@@ -31,7 +31,7 @@ Building a product requires more than product architecture. The work also needs 
 
 ### How It Works
 
-Configuration prepares and reconciles the operational records. Plan turns a selected Target phase into bounded work, and Develop executes that work. Review compares the result with its applicable authorities and records Findings. Implement coordinates Configure, Plan, Develop, and Review; Launch activates a completed implementation, Reset reconciles its authorized scope, and State preserves the aggregate position and execution outcomes.
+Configuration prepares and reconciles the operational records. Plan turns a selected Target phase into bounded work, and Develop executes that work. Review compares the result with its applicable authorities, records Findings, resolves the Findings within its authority, and rechecks the result. Implement coordinates Configure, Plan, Develop, and Review; Launch activates a completed implementation, Reset reconciles its authorized scope, and State preserves the aggregate position and execution outcomes.
 
 <br>
 
@@ -158,13 +158,13 @@ Every Principle below is mandatory.
 
 **Why:** Separating the way work is controlled from the product being built prevents operational records and workflow mechanics from becoming product architecture.
 
-**Boundary:** Operations may inspect Development results where its Components require them, but inspection never transfers ownership of those results.
+**Boundary:** Operations may inspect Development results where its Components require them, but inspection never transfers ownership of those results. Review may change a reviewed Development result or its evidence only to resolve one of its recorded Findings; no other Operation Component acquires that authority.
 
 <br>
 
 ### Each operational concern has one owning Component
 
-**Rule:** Configure owns Config preparation and reconciliation, Plan owns planned activities, Develop owns planned implementation work, Review owns assurance and Findings, Implement owns workflow coordination, Launch owns runtime activation, Reset owns bounded reconciliation, and State owns aggregate operational position and the execution log. No Operation Component writes another's owned content unless the Interface explicitly grants that write under the owning Component's rules.
+**Rule:** Configure owns Config preparation and reconciliation, Plan owns planned activities, Develop owns planned implementation work, Review owns Findings, review data, and its authorized resolutions, Implement owns workflow coordination, Launch owns runtime activation, Reset owns bounded reconciliation, and State owns aggregate operational position and the execution log. No Operation Component writes another's owned content unless the Interface explicitly grants that write under the owning Component's rules.
 
 **Why:** One owner for each operational concern keeps progress, evidence, and authority consistent across separate runs.
 

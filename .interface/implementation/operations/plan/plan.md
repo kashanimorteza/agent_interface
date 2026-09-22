@@ -30,7 +30,7 @@ Work must be precise enough to execute, order, and verify. Plan provides that st
 
 ### How It Works
 
-A Planning invocation establishes current Interface Understanding and Target Understanding. A selected value is a Target phase identifier. Planning considers selected phases, or every active and plannable Target phase when none is selected, in Target order. It does not proceed to a later phase until Planning of every earlier applicable phase has concluded without an open Blocker. Each applicable phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward.
+A Planning invocation establishes current Interface Understanding and Target Understanding. A selected value is a Target phase identifier. Planning considers selected phases, or every active and plannable Target phase when none is selected, in Target order. Once its required Config records are valid, it records the active Workflow position as `planning`. It does not proceed to a later phase until Planning of every earlier applicable phase has concluded without an open Blocker. Each applicable phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward.
 
 Each Planning invocation produces or reconciles the applicable Plans once against the current Understanding, then records its outcome, unresolved conditions, and the Skills actually used in one State Log Entry. Planning uses any suitable available Skill, but does not invoke another Core Operation. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
 
@@ -89,7 +89,7 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Every phase has its own Plan
 
-**Rule:** Planning accepts one or more Target phase identifiers, or considers every active and plannable Target phase when none is selected. It processes them in Target order. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
+**Rule:** Planning accepts one or more Target phase identifiers, or considers every active and plannable Target phase when none is selected. Once its required Config records are valid, it records the active Workflow position as `planning` and processes phases in Target order. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
 **Why:** Stated once in the Plan, that context is inherited by every Group and Task beneath it, so the phase is described in one place rather than restated by everything it contains.
 
@@ -249,6 +249,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — every planned phase has one Plan holding its identity, order, target, outcome, and phase-wide context
 - **Must** — plan selected active and plannable phases in Target order, or every active and plannable phase when none is selected
+- **Must** — record the active Workflow position as `planning` once required Config is valid
 - **Must** — stop before a later phase when an earlier applicable phase has an open Blocker
 - **Never** — planning invents a new phase or silently changes the meaning of an existing one
 

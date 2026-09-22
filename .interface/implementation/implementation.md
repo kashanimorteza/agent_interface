@@ -81,8 +81,6 @@ Responsibility: The configuration, planning, development, review, implementation
 → [Definition of Operations](operations/operations.md)<br>
 → [Preferences of Operations](operations/operations.yaml)
 
-Its Operation Components realize these responsibilities; Agent Native Sync remains a Foundation operation because it synchronizes the Agent Module into the selected Agent Native rather than performing Implementation work.
-
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
@@ -152,7 +150,7 @@ The mandatory Principles are stated by the Definition files of the owning subjec
 
 **Why:** Explicit ownership keeps product meaning, operational progress, evidence, and workflow records from becoming interchangeable.
 
-**Boundary:** A Component within Operations may inspect Development results when its responsibility requires it, but it never changes a Development-owned result directly.
+**Boundary:** A Component within Operations may inspect Development results where its responsibility requires them. Review may change a reviewed Development result or its evidence only to resolve one of its recorded Findings; no other Operation Component acquires that authority.
 
 <br>
 

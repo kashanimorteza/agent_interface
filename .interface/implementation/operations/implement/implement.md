@@ -30,7 +30,7 @@ Implementation work needs one accountable workflow that can move through plannin
 
 ### How It Works
 
-Implement accepts one or more selected phases, or coordinates every phase when none is selected. For each selected phase, it first ensures the required Config records are available, coordinating Configure when they are not. It then coordinates Plan, Develop, and Review in that order, carrying each outcome forward and stopping when a required condition or unresolved decision prevents safe continuation. Every execution appends one Implement Log Entry to State, recording common execution fields and coordination-specific outcomes in its `data`. Implement does not establish Target or Interface Understanding for the work; each participating Operation establishes the Understanding required for its own responsibility.
+Implement accepts one or more Target phase identifiers, or coordinates every Target phase in Target order when none is selected. It reserves its Implement Log identifier, then checks the required Config records once and coordinates Configure only when they are absent or invalid. Once Config is available, it records the active Workflow position as `implementing` and writes its Implement Log Entry with that reserved identifier. It then coordinates Plan, Develop, and Review for each phase in that order. Review continues its own passes until its result is satisfied or a Blocker prevents continuation. Each coordinated Operation Log Entry records the reserved Implement Log identifier as its `parent_id`. Implement carries outcomes forward and stops when a required condition, Blocker, or unresolved decision prevents safe continuation. Its Log records common execution fields and coordination-specific outcomes in `data`. Implement does not establish Target or Interface Understanding for the work; each participating Operation establishes the Understanding required for its own responsibility.
 
 <br>
 
@@ -73,7 +73,7 @@ Every Principle below is mandatory.
 
 ### Implement coordinates the Operations workflow
 
-**Rule:** Implement coordinates the selected phases, or every phase when none is selected. For each phase, it ensures required Config records are available, then coordinates Plan, Develop, and Review in that order, preserving each Component's scope, authority, outcomes, and stopping conditions. It records its coordination outcome in an Implement Log Entry.
+**Rule:** Implement accepts one or more Target phase identifiers, or coordinates every Target phase in Target order when none is selected. It reserves its Implement Log identifier, then checks required Config records once and coordinates Configure only when they are absent or invalid. Once Config is available, it records the active Workflow position as `implementing` and writes its Implement Log Entry with that reserved identifier. For each phase, it coordinates Plan, Develop, and Review in that order. Review performs its own passes until its result is satisfied or a Blocker prevents continuation. Every coordinated Operation Log Entry records the reserved Implement Log identifier as its `parent_id`. Implement preserves each Component's scope, authority, outcomes, and stopping conditions, and records its coordination outcome in its own Log Entry.
 
 **Why:** One coordinator keeps the implementation cycle coherent without turning coordination into ownership of the work it coordinates.
 
@@ -88,5 +88,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Implement coordinates the Operations workflow**
 
-- **Must** — coordinate the selected phases, or every phase when none is selected, ensure Config is available before coordinating Plan, Develop, and Review in that order, and record its coordination outcome in its Log Entry.
+- **Must** — accept one or more Target phase identifiers, or every Target phase in Target order when none is selected.
+- **Must** — reserve its Log identifier, check Config once, coordinate Configure only when Config is absent or invalid, then record `implementing` and its Log Entry.
+- **Must** — coordinate Plan, Develop, and Review in that order for each phase; Review continues until satisfied or blocked.
+- **Must** — record the Implement Log Entry as `parent_id` in every coordinated Operation Log Entry and record coordination outcomes in its own Log Entry.
 - **Never** — take ownership of another Operation Component's records or results.
