@@ -54,16 +54,10 @@ Develop reads the selected Plan and current Interface and Target authorities, pe
 
 <br>
 
-Technical choices and defaults belong to the owning Development Component Preferences. Develop owns execution conventions only; it does not select product architecture or technical items.
-
-Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
-
-<br>
-
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Develop owns execution. Plan owns the work definition, Development owns product meaning and technical choices, and State and Review own their respective records and judgments.
+Develop owns execution conventions. Technical choices and defaults belong to the owning Development Component Preferences; Plan owns the work definition, Development owns product meaning, and State and Review own their respective records and judgments.
 
 <br>
 
@@ -87,21 +81,20 @@ Every Principle below is mandatory.
 
 **Why:** Bounded execution keeps implementation traceable to the Plan and prevents an execution operation from becoming an unplanned design authority.
 
-**Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It may use any supporting Skill, but it does not invoke another Operation Skill; it stops and reports when another Operation is required.
+**Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It may use any supporting Skill, but it does not invoke another primary Operation Skill; it stops and reports when another Operation is required.
 
 <br>
 
-<!--------------------------------------------------------------------------------- At a Glance --->
 <!--------------------------------------------------------------------------------- Operation Contract --->
 ## Operation Contract
 
 Develop accepts zero or more phase selections. An empty selection means every phase eligible under its current Plan. It resolves stable phase identities, removes duplicates, and preserves Target order.
 
-Develop consumes current Interface and Target Understanding, applicable Implementation Components, the selected Plan and State, public interfaces, existing implementation, and the Agent parameters recorded for the work. It must establish the current authorities before mutation.
+Develop consumes current Interface and Target Understanding, applicable Implementation Components, the selected Plan and State, public interfaces, and existing implementation. It must establish the current authorities before mutation.
 
-Develop executes only eligible unfinished planned Tasks. It may create authorized Source, tests, executable documentation, dependencies, and configuration within the resolved Plan and Component boundaries, and records truthful Task progress, evidence, aggregate Development State, Log, Blockers, Open Questions, applied Agent parameters, and the Skills actually used by the Develop operation in the State Log.
+Develop executes only eligible unfinished planned Tasks. It may create authorized Source, tests, executable documentation, dependencies, and configuration within the resolved Plan and Component boundaries, and records truthful Task progress, evidence, aggregate Development State, Log, Blockers, Open Questions, and the Skills actually used by the Develop operation in the State Log.
 
-Develop never creates or changes Plan content, Target intent, unrelated work, or another operation's records. It resolves declared technical requirements from owning Implementation Preferences, verifies or installs only what is missing, and records concrete versions and verification results. It performs only its own Develop Operation and does not invoke another Operation to complete its work.
+Develop never creates or changes Plan content, Target intent, unrelated work, or another operation's records. It resolves declared technical requirements from owning Implementation Preferences, verifies or installs only what is missing, and records concrete versions and verification results. It performs only its own Develop Operation and does not invoke another primary Operation to complete its work.
 
 Every Task is claimed before mutation, its acceptance and verification conditions are checked, and its evidence is recorded. Components outside the declared testing scope do not acquire tests, test configuration, or test dependencies as a side effect. Existing valid work is preserved and repeated execution is idempotent.
 
@@ -111,6 +104,7 @@ Develop stops on invalid selection, missing or stale Plan, unmet dependency, una
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

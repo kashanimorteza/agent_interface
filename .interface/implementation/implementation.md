@@ -24,9 +24,7 @@ Implementation is the Module that defines how a Target is built and how that wor
 
 ### Overview
 
-Implementation is the reusable programming perspective applied to a Target. It has two distinct Subsystems: Development defines the product being built, and Operations controls the work that builds, evaluates, and records it.
-
-The Implementation Module defines the reusable programming perspective, standards, and engineering authorities applied to a Target through its Development and Operations Subsystems. The Operations defined by the Interface are realized by the corresponding Operation Components under `implementation/operations/`; their Definitions and Preferences are the source for the operational Skills that perform them.
+Implementation is the reusable programming perspective applied to a Target through two Subsystems: Development defines the product being built, and Operations controls the work that configures, builds, evaluates, activates, and records it. The corresponding Operation Components' Definitions and Preferences are the source for the operational Skills that perform that work.
 
 ### Purpose
 
@@ -36,7 +34,7 @@ It also maps the Development and Operations Subsystems and their Components so t
 
 ### How It Works
 
-The Definition of each Subsystem or Component is authoritative for its mandatory meaning and Principles. Preferences hold current choices. Skills operate under the authority of the relevant subject and record their operation in State; the subject's owned Config record keeps its detailed result when one exists.
+Development supplies the product authorities, and Operations applies them through its owned workflow. Skills act under the relevant subject and record execution in State; a subject-owned Config record keeps detailed results when one exists.
 
 <br>
 
@@ -67,27 +65,23 @@ The Implementation Module has two Subsystems: Development and Operations. Their 
 
 ### Development
 
-Development defines how independent product Components form one application system. It owns their composition, Component Profiles, Connections, shared technical catalogues, and cross-cutting standards.
+Development composes the independent product Components into one application system through shared profiles, connections, technical catalogues, and standards.
 
 Responsibility: The product composition and technical realization of the independent Components that form the Target application.
 
 → [Definition of Development](development/development.md)<br>
 → [Preferences of Development](development/development.yaml)
 
-Model defines shared domain meaning and Domain Definitions. Database owns persistence and the public operations for stored data. Logic owns application Behaviour and exposes it through its Public Interface. API publishes the application's external API through Logic. Presentation presents the application through capabilities published by Logic. Platform defines how completed Development Components are prepared and brought online.
-
 ### Operations
 
-Operations defines how work on Development is configured, planned, developed, reviewed, implemented, launched, reset, coordinated, and recorded. It owns no product Behaviour or Source.
+Operations governs how Development work is configured, planned, developed, reviewed, implemented, launched, reset, coordinated, and recorded without owning product Behaviour or Source.
 
-Responsibility: The configuration, planning, review, and operational recording of Implementation work.
+Responsibility: The configuration, planning, development, review, implementation, launch, reset, coordination, and recording of Implementation work.
 
 → [Definition of Operations](operations/operations.md)<br>
 → [Preferences of Operations](operations/operations.yaml)
 
-Configure prepares the three operational Config records. Plan turns Target phases into bounded, understandable, and verifiable activities. Develop performs authorized implementation work. Review establishes whether selected-phase work satisfies its applicable authorities and stores detailed Findings and resolutions in its Log data. Implement coordinates the Configure → Plan → Develop → Review workflow, Launch activates a completed implementation, Reset reconciles an authorized scope, and State records aggregate operational position, progress, outcomes, and the Log of every Skill, including Blockers and Open Questions. Each Skill records its execution metadata and concise report in State; detailed Skill-specific content belongs in its Log Entry's `data`.
-
-These Operation Components realize the Implementation-owned Operations. Agent Native Sync remains a Foundation operation because it synchronizes the Agent Module into the selected Agent Native rather than performing Implementation work.
+Its Operation Components realize these responsibilities; Agent Native Sync remains a Foundation operation because it synchronizes the Agent Module into the selected Agent Native rather than performing Implementation work.
 
 <br>
 
@@ -97,7 +91,6 @@ These Operation Components realize the Implementation-owned Operations. Agent Na
 - **Consumes Target** — applies current Target intent and phase requirements without becoming another Target definition.
 - **Consumed by operational Skills** — supplies the Development and Operations authorities used while implementation work is performed.
 - **Contains Development and Operations** — defines the product and operational ownership boundaries used by the Interface.
-- **Contains a named Definition and, where applicable, Preferences file per subject** — keeps each subject's meaning separate from its current choices.
 
 <br>
 
@@ -113,7 +106,7 @@ Development owns product responsibilities. Operations owns configuration, planni
 
 Technical choices and defaults belong to the Preferences file of the subject that owns them. The shape of a generated operational record belongs to its Schema, while State owns the common Operation Log shape.
 
-No shared Module-level Preferences are currently declared; Development and Operations subjects own their specific choices. Subject Preferences remain human-owned, are read in `selected`, `options`, `settings` order, and never override an explicit Target value or an applicable Definition Principle.
+Development and Operations subjects own their specific choices. Subject Preferences remain human-owned and are read in `selected`, `options`, `settings` order.
 
 <br>
 
@@ -139,7 +132,7 @@ The mandatory Principles are stated by the Definition files of the owning subjec
 
 ### Each Subsystem and Component has an explicit source pair
 
-**Rule:** Every Implementation Subsystem and Component has a Definition file named for the subject and, when it has choices, a Preferences file named for the subject. The Definition carries its Understanding and mandatory Principles; Preferences carry its choices, defaults, and realization conventions.
+**Rule:** Every Implementation Subsystem and Component has one authoritative Definition and, when it has choices, one Preferences source. The Definition carries its Understanding and mandatory Principles; Preferences carry its choices, defaults, and realization conventions.
 
 **Why:** A stable source pair separates what the subject is and must preserve from how it is preferably realized, while allowing subjects with no choices to keep Preferences empty or absent by design.
 
@@ -147,11 +140,11 @@ The mandatory Principles are stated by the Definition files of the owning subjec
 
 ### Operations separate execution logs from detailed records
 
-**Rule:** Every Operation records execution metadata, Skills used, available timing and token measurements, outcome, and a concise report in State. A Component-owned Config record stores detailed operational content when the Operation produces one, such as Plan, Review, or Task records.
+**Rule:** Every Operation records execution metadata, Skills used, available timing and token measurements, outcome, and a concise report in State. A Component-owned Config record stores detailed operational content when the Operation produces one, such as Plan or Task records. Review Findings and resolutions remain in the State Log Entry's `data`.
 
 **Why:** State provides the shared operational history that later Operations need, while each owned record preserves the detail without turning State into a duplicate of every Component record.
 
-**Boundary:** An Operation Log never replaces a Component-owned record, and a Component-owned record never replaces the Operation Log.
+**Boundary:** An Operation Log never replaces a Component-owned record, and a Component-owned record never replaces the Operation Log. State Log `data` may carry Operation-specific content when no separate Config record exists.
 
 ### Development and Operations retain separate ownership
 
@@ -168,8 +161,8 @@ The mandatory Principles are stated by the Definition files of the owning subjec
 
 - **Must** — keep product construction in Development and implementation control in Operations.
 - **Must** — keep each subject's Understanding and mandatory Principles in Definition and its choices in Preferences.
-- **Must** — record every Operation's execution metadata and concise report in State and keep detailed results in their owning records.
+- **Must** — record every Operation's execution metadata and concise report in State, keeping detailed Config results in their owning records and Operation-specific Log data in State when no separate record exists.
 - **Must** — keep choices owned by Development or Operations unless a choice genuinely spans both Subsystems.
-- **Must** — read each subject's Definition and Preferences through the links above.
+- **Must** — read each Subsystem's Definition and Preferences through the links above.
 - **Never** — let this Guide replace a subject's Definition, Preferences, or Schema.
 - **Never** — let Preferences override Definition Principles or let Development and Operations replace one another's ownership.

@@ -23,27 +23,25 @@ Development is the Implementation Subsystem that composes peer Components throug
 
 ### Overview
 
-Development is the Implementation Subsystem that defines the high-level composition through which independent peer Implementation Components form one application system. It owns their shared architectural concepts, configurable Component Profiles, declared dependency graph, centralized technical catalogues, and cross-Component standards.
+Development is the Implementation Subsystem that composes independent peer Components into one application system. It owns their shared composition concepts, Component Profiles, dependency graph, technical catalogues, and cross-Component standards.
 
-Development owns composition rather than the internal meaning or implementation behavior of another Component. Each Participating Component remains focused on its own role and receives shared technical and platform selections through its Development Component Profile.
+It owns composition, not the internal meaning or implementation behavior of another Component. Each Participating Component keeps its own responsibility and receives shared selections through its Component Profile.
 
 ### Purpose
 
-Software is built from parts, and the parts have to agree on things none of them owns alone: where each one lives, what it is allowed to reach, which language and packages it uses, how it presents itself to the others, and what it must publish about itself. Someone has to hold those agreements. Without a Component that does, each part settles them privately — one picks its own dependency versions, another reaches into a neighbour's internals because it was convenient, a third invents its own way of being called — and the system stops being one system.
+Software parts need shared decisions about dependencies, access, public surfaces, and published metadata. Without one owner for those decisions, each part settles them privately and the system drifts.
 
-Development exists to hold them. It owns composition: the profile of every Participating Component, the graph of who may depend on whom, the catalogues of languages and databases every Component draws from, and the standards every Component honours — one Public Interface offering Operations, one documentation shape, one precedence order when the project is silent. Each Component then concentrates on its own responsibility and receives the shared decisions rather than making them again.
-
-The cost of the alternative is drift that is invisible until it is expensive: two Components on incompatible versions of the same package, a dependency cycle nobody declared, a consumer bound to a provider's private internals, a Component nobody can use because it documents nothing. None of those is one Component's fault, which is exactly why one Component has to own them.
+Development prevents that drift by centralizing composition decisions while leaving each Component responsible for its own work. Otherwise incompatible technical choices, hidden dependencies, private coupling, and unusable Components emerge.
 
 ### How It Works
 
-A Component Profile is the unit Development works in. Each Participating Component has exactly one: its identity, its root in the repository, its type, its role, and the technical and Platform references that apply to it. Reading that profile tells the Component everything the composition decides on its behalf.
+A Component Profile gives each Participating Component its identity, role, and applicable shared selections.
 
-The technical choices behind those references live in Development's own catalogues rather than in the Components. A Language Item holds a language's version, package management, conventions, tools, and packages grouped by Technical Purpose; a Database Item holds a database technology's version, driver, and defaults. A Component Profile names the items that apply to it, and the Component resolves what it needs from there — so two Components on the same language are on the same version by construction, not by coincidence.
+Those selections resolve through Development's Language and Database catalogues, so compatible Components share reusable technical choices rather than defining them independently.
 
-Dependencies are declared, not discovered. A Connection names one consumer and one provider, and that declaration is the whole permission: what flows across it is the provider's Public Interface and its Operations, never its internals. The graph of those Connections stays direct and acyclic, so the composition can always be read as an order.
+Connections declare each consumer-provider dependency. Only the provider's Public Interface and Operations cross that boundary, and the graph remains direct and acyclic.
 
-What every Component owes the others is fixed by Development's standards rather than negotiated per Component: one Public Interface offering Operations that state what they accept and return, public documentation that explains that Interface, public metadata published through the Application Manifest, and a stated precedence order for the decisions the Target leaves open. Development supplies the shape; each Component fills it with its own content.
+Development also provides shared standards for Public Interfaces, documentation, public metadata, and resolving unstated Target decisions; each Component supplies its own content.
 
 <br>
 
@@ -230,7 +228,7 @@ Documentation uses only safe examples and secret references, never usable creden
 
 ### Unstated Development decisions follow one precedence order
 
-**Rule:** When the Target leaves a Development-owned decision unstated, resolution applies Development Principles first, Development Preferences second, and compatible professional judgment last. A necessary compatible supporting dependency may be added without replacing the selected primary package; its use is recorded in the implementation record, and a recurring choice is added to the relevant human-owned Preference.
+**Rule:** When the Target leaves a Development-owned decision unstated, resolution applies Development Principles first, Development Preferences second, and compatible professional judgment last.
 
 **Why:** A short precedence order preserves architecture, applies the Human's defaults, and leaves judgment only for a genuine gap.
 

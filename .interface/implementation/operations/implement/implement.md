@@ -2,7 +2,7 @@
 
 Implement is the Operation Component that coordinates the authorized Operations sequence across the selected phases.
 
-Responsibility: The coordination of the Operations workflow across planning, development, and review.
+Responsibility: Coordination of the Operations workflow across configuration, planning, development, and review.
 
 <br>
 
@@ -54,12 +54,6 @@ Implement reads the selected phase or phases, ensures the Config records are rea
 
 <br>
 
-Implement owns coordination, not product Source, Plan content, Review Findings, or State authority.
-
-Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
-
-<br>
-
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
@@ -91,11 +85,10 @@ Every Principle below is mandatory.
 
 <br>
 
-<!--------------------------------------------------------------------------------- At a Glance --->
 <!--------------------------------------------------------------------------------- Operation Contract --->
 ## Operation Contract
 
-Implement is the explicit Human coordinator for zero or more phase selections. An empty selection means every phase currently enabled and ready. It resolves and validates the complete selection before mutation and preserves Target order.
+Implement is the coordinating Operation for zero or more phase selections. An empty selection means every phase currently enabled and ready. It resolves and validates the complete selection before mutation and preserves Target order.
 
 Implement does not establish an independent Interface or Target Understanding. It invokes Configure, Plan, Develop, and Review, and each invoked Skill establishes the Understanding required for its own work. It never enters the Agent Module to resolve them.
 
@@ -107,11 +100,12 @@ Implement stops on invalid input, unavailable or incompatible child Skill, unmet
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
 
 **Implement coordinates the Operations workflow**
 
-- **Must** — preserve the declared sequence and authority of Plan, Develop, and Review.
+- **Must** — preserve the declared sequence and authority of Configure, Plan, Develop, and Review.
 - **Never** — take ownership of another Operation Component's records or results.

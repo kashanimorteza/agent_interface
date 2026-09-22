@@ -1,31 +1,25 @@
 # Logic Definition
 
+Logic is the Development Component that owns application Behaviour and exposes it through one reusable Public Interface.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
-   - **[Decisions](#decisions)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Principles](#principles)**
-   - **[Logic documentation exposes the Public Interface only](#logic-documentation-exposes-the-public-interface-only)**
-   - **[Logic is a reusable library](#logic-is-a-reusable-library)**
-   - **[Logic owns Behaviour](#logic-owns-behaviour)**
-   - **[One Public Interface exposes Logic's Operations](#one-public-interface-exposes-logics-operations)**
-   - **[Logic is composed of internal Services, one per Component it talks to](#logic-is-composed-of-internal-services-one-per-component-it-talks-to)**
-   - **[Logic reaches another Component only through that Component's Public Interface](#logic-reaches-another-component-only-through-that-components-public-interface)**
-   - **[Domain meaning is imported, never restated](#domain-meaning-is-imported-never-restated)**
-   - **[External dependencies remain explicit](#external-dependencies-remain-explicit)**
-   - **[Runtime configuration stays private](#runtime-configuration-stays-private)**
-   - **[Logic verification covers Logic boundaries](#logic-verification-covers-logic-boundaries)**
-7. **[At a Glance](#at-a-glance)**
+6. **[Layering](#layering)**
+7. **[Authority](#authority)**
+8. **[Principles](#principles)**
+9. **[At a Glance](#at-a-glance)**
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -63,6 +57,7 @@ What comes back is an Application Outcome: the result the consumer asked for, or
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Behaviour** — what the application does when a consumer asks for something: the validation, the ordering, and the rules that hold for an operation in its application context rather than for one record on its own.
@@ -75,6 +70,7 @@ What comes back is an Application Outcome: the result the consumer asked for, or
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ```text
@@ -93,6 +89,7 @@ The **Public Interface** is Logic's whole outward surface. It organizes what Log
 
 <br>
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Model** — imports authoritative Domain Definitions and their declaration vocabulary through Model's Public Interface.
@@ -103,6 +100,7 @@ The **Public Interface** is Logic's whole outward surface. It organizes what Log
 
 <br>
 
+<!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
 - **A rule determinable from one Domain Definition's own data** — belongs to Model, because it holds wherever that definition is used, with no operation and no application context to qualify it.
@@ -114,14 +112,21 @@ The **Public Interface** is Logic's whole outward surface. It organizes what Log
 
 <br>
 
-Logic-owned behavioural defaults and internal realization conventions belong to Logic Preferences. Concrete language, package, framework, and Package Management choices belong to the Logic Component Profile in Development Preferences; API transport and process ownership belong to the API Component. Implementation applies those sources to the current Target.
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Logic owns application Behaviour, operation composition, and its internal Services. Development supplies the Component's technical selections and Platform supplies runtime values; transport and persistence remain behind their own Component boundaries.
 
 <br>
 
-Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+Logic Definition Principles are mandatory. Logic Preferences provide configurable defaults and conventions for unstated Logic choices, while explicit Target meaning and applicable Principles take precedence. Preferences may make a rule stricter but may not weaken it.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -228,6 +233,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

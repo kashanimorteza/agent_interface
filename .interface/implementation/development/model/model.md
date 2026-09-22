@@ -268,7 +268,7 @@ Every obligation in the file, under the Principle it comes from.
 - **Never** — Let a default add a Field, override an explicit value, change meaning, or invent a relationship or behavior.
 - **Never** — Treat Initial Data or another project record as a Model-owned Domain Definition.
 - **Must** — Take what the domain is — which Domain Definitions and Fields exist, their names, and their relationships — only from the Target.
-- **Must** — Resolve an unstated technical modelling parameter of an existing Field through Model Preferences under the applicable Principles, and record a consequential choice so it can be reviewed.
+- **Must** — Resolve an unstated technical modelling parameter of an existing Field through Model Preferences under the applicable Principles.
 - **Never** — Let such a choice add, remove, or rename a Field or relationship, override an explicit Target value, or change what a Field means.
 - **Must** — Preserve each Target-declared credential classification and its required at-rest treatment.
 - **Never** — Infer a credential classification or its at-rest treatment from a Field's name.

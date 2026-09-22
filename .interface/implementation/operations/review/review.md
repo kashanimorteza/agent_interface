@@ -2,7 +2,9 @@
 
 Review is the Operation Component that independently judges selected-phase Plans and available implementation against their applicable authorities.
 
-Responsibility: The assurance of phase Plans and implemented results against their applicable authorities.
+Responsibility: Assurance of phase Plans and implemented results.
+
+<br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
@@ -62,17 +64,6 @@ Review works one phase at a time from current authorities. It requires the selec
 
 <br>
 
-Technical choices and defaults belong to Review Preferences, which currently define none. Review results are stored in the State Log; Review has no separate generated Config record.
-
-<br>
-
-Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
-
-<br>
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
@@ -81,10 +72,9 @@ Review owns assurance, Findings, and the resolutions it can perform. Plan owns p
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
-<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principles and Operation Contract in this Definition govern Review. Review Preferences are empty and cannot lower the evidence or independence required by those Principles.
+The Principles and Operation Contract in this Definition govern Review. Review Preferences cannot lower the evidence or independence required by those Principles.
 
 <br>
 
@@ -161,7 +151,7 @@ Every Principle below is mandatory.
 
 **Why:** A finding reported only in conversation is gone when the session ends, and the next run has no way to know it was ever raised. A stored finding is the only thing that makes the second review of a phase worth more than the first.
 
-**Boundary:** Review records its Findings, resolutions, and aggregate outcome in its State Log Entries. It does not reopen Tasks, change Plan content, invoke another Operation Skill, or change the active Workflow mode to reflect what it found.
+**Boundary:** Review records its Findings, resolutions, and aggregate outcome in its State Log Entries. It does not reopen Tasks, change Plan content, invoke another primary Operation Skill, or change the active Workflow mode to reflect what it found.
 
 <br>
 
@@ -176,7 +166,7 @@ Review independently compares the current Plan and implementation with those aut
 
 Review writes one State Log Entry for every review pass. The entry stores the start and completion times, measurable duration, available operation-level token usage, the Skills actually used with their available metrics and reports, a concise summary of the assurance outcome, and Review-specific `data`. That data includes the reviewed phase and Plan Revision, both assurance outcomes, Finding identifiers, detailed evidence, and any resolution. Review has no separate generated Config record.
 
-Review may use any supporting Skill and records the Skills it actually used. It never invokes another Operation Skill and never changes Plan content, Task progress, Target, or another operation's records. It repeats its own review after each resolution until the result is satisfied or an unresolved condition is recorded.
+Review may use any supporting Skill and records the Skills it actually used. It never invokes another primary Operation Skill and never changes Plan content, Task progress, Target, or another operation's records. It repeats its own review after each resolution until the result is satisfied or an unresolved condition is recorded.
 
 Review is idempotent and evidence-first. It stops on invalid selection, missing implementation or generated Source, inconclusive evidence, unavailable authority, or an unresolved condition that prevents assurance.
 
@@ -197,7 +187,7 @@ Every obligation in the file, under the Principle it comes from.
 **Review records, resolves, and rechecks its findings**
 
 - **Must** — record Findings before resolving them, record each resolution, and perform another pass after each resolution
-- **Never** — Review writes Plan content, changes Target, changes Task progress, or invokes another Operation Skill
+- **Never** — Review writes Plan content, changes Target, changes Task progress, or invokes another primary Operation Skill
 
 **Review is independent of how the work was done**
 

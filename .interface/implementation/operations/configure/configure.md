@@ -2,7 +2,7 @@
 
 Configure is the Operation Component that creates the structural Config records required by the Interface from their Schemas.
 
-Responsibility: The creation and structural reconciliation of Config records from their Schemas.
+Responsibility: Structural Config generation and reconciliation.
 
 <br>
 
@@ -15,7 +15,8 @@ Responsibility: The creation and structural reconciliation of Config records fro
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[At a Glance](#at-a-glance)**
+7. **[Operation Contract](#operation-contract)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -24,7 +25,7 @@ Responsibility: The creation and structural reconciliation of Config records fro
 
 ### Overview
 
-Configure is the Operation Component that creates the three structural Config records from their current Schemas.
+Configure creates and reconciles the three declared Config Records from their current Schemas.
 
 ### Purpose
 
@@ -50,12 +51,6 @@ Configure is complete when every generated record conforms to its current Schema
 ## Relationships
 
 - **Consumes Config Schemas** — reads the structures named by Configure Preferences from which Config Records are generated.
-
-<br>
-
-The Config Schemas own file shape and required structure. Configure Preferences own the current Config directory, record-to-Schema mapping, and the Human-only policy for those declarations.
-
-Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>
 
@@ -87,6 +82,17 @@ Every Principle below is mandatory.
 **Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Operation.
 
 **Boundary:** Configure changes only the three declared Config Records and the Configure Log Entry appended to State.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Operation Contract --->
+## Operation Contract
+
+Configure accepts no phase selection and establishes the structural Config foundation for the Interface. It reads the current Config Schemas and Configure Preferences, then creates or reconciles only the declared Application, Plan, and State Config records in the Config directory.
+
+Configure preserves Schema comments, does not require Target or Interface Understanding, and does not invoke another primary Operation Skill. It appends its own State Log Entry with execution metadata and Configure-specific data after the structural operation.
+
+Completion requires every declared Config Record to conform to its current Schema. Configure stops on an unavailable or invalid Schema, an invalid mapping, or an inability to write the authorized Config records or State Log Entry.
 
 <br>
 

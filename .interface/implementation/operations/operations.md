@@ -31,14 +31,14 @@ Building a product requires more than product architecture. The work also needs 
 
 ### How It Works
 
-Configuration prepares and reconciles the operational records. Plan turns a selected Target phase into bounded work. Review compares the result of that phase with its applicable authorities and records Findings. State preserves the aggregate operational position and outcomes needed to continue the workflow.
+Configuration prepares and reconciles the operational records. Plan turns a selected Target phase into bounded work, and Develop executes that work. Review compares the result with its applicable authorities and records Findings. Implement coordinates the primary Operation flow; Launch activates a completed implementation, Reset reconciles its authorized scope, and State preserves the aggregate position and execution outcomes.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Operation Component** — one Component that owns a distinct part of configuring, planning, reviewing, or recording implementation work.
+- **Operation Component** — one Component that owns a distinct part of configuring, planning, developing, reviewing, implementing, launching, resetting, or recording implementation work.
 - **Operational Record** — mutable information produced while the Interface workflow runs, separate from the authorities that define what the work means.
 
 <br>
@@ -107,7 +107,7 @@ Launch activates the completed implementation.
 
 ### Reset
 
-Reset reconciles an authorized records and outputs scope.
+Reset reconciles authorized records and outputs within its scope.
 
 → [Definition of Reset](reset/reset.md)<br>
 → [Preferences of Reset](reset/reset.yaml)
@@ -127,24 +127,14 @@ State records aggregate operational position and the execution log.
 
 - **Consumes Target** — uses current phase identity and intent without becoming another Target definition.
 - **Consumes Development** — applies the product architecture and Component authorities relevant to the work being performed.
-- **Consumed by Workflow** — provides the operational concepts and records through which implementation work proceeds and resumes.
-
-<br>
-
-Technical choices and defaults shared by Operations belong to Operations Preferences. Choices owned by Configure, Plan, Review, or State remain in that Component's Preferences. Operational record shapes belong to their Schemas.
-
-Every Operation may use any available supporting Skill. The five primary Operation Skills are Configure, Plan, Develop, Review, and Implement. Only Implement may invoke the other four primary Operation Skills; the other primary Skills never invoke one another. Supporting Skills remain available to every Operation according to their own declarations.
-
-<br>
-
-Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+- **Consumed by Agent** — provides the operational concepts and records used by the corresponding Operation Skills.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Operations owns workflow concerns. Technical choices belong to the Preferences of the Operation Component that owns them; product meaning belongs to Development; project intent belongs to Target; and runtime realization belongs to the selected Agent Native.
+Operations owns workflow concerns. Technical choices and defaults shared by Operations belong to Operations Preferences; choices owned by an Operation belong to that Component's Preferences, and operational record shapes belong to their Schemas. Product meaning belongs to Development, project intent belongs to Target, and runtime realization belongs to the selected Agent Native.
 
 <br>
 
@@ -182,6 +172,16 @@ Every Principle below is mandatory.
 
 <br>
 
+### Operation Skill invocation remains bounded
+
+**Rule:** Every Operation may use any available Supporting Skill. The primary Operation Skills are Configure, Plan, Develop, Review, and Implement. Only Implement may invoke the other four primary Operation Skills; those four never invoke one another. Supporting Skills remain available to every Operation according to their own declarations.
+
+**Why:** Separating primary Operation coordination from reusable Supporting Skills keeps the workflow explicit without limiting useful assistance.
+
+**Boundary:** This rule governs invocation of primary Operation Skills; it does not restrict an Operation from using a compatible Supporting Skill.
+
+<br>
+
 ### Operational records remain separate from their authorities
 
 **Rule:** An Operational Record records what happened, what exists, or where work stands. It never redefines Target intent, Development meaning, a Principle, a Preference, or a Schema.
@@ -206,6 +206,12 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Configure, Plan, Develop, Review, Implement, Launch, Reset, and State each retain their declared ownership.
 - **Never** — an Operation Component writes another's owned content without explicit Interface authority under that owner's rules.
+
+**Operation Skill invocation remains bounded**
+
+- **Must** — Let every Operation use compatible Supporting Skills according to their declarations.
+- **Must** — Let only Implement invoke the other primary Operation Skills.
+- **Never** — Let Configure, Plan, Develop, or Review invoke another primary Operation Skill.
 
 **Operational records remain separate from their authorities**
 

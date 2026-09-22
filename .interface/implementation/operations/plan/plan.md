@@ -67,7 +67,7 @@ Plan owns decomposition and completion conditions. Target owns intent, Developme
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principles and Operation Contract in this Definition govern Plan. Plan Preferences are empty and cannot add technical or project meaning.
+The Principles and Operation Contract in this Definition govern Plan. Plan Preferences, when present, cannot add technical or project meaning.
 
 <br>
 
@@ -76,7 +76,7 @@ The Principles and Operation Contract in this Definition govern Plan. Plan Prefe
 
 Every Principle below is mandatory.
 
-Plan Preferences currently define no technical choices or defaults. The generated Plan record follows the Plan Schema. Preferences can never override a Principle; a project may only add stricter rules.
+The generated Plan record follows the Plan Schema. Preferences can never override a Principle; a project may only add stricter rules.
 
 <br>
 
@@ -136,7 +136,7 @@ Plan Preferences currently define no technical choices or defaults. The generate
 
 **Why:** A later Target, Interface, Principle, or Preference change can change what the phase requires, while an unchanged understanding makes wholesale Task regeneration unnecessary.
 
-**Boundary:** Plan reads State as an execution record, may use any supporting Skill, but never reads Review as a prerequisite, invokes another Operation Skill, or performs another Operation's responsibility.
+**Boundary:** Plan reads State as an execution record, may use any supporting Skill, but never reads Review as a prerequisite, invokes another primary Operation Skill, or performs another Operation's responsibility.
 
 <br>
 
@@ -149,7 +149,7 @@ Plan Preferences currently define no technical choices or defaults. The generate
 - what result it must produce;
 - which phase and Group provide its planning context;
 - which Component and specific work area it targets;
-- which resolved language and technologies apply, as the applicable Preferences state them;
+- which applicable authorities and constraints govern it;
 - which inputs, dependencies, and constraints matter; and
 - how completion is accepted and verified.
 
@@ -193,7 +193,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 ### Completion must be demonstrable
 
-**Rule:** Every Task states an acceptance criterion and a verification condition, both expressed as observable behaviour. Acceptance states what makes the result correct. Verification states what must be observed to prove it, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that observes it. The concrete executable check that satisfies the verification condition is constructed and run at implementation time, and the check used and its outcome are recorded in the Task's log. A Task is complete only when that check has passed. The form of that check is governed by the declared cross-cutting testing scope, which is read before the check is constructed. A Task whose target Component is within that scope proves its verification condition through a test that persists as part of that Component. A Task whose target Component is outside that scope proves it through a transient check that leaves no test artifact behind: the check is run, its outcome is recorded in the log, and nothing it created remains in the Component. Availability of a test tool in the declared toolchain never widens the testing scope, and a Component outside that scope never acquires a test suite, a test directory, a test configuration, or a test dependency as a side effect of demonstrating completion.
+**Rule:** Every Task states an acceptance criterion and a verification condition, both expressed as observable behaviour. Acceptance states what makes the result correct. Verification states what must be observed to prove it, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that observes it. The concrete executable check that satisfies the verification condition is constructed and run at implementation time, and the check used and its outcome are recorded in the Task's log. A Task is complete only when that check has passed. The applicable testing authority determines whether the evidence is persisted or transient; Plan never widens that scope.
 
 **Why:** Writing code or changing a file is never sufficient evidence of completion, and a proof expressed as behaviour survives every rearrangement of the implementation that produces it.
 
@@ -240,11 +240,11 @@ Plan accepts zero or more phase selections. An empty selection means every enabl
 
 Plan consumes current Interface and Target Understanding, applicable Component authorities, the existing Plan, State, Schemas, and relevant implementation evidence. It establishes current Interface and Target Understanding before planning.
 
-Plan creates or reconciles only Planning-owned Plan content, Plan Revision, aggregate Planning State and Log, permitted Blockers and Open Questions, Task `source`, and the current phase Planning report. Its State Log Entry records the Skill execution, elapsed time, available token usage, and Planning report; the Plan report records Task identifiers added, removed, changed, and preserved. It never writes implementation, Target intent, or fields outside Planning authority.
+Plan creates or reconciles only Planning-owned Plan content, Plan Revision, aggregate Planning State and Log references to Blockers and Open Questions, Task `source`, and the current phase Planning report. Its State Log Entry records the Skill execution, elapsed time, available token usage, and Planning report; the Plan report records Task identifiers added, removed, changed, and preserved. It never writes implementation, Target intent, or fields outside Planning authority.
 
 Every planning run validates the complete selection before mutation, verifies the required Plan and State Config records, maps every selected requirement to one Task or inherited phase context, preserves valid identities and progress, and keeps planning content independent of files, paths, packages, commands, and implementation layout. A new Plan starts at revision `1`; semantic Planning changes increment the revision exactly once, while progress-only changes do not.
 
-Completion requires every Task to have observable acceptance and verification. Testing scope is inherited from the applicable Implementation authorities; it is never widened merely because a test tool is available. If a required Config record is missing, Planning stops and suggests Configure without invoking it.
+Completion requires every Task to have observable acceptance and verification. Testing scope is inherited from the applicable Implementation authorities; it is never widened merely because a test tool is available.
 
 Every planning invocation checks its understanding even when a Plan already exists or its Tasks are complete. Against unchanged understanding it preserves the same semantic Plan and revision; against changed understanding it reconciles rather than regenerating all Tasks. It stops on invalid selection, missing Config records, contradictory coverage, unresolved ownership, unavailable prerequisites, or a required Human decision.
 
@@ -270,7 +270,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — establish current Interface and Target Understanding and compare it with the understanding used by the existing Plan
 - **Must** — preserve valid Tasks, add newly required Tasks, and record each Task's creating Skill and State Log Entry in `source`
-- **Never** — regenerate all Tasks because a previous Plan exists, read Review as a prerequisite, or invoke another Operation Skill
+- **Never** — regenerate all Tasks because a previous Plan exists, read Review as a prerequisite, or invoke another primary Operation Skill
 
 **Groups organize related work**
 
@@ -314,8 +314,8 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — every Task states acceptance and a verification condition, both as observable behaviour
 - **Must** — the executable check used and its outcome are recorded in the Task's log, and the Task is complete only once it passes
 - **Never** — verification names the command, tool, path, or code that observes it, or doubles as an implementation procedure
-- **Must** — the check's form follows the declared cross-cutting testing scope: a persisted test only inside it, a transient check outside it
-- **Never** — a Component outside the declared testing scope acquires a test suite, test directory, test configuration, or test dependency
+- **Must** — let the applicable testing authority determine whether verification evidence is persisted or transient
+- **Never** — widen the declared testing scope merely to demonstrate a Task
 
 **Task progress and Workflow State remain separate**
 

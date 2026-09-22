@@ -17,7 +17,7 @@ policy:
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "Apply a Develop default only when the selected Plan, Target, and owning Development Component are silent."
-  selection: "Use professional judgment under Develop Principles when no compatible preference exists, and record a consequential choice."
+  selection: "Use professional judgment under Develop Principles when no compatible preference exists."
   version_resolution: "No entry currently carries a version."
   matching: "Match a setting to the selected Task or execution concern that owns it."
 

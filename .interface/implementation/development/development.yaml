@@ -22,6 +22,7 @@ resolution:
   selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
   matching: "Match Components by canonical identifier; languages and databases by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
+  additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the resolved dependency with the implementation; a consequential recurring choice is added by the human under the relevant Language Item and Technical Purpose."
 
 
 

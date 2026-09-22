@@ -1,33 +1,24 @@
 # Database Definition
 
+Database is the Development Component that owns the complete persistence boundary and exposes it through one generic public interface.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Principles](#principles)**
-   - **[Database documentation exposes only its public operations](#database-documentation-exposes-only-its-public-operations)**
-   - **[Database is an independent package with one public boundary](#database-is-an-independent-package-with-one-public-boundary)**
-   - **[Database has three ordered internal layers](#database-has-three-ordered-internal-layers)**
-   - **[Storage is derived from Model and invents nothing](#storage-is-derived-from-model-and-invents-nothing)**
-   - **[Engine-specific decisions are explicit and isolated](#engine-specific-decisions-are-explicit-and-isolated)**
-   - **[The complete Database is reproducible from the repository](#the-complete-database-is-reproducible-from-the-repository)**
-   - **[Storage changes use ordered and recoverable Migrations](#storage-changes-use-ordered-and-recoverable-migrations)**
-   - **[Database owns the complete persistence responsibility](#database-owns-the-complete-persistence-responsibility)**
-   - **[All data access uses one generic Database Interface](#all-data-access-uses-one-generic-database-interface)**
-   - **[Database Instances are explicit and selectable](#database-instances-are-explicit-and-selectable)**
-   - **[Every stored structure is traceable to a Model declaration](#every-stored-structure-is-traceable-to-a-model-declaration)**
-   - **[Credential storage protects values at rest](#credential-storage-protects-values-at-rest)**
-   - **[Declared Initial Data preserves its meaning](#declared-initial-data-preserves-its-meaning)**
-   - **[Related operations share an explicit Transaction boundary](#related-operations-share-an-explicit-transaction-boundary)**
-   - **[Persistence security and observability remain bounded](#persistence-security-and-observability-remain-bounded)**
-6. **[At a Glance](#at-a-glance)**
+5. **[Layering](#layering)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
+
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
@@ -44,6 +35,7 @@ A consumer passes a public Model type or instance and operation to the Database 
 
 Storage is derived from Model declarations; missing or ambiguous declarations are reported. Migrations apply structure in order, startup verifies integrity and imports Initial Data, and an Instance is ready only after setup succeeds. Runtime Instances, connections, and credentials are configured as Database owns them and are never hardcoded in source.
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Database Interface** — the only Database boundary published to consumers, exposing generic data operations and Instance discovery and selection.
@@ -58,6 +50,7 @@ Storage is derived from Model declarations; missing or ambiguous declarations ar
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ```text
@@ -77,6 +70,7 @@ The layers are ordered, and none bypasses the next boundary.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Model** — maps and enforces the logical Models, fields, relationships, rules, and declared initial data.
@@ -86,14 +80,21 @@ The layers are ordered, and none bypasses the next boundary.
 
 <br>
 
-Database-owned defaults and implementation conventions belong to Database Preferences. Concrete technical selections and the Platform Launch Item reference belong to the Database Component Profile in Development Preferences. Implementation applies those sources to the current Target.
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
+
+Database owns persistence meaning, mapping, storage access, structural history, and storage guarantees. Development supplies the Component's technical selections and Platform supplies runtime bindings; consumers reach Database only through its public interface.
 
 <br>
 
-Every Principle in this file is mandatory. An Implementation Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
+<!--------------------------------------------------------------------------------- Authority --->
+## Authority
+
+Database Definition Principles are mandatory. Database Preferences provide configurable defaults and conventions for unstated Database choices, while explicit Target meaning and applicable Principles take precedence. Preferences may make a rule stricter but may not weaken it.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -252,6 +253,7 @@ The Registry is derived from the configured Instance collection, and the number 
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
