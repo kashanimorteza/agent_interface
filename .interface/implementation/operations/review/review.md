@@ -47,7 +47,7 @@ Review stops when the required result or evidence is unavailable, an authority c
 - **Source Understanding** — understanding the generated Source needed to examine the selected phase without reading unrelated Source.
 - **Finding** — one specific way in which the result does not demonstrably satisfy what was asked, recorded with what was expected, what was observed, and where.
 - **Evidence** — the exact location or observable result that supports a finding, so that a reader can see it without repeating the review.
-- **Outcome** — the aggregate result: `satisfied` when the reviewed result satisfies the current Plan and applicable authorities, or the exact `not satisfied` or `inconclusive` result otherwise.
+- **Outcome** — the aggregate result: `satisfied` when the reviewed result satisfies the current Plan and applicable authorities, or `not satisfied` otherwise.
 - **Missing evidence** — an acceptance criterion for which nothing observable demonstrates that it holds.
 
 <br>

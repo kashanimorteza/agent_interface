@@ -36,17 +36,20 @@ sections:
           planning:
             required: true
             default: "not started"
-            allowed: ["not started", "in progress", "completed"]
+            allowed: ["not started", "in progress", "completed", "blocked"]
           development:
             required: true
             default: "not started"
-            allowed: ["not started", "in progress", "completed"]
+            allowed: ["not started", "in progress", "completed", "blocked"]
           review:
             required: true
             default: "not started"
-            allowed: ["not started", "in progress", "satisfied", "not satisfied", "inconclusive"]
-          updated_by: {required: true, default: "initialization"}
-          updated_at: {required: true, default: null, nullable: true}
+            allowed: ["not started", "in progress", "satisfied", "not satisfied"]
+          completed_at:
+            required: true
+            default: null
+            nullable: true
+            purpose: "The time Review last marked this phase satisfied; cleared when Development reopens the phase."
   log:
     required: true
     default: []
