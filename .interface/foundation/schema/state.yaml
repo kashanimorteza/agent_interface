@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-state"
-  version: "12.7"
+  version: "12.9"
   purpose: "Operational State format; State Principles define record meaning and ownership."
 operational_scope:
   stores: "Active Workflow position, aggregate phase progress, and append-only Skill execution log."
@@ -101,6 +101,10 @@ initial:
   policy:
     agent_may_edit: true
     rule: "Apply the current State Component and the active operation's ownership rules."
+  resolution:
+    consumption: "Read active, then the selected phase record when applicable, then relevant append-only Log Entries."
+    selection: "A phase resolves by its stable Target phase identifier; a historical event resolves by its Log Entry identifier and, when relevant, its phase or parent identifier."
+    absence: "No matching phase record means that operational State has not yet been reconciled for that phase; no matching Log Entry means no such recorded execution exists."
   read_order: ["active", "phases", "log"]
   content_map:
     active: "Current or most recently recorded Workflow position."

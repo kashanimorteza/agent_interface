@@ -6,6 +6,10 @@ The Core Skill for planning.
 
 Required. Stable key: `plan`. Skill name: `my-interface-plan`.
 
+## Personality
+
+No Personality is declared yet.
+
 ## Inputs
 
 An invocation request and an optional phase selection.

@@ -6,6 +6,10 @@ The Core Skill for reviewing.
 
 Required. Stable key: `review`. Skill name: `my-interface-review`.
 
+## Personality
+
+No Personality is declared yet.
+
 ## Inputs
 
 An invocation request and an optional phase selection.

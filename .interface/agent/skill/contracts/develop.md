@@ -6,6 +6,10 @@ The Core Skill for developing.
 
 Required. Stable key: `develop`. Skill name: `my-interface-develop`.
 
+## Personality
+
+No Personality is declared yet.
+
 ## Inputs
 
 An invocation request and an optional phase selection.

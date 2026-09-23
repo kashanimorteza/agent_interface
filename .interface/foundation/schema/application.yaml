@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-application"
-  version: "1.0"
+  version: "1.1"
   purpose: "Shared Application Manifest structure for public Component metadata."
 
 operational_scope:
@@ -34,14 +34,30 @@ sections:
       api: {required: true, default: {}}
       presentation: {required: true, default: {}}
       platform: {required: true, default: {}}
+      configure: {required: true, default: {}}
       plan: {required: true, default: {}}
+      develop: {required: true, default: {}}
       review: {required: true, default: {}}
+      implement: {required: true, default: {}}
+      launch: {required: true, default: {}}
+      reset: {required: true, default: {}}
       state: {required: true, default: {}}
 
 initial:
   meta:
     path: ".interface/config/application.yaml"
     path_note: "Shared Application Manifest public Component metadata."
+  policy:
+    agent_may_edit: true
+    rule: "Apply the current Application Schema and the owning Component's public-metadata authority."
+  resolution:
+    consumption: "Read public metadata by canonical Component identifier."
+    selection: "Select the section whose key is the Component being described."
+    absence: "An empty section means that its owner has published no public metadata."
+  read_order:
+    - "components"
+  content_map:
+    components: "Public metadata for each declared Implementation Component."
   content:
     components:
       development: {}
@@ -51,6 +67,11 @@ initial:
       api: {}
       presentation: {}
       platform: {}
+      configure: {}
       plan: {}
+      develop: {}
       review: {}
+      implement: {}
+      launch: {}
+      reset: {}
       state: {}

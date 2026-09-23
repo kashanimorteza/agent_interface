@@ -86,7 +86,6 @@ Agent
 └── Components
     ├── Runtime
     ├── Agent
-    ├── Personality
     ├── Rule
     ├── Skill
     ├── Command
@@ -126,16 +125,6 @@ Responsibility: The selected Agent Native and its General and Specialized Agent 
 
 → [Definition of Agent](agent/agent.md)<br>
 → [Preferences of Agent](agent/agent.yaml)
-
-### Personality
-
-The personalities an Agent can take on: who it is during a kind of work, the Actions each performs, and the models each prefers in priority order.
-
-Responsibility: The personalities an Agent can take on, the Actions each performs, and the models each prefers in priority order.
-
-→ [Definition of Personality](personality/personality.md)<br>
-→ [Preferences of Personality](personality/personality.yaml)<br>
-→ [Contracts of Personality](personality/contracts/)
 
 ### Rule
 
