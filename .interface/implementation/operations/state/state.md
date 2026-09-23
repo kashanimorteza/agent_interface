@@ -60,7 +60,7 @@ State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing
 ## Terms
 
 - **Active State** — the current or most recently recorded Workflow Mode, its Phase when applicable, and its recorded provenance.
-- **Phase State** — aggregate Planning, Development, and Review progress for one stable Target phase identifier, plus its completion time once Review is satisfied.
+- **Phase State** — aggregate Planning, Development, and Review progress for one stable Target phase identifier, plus its completion time once Development is completed and Review is satisfied.
 - **Log Entry** — one record of a Skill execution. It holds known start information while work is in progress, then its completion time, duration, outcome, report, and applicable execution data when work ends.
 - **Workflow Mode** — the current or most recently recorded operational position of the project.
 - **Blocker** — a condition that genuinely prevents safe or valid continuation.
@@ -120,7 +120,7 @@ Every Principle below is mandatory.
 
 ### Every Target phase has aggregate operational State
 
-**Rule:** State keeps one Phase State for every stable Target Phase identifier. Planning and Development use `not started`, `in progress`, `completed`, or `blocked`. Review uses `not started`, `in progress`, `satisfied`, or `not satisfied`; `not satisfied` identifies an unresolved Review result. `satisfied` records the Phase's `completed_at` time.
+**Rule:** State keeps one Phase State for every stable Target Phase identifier. Planning and Development use `not started`, `in progress`, `completed`, or `blocked`. Review uses `not started`, `in progress`, `satisfied`, or `not satisfied`; `not satisfied` identifies an unresolved Review result. State records the Phase's `completed_at` time only when Development is `completed` and Review is `satisfied`.
 
 **Why:** Target stays human-owned while State records where every Phase stands.
 
@@ -186,7 +186,7 @@ The status information State keeps for the project.
 
 - **Must** — keep aggregate Planning, Development, and Review progress by stable phase identifier
 - **Must** — use `blocked` for blocked Planning or Development and `not satisfied` for a blocked Review
-- **Must** — set `completed_at` when Review is satisfied and clear it for new or replacement development work
+- **Must** — set `completed_at` only when Development is completed and Review is satisfied, and clear it for new or replacement development work
 - **Never** — copy Target meaning or individual Task status, evidence, or history into State
 
 **Phase records reconcile without erasing progress**

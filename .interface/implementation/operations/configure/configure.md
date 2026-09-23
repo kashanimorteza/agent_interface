@@ -32,7 +32,7 @@ The Interface needs its Config records to exist with known structures before ope
 
 Configure reads the three Config Schemas named by Configure Preferences and generates or reconciles the corresponding records in the Config directory, preserving the explanatory comments defined by each Schema. When a record already exists, Configure preserves its valid operational content and changes only what is required to restore Schema conformance. Once the State Config is available, Configure records the active Workflow position as `configuring` and appends one Configure Log Entry to `state.yaml`; the common execution fields are recorded in the entry and Configure-specific details are recorded in its `data`.
 
-Configure is complete when every generated record conforms to its current Schema. It stops when a required Schema or mapping is invalid or unavailable, or when an authorized Config record or Log Entry cannot be written. Any later operational content belongs to the Operation that owns it.
+Configure is complete when every generated record conforms to its current Schema. It stops when a required Schema or mapping is invalid or unavailable, or when a Config record or Log Entry cannot be written. Any later operational content belongs to the Operation that owns it.
 
 <br>
 

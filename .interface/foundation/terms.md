@@ -25,7 +25,7 @@ This section defines the shared vocabulary used to understand Agent Interface, i
 - **Implementation Preferences** — preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations used when the Target leaves a choice unspecified.
 - **Schema** — the structure a file follows: either a standard for a Human-authored file or an operational format and initial template for a generated record.
 - **Config** — the separate shared operational boundary for mutable generated records that coordinate the Workflow; Config does not store what the Target means.
-- **Config Record** — one generated operational file inside `.interface/config/`, owned and writable only under its Component's authority.
+- **Config Record** — one generated operational file inside `.interface/config/`.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
 - **Understanding** — the current context an Agent Native or Agent Instance establishes from authoritative sources before performing a Skill's role; it may be Interface Understanding, Target Understanding, or Source Understanding.

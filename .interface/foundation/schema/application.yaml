@@ -17,7 +17,7 @@ generation:
   path: ".interface/config/application.yaml"
   path_note: "Shared Application Manifest public Component metadata."
   agent_may_edit: true
-  policy_rule: "Apply the current Application Schema and the owning Component's public-metadata authority."
+  policy_rule: "Apply the current Application Schema and preserve valid public metadata."
   resolution:
     consumption: "Read public metadata by canonical Component identifier."
     selection: "Select the section whose key is the Component being described."

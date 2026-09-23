@@ -24,7 +24,7 @@ At the start of every execution, create one Log Entry in State for that executio
 
 ## Outputs
 
-The Skill execution result and status.
+The Skill execution result and status, including the aggregate counts of associated Open Questions and Blockers.
 
 ## Source
 

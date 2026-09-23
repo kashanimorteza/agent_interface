@@ -90,7 +90,7 @@ content:
             and cannot initiate Agent Native Sync.
       editable_exception:
         path: .interface/config/
-        condition: Only the active Skill's declared write authority and the owning Component's rules may authorize an exact Config record.
+        condition: Files inside this directory are mutable operational records for the active Agent and Skills.
       future_paths: Protected automatically unless they are inside the editable Config exception.
     trust: {}
     authentication_references: {}

@@ -44,7 +44,7 @@ The Component exists because a boundary that depends on good reasoning is not a 
 
 ### How It Works
 
-Access starts closed. The Interface is read-only to every Agent Instance and Skill, and the only writable exception is an operational record inside the Config boundary, changed by the one Skill whose declared responsibility and owning Component give it authority over that exact record. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Agent Instance or lower layer can widen what it was given.
+Access starts closed. The Interface is read-only to every Agent Instance and Skill, and the only writable exception is an operational record inside the Config boundary. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Agent Instance or lower layer can widen what it was given.
 
 The Agent Module is protected by an explicit Human-only read boundary. Permission enforces that boundary; Agent Sync performs the authorized read and produces the Native realization, while every other consumer uses the synchronized Native artifacts.
 
@@ -107,11 +107,11 @@ Every Principle below is mandatory.
 
 <br>
 
-### Interface is read-only except for authorized Config records
+### Interface is read-only except for Config records
 
-**Rule:** The entire Interface is read-only to every Agent Instance and Skill by default. Only operational records inside the Interface Config boundary may be changed, and only by a Skill whose declared responsibility and owning Component grant authority over that exact record. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
+**Rule:** The entire Interface is read-only to every Agent Instance and Skill by default. Only operational records inside the Interface Config boundary may be changed. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
 
-**Why:** New or moved Interface sources remain protected automatically, while operational workflow records remain maintainable by their authorized owners.
+**Why:** New or moved Interface sources remain protected automatically, while operational workflow records remain maintainable.
 
 **Boundary:** Human authorship is outside Agent execution. The Config exception grants no write access to any other Interface path, and safe read-only inspection remains available within applicable read restrictions.
 
@@ -192,10 +192,9 @@ Every Principle below is mandatory.
 
 Every obligation in the file, under the Principle it comes from.
 
-**Interface is read-only except for authorized Config records**
+**Interface is read-only except for Config records**
 
 - **Never** — modify any Interface path outside the operational Config boundary
-- **Must** — restrict Config writes to the exact records owned by the active Skill's responsibility
 - **Must** — obtain applicable authorization for materially consequential actions
 
 **Permission is least-privilege and deny-safe**

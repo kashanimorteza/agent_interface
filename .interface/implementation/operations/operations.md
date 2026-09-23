@@ -164,7 +164,7 @@ Every Principle below is mandatory.
 
 ### Each operational concern has one owning Component
 
-**Rule:** Configure owns Config preparation and reconciliation, Plan owns planned activities, Develop owns planned implementation work, Review owns Findings, review data, and its authorized resolutions, Implement owns workflow coordination, Launch owns runtime activation, Reset owns bounded reconciliation, and State owns aggregate operational position and the execution log. No Operation Component writes another's owned content unless the Interface explicitly grants that write under the owning Component's rules.
+**Rule:** Configure owns Config preparation and reconciliation, Plan owns planned activities, Develop owns planned implementation work, Review owns Findings, review data, and its resolutions, Implement owns workflow coordination, Launch owns runtime activation, Reset owns bounded reconciliation, and State owns aggregate operational position and the execution log. Shared Config files may contain operational records produced by more than one Component.
 
 **Why:** One owner for each operational concern keeps progress, evidence, and authority consistent across separate runs.
 
