@@ -49,6 +49,8 @@ Architecture
 
 Defines the project's models.
 
+**Persistence:** Every Model declared in this section is persistent. It has an independently stored record and identity, and Database must map it to durable storage. A Model is non-persistent only when its own definition explicitly declares otherwise.
+
 ```text
 Models
 ├── User
