@@ -24,6 +24,10 @@ A successful Configure execution must have established the required Config recor
 
 Each selected phase must have a current Plan and a Development result.
 
+## Execution Log
+
+At the start of every execution, create one Log Entry in State for that execution, including its ID, Skill, and `started_at`. At completion, update that same Log Entry with `completed_at`, `duration_ms`, outcome, report, and any applicable data, Open Questions, or Blockers. If execution stops or is blocked, update the same entry with the actual outcome and reason.
+
 ## Outputs
 
 The Skill execution result and status.

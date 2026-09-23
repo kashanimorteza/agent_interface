@@ -1,8 +1,8 @@
 # State Definition
 
-State is the Operation Component that records the aggregate operational position, outcomes, stoppages, and log needed to continue the workflow.
+State is the Operation Component that records the aggregate operational position of the project.
 
-Responsibility: The operational position and aggregate progress needed to continue Implementation work.
+Responsibility: The current Mode, aggregate Phase progress, and status records needed to show the project's operational position.
 
 <br>
 
@@ -25,44 +25,44 @@ Responsibility: The operational position and aggregate progress needed to contin
 
 ### Overview
 
-State records the operational condition of the Interface Workflow: the active mode, aggregate progress for each Target phase, and the append-only Log of every Skill execution.
+State records the operational condition of the project: the active Mode, aggregate progress for each Target Phase, and the Log of its execution history.
 
 State never contains Target meaning, implementation instructions, application configuration, product code, or the status and history of individual Tasks.
 
 ### Purpose
 
-Work that spans phases, operations, and sessions needs somewhere to say where it currently stands. Without it, every operation starts by guessing: has this phase been planned, was it reviewed, did the last launch succeed, is there something blocking that nobody has acted on. Guessing from artifacts is unreliable — files exist for many reasons — and asking the Human every time is worse.
+Work that spans Phases and sessions needs a reliable record of where the project currently stands: which Mode is active, how far each Phase has progressed, and which recorded outcomes still matter.
 
-State exists to answer that question and only that question. It records the active Workflow position, aggregate progress for each phase, and the Log of what happened. Any Skill can read it and know where the Workflow stands and what preceding Skills reported.
+State exists to answer that question and only that question. It records the active operational position, aggregate progress for each Phase, and the history of recorded outcomes.
 
-It is deliberately thin. State holds no Target meaning, no implementation instruction, no Task-level detail — those have their own owners, and duplicating them here would create a second version of the truth that drifts from the first. Its operation log holds only execution metadata and concise reports: enough to resume with current context, never enough to replace the sources.
+It is deliberately thin. State holds no Target meaning, implementation instruction, or Task-level detail. Its Log holds the common metadata and concise reports needed to preserve the project's recorded position; it never replaces the sources.
 
 ### How It Works
 
-An operation begins by reading State: which mode is active, which phase it concerns, and what the aggregate progress of that phase is — planned, developed, reviewed. That supplies current operational context without reconstructing it from artifacts or asking.
+State keeps the active Mode, the relevant Phase when applicable, and aggregate Phase progress for planning, development, and review.
 
-Each operation then updates only the field it owns. Planning moves a phase's planning progress, Developing its development progress, and Review its review progress; none of them writes another's field. Task status and history remain in the Plan Config and its Task Logs, with Develop updating them during execution. Phase records reconcile as the Target changes — a new phase appears at its initial values, an existing one keeps the progress it has.
+A planning occurrence changes a Phase's planning progress; a development occurrence changes its development progress; and a review occurrence changes its review progress. Task status and history remain in the Plan Config and its Task Logs. Phase records reconcile against stable Target Phase identifiers: a new Phase begins with initial values, and an existing Phase preserves recorded progress.
 
-Every Skill invocation records one Log Entry in State. Shared execution metadata goes in the common fields; the Skill's own report and records go under `data`. State is the source of the execution log, while Plan remains the source of planned work.
+Every executed Skill has one Log Entry in State. Shared execution metadata belongs in common fields; information specific to that execution belongs under `data`. State is the source of execution history, while Plan remains the source of planned work.
 
-Everything that happened is appended to the Log rather than overwritten. Each entry may record its parent Skill, phase, start and completion times, measurable duration, available token usage, Skills it used, open questions, blockers, outcome, and a concise report. A Skill reads the latest relevant Log Entries before acting. Skill-specific information is stored in that entry's `data` mapping or list.
+The Log preserves every recorded Entry: in progress, completed, stopped, and blocked. Each Entry may record its parent, Phase, start and completion times, measurable duration, available token usage, Skills used, Open Questions, Blockers, outcome, and a concise report. Execution-specific information is stored in that Entry's `data` mapping or list.
 
 <br>
 
 <!---------------------------------------------------------------------------------------- Modes --->
 ## Modes
 
-State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing`, and `implementing` as active Modes. A Mode identifies the current or most recently recorded operational position only; the owning Operation Component defines its own behaviour, inputs, and outputs.
+State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing`, and `implementing` as active Modes. A Mode identifies the current or most recently recorded operational position only.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Active State** — the current or most recently entered Workflow mode, its phase when applicable, and update provenance.
+- **Active State** — the current or most recently recorded Workflow Mode, its Phase when applicable, and its recorded provenance.
 - **Phase State** — aggregate Planning, Development, and Review progress for one stable Target phase identifier, plus its completion time once Review is satisfied.
-- **Log Entry** — one append-only record of a Skill execution, its common execution metadata, outcome, and report.
-- **Workflow Mode** — the current operational position recorded by the Operation that owns the active work.
+- **Log Entry** — one record of a Skill execution. It holds known start information while work is in progress, then its completion time, duration, outcome, report, and applicable execution data when work ends.
+- **Workflow Mode** — the current or most recently recorded operational position of the project.
 - **Blocker** — a condition that genuinely prevents safe or valid continuation.
 - **Open Question** — a critical decision that cannot safely be made without a human.
 
@@ -71,9 +71,7 @@ State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Target phase identity** — uses stable phase identifiers without copying phase goals or Target meaning.
-- **Consumes operation outcomes** — each operation records only the aggregate State and Log Entry its role owns.
-- **Consumed by operations and reporting** — enables work to resume without reconstructing operational progress.
+- **Uses Target Phase identity** — uses stable Phase identifiers without copying Phase goals or Target meaning.
 
 Technical choices and defaults belong to State Preferences, which currently define none. The exact shape and initial values of State Config belong to the State Schema.
 
@@ -82,14 +80,14 @@ Technical choices and defaults belong to State Preferences, which currently defi
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-State owns aggregate operational records. Individual operations own their detailed records and evidence, while Target and Development remain the authorities for project and product meaning.
+State owns aggregate operational records. Target and Development remain the authorities for project and product meaning, and Plan remains the authority for individual Task records.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principles in this Definition govern State. State Preferences are empty; the State Schema owns record shape, and operations may update only the fields granted to them.
+The Principles in this Definition govern State. State Preferences are empty, and the State Schema owns record shape and initial values.
 
 <br>
 
@@ -102,161 +100,110 @@ Every Principle below is mandatory.
 
 ### State records the active Workflow position
 
-**Rule:** State records the current or most recently entered Workflow mode and the phase being acted on when the operation is phase-specific. Plan, Develop, and Review record the phase currently being handled during multi-phase work; multi-phase Implement coordination records no active phase.
+**Rule:** State records the current or most recently entered Workflow Mode and the Phase being acted on when work is Phase-specific. The active Phase is null when work is not Phase-specific or when coordination spans multiple Phases.
 
 **Why:** Anyone joining the work can immediately see its current operational position.
 
-**Boundary:** Active State is descriptive, not an authorization gate, and never prevents an operation merely because it ran before. A completed operation leaves its most recently recorded Mode in place; it does not reset State to `not set`.
+**Boundary:** Active State is descriptive, not an authorization gate. A completed record leaves its most recently recorded Mode in place; it does not reset State to `not set`.
 
 <br>
 
 ### The Workflow has six modes
 
-**Rule:** State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing`, and `implementing`. The initial mode is `not set`; the active phase is null when work is not phase-specific or when Implement coordinates multiple phases.
+**Rule:** State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing`, and `implementing`. The initial Mode is `not set`; the active Phase is null when work is not Phase-specific or when coordination spans multiple Phases.
 
-**Why:** A stable vocabulary aligns every operation without imposing a one-way lifecycle.
+**Why:** A stable vocabulary makes the recorded project position clear without imposing a one-way lifecycle.
 
-**Boundary:** Launch and Reset update their own Log Entries without inventing additional active modes.
+**Boundary:** Launch and Reset are recorded events; they do not introduce additional active Modes.
 
 <br>
 
 ### Every Target phase has aggregate operational State
 
-**Rule:** State keeps one Phase State for every stable Target phase identifier. Planning and Development use `not started`, `in progress`, `completed`, or `blocked`. Review uses `not started`, `in progress`, `satisfied`, or `not satisfied`; a Review Blocker results in `not satisfied`. Review starts once generated Source is available for the selected phase and establishes its Target, Interface, and Source Understanding. `satisfied` certifies that the reviewed result satisfies the current Plan and applicable authorities, and records the phase's `completed_at` time.
+**Rule:** State keeps one Phase State for every stable Target Phase identifier. Planning and Development use `not started`, `in progress`, `completed`, or `blocked`. Review uses `not started`, `in progress`, `satisfied`, or `not satisfied`; `not satisfied` identifies an unresolved Review result. `satisfied` records the Phase's `completed_at` time.
 
-**Why:** Target stays human-owned while operations can record where every phase stands.
+**Why:** Target stays human-owned while State records where every Phase stands.
 
-**Boundary:** Phase State never copies a phase title, goal, target, readiness, or enabled status. It never duplicates individual Task status, evidence, or history. When Development reopens a completed phase for new or replacement work, it clears `completed_at`.
+**Boundary:** Phase State never copies a Phase title, goal, target, readiness, or enabled status. It never duplicates individual Task status, evidence, or history. New or replacement development work clears `completed_at`.
 
 <br>
 
 ### Phase records reconcile without erasing progress
 
-**Rule:** The operation that owns phase reconciliation creates missing Phase State records from stable Target phase identifiers and preserves existing records. New records begin with every operation at `not started`. A removed Target phase is not silently deleted when its State carries meaningful progress or provenance; the conflict is reported. A record that still contains only initialization defaults may be removed during synchronization.
+**Rule:** State reconciles Phase records from stable Target Phase identifiers and preserves existing records. New records begin with every progress field at `not started`. A removed Target Phase is not silently deleted when its State carries meaningful progress or provenance; that conflict is recorded. A record that still contains only initialization defaults may be removed during reconciliation.
 
 **Why:** Target phases can evolve without making recorded work disappear.
 
-**Boundary:** Synchronization establishes identity only; it does not interpret phase meaning or decide implementability.
+**Boundary:** Reconciliation establishes identity only; it does not interpret Phase meaning or decide implementability.
 
 <br>
 
-### Operations update only their aggregate phase field
+### Phase progress fields change independently
 
-**Rule:** Planning updates Planning progress, Development updates Development progress, and Review updates Review progress for the active phase. Development clears `completed_at` when its work reopens a completed phase. Each records provenance and appends a Log Entry.
+**Rule:** A planning occurrence updates Planning progress, a development occurrence updates Development progress, and a review occurrence updates Review progress for the active Phase. New or replacement development work clears `completed_at` when it reopens a completed Phase.
 
-**Why:** Narrow ownership prevents one operation from overstating another's work.
+**Why:** Independent fields prevent one kind of recorded progress from overstating another.
 
-**Boundary:** One operation's completion never implies another operation's completion.
-
-<br>
-
-### Implement results belong to the Log
-
-**Rule:** Implement records its coordination outcome, selection, child Skill results, and completion condition in one Log Entry's `data`. The active mode and per-phase aggregate fields remain the current State summary.
-
-**Why:** End-to-end orchestration needs one truthful historical result in addition to per-phase progress.
-
-**Boundary:** Disabled, unready, and future phases are never marked complete. A later Target change can make additional phases implementable.
+**Boundary:** Completion of one progress field never implies completion of another.
 
 <br>
 
-### Launch results belong to the Log
+### The Log preserves operational evidence
 
-**Rule:** Launch records `not launched`, `launching`, `launched`, `failed`, or `stopped`, together with the Environment, Launch method, provenance, and verified access points in its Log Entry's `data`.
+**Rule:** State retains one Log Entry for every Skill execution. Common fields are optional and include identity, Skill, parent, Phase, event, outcome, timing, token usage, Open Questions, Blockers, and report. Execution-specific values belong under that Entry's `data`, which may be a nested mapping or list.
 
-**Why:** A successful launch is useful only when people and systems know how to reach it.
+**Why:** Active records show the present while the Log preserves how the project reached it.
 
-**Boundary:** State stores no credentials, shared secrets, or private configuration values.
-
-<br>
-
-### The Log is append-only operational evidence
-
-**Rule:** Every Skill execution appends one Log Entry. Common fields are optional and include identity, Skill, parent, phase, event, outcome, timing, token usage, open questions, blockers, and report. A valid invocation with no applicable phase records that no work was required rather than a Blocker. Skill-specific values belong only under that entry's `data`, which may be a nested mapping or list.
-
-**Why:** Active records show the present while the Log explains how the Workflow reached it.
-
-**Boundary:** The Log never copies Task histories, command transcripts, secrets, or Target content. It may preserve concise Review findings, resolutions, and evidence under Review's `data`; detailed Task history remains in the Plan Config and its Task Logs.
+**Boundary:** The Log never copies Task histories, command transcripts, secrets, or Target content. Detailed Task history remains in the Plan Config and its Task Logs.
 
 <br>
 
-### Workflow operations remain repeatable
+### The Log preserves Blockers and Open Questions
 
-**Rule:** Configure, Plan, Develop, Review, Launch, Implement, and Reset may run again. Each reconciles records it owns, preserves information outside its authority, and appends the new outcome truthfully to the Log.
+**Rule:** State preserves Blockers and Open Questions associated with a Log Entry as part of the project's recorded position. Their execution-specific details belong under that Entry's `data`.
 
-**Why:** Real projects revisit earlier work.
+**Why:** Current problems and unresolved decisions are part of understanding the project's present condition and history.
 
-**Boundary:** An operation may stop for invalid input, an unmet prerequisite, or a genuine Blocker, but never solely because it ran before.
-
-<br>
-
-### Reset reconciles State with what it removes
-
-**Rule:** A confirmed phase Reset returns only selected phase fields to values consistent with outputs that remain, preserves unselected phase State, and appends one Reset Log Entry per selected phase. A confirmed Config or Complete Reset removes State with the other operational Config records.
-
-**Why:** State must not claim removed plans, implementation, review evidence, or runtime still exists.
-
-**Boundary:** Config and Complete Reset remove State Config itself and cannot append to that removed record. Config Reset preserves developed outputs; Complete Reset does not.
-
-<br>
-
-### The Log records critical Blockers
-
-**Rule:** A Log Entry records a Blocker when it identifies what cannot continue, what is missing, why continuation is impossible, who can resolve it, and who raised it. The Blocker remains referenced until verified resolution and authorized reconciliation of current references.
-
-**Why:** A Blocker must identify a real, current stoppage.
-
-**Boundary:** Ordinary ambiguity or a choice professional judgment can safely resolve is not a Blocker.
-
-<br>
-
-### The Log records Open Questions for the Human
-
-**Rule:** A Log Entry records an Open Question with the decision, why it matters, any Blocker it releases, and provenance. A human answer records its value, author, and time under the relevant Log Entry's `data`.
-
-**Why:** Some choices materially change intent and cannot safely be guessed.
-
-**Boundary:** An operation never invents a human answer or raises non-critical uncertainty as an Open Question.
+**Boundary:** State does not define the shape or content of those execution-specific details.
 
 <br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
-Every obligation in the file, under the Principle it comes from.
+The status information State keeps for the project.
 
 **State records the active Workflow position**
 
 - **Must** — record the active Workflow position without making it an authorization gate
 
+**The Workflow has six modes**
+
+- **Must** — use only the six defined Modes for the active project position
+- **Must** — keep Launch and Reset as recorded events, not active Modes
+
 **Every Target phase has aggregate operational State**
 
 - **Must** — keep aggregate Planning, Development, and Review progress by stable phase identifier
 - **Must** — use `blocked` for blocked Planning or Development and `not satisfied` for a blocked Review
-- **Must** — record Review only once generated Source is available and Review establishes Target, Interface, and Source Understanding
-- **Must** — set `completed_at` only when Review is satisfied and clear it when Development reopens the phase
+- **Must** — set `completed_at` when Review is satisfied and clear it for new or replacement development work
 - **Never** — copy Target meaning or individual Task status, evidence, or history into State
 
 **Phase records reconcile without erasing progress**
 
 - **Must** — preserve existing progress while reconciling phase identity
 
-**Implement results belong to the Log**
+**Phase progress fields change independently**
 
-- **Must** — record truthful Implement results and exclude disabled or unready phases from completion
+- **Must** — change only the applicable Planning, Development, or Review field
+- **Never** — infer completion of one progress field from another
 
-**Launch results belong to the Log**
+**The Log preserves operational evidence**
 
-- **Must** — record Launch status and verified access points without secrets
+- **Must** — retain one concise Log Entry for every Skill execution
+- **Must** — keep execution-specific information only in `data`
+- **Never** — copy Task histories, transcripts, secrets, or Target content into the Log
 
-**The Log is append-only operational evidence**
+**The Log preserves Blockers and Open Questions**
 
-- **Must** — append one concise Log Entry for every Skill execution
-
-**Workflow operations remain repeatable**
-
-- **Must** — keep operations repeatable and make confirmed Reset outcomes agree with State
-
-**The Log records critical Blockers**
-
-- **Must** — reserve Blockers and Open Questions for genuine critical conditions
+- **Must** — retain their presence as part of the project's recorded position

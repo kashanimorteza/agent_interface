@@ -10,8 +10,21 @@ operational_scope:
 
 initialization:
   source: "initial"
-  purpose: "Create the Application Manifest Config from this template, then reconcile public Component metadata on every Configure run."
+  purpose: "Supply the Application Manifest's initial specialized content; Configure composes the generated file with the general YAML Schema."
   preservation: "Reconciliation preserves valid public metadata and reports conflicts rather than silently discarding meaningful information."
+generation:
+  purpose: "File-specific values Configure supplies while applying the general YAML file structure."
+  path: ".interface/config/application.yaml"
+  path_note: "Shared Application Manifest public Component metadata."
+  agent_may_edit: true
+  policy_rule: "Apply the current Application Schema and the owning Component's public-metadata authority."
+  resolution:
+    consumption: "Read public metadata by canonical Component identifier."
+    selection: "Select the section whose key is the Component being described."
+    absence: "An empty section means that its owner has published no public metadata."
+  read_order: ["components"]
+  content_map:
+    components: "Public metadata for each declared Implementation Component."
 
 structure:
   - "components"
@@ -44,34 +57,19 @@ sections:
       state: {required: true, default: {}}
 
 initial:
-  meta:
-    path: ".interface/config/application.yaml"
-    path_note: "Shared Application Manifest public Component metadata."
-  policy:
-    agent_may_edit: true
-    rule: "Apply the current Application Schema and the owning Component's public-metadata authority."
-  resolution:
-    consumption: "Read public metadata by canonical Component identifier."
-    selection: "Select the section whose key is the Component being described."
-    absence: "An empty section means that its owner has published no public metadata."
-  read_order:
-    - "components"
-  content_map:
-    components: "Public metadata for each declared Implementation Component."
-  content:
-    components:
-      development: {}
-      model: {}
-      database: {}
-      logic: {}
-      api: {}
-      presentation: {}
-      platform: {}
-      configure: {}
-      plan: {}
-      develop: {}
-      review: {}
-      implement: {}
-      launch: {}
-      reset: {}
-      state: {}
+  components:
+    development: {}
+    model: {}
+    database: {}
+    logic: {}
+    api: {}
+    presentation: {}
+    platform: {}
+    configure: {}
+    plan: {}
+    develop: {}
+    review: {}
+    implement: {}
+    launch: {}
+    reset: {}
+    state: {}

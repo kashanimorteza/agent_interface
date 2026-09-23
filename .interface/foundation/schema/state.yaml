@@ -1,13 +1,13 @@
 schema:
   id: "agent-interface-state"
-  version: "12.9"
+  version: "13.0"
   purpose: "Operational State format; State Principles define record meaning and ownership."
 operational_scope:
-  stores: "Active Workflow position, aggregate phase progress, and append-only Skill execution log."
+  stores: "Active Workflow position, aggregate Phase progress, and the project's recorded execution history."
   excludes: "Target meaning, technical decisions, individual Task status or history, product code, secrets, and command transcripts."
 initialization:
   source: "initial"
-  purpose: "Create State Config from this template; phase identities are populated later by the operation that owns phase reconciliation."
+  purpose: "Supply initial specialized State content. The generated Config file places this content inside the general YAML file structure. Phase identities are populated during Phase reconciliation."
   preservation: "Reconciliation preserves existing operational records and never replaces them with defaults."
 structure: ["active", "phases", "log"]
 sections:
@@ -53,17 +53,17 @@ sections:
   log:
     required: true
     default: []
-    purpose: "Append-only records of Skill executions and State-changing Workflow events."
+    purpose: "The project's preserved history of recorded Skill executions and their outcomes."
     item:
       fields:
         id: {required: false, default: "", purpose: "The stable identifier of this Log Entry when one is assigned."}
         skill: {required: false, default: "", purpose: "The Skill that performed this recorded action when one is assigned."}
         parent_id: {required: false, default: "", purpose: "The identifier of the Skill or coordinator that invoked this record when applicable."}
-        phase: {required: false, default: null, nullable: true}
-        event: {required: false, default: ""}
-        outcome: {required: false, default: ""}
-        started_at: {required: false, default: null, nullable: true}
-        completed_at: {required: false, default: null, nullable: true}
+        phase: {required: false, default: null, nullable: true, purpose: "The stable Target Phase identifier when this execution concerns one Phase."}
+        event: {required: false, default: "", purpose: "The concise name of the recorded execution event."}
+        outcome: {required: false, default: "", purpose: "The current or final recorded result of this execution."}
+        started_at: {required: false, default: null, nullable: true, purpose: "The time this execution started when known."}
+        completed_at: {required: false, default: null, nullable: true, purpose: "The time this execution ended when known."}
         duration_ms: {required: false, default: null, nullable: true, purpose: "Elapsed execution time in milliseconds when it can be measured."}
         token_usage:
           required: false
@@ -76,7 +76,7 @@ sections:
         skills_used:
           required: false
           default: []
-          purpose: "The Skills actually used by this operation."
+          purpose: "The Skills actually used during this recorded execution."
           item:
             name: {required: false, default: ""}
             duration_ms: {required: false, default: null, nullable: true}
@@ -88,34 +88,18 @@ sections:
                 output: {required: false, default: null, nullable: true}
                 total: {required: false, default: null, nullable: true}
             report: {required: false, default: ""}
-        open_questions: {required: false, default: [], purpose: "Open Question identifiers created, read, or affected by this record when applicable."}
-        blockers: {required: false, default: [], purpose: "Blocker identifiers created, read, or affected by this record when applicable."}
-        report: {required: false, default: "", purpose: "A concise explanation of what this record did and what a later Skill should know."}
+        open_questions: {required: false, default: [], purpose: "References to Open Questions associated with this recorded execution when applicable."}
+        blockers: {required: false, default: [], purpose: "References to Blockers associated with this recorded execution when applicable."}
+        report: {required: false, default: "", purpose: "A concise report of this recorded execution and its outcome."}
         data:
           required: false
-          purpose: "An optional Skill-owned YAML value for information specific to this record. It may be a nested mapping or list and has no shared fixed fields."
+          purpose: "An optional execution-specific YAML value. It may be a nested mapping or list and has no shared fixed fields."
 initial:
-  meta:
-    path: ".interface/config/state.yaml"
-    path_note: "Mutable Workflow position, aggregate progress, and append-only Skill execution log."
-  policy:
-    agent_may_edit: true
-    rule: "Apply the current State Component and the active operation's ownership rules."
-  resolution:
-    consumption: "Read active, then the selected phase record when applicable, then relevant append-only Log Entries."
-    selection: "A phase resolves by its stable Target phase identifier; a historical event resolves by its Log Entry identifier and, when relevant, its phase or parent identifier."
-    absence: "No matching phase record means that operational State has not yet been reconciled for that phase; no matching Log Entry means no such recorded execution exists."
-  read_order: ["active", "phases", "log"]
-  content_map:
-    active: "Current or most recently recorded Workflow position."
-    phases: "Aggregate Planning, Development, and Review progress by phase identifier."
-    log: "Append-only Skill execution and State-changing Workflow events."
-  content:
-    active:
-      mode: "not set"
-      phase: null
-      mode_reason: "No Workflow operation has been recorded."
-      set_by: "initialization"
-      set_at: null
-    phases: {}
-    log: []
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases: {}
+  log: []

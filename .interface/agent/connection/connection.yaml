@@ -51,7 +51,6 @@ content:
           - pydantic-ai@claude-plugins-official
           - document-skills@anthropic-agent-skills
           - adhd-output-style@claude-settings
-          - claude-md-management@claude-plugins-official
           - superpowers@claude-plugins-official
           - andrej-karpathy-skills@karpathy-skills
           - pydantic@pydantic-skills
@@ -135,7 +134,7 @@ content:
               desired_state: enabled
             claude-md-management:
               id: claude-md-management@claude-plugins-official
-              desired_state: enabled
+              desired_state: disabled
             superpowers:
               id: superpowers@claude-plugins-official
               desired_state: enabled

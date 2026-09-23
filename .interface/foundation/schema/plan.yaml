@@ -1,15 +1,29 @@
 schema:
   id: "agent-interface-plan"
   version: "8.5"
-  purpose: "Operational Plan file structure. Sections describe stored content; initial is the empty configuration template. Planning fills actual Plans, Groups, and Tasks using the Plan Component."
+  purpose: "Operational Plan file structure. Sections describe stored content; initial is the empty specialized content. Planning fills actual Plans, Groups, and Tasks using the Plan Component."
 initialization:
   source: "initial"
-  purpose: "Create the initial Config by copying this complete template. No project facts or project interpretation are needed."
+  purpose: "Supply the initial specialized Plan content. Configure combines it with the general YAML Schema; no project facts or project interpretation are needed."
   defaults: "Every section and field declares a default. Fixed required objects expand their child defaults; empty collections stay empty."
   collections: "Keys enclosed in angle brackets describe future records. Do not create placeholder Plans, Groups, or Tasks during initialization."
   optional_fields: "Optional fields remain absent until applicable. A null default on an optional field means no value is recorded."
   drafts: "Empty strings and zero order values are unfilled record defaults. Before storing usable planning work, the owning operation supplies real identifiers, required descriptive content, and valid phase order."
   preservation: "Initialization does not overwrite an existing Config file or reset its operational data."
+generation:
+  purpose: "File-specific values Configure supplies while applying the general YAML file structure."
+  path: ".interface/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+  agent_may_edit: true
+  policy_rule: "Apply the current Plan Component and the active operation's ownership rules."
+  resolution:
+    consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
+    selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
+    absence: "No matching Plan means no current planning record exists for that phase."
+  read_order: ["task_count", "plans"]
+  content_map:
+    task_count: "Total number of stored Tasks."
+    plans: "Current phase Plans and their Groups and Tasks."
 operational_scope:
   purpose: "This file records the current state of the project's work. It is an operational record, not a description of the project."
   stores: "Which work exists, what each activity must produce, what it depends on, where it stands, and what has happened to it."
@@ -199,22 +213,5 @@ definitions:
     done: "Acceptance proven by verification."
     replaced: "No longer executable because a newer Task identifies it through that Task's replaces field."
 initial:
-  meta:
-    path: ".interface/config/plan.yaml"
-    path_note: "Mutable Plans, Groups, Tasks, counts and progress."
-  policy:
-    agent_may_edit: true
-    rule: "Apply the current Plan Component and the active operation's ownership rules."
-  resolution:
-    consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
-    selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
-    absence: "No matching Plan means no current planning record exists for that phase."
-  read_order:
-    - "task_count"
-    - "plans"
-  content_map:
-    task_count: "Total number of stored Tasks."
-    plans: "Current phase Plans and their Groups and Tasks."
-  content:
-    task_count: 0
-    plans: {}
+  task_count: 0
+  plans: {}

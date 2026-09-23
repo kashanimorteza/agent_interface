@@ -12,7 +12,7 @@ A simple, precise configurator for bounded installation and file-generation work
 
 ## File Generation
 
-Each specialized Config Schema defines only its own record: Application, Plan, or State. When generating a Config file, this Skill applies that specialized Schema inside the general YAML file structure defined by `.interface/foundation/schema/yaml.yaml`. A generated file must conform to both layers.
+Each specialized Config Schema defines only its own record and file-specific generation parameters: Application, Plan, or State. When generating a Config file, this Skill reads the general YAML file structure from `.interface/foundation/schema/yaml.yaml` separately and composes it with the specialized Schema. A generated file must conform to both layers; specialized Schemas never copy the general YAML structure.
 
 - Application: `.interface/foundation/schema/application.yaml`
 - Plan: `.interface/foundation/schema/plan.yaml`
@@ -25,6 +25,10 @@ An invocation request.
 ## Invocation
 
 This Skill may be invoked directly by a Human or by an Agent.
+
+## Execution Log
+
+At the start of every execution, create one Log Entry in State for that execution, including its ID, Skill, and `started_at`. At completion, update that same Log Entry with `completed_at`, `duration_ms`, outcome, report, and any applicable data, Open Questions, or Blockers. If execution stops or is blocked, update the same entry with the actual outcome and reason. Recording this entry does not require State analysis.
 
 ## Outputs
 
