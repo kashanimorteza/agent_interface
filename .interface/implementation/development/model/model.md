@@ -192,7 +192,7 @@ Every Principle below is mandatory.
 
 ### Model declares every definition in one standard, technology-independent vocabulary
 
-**Rule:** Model expresses every Domain Definition in one technology-independent vocabulary: logical type, declared length and precision, nullability, default, identity, generated identity, uniqueness, and single-field or composite constraints. The Model Declaration Schema fixes the vocabulary's meanings. The same Domain Definition carries the vocabulary used by application code; Database and Logic read it through the Public Interface, and each realization maps it to its technology. Model preserves required, nullable, defaulted, generated, and absence semantics, invents none, and defines no partial-update behavior.
+**Rule:** Model expresses every Domain Definition in one technology-independent vocabulary: its meaning, kind, abstractness, logical type, cardinality, declared length and precision, nullability, default, identity, generated identity, uniqueness, ordering, distinctness, derivation, single-field or composite constraints, intrinsic rules, relationships, aggregation, inverse relationships, generalizations, and enumeration literals when declared. The Model Declaration Schema fixes the vocabulary's meanings. The same Domain Definition carries the vocabulary used by application code; Database and Logic read it through the Public Interface, and each realization maps it to its technology. Model preserves required, nullable, defaulted, generated, and absence semantics, invents none, and defines no partial-update behavior.
 
 **Why:** One technology-independent vocabulary preserves shared meaning and Target-declared presence semantics.
 
@@ -202,7 +202,7 @@ Every Principle below is mandatory.
 
 ### A Domain Relationship carries the definition it refers to
 
-**Rule:** Every Domain Relationship carries the referenced Domain Definition itself and declares its cardinality and optionality from the Target. It is resolved when declared, never through a later name lookup; technology independence does not justify an untyped reference, and the realization carries the definition where it can.
+**Rule:** Every Domain Relationship carries the referenced Domain Definition itself and declares its cardinality, optionality, ordering, distinctness, aggregation, and inverse relationship when the Target declares them. It is resolved when declared, never through a later name lookup; technology independence does not justify an untyped reference, and the realization carries the definition where it can.
 
 **Why:** Carrying the definition makes relationships verifiable where they are declared.
 

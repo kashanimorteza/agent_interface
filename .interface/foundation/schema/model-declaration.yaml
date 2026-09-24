@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-model-declaration"
-  version: "1.0"
+  version: "1.2"
   purpose: "The technology-independent vocabulary carried by every Model Domain Definition."
 
 vocabulary:
@@ -12,6 +12,16 @@ vocabulary:
       name:
         required: true
         purpose: "The Target-derived domain name of the definition."
+      description:
+        required: true
+        purpose: "The Target-derived meaning and responsibility of the Domain Definition."
+      kind:
+        required: true
+        allowed: ["entity", "value-object", "enumeration"]
+        purpose: "The Target-derived kind of Domain Definition."
+      abstract:
+        required: false
+        purpose: "Whether the Domain Definition is an abstract generalization that is not instantiated directly."
       persistent:
         required: true
         allowed: ["persistent", "non-persistent"]
@@ -22,18 +32,33 @@ vocabulary:
       relationships:
         required: true
         purpose: "The complete Target-derived set of Domain Relationships."
+      intrinsic_rules:
+        required: true
+        purpose: "The complete Target-derived rules and derived behavior that apply to this definition as a whole."
       composite_constraints:
         required: false
         purpose: "Constraints whose meaning applies to more than one Field of this Domain Definition."
+      generalizations:
+        required: false
+        purpose: "The Target-derived Domain Definitions this definition specializes, when it has any."
+      literals:
+        required: false
+        purpose: "The complete set of values when this Domain Definition is an enumeration."
 
   field:
     required_fields:
       name:
         required: true
         purpose: "The Target-derived identity of the Field."
+      description:
+        required: true
+        purpose: "The Target-derived meaning of the Field."
       logical_type:
         required: true
         purpose: "The technology-independent logical type of the Field."
+      cardinality:
+        required: true
+        purpose: "The number of values the Field may hold, expressed as a technology-independent multiplicity."
       nullable:
         required: true
         purpose: "Whether the Field may hold an explicit null value."
@@ -58,6 +83,18 @@ vocabulary:
       unique:
         required: false
         purpose: "Whether the Field is individually unique when declared."
+      ordered:
+        required: false
+        purpose: "Whether the values of a multi-valued Field have a Target-defined order."
+      distinct:
+        required: false
+        purpose: "Whether the values of a multi-valued Field must be distinct."
+      derived:
+        required: false
+        purpose: "Whether the Field is derived from other declared Model data rather than independently supplied."
+      derivation:
+        required: false
+        purpose: "The Target-derived, technology-independent statement of how a derived Field is determined."
       constraints:
         required: false
         purpose: "Single-Field constraints declared by the Target."
@@ -70,6 +107,9 @@ vocabulary:
       name:
         required: true
         purpose: "The Target-derived identity of the Domain Relationship."
+      description:
+        required: true
+        purpose: "The Target-derived meaning of the Domain Relationship."
       definition:
         required: true
         purpose: "The referenced Domain Definition itself, not only a name."
@@ -79,8 +119,55 @@ vocabulary:
       optional:
         required: true
         purpose: "Whether the relationship is optional under the Target."
+      aggregation:
+        required: false
+        allowed: ["none", "shared", "composite"]
+        purpose: "The Target-derived whole-part ownership meaning of the relationship when it has one."
+      inverse:
+        required: false
+        purpose: "The corresponding relationship on the referenced Domain Definition when the Target declares one."
+      ordered:
+        required: false
+        purpose: "Whether related values have a Target-defined order."
+      distinct:
+        required: false
+        purpose: "Whether related values must be distinct."
+
+  constraint:
+    required_fields:
+      id:
+        required: true
+        purpose: "The stable identity of the declared constraint."
+      description:
+        required: true
+        purpose: "The Target-derived condition the constraint expresses."
+
+  intrinsic_rule:
+    required_fields:
+      id:
+        required: true
+        purpose: "The stable identity of the declared intrinsic rule."
+      description:
+        required: true
+        purpose: "The Target-derived deterministic rule or behavior of the Domain Definition."
+
+  enumeration_literal:
+    required_fields:
+      name:
+        required: true
+        purpose: "The Target-derived identity of the enumeration value."
+      description:
+        required: true
+        purpose: "The Target-derived meaning of the enumeration value."
 
 rules:
   target_meaning: "The vocabulary carries Target meaning and never invents a Field, relationship, default, generated value, or absence state."
   technology_independence: "Vocabulary values remain independent of language, package, database, engine, and runtime."
-  completeness: "A Domain Definition carries its complete Target-derived Fields, relationships, and declared composite constraints."
+  multiplicity: "Cardinality uses a lower and upper bound such as `1`, `0..1`, `0..*`, or `1..*`; nullability is separate from cardinality."
+  derivation_integrity: "A derived Field declares its derivation, and a derivation is declared only for a derived Field."
+  constraint_integrity: "Single-Field and composite constraints use Constraint records with identifiers unique within their Domain Definition."
+  relationship_integrity: "A Relationship references an existing Domain Definition. When an inverse is declared, it identifies the corresponding Relationship on that Definition and both ends agree in meaning."
+  generalization_integrity: "A Generalization references an existing Domain Definition, never references itself, and forms no cycle."
+  kind_integrity: "An enumeration declares its complete literals and carries no Field, Relationship, or Generalization entries. An entity or value-object declares its complete Fields and Relationships; an abstract Definition is not instantiated directly."
+  literal_integrity: "Enumeration literal names are unique within their Domain Definition."
+  completeness: "A Domain Definition carries its complete Target-derived meaning, kind, Fields, Relationships, Intrinsic Rules, declared constraints, generalizations, and enumeration literals when applicable."
