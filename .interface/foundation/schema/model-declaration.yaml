@@ -1,14 +1,11 @@
 schema:
   id: "agent-interface-model-declaration"
-  version: "1.3"
+  version: "1.4"
   purpose: "The technology-independent vocabulary carried by every independent Model Domain Definition."
 
 vocabulary:
   definition:
     required_fields:
-      id:
-        required: true
-        purpose: "The stable, domain-oriented identity of the Domain Definition."
       name:
         required: true
         purpose: "The Target-derived domain name of the Definition."
@@ -19,10 +16,6 @@ vocabulary:
         required: true
         allowed: ["entity", "value-object", "enumeration"]
         purpose: "The Target-derived kind of Domain Definition."
-      public:
-        required: true
-        allowed: [true, false]
-        purpose: "Whether the Definition is published through the Public Interface and Public Registry."
       fields:
         required: false
         purpose: "The complete Field set owned by an entity or value-object Definition."
@@ -43,8 +36,7 @@ vocabulary:
         purpose: "The Target-derived meaning of the Field."
       logical_type:
         required: true
-        allowed: ["text", "integer", "decimal", "boolean", "date", "datetime"]
-        purpose: "The technology-independent logical type of the Field."
+        purpose: "The technology-independent logical type appropriate to the Field."
       nullable:
         required: true
         purpose: "Whether the Field may hold an explicit null value."
@@ -104,10 +96,10 @@ rules:
   target_meaning: "The vocabulary carries Target meaning and never invents a Definition, Field, constraint, default, or sensitivity classification."
   technology_independence: "Vocabulary values remain independent of language, package, database, engine, and runtime."
   descriptions: "Every Domain Definition and Field has a description."
-  public_surface: "Only a Definition declared public is listed in the Public Registry; its id is the stable public identity used by consumers."
   default_integrity: "A default applies only when construction receives no value for the Field; it does not override a supplied value."
+  identity_integrity: "An identity Field is declared only by an entity Definition."
   constraint_integrity: "Constraints and Intrinsic Rules use identifiers unique within their Domain Definition."
   flat_independence: "Every Definition is self-contained, flat, and independently understandable. Fields describe values belonging to that Definition alone."
   kind_integrity: "An enumeration declares its complete literals and has no Fields. An entity or value-object declares its complete Fields and has no literals."
   literal_integrity: "Enumeration literal names are unique within their Domain Definition."
-  completeness: "A Domain Definition carries its complete Target-derived meaning, kind, public status, Fields, Intrinsic Rules, constraints, and enumeration literals when applicable."
+  completeness: "A Domain Definition carries its complete Target-derived meaning, kind, Fields, Intrinsic Rules, constraints, and enumeration literals when applicable."

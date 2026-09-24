@@ -2,9 +2,9 @@
 meta:
   path: ".interface/implementation/development/model/model.yaml"
   path_note: "The Preferences layer of the Model Component."
-  purpose: "Configurable defaults, layout, Schema references, verification, and technical implementation choices for Model."
+  purpose: "Configurable configuration, layout, verification, and technical implementation choices for Model."
   standard: "Agent Project Interface"
-  version: "12.4"
+  version: "12.5"
   updated: "2026-09-24"
 
 
@@ -18,7 +18,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Model's configurable defaults, layout, Schema reference, and verification; then read development for Model's type, language, platform, and technical defaults. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
+  consumption: "Read settings for Model's configuration, configurable defaults, layout, and verification; then read development for Model's type, language, platform, and technical defaults. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
   version_resolution: "development resolves every versioned technical item assigned to Model."
   matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates, removes, or renames Target meaning."
@@ -32,7 +32,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "The Model Declaration Schema reference, layer-directory defaults, public identity shape, casing, and verification checks."
+  settings: "The Model Declaration Schema configuration, layer-directory defaults, casing, and verification checks."
   development: "Model type, language, platform, and the selected Pydantic implementation defaults."
 
 
@@ -42,9 +42,9 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
 
-    # ---- Declaration Vocabulary ----
-    declaration_vocabulary:
-      structure: ".interface/foundation/schema/model-declaration.yaml"
+    # ---- Configuration ----
+    configuration:
+      model_declaration_schema: ".interface/foundation/schema/model-declaration.yaml"
     
     # ---- Layout ----
     layout:
@@ -52,17 +52,15 @@ content:
         public_interface: "public_interface"
         definitions: "Entity"
         supporting_content: "supporting"
-      public_identity_shape: "A published Definition retains its domain-oriented id as its stable public identity. The Public Registry exposes that id, its kind, and its description; the selected language decides the concrete import form."
       casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as development.languages states it."
 
     # ---- Verification ----
     verification:
       checks:
         - "public interface"
-        - "public registry"
         - "direct construction and JSON conversion"
         - "declaration vocabulary publishing"
-        - "definition separation: one independent Domain Definition per unit, Model Foundation in its own, only explicitly public Definitions reachable through the public entry point"
+        - "definition separation: one independent Domain Definition per unit and Model Foundation in its own"
 
   # <!-------------------------------------------- development -->
   development:
@@ -82,10 +80,9 @@ content:
             structure:
               field_declaration: "Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not."
               reusable_domain_type: "Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field."
-              model_config: "ConfigDict(validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity."
+              model_config: "ConfigDict(validate_assignment=True, validate_default=True); add frozen=True where the concept is a value rather than an entity."
               single_field_rule: "@field_validator"
               cross_field_rule: "@model_validator(mode='after')"
-              non_model_validation: "TypeAdapter, for validating a type that is not a BaseModel"
               validator_order: "Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance."
             api:
               base_model: "pydantic.BaseModel"
