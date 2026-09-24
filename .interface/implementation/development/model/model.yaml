@@ -81,7 +81,8 @@ content:
     # ---- Layout ----
     layout:
       purpose: "How the separation required by the Principle “Each Domain Definition stands in its own module” is realized in the selected technology. The Principle fixes the separation; this group fixes its shape."
-      domain_definition: "One file per Domain Definition, holding that definition and what belongs to it alone, named for the definition in the selected language's own naming standard."
+      entity_directory: "Entity"
+      domain_definition: "One file per Domain Definition, holding that definition and what belongs to it alone, inside the configured Entity directory and named for the definition in the selected language's own naming standard."
       model_foundation: "Its own file, separate from every Domain Definition."
       public_interface: "One public entry point publishes every Domain Definition under its own identity, so a consumer imports the definition rather than the file it was declared in."
       supporting_content: "A helper, constant, or type used by exactly one Domain Definition lives with it; anything used by more than one belongs to Model Foundation."

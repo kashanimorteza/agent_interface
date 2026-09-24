@@ -594,7 +594,7 @@ title = Model
 target = Model
 is_active = Enabled
 readiness = Ready
-goal = Implement the independent Model layer and its reusable package from the defined models, fields, relationships, rules, and initial data.
+goal = Implement the independent Model layer and its reusable package from the defined models, fields, relationships, and rules.
 ```
 
 <!-------------------------- Phase 2 -->

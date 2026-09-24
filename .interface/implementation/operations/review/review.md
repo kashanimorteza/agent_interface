@@ -34,7 +34,7 @@ Review first records what it finds, then resolves the findings it is authorized 
 
 ### How It Works
 
-Review accepts one or more Target phase identifiers, or considers every phase when none is selected. For each phase, it establishes current Target Understanding, Interface Understanding, and Source Understanding within that phase's scope. Once generated Source is available, it reads the current Plan and examines the generated Source, Public Interface, implemented result, and evidence against that Plan and the current authorities. It writes one Log Entry for every review pass, records its Findings in `data`, resolves what it can, and starts another pass until no Finding remains or a Blocker prevents continuation.
+Review accepts one or more Target phase identifiers, or considers every phase when none is selected. For each phase, it establishes current Target Understanding, Interface Understanding, and Source Understanding within that phase's scope. Once generated Source is available, it reads the current Plan and examines the generated Source, Public Interface, implemented result, and evidence against that Plan and the current authorities. Each Review execution uses one Log Entry: it records Findings in `data` and updates those same Findings when it resolves them. A later independent Review execution creates its own Log Entry.
 
 Review stops when the required result or evidence is unavailable, an authority cannot be established, or an unresolved condition prevents assurance.
 
@@ -94,7 +94,7 @@ Every Principle below is mandatory.
 
 ### Review records, resolves, and rechecks its findings
 
-**Rule:** When Review begins, it records the active Workflow position as `reviewing`. Every Review pass first records its Findings, then resolves each Finding that Review is authorized and able to resolve. It records the resolution in a new Log Entry and runs another independent pass. A Finding that cannot be resolved is recorded in `open_questions` or `blockers` and stops the cycle.
+**Rule:** When Review begins, it records the active Workflow position as `reviewing`. It first records its Findings in its Log Entry, then updates those same Finding records when it resolves them. A Finding that cannot be resolved is recorded in `open_questions` or `blockers` and stops the cycle. A later independent Review execution records its work in a new Log Entry.
 
 **Why:** Recording the Finding before resolving it preserves the original observation while allowing Review to close the loop and verify the result.
 
@@ -134,7 +134,7 @@ Every Principle below is mandatory.
 
 ### A Finding outlives the session that raised it
 
-**Rule:** Every Finding is stored in the Review Skill's State Log `data`, and remains traceable through the pass that raised it and any later pass that resolved it or left it open. Its state is part of the Log Entry data.
+**Rule:** Every Finding is stored in the Review Skill's State Log `data`, and remains traceable through the Entry that raised it, resolved it, or left it open. Its state is part of that Entry's data.
 
 **Why:** A finding reported only in conversation is gone when the session ends, and the next run has no way to know it was ever raised. A stored finding is the only thing that makes the second review of a phase worth more than the first.
 
@@ -156,7 +156,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Review records, resolves, and rechecks its findings**
 
-- **Must** — record Findings before resolving them, record each resolution, and perform another pass after each resolution
+- **Must** — record Findings before resolving them and update the same Finding records with each resolution
 - **Must** — record the active Workflow position as `reviewing` when Review begins
 - **Never** — Review writes Plan content, changes Target, or changes Task progress
 

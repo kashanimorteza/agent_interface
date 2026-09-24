@@ -23,7 +23,7 @@ Model is the Development Component that owns the logical domain definitions and 
 
 ### Overview
 
-Model defines the Target's authoritative domain meaning through reusable Domain Definitions. It owns identity, Fields, relationships, defaults, constraints, and behavior determinable from each definition's own data, and publishes them through one Public Interface.
+Model defines the Target's authoritative domain meaning through reusable Domain Definitions. It owns identity, Fields, relationships, defaults, constraints, and behavior determinable from each definition's own data, organizes each definition in the configured Entity directory, and publishes them through one Public Interface.
 
 ### Purpose
 
@@ -37,6 +37,7 @@ A Domain Definition authoritatively carries one Target concept's Fields, relatio
 ## Terms
 
 - **Domain Definition** — the authoritative logical definition of one meaningful concept in the Target's domain.
+- **Entity Directory** — the configurable Model directory that contains one separate module for each Domain Definition.
 - **Field** — one named property of a Domain Definition, with its domain meaning and applicable constraints.
 - **Model Foundation** — the technology-independent common foundation through which concrete Model realizations receive shared mechanisms without inheriting domain Fields or relationships.
 - **Intrinsic Rule** — a domain rule that can be evaluated entirely from the data of the Domain Definition it governs.
@@ -52,13 +53,14 @@ A Domain Definition authoritatively carries one Target concept's Fields, relatio
 
 ```text
 Model
-├── Domain Definition          ← one authoritative definition per domain concept
+├── Entity Directory           ← one separate module per Domain Definition
+│   └── Domain Definition      ← one authoritative definition per domain concept
 ├── Declaration Vocabulary     ← the one language every definition is stated in
 ├── Model Foundation           ← the mechanisms every definition shares
 └── Public Interface           ← the only surface a consumer reaches
 ```
 
-**Domain Definition** holds one Target concept, its Fields, relationships, and Intrinsic Rules in its own module.
+**Entity Directory** contains one separate module for each **Domain Definition**, which holds one Target concept, its Fields, relationships, and Intrinsic Rules.
 
 **Declaration Vocabulary** defines the shared technology-independent vocabulary.
 
@@ -238,11 +240,11 @@ instance      -> serialize   -> { field: value, ... }
 
 ### Each Domain Definition stands in its own module
 
-**Rule:** Every Domain Definition is declared in its own module with only what belongs to it. Modules never gather several definitions, and the Public Interface publishes each under an unambiguous identity independent of its module.
+**Rule:** Every Domain Definition is declared in its own module with only what belongs to it. Those modules live in the configured Entity Directory, never gather several definitions, and are published by the Public Interface under an unambiguous identity independent of their modules.
 
 **Why:** One definition per module keeps domain boundaries visible and independently changeable.
 
-**Boundary:** Preferences define module layout, while shared mechanisms remain in Model Foundation.
+**Boundary:** Preferences name the Entity Directory and define module layout, while shared mechanisms remain in Model Foundation.
 
 <br>
 
@@ -336,6 +338,6 @@ Every obligation in the file, under the Principle it comes from.
 
 **Each Domain Definition stands in its own module**
 
-- **Must** — Declare every Domain Definition in a module of its own, carrying that definition and what belongs to it alone.
+- **Must** — Declare every Domain Definition in a module of its own inside the configured Entity Directory, carrying that definition and what belongs to it alone.
 - **Never** — Gather several Domain Definitions into one module.
 - **Must** — Publish each Domain Definition through the Public Interface under its own identity, independent of the module it was declared in.

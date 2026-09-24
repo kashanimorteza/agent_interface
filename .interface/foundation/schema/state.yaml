@@ -56,7 +56,10 @@ sections:
     purpose: "The project's preserved history of recorded Skill executions and their outcomes."
     item:
       fields:
-        id: {required: false, default: "", purpose: "The stable identifier of this Log Entry when one is assigned."}
+        id:
+          required: false
+          default: ""
+          purpose: "The project-wide sequential identifier of this Log Entry, zero-padded to at least three digits (001, 002, …)."
         skill: {required: false, default: "", purpose: "The Skill that performed this recorded action when one is assigned."}
         parent_id: {required: false, default: "", purpose: "The identifier of the Skill or coordinator that invoked this record when applicable."}
         phase: {required: false, default: null, nullable: true, purpose: "The stable Target Phase identifier when this execution concerns one Phase."}

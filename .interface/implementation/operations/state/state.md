@@ -61,7 +61,7 @@ State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing
 
 - **Active State** — the current or most recently recorded Workflow Mode, its Phase when applicable, and its recorded provenance.
 - **Phase State** — aggregate Planning, Development, and Review progress for one stable Target phase identifier, plus its completion time once Development is completed and Review is satisfied.
-- **Log Entry** — one record of a Skill execution. It holds known start information while work is in progress, then its completion time, duration, outcome, report, and applicable execution data when work ends.
+- **Log Entry** — one record of a Skill execution. Its project-wide identifier is a sequential, zero-padded number (`001`, `002`, …); it holds known start information while work is in progress, then its completion time, duration, outcome, report, and applicable execution data when work ends.
 - **Workflow Mode** — the current or most recently recorded operational position of the project.
 - **Blocker** — a condition that genuinely prevents safe or valid continuation.
 - **Open Question** — a critical decision that cannot safely be made without a human.
@@ -150,7 +150,7 @@ Every Principle below is mandatory.
 
 ### The Log preserves operational evidence
 
-**Rule:** State retains one Log Entry for every Skill execution. Common fields are optional and include identity, Skill, parent, Phase, event, outcome, timing, token usage, Open Questions, Blockers, and report. Execution-specific values belong under that Entry's `data`, which may be a nested mapping or list.
+**Rule:** State retains one Log Entry for every Skill execution. Its `id` is the next project-wide sequential number, zero-padded to at least three digits (`001`, `002`, …); the Skill and timestamps remain separate fields. Common fields are optional and include identity, Skill, parent, Phase, event, outcome, timing, token usage, Open Questions, Blockers, and report. Execution-specific values belong under that Entry's `data`, which may be a nested mapping or list.
 
 **Why:** Active records show the present while the Log preserves how the project reached it.
 
@@ -201,6 +201,7 @@ The status information State keeps for the project.
 **The Log preserves operational evidence**
 
 - **Must** — retain one concise Log Entry for every Skill execution
+- **Must** — assign each Log Entry the next project-wide sequential, zero-padded identifier
 - **Must** — keep execution-specific information only in `data`
 - **Never** — copy Task histories, transcripts, secrets, or Target content into the Log
 
