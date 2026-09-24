@@ -1,0 +1,95 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable operational State: active Workflow position, aggregate phase progress, and the execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema and State Component; preserve existing operational records and never replace them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the phase records keyed by stable Target phase identifier, then the log."
+  selection: "A requested phase resolves to the record keyed by that phase identifier; a Log Entry resolves by its id."
+  absence: "No matching phase record means the phase has no recorded State; an empty log means no Skill execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current or most recently recorded Workflow Mode, its phase, and its provenance."
+  phases: "Aggregate Planning, Development, and Review progress for each stable Target phase."
+  log: "Preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases:
+    P1:
+      id: "P1"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P7:
+      id: "P7"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-24T12:33:06Z"
+      completed_at: "2026-09-24T12:33:27Z"
+      duration_ms: 21000
+      duration: "21 seconds"
+      token_usage: {input: null, output: null, total: null}
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Generated Application, Plan, and State Config records from their Schemas composed with the general YAML frame; all three conform. State phase records P1-P7 created at initial values."
