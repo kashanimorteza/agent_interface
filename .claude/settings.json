@@ -82,5 +82,64 @@
     }
   },
   "outputStyle": "adhd-output-style:ADHD Explanatory",
-  "autoMemoryEnabled": false
+  "autoMemoryEnabled": false,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Glob|Grep|Edit|Write|NotebookEdit|Bash|Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" pre-tool-use || { echo 'interface-boundary-guard: hook failed; blocking (fail_closed)' >&2; exit 2; }",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "matcher": "my-interface-agent-native",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" grant || { echo 'agent-native-read-grant: grant failed; blocking (fail_closed)' >&2; exit 2; }",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" submit || { echo 'agent-native-read-grant: revocation failed; blocking (fail_closed)' >&2; exit 2; }",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" revoke || { echo 'agent-native-read-grant: revocation at Stop failed; next prompt revokes it' >&2; exit 1; }",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" revoke || { echo 'agent-native-read-grant: revocation at SessionEnd failed' >&2; exit 1; }",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }
