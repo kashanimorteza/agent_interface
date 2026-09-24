@@ -18,10 +18,10 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Resolve each Component Profile first. Match its language and database references to their exact option entries and its platform reference, when present, to the exact Platform-owned Launch Item. Within a selected Language Item, resolve the package purposes selected by that Profile and any additional purposes required by the Target and the Component's conceptual responsibilities; no purpose is bound to a Component identifier. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
+  consumption: "Resolve each Component Profile first. Where Development owns a Component's language and platform references, match them to their exact option entries and Platform Launch Items. Component-specific technical preferences are resolved from that Component's own Preferences. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
   selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
-  matching: "Match Components by canonical identifier; languages and databases by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
+  matching: "Match Components by canonical identifier; languages by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
   additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the resolved dependency with the implementation; a consequential recurring choice is added by the human under the relevant Language Item and Technical Purpose."
 
 
@@ -36,8 +36,8 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "One configurable profile per Participating Component, including identity, path, documentation file, type, role, applicable language, database, and Platform Launch Item references, and any selected language-level Technical Purposes."
-  options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
+  selected: "One configurable profile per Participating Component, including identity, path, documentation file, role, and any language or Platform reference that Development owns."
+  options: "Reusable Language Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages. Model- and Database-specific preferences belong to their respective Components."
   settings: "Project-wide naming conventions, documentation rules, Connection defaults, shared package defaults, and Cross-cutting Capability applicability."
 
 
@@ -51,19 +51,12 @@ content:
         name: "model"
         path: "model"
         documentation: "model/README.md"
-        type: "library"
         role: "Defines the system's shared domain Model."
-        language: "Python"
-        platform: "VPS"
       database:
         name: "database"
         path: "database"
         documentation: "database/README.md"
-        type: "library"
         role: "Owns persistence and access to stored data."
-        language: "Python"
-        database: "SQLite"
-        platform: "VPS"
       logic:
         name: "logic"
         path: "logic"
@@ -140,53 +133,6 @@ content:
             package: "pytest"
             version: "latest-compatible"
         packages:
-          modeling:
-            name: "Pydantic"
-            package: "pydantic"
-            version: "2.x"
-            guidance:
-              standards:
-                json_schema: "Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible."
-                typing: "Modern Python typing as the language entry states it — builtin generics and the union operator."
-              structure:
-                field_declaration: "Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not."
-                reusable_domain_type: "Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field."
-                model_config: "ConfigDict(extra='forbid', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is 'ignore', which discards an unknown field silently."
-                single_field_rule: "@field_validator"
-                cross_field_rule: "@model_validator(mode='after')"
-                polymorphic_data: "A discriminated union, with Field(discriminator=...)"
-                root_collection: "RootModel[...]"
-                non_model_validation: "TypeAdapter, for validating a type that is not a BaseModel"
-                derived_value: "computed_field"
-                validator_order: "Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance."
-              api:
-                base_model: "pydantic.BaseModel"
-                configuration: "pydantic.ConfigDict"
-                field_validation: "pydantic.field_validator"
-                model_validation: "pydantic.model_validator"
-                root_model: "pydantic.RootModel"
-                computed_field: "pydantic.computed_field"
-                field_serialization: "pydantic.field_serializer"
-                model_serialization: "pydantic.model_serializer"
-                serialization:
-                  - "model_dump"
-                  - "model_dump_json"
-                schema: "model_json_schema"
-            avoid:
-              legacy_apis:
-                - "validator"
-                - "root_validator"
-                - "parse_obj"
-                - "dict"
-                - "json"
-              deprecated_constraint_helpers:
-                note: "Scheduled for removal in Pydantic 3; express the same constraint with Annotated instead."
-                names:
-                  - "constr"
-                  - "conint"
-                  - "confloat"
-                  - "condecimal"
-              plain_validator: "PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead."
           api:
             name: "FastAPI"
             package: "fastapi[standard]"
@@ -199,23 +145,6 @@ content:
             name: "Typer"
             package: "typer"
             version: "latest-compatible"
-          database:
-            orm:
-              name: "SQLAlchemy"
-              package: "SQLAlchemy"
-              version: "latest-compatible"
-              capabilities:
-                model_mapping: true
-                parameterized_sql: true
-            migration:
-              name: "Alembic"
-              package: "Alembic"
-              version: "latest-compatible"
-              compatible_orm: "SQLAlchemy"
-              commands:
-                upgrade: "uv run alembic upgrade head"
-                downgrade: "uv run alembic downgrade -1"
-
       TypeScript:
         version: "latest-compatible"
         package_management:
@@ -239,59 +168,6 @@ content:
             package: null
             version: "runtime-provided"
 
-    databases:
-      SQLite:
-        version: "runtime-provided"
-        driver:
-          name: "sqlite3"
-          version: "runtime-provided"
-          package: null
-        storage:
-          kind: "file"
-          relative_to: "component_root"
-          location: "data/<database>.db"
-          committed: false
-        connection:
-          url_scheme: "sqlite"
-          parameters:
-            - "database"
-          foreign_keys: true
-          check_same_thread: false
-      PostgreSQL:
-        version: "latest-compatible"
-        driver:
-          name: "psycopg"
-          version: "latest-compatible"
-          package: "psycopg"
-        storage:
-          kind: "server"
-        connection:
-          url_scheme: "postgresql+psycopg"
-          default_port: 5432
-          parameters:
-            - "host"
-            - "port"
-            - "database"
-            - "username_secret"
-            - "password_secret"
-      MySQL:
-        version: "latest-compatible"
-        driver:
-          name: "PyMySQL"
-          version: "latest-compatible"
-          package: "PyMySQL"
-        storage:
-          kind: "server"
-        connection:
-          url_scheme: "mysql+pymysql"
-          default_port: 3306
-          parameters:
-            - "host"
-            - "port"
-            - "database"
-            - "username_secret"
-            - "password_secret"
-          charset: "utf8mb4"
   # <!-------------------------------------------- settings -->
   settings:
 

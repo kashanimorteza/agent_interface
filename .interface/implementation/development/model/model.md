@@ -23,7 +23,7 @@ Model is the Development Component that owns the logical domain definitions and 
 
 ### Overview
 
-Model defines the Target's authoritative domain meaning through reusable Domain Definitions. It owns identity, Fields, relationships, defaults, constraints, and behavior determinable from each definition's own data, organizes each definition in the configured Entity directory, and publishes them through one Public Interface.
+Model defines the Target's authoritative domain meaning through reusable Domain Definitions. Its three layers are Public Interface, Entities, and Supporting Files. It owns identity, Fields, relationships, defaults, constraints, and behavior determinable from each definition's own data, organizes each definition in the configured Entity directory, and publishes them through one Public Interface.
 
 ### Purpose
 
@@ -32,6 +32,8 @@ Model prevents external concerns from forming competing definitions by making do
 ### How It Works
 
 A Domain Definition authoritatively carries one Target concept's Fields, relationships, and Intrinsic Rules in the shared vocabulary. Consumers reach the definition and declaration through the Public Interface; Database and Logic read them without redefining them.
+
+<br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
@@ -53,20 +55,11 @@ A Domain Definition authoritatively carries one Target concept's Fields, relatio
 
 ```text
 Model
-├── Entity Directory           ← one separate module per Domain Definition
-│   └── Domain Definition      ← one authoritative definition per domain concept
-├── Declaration Vocabulary     ← the one language every definition is stated in
-├── Model Foundation           ← the mechanisms every definition shares
-└── Public Interface           ← the only surface a consumer reaches
+└── Layers
+    ├── Public Interface       ← the only surface a consumer reaches
+    ├── Entities               ← one separate module per Domain Definition
+    └── Supporting Files       ← shared files between Public Interface and Entities
 ```
-
-**Entity Directory** contains one separate module for each **Domain Definition**, which holds one Target concept, its Fields, relationships, and Intrinsic Rules.
-
-**Declaration Vocabulary** defines the shared technology-independent vocabulary.
-
-**Model Foundation** supplies shared mechanisms without owning domain meaning.
-
-**Public Interface** exposes definitions and declarations to consumers.
 
 <br>
 
@@ -82,7 +75,11 @@ Model
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Model owns logical domain meaning, intrinsic behavior, declarations, and serialization. Development supplies the Component's shared technical selections; Database and Logic consume Model through its Public Interface without moving their concerns into Model.
+- **Public Interface** — publishes Domain Definitions and declarations to consumers.
+- **Entities** — contains the individual Domain Definitions.
+- **Supporting Files** — provides the shared Declaration Vocabulary, Model Foundation, and other common mechanisms.
+
+Technical choices, defaults, and directory names for these layers belong to Model Preferences. The structure of Model declarations belongs to the Model Declaration Schema.
 
 <br>
 
@@ -97,8 +94,6 @@ Model Definition Principles are mandatory. Model Preferences provide configurabl
 ## Principles
 
 Every Principle below is mandatory.
-
-<br>
 
 ### Model documentation explains its published domain surface
 

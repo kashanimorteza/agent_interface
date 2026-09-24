@@ -2,9 +2,9 @@
 meta:
   path: ".interface/implementation/development/database/database.yaml"
   path_note: "Preferences for the Database Component."
-  purpose: "Implementation layout and conventions for the Database Component."
+  purpose: "Implementation layout, operation contracts, and technical defaults for the Database Component."
   standard: "Agent Project Interface"
-  version: "11.0"
+  version: "11.2"
   updated: "2026-09-24"
 
 
@@ -17,8 +17,28 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read database.yaml for the current Engines, Instances, Settings, and Operations. This file defines only layout and conventions."
-  matching: "Each declared Engine uses one implementation file beneath settings.layout.engine_directory."
+  consumption: "Read settings for the Database's shared parameters; read configuration to locate the runtime database.yaml and its independent Structure; read database_directory and layout to locate the Database files and layers; read operations for the available operation contracts; then read development for Database technical defaults."
+  matching: "Each declared Engine uses one implementation file beneath layout.directories.engine and applies the matching development.database_engines default when one exists."
+
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "settings: apply Database shared parameters."
+  - "configuration: locate the runtime database.yaml and its independent Structure."
+  - "database_directory: locate the Database root directory."
+  - "layout: locate the default directories for the three Database layers."
+  - "operations: identify fixed Core Operations and the optional Extra Operation category."
+  - "development: apply Database language, package, and Engine defaults."
+
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  settings: "Shared Database parameters, including an optional Secret Key."
+  configuration: "The runtime database.yaml file and the Foundation Structure that fixes its shape."
+  database_directory: "The configured root directory for all Database files."
+  layout: "The default directories for Public Interface, Mapping, and Engine."
+  operations: "The fixed Core Operation catalogue and the optional Extra Operation category."
+  development: "Database type, language, platform, package defaults, and Database Engine defaults."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -26,12 +46,144 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings:
-    configuration:
-      file: "database.yaml"
-      structure: ".interface/foundation/schema/database.yaml"
+    secrets:
+      secret_key: null
+    parameters: {}
 
-    layout:
-      public_interface: "One public entry point for the Operations declared in database.yaml."
-      mapping: "One internal Mapping layer between Public Interface and Engine implementations; it routes requests and standardizes results when needed."
-      engine_directory: "engine"
-      engine_file: "One implementation file per declared Engine, named by that Engine key in the selected language standard."
+  # <!-------------------------------------------- configuration -->
+  configuration:
+    file: "database.yaml"
+    structure: ".interface/foundation/schema/database.yaml"
+
+  # <!-------------------------------------------- database_directory -->
+  database_directory:
+    path: "database"
+
+  # <!-------------------------------------------- layout -->
+  layout:
+    directories:
+      public_interface: "public_interface"
+      mapping: "mapping"
+      engine: "engine"
+
+  # <!-------------------------------------------- operations -->
+  operations:
+    core:
+      add:
+        purpose: "Add one record for a Model."
+        accepts: "A Model identity and the values for its new record."
+        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
+        order_by: "Optional field ordering for the operation result."
+        returns: "The created record or the operation outcome."
+      edit:
+        purpose: "Get one Model record in its editable form."
+        accepts: "A Model identity and one record identifier."
+        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
+        order_by: "Optional field ordering for the operation result."
+        returns: "The editable record or a not-found outcome."
+      update:
+        purpose: "Change supplied values on one Model record."
+        accepts: "A Model identity, one record identifier, and changed values."
+        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
+        order_by: "Optional field ordering for the operation result."
+        returns: "The updated record or the operation outcome."
+      list:
+        purpose: "List Model records."
+        accepts: "A Model identity and optional selection criteria."
+        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
+        order_by: "Optional field ordering for the returned records."
+        returns: "The matching records."
+      delete:
+        purpose: "Delete one Model record."
+        accepts: "A Model identity and one record identifier."
+        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
+        order_by: "Optional field ordering for the operation result."
+        returns: "The deletion outcome."
+      enable:
+        purpose: "Enable one Model record."
+        accepts: "A Model identity and one record identifier."
+        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
+        order_by: "Optional field ordering for the operation result."
+        returns: "The enabled record or the operation outcome."
+      disable:
+        purpose: "Disable one Model record."
+        accepts: "A Model identity and one record identifier."
+        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
+        order_by: "Optional field ordering for the operation result."
+        returns: "The disabled record or the operation outcome."
+      get_by_id:
+        purpose: "Get one Model record by its identifier."
+        accepts: "A Model identity and one record identifier."
+        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
+        order_by: "Optional field ordering for the operation result."
+        returns: "The matching record or a not-found outcome."
+    extra:
+      purpose: "Optional Operations for purposes that do not work directly with one Model, such as reporting."
+      filters: "Every Extra Operation accepts optional conditions that constrain its result."
+      order_by: "Every Extra Operation accepts optional field ordering for its result."
+
+  # <!-------------------------------------------- development -->
+  development:
+    component:
+      type: "library"
+      language: "Python"
+      platform: "VPS"
+    languages:
+      python:
+        orm:
+          name: "SQLAlchemy"
+          package: "SQLAlchemy"
+          version: "latest-compatible"
+          capabilities:
+            model_mapping: true
+            parameterized_sql: true
+        migration:
+          name: "Alembic"
+          package: "Alembic"
+          version: "latest-compatible"
+          compatible_orm: "SQLAlchemy"
+          commands:
+            upgrade: "uv run alembic upgrade head"
+            downgrade: "uv run alembic downgrade -1"
+    database_engines:
+      sqlite:
+        version: "runtime-provided"
+        driver:
+          name: "sqlite3"
+          version: "runtime-provided"
+          package: null
+        storage:
+          kind: "file"
+          relative_to: "component_root"
+          location: "data/<database>.db"
+          committed: false
+        connection:
+          url_scheme: "sqlite"
+          parameters: ["database"]
+          foreign_keys: true
+          check_same_thread: false
+      postgresql:
+        version: "latest-compatible"
+        driver:
+          name: "psycopg"
+          version: "latest-compatible"
+          package: "psycopg"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "postgresql+psycopg"
+          default_port: 5432
+          parameters: ["host", "port", "database", "username_secret", "password_secret"]
+      mysql:
+        version: "latest-compatible"
+        driver:
+          name: "PyMySQL"
+          version: "latest-compatible"
+          package: "PyMySQL"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "mysql+pymysql"
+          default_port: 3306
+          parameters: ["host", "port", "database", "username_secret", "password_secret"]
+          charset: "utf8mb4"
