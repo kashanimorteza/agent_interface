@@ -1,11 +1,11 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/model/model.yaml"
-  path_note: "The Preferences layer of the Model Component — Model-owned Field defaults and technology-independent implementation conventions."
-  purpose: "Defaults for properties of existing Model Fields and conceptual conventions for realizing the Model boundary."
+  path_note: "The Preferences layer of the Model Component."
+  purpose: "Configurable defaults, layout, Schema references, verification, and technical implementation choices for Model."
   standard: "Agent Project Interface"
-  version: "12.2"
-  updated: "2026-09-22"
+  version: "12.4"
+  updated: "2026-09-24"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -18,10 +18,10 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read development for Model's type, language, platform, and technical defaults. Apply Model Field defaults property by property only to Fields present in the Target definition, then apply the technology-independent implementation conventions in settings. Preserve every explicit property, including false and null, and never write resolved values back into this file."
+  consumption: "Read settings for Model's configurable defaults, layout, Schema reference, and verification; then read development for Model's type, language, platform, and technical defaults. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
-  version_resolution: "Development resolves every versioned technical item assigned to Model."
-  matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates a Field, relationship, or behavior."
+  version_resolution: "development resolves every versioned technical item assigned to Model."
+  matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates, removes, or renames Target meaning."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -32,7 +32,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Technology-independent conventions, grouped by the parts Model Principles name in its Architecture — Domain Definition, Declaration Vocabulary, and Model Foundation — plus Layout and Verification, which span the Component. The vocabulary's own terms are fixed by the Model Declaration Schema; this file carries only preferences about using them."
+  settings: "The Model Declaration Schema reference, layer-directory defaults, public identity shape, casing, and verification checks."
   development: "Model type, language, platform, and the selected Pydantic implementation defaults."
 
 
@@ -42,57 +42,27 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
 
-    # ---- Domain Definition ----
-    domain_definition:
-      validation:
-        declarative_constraints_first: true
-        custom_validation: "only when declarative constraints are insufficient"
-        strictness: "enable when coercion could hide invalid domain data"
-        coercion: "reject conversion-in values whose conversion would hide invalid domain data; apply the same validation rules as construction"
-      numeric_precision:
-        exact_values: "exact decimal representation"
-        approximate_values: "only when explicitly permitted by the Target"
-      time:
-        absolute_instants: "timezone-aware"
-        canonical_timezone: "UTC"
-        naive_datetime: "only when explicitly required by the Target"
-
     # ---- Declaration Vocabulary ----
     declaration_vocabulary:
       structure: ".interface/foundation/schema/model-declaration.yaml"
-      note: "The vocabulary's terms and their meanings are fixed by that Schema, not here. This group carries only Model's preferences about using it."
-      logical_types: "Resolve each Field's logical type from the Target. Where the Target implies a type without naming one, prefer the narrowest type that holds every value the Target allows."
-      precision_and_length: "State length and precision only where the Target states them; do not invent a bound the Target does not imply."
-
-    # ---- Model Foundation ----
-    model_foundation:
-      serialization:
-        representation_target: "The plain structure is JSON-compatible: every published value is expressible in JSON without a custom encoder."
-        non_finite_numbers: "Reject NaN and positive or negative infinity at construction, assignment, conversion in, and conversion out."
-        deserialization: "Accept only the input forms permitted by the Domain Definition; do not apply general coercion that construction would refuse."
+    
     # ---- Layout ----
     layout:
-      purpose: "The default directories for Model's Public Interface, Entities, and Supporting Files."
       directories:
         public_interface: "public_interface"
-        entities: "Entity"
-        supporting_files: "supporting"
-      domain_definition: "One file per Domain Definition, holding that definition and what belongs to it alone, inside the configured Entities directory and named for the definition in the selected language's own naming standard."
-      model_foundation: "One Supporting File, separate from every Domain Definition."
-      public_interface: "One public entry point publishes every Domain Definition under its own identity, so a consumer imports the definition rather than the file it was declared in."
-      supporting_content: "A helper, constant, or type used by exactly one Domain Definition lives with it; anything used by more than one belongs to Model Foundation."
-      public_identity_shape: "A consumer reaches a definition through the public entry point under its own name, in the form the selected language uses for a published type — conceptually `model.<public entry point>.<DefinitionName>`."
-      naming_shape: "A definition is named for the domain concept, never for a consumer's representation of it: `Invoice`, not `InvoiceDTO`, unless the Target itself calls the concept a DTO."
-      casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as Development states it."
+        definitions: "Entity"
+        supporting_content: "supporting"
+      public_identity_shape: "A published Definition retains its domain-oriented id as its stable public identity. The Public Registry exposes that id, its kind, and its description; the selected language decides the concrete import form."
+      casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as development.languages states it."
 
     # ---- Verification ----
     verification:
       checks:
         - "public interface"
-        - "validation behavior"
-        - "serialization behavior"
+        - "public registry"
+        - "direct construction and JSON conversion"
         - "declaration vocabulary publishing"
-        - "module separation: one Domain Definition per module, Model Foundation in its own, every definition reachable through the public entry point"
+        - "definition separation: one independent Domain Definition per unit, Model Foundation in its own, only explicitly public Definitions reachable through the public entry point"
 
   # <!-------------------------------------------- development -->
   development:
@@ -108,32 +78,20 @@ content:
           version: "2.x"
           guidance:
             standards:
-              json_schema: "Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible."
               typing: "Modern Python typing as the language entry states it — builtin generics and the union operator."
             structure:
               field_declaration: "Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not."
               reusable_domain_type: "Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field."
-              model_config: "ConfigDict(extra='forbid', validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity. The default for extra is 'ignore', which discards an unknown field silently."
+              model_config: "ConfigDict(validate_assignment=True, validate_default=True, str_strip_whitespace=True); add frozen=True where the concept is a value rather than an entity."
               single_field_rule: "@field_validator"
               cross_field_rule: "@model_validator(mode='after')"
-              polymorphic_data: "A discriminated union, with Field(discriminator=...)"
-              root_collection: "RootModel[...]"
               non_model_validation: "TypeAdapter, for validating a type that is not a BaseModel"
-              derived_value: "computed_field"
               validator_order: "Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance."
             api:
               base_model: "pydantic.BaseModel"
               configuration: "pydantic.ConfigDict"
               field_validation: "pydantic.field_validator"
               model_validation: "pydantic.model_validator"
-              root_model: "pydantic.RootModel"
-              computed_field: "pydantic.computed_field"
-              field_serialization: "pydantic.field_serializer"
-              model_serialization: "pydantic.model_serializer"
-              serialization:
-                - "model_dump"
-                - "model_dump_json"
-              schema: "model_json_schema"
           avoid:
             legacy_apis:
               - "validator"
