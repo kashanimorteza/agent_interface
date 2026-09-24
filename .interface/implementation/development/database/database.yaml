@@ -1,123 +1,37 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/database/database.yaml"
-  path_note: "The Preferences layer of the Database Component — persistence defaults, credential treatment, Instances, and implementation conventions."
-  purpose: "Database-owned defaults, selectable protected credential treatments, and runtime storage configuration conventions; concrete technology choices come from Development."
+  path_note: "Preferences for the Database Component."
+  purpose: "Implementation layout and conventions for the Database Component."
   standard: "Agent Project Interface"
-  version: "10.1"
-  updated: "2026-09-19"
+  version: "11.0"
+  updated: "2026-09-24"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Operations read it without writing resolved Database choices back into it."
-  changed_by: "The human, directly. A missing critical Database choice is raised through State."
-  precedence: "An explicit Target value and every applicable Database Principle take precedence over this file."
+  rule: "This file is human-owned."
+  changed_by: "The human, directly."
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Resolve Database's Component Profile, language-owned Technical Purposes, Database Item, and Platform Reference from Development first. Apply this file only for Database-owned defaults, credential treatment, Instance configuration, and implementation conventions. Never write resolved values back into this file."
-  selection: "Prefer a supported compatible Database-owned default. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "This file owns no versioned Engine, ORM, migration, or package choice. Development Preferences resolve every versioned technical item assigned to Database."
-  matching: "Match a selected Database-owned key to its exact entry in this file. Match Engine, ORM, migration, language, package, and Platform selections to their exact entries in Development Preferences. Match Instance identities to storage_adapter.instances and credential defaults by exact field name."
-
-
-
-
-# <!--------------------------------------------------------------------------------- Read_Order -->
-read_order:
-  - "selected"
-  - "options"
-  - "settings"
-
-
-# <!--------------------------------------------------------------------------------- Content_Map -->
-content_map:
-  selected: "The default Instance and the credential at-rest mode used when the Target states none."
-  options: "Selectable protected credential at-rest alternatives. Engine, ORM, migration, language, and package alternatives belong to Development."
-  settings: "Configurable technical conventions for the Database Interface, Initial Data mechanism, Storage Adapter, Migrations, Transactions, and controlled commands."
+  consumption: "Read database.yaml for the current Engines, Instances, Settings, and Operations. This file defines only layout and conventions."
+  matching: "Each declared Engine uses one implementation file beneath settings.layout.engine_directory."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- selected -->
-  selected:
-    default_instance: "general"   # the value written into database.yaml; that file is the runtime authority
-    credential_at_rest_mode: "hash"   # an entry of options.credential_storage_modes; a credential the Target declares recoverable uses "encrypted"
-
-  # <!-------------------------------------------- options -->
-  options:
-    credential_storage_modes:
-      hash:
-        stored_as: "string"
-        transformation: "one_way_hash"
-        recoverable: false
-        use_case: "Credentials used only for verification."
-      encrypted:
-        stored_as: "string"
-        transformation: "authenticated_reversible_protection"
-        recoverable: true
-        key_source: "Database runtime configuration's encryption key field."
-
   # <!-------------------------------------------- settings -->
   settings:
-    database_interface:
-      criteria_shape: "Each operation takes only the criteria it needs, named for the domain rather than for storage."
+    configuration:
+      file: "database.yaml"
+      structure: ".interface/foundation/schema/database.yaml"
 
-    data_logic_and_mapping:
-      initial_data:
-        importer:
-          mechanism: "reusable, configurable implementation-defined import mechanism"
-          configuration_source: "the selected implementation"
-          configurable: true
-      credential_storage:
-        encryption_key_source: "storage_adapter.runtime_configuration.encryption_key"
-
-    storage_adapter:
-      runtime_configuration:
-        file: "database/database.yaml"
-        structure: ".interface/foundation/schema/database.yaml"
-        storage_paths: "Resolve file-backed Engine storage locations relative to the Database Component root and independent of process working directory. Under the default file-backed profile, data remains under data/. Server-backed Engines keep physical data on their configured server."
-      backups:
-        enabled: "environment-managed"
-      instance_defaults:
-        naming:
-          key: "<role>"
-          name: "<project> <role>"
-          database: "<project>_<role>"
-          normalization: "lower_snake_case"
-        connection:
-          host: "localhost"                              # empty for a file-backed Engine
-          port: "engine_default"                         # empty for a file-backed Engine
-          path: "data/<database>.<engine-extension>"     # empty for a server-backed Engine
-          applicability: "every Instance carries all connection keys; a key that does not apply to its Engine is left empty rather than removed, so the shape of every Instance is the same"
-        credentials:
-          location: "the selected Database runtime configuration, on the Instance that uses them"
-          keys: [username, password]
-      instances:
-        general:
-          name: "<project> General"
-          purpose: "General application data."
-          engine: "<development.database_item>"
-          database: "<project>_general"
-
-    migrations:
-      integrity_marker: "checksum"
-      drift_detection: "before normal operations"
-      concurrent_runner_coordination: "engine-supported lock"
-      irreversible_migration_recovery: "verified backup"
-    transactions:
-      isolation: "engine-resolved and explicitly recorded"
-      concurrency: "optimistic version check unless the resolved operation requires locking"
-      retry_transient_conflicts: true
-      distinguish_failures:
-        - "deadlock"
-        - "serialization_failure"
-        - "timeout"
-        - "connection_failure"
-    controlled_commands:
-      enabled: true
-      identifiers: "internal allow-list or typed operation definition"
+    layout:
+      public_interface: "One public entry point for the Operations declared in database.yaml."
+      mapping: "One internal Mapping layer between Public Interface and Engine implementations; it routes requests and standardizes results when needed."
+      engine_directory: "engine"
+      engine_file: "One implementation file per declared Engine, named by that Engine key in the selected language standard."

@@ -1,95 +1,161 @@
 schema:
   id: "agent-interface-database-configuration"
-  version: "1.0"
-  purpose: "The structure of the Database Component's runtime configuration file: supported Engines, selectable Instances with their connection settings and credentials, the default Instance, and the at-rest encryption key when one is needed."
+  version: "2.1"
+  purpose: "The independent structure of database.yaml: supported Engines and their parameters, named Instances, component Settings, and public Operations."
   kind: "Structure standard"
-  applies_when: "The Implementation declares a Database Component. An Implementation without one ignores this Schema."
-  generates: "<database component path>/database.yaml — by default database/database.yaml"
-  decided: "2026-09-18"
-
-# <!--------------------------------------------------------------------------------- Ownership -->
-ownership:
-  owner: "The Database Component; Database Preferences point here through settings.storage_adapter.runtime_configuration.structure."
-  written_by: "Developing, as part of generating the Database Component; the Human edits it afterwards."
-  authority: "Database Principles and the Target take precedence over this Schema; this Schema fixes only the file's shape."
+  applies_when: "The Implementation declares a Database Component."
+  generates: "<database component path>/database.yaml"
 
 # <!--------------------------------------------------------------------------------- Structure -->
 structure:
 
   engines:
     required: true
-    purpose: "The Engine profiles this Database supports, resolved from Development's Database Item. A profile means the adapter supports that Engine, never that its server is running."
+    purpose: "The database Engines supported by the component."
     shape:
       "<engine-key>":
+        name: "<human-readable engine name>"
         driver: "<engine driver or dialect>"
+        parameters: "<engine-specific configuration mapping>"
 
   instances:
     required: true
-    purpose: "One entry per selectable database identity. Add an Instance by adding an entry here."
+    purpose: "Named database identities, each using one declared Engine."
     shape:
       "<instance-key>":
-        name: "<human-readable name>"
-        purpose: "<what this database holds>"
+        name: "<human-readable instance name>"
+        purpose: "<what this instance stores>"
         engine: "<engine-key declared under engines>"
         database: "<database identity>"
-        host: "<host>          - empty for a file-backed Engine"
-        port: "<port>          - empty for a file-backed Engine"
-        path: "<storage path>  - empty for a server-backed Engine"
-        username: "<username>"
-        password: "<password>"
+        host: "<host or empty>"
+        port: "<port or empty>"
+        path: "<storage path or empty>"
+        username: "<username or empty>"
+        password: "<password or empty>"
+        parameters: "<instance-specific configuration mapping>"
 
-  default_instance:
+  settings:
     required: true
-    purpose: "The instance-key used when a consumer names no Instance. Exactly one, and it must exist under instances."
-
-  encryption:
-    required: false
-    purpose: "The key used for the at-rest encryption of persisted credential fields, when the Target declares a field whose resolved mode is encrypted. Absent when no Model field needs it."
+    purpose: "Component-wide Database settings."
     shape:
-      key: "<encryption key>"
+      default_instance: "<instance-key declared under instances>"
+      assignments:
+        "<purpose-key>": "<instance-key declared under instances>"
+      secrets:
+        "<secret-key>": "<secret value or secret reference>"
+      parameters: "<component-specific configuration mapping>"
+
+  operations:
+    required: true
+    purpose: "Operations published by the Database Public Interface, separated by whether they work with one Model."
+    shape:
+      model:
+        "<operation-key>":
+          enabled: "<true or false>"
+          purpose: "<what this Model operation does>"
+      custom:
+        "<operation-key>":
+          enabled: "<true or false>"
+          purpose: "<what this non-Model operation does>"
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  adding_an_instance: "Add one entry under instances; no source file changes."
-  changing_a_credential: "Edit username or password on that Instance; no source file changes."
-  engine_applicability: "Every Instance carries the same keys. host and port apply to server-backed Engines; path applies to file-backed Engines; username and password apply to Engines that authenticate. A key that does not apply to an Instance's Engine is left empty rather than removed, so changing an Instance from one Engine to another means filling values in, not adding keys."
-  default_must_exist: "default_instance names an existing Instance. An unknown explicit selection is rejected; an omitted selection uses the default."
-  no_source_duplication: "Source reads every value from this file and hardcodes none of them — not the project name, the Instance key, the Engine, the database identity, the path, or a credential."
-  credentials: "Connection credentials are written here, beside the Instance that uses them. How this file is protected is an open decision (2026-09-18) and this Schema does not decide it."
-  persisted_credentials_are_separate: "A credential field stored inside a Model — a user's password, an API key — is not a connection credential: it follows Database Principle “Credential storage protects values at rest”'s at-rest treatment, and when that treatment is encryption its key is read from this file's encryption.key (decided 2026-09-18)."
+  engine_support: "Every declared Engine has one implementation file under the configured engine directory."
+  instance_integrity: "Every Instance names an existing Engine."
+  setting_integrity: "settings.default_instance and every settings.assignments value name an existing Instance."
+  operation_contract: "Only enabled Operations are published through Public Interface. Model Operations work with one Model; Custom Operations may use another request shape. Every Engine implementation preserves the applicable standard request and response form."
+  configuration_ownership: "This file contains current resources. Database Preferences define layout and conventions."
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
   engines:
     sqlite:
-      driver: sqlite
+      name: "SQLite"
+      driver: "sqlite"
+      parameters:
+        timeout_seconds: 30
     postgresql:
-      driver: postgresql+psycopg
+      name: "PostgreSQL"
+      driver: "postgresql"
+      parameters: {}
+    mysql:
+      name: "MySQL"
+      driver: "mysql"
+      parameters: {}
+    mssql:
+      name: "Microsoft SQL Server"
+      driver: "mssql"
+      parameters: {}
 
   instances:
-    general:
-      name: "Trading Assistant General"
-      purpose: "General application data."
-      engine: sqlite
-      database: trading_assistant_general
+    logs:
+      name: "Logs"
+      purpose: "Application logs."
+      engine: "sqlite"
+      database: "logs"
       host: ""
       port: ""
-      path: data/trading_assistant_general.db
+      path: "data/logs.db"
       username: ""
       password: ""
-
-    analytics:
-      name: "Trading Assistant Analytics"
-      purpose: "Reporting and historical analysis."
-      engine: postgresql
-      database: trading_assistant_analytics
-      host: localhost
-      port: 5432
+      parameters: {}
+    reports:
+      name: "Reports"
+      purpose: "Reporting data."
+      engine: "postgresql"
+      database: "reports"
+      host: "localhost"
+      port: "5432"
       path: ""
-      username: trading_assistant
+      username: "report_user"
       password: "<password>"
+      parameters: {}
+    management:
+      name: "Management"
+      purpose: "Application management data."
+      engine: "mysql"
+      database: "management"
+      host: "localhost"
+      port: "3306"
+      path: ""
+      username: "management_user"
+      password: "<password>"
+      parameters: {}
 
-  default_instance: general
+  settings:
+    default_instance: "management"
+    assignments:
+      logs: "logs"
+      reports: "reports"
+      management: "management"
+    secrets:
+      encryption_key: "<secret reference>"
+    parameters: {}
 
-  encryption:
-    key: "<encryption key>"
+  operations:
+    model:
+      add:
+        enabled: true
+        purpose: "Add one record."
+      update:
+        enabled: true
+        purpose: "Update one record."
+      list:
+        enabled: true
+        purpose: "List records."
+      delete:
+        enabled: true
+        purpose: "Delete one record."
+      enable:
+        enabled: true
+        purpose: "Enable one record."
+      disable:
+        enabled: true
+        purpose: "Disable one record."
+      get_by_id:
+        enabled: true
+        purpose: "Get one record by its identifier."
+    custom:
+      report:
+        enabled: true
+        purpose: "Return a report that does not operate on one Model."
