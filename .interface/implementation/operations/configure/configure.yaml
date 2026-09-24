@@ -31,7 +31,7 @@ read_order:
 content_map:
   selected: "Empty. Configure selects no profile."
   options: "Empty. Configure supports no alternatives."
-  settings: "The Config directory, generated records, and their Schemas."
+  settings: "The Config directory and the generated record-to-Schema mappings."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -40,10 +40,6 @@ content:
   settings:
     config_directory:
       path: ".interface/config/"
-      structural_owner: "Configure"
-      operational_content_owner: "The Operation that owns the content of each Config Record."
-      purpose: "The directory in which Configure creates and reconciles structural Config records."
-      preserve_schema_comments: true
     records:
       - name: "Application Config"
         file: "application.yaml"

@@ -30,9 +30,9 @@ Work must be precise enough to execute, order, and verify. Plan provides that st
 
 ### How It Works
 
-A Planning invocation establishes current Interface Understanding and Target Understanding. A selected value is a Target phase identifier. Planning considers selected phases, or every active and plannable Target phase when none is selected, in Target order. Once its required Config records are valid, it records the active Workflow position as `planning`. It does not proceed to a later phase until Planning of every earlier applicable phase has concluded without an open Blocker. Each applicable phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward.
+A Planning invocation establishes current Interface Understanding and Target Understanding. A selected value is a Target phase identifier. Planning considers selected phases, or every active and plannable Target phase when none is selected, in Target order. It does not proceed to a later phase until Planning of every earlier applicable phase has concluded without an open Blocker. Each applicable phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward.
 
-Each Planning invocation produces or reconciles the applicable Plans once against the current Understanding, then records its outcome, unresolved conditions, and the Skills actually used in one State Log Entry. Planning uses any suitable available Skill, but does not invoke another Core Operation. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
+Each Planning invocation produces or reconciles the applicable Plans once against the current Understanding. Planning uses any suitable available Skill, but does not invoke another Core Operation. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
 
 <br>
 
@@ -49,7 +49,7 @@ Each Planning invocation produces or reconciles the applicable Plans once agains
 - **Verification** — the condition that must be observed to prove acceptance, stated as behaviour rather than as a command.
 - **Task Skills** — the Skills Planning identifies as useful for completing one Task, distinct from that Task's Source ID.
 - **Status** — the current progress value of a Task, updated by Develop and distinct from the aggregate Workflow State.
-- **State Log** — the append-only State record of a Skill execution and its result.
+- **State Log** — State's ordered record of an Operation execution and its result.
 - **Task Log** — the append-only history of progress, evidence, and verified transitions for one Task, distinct from the State Log.
 - **Task Source ID** — the State Log Entry identifier of the Planning invocation that last created or materially changed a Task.
 
@@ -67,7 +67,7 @@ Each Planning invocation produces or reconciles the applicable Plans once agains
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Plan owns decomposition and completion conditions. Target owns intent, Development owns realization, Develop owns execution, and State owns aggregate progress.
+Plan owns decomposition and completion conditions. Its generated record follows the Plan Schema. Target owns intent, Development owns realization, Develop owns execution, and State owns aggregate progress.
 
 <br>
 
@@ -83,17 +83,15 @@ The Principles in this Definition govern Plan. Plan Preferences, when present, c
 
 Every Principle below is mandatory.
 
-The generated Plan record follows the Plan Schema. Preferences can never override a Principle; a project may only add stricter rules.
-
 <br>
 
 ### Every phase has its own Plan
 
-**Rule:** Planning accepts one or more Target phase identifiers, or considers every active and plannable Target phase when none is selected. Once its required Config records are valid, it records the active Workflow position as `planning` and processes phases in Target order. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
+**Rule:** Planning accepts one or more Target phase identifiers, or considers every active and plannable Target phase when none is selected. Once its required Config records are valid, it processes phases in Target order. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
 **Why:** Stated once in the Plan, that context is inherited by every Group and Task beneath it, so the phase is described in one place rather than restated by everything it contains.
 
-**Boundary:** Planning does not invent a new project phase or silently change the meaning of an existing one. A selected inactive or unplannable phase is recorded as skipped with its reason as a Blocker in the State Log. An open Blocker for an earlier applicable phase stops Planning before a later phase begins. The phase remains the unit selected for planning and development.
+**Boundary:** Planning does not invent a new project phase or silently change the meaning of an existing one. A selected inactive or unplannable phase is skipped. An open Blocker for an earlier applicable phase stops Planning before a later phase begins. The phase remains the unit selected for planning and development.
 
 <br>
 
@@ -129,7 +127,7 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Planning requires the operational Config records
 
-**Rule:** Planning starts only when the Plan Config and State Config exist and are structurally valid. If either required record is missing or invalid, Plan stops and records the unmet prerequisite.
+**Rule:** Planning starts only when the Plan Config and State Config exist and are structurally valid. If either required record is missing or invalid, Plan stops.
 
 **Why:** Planning needs a place to preserve the Plan and to record aggregate progress and the planning event before it can safely produce work.
 
@@ -139,7 +137,7 @@ The generated Plan record follows the Plan Schema. Preferences can never overrid
 
 ### Planning establishes current understanding and reconciles existing work
 
-**Rule:** Every invocation establishes current Interface Understanding and Target Understanding, then produces or reconciles the existing Plan against them once. The invocation records its outcome, unresolved conditions, and Skills actually used in one State Log Entry.
+**Rule:** Every invocation establishes current Interface Understanding and Target Understanding, then produces or reconciles the existing Plan against them once.
 
 **Why:** A later Target, Interface, Principle, or Preference change can change what the phase requires, while an unchanged understanding makes wholesale Task regeneration unnecessary.
 
@@ -249,7 +247,6 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — every planned phase has one Plan holding its identity, order, target, outcome, and phase-wide context
 - **Must** — plan selected active and plannable phases in Target order, or every active and plannable phase when none is selected
-- **Must** — record the active Workflow position as `planning` once required Config is valid
 - **Must** — stop before a later phase when an earlier applicable phase has an open Blocker
 - **Never** — planning invents a new phase or silently changes the meaning of an existing one
 
@@ -261,8 +258,6 @@ Every obligation in the file, under the Principle it comes from.
 **Planning establishes current understanding and reconciles existing work**
 
 - **Must** — establish current Interface and Target Understanding, then produce or reconcile the existing Plan once
-- **Must** — record the Planning invocation and its outcome in State
-- **Must** — record the Planning outcome, unresolved conditions, and Skills actually used in its State Log Entry
 - **Never** — treat a previous Plan as current without comparing its Understanding
 
 **Groups organize related work**
@@ -320,7 +315,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Existing work is never silently destroyed**
 
-- **Must** — replanning preserves valid work, adds what is newly required, and records the Planning State Log Entry for every created or materially changed Task
+- **Must** — replanning preserves valid work and adds what is newly required; every created or materially changed Task identifies the Planning execution that created or changed it.
 - **Must** — replace a developed Task through a new Task that references it; Develop marks the prior Task as replaced
 - **Never** — a developed Task is removed or rewritten by Planning
 

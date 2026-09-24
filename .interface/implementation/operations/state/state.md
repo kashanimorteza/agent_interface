@@ -61,7 +61,7 @@ State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing
 
 - **Active State** — the current or most recently recorded Workflow Mode, its Phase when applicable, and its recorded provenance.
 - **Phase State** — aggregate Planning, Development, and Review progress for one stable Target phase identifier, plus its completion time once Development is completed and Review is satisfied.
-- **Log Entry** — one record of a Skill execution. Its project-wide identifier is a sequential, zero-padded number (`001`, `002`, …); it holds known start information while work is in progress, then its completion time, duration, outcome, report, and applicable execution data when work ends.
+- **Log Entry** — one record of a Skill execution. Its project-wide identifier is a sequential, zero-padded number (`001`, `002`, …); it holds known start information while work is in progress, then its completion time, measured and readable duration, outcome, report, and applicable execution data when work ends.
 - **Workflow Mode** — the current or most recently recorded operational position of the project.
 - **Blocker** — a condition that genuinely prevents safe or valid continuation.
 - **Open Question** — a critical decision that cannot safely be made without a human.
@@ -158,6 +158,16 @@ Every Principle below is mandatory.
 
 <br>
 
+### Duration is both measurable and readable
+
+**Rule:** When an execution duration can be measured, State records `duration_ms` as the measured value and `duration` as its human-readable form. A duration below one minute is written as `<seconds> seconds`; a duration of one minute or more is written as `<minutes>:<seconds>`, with seconds zero-padded to two digits.
+
+**Why:** The measured value supports exact processing, while the readable value makes the Log immediately understandable without calculation.
+
+**Boundary:** State does not invent a duration when start or completion time is unknown; both duration fields remain absent or null in that case.
+
+<br>
+
 ### The Log preserves Blockers and Open Questions
 
 **Rule:** State preserves Blockers and Open Questions associated with a Log Entry as part of the project's recorded position. Their execution-specific details belong under that Entry's `data`.
@@ -204,6 +214,11 @@ The status information State keeps for the project.
 - **Must** — assign each Log Entry the next project-wide sequential, zero-padded identifier
 - **Must** — keep execution-specific information only in `data`
 - **Never** — copy Task histories, transcripts, secrets, or Target content into the Log
+
+**Duration is both measurable and readable**
+
+- **Must** — record a measured `duration_ms` and a readable `duration` when execution timing is available
+- **Must** — format durations below one minute as seconds and longer durations as `minutes:seconds`
 
 **The Log preserves Blockers and Open Questions**
 

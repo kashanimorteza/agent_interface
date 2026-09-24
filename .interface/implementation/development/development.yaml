@@ -18,7 +18,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Resolve each Component Profile first. Match its language and database references to their exact option entries and its platform reference, when present, to the exact Platform-owned Launch Item. Within a selected Language Item, resolve only the package purposes required by the Target and the Component's conceptual responsibilities; no purpose is bound to a Component identifier. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
+  consumption: "Resolve each Component Profile first. Match its language and database references to their exact option entries and its platform reference, when present, to the exact Platform-owned Launch Item. Within a selected Language Item, resolve the package purposes selected by that Profile and any additional purposes required by the Target and the Component's conceptual responsibilities; no purpose is bound to a Component identifier. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
   selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
   matching: "Match Components by canonical identifier; languages and databases by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
@@ -36,7 +36,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "One configurable profile per Participating Component, including identity, path, documentation file, type, role, and applicable language, database, and Platform Launch Item references."
+  selected: "One configurable profile per Participating Component, including identity, path, documentation file, type, role, applicable language, database, and Platform Launch Item references, and any selected language-level Technical Purposes."
   options: "Reusable Language Items and Database Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages."
   settings: "Project-wide naming conventions, documentation rules, Connection defaults, shared package defaults, and Cross-cutting Capability applicability."
 
@@ -79,6 +79,7 @@ content:
         type: "executable"
         role: "Publishes the external API and runs the API process."
         language: "Python"
+        api: "FastAPI"
         platform: "VPS"
       presentation:
         name: "presentation"
@@ -87,6 +88,9 @@ content:
         type: "executable"
         role: "Provides the user-facing application."
         language: "TypeScript"
+        user_interface: "React"
+        application_framework: "Next.js"
+        api_client: "Fetch"
         platform: "VPS"
       platform:
         name: "platform"
@@ -140,7 +144,7 @@ content:
             name: "Pydantic"
             package: "pydantic"
             version: "2.x"
-            agent_consider:
+            guidance:
               standards:
                 json_schema: "Draft 2020-12, emitted by model_json_schema(); the same output is OpenAPI 3.1 compatible."
                 typing: "Modern Python typing as the language entry states it — builtin generics and the union operator."
@@ -168,7 +172,7 @@ content:
                   - "model_dump"
                   - "model_dump_json"
                 schema: "model_json_schema"
-            agent_avoid:
+            avoid:
               legacy_apis:
                 - "validator"
                 - "root_validator"
@@ -183,11 +187,6 @@ content:
                   - "confloat"
                   - "condecimal"
               plain_validator: "PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead."
-            agent_skills:
-              - resource: "pydantic"
-                requirement: "required"
-                activation: "when_selected"
-                purpose: "Apply the complete applicable Pydantic guidance while implementing and independently reviewing the selected data validation framework."
           api:
             name: "FastAPI"
             package: "fastapi[standard]"
@@ -196,20 +195,10 @@ content:
               validation: "pydantic>=2,<3"
               settings: "pydantic-settings"
               http_testing: "httpx"
-            agent_skills:
-              - resource: "fastapi"
-                requirement: "required"
-                activation: "when_selected"
-                purpose: "Apply the complete applicable FastAPI guidance while implementing and independently reviewing the selected API framework and its durable checks."
           cli:
             name: "Typer"
             package: "typer"
             version: "latest-compatible"
-            agent_skills:
-              - resource: "typer"
-                requirement: "required"
-                activation: "when_selected"
-                purpose: "Apply the complete applicable Typer guidance while implementing and independently reviewing the selected command-line interface."
           database:
             orm:
               name: "SQLAlchemy"
@@ -308,10 +297,7 @@ content:
 
     # ---- naming ----
     naming:
-      purpose: "The naming conventions the project uses, gathered in one place rather than inside the technology that happens to apply it."
-      code: "Follow the established naming standard of the selected language for whatever is being named — variable, function, class, constant, file, folder. A language's own standard is well known and is not restated here, and no project-specific naming is imposed on code."
       storage:
-        applies_to: "Every declared database Engine; these do not differ by Engine and are the project's own choice rather than an Engine's standard."
         tables: "plural_snake_case"
         columns: "snake_case"
         constraints: "snake_case"
@@ -328,9 +314,6 @@ content:
         - run               # how to start or use it
         - verify            # how to check it works
         - troubleshooting
-      examples: "required wherever something is executable; written for the Component's resolved technology so they run as written"
-      per_component: "each Component fills this order through its own mechanism; a part that does not apply says so rather than being omitted"
-      secrets: "placeholders, environment-variable names, or safe secret references only; never a usable credential"
 
     connections:
       presentation_to_api:
@@ -339,9 +322,6 @@ content:
       api_to_logic:
         consumer: "api"
         provider: "logic"
-      api_to_model:
-        consumer: "api"
-        provider: "model"
       logic_to_database:
         consumer: "logic"
         provider: "database"
@@ -356,9 +336,6 @@ content:
       publish: false
 
     cross_cutting:
-      activation: "An empty applies_to list leaves a capability inactive; a non-empty list activates it only for its unique canonical Component identifiers."
-      target_resolution: "An explicit Target requirement or exclusion takes precedence for the current Target."
-      ownership: "Each listed Component applies the shared requirement while retaining ownership of its internal realization."
       testing:
         applies_to:
           - "logic"

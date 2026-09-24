@@ -27,7 +27,7 @@ Model defines the Target's authoritative domain meaning through reusable Domain 
 
 ### Purpose
 
-Model prevents storage, transport, and presentation from forming competing definitions by making domain meaning one shared, technology-independent vocabulary.
+Model prevents external concerns from forming competing definitions by making domain meaning one shared, technology-independent vocabulary.
 
 ### How It Works
 
@@ -73,17 +73,16 @@ Model
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Development** — takes from it what Model does not choose for itself: its identity, its technology, and where it runs.
+- **Consumes Development** — takes from it what Model does not choose for itself: its identity and technology.
 - **Consumed by Database** — provides the Declaration Vocabulary from which Database derives and enforces physical storage structure.
 - **Consumed by Logic** — provides the Domain Definitions Logic reasons about and passes between its Services.
-- **Consumed by API and Presentation** — provides the Domain Definitions they accept and return, and the Serialization pair they convert with.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Model owns logical domain meaning, intrinsic behavior, declarations, and serialization. Development supplies the Component's shared technical selections; Database, Logic, API, and Presentation consume Model through its Public Interface without moving their concerns into Model.
+Model owns logical domain meaning, intrinsic behavior, declarations, and serialization. Development supplies the Component's shared technical selections; Database and Logic consume Model through its Public Interface without moving their concerns into Model.
 
 <br>
 
@@ -183,7 +182,7 @@ Every Principle below is mandatory.
 
 ### Model remains separate from external concerns
 
-**Rule:** Model never owns Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or other external concerns.
+**Rule:** Model never owns Initial Data, persistence, transport, workflow orchestration, technical selection, platform operation, or other external concerns.
 
 **Why:** A narrow boundary keeps Model reusable and protects domain meaning.
 
@@ -193,7 +192,7 @@ Every Principle below is mandatory.
 
 ### Model declares every definition in one standard, technology-independent vocabulary
 
-**Rule:** Model expresses every Domain Definition in one technology-independent vocabulary: logical type, declared length and precision, nullability, default, identity, generated identity, uniqueness, and single-field or composite constraints. The Model Declaration Schema fixes the vocabulary's meanings. The same Domain Definition carries the vocabulary used by application code, every Component reads it through the Public Interface, and each realization maps it to its technology. Model preserves required, nullable, defaulted, generated, and absence semantics, invents none, and defines no partial-update behavior.
+**Rule:** Model expresses every Domain Definition in one technology-independent vocabulary: logical type, declared length and precision, nullability, default, identity, generated identity, uniqueness, and single-field or composite constraints. The Model Declaration Schema fixes the vocabulary's meanings. The same Domain Definition carries the vocabulary used by application code; Database and Logic read it through the Public Interface, and each realization maps it to its technology. Model preserves required, nullable, defaulted, generated, and absence semantics, invents none, and defines no partial-update behavior.
 
 **Why:** One technology-independent vocabulary preserves shared meaning and Target-declared presence semantics.
 
@@ -304,7 +303,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Model remains separate from external concerns**
 
-- **Never** — Let Model own Initial Data, persistence, transport, presentation, workflow orchestration, technical selection, platform operation, or another concern outside its logical boundary.
+- **Never** — Let Model own Initial Data, persistence, transport, workflow orchestration, technical selection, platform operation, or another concern outside its logical boundary.
 - **Must** — Keep external realization outside Model ownership even when another Component consumes Model data or its Public Interface.
 
 **Model declares every definition in one standard, technology-independent vocabulary**

@@ -68,6 +68,11 @@ sections:
         started_at: {required: false, default: null, nullable: true, purpose: "The time this execution started when known."}
         completed_at: {required: false, default: null, nullable: true, purpose: "The time this execution ended when known."}
         duration_ms: {required: false, default: null, nullable: true, purpose: "Elapsed execution time in milliseconds when it can be measured."}
+        duration:
+          required: false
+          default: null
+          nullable: true
+          purpose: "Human-readable elapsed time when duration_ms is known: '<seconds> seconds' below one minute, otherwise '<minutes>:<seconds>' with two-digit seconds."
         token_usage:
           required: false
           default: {}

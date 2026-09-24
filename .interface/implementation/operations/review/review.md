@@ -1,6 +1,6 @@
 # Review Definition
 
-Review is the Operation Component that independently judges selected-phase Plans and implemented results against their applicable authorities.
+Review is the Operation Component that independently judges selected-phase Plans and generated Source.
 
 <br>
 
@@ -22,19 +22,19 @@ Review is the Operation Component that independently judges selected-phase Plans
 
 ### Overview
 
-Review is the Operation Component that establishes whether a phase Plan and its implemented result satisfy the current Interface and Target, and records what it found.
+Review is the Operation Component that establishes whether a phase Plan and its generated Source satisfy the planned result, and records what it found.
 
-Review owns its Findings and the Log data that records what was reviewed. It does not own Plan or Target. When it runs, it records the active Workflow position as `reviewing`, then records aggregate Review progress and its outcome under State.
+Review owns its Findings and the execution data that records what was reviewed. It does not own Plan or Target.
 
 ### Purpose
 
-Review is the reader who does not hold the producer's intent. It takes the current authorities and Target, builds the obligations they impose, and judges the Plan and implemented result against them.
+Review is the reader who does not hold the producer's intent. It takes the phase Plan as the planned baseline and judges the generated Source and evidence against it.
 
-Review first records what it finds, then resolves the findings it is authorized and able to resolve. After each resolution it reviews the result again. A finding that cannot be resolved is retained in the Log Entry's `open_questions` or `blockers`.
+Review first records what it finds, then resolves the findings it is authorized and able to resolve. After each resolution it reviews the result again. A finding that cannot be resolved remains open.
 
 ### How It Works
 
-Review accepts one or more Target phase identifiers, or considers every phase when none is selected. For each phase, it establishes current Target Understanding, Interface Understanding, and Source Understanding within that phase's scope. Once generated Source is available, it reads the current Plan and examines the generated Source, Public Interface, implemented result, and evidence against that Plan and the current authorities. Each Review execution uses one Log Entry: it records Findings in `data` and updates those same Findings when it resolves them. A later independent Review execution creates its own Log Entry.
+Review accepts one or more Target phase identifiers, or considers every phase when none is selected. For each phase, it establishes Source Understanding within that phase's scope. Once generated Source is available, it reads the current Plan and examines the generated Source, Public Interface, implemented result, and evidence against that Plan. It records Findings in its execution data and updates those same Finding records when it resolves them.
 
 Review stops when the required result or evidence is unavailable, an authority cannot be established, or an unresolved condition prevents assurance.
 
@@ -43,11 +43,11 @@ Review stops when the required result or evidence is unavailable, an authority c
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Review** — one independent examination of one phase's Plan and implemented result against the current Interface and Target.
+- **Review** — one independent examination of one phase's Plan, generated Source, and evidence.
 - **Source Understanding** — understanding the generated Source needed to examine the selected phase without reading unrelated Source.
 - **Finding** — one specific way in which the result does not demonstrably satisfy what was asked, recorded with what was expected, what was observed, and where.
 - **Evidence** — the exact location or observable result that supports a finding, so that a reader can see it without repeating the review.
-- **Outcome** — the aggregate result: `satisfied` when the reviewed result satisfies the current Plan and applicable authorities, or `not satisfied` otherwise.
+- **Outcome** — the aggregate result: `satisfied` when the reviewed result satisfies the current Plan, or `not satisfied` otherwise.
 - **Missing evidence** — an acceptance criterion for which nothing observable demonstrates that it holds.
 
 <br>
@@ -55,9 +55,9 @@ Review stops when the required result or evidence is unavailable, an authority c
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Interface, Target, and Plan** — takes their current meaning, Plan coverage, acceptance criteria, and verification conditions as the baseline for a phase.
+- **Consumes Plan and generated Source** — takes the Plan's coverage, acceptance criteria, and verification conditions as the baseline for examining the selected phase's Source and evidence.
 - **Consumes State** — uses current aggregate progress and prior Review Log Entries without treating either as authority.
-- **Consumed by State** — writes the phase's aggregate Review outcome and a Log Entry containing execution metadata, a concise report, and Review-specific data including Findings and resolutions.
+- **Supplies State** — provides the phase's aggregate Review outcome and Review-specific Findings and resolutions.
 
 <br>
 
@@ -82,19 +82,19 @@ Every Principle below is mandatory.
 
 <br>
 
-### Review examines Source against the current Plan and authorities
+### Review examines Source against the current Plan
 
-**Rule:** A Review accepts one or more Target phase identifiers, or considers every phase when none is selected. Once generated Source is available for a phase, it establishes current Target Understanding, Interface Understanding, and Source Understanding within that phase's scope. It reads the current Plan, then judges the generated Source, Public Interface, implemented result, and evidence against that Plan and the same current authorities.
+**Rule:** A Review accepts one or more Target phase identifiers, or considers every phase when none is selected. Once generated Source is available for a phase, it establishes Source Understanding within that phase's scope. It reads the current Plan, then judges the generated Source, Public Interface, implemented result, and evidence against that Plan.
 
-**Why:** A result can only be wrong relative to a current intended outcome, its governing rules, and the work that was planned for it. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
+**Why:** A result can only be judged against the work that was planned for it. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
 
-**Boundary:** Review does not define new requirements or change Plan content. Work newly required by Target belongs to Planning. When the authoritative baseline is silent about something, that silence is a fact about the baseline, not a licence to supply the missing requirement and then find the result wanting.
+**Boundary:** Review does not define new requirements or change Plan content. Work newly required by Target belongs to Planning. Silence in the Plan is not a licence to supply a missing requirement and then find the result wanting.
 
 <br>
 
 ### Review records, resolves, and rechecks its findings
 
-**Rule:** When Review begins, it records the active Workflow position as `reviewing`. It first records its Findings in its Log Entry, then updates those same Finding records when it resolves them. A Finding that cannot be resolved is recorded in `open_questions` or `blockers` and stops the cycle. A later independent Review execution records its work in a new Log Entry.
+**Rule:** Review records its Findings in its execution data, then updates those same Finding records when it resolves them. A Finding that cannot be resolved is recorded in `open_questions` or `blockers` and prevents further review work on that unresolved condition.
 
 **Why:** Recording the Finding before resolving it preserves the original observation while allowing Review to close the loop and verify the result.
 
@@ -108,7 +108,7 @@ Every Principle below is mandatory.
 
 **Why:** The same operation wrote the code and the check that proves it, so a check shaped around the implementation will pass whatever the implementation happens to do. Independence is the whole reason Review exists.
 
-**Boundary:** Independence is about the judgment, not about the sources. Review uses current Target Understanding, applicable Interface Principles and Preferences, and the phase Plan; it does not invent a different standard.
+**Boundary:** Independence is about the judgment, not about the sources. Review uses the phase Plan and the generated Source it examines; it does not invent a different standard.
 
 <br>
 
@@ -134,7 +134,7 @@ Every Principle below is mandatory.
 
 ### A Finding outlives the session that raised it
 
-**Rule:** Every Finding is stored in the Review Skill's State Log `data`, and remains traceable through the Entry that raised it, resolved it, or left it open. Its state is part of that Entry's data.
+**Rule:** Every Finding is stored in the Review execution's State Log `data` and remains traceable through that execution's Entry. Its state is updated in that Entry's data when it is resolved or left open.
 
 **Why:** A finding reported only in conversation is gone when the session ends, and the next run has no way to know it was ever raised. A stored finding is the only thing that makes the second review of a phase worth more than the first.
 
@@ -147,17 +147,16 @@ Every Principle below is mandatory.
 
 Every obligation in the file, under the Principle it comes from.
 
-**Review examines Source against the current Plan and authorities**
+**Review examines Source against the current Plan**
 
 - **Must** — accept one or more Target phases, or every phase when none is selected
-- **Must** — establish Target, Interface, and Source Understanding for the selected phase once generated Source is available
-- **Must** — judge generated Source, Public Interface, implementation, and evidence against the current Plan and authorities
-- **Never** — Review defines a new requirement, changes Plan content, or treats silence in the baseline as a requirement
+- **Must** — establish Source Understanding for the selected phase once generated Source is available
+- **Must** — judge generated Source, Public Interface, implementation, and evidence against the current Plan
+- **Never** — Review defines a new requirement, changes Plan content, or treats silence in the Plan as a requirement
 
 **Review records, resolves, and rechecks its findings**
 
 - **Must** — record Findings before resolving them and update the same Finding records with each resolution
-- **Must** — record the active Workflow position as `reviewing` when Review begins
 - **Never** — Review writes Plan content, changes Target, or changes Task progress
 
 **Review is independent of how the work was done**
@@ -177,5 +176,5 @@ Every obligation in the file, under the Principle it comes from.
 
 **A Finding outlives the session that raised it**
 
-- **Must** — every Finding is stored with its Review and keeps its state until resolved or accepted
+- **Must** — every Finding is stored with its Review and keeps its state until resolved or left open
 - **Never** — Review reopens Tasks or changes Plan content

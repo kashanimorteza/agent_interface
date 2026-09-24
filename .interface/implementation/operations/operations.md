@@ -31,7 +31,7 @@ Building a product requires more than product architecture. The work also needs 
 
 ### How It Works
 
-Configuration prepares and reconciles the operational records. Plan turns a selected Target phase into bounded work, and Develop executes that work. Review compares the result with its applicable authorities, records Findings, resolves the Findings within its authority, and rechecks the result. Implement coordinates Configure, Plan, Develop, and Review; Launch activates a completed implementation, Reset reconciles its authorized scope, and State preserves the aggregate position and execution outcomes.
+Configuration prepares and reconciles the operational records. Plan turns a selected Target phase into bounded work, and Develop executes that work. Review compares generated Source and evidence with the phase Plan, records Findings, resolves the Findings within its authority, and rechecks the result. Implement coordinates Configure, Plan, Develop, and Review; Launch activates a completed implementation, Reset reconciles its authorized scope, and State preserves the aggregate position and execution outcomes.
 
 <br>
 
@@ -83,7 +83,7 @@ Develop executes authorized planned Tasks.
 
 ### Review
 
-Review checks selected-phase work against its applicable authorities.
+Review checks selected-phase Source and evidence against the phase Plan.
 
 → [Definition of Review](review/review.md)<br>
 → [Preferences of Review](review/review.yaml)

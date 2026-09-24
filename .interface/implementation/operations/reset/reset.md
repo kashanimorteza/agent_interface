@@ -54,13 +54,6 @@ Reset reads the selected scope and current authorities, identifies affected reco
 
 <br>
 
-Reset owns bounded reconciliation, not Target meaning, Development Source, or another Component's authority.
-
-Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Principles --->
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
@@ -75,6 +68,7 @@ The Principle and Operation Contract in this Definition govern Reset. Reset Pref
 
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
@@ -91,7 +85,6 @@ Every Principle below is mandatory.
 
 <br>
 
-<!--------------------------------------------------------------------------------- At a Glance --->
 <!--------------------------------------------------------------------------------- Operation Contract --->
 ## Operation Contract
 
@@ -105,6 +98,7 @@ Reset resolves shared paths conservatively; unresolved attribution stops mutatio
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

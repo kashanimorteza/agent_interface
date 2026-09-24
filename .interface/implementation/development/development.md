@@ -49,7 +49,7 @@ Development also provides shared standards for Public Interfaces, documentation,
 ## Terms
 
 - **Participating Component** — one peer Implementation Component declared by a Component Profile in Development Preferences.
-- **Component Profile** — the configurable Development Preferences entry that gives one Participating Component its identity, name, root, type, role, and applicable Language Item, Database Item, and Platform Reference.
+- **Component Profile** — the configurable Development Preferences entry that gives one Participating Component its identity, name, root, type, role, and applicable Language Item, Database Item, Platform Reference, and language-level Technical Purpose selections.
 - **Application Package** — a Participating Component whose selected Component Type makes it an importable library or executable application boundary.
 - **Component Type** — the conceptual form of a Participating Component, such as a library, executable, or guideline.
 - **Language Item** — one reusable Development Preferences definition containing a programming language's version, Package Management, conventions, tools, and purpose-specific packages.
@@ -206,23 +206,33 @@ Every Principle below is mandatory.
 
 ### Cross-cutting Capabilities are activated through applicability
 
-**Rule:** Development coordinates each Cross-cutting Capability across the Components to which it applies. Each participating Component retains ownership of its internal realization, while the shared requirement remains defined once in Development.
+**Rule:** Development coordinates each Cross-cutting Capability across the Components to which it applies. An explicit Target requirement or exclusion takes precedence over the configured applicability. Each participating Component retains ownership of its internal realization, while the shared requirement remains defined once in Development.
 
 **Why:** One applicability list coordinates shared behavior without transferring implementation ownership to Development.
 
-**Boundary:** Behavior wholly internal to one Component remains owned by that Component. The applicability and Target-resolution rules are resolved from Development Preferences.
+**Boundary:** Behavior wholly internal to one Component remains owned by that Component. Preferences select applicability; they do not transfer realization ownership.
 
 <br>
 
 ### Every Component has complete, safe, and operational documentation
 
-**Rule:** Every Participating Component has complete, safe, and operational documentation for its Public Interface. Documentation explains what the Component offers, how a consumer uses it, how it is configured and run, how it is verified, and how failures are understood. The shared documentation conventions are declared once in Development Preferences, and each Component fulfils them through its own mechanism.
+**Rule:** Every Participating Component has complete, safe, and operational documentation for its Public Interface. Documentation explains what the Component offers, how a consumer uses it, how it is configured and run, how it is verified, and how failures are understood. Development Preferences select shared documentation locations and formats; each Component fulfils the mandatory documentation Principles through its own mechanism.
 
 Documentation uses only safe examples and secret references, never usable credentials, tokens, or secret values, and remains consistent with the implemented Public Interface.
 
 **Why:** Operational documentation gives each resolved Component one practical usage guide without duplicating its governing philosophy.
 
 **Boundary:** Public documentation never copies or restates Principles and never replaces or overrides Principles, Preferences, the implemented Public Interface, or another authoritative project source.
+
+<br>
+
+### Documentation conventions protect usable public information
+
+**Rule:** Documentation for an executable Component includes runnable examples where they help a consumer use, start, or verify it. Examples and configuration guidance use placeholders, environment-variable names, or safe secret references only; they never contain a usable credential, token, or secret value.
+
+**Why:** Documentation is only operationally useful when a reader can safely follow it, and a usable secret in an example is a secret already exposed.
+
+**Boundary:** Development defines this shared documentation rule. Each Component owns the concrete documentation it publishes and the technology-specific form its examples take.
 
 <br>
 
@@ -258,11 +268,11 @@ Documentation uses only safe examples and secret references, never usable creden
 
 ### Development centralizes reusable technical items
 
-**Rule:** Development Preferences defines each reusable Language Item and Database Item once. Component Profiles reference the applicable items, and implementation resolves only the technical purposes required by the Target and the Component's conceptual responsibilities. Technical selections are not duplicated in a participating Component's own Principles or Preferences.
+**Rule:** Development Preferences defines each reusable Language Item and Database Item once. Component Profiles reference the applicable items, and implementation resolves only the technical purposes required by the Target and the Component's conceptual responsibilities. A reusable technology selection is never duplicated in a participating Component's own Principles or Preferences; that Component may retain the defaults and conventions that belong only to its own boundary.
 
 **Why:** Central technical catalogues preserve all reusable choices in one place while letting Components focus exclusively on their conceptual responsibilities.
 
-**Boundary:** A Component Profile may omit an inapplicable technical reference. A Technical Purpose never restricts its package to a particular Component or transfers conceptual responsibility into the Language Item. Development only references a Platform Launch Item; its definition and all internal parameters remain owned by Platform.
+**Boundary:** A Component Profile may omit an inapplicable technical reference. A Technical Purpose never restricts its package to a particular Component or transfers conceptual responsibility into the Language Item. Component-owned defaults do not become reusable catalogue entries merely because they are technical. Development only references a Platform Launch Item; its definition and all internal parameters remain owned by Platform.
 
 
 <br>
@@ -322,10 +332,15 @@ Every obligation in the file, under the Principle it comes from.
 
 **Every Component has complete, safe, and operational documentation**
 
-- **Must** — Provide complete, safe, and operational documentation for each Component's Public Interface according to the shared Documentation Preferences.
+- **Must** — Provide complete, safe, and operational documentation for each Component's Public Interface using the selected documentation locations and formats.
 - **Must** — Explain how a consumer uses, configures, runs, verifies, and troubleshoots the Component.
 - **Must** — Keep public documentation consistent with public behavior and update it when public usage changes.
 - **Never** — Expose a usable secret in documentation or let public documentation copy, replace, or override an authoritative source.
+
+**Documentation conventions protect usable public information**
+
+- **Must** — Provide runnable examples where they help a consumer use, start, or verify an executable Component.
+- **Never** — Place a usable credential, token, or secret value in documentation or examples.
 
 **Unstated Development decisions follow one precedence order**
 
@@ -352,7 +367,7 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Allow any compatible Component to use an applicable Technical Purpose.
 - **Must** — Omit a technical reference from a Component Profile when that reference is inapplicable.
 - **Never** — Group a language package by Component identity or let a Technical Purpose transfer conceptual responsibility.
-- **Never** — Duplicate concrete technical selections in a participating Component or copy Platform Launch Item definitions into Development.
+- **Never** — Duplicate a reusable technical selection in a participating Component or copy Platform Launch Item definitions into Development.
 
 **Every Component offers its work as Operations on one Public Interface**
 

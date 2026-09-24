@@ -44,17 +44,6 @@ It then carries the work out through its Services. Each Service holds the calls 
 
 What comes back is an Application Outcome: the result the consumer asked for, or one of the expected failures that Operation declares. The consumer learns nothing else — not which Components were involved, not which Service performed which step, not how the answers were combined. That is the whole exchange, and it is the same exchange whether the consumer is an API process, a command-line entry point, or another Component.
 
-### Decisions
-
-**Logic**
-
-1. Logic's architecture is the Public Interface with its Categories and Operations, and the internal Services with their Actions. This replaces an earlier structure of a Logic Foundation, one Model Logic unit per Model inheriting from it, and a separate Use Case Logic unit for cross-Model Behaviour. The internal structure of each Service stays deliberately open.
-2. That architecture is Logic's own. No named external standard is selected for it — an earlier choice of Hexagonal, with Clean as an alternative, and the policy requiring conformance to it, are not kept.
-3. No consumer is named or privileged. Anything can talk to Logic through its Public Interface. An earlier statement that the API Component consumes it is not kept, because it read as a restriction that does not exist.
-4. Logic reaches every other Component through that Component's own Public Interface, from the Service that owns the dependency. There are no separate Logic-side names for those boundaries; earlier Model Interface and Database Interface terms are not kept.
-5. Public Interface and Operation are meant to become the shared standard of every Implementation Component — Model, Database, API and the rest — declared in Development so documentation can rely on them. Recorded here as the decision that produced it; Development owns the general statement.
-6. Still open: which further Categories and Operations the Public Interface offers, the full Action list of each Service beyond Database, and the internal structure of a Service.
-
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
@@ -96,7 +85,7 @@ The **Public Interface** is Logic's whole outward surface. It organizes what Log
 - **Consumes Database** — reaches persisted data and its transaction boundary through Database's Public Interface.
 - **Consumes Development** — takes from it what Logic does not choose for itself: its identity, its technology, and the Connections it is permitted to make.
 - **Consumes Platform** — receives the runtime values its configuration contract requires.
-- **Consumed by any consumer** — provides the Public Interface through which any Component or entry point carries out the Operations Logic offers; the API is one such consumer, not a privileged one.
+- **Consumed by API** — provides the Public Interface through which API carries out the Operations Logic offers.
 
 <br>
 
@@ -155,7 +144,7 @@ Every Principle below is mandatory.
 
 ### Logic owns Behaviour
 
-**Rule:** Logic validates domain state, applies operation and application-context rules, and returns Application Outcomes. Behaviour remains independent of transport and storage.
+**Rule:** Logic validates domain state, applies operation and application-context rules, including applicable authorization and Target-defined quotas, and returns Application Outcomes. Behaviour remains independent of transport and storage.
 
 **Why:** One owner for Behaviour keeps the same rule from being written differently in the API, the Database, and the Presentation.
 
@@ -215,11 +204,21 @@ Every Principle below is mandatory.
 
 ### Runtime configuration stays private
 
-**Rule:** Logic defines the configuration contract required by its Behaviour and validates required values before use. Runtime values are supplied to Logic by its environment; secrets never enter source, errors, or public interfaces.
+**Rule:** Logic defines the configuration contract required by its Behaviour and validates required values before use. Runtime values are supplied to Logic by its environment; secrets never enter source, errors, public interfaces, logs, or Application Outcomes.
 
 **Why:** A contract validated before readiness fails at start with a clear cause rather than mid-operation with an unclear one.
 
 **Boundary:** Logic owns the contract and its validation, never the values, their delivery, or the environment they come from.
+
+<br>
+
+### Logic execution remains bounded
+
+**Rule:** Logic uses finite timeouts. It retries only boundedly and only an operation that is safe or idempotent to repeat; it never retries without a limit.
+
+**Why:** An unbounded wait or retry can turn one unavailable dependency into work that never ends or a repeated change whose result cannot be trusted.
+
+**Boundary:** This Principle governs Logic's use of a dependency. It does not transfer retry, transaction, or recovery ownership from the Component whose Public Interface Logic calls.
 
 <br>
 
@@ -285,7 +284,12 @@ Every obligation in the file, under the Principle it comes from.
 **Runtime configuration stays private**
 
 - **Must** — Define Logic's configuration contract and validate every required value before use.
-- **Never** — Put a secret in source, an error, or a public interface, or take ownership of runtime values.
+- **Never** — Put a secret in source, an error, a public interface, a log, or an Application Outcome, or take ownership of runtime values.
+
+**Logic execution remains bounded**
+
+- **Must** — Use finite timeouts and bounded retries only for safe or idempotent operations.
+- **Never** — Retry without a limit.
 
 **Logic verification covers Logic boundaries**
 

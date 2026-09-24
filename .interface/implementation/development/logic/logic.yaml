@@ -142,10 +142,7 @@ content:
               outcomes: ["emptied", "unknown Model", "deletion not authorized for this Model", "records still referenced"]
               uses: "database.truncate"
 
-          naming: "The Operation names follow the conventions a consumer already knows from REST and from data libraries — create, list, update, delete — rather than Interface-invented names (decided 2026-09-19)."
-      operation_shape:
-        does: "What the consumer gets, stated in the consumer's own terms rather than in the steps that produce it."
-        uses: "The Services and Actions the Operation composes. Recorded here so the dependency is visible to the Human; it is internal detail and is never published to a consumer."
+          naming: "Use familiar consumer-oriented operation names such as create, list, update, and delete."
     services:
       purpose: "The Services this Logic currently has, one per Component it talks to, with the Actions each performs. The Principle “Logic is composed of internal Services, one per Component it talks to” fixes what a Service is; this group records which ones exist."
       database:
@@ -164,9 +161,6 @@ content:
           max: "Return the largest value of one field across the matching records."
           truncate: "Remove every record of a Model, leaving its structure in place."
           execute_command: "Perform a data operation the other Actions cannot express, through Database's own capability-restricted command route; never structural, privilege, or migration work."
-      planned:
-        note: "Further Services arrive with the Components they talk to — MT5, Binance, Log, Report. Each is declared here with its own Actions when its Component exists."
-      internal_structure: "Not yet decided. A Service's own layout — how its Actions are organized in files and units — is deliberately left open (2026-09-19)."
 
     policies:
       deletion:
@@ -180,23 +174,14 @@ content:
         filtering: "explicitly allowlisted Fields only"
         sorting: "explicitly allowlisted Fields with stable ordering"
       authorization:
-        owner: "Logic"
         enabled_when: "Development authentication applies to Logic or Target requires authorization."
       business_rate_limits:
-        owner: "Logic"
         source: "Target-defined quotas and eligibility rules"
     runtime:
-      reliability:
-        finite_timeouts_required: true
-        retry:
-          bounded: true
-          only_safe_or_idempotent_operations: true
-          unlimited: false
       observability:
         logging:
           enabled: true
           correlate_with_request_id: true
-          include_credentials_or_secrets: false
     verification:
       checks:
         - "Authentication and authorization, when Development enables them for Logic"

@@ -54,12 +54,6 @@ Launch reads the applicable Platform and operational authorities, verifies readi
 
 <br>
 
-Launch owns activation and observation, not product Source, Platform definitions, or runtime secrets.
-
-Every Principle in this file is mandatory. An Operations Preference can never override a Principle, and a project may only add stricter rules, never looser ones.
-
-<br>
-
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
@@ -91,7 +85,6 @@ Every Principle below is mandatory.
 
 <br>
 
-<!--------------------------------------------------------------------------------- At a Glance --->
 <!--------------------------------------------------------------------------------- Operation Contract --->
 ## Operation Contract
 
@@ -107,6 +100,7 @@ Launch is idempotent: a healthy running part is preserved and only runtime eleme
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.

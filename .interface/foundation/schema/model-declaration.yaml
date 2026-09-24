@@ -22,6 +22,9 @@ vocabulary:
       relationships:
         required: true
         purpose: "The complete Target-derived set of Domain Relationships."
+      composite_constraints:
+        required: false
+        purpose: "Constraints whose meaning applies to more than one Field of this Domain Definition."
 
   field:
     required_fields:
@@ -58,6 +61,9 @@ vocabulary:
       constraints:
         required: false
         purpose: "Single-Field constraints declared by the Target."
+      sensitivity:
+        required: false
+        purpose: "The Target-declared sensitivity or credential classification of the Field when it has one."
 
   relationship:
     required_fields:
@@ -77,4 +83,4 @@ vocabulary:
 rules:
   target_meaning: "The vocabulary carries Target meaning and never invents a Field, relationship, default, generated value, or absence state."
   technology_independence: "Vocabulary values remain independent of language, package, database, engine, and runtime."
-  completeness: "A Domain Definition carries its complete Target-derived Fields and relationships."
+  completeness: "A Domain Definition carries its complete Target-derived Fields, relationships, and declared composite constraints."

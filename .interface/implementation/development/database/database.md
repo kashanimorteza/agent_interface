@@ -35,6 +35,8 @@ A consumer passes a public Model type or instance and operation to the Database 
 
 Storage is derived from Model declarations; missing or ambiguous declarations are reported. Migrations apply structure in order, startup verifies integrity and imports Initial Data, and an Instance is ready only after setup succeeds. Runtime Instances, connections, and credentials are configured as Database owns them and are never hardcoded in source.
 
+<br>
+
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
@@ -73,7 +75,8 @@ The layers are ordered, and none bypasses the next boundary.
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — maps and enforces the logical Models, fields, relationships, rules, and declared initial data.
+- **Consumes Model** — maps and enforces the logical Models, Fields, relationships, and rules.
+- **Consumes Target** — imports Target-declared Initial Data through Model-defined structures.
 - **Consumes Development** — uses the shared package standard, technical catalogues, connections, and ownership rules.
 - **Consumes Platform** — receives runtime Bindings delivered to Database's boundary by the selected Launch Item.
 - **Consumed by Logic** — provides the generic data-access interface and Instance Registry through Logic's Data Access boundary.
@@ -183,7 +186,7 @@ Every Principle below is mandatory.
 
 ### All data access uses one generic Database Interface
 
-**Rule:** One generic Model-driven Interface serves every persistent Model through create, read, read-by-identifier, list, search, update, delete, aggregate, and truncate operations. It accepts a public Model type or instance and operation criteria, never an untyped Model-name string. A capability-restricted command route may cover unsupported data operations with explicit parameters, protected identifiers, observability, transaction participation, and Engine identification, but never structural, privilege, connection, or Migration work.
+**Rule:** One generic Model-driven Interface serves every persistent Model through create, read, list, search, update, delete, aggregate, and truncate operations. `read` reads one record by its identifier. The Interface accepts a public Model type or instance and operation criteria, never an untyped Model-name string. A capability-restricted command route may cover unsupported data operations with explicit parameters, protected identifiers, observability, transaction participation, and Engine identification, but never structural, privilege, connection, or Migration work.
 
 **Why:** One generic pipeline preserves a stable boundary without duplicating business logic.
 
@@ -223,13 +226,23 @@ The Registry is derived from the configured Instance collection, and the number 
 
 <br>
 
+### Database runtime configuration stays inside Database
+
+**Rule:** Database obtains its Instance settings, Engine bindings, connection settings, credentials, and keys only from Database-owned Runtime Configuration. It never hardcodes them in source, publishes them through its public interface, or moves them into Interface records.
+
+**Why:** Runtime values change by environment and must remain local to the persistence boundary without creating a second source of truth in code or shared records.
+
+**Boundary:** Preferences select the configuration's location and technical defaults, and its Schema defines its generated shape. Runtime Configuration never changes Model meaning, Target Initial Data, or another Component's settings.
+
+<br>
+
 ### Declared Initial Data preserves its meaning
 
 **Rule:** When declared, Initial Data is imported through a reusable configurable mechanism into resolved mappings. Keys name Model Fields, relationships and required fields are satisfied, records follow dependency order, and imports are repeatable without duplicates or uniqueness violations. Setup applies structure, verifies integrity, then imports; the Instance is not ready until import succeeds or is not applicable, and any missing or failed import is a setup failure.
 
 **Why:** Rebuilding the Database must restore the declared initial state with the same meaning.
 
-**Boundary:** Initial data comes from the Target and Model definitions, never from Database Preferences. The physical import mechanism remains an implementation choice.
+**Boundary:** Initial Data comes from the Target; Model defines the structures it must satisfy. It never comes from Database Preferences. The physical import mechanism remains an implementation choice.
 
 <br>
 
@@ -330,6 +343,11 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Reject a persisted credential whose declared at-rest treatment is missing or unsupported, rather than storing it.
 - **Never** — Infer a credential classification or its at-rest treatment from a field name.
 - **Never** — Expose credential representations, keys, connection settings, or secret values through Database outputs.
+
+**Database runtime configuration stays inside Database**
+
+- **Must** — obtain Instance settings, Engine bindings, connections, credentials, and keys only from Database-owned Runtime Configuration
+- **Never** — hardcode or publish runtime settings, credentials, or keys
 
 **Declared Initial Data preserves its meaning**
 
