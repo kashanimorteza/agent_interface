@@ -29,18 +29,18 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "not set"
-    phase: null
-    mode_reason: "No Workflow operation has been recorded."
-    set_by: "initialization"
-    set_at: null
+    mode: "implementing"
+    phase: "P1"
+    mode_reason: "Implement 002 completed P1 (Model): planned, developed, and reviewed as satisfied."
+    set_by: "my-interface-implement"
+    set_at: "2026-09-24T12:51:06Z"
   phases:
     P1:
       id: "P1"
-      planning: "not started"
-      development: "not started"
-      review: "not started"
-      completed_at: null
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-09-24T12:50:51Z"
     P2:
       id: "P2"
       planning: "not started"
@@ -93,3 +93,116 @@ content:
       open_questions: []
       blockers: []
       report: "Generated Application, Plan, and State Config records from their Schemas composed with the general YAML frame; all three conform. State phase records P1-P7 created at initial values."
+    - id: "002"
+      skill: "my-interface-implement"
+      parent_id: ""
+      phase: null
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-09-24T12:34:10Z"
+      completed_at: "2026-09-24T12:51:06Z"
+      duration_ms: 1016000
+      duration: "16:56"
+      token_usage: {input: null, output: null, total: null}
+      skills_used:
+        - {name: "my-interface-plan", duration_ms: 166000, token_usage: {input: null, output: null, total: null}, report: "Entry 003: P1 planned, 22 Tasks in 7 Groups."}
+        - {name: "my-interface-develop", duration_ms: 684000, token_usage: {input: null, output: null, total: null}, report: "Entry 004: all 22 Tasks done and verified."}
+        - {name: "my-interface-review", duration_ms: 65000, token_usage: {input: null, output: null, total: null}, report: "Entry 005: one Finding resolved; P1 satisfied."}
+      open_questions: ["OQ-004-1 (from Develop entry 004)", "OQ-004-2 (from Develop entry 004)"]
+      blockers: []
+      report: "Implemented P1 (Model): Config was already valid so Configure was not coordinated; Plan (003), Develop (004), and Review (005) ran in order for P1. Outcome: P1 planning completed, development completed, review satisfied. Nothing committed."
+      data:
+        phases: {P1: "satisfied"}
+        coordinated_entries: ["003", "004", "005"]
+        unique_open_question_count: 2
+        unique_blocker_count: 0
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-24T12:34:19Z"
+      completed_at: "2026-09-24T12:37:05Z"
+      duration_ms: 166000
+      duration: "2:46"
+      token_usage: {input: null, output: null, total: null}
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Planned P1 (Model) from the current Target, Model, and Development authorities: 1 Plan, 7 Groups, 22 Tasks, all new. Dependencies are explicit and acyclic; no Task names a path, file, or technology."
+      data:
+        added_tasks:
+          P1-G1: ["P1-G1-T1", "P1-G1-T2", "P1-G1-T3", "P1-G1-T4"]
+          P1-G2: ["P1-G2-T1", "P1-G2-T2", "P1-G2-T3"]
+          P1-G3: ["P1-G3-T1", "P1-G3-T2", "P1-G3-T3"]
+          P1-G4: ["P1-G4-T1", "P1-G4-T2"]
+          P1-G5: ["P1-G5-T1", "P1-G5-T2", "P1-G5-T3", "P1-G5-T4"]
+          P1-G6: ["P1-G6-T1", "P1-G6-T2", "P1-G6-T3"]
+          P1-G7: ["P1-G7-T1", "P1-G7-T2", "P1-G7-T3"]
+        changed_tasks: []
+        removed_tasks: []
+        preserved_tasks: []
+        replaced_tasks: []
+        reason: "No prior Plan existed for P1."
+        decisions:
+          - "Target rules that depend on another record's data (Instance connection-field requirement, Account credential non-duplication) are not Model Intrinsic Rules; the relevant Tasks scope them out of Model validation. They remain for Logic to own; Human may confirm."
+          - "Initial Data is excluded from P1 (Model owns none); it belongs to the Database phase."
+          - "Testing is not a declared cross-cutting capability for Model, so no persisted test Task was planned; each Task's verification is observed at implementation time."
+          - "No provider Skills are declared, so Task Skills are empty."
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-24T12:37:26Z"
+      completed_at: "2026-09-24T12:48:50Z"
+      duration_ms: 684000
+      duration: "11:24"
+      token_usage: {input: null, output: null, total: null}
+      skills_used: []
+      open_questions:
+        - "OQ-004-1: A generated identity Field (`id`: not nullable, auto increment) is required and non-null on every Model instance, because Model may not invent an absence state. A not-yet-stored entity therefore has no Model representation; Database and Logic must decide how new records are created. Human may confirm this reading or adjust the Target."
+        - "OQ-004-2: A nullable Field with no Target default (for example `description`, `ip`) is required and must be passed as an explicit null, because Model may not invent a default. Human may confirm or declare defaults in the Target."
+      blockers: []
+      report: "Developed P1 (Model): all 22 Tasks done, each claimed first and completed only after its check passed. Built the model library (Python, Pydantic 2 via uv): Model Foundation, conversion, Declaration Vocabulary, 15 Domain Definitions (one per module), one Public Interface, README, and the Application Manifest Model section. Final check: ruff format/check and pyright clean; all 15 definitions equal the Target's Models section under an independent parser; README examples run. No .interface path outside config was changed; nothing committed. Process slip recorded: seven definition Tasks were generated a moment before their claims were recorded (shell variable did not word-split); that output was deleted, the Tasks claimed, and the output regenerated."
+      data:
+        tasks_done: 22
+        tasks_blocked: 0
+        component_root: "model"
+        decisions:
+          - "Model realized as a uv-managed Python library under the Component root declared by its Profile; Pydantic 2.x, ruff and pyright as Language Item tools. No persisted tests: testing is not a declared cross-cutting capability for Model, so every check was transient."
+          - "Entity directory named `entity` (lower case): the Preferences name it `Entity` but also require folders to follow the language's casing standard."
+          - "One failure form: pydantic ValidationError. The error-handling capability has no definition beyond its applicability to Model."
+          - "Declaration carries each Field's meaning in the Field's own Annotated metadata; nullability, required, and default are read from the Field, so they cannot drift from validation."
+          - "Rules that need another record (Instance connection-field requirement, Account credential non-duplication) are not evaluated in Model; cross-record uniqueness is declared, not enforced."
+        follow_up_for_human:
+          - "Development Preferences pin pyright, ruff at latest-compatible; resolved versions are recorded in the model component's lockfile."
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-09-24T12:49:46Z"
+      completed_at: "2026-09-24T12:50:51Z"
+      duration_ms: 65000
+      duration: "1:05"
+      token_usage: {input: null, output: null, total: null}
+      skills_used: []
+      open_questions: ["OQ-004-1 (from Develop entry 004, still open)", "OQ-004-2 (from Develop entry 004, still open)"]
+      blockers: []
+      report: "Reviewed P1 (Model) against its current Plan by independent observation: behaviour probes the implementer did not run (bool/float-for-int, assignment failure leaves the instance unchanged, decimal exponent and offset date-time conversion, length after whitespace stripping, no Field leakage between definitions), a built wheel (all 15 definitions, foundation, py.typed), lockfile sync, Task-log evidence and dependency ordering, and protected-path check (no .interface change outside config). One Finding (placeholder package summary), resolved in pass one and confirmed in pass two together with a full re-verification. Result: satisfied. Observations, not Findings: strict mode accepts an integer for a float Field (lossless; JSON authors emit it); P1-G1-T1's log records that the metadata mechanism arrived with P1-G1-T3, and the criterion is now observably met; the entity directory is lower case `entity` where Preferences name `Entity` (a recorded, judgement-based reading of the casing rule that the Human may overrule)."
+      data:
+        aggregate: "satisfied"
+        phases: {P1: "satisfied"}
+        findings:
+          - id: "F-005-1"
+            phase: "P1"
+            task: "P1-G7-T2"
+            state: "resolved"
+            expected: "The Model's public documentation and published metadata describe the Component accurately (Plan Task P1-G7-T2 acceptance: documentation consistent with the implemented Public Interface; P1-G7-T3: accurate public metadata)."
+            observed: "The package's published summary is still the scaffold placeholder 'Add your description here'; a built wheel's METADATA carries 'Summary: Add your description here'."
+            evidence: "model/pyproject.toml line 4 (`description = \"Add your description here\"`); wheel METADATA from `uv build --wheel`, line `Summary: Add your description here`."
+            resolution: "Replaced the placeholder with an accurate description in the package metadata. Recheck: a fresh wheel build carries the new Summary; lockfile still in sync; ruff and pyright clean; all 15 definitions equal the Target; README examples run."

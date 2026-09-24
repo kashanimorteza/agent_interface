@@ -158,13 +158,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Duration is both measurable and readable
+### Duration is readable
 
-**Rule:** When an execution duration can be measured, State records `duration_ms` as the measured value and `duration` as its human-readable form. A duration below one minute is written as `<seconds> seconds`; a duration of one minute or more is written as `<minutes>:<seconds>`, with seconds zero-padded to two digits.
+**Rule:** When an execution duration can be determined, State records it in `duration`. A duration below one minute is written as `<seconds> seconds`; a duration of one minute or more is written as `<minutes>:<seconds>`, with seconds zero-padded to two digits.
 
-**Why:** The measured value supports exact processing, while the readable value makes the Log immediately understandable without calculation.
+**Why:** One readable value makes the Log immediately understandable without duplicating the same duration.
 
-**Boundary:** State does not invent a duration when start or completion time is unknown; both duration fields remain absent or null in that case.
+**Boundary:** State does not invent a duration when start or completion time is unknown; `duration` remains absent or null in that case.
 
 <br>
 
@@ -215,9 +215,9 @@ The status information State keeps for the project.
 - **Must** — keep execution-specific information only in `data`
 - **Never** — copy Task histories, transcripts, secrets, or Target content into the Log
 
-**Duration is both measurable and readable**
+**Duration is readable**
 
-- **Must** — record a measured `duration_ms` and a readable `duration` when execution timing is available
+- **Must** — record a readable `duration` when execution timing is available
 - **Must** — format durations below one minute as seconds and longer durations as `minutes:seconds`
 
 **The Log preserves Blockers and Open Questions**

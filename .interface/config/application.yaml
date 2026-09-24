@@ -26,7 +26,34 @@ content_map:
 content:
   components:
     development: {}
-    model: {}
+    model:
+      package_name: "model"
+      path: "model"
+      public_entrypoint: "model"
+      public_interface:
+        documentation: "model/README.md"
+        categories:
+          - name: "Domain Definitions"
+            operations: ["construct", "assign", "serialize", "deserialize"]
+            definitions:
+              - "Account"
+              - "AccountGroup"
+              - "Action"
+              - "ActionGroup"
+              - "Asset"
+              - "Broker"
+              - "Currency"
+              - "Instance"
+              - "PartialGroup"
+              - "PartialRule"
+              - "Position"
+              - "TradingPlatform"
+              - "TrailingGroup"
+              - "TrailingRule"
+              - "User"
+          - name: "Declaration"
+            operations: ["declaration"]
+            vocabulary: ["Constraint", "Declaration", "FieldDeclaration", "ModelFoundation", "Relationship", "Rule", "Sensitivity"]
     database: {}
     logic: {}
     api: {}
