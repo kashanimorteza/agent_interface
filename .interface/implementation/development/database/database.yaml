@@ -4,7 +4,7 @@ meta:
   path_note: "Preferences for the Database Component."
   purpose: "Implementation layout and technical defaults for the Database Component."
   standard: "Agent Project Interface"
-  version: "11.8"
+  version: "11.9"
   updated: "2026-09-25"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -31,7 +31,7 @@ read_order:
 content_map:
   settings: "Database type, language, platform, runtime database.yaml, its Foundation Structure, and the root directory for all Database files."
   layout: "The default directories for Interface, Mapping, and Engine."
-  development: "Component capabilities, Database storage naming conventions, language, package defaults, and Database Engine defaults."
+  development: "Component capabilities, Database storage naming conventions, SQLModel choices, migration defaults, and Database Engine defaults."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -71,18 +71,22 @@ content:
         indexes: "ix_<table>_<column>"
     languages:
       python:
-        orm:
-          name: "SQLAlchemy"
-          package: "SQLAlchemy"
-          version: "latest-compatible"
-          capabilities:
-            model_mapping: true
-            parameterized_sql: true
+        modeling:
+          package:
+            name: "SQLModel"
+            version: "latest-compatible"
+            skill: "sqlmodel"
+          guidance:
+            project_rules:
+              entity_source: "Use Entity classes published by Model Interface. Do not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes in Database."
+              engine_and_session: "Use create_engine and Session from SQLModel. Open sessions directly with the configured Engine; do not introduce a separate session factory for ordinary Database operations."
+              metadata: "Import all Entity classes before using SQLModel.metadata. Use that metadata as the authoritative table metadata for table creation and migration comparison."
+              query_api: "Use SQLModel's select and Session.exec APIs for ordinary Database queries. Use a SQLAlchemy escape hatch only when SQLModel cannot express the required Engine-specific capability."
         migration:
           name: "Alembic"
           package: "Alembic"
           version: "latest-compatible"
-          compatible_orm: "SQLAlchemy"
+          compatible_modeling: "SQLModel"
           commands:
             upgrade: "uv run alembic upgrade head"
             downgrade: "uv run alembic downgrade -1"

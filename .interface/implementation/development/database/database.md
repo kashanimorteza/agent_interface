@@ -64,7 +64,7 @@ Database
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — uses Model Definitions and their declared data shapes to create Tables and recognize data in Model form.
+- **Consumes Model** — imports Entity classes published by Model Interface and uses their SQLModel metadata to create Tables and recognize Entity-form data.
 - **Provides to Logic** — exposes Database Operations through Interface.
 
 <br>
@@ -155,11 +155,11 @@ Every Principle below is mandatory.
 
 ### Database connects Model to Logic
 
-**Rule:** Database uses Model Definitions and their Declaration meaning to create Tables and recognize Model-form data, and provides its Interface Operations to Logic.
+**Rule:** Database imports Entity classes only through Model Interface. After all Entity classes are imported, Database uses SQLModel metadata to create Tables and compare migrations. Database does not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes; it provides its Interface Operations to Logic.
 
-**Why:** This keeps persistence aligned with domain data while giving Logic one consistent data boundary.
+**Why:** This keeps persistence aligned with one authoritative Entity model while giving Logic one consistent data boundary.
 
-**Boundary:** Model owns domain declarations; Logic owns application behavior; Database owns the persistence implementation between them.
+**Boundary:** Model owns Entity declarations; Logic owns application behavior; Database owns table creation, migration comparison, and persistence implementation between them.
 
 <br>
 
@@ -193,5 +193,6 @@ Every obligation in the file, under the Principle it comes from.
 
 **Database connects Model to Logic**
 
-- **Must** — use Model Definitions and their Declaration meaning when persisting Model data.
+- **Must** — import Entity classes through Model Interface and use SQLModel metadata for table creation and migration comparison.
+- **Never** — create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes.
 - **Must** — provide Interface Operations to Logic through Interface.
