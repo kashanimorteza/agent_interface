@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component."
   purpose: "Configurable component, layout, data validation, and technical implementation choices for Model."
   standard: "Agent Project Interface"
-  version: "12.9"
+  version: "13.0"
   updated: "2026-09-25"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -24,16 +24,16 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify the Model Component and its technical selection."
-  - "layout: locate Model's Interface, Definitions, Declaration, and Foundation layers and their configured names."
-  - "data_validation: apply Definition responsibility and validation moments."
+  - "layout: locate Model's Interface, Entity, Declaration, and Foundation layers and their configured names."
+  - "data_validation: apply Entity responsibility and validation moments."
   - "development: apply Model capabilities, naming conventions, language, package, and implementation defaults."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "The Model Component's type, language, and platform."
   layout: "Layer and directory names, Declaration and Foundation class names, Foundation method names, and casing."
-  data_validation: "The responsibility and moments for Definition data validation."
-  development: "Component capabilities, Model naming conventions, and selected Pydantic implementation defaults."
+  data_validation: "The responsibility and moments for Entity data validation."
+  development: "Component capabilities, Model naming conventions, and selected SQLModel implementation defaults."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -49,11 +49,7 @@ content:
   layout:
     directories:
       interface: "interface"
-      definitions:
-        directory: "definitions"
-        entities: "entity"
-        value_objects: "value_object"
-        enumerations: "enumeration"
+      entity: "entity"
       declaration: "declaration"
       foundation: "foundation"
     classes:
@@ -67,7 +63,7 @@ content:
 
   # <!-------------------------------------------- data_validation -->
   data_validation:
-    responsibility: "Each Definition verifies its own data against its Declaration through Foundation."
+    responsibility: "Each Entity verifies its own data against its Declaration through Foundation."
     moments:
       - "direct construction"
       - "from_json"
@@ -81,24 +77,22 @@ content:
       logging: false
       encryption: false
     naming:
-      definitions:
-        entities: "PascalCase"
-        value_objects: "PascalCase"
-        enumerations: "PascalCase"
+      entity: "PascalCase"
       fields: "snake_case"
       modules: "snake_case"
     languages:
       python:
         modeling:
           package:
-            name: "pydantic"
-            version: "2.x"
-            skill: "pydantic"
+            name: "SQLModel"
+            version: "latest-compatible"
+            skill: "sqlmodel"
           guidance:
             project_rules:
-              source_of_truth: "Generate each Model from its Domain Definition. Do not add Fields, constraints, defaults, or behavior that the Definition does not declare."
+              source_of_truth: "Generate each Model from its Domain Entity. Do not add Fields, constraints, defaults, or behavior that the Entity does not declare."
               declaration: "Every Model uses the configured private Declaration class to record its technology-independent Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour."
-              foundation: "Every Definition uses the configured private Foundation class to verify its own data against Declaration during direct construction, from_json, and to_json. Foundation owns common behaviour; a concrete Model owns only its declared meaning."
-              definition_unit: "Create one private Model class per Domain Definition and place it in its own module beneath the configured Entities, Value Objects, or Enumerations directory."
-              interface: "Make Interface the only public Model layer. Present consumer-facing Definitions and capabilities there; do not require a consumer to import a private Model class or layer."
-              flat_structure: "Do not nest, inherit, or copy Definitions. Record every Target-declared cross-Definition connection as an explicit Relationship or Reference."
+              entity: "Generate every Entity as a private SQLModel table model. SQLModel realizes the declared Fields and metadata without redefining their domain meaning."
+              foundation: "Every Entity uses the configured private Foundation class to verify its own data against Declaration during direct construction, from_json, and to_json. Foundation uses SQLModel for conversion and validation while retaining the public to_json and from_json contract."
+              entity_unit: "Create one private SQLModel Entity class per Domain Entity and place it in its own module beneath the configured Entity directory."
+              interface: "Make Interface the only public Model layer. Re-export consumer-facing Entity classes and capabilities there; do not require a consumer to import a private Model class or layer."
+              flat_structure: "Do not nest, inherit, or copy Entities. Record every Target-declared cross-Entity connection as an explicit Relationship or Reference."

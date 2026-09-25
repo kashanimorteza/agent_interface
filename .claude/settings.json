@@ -42,12 +42,7 @@
     "adhd-output-style@claude-settings": true,
     "claude-md-management@claude-plugins-official": false,
     "superpowers@claude-plugins-official": true,
-    "andrej-karpathy-skills@karpathy-skills": true,
-    "pydantic-ai@claude-plugins-official": true,
-    "pydantic@pydantic-skills": true,
-    "logfire@pydantic-skills": true,
-    "ai@pydantic-skills": true,
-    "pydantic-ai-harness@pydantic-skills": true
+    "andrej-karpathy-skills@karpathy-skills": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -72,12 +67,6 @@
       "source": {
         "source": "github",
         "repo": "forrestchang/andrej-karpathy-skills"
-      }
-    },
-    "pydantic-skills": {
-      "source": {
-        "source": "github",
-        "repo": "pydantic/skills"
       }
     }
   },

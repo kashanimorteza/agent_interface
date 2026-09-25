@@ -65,8 +65,7 @@ content:
       package: "fastapi[standard]"
       version: "latest-compatible"
       supporting_packages:
-        validation: "pydantic>=2,<3"
-        settings: "pydantic-settings"
+        modeling: "sqlmodel==0.0.47"
         http_testing: "httpx"
 
   # <!-------------------------------------------- settings -->

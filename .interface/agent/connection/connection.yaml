@@ -48,12 +48,10 @@ content:
           - plugin-dev@claude-plugins-official
           - frontend-design@claude-plugins-official
           - example-skills@anthropic-agent-skills
-          - pydantic-ai@claude-plugins-official
           - document-skills@anthropic-agent-skills
           - adhd-output-style@claude-settings
           - superpowers@claude-plugins-official
           - andrej-karpathy-skills@karpathy-skills
-          - pydantic@pydantic-skills
   options:
     protocols:
       MCP:
@@ -80,9 +78,6 @@ content:
             karpathy-skills:
               source: github
               repository: forrestchang/andrej-karpathy-skills
-            pydantic-skills:
-              source: github
-              repository: pydantic/skills
   settings:
     services:
       native:
@@ -123,9 +118,6 @@ content:
             example-skills:
               id: example-skills@anthropic-agent-skills
               desired_state: enabled
-            pydantic-ai:
-              id: pydantic-ai@claude-plugins-official
-              desired_state: enabled
             document-skills:
               id: document-skills@anthropic-agent-skills
               desired_state: enabled
@@ -140,9 +132,6 @@ content:
               desired_state: enabled
             andrej-karpathy-skills:
               id: andrej-karpathy-skills@karpathy-skills
-              desired_state: enabled
-            pydantic:
-              id: pydantic@pydantic-skills
               desired_state: enabled
       plugin_manifests: {}
       capability_packages: {}
