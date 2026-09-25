@@ -1,0 +1,62 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable State Config: active Workflow position, aggregate Phase progress, and the project's recorded execution history."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema. Reconciliation preserves existing operational records and never replaces them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read the active Workflow position, then the aggregate progress of the Phase selected by stable Target phase identifier, then the Log."
+  selection: "A requested phase resolves to the entry in phases keyed by that phase identifier; a recorded execution resolves to the Log Entry with its identifier."
+  absence: "No matching phases entry means no aggregate progress is recorded for that phase; an empty log means no execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The active Workflow position: mode, phase, and who set it, when, and why."
+  phases: "Aggregate operation progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases: {}
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-25T15:39:00+03:30"
+      completed_at: "2026-09-25T15:39:25+03:30"
+      duration: "25 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Generated application.yaml, plan.yaml, and state.yaml in .interface/config/ from their current Schemas composed with the general YAML Schema; Config was empty beforehand. Programmatic parse validation was blocked by the interface-boundary-guard hook, so conformance was checked by direct comparison with each Schema's initial content."
+      data:
+        duration_ms: 25000
+        records_generated:
+          - "application.yaml"
+          - "plan.yaml"
+          - "state.yaml"
+        notes:
+          - "The State Schema declares no generation block; its path, path_note, policy, resolution, read_order, and content_map were composed from the Schema's own sections and purposes."
