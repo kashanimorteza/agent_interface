@@ -31,7 +31,7 @@ Model gives Database and Logic one shared, technology-independent definition of 
 
 ### How It Works
 
-Each Definition stands alone in the Definitions layer. Database and Logic reach the library through its Public Interface, which provides the tools to import Models. Model Foundation gives every Model shared validation and conversion to and from JSON.
+Each Definition stands alone in the Definitions layer. Logic reaches the library through its Public Interface to import Models, construct Instances, and convert them to or from JSON. Database uses that same Interface to read each Model's Entity and Field meaning before realizing storage. Model Foundation gives every Model shared validation and conversion to and from JSON.
 
 <br>
 
@@ -42,9 +42,12 @@ Each Definition stands alone in the Definitions layer. Database and Logic reach 
 - **Definitions** — the Model layer that contains one separate unit for each Domain Definition.
 - **Field** — one named value of a Domain Definition, with its domain meaning, logical type, and applicable constraints.
 - **Relationship** — an explicit domain reference from one Domain Definition to another, without nesting either Definition inside the other.
+- **Identity** — the Field or Fields that distinguish one Entity from every other Entity of the same Definition.
+- **Uniqueness Constraint** — a condition requiring one Field or a declared combination of Fields to have no duplicate value within its Definition.
+- **Reference** — the Field-level expression of a Relationship that identifies a value belonging to another Definition.
 - **Model Foundation** — the shared, technology-independent mechanisms through which Model realizations validate their data and convert to or from JSON.
 - **Intrinsic Rule** — a rule evaluated only from the data of the Domain Definition it governs.
-- **Public Interface** — the only surface through which another Component imports and uses Model Definitions.
+- **Public Interface** — the only surface through which Logic imports and uses Models, and Database reads Model and Field meaning to realize storage.
 - **Supporting Content** — the Model Foundation and other common mechanisms supporting Definitions and the Public Interface.
 
 <br>
@@ -65,8 +68,8 @@ Model
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Database** — imports Model Definitions through the Public Interface to realize storage.
-- **Logic** — imports Model Definitions through the Public Interface to use validated domain data.
+- **Database** — reads each Model's Entity and Field meaning through the Public Interface to derive storage structure, including applicable identity, uniqueness, references, defaults, and constraints.
+- **Logic** — imports Model Definitions through the Public Interface, constructs validated Instances, and converts them to or from JSON.
 
 <br>
 
@@ -145,9 +148,9 @@ Every Principle below is mandatory.
 
 ### Model exposes one Public Interface
 
-**Rule:** Database and Logic use Model only through its Public Interface. The Public Interface provides the tools required to import Model Definitions; JSON conversion functions remain on the imported Model and come from Foundation.
+**Rule:** Database and Logic use Model only through its Public Interface. Logic receives the tools required to import Models, construct Instances, and convert them to or from JSON. Database receives each Model's Entity and Field meaning, including applicable identity, uniqueness, references, defaults, and constraints, to derive storage structure. JSON conversion functions remain on the imported Model and come from Foundation.
 
-**Why:** One surface keeps consumption consistent while Model implementations remain free to change internally.
+**Why:** One surface gives each consumer the information it needs while Model implementations remain free to change internally.
 
 **Boundary:** Consumers do not depend on private Model resources or reimplement Model conversion functions.
 
@@ -155,11 +158,41 @@ Every Principle below is mandatory.
 
 ### Model validates intrinsic data meaning
 
-**Rule:** Model validates Field constraints and Intrinsic Rules evaluable from the data of one Model. Construction applies declared defaults when an input omits a Field and validates the resulting instance.
+**Rule:** Model validates Field constraints and Intrinsic Rules evaluable from the data of one Model. Construction applies declared defaults when an input omits a Field, distinguishes an omitted value from an explicit null, ignores unknown input Fields, and validates the resulting instance.
 
 **Why:** Each instance entering or leaving a consuming Component has data that conforms to its Model Definition.
 
 **Boundary:** Cross-Model, stored-data, workflow, authorization, and external-context rules remain outside Model.
+
+<br>
+
+### Model makes identity, uniqueness, and references available
+
+**Rule:** Model preserves and exposes every Target-declared Identity, Uniqueness Constraint, and Relationship. A Reference identifies its target Definition and the identity it refers to; a Uniqueness Constraint may cover one Field or a declared combination of Fields.
+
+**Why:** Database can derive primary keys, unique constraints, and foreign keys from domain meaning without inventing relationships or persistence rules.
+
+**Boundary:** Model describes the domain facts. Database decides the table, column, index, foreign-key syntax, and physical enforcement used to realize them.
+
+<br>
+
+### Model preserves structured Field constraints
+
+**Rule:** When Target meaning declares a Field restriction, Model preserves it as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
+
+**Why:** Validation and storage realization need more than descriptive prose to apply the same domain restriction consistently.
+
+**Boundary:** Model does not impose a fixed vocabulary or representation for constraints that the Target does not declare.
+
+<br>
+
+### Model handles sensitive and immutable Fields safely
+
+**Rule:** Model preserves a Field's sensitivity classification and prevents a sensitive supplied value from appearing in validation diagnostics. When Target meaning declares a Field immutable, Model prevents that Field from changing after construction.
+
+**Why:** Sensitive data stays protected during normal model handling, while immutable domain facts remain stable.
+
+**Boundary:** Model does not own secrets management, encryption, authorization, audit history, or storage-level protection.
 
 <br>
 
@@ -240,13 +273,28 @@ Every obligation in the file, under the Principle it comes from.
 
 **Model exposes one Public Interface**
 
-- **Must** — Import Model Definitions through the Public Interface.
+- **Must** — Let Logic import and use Models, and let Database read their Entity and Field meaning, through the Public Interface.
 - **Never** — Depend on private Model resources or duplicate conversion functions.
 
 **Model validates intrinsic data meaning**
 
-- **Must** — Validate Field constraints and local Model rules; apply declared defaults during construction.
-- **Never** — Own stored-data, workflow, or external-context rules.
+- **Must** — Validate Field constraints and local Model rules; apply declared defaults and ignore unknown input Fields.
+- **Never** — Treat an omitted value as an explicit null or own stored-data, workflow, or external-context rules.
+
+**Model makes identity, uniqueness, and references available**
+
+- **Must** — Expose every declared Identity, Uniqueness Constraint, and Relationship for Database consumption.
+- **Never** — Choose physical storage details.
+
+**Model preserves structured Field constraints**
+
+- **Must** — Keep each declared Field restriction usable for validation and storage realization.
+- **Never** — Invent a constraint or force one constraint representation.
+
+**Model handles sensitive and immutable Fields safely**
+
+- **Must** — Preserve sensitivity and declared immutability; keep sensitive input out of validation diagnostics.
+- **Never** — Own encryption, secret management, authorization, or audit history.
 
 **Model exposes complete logical meaning**
 
