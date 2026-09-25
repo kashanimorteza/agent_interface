@@ -1,6 +1,6 @@
 # Development Definition
 
-Development is the Implementation Subsystem that coordinates the Components of one application through shared defaults, direct Connections, documentation standards, and the Application Manifest.
+Development is the Implementation Subsystem that coordinates the Components of one application through shared defaults, direct Connections, and the Application Manifest.
 
 <br>
 
@@ -23,7 +23,7 @@ Development is the Implementation Subsystem that coordinates the Components of o
 
 ### Overview
 
-Development coordinates independent Components into one application. It owns their shared defaults, direct Connections, documentation standards, and the generated Application Manifest. Each Component owns its own meaning, implementation, technical choices, and Public Interface.
+Development coordinates independent Components into one application. It owns their shared defaults, direct Connections, and the generated Application Manifest. Each Component owns its own meaning, implementation, technical choices, documentation, and Public Interface.
 
 ### Purpose
 
@@ -43,7 +43,6 @@ Each Component resolves its own Preferences first, then uses a Development Defau
 - **Public Interface** — the Component-owned surface through which another Component uses it; each Component explains its own public contents.
 - **Connection** — one direct dependency from a consumer Component to a provider Component.
 - **Application Manifest** — the generated Config record that presents the current public composition of the application.
-- **Documentation Standard** — the shared rule for how every Component documents its Public Interface and safe usage.
 
 <br>
 
@@ -114,7 +113,7 @@ Platform provides the runtime and deployment foundation used by the other Compon
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Components use Development** — receive applicable shared defaults, the Connection graph, and the Documentation Standard.
+- **Components use Development** — receive applicable shared defaults and the Connection graph.
 - **Development uses Components** — derives the Application Manifest from their public composition and declared Connections.
 - **Application Manifest is stored in Config** — presents the current public application composition without becoming its source of authority.
 
@@ -123,7 +122,7 @@ Platform provides the runtime and deployment foundation used by the other Compon
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Development owns only shared coordination: defaults, Connections, documentation standards, and the Application Manifest. Each Component owns its own content, technical choices, and Public Interface. Platform owns runtime and launch details.
+Development owns only shared coordination: defaults, Connections, and the Application Manifest. Each Component owns its own content, technical choices, documentation, and Public Interface. Platform owns runtime and launch details.
 
 <br>
 
@@ -189,16 +188,6 @@ Every Principle below is mandatory.
 
 <br>
 
-### Every Component follows one documentation standard
-
-**Rule:** Every Component documents its Public Interface, configuration, use, verification, and failures according to the Development Documentation Standard. Examples use placeholders or secret references only, never usable credentials, tokens, or secret values.
-
-**Why:** A shared standard makes every Component understandable and safe to use.
-
-**Boundary:** Development defines the documentation standard; each Component owns its documentation content and technology-specific examples.
-
-<br>
-
 ### Unstated shared decisions follow one precedence order
 
 **Rule:** Resolve an unstated shared choice in this order: explicit Component Preference, Development Default, then compatible professional judgment.
@@ -248,8 +237,3 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Generate the Config Manifest from public Component metadata and Connections.
 - **Never** — Put secrets or private implementation detail in the Manifest.
-
-**Every Component follows one documentation standard**
-
-- **Must** — Document each Public Interface, configuration, use, verification, and failures safely.
-- **Never** — Include a usable secret in documentation.

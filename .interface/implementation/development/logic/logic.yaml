@@ -37,7 +37,7 @@ read_order:
 content_map:
   component: "Logic type, language, and platform."
   capabilities: "Component capabilities that are currently inactive."
-  settings: "Grouped by the parts Logic Principles name in its Architecture — Public Interface with its Categories and Operations, and Services with their Actions — plus the subjects that span the Component: behavioural policies, runtime behaviour, and verification."
+  settings: "Component directory and package name, plus the parts Logic Principles name in its Architecture — Public Interface with its Categories and Operations, and Services with their Actions — and the subjects that span the Component: behavioural policies, runtime behaviour, and verification."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -58,6 +58,10 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings:
+
+    component:
+      directory: "logic"
+      package: "trading-assistant-logic"
 
     public_interface:
       purpose: "The Operations this Logic currently offers and the Categories they are grouped into. The Principle “One Public Interface exposes Logic's Operations” fixes what the Interface is; this group records what is on it today."

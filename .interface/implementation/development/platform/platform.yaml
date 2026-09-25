@@ -41,7 +41,7 @@ content_map:
   capabilities: "Component capabilities that are currently inactive."
   selected: "The default named Launch Item."
   options: "The supported named Launch Items, each containing runtime requirements for their applicable Components."
-  settings: "Empty. The complete current Platform configuration is owned by each Launch Item."
+  settings: "Platform's Component directory and package status. The complete current Platform configuration is owned by each Launch Item."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -85,4 +85,7 @@ content:
           operating_system: "Linux"
 
   # <!-------------------------------------------- settings -->
-  settings: {}
+  settings:
+    component:
+      directory: "platform"
+      package: null

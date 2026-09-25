@@ -30,8 +30,8 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "The Model Component's type, language, and platform."
-  layout: "Layer and directory names, Declaration and Foundation class names, Foundation method names, and casing."
+  settings: "The Model Component's type, language, platform, root directory, and package name."
+  layout: "Entity directory, Interface, Declaration, and Foundation file names, class names, Foundation method names, and casing."
   data_validation: "The responsibility and moments for Entity data validation."
   development: "Component capabilities, Model naming conventions, and selected SQLModel implementation defaults."
 
@@ -44,14 +44,17 @@ content:
       type: "library"
       language: "Python"
       platform: "VPS"
+      directory: "my_model"
+      package: "my_model"
 
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      interface: "interface"
       entity: "entity"
-      declaration: "declaration"
-      foundation: "foundation"
+    files:
+      interface: "interface.py"
+      declaration: "declaration.py"
+      foundation: "foundation.py"
     classes:
       declaration: "Declaration"
       foundation: "Foundation"
@@ -90,9 +93,22 @@ content:
           guidance:
             project_rules:
               source_of_truth: "Generate each Model from its Domain Entity. Do not add Fields, constraints, defaults, or behavior that the Entity does not declare."
-              declaration: "Every Model uses the configured private Declaration class to record its technology-independent Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour."
-              entity: "Generate every Entity as a private SQLModel table model. SQLModel realizes the declared Fields and metadata without redefining their domain meaning."
-              foundation: "Every Entity uses the configured private Foundation class to verify its own data against Declaration during direct construction, from_json, and to_json. Foundation uses SQLModel for conversion and validation while retaining the public to_json and from_json contract."
-              entity_unit: "Create one private SQLModel Entity class per Domain Entity and place it in its own module beneath the configured Entity directory."
-              interface: "Make Interface the only public Model layer. Re-export consumer-facing Entity classes and capabilities there; do not require a consumer to import a private Model class or layer."
+              declaration: "Every Model uses the configured public Declaration class to record its technology-independent Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour."
+              entity: "Generate every Entity as a public SQLModel table model. SQLModel realizes the declared Fields and metadata without redefining their domain meaning."
+              foundation: "Every Entity uses the configured public Foundation class to verify its own data against Declaration during direct construction, from_json, and to_json. Foundation uses SQLModel for conversion and validation while retaining the public to_json and from_json contract."
+              entity_unit: "Create one public SQLModel Entity class per Domain Entity and place it in its own module beneath the configured Entity directory."
+              interface: "Keep Interface, Entity, Declaration, and Foundation public. Interface presents consumer-facing Entity classes and capabilities as a convenient entry point."
               flat_structure: "Do not nest, inherit, or copy Entities. Record every Target-declared cross-Entity connection as an explicit Relationship or Reference."
+  
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    file: "README.md"
+    location: "the Component root"
+    format: "markdown"
+    order:
+      - overview
+      - interface
+      - setup
+      - run
+      - verify
+      - troubleshooting

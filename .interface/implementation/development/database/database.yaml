@@ -29,7 +29,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Database type, language, platform, runtime database.yaml, its Foundation Structure, and the root directory for all Database files."
+  settings: "Database type, language, platform, component directory, package name, runtime database.yaml, its Foundation Structure, and the root directory for all Database files."
   layout: "The default directories for Interface, Mapping, and Engine."
   development: "Component capabilities, Database storage naming conventions, SQLModel choices, migration defaults, and Database Engine defaults."
 
@@ -42,11 +42,13 @@ content:
       type: "library"
       language: "Python"
       platform: "VPS"
+      directory: "my_database"
+      package: "my_database"
     configuration:
       file: "database.yaml"
       structure: ".interface/foundation/schema/database.yaml"
     database_directory:
-      path: "database"
+      path: "db"
 
   # <!-------------------------------------------- layout -->
   layout:
@@ -132,3 +134,16 @@ content:
           default_port: 3306
           parameters: ["host", "port", "database", "username_secret", "password_secret"]
           charset: "utf8mb4"
+          
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    file: "README.md"
+    location: "the Component root"
+    format: "markdown"
+    order:
+      - overview
+      - interface
+      - setup
+      - run
+      - verify
+      - troubleshooting

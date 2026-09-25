@@ -43,7 +43,7 @@ content_map:
   packages: "Presentation-owned package selections."
   selected: "The Presentation-owned Theme."
   options: "Supported Presentation-owned Themes."
-  settings: "Configuration grouped by the Presentation, Interaction Logic, and API Access layers."
+  settings: "Component directory and package name, plus configuration grouped by the Presentation, Interaction Logic, and API Access layers."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -97,6 +97,10 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings:
+
+    component:
+      directory: "presentation"
+      package: "trading-assistant-presentation"
 
     interaction_logic:
       state_management: "framework-native"

@@ -39,7 +39,7 @@ content_map:
   component: "API type, language, and platform."
   capabilities: "Component capabilities that are currently inactive."
   packages: "API-owned package selections."
-  settings: "Technical defaults grouped by API parts and runtime concerns: structure, transport, contract publication, requests, query limits, lifecycle endpoints, and idempotency."
+  settings: "Component directory and package name, plus API parts and runtime concerns: structure, transport, contract publication, requests, query limits, lifecycle endpoints, and idempotency."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -70,6 +70,10 @@ content:
 
   # <!-------------------------------------------- settings -->
   settings:
+
+    component:
+      directory: "api"
+      package: "trading-assistant-api"
 
     parts:
       application_bootstrap:

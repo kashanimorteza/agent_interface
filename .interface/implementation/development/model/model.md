@@ -31,7 +31,7 @@ Model gives Database and Logic one shared, technology-independent definition of 
 
 ### How It Works
 
-Each Entity stands alone in the private Entity layer. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Interface is Model's only public layer and presents the capabilities that other Components may use. SQLModel realizes the Entity as a table model without changing its domain meaning.
+Each Entity stands alone in its own unit under the Entity directory. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Every Model layer is public; Interface provides a convenient entry point for Entity classes and capabilities. SQLModel realizes the Entity as a table model without changing its domain meaning.
 
 <br>
 
@@ -39,7 +39,7 @@ Each Entity stands alone in the private Entity layer. Declaration records techno
 ## Terms
 
 - **Domain Entity** — the authoritative logical definition of one meaningful concept in the Target's domain.
-- **Entity** — the private Model layer that contains each Entity in a separate unit.
+- **Entity Layer** — the public Model layer that contains each Entity in a separate unit.
 - **Entity** — a Domain Entity with an Identity that distinguishes one instance from another.
 - **Field** — one named value of a Domain Entity, with its domain meaning, logical type, and applicable constraints.
 - **Type** — the technology-independent category of values a Field may hold.
@@ -51,10 +51,10 @@ Each Entity stands alone in the private Entity layer. Declaration records techno
 - **Reference** — the Field-level expression of a Relationship that identifies a value belonging to another Entity.
 - **Index** — a declared access intention for one Field or a declared combination of Fields.
 - **Value Generation** — a declared way to supply a Field value automatically, including Auto Increment, generated identifier, or generated timestamp.
-- **Declaration** — the private class that records an Entity's technology-independent data meaning and metadata without providing runtime behaviour.
-- **Foundation** — the private class that provides shared validation, `to_json()`, and `from_json()` behaviour without defining domain meaning.
+- **Declaration** — the public class that records an Entity's technology-independent data meaning and metadata without providing runtime behaviour.
+- **Foundation** — the public class that provides shared validation, `to_json()`, and `from_json()` behaviour without defining domain meaning.
 - **Intrinsic Rule** — a rule evaluated only from the data of the Domain Entity it governs.
-- **Interface** — Model's only public layer. It presents the Entity classes and capabilities that consuming Components may import and use without accessing any internal Model class or layer.
+- **Interface** — a public Model file that presents the Entity classes and capabilities that consuming Components may import and use.
 
 <br>
 
@@ -74,7 +74,7 @@ Model
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Database** — uses the Entity and Declaration meaning published through Interface to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
+- **Database** — imports public Entity classes and uses their declared meaning and SQLModel metadata to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
 - **Logic** — imports and uses Model capabilities published through Interface in application programming.
 
 <br>
@@ -84,15 +84,15 @@ Model
 
 ### Interface
 
-The only public layer. It presents the Entity classes and capabilities available to other Components.
+A public file that presents the Entity classes and capabilities available to other Components.
 
 ### Entity
 
-A private layer containing one separate unit for each Entity.
+A public directory containing one separate unit for each Entity.
 
 ### Declaration
 
-A private layer that records Entity meaning and metadata without runtime behaviour:
+A public file that records Entity meaning and metadata without runtime behaviour:
 
 ```text
 Declaration
@@ -116,7 +116,7 @@ Declaration
 
 ### Foundation
 
-A private layer that provides shared validation and conversion behaviour:
+A public file that provides shared validation and conversion behaviour:
 
 ```text
 Foundation
@@ -200,13 +200,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Model exposes one Interface
+### Model publishes all layers
 
-**Rule:** Interface is Model's only public layer. Consumers import and use Entity classes only through Interface. Entity, Declaration, Foundation, and every class within them are private implementation details; Interface alone presents the Entity classes and capabilities intended for consumers.
+**Rule:** Interface, Entity, Declaration, and Foundation are public Model layers. Interface presents Entity classes and capabilities as a convenient entry point; consumers may use any public Model layer without treating another layer as private.
 
-**Why:** One surface gives each consumer the information it needs while Model implementations remain free to change internally.
+**Why:** Every Model concern remains directly available while Interface still provides one convenient entry point for common use.
 
-**Boundary:** Consumers do not import or depend on private Model resources, and do not reimplement Foundation behaviour.
+**Boundary:** Public access does not transfer ownership of Entity meaning to a consumer or authorize a consumer to duplicate Foundation behaviour.
 
 <br>
 
@@ -272,7 +272,7 @@ Every Principle below is mandatory.
 
 ### Entities expose complete logical meaning
 
-**Rule:** Every Entity preserves its Target-derived meaning through Declaration, including its Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation when applicable, in a form that consumers can use through Interface.
+**Rule:** Every Entity preserves its Target-derived meaning through Declaration, including its Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation when applicable, in a form that consumers can use.
 
 **Why:** Consumers receive complete domain information without prescribing one storage format or implementation structure.
 
@@ -292,7 +292,7 @@ Every Principle below is mandatory.
 
 ### Each Entity stands in its own unit
 
-**Rule:** Every Entity has one private unit of its own in the Entity layer. Content used by exactly one Entity remains with it; shared metadata belongs to Declaration and shared behaviour belongs to Foundation.
+**Rule:** Every Entity has one public unit of its own in the Entity layer. Content used by exactly one Entity remains with it; shared metadata belongs to Declaration and shared behaviour belongs to Foundation.
 
 **Why:** One Entity per unit keeps domain boundaries visible and independently changeable.
 
@@ -335,10 +335,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Keep Entity meaning and metadata in Declaration.
 - **Never** — Put runtime behaviour or technology-specific storage choices in Declaration.
 
-**Model exposes one Interface**
+**Model publishes all layers**
 
-- **Must** — Use Interface as Model's only public layer and present consumer-facing Entity classes and capabilities there.
-- **Never** — Let a consumer import a private Model resource or duplicate Foundation behaviour.
+- **Must** — Keep Interface, Entity, Declaration, and Foundation public; present Entity classes and capabilities through Interface as a convenient entry point.
+- **Never** — Let public access duplicate Foundation behaviour or transfer Entity ownership to a consumer.
 
 **Model validates intrinsic data meaning**
 
@@ -382,5 +382,5 @@ Every obligation in the file, under the Principle it comes from.
 
 **Each Entity stands in its own unit**
 
-- **Must** — Keep each Entity in its own private unit under the Entity layer.
+- **Must** — Keep each Entity in its own public unit under the Entity layer.
 - **Never** — Put Entity-specific content in Declaration or Foundation.
