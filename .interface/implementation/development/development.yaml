@@ -1,7 +1,7 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/development.yaml"
-  path_note: "The Preferences layer of the Development Subsystem — shared defaults, Connections, Application Manifest, and documentation standard."
+  path_note: "The Preferences layer of the Development Subsystem — shared defaults, development standards, documentation, Connections, and the Application Manifest."
   purpose: "Configurable shared coordination for the Development Components."
   standard: "Agent Project Interface"
   version: "7.1"
@@ -18,7 +18,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read the consuming Component's Preferences first. When that Component leaves a shared choice unstated, read Development defaults. Read Connections to resolve direct dependencies, documentation for the shared documentation standard, and application_manifest for the generated Config record. Do not write resolved values back into this file."
+  consumption: "Read the consuming Component's Preferences first. When that Component leaves a shared choice unstated, read Development defaults. Read Connections to resolve direct dependencies, Documentation for the shared documentation standard, and Settings for the generated Application Manifest record. Do not write resolved values back into this file."
   selection: "Use a compatible Development Default only when the Component is silent. For an explicit unlisted or incompatible need, preserve Component and Target intent under the applicable Principles and record the consequential choice; ask only when no safe compatible choice can be established."
   version_resolution: "Preserve an explicit concrete version. Resolve an unpinned version only when it belongs to a Development-owned shared default; each Component resolves versions for its own packages and tools."
   matching: "Match Connections by their exact consumer and provider identifiers. Match a shared default only when the Component has no explicit value for that choice."
@@ -26,29 +26,42 @@ resolution:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "defaults"
-  - "options"
   - "settings"
+  - "defaults"
+  - "development"
+  - "connections"
+  - "documentation"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
+  settings: "Configuration for the generated Application Manifest."
   defaults: "Shared language and platform defaults used only when a Component makes no explicit selection."
-  options: "Reusable language standards and quality-tool defaults."
-  settings: "The Documentation Standard, direct Connections, and generated Application Manifest configuration."
+  development: "Reusable language standards and quality-tool defaults."
+  connections: "The direct dependency graph between Components."
+  documentation: "The shared documentation standard for every Component."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
+
+  # <!-------------------------------------------- settings -->
+  settings:
+    application_manifest:
+      file: ".interface/config/application.yaml"
+      sources:
+        - "each Component's non-secret public metadata"
+        - "declared Connections"
 
   # <!-------------------------------------------- defaults -->
   defaults:
     component:
       language: "Python"
       platform: "VPS"
+      database: "SQLite"
 
-  # <!-------------------------------------------- options -->
-  options:
+  # <!-------------------------------------------- development -->
+  development:
     languages:
       Python:
         version: "latest-compatible"
@@ -92,39 +105,33 @@ content:
           name: "npm"
           version: "latest-compatible"
 
-  # <!-------------------------------------------- settings -->
-  settings:
-    documentation:
-      file: "README.md"
-      location: "the Component root"
-      format: "markdown"
-      order:
-        - overview
-        - interface
-        - setup
-        - run
-        - verify
-        - troubleshooting
+  # <!-------------------------------------------- connections -->
+  connections:
+    presentation_to_api:
+      consumer: "presentation"
+      provider: "api"
+    api_to_logic:
+      consumer: "api"
+      provider: "logic"
+    logic_to_database:
+      consumer: "logic"
+      provider: "database"
+    logic_to_model:
+      consumer: "logic"
+      provider: "model"
+    database_to_model:
+      consumer: "database"
+      provider: "model"
 
-    connections:
-      presentation_to_api:
-        consumer: "presentation"
-        provider: "api"
-      api_to_logic:
-        consumer: "api"
-        provider: "logic"
-      logic_to_database:
-        consumer: "logic"
-        provider: "database"
-      logic_to_model:
-        consumer: "logic"
-        provider: "model"
-      database_to_model:
-        consumer: "database"
-        provider: "model"
-
-    application_manifest:
-      file: ".interface/config/application.yaml"
-      sources:
-        - "each Component's non-secret public metadata"
-        - "declared Connections"
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    file: "README.md"
+    location: "the Component root"
+    format: "markdown"
+    order:
+      - overview
+      - interface
+      - setup
+      - run
+      - verify
+      - troubleshooting
