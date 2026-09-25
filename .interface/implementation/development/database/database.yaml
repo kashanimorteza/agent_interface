@@ -4,8 +4,8 @@ meta:
   path_note: "Preferences for the Database Component."
   purpose: "Implementation layout, operation contracts, and technical defaults for the Database Component."
   standard: "Agent Project Interface"
-  version: "11.2"
-  updated: "2026-09-24"
+  version: "11.3"
+  updated: "2026-09-25"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -17,12 +17,13 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for the Database's shared parameters; read configuration to locate the runtime database.yaml and its independent Structure; read database_directory and layout to locate the Database files and layers; read operations for the available operation contracts; then read development for Database technical defaults."
+  consumption: "Read component for Database identity and technical selection; read settings for shared parameters and storage naming; read configuration to locate the runtime database.yaml and its independent Structure; read database_directory and layout to locate the Database files and layers; read operations for the available operation contracts; then read development for Database technical defaults."
   matching: "Each declared Engine uses one implementation file beneath layout.directories.engine and applies the matching development.database_engines default when one exists."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
+  - "component: identify the Database Component and its technical selection."
   - "settings: apply Database shared parameters."
   - "configuration: locate the runtime database.yaml and its independent Structure."
   - "database_directory: locate the Database root directory."
@@ -33,6 +34,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
+  component: "Database type, language, and platform."
   settings: "Shared Database parameters, including an optional Secret Key."
   configuration: "The runtime database.yaml file and the Foundation Structure that fixes its shape."
   database_directory: "The configured root directory for all Database files."
@@ -44,11 +46,23 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
+  # <!-------------------------------------------- component -->
+  component:
+    type: "library"
+    language: "Python"
+    platform: "VPS"
+
   # <!-------------------------------------------- settings -->
   settings:
     secrets:
       secret_key: null
     parameters: {}
+    naming:
+      storage:
+        tables: "plural_snake_case"
+        columns: "snake_case"
+        constraints: "snake_case"
+        indexes: "ix_<table>_<column>"
 
   # <!-------------------------------------------- configuration -->
   configuration:
@@ -124,10 +138,6 @@ content:
 
   # <!-------------------------------------------- development -->
   development:
-    component:
-      type: "library"
-      language: "Python"
-      platform: "VPS"
     languages:
       python:
         orm:

@@ -1,11 +1,11 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/development.yaml"
-  path_note: "The Preferences layer of the Development Subsystem — Component Profiles, centralized technical items, Connections, publication, and shared-capability defaults."
-  purpose: "Configurable composition and reusable technical defaults applied across Participating Components."
+  path_note: "The Preferences layer of the Development Subsystem — shared defaults, Connections, Application Manifest, and documentation standard."
+  purpose: "Configurable shared coordination for the Development Components."
   standard: "Agent Project Interface"
-  version: "7.0"
-  updated: "2026-09-19"
+  version: "7.1"
+  updated: "2026-09-25"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -13,88 +13,42 @@ policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Development choices back into it."
   changed_by: "The human, directly. A missing critical Development choice is raised through State instead of being written into this file."
-  precedence: "An explicit Target value and every applicable Development Principle take precedence over this file."
+  precedence: "An explicit Component Preference and every applicable Development Principle take precedence over this file."
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Resolve each Component Profile first. Where Development owns a Component's language and platform references, match them to their exact option entries and Platform Launch Items. Component-specific technical preferences are resolved from that Component's own Preferences. Resolve Connections, package publication, and Cross-cutting Capability applicability from settings. Do not write resolved values back into this file."
-  selection: "Use the selected compatible Component Profiles and technical items when the Target is silent. For an explicit unlisted or incompatible need, select the smallest well-supported compatible item and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "Preserve an explicit concrete version. Resolve latest, latest-compatible, and bounded constraints such as 2.x to a concrete stable version compatible with the complete selected profile; implementation records use the resolved concrete version."
-  matching: "Match Components by canonical identifier; languages by exact item key; each platform reference by the exact key of a Platform Launch Item; purpose-specific packages by their exact Technical Purpose key; Connections by their exact consumer and provider identifiers; and Cross-cutting Capability applies_to values by unique canonical Component identifiers."
-  additional_dependencies: "A Component may add a compatible supporting dependency when necessary without replacing its selected primary package. Record the resolved dependency with the implementation; a consequential recurring choice is added by the human under the relevant Language Item and Technical Purpose."
-
-
+  consumption: "Read the consuming Component's Preferences first. When that Component leaves a shared choice unstated, read Development defaults. Read Connections to resolve direct dependencies, documentation for the shared documentation standard, and application_manifest for the generated Config record. Do not write resolved values back into this file."
+  selection: "Use a compatible Development Default only when the Component is silent. For an explicit unlisted or incompatible need, preserve Component and Target intent under the applicable Principles and record the consequential choice; ask only when no safe compatible choice can be established."
+  version_resolution: "Preserve an explicit concrete version. Resolve an unpinned version only when it belongs to a Development-owned shared default; each Component resolves versions for its own packages and tools."
+  matching: "Match Connections by their exact consumer and provider identifiers. Match a shared default only when the Component has no explicit value for that choice."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "selected"
+  - "defaults"
   - "options"
   - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "One configurable profile per Participating Component, including identity, path, documentation file, role, and any language or Platform reference that Development owns."
-  options: "Reusable Language Items with their versions, Package Management, conventions, tools, drivers, and purpose-specific packages. Model- and Database-specific preferences belong to their respective Components."
-  settings: "Project-wide naming conventions, documentation rules, Connection defaults, shared package defaults, and Cross-cutting Capability applicability."
+  defaults: "Shared language and platform defaults used only when a Component makes no explicit selection."
+  options: "Reusable language standards and quality-tool defaults."
+  settings: "The Documentation Standard, direct Connections, and generated Application Manifest configuration."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- selected -->
-  selected:
-    components:
-      model:
-        name: "model"
-        path: "model"
-        documentation: "model/README.md"
-        role: "Defines the system's shared domain Model."
-      database:
-        name: "database"
-        path: "database"
-        documentation: "database/README.md"
-        role: "Owns persistence and access to stored data."
-      logic:
-        name: "logic"
-        path: "logic"
-        documentation: "logic/README.md"
-        type: "library"
-        role: "Implements server-side application Behaviour as reusable Logic."
-        language: "Python"
-        platform: "VPS"
-      api:
-        name: "api"
-        path: "api"
-        documentation: "api/README.md"
-        type: "executable"
-        role: "Publishes the external API and runs the API process."
-        language: "Python"
-        api: "FastAPI"
-        platform: "VPS"
-      presentation:
-        name: "presentation"
-        path: "presentation"
-        documentation: "presentation/README.md"
-        type: "executable"
-        role: "Provides the user-facing application."
-        language: "TypeScript"
-        user_interface: "React"
-        application_framework: "Next.js"
-        api_client: "Fetch"
-        platform: "VPS"
-      platform:
-        name: "platform"
-        path: "platform"
-        documentation: "platform/README.md"
-        type: "guideline"
-        role: "Defines Launch Items, per-Component runtime requirements, and supporting artifacts."
+  # <!-------------------------------------------- defaults -->
+  defaults:
+    component:
+      language: "Python"
+      platform: "VPS"
 
   # <!-------------------------------------------- options -->
   options:
-
     languages:
       Python:
         version: "latest-compatible"
@@ -132,63 +86,24 @@ content:
             name: "pytest"
             package: "pytest"
             version: "latest-compatible"
-        packages:
-          api:
-            name: "FastAPI"
-            package: "fastapi[standard]"
-            version: "latest-compatible"
-            supporting_packages:
-              validation: "pydantic>=2,<3"
-              settings: "pydantic-settings"
-              http_testing: "httpx"
-          cli:
-            name: "Typer"
-            package: "typer"
-            version: "latest-compatible"
       TypeScript:
         version: "latest-compatible"
         package_management:
           name: "npm"
           version: "latest-compatible"
-        packages:
-          user_interface:
-            name: "React"
-            package: "react"
-            version: "latest-compatible"
-            component_style: "Function components"
-          application_framework:
-            name: "Next.js"
-            package: "next"
-            version: "latest-compatible"
-            user_interface: "React"
-            router: "App Router"
-            run: "npm run dev"
-          api_client:
-            name: "Fetch"
-            package: null
-            version: "runtime-provided"
 
   # <!-------------------------------------------- settings -->
   settings:
-
-    # ---- naming ----
-    naming:
-      storage:
-        tables: "plural_snake_case"
-        columns: "snake_case"
-        constraints: "snake_case"
-        indexes: "ix_<table>_<column>"
-
     documentation:
       file: "README.md"
-      location: "the Component's path root, at the file its Profile's documentation key names"
+      location: "the Component root"
       format: "markdown"
       order:
-        - overview          # what it is, what it does, where it sits
-        - interface         # the Public Interface: every Category and Operation, what each accepts and returns, the outcomes it can produce, and a runnable example of calling it
-        - setup             # install, configure
-        - run               # how to start or use it
-        - verify            # how to check it works
+        - overview
+        - interface
+        - setup
+        - run
+        - verify
         - troubleshooting
 
     connections:
@@ -208,37 +123,8 @@ content:
         consumer: "database"
         provider: "model"
 
-    packages:
-      publish: false
-
-    cross_cutting:
-      testing:
-        applies_to:
-          - "logic"
-          - "api"
-      logging:
-        applies_to:
-          - "database"
-          - "logic"
-          - "api"
-          - "presentation"
-      error_handling:
-        applies_to:
-          - "model"
-          - "database"
-          - "logic"
-          - "api"
-          - "presentation"
-      authentication:
-        applies_to:
-          - "database"
-          - "logic"
-          - "api"
-          - "presentation"
-      encryption:
-        applies_to:
-          - "model"
-          - "database"
-          - "logic"
-          - "api"
-          - "presentation"
+    application_manifest:
+      file: ".interface/config/application.yaml"
+      sources:
+        - "each Component's non-secret public metadata"
+        - "declared Connections"

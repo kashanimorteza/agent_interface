@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/api/api.yaml"
   path_note: "The Preferences layer of the API Component — API-owned boundary defaults and transport conventions."
-  purpose: "Defaults for the executable API boundary: selected transport, contract, queries, lifecycle, and cross-cutting behavior."
+  purpose: "Defaults for the executable API boundary: technical selection, transport, contract, queries, and lifecycle."
   standard: "Agent Project Interface"
-  version: "4.0"
-  updated: "2026-09-19"
+  version: "4.1"
+  updated: "2026-09-25"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -18,36 +18,47 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Use API's identity, language, framework, and Platform Reference from its Component Profile in Development Preferences, then apply the boundary defaults in this file. Preserve every explicit value, including false and null, and never write resolved values back into this file."
+  consumption: "Read component and packages for API's technical selection, then apply the boundary defaults in settings. Use a Development Default only when this file leaves a shared choice unstated. Preserve every explicit value, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves an API-owned choice unstated and this file supplies no default, use compatible professional judgment under API Principles and record a consequential implementation choice with the implementation."
-  version_resolution: "This file owns no versioned technology. Development Preferences resolve every versioned technical item assigned to API."
-  matching: "An explicit Target statement takes priority. A default here applies only where the Target leaves that boundary choice unstated; otherwise no default applies. Where two entries could apply, the one naming the more specific operation, route, or resource governs, and a Component Profile selection in Development outranks a general default here."
+  version_resolution: "This file resolves versions for API-owned packages; Development resolves versions only for its shared Defaults."
+  matching: "An explicit Target statement takes priority. A default here applies only where the Target leaves that boundary choice unstated; otherwise no default applies. Where two entries could apply, the one naming the more specific route or resource governs."
 
 
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "selected"
-  - "options"
+  - "component"
+  - "packages"
   - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty. Development owns API's configurable profile and concrete selections."
-  options: "Empty. Development catalogues API's concrete technical alternatives and Platform reference."
-  settings: "Technical defaults grouped by API parts and runtime concerns: structure, selected transport, contract publication, requests, query limits, lifecycle endpoints, and idempotency."
+  component: "API type, language, and platform."
+  packages: "API-owned package selections."
+  settings: "Technical defaults grouped by API parts and runtime concerns: structure, transport, contract publication, requests, query limits, lifecycle endpoints, and idempotency."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- selected -->
-  selected: {}
+  # <!-------------------------------------------- component -->
+  component:
+    type: "executable"
+    language: "Python"
+    platform: "VPS"
 
-  # <!-------------------------------------------- options -->
-  options: {}
+  # <!-------------------------------------------- packages -->
+  packages:
+    api:
+      name: "FastAPI"
+      package: "fastapi[standard]"
+      version: "latest-compatible"
+      supporting_packages:
+        validation: "pydantic>=2,<3"
+        settings: "pydantic-settings"
+        http_testing: "httpx"
 
   # <!-------------------------------------------- settings -->
   settings:
@@ -63,7 +74,7 @@ content:
         directory: "service"
         file_per_domain: true
     runtime:
-      entrypoint_source: "Development API runtime entrypoint"
+      entrypoint_source: "API Component"
       host_source: "Platform Runtime Binding"
       port_source: "Platform Runtime Binding"
     contract:

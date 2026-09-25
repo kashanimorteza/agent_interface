@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Platform Component — named Launch Items with per-Component runtime requirements."
   purpose: "Technical defaults for selecting and applying a complete launch definition to the Target."
   standard: "Agent Project Interface"
-  version: "5.0"
-  updated: "2026-09-14"
+  version: "5.1"
+  updated: "2026-09-25"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -18,7 +18,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Resolve selected.launch to its exact entry under options.launches, then apply each selected Component's runtime requirements as one coherent launch definition. Do not infer undeclared actions and do not write resolved values back into this file."
+  consumption: "Read component, then resolve selected.launch to its exact entry under options.launches and apply each selected Component's runtime requirements as one coherent launch definition. Do not infer undeclared actions and do not write resolved values back into this file."
   selection: "Use the selected Launch Item when the Target leaves the launch method unstated. For an explicit unlisted or incompatible need, select the smallest compatible definition and record the consequential choice; ask only when no safe compatible definition can be established."
   version_resolution: "Preserve every explicit concrete version. Resolve an unpinned version to a concrete compatible stable version when a versioned package or tool is added to a Launch Item."
   matching: "Match selected.launch to its exact key under options.launches and each Component's runtime requirements by its exact component key."
@@ -28,6 +28,7 @@ resolution:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
+  - "component"
   - "selected"
   - "options"
   - "settings"
@@ -35,6 +36,7 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
+  component: "Platform type."
   selected: "The default named Launch Item."
   options: "The supported named Launch Items, each containing runtime requirements for their applicable Components."
   settings: "Empty. The complete current Platform configuration is owned by each Launch Item."
@@ -42,6 +44,10 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
+
+  # <!-------------------------------------------- component -->
+  component:
+    type: "guideline"
 
   # <!-------------------------------------------- selected -->
   selected:

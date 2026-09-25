@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Logic Component — Logic-owned behavioural defaults and internal realization conventions."
   purpose: "Configurable defaults for Logic organization, reliability, and verification."
   standard: "Agent Project Interface"
-  version: "13.0"
-  updated: "2026-09-19"
+  version: "13.1"
+  updated: "2026-09-25"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -18,9 +18,9 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Resolve Logic's Component Profile, language-owned Technical Purposes, Connections, and Platform Launch Item from Development first. Apply this file only to Logic-owned behavioural defaults and internal realization conventions. Resolve environment-specific Runtime Bindings from Platform and never copy concrete technical or Platform values into this file."
+  consumption: "Read component for Logic's technical selection, then apply Logic-owned behavioural defaults and internal realization conventions. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
-  version_resolution: "This file owns no versioned implementation technology. Development resolves every language, framework, package, tool, and Package Management version."
+  version_resolution: "This file resolves versions for Logic-owned packages and tools. Development resolves versions only for its shared Defaults."
   matching: "Match standards and Logic settings by their exact keys. Match Model Logic files to public Model identities, and match each behavioural policy under settings.policies to the Models and Operations its own entry names."
 
 
@@ -28,26 +28,24 @@ resolution:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "selected"
-  - "options"
+  - "component"
   - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "Empty. Development owns Logic's configurable Component Profile and technical selections."
-  options: "Empty. Development owns concrete technical alternatives; Logic's own choices are under settings."
+  component: "Logic type, language, and platform."
   settings: "Grouped by the parts Logic Principles name in its Architecture — Public Interface with its Categories and Operations, and Services with their Actions — plus the subjects that span the Component: behavioural policies, runtime behaviour, and verification."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- selected -->
-  selected: {}
-
-  # <!-------------------------------------------- options -->
-  options: {}
+  # <!-------------------------------------------- component -->
+  component:
+    type: "library"
+    language: "Python"
+    platform: "VPS"
 
   # <!-------------------------------------------- settings -->
   settings:

@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/presentation/presentation.yaml"
   path_note: "The Preferences layer of the Presentation Component — supported technical choices and defaults used when a Presentation choice is unstated."
-  purpose: "Defaults and supported Theme and layer settings for the Presentation package. Development selects the language, user-interface library, framework, and API client."
+  purpose: "Defaults and supported Theme, technical, and layer settings for the Presentation package."
   standard: "Agent Project Interface"
-  version: "5.0"
-  updated: "2026-09-13"
+  version: "5.1"
+  updated: "2026-09-25"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -18,9 +18,9 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Operations resolve Presentation's language, user-interface library, framework, and API client from its Development Component Profile and the matching Development technical catalogue. They resolve Presentation-owned defaults from this file and the current project definition."
+  consumption: "Read component and packages for Presentation's technical selection, then resolve Presentation-owned defaults from this file and the current project definition. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Prefer a supported compatible Presentation-owned option. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
-  version_resolution: "Development resolves versions for the selected language, user-interface library, framework, and API client. This file resolves versions only for Presentation-owned options."
+  version_resolution: "This file resolves versions for Presentation-owned packages. Development resolves versions only for its shared Defaults."
   matching: "Match each Presentation-owned selected key to its option entry. An explicit project value takes priority over the selection recorded here."
 
 
@@ -28,6 +28,8 @@ resolution:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
+  - "component"
+  - "packages"
   - "selected"
   - "options"
   - "settings"
@@ -35,13 +37,40 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: "The Presentation-owned Theme. Development selects the language, user-interface library, application framework, package manager, and API client through Presentation's Component Profile and Language Item."
+  component: "Presentation type, language, and platform."
+  packages: "Presentation-owned package selections."
+  selected: "The Presentation-owned Theme."
   options: "Supported Presentation-owned Themes."
   settings: "Configuration grouped by the Presentation, Interaction Logic, and API Access layers."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
+
+  # <!-------------------------------------------- component -->
+  component:
+    type: "executable"
+    language: "TypeScript"
+    platform: "VPS"
+
+  # <!-------------------------------------------- packages -->
+  packages:
+    user_interface:
+      name: "React"
+      package: "react"
+      version: "latest-compatible"
+      component_style: "Function components"
+    application_framework:
+      name: "Next.js"
+      package: "next"
+      version: "latest-compatible"
+      user_interface: "React"
+      router: "App Router"
+      run: "npm run dev"
+    api_client:
+      name: "Fetch"
+      package: null
+      version: "runtime-provided"
 
   # <!-------------------------------------------- selected -->
   selected:
