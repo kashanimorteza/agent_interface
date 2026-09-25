@@ -1,6 +1,6 @@
 # Model Definition
 
-Model defines the Target's logical data concepts as a reusable library for Database and Logic.
+Model defines and handles the project's data-model Definitions.
 
 <br>
 
@@ -31,7 +31,7 @@ Model gives Database and Logic one shared, technology-independent definition of 
 
 ### How It Works
 
-Each Definition stands alone in the Definitions layer. The Core separates Declaration from Foundation: Declaration records technology-independent meaning, while Foundation provides shared behaviour. The Public Interface publishes every supported Model capability. Logic uses Model capabilities in programming; Database uses Definitions to create its Tables.
+Each Definition stands alone in the private Definitions layer. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Interface is Model's only public layer and presents the capabilities that other Components may use. Logic uses those capabilities in programming; Database uses them to create its Tables.
 
 <br>
 
@@ -53,10 +53,10 @@ Each Definition stands alone in the Definitions layer. The Core separates Declar
 - **Reference** — the Field-level expression of a Relationship that identifies a value belonging to another Definition.
 - **Index** — a declared access intention for one Field or a declared combination of Fields.
 - **Value Generation** — a declared way to supply a Field value automatically, including Auto Increment, generated identifier, or generated timestamp.
-- **Declaration** — the Core class that records a Definition's technology-independent data meaning and metadata without providing runtime behaviour.
-- **Foundation** — the Core class that provides shared validation, `to_json()`, and `from_json()` behaviour without defining domain meaning.
+- **Declaration** — the private class that records a Definition's technology-independent data meaning and metadata without providing runtime behaviour.
+- **Foundation** — the private class that provides shared validation, `to_json()`, and `from_json()` behaviour without defining domain meaning.
 - **Intrinsic Rule** — a rule evaluated only from the data of the Domain Definition it governs.
-- **Public Interface** — the only surface through which consuming Components access every published Model class, Definition, Type, and method.
+- **Interface** — Model's only public layer. It presents the Definitions and capabilities that consuming Components may import and use without accessing any internal Model class or layer.
 
 <br>
 
@@ -65,33 +65,10 @@ Each Definition stands alone in the Definitions layer. The Core separates Declar
 
 ```text
 Model
-└── Layers
-    ├── Public Interface
-    ├── Definitions
-    │   ├── Entities
-    │   ├── Value Objects
-    │   └── Enumerations
-    └── Core
-        ├── Declaration
-        │   ├── Types
-        │   ├── Field Rules
-        │   │   ├── Required and Nullability
-        │   │   ├── Default Values
-        │   │   ├── Sensitivity
-        │   │   ├── Immutability
-        │   │   ├── Length
-        │   │   └── Constraints
-        │   ├── Primary Keys
-        │   ├── Relationships
-        │   ├── Unique Constraints
-        │   ├── Indexes
-        │   └── Value Generation
-        │       ├── Auto Increment
-        │       ├── Generated Identifier
-        │       └── Generated Timestamp
-        └── Foundation
-            ├── to_json()
-            └── from_json()
+├── Interface
+├── Definitions
+├── Declaration
+└── Foundation
 ```
 
 <br>
@@ -99,17 +76,62 @@ Model
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Database** — uses Definitions and their Declaration meaning through the Public Interface to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
-- **Logic** — uses published Model classes, Definitions, Types, and methods through the Public Interface in application programming.
+- **Database** — uses the Definitions and Declaration meaning published through Interface to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
+- **Logic** — imports and uses Model capabilities published through Interface in application programming.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-- **Public Interface** — publishes every supported Model class, Definition, Type, and method for use by other Components.
-- **Definitions** — contains separate Entity, Value Object, and Enumeration units.
-- **Core** — contains Declaration, Foundation, and the shared rules and implementation standards required to realize Model.
+### Interface
+
+The only public layer. It presents the Definitions and capabilities available to other Components.
+
+### Definitions
+
+A private layer containing separate units:
+
+```text
+Definitions
+├── Entities
+├── Value Objects
+└── Enumerations
+```
+
+### Declaration
+
+A private layer that records Definition meaning and metadata without runtime behaviour:
+
+```text
+Declaration
+├── Types
+├── Field Rules
+│   ├── Required and Nullability
+│   ├── Default Values
+│   ├── Sensitivity
+│   ├── Immutability
+│   ├── Length
+│   └── Constraints
+├── Primary Keys
+├── Relationships
+├── Unique Constraints
+├── Indexes
+└── Value Generation
+    ├── Auto Increment
+    ├── Generated Identifier
+    └── Generated Timestamp
+```
+
+### Foundation
+
+A private layer that provides shared validation and conversion behaviour:
+
+```text
+Foundation
+├── to_json()
+└── from_json()
+```
 
 Technical choices, names, and layout for these layers belong to Model Preferences. Declaration meaning remains independent of language, package, database, and Engine.
 
@@ -169,7 +191,7 @@ Every Principle below is mandatory.
 
 ### Foundation provides shared Model behaviour
 
-**Rule:** Every Entity uses Foundation to verify its own data against Declaration during direct construction, `from_json()`, and `to_json()`. Foundation also converts an Instance to JSON through `to_json()` or creates an Instance from JSON through `from_json()`, without injecting Fields, constraints, or domain meaning.
+**Rule:** Every Definition uses Foundation to verify its own data against Declaration during direct construction, `from_json()`, and `to_json()`. Foundation also converts an Instance to JSON through `to_json()` or creates an Instance from JSON through `from_json()`, without injecting Fields, constraints, or domain meaning.
 
 **Why:** The library has one consistent implementation of its common behaviour without imposing a shared domain structure.
 
@@ -187,19 +209,19 @@ Every Principle below is mandatory.
 
 <br>
 
-### Model exposes one Public Interface
+### Model exposes one Interface
 
-**Rule:** Database and Logic use Model only through its Public Interface. The Public Interface publishes every supported Model class, Definition, Type, and method. Logic uses those published capabilities in application programming. Database uses published Definitions and their Declaration meaning to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
+**Rule:** Interface is Model's only public layer. Database and Logic import and use Model only through Interface. Definitions, Declaration, Foundation, and every class within them are private implementation details; Interface alone presents the Definitions and capabilities intended for consumers. Database uses the Definitions and Declaration meaning presented through Interface to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
 
 **Why:** One surface gives each consumer the information it needs while Model implementations remain free to change internally.
 
-**Boundary:** Consumers do not depend on private Model resources or reimplement Foundation behaviour.
+**Boundary:** Consumers do not import or depend on private Model resources, and do not reimplement Foundation behaviour.
 
 <br>
 
 ### Model validates intrinsic data meaning
 
-**Rule:** Each Entity validates its own Field constraints and Intrinsic Rules against its Declaration during direct construction, conversion from JSON, and conversion to JSON. Construction applies declared defaults when an input omits a Field, distinguishes an omitted value from an explicit null, ignores unknown input Fields, and validates the resulting Instance.
+**Rule:** Each Definition validates its own Field constraints and Intrinsic Rules against its Declaration during direct construction, conversion from JSON, and conversion to JSON. Construction applies declared defaults when an input omits a Field, distinguishes an omitted value from an explicit null, ignores unknown input Fields, and validates the resulting Instance.
 
 **Why:** Each instance entering or leaving a consuming Component has data that conforms to its Model Definition.
 
@@ -259,7 +281,7 @@ Every Principle below is mandatory.
 
 ### Definitions expose complete logical meaning
 
-**Rule:** Every Definition preserves its Target-derived meaning through Declaration, including its Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation when applicable, in a form that Database and Logic can use through the Public Interface.
+**Rule:** Every Definition preserves its Target-derived meaning through Declaration, including its Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation when applicable, in a form that Database and Logic can use through Interface.
 
 **Why:** Consumers receive complete domain information without prescribing one storage format or implementation structure.
 
@@ -279,7 +301,7 @@ Every Principle below is mandatory.
 
 ### Each Domain Definition stands in its own unit
 
-**Rule:** Every Domain Definition has one unit of its own in the applicable Entities, Value Objects, or Enumerations branch of the Definitions layer. Content used by exactly one Definition remains with it; shared behaviour and metadata classes belong to Core.
+**Rule:** Every Domain Definition has one private unit of its own in the applicable Entities, Value Objects, or Enumerations branch of the Definitions layer. Content used by exactly one Definition remains with it; shared metadata belongs to Declaration and shared behaviour belongs to Foundation.
 
 **Why:** One Definition per unit keeps domain boundaries visible and independently changeable.
 
@@ -314,7 +336,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Foundation provides shared Model behaviour**
 
-- **Must** — Use Foundation to verify Entity data during construction, `to_json()`, and `from_json()`.
+- **Must** — Use Foundation to verify Definition data during construction, `to_json()`, and `from_json()`.
 - **Never** — Let Foundation define domain meaning or Fields.
 
 **Declaration records technology-independent data meaning**
@@ -322,14 +344,14 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Keep Definition meaning and metadata in Declaration.
 - **Never** — Put runtime behaviour or technology-specific storage choices in Declaration.
 
-**Model exposes one Public Interface**
+**Model exposes one Interface**
 
-- **Must** — Publish every supported Model class, Definition, Type, and method through the Public Interface.
-- **Never** — Depend on private Model resources or duplicate Foundation behaviour.
+- **Must** — Use Interface as Model's only public layer and present consumer-facing Definitions and capabilities there.
+- **Never** — Let a consumer import a private Model resource or duplicate Foundation behaviour.
 
 **Model validates intrinsic data meaning**
 
-- **Must** — Let each Entity validate its own data during construction and both JSON conversion directions; apply declared defaults and ignore unknown input Fields.
+- **Must** — Let each Definition validate its own data during construction and both JSON conversion directions; apply declared defaults and ignore unknown input Fields.
 - **Never** — Treat an omitted value as an explicit null or own stored-data, workflow, or external-context rules.
 
 **Declaration makes data structure available**
@@ -369,5 +391,5 @@ Every obligation in the file, under the Principle it comes from.
 
 **Each Domain Definition stands in its own unit**
 
-- **Must** — Keep each Definition in its own unit under the applicable Definitions branch.
-- **Never** — Put Definition-specific content in Core.
+- **Must** — Keep each Definition in its own private unit under the applicable Definitions branch.
+- **Never** — Put Definition-specific content in Declaration or Foundation.

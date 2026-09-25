@@ -23,7 +23,7 @@ Database is the Development Component that persists Model data and provides stan
 
 ### Overview
 
-Database is the Development Component that persists Model data and publishes data Operations to Logic. It contains Configuration, Operations, and the Public Interface, Mapping, and Engine layers.
+Database is the Development Component that persists Model data and publishes data Operations to Logic. Its layers are Interface, Mapping, and Engine.
 
 ### Purpose
 
@@ -31,7 +31,7 @@ Database keeps persistence knowledge in one Component. Without that separation, 
 
 ### How It Works
 
-Logic sends an Operation request through Public Interface. Mapping resolves the applicable Instance and Engine, passes the request to that Engine, standardizes the result when needed, and returns it through Public Interface.
+Logic sends an Operation request through Interface. Mapping resolves the applicable Instance and Engine, passes the request to that Engine, standardizes the result when needed, and returns it through Interface.
 
 <br>
 
@@ -40,11 +40,11 @@ Logic sends an Operation request through Public Interface. Mapping resolves the 
 
 - **Engine** — a supported database technology and its implementation.
 - **Instance** — a named database connection and storage identity using one Engine.
-- **Database Configuration** — the declared Engines, Instances, Settings, and Operations available to Database.
+- **Database Configuration** — the declared Engines, Instances, and Settings available to Database.
 - **Settings** — component-wide choices such as the default Instance, purpose-to-Instance assignments, and secret references.
-- **Core Operation** — a fixed public operation that works with one Model, such as add, edit, update, list, delete, enable, disable, or get by ID.
-- **Extra Operation** — an optional public operation with its own request and result shape, such as a report.
-- **Public Interface** — the boundary through which Logic requests configured Operations.
+- **Interface** — the public boundary through which Logic requests Database Operations.
+- **Operation** — one public Database action published through Interface.
+- **Execute Command** — an Operation that executes a declared database command whose purpose does not directly concern one Model.
 - **Mapping** — the internal layer that routes a request to its Instance and Engine and standardizes its result when needed.
 
 <br>
@@ -54,38 +54,48 @@ Logic sends an Operation request through Public Interface. Mapping resolves the 
 
 ```text
 Database
-├── Configuration
-├── Operations
-│   ├── Core Operations
-│   └── Extra Operations
-└── Layers
-    ├── Public Interface
-    ├── Mapping
-    └── Engine
+├── Interface
+├── Mapping
+└── Engine
 ```
-
-**Configuration** declares the Database resources and Operation catalogue.
-
-**Operations** separates fixed Core Operations for one Model from optional Extra Operations for other purposes.
-
-**Layers** contains the Public Interface that receives requests, Mapping that resolves and handles them, and Engine implementations that perform storage work.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — persists the Models and their declared data shapes.
-- **Provides to Logic** — exposes configured Operations through its Public Interface.
+- **Consumes Model** — uses Model Definitions and their declared data shapes to create Tables and recognize data in Model form.
+- **Provides to Logic** — exposes Database Operations through Interface.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-- **Public Interface** — receives Operation requests from Logic and returns their results.
-- **Mapping** — resolves the requested Instance and Engine, routes the Operation, and standardizes returned data when required.
-- **Engine** — performs the storage behavior for its Engine-specific implementation.
+### Interface
+
+The public layer that receives Operation requests from Logic and returns their results. Every Operation accepts optional filters and optional field ordering when those inputs apply to its result.
+
+#### Operations
+
+- **Add** — accepts a Model identity and values for a new record; returns the created record or operation outcome.
+- **Edit** — accepts a Model identity and record identifier; returns that record in editable form or a not-found outcome.
+- **Update** — accepts a Model identity, record identifier, and changed values; returns the updated record or operation outcome.
+- **List** — accepts a Model identity and optional selection criteria; returns matching records.
+- **Delete** — accepts a Model identity and record identifier; returns the deletion outcome.
+- **Enable** — accepts a Model identity and record identifier; returns the enabled record or operation outcome.
+- **Disable** — accepts a Model identity and record identifier; returns the disabled record or operation outcome.
+- **Get by ID** — accepts a Model identity and record identifier; returns the matching record or a not-found outcome.
+- **Report** — accepts report-specific selection criteria; returns the requested report without requiring one Model as its subject.
+- **Execute Command** — accepts a declared command and its supplied parameters; returns that command's result or operation outcome. Its purpose need not concern one Model.
+
+### Mapping
+
+The private layer that resolves and handles requests: it resolves the requested Instance and Engine, routes the Operation, and standardizes returned data when required.
+
+### Engine
+
+The private layer that performs storage behaviour for each Engine-specific implementation.
 
 Database's technical selections, defaults, and layout belong to Database Preferences. The structure of its generated configuration belongs to its Schema. This Definition states only the conceptual layers and the rules that govern them.
 
@@ -113,19 +123,19 @@ Every Principle below is mandatory.
 
 <br>
 
-### Database exposes explicit public Operations
+### Database exposes explicit Interface Operations
 
-**Rule:** Public Interface publishes only the enabled Operations declared in Database Configuration. Core Operations are the fixed operations that work with one Model and use their shared request and result standard. Extra Operations are optional and define the request and result shape appropriate to their own purpose. Every Operation accepts optional filters and optional ordering by field.
+**Rule:** Interface publishes the Operations described in this Component. Every Operation accepts optional filters and optional ordering by field when those inputs apply to its result. Execute Command may perform a declared database command that does not directly concern one Model.
 
 **Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
 
-**Boundary:** Public Interface receives and returns requests; it does not select an Engine or implement database-specific behavior.
+**Boundary:** Interface receives and returns requests; it does not select an Engine or implement database-specific behavior.
 
 <br>
 
 ### Mapping routes requests and handles results
 
-**Rule:** Mapping receives each request from Public Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and standardizes the returned data when required before returning it to Public Interface. Mapping provides one mapping action for each published Operation.
+**Rule:** Mapping receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and standardizes the returned data when required before returning it to Interface. Mapping provides one mapping action for each published Operation.
 
 **Why:** A single routing layer keeps selection, translation, and result handling consistent across Engines.
 
@@ -145,7 +155,7 @@ Every Principle below is mandatory.
 
 ### Database connects Model to Logic
 
-**Rule:** Database uses Model declarations to persist Model data and provides its configured Operations to Logic through Public Interface.
+**Rule:** Database uses Model Definitions and their Declaration meaning to create Tables and recognize Model-form data, and provides its Interface Operations to Logic.
 
 **Why:** This keeps persistence aligned with domain data while giving Logic one consistent data boundary.
 
@@ -163,16 +173,15 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — declare every supported Engine, its parameters, named Instances, and component Settings in Database Configuration.
 - **Must** — make every Instance name a declared Engine and every configured Instance reference resolve to a declared Instance.
 
-**Database exposes explicit public Operations**
+**Database exposes explicit Interface Operations**
 
-- **Must** — publish only enabled Operations declared in Database Configuration.
-- **Must** — use the shared Core-operation standard for Core Operations.
-- **Must** — give every Extra Operation the request and result shape required by its own purpose.
-- **Must** — accept optional filters and optional field ordering for every Operation.
+- **Must** — publish the Operations described by Interface.
+- **Must** — accept optional filters and optional field ordering whenever they apply to an Operation result.
+- **Must** — let Execute Command perform a declared database command that does not directly concern one Model.
 
 **Mapping routes requests and handles results**
 
-- **Must** — route every Public Interface request to the resolved Instance and Engine.
+- **Must** — route every Interface request to the resolved Instance and Engine.
 - **Must** — provide one Mapping function for each published Operation.
 - **Must** — standardize returned data whenever that Operation requires it.
 
@@ -184,5 +193,5 @@ Every obligation in the file, under the Principle it comes from.
 
 **Database connects Model to Logic**
 
-- **Must** — use Model declarations when persisting Model data.
-- **Must** — provide configured Database Operations to Logic through Public Interface.
+- **Must** — use Model Definitions and their Declaration meaning when persisting Model data.
+- **Must** — provide Interface Operations to Logic through Interface.

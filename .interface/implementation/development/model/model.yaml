@@ -4,9 +4,8 @@ meta:
   path_note: "The Preferences layer of the Model Component."
   purpose: "Configurable component, layout, data validation, and technical implementation choices for Model."
   standard: "Agent Project Interface"
-  version: "12.7"
+  version: "12.9"
   updated: "2026-09-25"
-
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -15,62 +14,48 @@ policy:
   changed_by: "The human, directly. A missing critical Model choice is raised through State."
   precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
 
-
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read component, layout, and data_validation for Model's defaults and data checks; then read Model's development section for technical implementation choices. Use Development Defaults only when Model leaves a shared choice unstated. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
+  consumption: "Read settings for Model identity; read layout and data_validation for Model's defaults and data checks; then read Model's development section for capabilities, naming, and technical implementation choices. Use Development Defaults only when Model leaves a shared choice unstated. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
   version_resolution: "Model's development section resolves Model-owned versioned technical items. Development resolves only its shared Defaults."
   matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates, removes, or renames Target meaning."
 
-
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "component"
-  - "capabilities"
-  - "layout"
-  - "data_validation"
-  - "development"
-
+  - "settings: identify the Model Component and its technical selection."
+  - "layout: locate Model's Interface, Definitions, Declaration, and Foundation layers and their configured names."
+  - "data_validation: apply Definition responsibility and validation moments."
+  - "development: apply Model capabilities, naming conventions, language, package, and implementation defaults."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  component: "The Model Component's type, language, and platform."
-  capabilities: "Component capabilities that are currently inactive."
-  layout: "Layer and directory names, Core class names, Foundation method names, and casing."
-  data_validation: "The responsibility and moments for Entity data validation."
-  development: "The selected Pydantic implementation defaults."
-
+  settings: "The Model Component's type, language, and platform."
+  layout: "Layer and directory names, Declaration and Foundation class names, Foundation method names, and casing."
+  data_validation: "The responsibility and moments for Definition data validation."
+  development: "Component capabilities, Model naming conventions, and selected Pydantic implementation defaults."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- component -->
-  component:
-    type: "library"
-    language: "Python"
-    platform: "VPS"
-
-  # <!-------------------------------------------- capabilities -->
-  capabilities:
-    testing: false
-    error_handling: false
-    logging: false
-    encryption: false
+  # <!-------------------------------------------- settings -->
+  settings:
+    component:
+      type: "library"
+      language: "Python"
+      platform: "VPS"
 
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      public_interface: "model_interface"
+      interface: "interface"
       definitions:
         directory: "definitions"
         entities: "entity"
         value_objects: "value_object"
         enumerations: "enumeration"
-      core:
-        directory: "core"
-        declaration: "declaration"
-        foundation: "foundation"
+      declaration: "declaration"
+      foundation: "foundation"
     classes:
       declaration: "Declaration"
       foundation: "Foundation"
@@ -82,7 +67,7 @@ content:
 
   # <!-------------------------------------------- data_validation -->
   data_validation:
-    responsibility: "Each Entity verifies its own data against its Declaration through Foundation."
+    responsibility: "Each Definition verifies its own data against its Declaration through Foundation."
     moments:
       - "direct construction"
       - "from_json"
@@ -90,6 +75,18 @@ content:
 
   # <!-------------------------------------------- development -->
   development:
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+      encryption: false
+    naming:
+      definitions:
+        entities: "PascalCase"
+        value_objects: "PascalCase"
+        enumerations: "PascalCase"
+      fields: "snake_case"
+      modules: "snake_case"
     languages:
       python:
         modeling:
@@ -100,8 +97,8 @@ content:
           guidance:
             project_rules:
               source_of_truth: "Generate each Model from its Domain Definition. Do not add Fields, constraints, defaults, or behavior that the Definition does not declare."
-              declaration: "Every Model uses the configured Declaration class to expose its technology-independent Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour."
-              foundation: "Every Entity uses the configured Foundation class to verify its own data against Declaration during direct construction, from_json, and to_json. Foundation owns common behaviour; a concrete Model owns only its declared meaning."
-              definition_unit: "Create one Model class per Domain Definition and place it in its own module beneath the configured Entities, Value Objects, or Enumerations directory."
-              public_interface: "Expose every supported Model class, Definition, Type, and method through the configured Public Interface. Do not require a consumer to use a private Model resource."
+              declaration: "Every Model uses the configured private Declaration class to record its technology-independent Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour."
+              foundation: "Every Definition uses the configured private Foundation class to verify its own data against Declaration during direct construction, from_json, and to_json. Foundation owns common behaviour; a concrete Model owns only its declared meaning."
+              definition_unit: "Create one private Model class per Domain Definition and place it in its own module beneath the configured Entities, Value Objects, or Enumerations directory."
+              interface: "Make Interface the only public Model layer. Present consumer-facing Definitions and capabilities there; do not require a consumer to import a private Model class or layer."
               flat_structure: "Do not nest, inherit, or copy Definitions. Record every Target-declared cross-Definition connection as an explicit Relationship or Reference."

@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-database-configuration"
   version: "2.1"
-  purpose: "The independent structure of database.yaml: supported Engines and their parameters, named Instances, component Settings, and public Operations."
+  purpose: "The independent structure of database.yaml: supported Engines and their parameters, named Instances, and component Settings."
   kind: "Structure standard"
   applies_when: "The Implementation declares a Database Component."
   generates: "<database component path>/database.yaml"
@@ -45,29 +45,11 @@ structure:
         "<secret-key>": "<secret value or secret reference>"
       parameters: "<component-specific configuration mapping>"
 
-  operations:
-    required: true
-    purpose: "Operations published by the Database Public Interface, separated into fixed Core Operations and optional Extra Operations."
-    shape:
-      core:
-        "<operation-key>":
-          enabled: "<true or false>"
-          purpose: "<what this Core Operation does for one Model>"
-          filters: "<optional conditions such as id = 1 or name = value>"
-          order_by: "<optional ordering by one or more fields>"
-      extra:
-        "<operation-key>":
-          enabled: "<true or false>"
-          purpose: "<what this optional Extra Operation does>"
-          filters: "<optional conditions that constrain the result>"
-          order_by: "<optional ordering by one or more fields>"
-
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
   engine_support: "Every declared Engine has one implementation file under the configured engine directory."
   instance_integrity: "Every Instance names an existing Engine."
   setting_integrity: "settings.default_instance and every settings.assignments value name an existing Instance."
-  operation_contract: "Only enabled Operations are published through Public Interface. Core Operations work with one Model; Extra Operations may use another request shape. Every Operation accepts optional filters and order_by. Every Engine implementation preserves the applicable standard request and response form."
   configuration_ownership: "This file contains current resources. Database Preferences define layout and conventions."
 
 # <!--------------------------------------------------------------------------------- Example -->
@@ -135,34 +117,3 @@ example: |
     secrets:
       encryption_key: "<secret reference>"
     parameters: {}
-
-  operations:
-    core:
-      add:
-        enabled: true
-        purpose: "Add one record."
-      edit:
-        enabled: true
-        purpose: "Get one record in its editable form."
-      update:
-        enabled: true
-        purpose: "Update one record."
-      list:
-        enabled: true
-        purpose: "List records."
-      delete:
-        enabled: true
-        purpose: "Delete one record."
-      enable:
-        enabled: true
-        purpose: "Enable one record."
-      disable:
-        enabled: true
-        purpose: "Disable one record."
-      get_by_id:
-        enabled: true
-        purpose: "Get one record by its identifier."
-    extra:
-      report:
-        enabled: true
-        purpose: "Return a report that does not operate on one Model."

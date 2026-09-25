@@ -2,151 +2,73 @@
 meta:
   path: ".interface/implementation/development/database/database.yaml"
   path_note: "Preferences for the Database Component."
-  purpose: "Implementation layout, operation contracts, and technical defaults for the Database Component."
+  purpose: "Implementation layout and technical defaults for the Database Component."
   standard: "Agent Project Interface"
-  version: "11.3"
+  version: "11.8"
   updated: "2026-09-25"
-
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned."
-  changed_by: "The human, directly."
-
+  rule: "This file is human-owned. Operations read it without writing resolved Database choices back into it."
+  changed_by: "The human, directly. A missing critical Database choice is raised through State."
+  precedence: "An explicit Database Configuration and every applicable Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read component for Database identity and technical selection; read settings for shared parameters and storage naming; read configuration to locate the runtime database.yaml and its independent Structure; read database_directory and layout to locate the Database files and layers; read operations for the available operation contracts; then read development for Database technical defaults."
+  consumption: "Read settings for Database identity, runtime configuration, and root directory; read layout to locate the Database layers; then read development for capabilities, naming, and technical defaults."
+  selection: "When Database Configuration leaves a Database-owned technical choice unstated and this file supplies no default, use compatible professional judgment under Database Principles and record a consequential implementation choice with the implementation."
+  version_resolution: "Database's development section resolves Database-owned versioned technical items. Development resolves only its shared Defaults."
   matching: "Each declared Engine uses one implementation file beneath layout.directories.engine and applies the matching development.database_engines default when one exists."
-
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "component: identify the Database Component and its technical selection."
-  - "capabilities: apply the currently inactive component capabilities."
-  - "settings: apply Database shared parameters."
-  - "configuration: locate the runtime database.yaml and its independent Structure."
-  - "database_directory: locate the Database root directory."
-  - "layout: locate the default directories for the three Database layers."
-  - "operations: identify fixed Core Operations and the optional Extra Operation category."
-  - "development: apply Database language, package, and Engine defaults."
-
+  - "settings: identify the Database Component and locate its runtime configuration and root directory."
+  - "layout: locate the default directories for Interface, Mapping, and Engine."
+  - "development: apply Database capabilities, naming conventions, language, package, and Engine defaults."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  component: "Database type, language, and platform."
-  capabilities: "Component capabilities that are currently inactive."
-  settings: "Shared Database parameters, including an optional Secret Key."
-  configuration: "The runtime database.yaml file and the Foundation Structure that fixes its shape."
-  database_directory: "The configured root directory for all Database files."
-  layout: "The default directories for Public Interface, Mapping, and Engine."
-  operations: "The fixed Core Operation catalogue and the optional Extra Operation category."
-  development: "Database type, language, platform, package defaults, and Database Engine defaults."
-
+  settings: "Database type, language, platform, runtime database.yaml, its Foundation Structure, and the root directory for all Database files."
+  layout: "The default directories for Interface, Mapping, and Engine."
+  development: "Component capabilities, Database storage naming conventions, language, package defaults, and Database Engine defaults."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- component -->
-  component:
-    type: "library"
-    language: "Python"
-    platform: "VPS"
-
-  # <!-------------------------------------------- capabilities -->
-  capabilities:
-    testing: false
-    error_handling: false
-    logging: false
-    encryption: false
-
   # <!-------------------------------------------- settings -->
   settings:
-    secrets:
-      secret_key: null
-    parameters: {}
+    component:
+      type: "library"
+      language: "Python"
+      platform: "VPS"
+    configuration:
+      file: "database.yaml"
+      structure: ".interface/foundation/schema/database.yaml"
+    database_directory:
+      path: "database"
+
+  # <!-------------------------------------------- layout -->
+  layout:
+    directories:
+      interface:
+        directory: "interface"
+      mapping: "mapping"
+      engine: "engine"
+
+  # <!-------------------------------------------- development -->
+  development:
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+      encryption: false
     naming:
       storage:
         tables: "plural_snake_case"
         columns: "snake_case"
         constraints: "snake_case"
         indexes: "ix_<table>_<column>"
-
-  # <!-------------------------------------------- configuration -->
-  configuration:
-    file: "database.yaml"
-    structure: ".interface/foundation/schema/database.yaml"
-
-  # <!-------------------------------------------- database_directory -->
-  database_directory:
-    path: "database"
-
-  # <!-------------------------------------------- layout -->
-  layout:
-    directories:
-      public_interface: "public_interface"
-      mapping: "mapping"
-      engine: "engine"
-
-  # <!-------------------------------------------- operations -->
-  operations:
-    core:
-      add:
-        purpose: "Add one record for a Model."
-        accepts: "A Model identity and the values for its new record."
-        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
-        order_by: "Optional field ordering for the operation result."
-        returns: "The created record or the operation outcome."
-      edit:
-        purpose: "Get one Model record in its editable form."
-        accepts: "A Model identity and one record identifier."
-        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
-        order_by: "Optional field ordering for the operation result."
-        returns: "The editable record or a not-found outcome."
-      update:
-        purpose: "Change supplied values on one Model record."
-        accepts: "A Model identity, one record identifier, and changed values."
-        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
-        order_by: "Optional field ordering for the operation result."
-        returns: "The updated record or the operation outcome."
-      list:
-        purpose: "List Model records."
-        accepts: "A Model identity and optional selection criteria."
-        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
-        order_by: "Optional field ordering for the returned records."
-        returns: "The matching records."
-      delete:
-        purpose: "Delete one Model record."
-        accepts: "A Model identity and one record identifier."
-        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
-        order_by: "Optional field ordering for the operation result."
-        returns: "The deletion outcome."
-      enable:
-        purpose: "Enable one Model record."
-        accepts: "A Model identity and one record identifier."
-        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
-        order_by: "Optional field ordering for the operation result."
-        returns: "The enabled record or the operation outcome."
-      disable:
-        purpose: "Disable one Model record."
-        accepts: "A Model identity and one record identifier."
-        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
-        order_by: "Optional field ordering for the operation result."
-        returns: "The disabled record or the operation outcome."
-      get_by_id:
-        purpose: "Get one Model record by its identifier."
-        accepts: "A Model identity and one record identifier."
-        filters: "Optional conditions that constrain the operation, such as id = 1 or name = <value>."
-        order_by: "Optional field ordering for the operation result."
-        returns: "The matching record or a not-found outcome."
-    extra:
-      purpose: "Optional Operations for purposes that do not work directly with one Model, such as reporting."
-      filters: "Every Extra Operation accepts optional conditions that constrain its result."
-      order_by: "Every Extra Operation accepts optional field ordering for its result."
-
-  # <!-------------------------------------------- development -->
-  development:
     languages:
       python:
         orm:
