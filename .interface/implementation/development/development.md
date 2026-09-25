@@ -152,8 +152,6 @@ Development Definition Principles are mandatory. Development Preferences supply 
 
 Every Principle below is mandatory.
 
-<br>
-
 ### Every Participating Component has one configurable Component Profile
 
 **Rule:** Development Preferences declares exactly one Component Profile for every Participating Component. Each profile has one canonical identity and the configurable composition values that apply to that Component. Profile values remain Preferences rather than fixed Principle values. Participating Components are peers, and each owns its internal organization.

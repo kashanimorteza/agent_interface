@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/model/model.yaml"
   path_note: "The Preferences layer of the Model Component."
-  purpose: "Configurable configuration, layout, verification, and technical implementation choices for Model."
+  purpose: "Configurable component, configuration, layout, verification, and technical implementation choices for Model."
   standard: "Agent Project Interface"
-  version: "12.5"
-  updated: "2026-09-24"
+  version: "12.7"
+  updated: "2026-09-25"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -18,7 +18,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Model's configuration, configurable defaults, layout, and verification; then read development for Model's type, language, platform, and technical defaults. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
+  consumption: "Read component, configuration, layout, and verification for Model's defaults and checks; then read development for technical implementation defaults. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
   version_resolution: "development resolves every versioned technical item assigned to Model."
   matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates, removes, or renames Target meaning."
@@ -26,81 +26,63 @@ resolution:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings"
+  - "component"
+  - "configuration"
+  - "layout"
+  - "verification"
   - "development"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "The Model Declaration Schema configuration, layer-directory defaults, casing, and verification checks."
-  development: "Model type, language, platform, and the selected Pydantic implementation defaults."
+  component: "The Model Component's type, language, and platform."
+  configuration: "The Model Declaration Schema configuration."
+  layout: "Layer-directory defaults and casing."
+  verification: "The checks used to verify the Model library."
+  development: "The selected Pydantic implementation defaults."
 
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- settings -->
-  settings:
+  # <!-------------------------------------------- component -->
+  component:
+    type: "library"
+    language: "Python"
+    platform: "VPS"
 
-    # ---- Configuration ----
-    configuration:
-      model_declaration_schema: ".interface/foundation/schema/model-declaration.yaml"
-    
-    # ---- Layout ----
-    layout:
-      directories:
-        public_interface: "public_interface"
-        definitions: "Entity"
-        supporting_content: "supporting"
-      casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as development.languages states it."
+  # <!-------------------------------------------- configuration -->
+  configuration:
+    model_declaration_schema: ".interface/foundation/schema/model-declaration.yaml"
 
-    # ---- Verification ----
-    verification:
-      checks:
-        - "public interface"
-        - "direct construction and JSON conversion"
-        - "declaration vocabulary publishing"
-        - "definition separation: one independent Domain Definition per unit and Model Foundation in its own"
+  # <!-------------------------------------------- layout -->
+  layout:
+    directories:
+      public_interface: "public_interface"
+      definitions: "entity"
+      supporting_content: "supporting"
+    casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as development.languages states it."
+
+  # <!-------------------------------------------- verification -->
+  verification:
+    checks:
+      - "public interface"
+      - "direct construction and JSON conversion"
+      - "declaration vocabulary publishing"
+      - "definition separation: one independent Domain Definition per unit and Model Foundation in its own"
 
   # <!-------------------------------------------- development -->
   development:
-    component:
-      type: "library"
-      language: "Python"
-      platform: "VPS"
     languages:
       python:
         modeling:
-          name: "Pydantic"
-          package: "pydantic"
-          version: "2.x"
+          package:
+            name: "pydantic"
+            version: "2.x"
+            skill: "pydantic"
           guidance:
-            standards:
-              typing: "Modern Python typing as the language entry states it — builtin generics and the union operator."
-            structure:
-              field_declaration: "Declare a constrained field as Annotated[T, Field(...)]. The assignment form reads as though the field has a default when it does not."
-              reusable_domain_type: "Define a repeated constraint once as an Annotated alias carrying AfterValidator or an annotated_types constraint, then reuse the alias instead of repeating the constraint on each field."
-              model_config: "ConfigDict(validate_assignment=True, validate_default=True); add frozen=True where the concept is a value rather than an entity."
-              single_field_rule: "@field_validator"
-              cross_field_rule: "@model_validator(mode='after')"
-              validator_order: "Before and wrap validators run right to left; after validators run left to right. Stacked validators are written so that order is explicit rather than assumed from their appearance."
-            api:
-              base_model: "pydantic.BaseModel"
-              configuration: "pydantic.ConfigDict"
-              field_validation: "pydantic.field_validator"
-              model_validation: "pydantic.model_validator"
-          avoid:
-            legacy_apis:
-              - "validator"
-              - "root_validator"
-              - "parse_obj"
-              - "dict"
-              - "json"
-            deprecated_constraint_helpers:
-              note: "Scheduled for removal in Pydantic 3; express the same constraint with Annotated instead."
-              names:
-                - "constr"
-                - "conint"
-                - "confloat"
-                - "condecimal"
-            plain_validator: "PlainValidator replaces standard validation entirely and cuts off type safety; use BeforeValidator or AfterValidator around it instead."
+            project_rules:
+              source_of_truth: "Generate each Model from its Domain Definition. Do not add Fields, constraints, defaults, or behavior that the Definition does not declare."
+              foundation: "Every Model inherits the shared Foundation. Foundation owns common validation and the two JSON conversion functions; a concrete Model owns only its declared Fields and validation rules."
+              definition_unit: "Create one Model class per Domain Definition and place it in its own module under the configured Definitions directory."
+              flat_structure: "Do not create nested, recursive, or cross-Model structures."
