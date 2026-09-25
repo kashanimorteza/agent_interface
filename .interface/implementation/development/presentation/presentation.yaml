@@ -29,6 +29,7 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "component"
+  - "capabilities"
   - "packages"
   - "selected"
   - "options"
@@ -38,6 +39,7 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   component: "Presentation type, language, and platform."
+  capabilities: "Component capabilities that are currently inactive."
   packages: "Presentation-owned package selections."
   selected: "The Presentation-owned Theme."
   options: "Supported Presentation-owned Themes."
@@ -52,6 +54,13 @@ content:
     type: "executable"
     language: "TypeScript"
     platform: "VPS"
+
+  # <!-------------------------------------------- capabilities -->
+  capabilities:
+    testing: false
+    error_handling: false
+    logging: false
+    encryption: false
 
   # <!-------------------------------------------- packages -->
   packages:

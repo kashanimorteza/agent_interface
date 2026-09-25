@@ -24,6 +24,7 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "component: identify the Database Component and its technical selection."
+  - "capabilities: apply the currently inactive component capabilities."
   - "settings: apply Database shared parameters."
   - "configuration: locate the runtime database.yaml and its independent Structure."
   - "database_directory: locate the Database root directory."
@@ -35,6 +36,7 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   component: "Database type, language, and platform."
+  capabilities: "Component capabilities that are currently inactive."
   settings: "Shared Database parameters, including an optional Secret Key."
   configuration: "The runtime database.yaml file and the Foundation Structure that fixes its shape."
   database_directory: "The configured root directory for all Database files."
@@ -51,6 +53,13 @@ content:
     type: "library"
     language: "Python"
     platform: "VPS"
+
+  # <!-------------------------------------------- capabilities -->
+  capabilities:
+    testing: false
+    error_handling: false
+    logging: false
+    encryption: false
 
   # <!-------------------------------------------- settings -->
   settings:

@@ -29,12 +29,14 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "component"
+  - "capabilities"
   - "settings"
 
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   component: "Logic type, language, and platform."
+  capabilities: "Component capabilities that are currently inactive."
   settings: "Grouped by the parts Logic Principles name in its Architecture — Public Interface with its Categories and Operations, and Services with their Actions — plus the subjects that span the Component: behavioural policies, runtime behaviour, and verification."
 
 
@@ -46,6 +48,13 @@ content:
     type: "library"
     language: "Python"
     platform: "VPS"
+
+  # <!-------------------------------------------- capabilities -->
+  capabilities:
+    testing: false
+    error_handling: false
+    logging: false
+    encryption: false
 
   # <!-------------------------------------------- settings -->
   settings:
@@ -178,8 +187,7 @@ content:
     runtime:
       observability:
         logging:
-          enabled: true
-          correlate_with_request_id: true
+          enabled: false
     verification:
       checks:
         - "Authentication and authorization, when Development enables them for Logic"

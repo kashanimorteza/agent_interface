@@ -95,10 +95,6 @@ content:
             name: "pyright"
             package: "pyright"
             version: "latest-compatible"
-          test_runner:
-            name: "pytest"
-            package: "pytest"
-            version: "latest-compatible"
       TypeScript:
         version: "latest-compatible"
         package_management:

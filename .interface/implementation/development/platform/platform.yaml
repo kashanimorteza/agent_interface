@@ -29,6 +29,7 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "component"
+  - "capabilities"
   - "selected"
   - "options"
   - "settings"
@@ -37,6 +38,7 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   component: "Platform type."
+  capabilities: "Component capabilities that are currently inactive."
   selected: "The default named Launch Item."
   options: "The supported named Launch Items, each containing runtime requirements for their applicable Components."
   settings: "Empty. The complete current Platform configuration is owned by each Launch Item."
@@ -48,6 +50,13 @@ content:
   # <!-------------------------------------------- component -->
   component:
     type: "guideline"
+
+  # <!-------------------------------------------- capabilities -->
+  capabilities:
+    testing: false
+    error_handling: false
+    logging: false
+    encryption: false
 
   # <!-------------------------------------------- selected -->
   selected:

@@ -27,6 +27,7 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "component"
+  - "capabilities"
   - "layout"
   - "verification"
   - "development"
@@ -35,6 +36,7 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   component: "The Model Component's type, language, and platform."
+  capabilities: "Component capabilities that are currently inactive."
   layout: "Layer-directory defaults and casing."
   verification: "The checks used to verify the Model library."
   development: "The selected Pydantic implementation defaults."
@@ -48,6 +50,13 @@ content:
     type: "library"
     language: "Python"
     platform: "VPS"
+
+  # <!-------------------------------------------- capabilities -->
+  capabilities:
+    testing: false
+    error_handling: false
+    logging: false
+    encryption: false
 
   # <!-------------------------------------------- layout -->
   layout:
