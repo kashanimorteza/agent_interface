@@ -23,7 +23,7 @@ Model defines the Target's logical data concepts as a reusable library for Datab
 
 ### Overview
 
-Model defines independent, flat Domain Definitions: their names, descriptions, Fields, logical types, constraints, defaults, and kinds. Storage and application behaviour belong to other Components.
+Model defines flat Domain Definitions: their names, descriptions, Fields, logical types, constraints, defaults, kinds, and explicit Relationships. Definitions never nest within one another. Storage and application behaviour belong to other Components.
 
 ### Purpose
 
@@ -41,11 +41,11 @@ Each Definition stands alone in the Definitions layer. Database and Logic reach 
 - **Domain Definition** — the authoritative logical definition of one meaningful concept in the Target's domain.
 - **Definitions** — the Model layer that contains one separate unit for each Domain Definition.
 - **Field** — one named value of a Domain Definition, with its domain meaning, logical type, and applicable constraints.
+- **Relationship** — an explicit domain reference from one Domain Definition to another, without nesting either Definition inside the other.
 - **Model Foundation** — the shared, technology-independent mechanisms through which Model realizations validate their data and convert to or from JSON.
 - **Intrinsic Rule** — a rule evaluated only from the data of the Domain Definition it governs.
-- **Declaration Vocabulary** — the technology-independent vocabulary in which each Domain Definition declares its meaning and Fields.
 - **Public Interface** — the only surface through which another Component imports and uses Model Definitions.
-- **Supporting Content** — the shared Declaration Vocabulary, Model Foundation, and other common mechanisms supporting Definitions and the Public Interface.
+- **Supporting Content** — the Model Foundation and other common mechanisms supporting Definitions and the Public Interface.
 
 <br>
 
@@ -75,9 +75,9 @@ Model
 
 - **Public Interface** — provides Model import tools to consuming Components.
 - **Definitions** — contains each independent Domain Definition and its own content.
-- **Supporting Content** — provides Model Foundation, Declaration Vocabulary, and other shared content.
+- **Supporting Content** — provides Model Foundation and other shared content.
 
-Technical choices, defaults, and directory names for these layers belong to Model Preferences. The structure of a Model declaration belongs to the Model Declaration Schema.
+Technical choices, defaults, and directory names for these layers belong to Model Preferences. Each realization selects the structure through which it records and exposes Model meaning.
 
 <br>
 
@@ -183,23 +183,23 @@ Every Principle below is mandatory.
 
 <br>
 
-### Model declares every Definition in one standard vocabulary
+### Model exposes complete logical meaning
 
-**Rule:** Every Domain Definition declares its name, description, kind, Fields, Intrinsic Rules, and enumeration literals when applicable. Every Field declares its name, description, logical type, presence semantics, default when one exists, and applicable constraints. The Model Declaration Schema supplies the common structure without limiting the logical types a Model may declare.
+**Rule:** Every Model realization preserves each Definition's Target-derived meaning, including its Fields, constraints, defaults, identity, uniqueness, and references when applicable, in a form that Database and Logic can use through the Public Interface.
 
-**Why:** One vocabulary gives consumers a complete shared description without importing storage or technology decisions.
+**Why:** Consumers receive complete domain information without prescribing one storage format or implementation structure.
 
-**Boundary:** The vocabulary remains limited to each independent Definition and its own Fields; operational and storage decisions remain outside Model.
+**Boundary:** Model does not prescribe how a realization stores that information, and Database alone decides how to realize it as storage.
 
 <br>
 
-### Definitions are flat and independent
+### Definitions are flat and explicitly related
 
-**Rule:** Every Domain Definition is self-contained, flat, and independently understandable.
+**Rule:** Every Domain Definition remains flat and independently understandable. When Target meaning connects two Definitions, Model records that connection as an explicit Relationship or Reference rather than nesting one Definition inside another.
 
-**Why:** Independent flat Definitions prevent hidden coupling and keep each concept understandable on its own.
+**Why:** Flat Definitions prevent hidden structural coupling while explicit Relationships preserve the Target's domain connections.
 
-**Boundary:** An Enumeration is itself an independent Domain Definition with its own content.
+**Boundary:** A Relationship does not create nesting, inheritance, copied Fields, or shared ownership between Definitions. An Enumeration remains an independent Domain Definition with its own content.
 
 <br>
 
@@ -248,12 +248,12 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Validate Field constraints and local Model rules; apply declared defaults during construction.
 - **Never** — Own stored-data, workflow, or external-context rules.
 
-**Model declares every Definition in one standard vocabulary**
+**Model exposes complete logical meaning**
 
-- **Must** — Describe every Definition and Field through the common Schema structure.
-- **Never** — Restrict a Model to a fixed list of logical types.
+- **Must** — Expose each Definition's logical meaning, including applicable identity, uniqueness, defaults, and references.
+- **Never** — Prescribe one declaration format or storage realization.
 
-**Definitions are flat and independent**
+**Definitions are flat and explicitly related**
 
-- **Must** — Keep every Definition independent and flat.
-- **Never** — Let a Definition depend on another Definition for its meaning.
+- **Must** — Keep every Definition flat and record every Target-declared cross-Definition connection explicitly.
+- **Never** — Nest, inherit, or copy one Definition into another.

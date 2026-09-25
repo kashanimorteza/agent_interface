@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/model/model.yaml"
   path_note: "The Preferences layer of the Model Component."
-  purpose: "Configurable component, configuration, layout, verification, and technical implementation choices for Model."
+  purpose: "Configurable component, layout, verification, and technical implementation choices for Model."
   standard: "Agent Project Interface"
   version: "12.7"
   updated: "2026-09-25"
@@ -18,7 +18,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read component, configuration, layout, and verification for Model's defaults and checks; then read development for technical implementation defaults. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
+  consumption: "Read component, layout, and verification for Model's defaults and checks; then read development for technical implementation defaults. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
   version_resolution: "development resolves every versioned technical item assigned to Model."
   matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates, removes, or renames Target meaning."
@@ -27,7 +27,6 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "component"
-  - "configuration"
   - "layout"
   - "verification"
   - "development"
@@ -36,7 +35,6 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   component: "The Model Component's type, language, and platform."
-  configuration: "The Model Declaration Schema configuration."
   layout: "Layer-directory defaults and casing."
   verification: "The checks used to verify the Model library."
   development: "The selected Pydantic implementation defaults."
@@ -50,10 +48,6 @@ content:
     type: "library"
     language: "Python"
     platform: "VPS"
-
-  # <!-------------------------------------------- configuration -->
-  configuration:
-    model_declaration_schema: ".interface/foundation/schema/model-declaration.yaml"
 
   # <!-------------------------------------------- layout -->
   layout:
